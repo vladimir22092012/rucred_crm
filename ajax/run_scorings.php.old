@@ -1,0 +1,83 @@
+<?php
+error_reporting(-1);
+ini_set('display_errors', 'On');
+chdir('..');
+
+require 'autoload.php';
+
+class RunScoringsApp extends Core
+{
+    private $response = array();
+    
+    public function run()
+    {
+    	$action = $this->request->get('action', 'string');
+        
+        switch ($action):
+            
+            case 'create':
+            
+                $type = $this->request->get('type', 'string');
+                $order_id = $this->request->get('order_id', 'integer');
+                
+                $scoring_types = $this->scorings->get_types();
+                
+                if ($order = $this->orders->get_order($order_id))
+                {
+                    $audit = new StdClass();
+                    $audit->status = 'new';
+                    $audit->order_id = $order->order_id;
+                    $audit->user_id = $order->user_id;
+                    $audit->created = date('Y-m-d H:i:s');
+                    
+                    switch ($type):
+                        
+                        case 'all':
+                            $audit->types = array();
+                            foreach ($scoring_types as $scoring_type)
+                                if ($scoring_type->active)
+                                    $audit->types[] = $scoring_type->name;                            
+                        break;
+                        
+                        default:
+                            $audit->types = array($type);
+                        break;
+                        
+                    endswitch;
+                    
+                    $this->response['audit_id'] = $this->scorings->add_audit($audit);
+                    $this->response['success'] = 1;
+                    
+                }
+                else
+                {
+                    $this->response['error'] = 'undefined_order';
+                }
+                
+            break;
+            
+            case 'check':
+                
+                $audit_id = $this->request->get('audit_id', 'integer');
+                
+                if ($audit = $this->scorings->get_audit($audit_id))
+                {
+                    $this->response['status'] = $audit->status;
+                    
+                }
+                else
+                {
+                    $this->response['error'] = 'audit_not_found';
+                }
+                
+            break;
+            
+        endswitch;
+    
+        echo json_encode($this->response);
+    }
+    
+}
+
+$app = new RunScoringsApp();
+$app->run();
