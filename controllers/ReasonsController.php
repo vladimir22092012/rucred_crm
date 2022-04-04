@@ -5,8 +5,6 @@ class ReasonsController extends Controller
     public function fetch()
     {
 
-return false;
-
         if ($this->request->method('post'))
         {
             switch ($this->request->post('action', 'string')):

@@ -21,13 +21,21 @@ RewriteRule ^orders/offline/?$          index.php?module=OrdersController&offlin
 RewriteRule ^order/([^/]*)/?$           index.php?module=OrderController&id=$1  [L,QSA]
 
 RewriteRule ^neworder/?$                index.php?module=NeworderController  [L,QSA]
+RewriteRule ^neworder/draft/([^/]*)/?   index.php?module=NeworderController&order_id=$1  [L,QSA]
 RewriteRule ^offline_orders/?$          index.php?module=OfflineOrdersController  [L,QSA]
 RewriteRule ^offline_order/([^/]*)/?$   index.php?module=OfflineOrderController&id=$1  [L,QSA]
+RewriteRule ^drafts/?$                  index.php?module=OfflineOrdersController&drafts=1  [L,QSA]
+RewriteRule ^companies/?$               index.php?module=CompaniesController  [L,QSA]
+RewriteRule ^company/([^/]*)/?$         index.php?module=CompanyController&id=$1   [L,QSA]
+RewriteRule ^groups/?$                  index.php?module=GroupsController  [L,QSA]
 
 RewriteRule ^tickets/?$                 index.php?module=TicketsController  [L,QSA]
 RewriteRule ^ticket/([^/]*)/?$          index.php?module=TicketController&id=$1  [L,QSA]
 RewriteRule ^ticket_statuses/?$         index.php?module=TicketStatusesController  [L,QSA]
 RewriteRule ^ticket_reasons/?$          index.php?module=TicketReasonsController  [L,QSA]
+
+RewriteRule ^document/([^/]*)/?$        index.php?module=DocumentController&id=$1  [L,QSA]
+RewriteRule ^document/?$                index.php?module=DocumentController  [L,QSA]
 
 RewriteRule ^contracts/?$               index.php?module=ContractsController  [L,QSA]
 RewriteRule ^contract/([^/]*)/?$        index.php?module=ContractController&id=$1  [L,QSA]
@@ -35,6 +43,8 @@ RewriteRule ^contract/([^/]*)/?$        index.php?module=ContractController&id=$
 RewriteRule ^loantypes/?$               index.php?module=LoantypesController  [L,QSA]
 RewriteRule ^loantype/([^/]*)/?$        index.php?module=LoantypeController&id=$1  [L,QSA]
 RewriteRule ^loantype/?$                index.php?module=LoantypeController  [L,QSA]
+
+RewriteRule ^html2pdf/?$                index.php?module=Html2PdfController[L,QSA]
 
 RewriteRule ^sudblock_contracts/?$      index.php?module=SudblockContractsController  [L,QSA]
 RewriteRule ^sudblock_contract/([^/]*)/?$   index.php?module=SudblockContractController&id=$1  [L,QSA]

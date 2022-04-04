@@ -1,4 +1,4 @@
-{$meta_title='Виды кредитования' scope=parent}
+{$meta_title='Продукты' scope=parent}
 
 {capture name='page_scripts'}
 <script>
@@ -93,10 +93,10 @@
         <!-- ============================================================== -->
         <div class="row page-titles">
             <div class="col-md-6 col-8 align-self-center">
-                <h3 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i> Виды кредитования</h3>
+                <h3 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i>Продукты</h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
-                    <li class="breadcrumb-item active">Виды кредитования</li>
+                    <li class="breadcrumb-item active">Продукты</li>
                 </ol>
             </div>
             <div class="col-md-6 col-4 align-self-center">
@@ -149,9 +149,6 @@
                                         <th style="width: 70px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             Макс.&nbsp;срок
                                         </th>
-                                        <th style="width: 80px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            Доп. услуги
-                                        </th>
                                         <th style="width: 50px;" class="jsgrid-header-cell "></th>
                                     </tr>
                                 </table>
@@ -185,10 +182,6 @@
                                             </td>
                                             <td style="width: 70px;" class="jsgrid-cell jsgrid-align-center">
                                                 {$loantype->max_period}
-                                            </td>
-                                            <td style="width: 80px;" class="jsgrid-cell jsgrid-align-left">
-                                                {if $loantype->bot_inform}<span class="label label-primary">Бот</span>{/if}
-                                                {if $loantype->sms_inform}<span class="label label-info">Смс</span>{/if}
                                             </td>
                                             <td style="width: 50px;" class="jsgrid-cell jsgrid-align-right">
                                                 <div class="js-visible-view">

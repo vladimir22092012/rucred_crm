@@ -144,7 +144,7 @@
                         
                         <div class="col-md-6">
                             <div class="border">
-                                <h5 class="card-header"><span class="text-white">Обшие</span></h5>
+                                <h5 class="card-header"><span class="text-white">Общие</span></h5>
                                 
                                 <input type="hidden" name="id" value="{$loantype->id}" />
                                 
@@ -174,34 +174,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="clearfix">
-                                        <div class="float-left">
-                                            <div class="onoffswitch">
-                                                <input type="checkbox" name="bot_inform" value="30" class="onoffswitch-checkbox" id="bot_inform" {if $loantype->bot_inform}checked="true"{/if} />
-                                                <label class="onoffswitch-label" for="bot_inform">
-                                                    <span class="onoffswitch-inner"></span>
-                                                    <span class="onoffswitch-switch"></span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="float-left">
-                                            <h4 class="pl-3"><label for="bot_inform">Бот-информирование 30 руб</label></h4>
-                                        </div>
-                                    </div>
-                                    <div class="clearfix">
-                                        <div class="float-left">
-                                            <div class="onoffswitch">
-                                                <input type="checkbox" name="sms_inform" value="99" class="onoffswitch-checkbox" id="sms_inform" {if $loantype->sms_inform}checked="true"{/if} />
-                                                <label class="onoffswitch-label" for="sms_inform">
-                                                    <span class="onoffswitch-inner"></span>
-                                                    <span class="onoffswitch-switch"></span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="float-left">
-                                            <h4 class="pl-3"><label for="sms_inform">Смс-информирование 99 руб</label></h4>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -216,42 +188,37 @@
                                                 <label class="control-label">Процентная ставка, %/день</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <select name="percent" class="form-control">
-                                                    <option value=""></option>
-                                                    {foreach $percents as $p}
-                                                    <option value="{$p}" {if $p == $loantype->percent}selected{/if}>{$p}</option>
-                                                    {/foreach}
-                                                </select>
+                                                <input type="text" class="form-control" name="percent" {if $loantype}value="{$loantype->percent}" {/if}/>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-5 ">
-                                                <label class="control-label">Ответственность, %/день</label>
+                                                <label class="control-label">Процентная ставка профсоюз, %/день</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <select name="charge" class="form-control">
-                                                    <option value=""></option>
-                                                    {foreach $charges as $ch}
-                                                    <option value="{$ch}" {if $ch == $loantype->charge}selected{/if}>{$ch}</option>
-                                                    {/foreach}
-                                                </select>
+                                                <input type="text" class="form-control" name="profunion" {if $loantype}value="{$loantype->profunion}" {/if}/>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-5 ">
-                                                <label class="control-label">Страхование, %</label>
+                                                <label class="control-label">Скидка, %/день</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <select name="insure" class="form-control">
-                                                    <option value=""></option>
-                                                    {foreach $insures as $in}
-                                                    <option value="{$in}" {if $in == $loantype->insure}selected{/if}>{$in}</option>
-                                                    {/foreach}
-                                                </select>
+                                                <input type="text" class="form-control" name="discount" {if $loantype}value="{$loantype->discount}" {/if}/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-5 ">
+                                                <label class="control-label">Минимальная сумма, руб</label>
+                                            </div>
+                                            <div class="col-7 ">
+                                                <input type="text" class="form-control" name="min_amount" value="{$loantype->min_amount}" />
                                             </div>
                                         </div>
                                     </div>
@@ -268,7 +235,7 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-5 ">
-                                                <label class="control-label">Максимальная срок, дней</label>
+                                                <label class="control-label">Количество выплат</label>
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="max_period" value="{$loantype->max_period}" />

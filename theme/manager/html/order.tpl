@@ -497,12 +497,6 @@
                                         <span class="hidden-xs-down">Кредитная история</span>
                                     </a> 
                                 </li>
-                                <li class="nav-item"> 
-                                    <a class="nav-link js-event-add-click" data-toggle="tab" href="#communications" role="tab" aria-selected="true" data-event="25" data-user="{$order->user_id}" data-order="{$order->order_id}" data-manager="{$manager->id}" >
-                                        <span class="hidden-sm-up"><i class="ti-mobile"></i></span> 
-                                        <span class="hidden-xs-down">Коммуникации</span>
-                                    </a> 
-                                </li>
                             </ul>
 
                             <!-- Tab panes -->
@@ -2037,60 +2031,6 @@
                                             
                                         </div>
                                     </div>
-                                </div>
-                                
-                                
-                                <div class="tab-pane p-3" id="communications" role="tabpanel">
-                                    
-                                    <h3>Коммуникации с клиентом</h3>
-                                    {if $communications}
-                                        <table class="table table-hover table-bordered">
-                                            <tbody>
-                                                <tr class="table-success">
-                                                    <th>Дата</th>
-                                                    <th>Тип</th>
-                                                    <th>Пользователь</th>
-                                                    <th>Орг-я</th>
-                                                    <th>Номер</th>
-                                                    <th>Исходящий</th>
-                                                    <th>Содержание</th>
-                                                </tr>
-                                                {foreach $communications as $communication}
-                                                <tr class="">
-                                                    <td > 
-                                                        <small>{$communication->created|date}</small>
-                                                        <br />
-                                                        <small>{$communication->created|time}</small>
-                                                    </td>
-                                                    <td >
-                                                        {if $communication->type == 'sms'}Смс{/if}
-                                                        {if $communication->type == 'zvonobot'}Звонобот{/if}
-                                                        {if $communication->type == 'call'}Звонок{/if}
-                                                    </td>
-                                                    <td >
-                                                        {$managers[$communication->manager_id]->name|escape}
-                                                    </td>
-                                                    <td>
-                                                        {if $communication->yuk}<span class="label label-info">ЮК</span>
-                                                        {else}<span class="label label-success">МКК</span>{/if}
-                                                    </td>
-                                                    <td>
-                                                        {$communication->to_number}
-                                                    </td>
-                                                    <td>
-                                                        {$communication->from_number}
-                                                    </td>
-                                                    <td>
-                                                        {$communication->content}
-                                                    </td>
-                                                </tr>
-                                                
-                                                {/foreach}
-                                            </tbody>
-                                        </table>
-                                    {else}
-                                        <h4>Нет коммуникаций</h4>
-                                    {/if}    
                                 </div>
                                 
                             </div>
