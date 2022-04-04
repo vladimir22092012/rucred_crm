@@ -351,10 +351,6 @@ class Users extends Core
         ", (array)$user);
         $this->db->query($query);
         $id = $this->db->insert_id();
-if ($this->is_developer)
-{
-    echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($query);echo '</pre><hr />';
-}        
         return $id;
     }
     
@@ -363,9 +359,10 @@ if ($this->is_developer)
 		$query = $this->db->placehold("
             UPDATE __users SET ?% WHERE id = ?
         ", (array)$user, (int)$id);
-        $this->db->query($query);
+
+		$result = $this->db->query($query);
         
-        return $id;
+        return $result;
     }
     
     public function delete_user($id)

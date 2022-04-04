@@ -13,13 +13,12 @@ class LoantypeController extends Controller
             $loantype->name = $this->request->post('name');
             $loantype->organization_id = $this->request->post('organization_id', 'integer');
             $loantype->percent = $this->request->post('percent');
-            $loantype->charge = $this->request->post('charge');
-            $loantype->insure = $this->request->post('insure');
+            $loantype->profunion = $this->request->post('profunion');
+            $loantype->discount = $this->request->post('discount');
+            $loantype->min_amount = $this->request->post('min_amount');
             $loantype->max_amount = $this->request->post('max_amount', 'integer');
             $loantype->max_period = $this->request->post('max_period', 'integer');
 
-            $loantype->bot_inform = $this->request->post('bot_inform', 'integer');
-            $loantype->sms_inform = $this->request->post('sms_inform', 'integer');
             
             if (empty($loantype->name))
             {
@@ -32,14 +31,6 @@ class LoantypeController extends Controller
             elseif (empty($loantype->percent))
             {
                 $this->design->assign('error', 'Выберите процентную ставку');
-            }
-            elseif (empty($loantype->charge))
-            {
-                $this->design->assign('error', 'Выберите ставку ответственности');
-            }
-            elseif (empty($loantype->insure))
-            {
-                $this->design->assign('error', 'Выберите процент страхования');
             }
             elseif (empty($loantype->max_amount))
             {
@@ -79,36 +70,6 @@ class LoantypeController extends Controller
         foreach ($this->offline->get_organizations() as $org)
             $organizations[$org->id] = $org;
         $this->design->assign('organizations', $organizations);
-        
-        $percents = array(
-            0,
-            0.2, 
-            0.6, 
-            0.7, 
-            0.8, 
-            0.9,
-            1,
-        );
-        $this->design->assign('percents', $percents);
-        
-        $charges = array(
-            0.3,
-            1, 
-            1.5, 
-        );
-        $this->design->assign('charges', $charges);
-        
-        $insures = array(
-            9,
-            11, 
-            10, 
-            12, 
-            14, 
-            16, 
-            18, 
-            20,
-        );
-        $this->design->assign('insures', $insures);
         
         
         

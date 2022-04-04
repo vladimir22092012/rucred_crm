@@ -12,68 +12,28 @@ class Documents extends Core
     );
     
     private $templates = array(
-        'ANKETA_PEP' => 'anketa-zayavlenie-pep.01072021.tpl',
-        'SOGLASIE_VZAIMODEYSTVIE' => 'soglasie-na-vzaimodeystvie.01072021.tpl',
-        'SOGLASIE_MEGAFON' => 'soglasie-dlya-megafona.tpl',
-        'SOGLASIE_SCORING' => 'soglasie-dlya-skoringa.tpl',
-        'SOGLASIE_SPISANIE' => 'soglasie-na-spisanie.tpl',
-        'PRICHINA_OTKAZA' => 'zayavlenie-na-uslugu-uznay-prichinu-otkaza.tpl',
-
-        'IND_USLOVIYA_NL' => 'individualnie-usloviya-nl.tpl',
-        'POLIS_STRAHOVANIYA' => 'polis-strahovaniya.24122021.tpl',
-        'DOP_USLUGI_VIDACHA' => 'soglasie-na-okazanie-dopuslugi-pri-vidache.09122021.tpl',
-
-        'DOP_SOGLASHENIE_PROLONGATSIYA' => 'dopolnitelnoe-soglashenie-o-prolongatsii.tpl',
-        'DOP_USLUGI_PROLONGATSIYA' => 'soglasie-na-okazanie-dopuslugi-pri-prolongatsii.tpl',
-
-        'SUD_PRIKAZ' => 'sudblock_prikaz.tpl',
-        'SUD_SPRAVKA' => 'sudblock_spravka.tpl',
-        'SUD_VOZBUZHDENIE' => 'sudblock_zayavlenie.tpl',
-        
-        'OFFLINE_AKT_CONSULTATION' => 'offline/akt_consultation.tpl',
-        'OFFLINE_ANKETA' => 'offline/anketa.tpl',
-        'OFFLINE_DOGOVOR' => 'offline/dogovor.tpl',
-        'OFFLINE_DOGOVOR_CONSULTATION' => 'offline/dogovor_consultation.tpl',
-        'OFFLINE_DOP_SOGLASHENIE' => 'offline/dop_soglashenie.tpl',
-        'OFFLINE_PKO' => 'offline/pko.tpl',
-        'OFFLINE_RKO' => 'offline/rko.tpl',
-        'OFFLINE_ASP' => 'offline/soglashenie_asp.tpl',
-        'OFFLINE_OBRABOTKA' => 'offline/soglasie_na_obrabotku.tpl',
-        'OFFLINE_INFORM' => 'offline/zayavlenie_inform.tpl',
-        'OFFLINE_SMS' => 'offline/zayavlenie_sms.tpl',
+        'SOGLASIE_MINB' =>  'soglasie_minb.tpl',
+        'SOGLASIE_NA_KRED_OTCHET' => 'soglasie_na_kred_otchet.tpl',
+        'SOGLASIE_NA_OBR_PERS_DANNIH' => 'soglasie_na_obr_pers_dannih.tpl',
+        'SOGLASIE_RABOTODATEL' => 'soglasie_rabotadatelu.tpl',
+        'SOGLASIE_RDB' => 'soglasie_rdb.tpl',
+        'SOGLASIE_RUKRED_RABOTODATEL' => 'soglasie_rukred_rabotadatel.tpl',
+        'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP' => 'zayavlenie_na_perechislenie_chasti_zp.tpl',
+        'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR' => 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl',
+        'INDIVIDUALNIE_USLOVIA' => 'individualnie_usloviya.tpl'
     );
     
     
     private $names = array(
-        'ANKETA_PEP' => 'Анкета - заявление ПЭП',
-        'SOGLASIE_VZAIMODEYSTVIE' => 'Согласие на взаимодействие',
-        'SOGLASIE_MEGAFON' => 'Согласие для мегафона',
-        'SOGLASIE_SCORING' => 'Согласие для скоринга',
-        'SOGLASIE_SPISANIE' => 'Согласие на списание',
-        'PRICHINA_OTKAZA' => 'Заявление на услугу Узнай причину отказа',
-
-        'IND_USLOVIYA_NL' => 'Индивидуальные условия',
-        'POLIS_STRAHOVANIYA' => 'Полис страхования',
-        'DOP_USLUGI_VIDACHA' => 'Заявление на страхование',
-
-        'DOP_SOGLASHENIE_PROLONGATSIYA' => 'Дополнительное соглашение',
-        'DOP_USLUGI_PROLONGATSIYA' => 'Согласие на оказание доп услуги при пролонгации',
-
-        'SUD_PRIKAZ' => 'Заявление о вынесении судебного приказа',
-        'SUD_SPRAVKA' => 'Справка',
-        'SUD_VOZBUZHDENIE' => 'Заявление о возбуждении исполнительного производства',
-
-        'OFFLINE_AKT_CONSULTATION' => 'Акт об оказании услуг к договору',
-        'OFFLINE_ANKETA' => 'Электронная анкета ЦБ',
-        'OFFLINE_DOGOVOR' => 'Договор на оказание услуг к договору',
-        'OFFLINE_DOGOVOR_CONSULTATION' => '',
-        'OFFLINE_DOP_SOGLASHENIE' => 'Дополнительное соглашение',
-        'OFFLINE_PKO' => 'Приходный кассовый ордер',
-        'OFFLINE_RKO' => 'Расходный кассовый ордер',
-        'OFFLINE_ASP' => 'Соглашение на ПЭП',
-        'OFFLINE_OBRABOTKA' => 'Согласие на обработку и взаимодействие',
-        'OFFLINE_INFORM' => 'Бот информирование',
-        'OFFLINE_SMS' => 'Смс информирование',
+        'SOGLASIE_MINB' =>  'Согласие на обработку персональных данных МинБанк',
+        'SOGLASIE_NA_KRED_OTCHET' => 'Согласие на предоставление кредитного отчета',
+        'SOGLASIE_NA_OBR_PERS_DANNIH' => 'Согласие на обработку персональных данных',
+        'SOGLASIE_RABOTODATEL' => 'Согласие на обработку персональных данных, разрешенных субъектом персональных данных для распространения',
+        'SOGLASIE_RDB' => 'Согласие на обработку персональных данных РосДорБанк',
+        'SOGLASIE_RUKRED_RABOTODATEL' => 'Согласие Рукред Работодателю',
+        'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP' => 'Заявление на перечисление части зп в счет обслуживания микрозайма',
+        'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR' => 'Заявление о перечислении части заработной платы на счёт третьего лица',
+        'INDIVIDUALNIE_USLOVIA' => 'Индивидуальные условия микрозайма'
     );
     
     private $client_visible = array(
@@ -83,6 +43,17 @@ class Documents extends Core
         'SOGLASIE_SCORING' => 0,
         'SOGLASIE_SPISANIE' => 0,
         'PRICHINA_OTKAZA' => 0,
+        'INDIVIDUALNIE_USLOVIA' => 1,
+
+        'DOP_SOGLASHENIE_K_TRUDOVOMU_DOGOVORU' => 0,
+        'SOGLASIE_MINB' =>  0,
+        'SOGLASIE_NA_KRED_OTCHET' => 0,
+        'SOGLASIE_NA_OBR_PERS_DANNIH' => 0,
+        'SOGLASIE_RABOTODATEL' => 0,
+        'SOGLASIE_RDB' => 0,
+        'SOGLASIE_RUKRED_RABOTODATEL' => 0,
+        'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP' => 0,
+        'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR' => 0,
         
         'IND_USLOVIYA_NL' => 1,
         'POLIS_STRAHOVANIYA' => 1,
@@ -339,6 +310,7 @@ class Documents extends Core
             INSERT INTO __documents SET ?%
         ", $document);
         $this->db->query($query);
+
         $id = $this->db->insert_id();
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($query);echo '</pre><hr />';exit;
         return $id;
@@ -363,6 +335,14 @@ class Documents extends Core
     {
 		$query = $this->db->placehold("
             DELETE FROM __documents WHERE id = ?
+        ", (int)$id);
+        $this->db->query($query);
+    }
+
+    public function delete_documents($id)
+    {
+        $query = $this->db->placehold("
+            DELETE FROM __documents WHERE order_id = ?
         ", (int)$id);
         $this->db->query($query);
     }

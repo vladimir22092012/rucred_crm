@@ -15,6 +15,7 @@ class Orders extends Core
         9 => 'Выдан',
         10 => 'Отказ клиента',
         11 => 'Не удалось выдать',
+        12 => 'Черновик'
     );
     
     public function get_statuses()
@@ -72,6 +73,9 @@ class Orders extends Core
                 o.bot_inform,
                 o.sms_inform,
                 o.employer,
+                o.loan_type,
+                o.probably_return_date,
+                o.probably_return_sum,
                 u.UID AS user_uid,
                 u.service_sms,
                 u.service_insurance,
@@ -90,6 +94,7 @@ class Orders extends Core
                 u.passport_issued,
                 u.snils,
                 u.inn,
+                u.Regadressfull,
                 u.Regindex,
                 u.Regregion,
                 u.Regregion_shorttype,
@@ -104,6 +109,7 @@ class Orders extends Core
                 u.Reghousing,
                 u.Regbuilding,
                 u.Regroom,
+                u.Faktadressfull,
                 u.Faktindex,
                 u.Faktregion,
                 u.Faktregion_shorttype,
@@ -139,17 +145,35 @@ class Orders extends Core
                 u.expenses,
                 u.social,
                 u.contact_status,
-                u.loan_history
+                u.profunion,
+                u.prev_fio,
+                u.fio_change_date,
+                u.sex,
+                u.fio_spouse,
+                u.phone_spouse,
+                u.foreign_flag,
+                u.foreign_husb_wife,
+                u.fio_public_spouse,
+                u.foreign_relative,
+                u.fio_relative,
+                u.fio_acc_holder,
+                u.account_number,
+                u.bank_name,
+                u.bik_bank,
+                u.viber_num,
+                u.telegram_num,
+                u.whatsapp_num,
+                u.push_not,
+                u.sms_not,
+                u.email_not,
+                u.massanger_not
             FROM __orders AS o
             LEFT JOIN __users AS u
             ON u.id = o.user_id
             WHERE o.id = ?
         ", (int)$id);
         $this->db->query($query);
-        if ($result = $this->db->result())
-        {
-            $result->loan_history = json_decode($result->loan_history);
-        }
+        $result = $this->db->result();
 
         return $result;
     }
@@ -420,6 +444,7 @@ class Orders extends Core
                 o.bot_inform,
                 o.sms_inform,
                 o.employer,
+                o.loan_type,
                 u.UID AS user_uid,
                 u.service_sms,
                 u.service_insurance,

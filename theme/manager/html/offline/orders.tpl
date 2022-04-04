@@ -268,7 +268,7 @@
                                                 {$order->date|time}
                                             </td>
                                             <td style="width: 70px;" class="jsgrid-cell">
-                                                {$order->amount} 
+                                                {$order->amount|number_format:0:',':' '}
                                             </td>
                                             <td style="width: 60px;" class="jsgrid-cell">
                                                 {if $order->period}
@@ -291,8 +291,6 @@
                                                 {else}
                                                     {if $order->have_crm_closed}
                                                         <span class="label label-primary" title="Клиент уже имеет погашенные займы в CRM">ПК CRM</span>
-                                                    {elseif $order->loan_history|count > 0}
-                                                        <span class="label label-success" title="Клиент уже имеет погашенные займы">ПК</span>
                                                     {elseif $order->first_loan}
                                                         <span class="label label-info" title="Новый клиент">Новая</span>
                                                     {else}
@@ -307,7 +305,7 @@
                                                 {/if}
                                             </td>
                                             <td style="width: 70px;" class="jsgrid-cell">
-                                                {$order->birth}
+                                                {$order->birth|date}
                                             </td>
                                             <td style="width: 80px;" class="jsgrid-cell">
                                                 {$order->phone_mobile}

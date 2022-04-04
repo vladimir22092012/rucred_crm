@@ -1,0 +1,155 @@
+{$meta_title = 'Реестр компании' scope=parent}
+
+{capture name='page_styles'}
+    <link href="theme/manager/assets/plugins/Magnific-Popup-master/dist/magnific-popup.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css"
+          href="theme/manager/assets/plugins/datatables.net-bs4/css/dataTables.bootstrap4.css">
+    <link rel="stylesheet" type="text/css"
+          href="theme/manager/assets/plugins/datatables.net-bs4/css/responsive.dataTables.min.css">
+{/capture}
+
+{capture name='page_scripts'}
+    <script src="theme/manager/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
+    <script src="theme/manager/assets/plugins/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="theme/manager/assets/plugins/datatables.net-bs4/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/companies.js"></script>
+{/capture}
+
+<div class="page-wrapper">
+    <!-- ============================================================== -->
+    <!-- Container fluid  -->
+    <!-- ============================================================== -->
+    <div class="container-fluid">
+        <!-- ============================================================== -->
+        <!-- Bread crumb and right sidebar toggle -->
+        <!-- ============================================================== -->
+        <div class="row page-titles">
+            <div class="col-md-6 col-8 align-self-center">
+                <h3 class="text-themecolor mb-0 mt-0">Реестр компании</h3>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">Главная</li>
+                    <li class="breadcrumb-item">Справочники</li>
+                    <li class="breadcrumb-item">Компании</li>
+                    <li class="breadcrumb-item active">Реестр компании</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title"></h4>
+                        <h6 class="card-subtitle"></h6>
+                        <div class="table-responsive m-t-40">
+                            <div class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
+                                <table id="config-table" class="table display table-striped dataTable">
+                                    <thead>
+                                    <tr>
+                                        <th>Позиция</th>
+                                        <th>Код</th>
+                                        <th colspan="2">Описание</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>Наименование компании</td>
+                                        <td>{$company->gr_number}{$company->com_number}</td>
+                                        <td colspan="4">{$company->com_name}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Позиция</td>
+                                        <td>{$company->gr_number}</td>
+                                        <td colspan="4">{$company->gr_name}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ИНН</td>
+                                        <td colspan="4">{$company->inn}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ОГРН</td>
+                                        <td colspan="4">{$company->ogrn}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>КПП</td>
+                                        <td colspan="4">{$company->kpp}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Юридический адрес</td>
+                                        <td colspan="4">{$company->jur_address}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Адрес местонахождения</td>
+                                        <td colspan="4">{$company->phys_address}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Руководитель</td>
+                                        <td colspan="4">{$company->eio_position} {$company->eio_fio}</td>
+                                    </tr>
+                                    <tr>
+                                        <td rowspan="{count($branches)+1}">Филиалы и даты выплат</td>
+                                        <td>Код</td>
+                                        <td>Наименование филиала</td>
+                                        <td>Дата выплаты</td>
+                                        <td><button class="btn float-right hidden-sm-down btn-outline-success add-company-modal">
+                                                <i class="mdi mdi-plus-circle"></i> Добавить филиал
+                                            </button></td>
+                                    </tr>
+                                    {foreach $branches as $branch}
+                                        <tr>
+                                            <td>{$company->gr_number}{$company->com_number}-{$branch->number}</td>
+                                            <td>{$branch->name}</td>
+                                            <td>{$branch->payday}</td>
+                                        </tr>
+                                    {/foreach}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    {include file='footer.tpl'}
+
+</div>
+
+<div id="modal_add_item" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Добавить филиал</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+
+                <div class="alert" style="display:none"></div>
+                <form method="POST">
+                    <input type="hidden" name="action" value="add_branch">
+                    <input type="hidden" name="group_id" value="{$company->gr_id}">
+                    <input type="hidden" name="company_id" value="{$company->com_id}">
+                    <div class="form-group">
+                        <label for="name" class="control-label">Наименование филиала</label>
+                        <input type="text" class="form-control" name="name" id="name" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="eio_position" class="control-label">Дата выплаты:</label>
+                        <input type="text" class="form-control" name="payday" id="payday" value=""/>
+                    </div>
+                    <div class="form-action">
+                        <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
+                        <input type="submit" formmethod="post" class="btn btn-success" value="Сохранить">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
