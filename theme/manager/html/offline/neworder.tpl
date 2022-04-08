@@ -16,28 +16,7 @@
     <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
     <script>
         $(function () {
-            $('.phone_num').mask('+7(999)999-99-99');
-            $('.passport_serial').mask('9999');
-            $('.passport_number').mask('999999');
-            $('.snils').mask('999-999-999 99');
-            $('.inn').mask('999999999999');
-            $('.bik').mask('999999999');
-            $('.account_number').mask('40817810999999999999');
-            $('.card_num').mask('9999-9999-9999-9999');
-            $('.card_month').mask('99');
-            $('.card_year').mask('99');
-
-            $('.mask_number').each(function (){
-
-                let val = new Cleave(this, {
-                    numeral: true,
-                    numeralThousandsGroupStyle: 'thousand',
-                    delimiter: ' ',
-                });
-            });
-
             let order = {{json_encode($order)}};
-
             if (order) {
                 $('.price_basic[id="' + order['loan_type'] + '"]').trigger('click');
 
@@ -206,13 +185,13 @@
                                                         Р</h5>
                                                 </div>
                                                 <hr style="width: 80%; size: 5px">
-                                                <div style="display: none" class="out_profunion">
+                                                <div class="out_profunion">
                                                     <h6>
                                                         <span class="loantype-percents percents">{$loantype->percent}</span>%
                                                     </h6>
                                                     <span>За каждый день использования микрозаймом</span>
                                                 </div>
-                                                <div class="in_profunion">
+                                                <div class="in_profunion" style="display: none">
                                                     <h6>
                                                         <span class="loantype-percents-profunion percents">{$loantype->profunion}</span>%
                                                     </h6>
@@ -277,7 +256,7 @@
                                             <input style="width: 350px; margin-left: 25px" type="text" name="firstname"
                                                    class="form-control js-firstname-input"
                                                    placeholder="Имя" required value="{$order->firstname}"/>
-                                            <input class="form-control" style="width: 350px; margin-left: 25px"
+                                            <input class="form-control js-patronymic-input" style="width: 350px; margin-left: 25px"
                                                    name="patronymic"
                                                    placeholder="Отчество(если есть)" type="text"
                                                    value="{$order->patronymic}">
@@ -539,19 +518,19 @@
                                             <div style="display: flex;">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" name="profunion"
-                                                           id="profunion1" value="1" checked>
+                                                           id="profunion1" value="1">
                                                     <label class="form-check-label" for="profunion1">
                                                         Я член профсоюза
                                                     </label>
                                                 </div>
                                                 <div class="form-check" style="margin-left: 25px">
                                                     <input class="form-check-input" type="radio" name="profunion"
-                                                           id="profunion2" value="0">
+                                                           id="profunion2" value="0" checked>
                                                     <label class="form-check-label" for="profunion2">
                                                         Я не являюсь членом профсоюза
                                                     </label>
                                                 </div>
-                                                <div class="form-check" style="display: none; margin-left: 25px"
+                                                <div class="form-check" style="margin-left: 25px"
                                                      id="profunion_toggle">
                                                     <input class="form-check-input want_profunion" type="checkbox" value="1"
                                                            id="want_profunion" name="want_profunion">

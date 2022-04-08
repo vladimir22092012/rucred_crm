@@ -11,7 +11,19 @@ class Users extends Core
             return $clock < $this->settings->holiday_worktime['from'] || $clock >= $this->settings->holiday_worktime['to'];
         else
             return $clock < $this->settings->workday_worktime['from'] || $clock >= $this->settings->workday_worktime['to'];    	
-    }    
+    }
+
+    public function last_personal_number()
+    {
+        $query = $this->db->placehold("
+        SELECT MAX(`personal_number`) as personal_number
+        FROM __users
+        ");
+
+        $this->db->query($query);
+        $id = $this->db->result('personal_number');
+        return $id;
+    }
     
     public function get_looker_link($user_id)
     {

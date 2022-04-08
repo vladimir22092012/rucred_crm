@@ -118,6 +118,7 @@
                                                     </h3>
                                                     <small>Дата регистрации: 
                                                     {$client->created|date}</small>
+                                                    <small style="margin-left: 5px">Номер клиента: {$client->personal_number}</small>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="custom-control custom-checkbox mr-sm-2 mb-3">

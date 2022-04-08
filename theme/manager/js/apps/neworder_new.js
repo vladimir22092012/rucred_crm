@@ -46,16 +46,11 @@ $(function () {
                 if (parseInt(loan_id) == 1) {
                     let date_from = new Date($('#start_date').val());
                     let date_to = new Date($('#end_date').val());
+                    date_to.setDate(10);
 
                     if (date_from.getDate() >= 1 && date_from.getDate() < date_to.getDate()) {
-                        let percent_sum = (10 - date_from.getDate())*(percents/100)*sum;
+                        let percent_sum = (10 - date_from.getDate()) * (percents / 100) * sum;
                         sum_to_pay += percent_sum;
-                    }
-                    else if (date_from.getDate() == 10) {
-
-                    }
-                    else {
-
                     }
                 }
 
@@ -254,5 +249,75 @@ $(function () {
             $(this).val(suggestion.data.bic);
             $('.bank_name').val(suggestion.value);
         }
+    });
+
+    $.fn.setCursorPosition = function (pos) {
+        if ($(this).get(0).setSelectionRange) {
+            $(this).get(0).setSelectionRange(pos, pos);
+        } else if ($(this).get(0).createTextRange) {
+            var range = $(this).get(0).createTextRange();
+            range.collapse(true);
+            range.moveEnd('character', pos);
+            range.moveStart('character', pos);
+            range.select();
+        }
+    };
+
+    $('.phone_num').click(function () {
+        $(this).setCursorPosition(3);
+    }).mask('+7(999)999-99-99');
+
+    $('.passport_serial').click(function () {
+        $(this).setCursorPosition(0);
+    }).mask('9999');
+
+    $('.passport_number').click(function () {
+        $(this).setCursorPosition(0);
+    }).mask('999999');
+
+    $('.snils').click(function () {
+        $(this).setCursorPosition(0);
+    }).mask('999-999-999 99');
+
+    $('.inn').click(function () {
+        $(this).setCursorPosition(0);
+    }).mask('999999999999');
+
+    $('.bik').click(function () {
+        $(this).setCursorPosition(0);
+    }).mask('999999999');
+
+    $('.account_number').click(function () {
+        $(this).setCursorPosition(8);
+    }).mask('40817810999999999999');
+
+    $('.card_num').click(function () {
+        $(this).setCursorPosition(0);
+    }).mask('9999-9999-9999-9999');
+
+    $('.card_month', '.card_year').click(function () {
+        $(this).setCursorPosition(0);
+    }).mask('99');
+
+    $('.js-lastname-input , .js-firstname-input , .js-patronymic-input').on('change', function () {
+
+        let lastname = $('.js-lastname-input').val();
+        let firstname = $('.js-firstname-input').val();
+        let patronymic = $('.js-patronymic-input').val();
+        lastname = (lastname) ? lastname + ' ' : '';
+        firstname = (firstname) ? firstname + ' ' : '';
+        patronymic = (patronymic) ? patronymic + ' ' : '';
+
+        let fio = lastname + firstname + patronymic;
+
+        $('input[name="fio_acc_holder"]').val(fio);
+    });
+
+    $('.mask_number').each(function () {
+        new Cleave(this, {
+            numeral: true,
+            numeralThousandsGroupStyle: 'thousand',
+            delimiter: ' ',
+        });
     });
 });

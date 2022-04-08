@@ -180,6 +180,10 @@ class NeworderController extends Controller
                 $user['stage_card'] = 1;
                 unset($user['user_id']);
 
+                $last_personal_number = $this->users->last_personal_number();
+
+                $user['personal_number'] = $last_personal_number + 1;
+
                 if ($user['user_id'] = $this->users->add_user($user)) {
 
                 } else {

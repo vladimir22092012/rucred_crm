@@ -34,6 +34,21 @@ class GroupsController extends Controller
                 'number' => $number
             ];
 
-        $this->Groups->add_group($group);
+        $group_id = $this->Groups->add_group($group);
+
+        $loantypes = $this->Loantypes->get_loantypes();
+
+        foreach ($loantypes as $loantype)
+        {
+            $group =
+                [
+                    'group_id' => $group_id,
+                    'loantype_id' => $loantype->id,
+                    'standart_percents' => $loantype->percent,
+                    'preferential_percents' => $loantype->profunion
+                ];
+
+            $this->GroupLoanTypes->add_group($group);
+        }
     }
 }

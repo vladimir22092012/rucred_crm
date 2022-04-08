@@ -13,6 +13,28 @@
     <script src="theme/manager/assets/plugins/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="theme/manager/assets/plugins/datatables.net-bs4/js/dataTables.responsive.min.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/companies.js"></script>
+    <script>
+        $(function () {
+
+            $('.add_company').on('click', function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    method: 'POST',
+                    data: $('#add_company_form').serialize(),
+                    success: function (resp) {
+                        if (resp) {
+                            $('.alert-danger').text(resp);
+                            $('.alert-danger').fadeIn();
+                        }
+                        else {
+                            location.reload();
+                        }
+                    }
+                });
+            })
+        })
+    </script>
 {/capture}
 
 <div class="page-wrapper">
@@ -36,8 +58,10 @@
                 <button class="btn float-right hidden-sm-down btn-success add-company-modal">
                     <i class="mdi mdi-plus-circle"></i> Добавить
                 </button>
-
             </div>
+            {if !empty($error)}
+                <div class="alert alert-danger">{$error}</div>
+            {/if}
         </div>
 
         <div class="row">
@@ -69,7 +93,9 @@
                                     <tbody id="table-body">
                                     {if !empty($companies)}
                                         {foreach $companies as $company}
-                                            <tr onclick="location.href='company/{$company->id}'" onmouseover="this.style.backgroundColor='#AEA8F5';" onmouseout="this.style.backgroundColor='white';">
+                                            <tr onclick="location.href='company/{$company->id}'"
+                                                onmouseover="this.style.backgroundColor='#AEA8F5';"
+                                                onmouseout="this.style.backgroundColor='white';">
                                                 <td>{$company->gr_number}</td>
                                                 <td>{$company->com_number}</td>
                                                 <td>{$company->gr_number}{$company->com_number}</td>
@@ -113,7 +139,7 @@
             <div class="modal-body">
 
                 <div class="alert" style="display:none"></div>
-                <form method="POST">
+                <form method="POST" id="add_company_form">
                     <input type="hidden" name="action" value="add_company">
                     <div class="form-group">
                         <label for="group_id" class="control-label">Группа:</label>
@@ -155,9 +181,19 @@
                         <label for="phys_address" class="control-label">Адрес местонахождения:</label>
                         <input type="text" class="form-control" name="phys_address" id="phys_address" value=""/>
                     </div>
-                    <div class="form-action">
-                        <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
-                        <input type="submit" formmethod="post" class="btn btn-success" value="Сохранить">
+                    <div class="form-group">
+                        <label class="alert alert-danger" style="display: none"></label>
+                        <label for="branches_name" class="control-label">Наименование филиала:</label>
+                        <input type="text" class="form-control" name="branches_name" id="branches_name" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label class="alert alert-danger" style="display: none"></label>
+                        <label for="branches_payday" class="control-label">Дата выплаты:</label>
+                        <input type="text" class="form-control" name="branches_payday" id="branches_payday" value=""/>
+                    </div>
+                    <div>
+                        <input type="button" class="btn btn-danger cancel" data-dismiss="modal" value="Отмена">
+                        <input type="button" class="btn btn-success add_company" value="Сохранить">
                     </div>
                 </form>
             </div>

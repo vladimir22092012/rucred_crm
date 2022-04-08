@@ -31,27 +31,57 @@ class CompaniesController extends Controller
         $kpp = $this->request->post('kpp');
         $jur_address = $this->request->post('jur_address');
         $phys_address = $this->request->post('phys_address');
+        $branches_name = $this->request->post('branches_name');
+        $branches_payday = $this->request->post('branches_payday');
 
-        $last_id = $this->Companies->last_id();
+        if (!$branches_name || !$branches_payday) {
+            echo 'Проверьте правильность заполнения филиала!';
+            exit;
+        } else {
+            $last_id = $this->Companies->last_id();
+            $number = $last_id + 1;
+
+            if ($last_id < 10)
+                $number = '0' . $number;
+
+            $company =
+                [
+                    'group_id' => $group_id,
+                    'number' => $number,
+                    'name' => $name,
+                    'eio_position' => $eio_position,
+                    'eio_fio' => $eio_fio,
+                    'inn' => $inn,
+                    'ogrn' => $ogrn,
+                    'kpp' => $kpp,
+                    'jur_address' => $jur_address,
+                    'phys_address' => $phys_address
+                ];
+
+            $company_id = $this->Companies->add_company($company);
+
+            $this->action_add_brunch($group_id, $company_id, $branches_name, $branches_payday);
+            exit;
+        }
+    }
+
+    private function action_add_brunch($group_id, $company_id, $branches_name, $branches_payday)
+    {
+        $last_id = $this->Branches->last_id();
         $number = $last_id + 1;
 
         if ($last_id < 10)
             $number = '0' . $number;
 
-        $company =
+        $branch =
             [
                 'group_id' => $group_id,
+                'company_id' => $company_id,
                 'number' => $number,
-                'name' => $name,
-                'eio_position' => $eio_position,
-                'eio_fio' => $eio_fio,
-                'inn' => $inn,
-                'ogrn' => $ogrn,
-                'kpp' => $kpp,
-                'jur_address' => $jur_address,
-                'phys_address' => $phys_address
+                'name' => $branches_name,
+                'payday' => $branches_payday
             ];
 
-        $this->Companies->add_company($company);
+        $this->Branches->add_branch($branch);
     }
 }

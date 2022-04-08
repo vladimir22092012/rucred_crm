@@ -5,10 +5,9 @@
     </tr>
     <tr style="width: 100%">
         <br>
-        <td style="width: 100%" align="center"><strong>Общество с ограниченной ответственностью</strong></td>
-    </tr>
-    <tr style="width: 100%">
-        <td style="width: 100%" align="center"><strong>Микрокредитная компания «Русское кредитное общество»</strong></td>
+        <td style="width: 100%" align="justify"><strong>Общество с ограниченной ответственностью Микрокредитная компания
+                «Русское
+                кредитное общество»</strong></td>
     </tr>
     <tr style="width: 100%">
         <br>
@@ -97,8 +96,7 @@
             <td style="width: 40%" align="center">
                 <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
             </td>
-            <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div></td>
+            <td style="width: 15%;" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span><br></td>
         </tr>
     </table>
 </footer>
@@ -178,8 +176,7 @@
             <td style="width: 40%" align="center">
                 <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
             </td>
-            <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div></td>
+            <td style="width: 15%;" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span><br></td>
         </tr>
     </table>
 </footer>
@@ -243,7 +240,7 @@
             </td>
             <td style="width: 70%" align="left">Количество ежемесячных
                 платежей:
-                <strong>{if $loan_type == 1}1 (ОДИН){elseif $loan_type == 2}5 (ПЯТЬ){else}11 (ОДИННАДЦАТЬ){/if}</strong><br>Размер
+                <strong>{if $loan_type == 1}1(ОДИН){elseif $loan_type == 2}5(ПЯТЬ){else}11(ОДИННАДЦАТЬ){/if}</strong><br>Размер
                 и периодичность (сроки)
                 платежей Заёмщика по Договору определяются Правилами предоставления и
                 обслуживания микрозаймов. Платежи производятся ежемесячно в соответствии с Графиком платежей являющимся
@@ -267,8 +264,7 @@
             <td style="width: 40%" align="center">
                 <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
             </td>
-            <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div></td>
+            <td style="width: 15%;" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span><br></td>
         </tr>
     </table>
 </footer>
@@ -328,8 +324,8 @@
         <tr style="width: 100%;">
             <td style="width: 30%; background-color: #b3b2ab">2.11. Цели использования Заёмщиком микрозайма
             </td>
-            <td style="width: 70%"> {if $loan->reason_flag == 0}&#x2611;{else}&#10065;{/if} На неотложные
-                нужды<br> {if $loan->reason_flag == 1}&#x2611;{else}&#10065;{/if} На рефинансирование обязательств перед
+            <td style="width: 70%"> {if $loan->reason_flag == 0}&#9745;{else}&#10065;{/if} На неотложные
+                нужды<br> {if $loan->reason_flag == 1}&#9745;{else}&#10065;{/if} На рефинансирование обязательств перед
                 третьими лицами
             </td>
         </tr>
@@ -350,8 +346,7 @@
             <td style="width: 40%" align="center">
                 <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
             </td>
-            <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div></td>
+            <td style="width: 15%;" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span><br></td>
         </tr>
     </table>
 </footer>
@@ -418,8 +413,7 @@
             <td style="width: 40%" align="center">
                 <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
             </td>
-            <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div></td>
+            <td style="width: 15%;" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span><br></td>
         </tr>
     </table>
 </footer>
@@ -499,8 +493,7 @@
             <td style="width: 40%" align="center">
                 <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
             </td>
-            <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div></td>
+            <td style="width: 15%;" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span><br></td>
         </tr>
     </table>
 </footer>
@@ -561,23 +554,22 @@
             <td style="width: 40%" align="center">
                 <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
             </td>
-            <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div></td>
+            <td style="width: 15%;" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span><br></td>
         </tr>
     </table>
 </footer>
 <div>
     <h3><strong>3. ИНФОРМАЦИЯ О ПОЛНОЙ СТОИМОСТИ МИКРОЗАЙМА, РАССЧИТАННОЙ НА ОСНОВАНИИ ПРИМЕРНОГО ГРАФИКА ПЛАТЕЖЕЙ ПО
             МИКРОЗАЙМУ</strong></h3><br>
-    <table border="1" style="width: 100%; font-size: 9px" cellpadding="5">
+    <table border="1" style="width: 100%; font-size: 9px" cellspacing="0">
         <tr style="width: 100%;">
             <td style="width: 30%; background-color: #b3b2ab">3.1. Основные параметры микрозайма
             </td>
             <td style="width: 70%" align="left">(01) Сумма микрозайма: <strong>{$amount|number_format:0:',':' '}
                     ({$amount_to_string|upper})</strong> рублей
-                <strong>00</strong> копеек<br>(02) Срок микрозайма: <strong>{$period|escape}</strong>
-                (<strong>{$period_str|upper}</strong>)
-                {$period|plural:'день':'дней':'дня'}<br>(03)
+                <strong>00</strong>
+                копеек<br>(02) Срок микрозайма: <strong>{$period|escape}</strong> (<strong>{$period_str|upper}</strong>)
+                дней<br>(03)
                 Процентная
                 ставка по микрозайму в день: <strong>{$percent|number_format:2:',':' '}%
                     ({$percents_per_day_str_part_one|upper} {if $percents_per_day_str_part_two|upper} ЦЕЛЫХ И {$percents_per_day_str_part_two|upper} СОТЫХ ПРОЦЕНТА{/if}
@@ -585,9 +577,8 @@
                 стоимость микрозайма в валюте
                 микрозайма: <br><strong>{$payment_schedule['result']['all_sum_pay']|number_format:2:',':' '}</strong>
                 (<strong>{$all_pay_sum_string_part_one|upper})</strong>
-                рублей
-                <strong>{if $all_pay_sum_string_part_two|upper}{$all_pay_sum_string_part_two|upper}{else}00{/if}</strong>
-                копеек<br>(05)
+                рублей <strong>{if $all_pay_sum_string_part_two|upper}{$all_pay_sum_string_part_two|upper}{else}00{/if}
+                </strong> копеек<br>(05)
                 Полная стоимость микрозайма в процентах
                 годовых: <strong>{$percents}00%
                     ({$percents_per_year|upper} {if $second_part_percents|upper} ЦЕЛЫХ И {$second_part_percents|upper} ТЫСЯЧНЫХ ПРОЦЕНТОВ{/if}
@@ -597,8 +588,8 @@
                 <br><strong>{$payment_schedule['result']['all_loan_percents_pay']|number_format:2:',':' '}</strong>
                 (<strong>{$all_percents_string_part_one|upper}</strong>)
                 рублей
-                <strong>{if $all_percents_string_part_two|upper}{$all_percents_string_part_two|upper}{else}00{/if}</strong>
-                копеек<br>
+                <strong>{if $all_percents_string_part_two|upper}{$all_percents_string_part_two|upper}{else}00{/if}
+                </strong> копеек<br>
             </td>
         </tr>
         <tr style="width: 100%;">
@@ -674,8 +665,7 @@
             <td style="width: 40%" align="center">
                 <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
             </td>
-            <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div></td>
+            <td style="width: 15%;" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span><br></td>
         </tr>
     </table>
 </footer>
@@ -779,8 +769,7 @@
             <td style="width: 40%" align="center">
                 <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
             </td>
-            <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div></td>
+            <td style="width: 15%;" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span><br></td>
         </tr>
     </table>
 </footer>

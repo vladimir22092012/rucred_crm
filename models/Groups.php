@@ -16,6 +16,20 @@ class Groups extends Core
         return $result;
     }
 
+    public function get_group($id)
+    {
+        $query = $this->db->placehold("
+        SELECT *
+        FROM s_groups
+        WHERE id = ?
+        ", $id);
+
+        $this->db->query($query);
+        $result = $this->db->result();
+
+        return $result;
+    }
+
     public function add_group($group)
     {
         $query = $this->db->placehold("
@@ -23,6 +37,10 @@ class Groups extends Core
         ", $group);
 
         $this->db->query($query);
+
+        $id = $this->db->insert_id();
+
+        return $id;
     }
 
     public function last_id()

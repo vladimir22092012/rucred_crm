@@ -1,7 +1,7 @@
 <?php
 
 error_reporting(-1);
-ini_set('display_errors', 'On');
+ini_set('display_errors', 'Off');
 
 class DocumentController extends Controller
 {
@@ -26,9 +26,17 @@ class DocumentController extends Controller
         $first_pay = new DateTime(date('Y-m-10', strtotime($document->params->date . '+1 month')));
         $end_date = new DateTime(date('Y-m-10', strtotime($document->params->probably_return_date)));
 
+
+        $period = date_diff($start_date, $end_date)->days;
+
+        $this->design->assign('period', $period);
+
         $first_pay = $this->check_date($first_pay);
 
         $payment_schedule = array();
+
+        $percent_per_month = (($document->params->percent / 100) * 365) / 12;
+        $annoouitet_pay = $document->params->amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
 
         if (date_diff($start_date, $first_pay)->days < 20) {
             $first_pay_percents = clone $first_pay;
@@ -41,28 +49,86 @@ class DocumentController extends Controller
             $first_pay->add(new DateInterval('P1M'));
             $first_pay = $this->check_date($first_pay);
 
-            $payment_schedule[0] = ['date' => $first_pay_percents->format('d.m.Y'), 'sum' => $sum_first_pay];
+            $payment_schedule[$first_pay_percents->format('d.m.Y')] =
+                [
+                    'pay_sum' => $sum_first_pay,
+                    'loan_percents_pay' => $sum_first_pay,
+                    'loan_body_pay' => 0.00,
+                    'comission_pay' => 0.00,
+                    'rest_pay' => $annoouitet_pay
+                ];
         }
 
         if ($first_pay->format('m') == $end_date->format('m')) {
-            $percent_per_month = (($document->params->percent / 100) * 365) / 12;
-            $annoouitet_pay = $document->params->amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
-            $annoouitet_pay -= $payment_schedule[0]['sum'];
-            $payment_schedule[1] = ['date' => $first_pay->format('d.m.Y'), 'sum' => $annoouitet_pay];
+
+            $payment_schedule[$first_pay->format('d.m.Y')] =
+                [
+                    'pay_sum' => $annoouitet_pay,
+                    'loan_percents_pay' => $annoouitet_pay - $document->params->amount,
+                    'loan_body_pay' => $document->params->amount,
+                    'comission_pay' => 0.00,
+                    'rest_pay' => 0.00
+                ];
+
         } else {
+
             $interval = new DateInterval('P1M');
             $daterange = new DatePeriod($first_pay, $interval, $end_date);
 
             foreach ($daterange as $date) {
-                var_dump($date);
                 $this->check_date($date);
 
-                $percent_per_month = (($document->params->percent / 100) * 365) / 12;
-                $annoouitet_pay = $document->params->percent->amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
-
-                $payment_schedule[$date->format('d.m.Y')] = $annoouitet_pay;
+                $payment_schedule[$date->format('d.m.Y')] = ['pay_sum' => $annoouitet_pay];
             }
         }
+
+        $payment_schedule['result'] =
+            [
+                'all_sum_pay' => 0.00,
+                'all_loan_percents_pay' => 0.00,
+                'all_loan_body_pay' => 0.00,
+                'all_comission_pay' => 0.00,
+                'all_rest_pay_sum' => 0.00
+            ];
+
+        foreach ($payment_schedule as $date => $pay) {
+            $payment_schedule['result']['all_sum_pay'] += $pay['pay_sum'];
+            $payment_schedule['result']['all_loan_percents_pay'] += $pay['loan_percents_pay'];
+            $payment_schedule['result']['all_loan_body_pay'] += $pay['loan_body_pay'];
+            $payment_schedule['result']['all_comission_pay'] += $pay['comission_pay'];
+            $payment_schedule['result']['all_rest_pay_sum'] = 0.00;
+        }
+
+        $all_pay_sum_string = explode('.', $payment_schedule['result']['all_sum_pay']);
+        $all_pay_sum_string_part_one = $this->num2str($all_pay_sum_string[0]);
+
+        if (count($all_pay_sum_string) > 1) {
+            $all_pay_sum_string_part_two = $this->num2str($all_pay_sum_string[1]);
+            $this->design->assign('all_pay_sum_string_part_two', $all_pay_sum_string_part_two);
+        }
+
+        $this->design->assign('all_pay_sum_string_part_one', $all_pay_sum_string_part_one);
+
+        $all_percents_string = explode('.', $payment_schedule['result']['all_loan_percents_pay']);
+        $all_percents_string_part_one = $this->num2str($all_percents_string[0]);
+
+        if (count($all_percents_string) > 1) {
+            $all_percents_string_part_two = $this->num2str($all_percents_string[1]);
+            $this->design->assign('all_percents_string_part_two', $all_percents_string_part_two);
+        }
+
+        $percents_per_day_str = explode('.', $document->params->percent);
+        $percents_per_day_str_part_one = $this->num2str($percents_per_day_str[0]);
+        $percents_per_day_str_part_two = $this->num2str($percents_per_day_str[1]);
+
+        $this->design->assign('percents_per_day_str_part_one', $percents_per_day_str_part_one);
+        $this->design->assign('percents_per_day_str_part_two', $percents_per_day_str_part_two);
+
+        $period_str = $this->num2str($period);
+
+        $this->design->assign('period_str', $period_str);
+
+        $this->design->assign('all_percents_string_part_one', $all_percents_string_part_one);
 
         $this->design->assign('payment_schedule', $payment_schedule);
 
@@ -74,7 +140,8 @@ class DocumentController extends Controller
         $percents_str = explode(',', $percents);
 
         if (count($percents_str) > 1) {
-            $second_part_percents = $percents_str[1];
+            $second_part_percents = $percents_str[1] . '00';
+            $second_part_percents = $this->num2str($second_part_percents);
             $this->design->assign('second_part_percents', $second_part_percents);
         }
 
