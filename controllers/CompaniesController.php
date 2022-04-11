@@ -31,38 +31,31 @@ class CompaniesController extends Controller
         $kpp = $this->request->post('kpp');
         $jur_address = $this->request->post('jur_address');
         $phys_address = $this->request->post('phys_address');
-        $branches_name = $this->request->post('branches_name');
-        $branches_payday = $this->request->post('branches_payday');
 
-        if (!$branches_name || !$branches_payday) {
-            echo 'Проверьте правильность заполнения филиала!';
-            exit;
-        } else {
-            $last_id = $this->Companies->last_id();
-            $number = $last_id + 1;
+        $last_id = $this->Companies->last_id();
+        $number = $last_id + 1;
 
-            if ($last_id < 10)
-                $number = '0' . $number;
+        if ($last_id < 10)
+            $number = '0' . $number;
 
-            $company =
-                [
-                    'group_id' => $group_id,
-                    'number' => $number,
-                    'name' => $name,
-                    'eio_position' => $eio_position,
-                    'eio_fio' => $eio_fio,
-                    'inn' => $inn,
-                    'ogrn' => $ogrn,
-                    'kpp' => $kpp,
-                    'jur_address' => $jur_address,
-                    'phys_address' => $phys_address
-                ];
+        $company =
+            [
+                'group_id' => $group_id,
+                'number' => $number,
+                'name' => $name,
+                'eio_position' => $eio_position,
+                'eio_fio' => $eio_fio,
+                'inn' => $inn,
+                'ogrn' => $ogrn,
+                'kpp' => $kpp,
+                'jur_address' => $jur_address,
+                'phys_address' => $phys_address
+            ];
 
-            $company_id = $this->Companies->add_company($company);
+        $company_id = $this->Companies->add_company($company);
 
-            $this->action_add_brunch($group_id, $company_id, $branches_name, $branches_payday);
-            exit;
-        }
+        $this->action_add_brunch($group_id, $company_id, 'По умолчанию', 10);
+        exit;
     }
 
     private function action_add_brunch($group_id, $company_id, $branches_name, $branches_payday)

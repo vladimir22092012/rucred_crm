@@ -181,16 +181,6 @@
                         <label for="phys_address" class="control-label">Адрес местонахождения:</label>
                         <input type="text" class="form-control" name="phys_address" id="phys_address" value=""/>
                     </div>
-                    <div class="form-group">
-                        <label class="alert alert-danger" style="display: none"></label>
-                        <label for="branches_name" class="control-label">Наименование филиала:</label>
-                        <input type="text" class="form-control" name="branches_name" id="branches_name" value=""/>
-                    </div>
-                    <div class="form-group">
-                        <label class="alert alert-danger" style="display: none"></label>
-                        <label for="branches_payday" class="control-label">Дата выплаты:</label>
-                        <input type="text" class="form-control" name="branches_payday" id="branches_payday" value=""/>
-                    </div>
                     <div>
                         <input type="button" class="btn btn-danger cancel" data-dismiss="modal" value="Отмена">
                         <input type="button" class="btn btn-success add_company" value="Сохранить">
