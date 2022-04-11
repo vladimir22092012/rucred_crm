@@ -54,4 +54,15 @@ class Groups extends Core
         $id = $this->db->result('id');
         return $id;
     }
+
+    public function update_group($id, $group)
+    {
+        $query = $this->db->placehold("
+        UPDATE s_groups 
+        SET ?%
+        WHERE id = ?
+        ", $group, $id);
+
+        $this->db->query($query);
+    }
 }

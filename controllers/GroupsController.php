@@ -9,6 +9,10 @@ class GroupsController extends Controller
                 $this->action_add_group();
                 break;
 
+            case 'update_group':
+                $this->action_update_group();
+                break;
+
         endswitch;
 
         $groups = $this->Groups->get_groups();
@@ -29,7 +33,7 @@ class GroupsController extends Controller
         if ($last_id < 10)
             $number = '0' . $number;
 
-        if(!$last_id || $last_id == 0)
+        if (!$last_id || $last_id == 0)
             $number = '00';
 
         $group =
@@ -42,8 +46,7 @@ class GroupsController extends Controller
 
         $loantypes = $this->Loantypes->get_loantypes();
 
-        foreach ($loantypes as $loantype)
-        {
+        foreach ($loantypes as $loantype) {
             $group =
                 [
                     'group_id' => $group_id,
@@ -54,5 +57,18 @@ class GroupsController extends Controller
 
             $this->GroupLoanTypes->add_group($group);
         }
+    }
+
+    private function action_update_group()
+    {
+        $group_id = $this->request->post('group_id', 'integer');
+        $group_name = $this->request->post('group_name', 'string');
+
+        $group =
+            [
+              'name' => $group_name
+            ];
+
+        $this->Groups->update_group($group_id, $group);
     }
 }

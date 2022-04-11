@@ -13,6 +13,39 @@
     <script src="theme/manager/assets/plugins/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="theme/manager/assets/plugins/datatables.net-bs4/js/dataTables.responsive.min.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/companies.js"></script>
+    <script>
+        $(function () {
+
+            $('.to_edit').on('click', function () {
+                $('.group_name_front').hide();
+                $('.group_name_edit').show();
+            });
+
+            $('.cancel_edit').on('click', function () {
+                $('.group_name_edit').hide();
+                $('.group_name_front').show();
+            });
+
+            $('.save_edit').on('click', function (e) {
+                e.preventDefault();
+
+                let group_name = $('.group_name').val();
+                let group_id = $(this).attr('data-group');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'update_group',
+                        group_name: group_name,
+                        group_id : group_id
+                    },
+                    success: function () {
+                        location.reload();
+                    }
+                })
+            })
+        })
+    </script>
 {/capture}
 
 <div class="page-wrapper">
@@ -54,13 +87,24 @@
                                     <tr>
                                         <th class="">Наименование группы</th>
                                         <th class="">Номер</th>
+                                        <th></th>
                                     </tr>
                                     </thead>
                                     <tbody id="table-body">
                                     {if !empty($groups)}
                                         {foreach $groups as $group}
                                             <tr>
-                                                <td>{$group->name}</td>
+                                                <td class="group_name_front">
+                                                    <input type="button" class="btn btn-outline-info to_edit"
+                                                           value="{$group->name}"></td>
+                                                <td class="group_name_edit" style="display: none">
+                                                    <input type="text" class="form-control group_name" style="width: 300px"
+                                                           value="{$group->name}">
+                                                    <input type="button" data-group="{$group->id}" class="btn btn-outline-success save_edit"
+                                                           value="Сохранить">
+                                                    <input type="button" class="btn btn-outline-danger cancel_edit"
+                                                           value="Отменить">
+                                                </td>
                                                 <td>{$group->number}</td>
                                             </tr>
                                         {/foreach}
@@ -99,8 +143,8 @@
                         <label for="name" class="control-label">Наименование группы</label>
                         <input type="text" class="form-control" name="name" id="name" value=""/>
                     </div>
-                        <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
-                        <input type="submit" formmethod="post" class="btn btn-success" value="Сохранить">
+                    <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
+                    <input type="submit" formmethod="post" class="btn btn-success" value="Сохранить">
                 </form>
             </div>
         </div>
