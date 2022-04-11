@@ -4,17 +4,17 @@
     <link href="theme/manager/assets/plugins/Magnific-Popup-master/dist/magnific-popup.css" rel="stylesheet"/>
     <link rel="stylesheet" type="text/css"
           href="theme/manager/assets/plugins/datatables.net-bs4/css/dataTables.bootstrap4.css">
-    <link rel="stylesheet" type="text/css"
-          href="theme/manager/assets/plugins/datatables.net-bs4/css/responsive.dataTables.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet"/>
 {/capture}
 
 {capture name='page_scripts'}
     <script src="theme/manager/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
-    <script src="theme/manager/assets/plugins/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="theme/manager/assets/plugins/datatables.net-bs4/js/dataTables.responsive.min.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/companies.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
     <script>
         $(function () {
+
+            let token_dadata = "25c845f063f9f3161487619f630663b2d1e4dcd7";
 
             $('.add_company').on('click', function (e) {
                 e.preventDefault();
@@ -32,7 +32,37 @@
                         }
                     }
                 });
-            })
+            });
+
+            $('#inn').suggestions({
+                token: token_dadata,
+                type: "party",
+                minChars: 3,
+                onSelect: function (suggestion) {
+                    $(this).val(suggestion.data.inn);
+                    $('#kpp').val(suggestion.data.kpp);
+                    $('#ogrn').val(suggestion.data.ogrn);
+                    $('#name').val(suggestion.value);
+                    $('#eio_fio').val(suggestion.data.management.name);
+                    $('#eio_position').val(suggestion.data.management.post);
+                    $('#jur_address').val(suggestion.data.address.value);
+                }
+            });
+
+            $('#name').suggestions({
+                token: token_dadata,
+                type: "party",
+                minChars: 3,
+                onSelect: function (suggestion) {
+                    $(this).val(suggestion.data.inn);
+                    $('#kpp').val(suggestion.data.kpp);
+                    $('#ogrn').val(suggestion.data.ogrn);
+                    $('#inn').val(suggestion.data.inn);
+                    $('#eio_fio').val(suggestion.data.management.name);
+                    $('#eio_position').val(suggestion.data.management.post);
+                    $('#jur_address').val(suggestion.data.address.value);
+                }
+            });
         })
     </script>
 {/capture}
