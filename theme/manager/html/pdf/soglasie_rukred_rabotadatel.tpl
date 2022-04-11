@@ -54,7 +54,7 @@
     обработки его персональных данных (оператор прекратит обработку таких персональных данных в течение 3 (Трёх) рабочих
     дней, о чем будет направлено письменное уведомление субъекту персональных данных в течение 10 (Десяти) рабочих дней.<br><br>
 </div>
-<table style="width: 100%;" border="1" cellpadding="5">
+<table style="width: 100%;" border="1" cellpadding="8">
     <tr style="width: 100%">
         <td style="width: 25%; height: 30px" align="center"><span style="color: #b3b2ab">ПОДПИСЬ</span></td>
         <td style="width: 50%" align="center"><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></td>
