@@ -286,10 +286,6 @@ $(function () {
         $(this).setCursorPosition(0);
     }).mask('999999999999');
 
-    $('.bik').click(function () {
-        $(this).setCursorPosition(0);
-    }).mask('999999999');
-
     $('.account_number').click(function () {
         $(this).setCursorPosition(8);
     }).mask('40817810999999999999');
