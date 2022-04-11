@@ -121,10 +121,21 @@
 <div>
 
 </div>
-<table style="width: 100%;" border="1" cellpadding="8">
-    <tr style="width: 100%">
-        <td style="width: 25%; height: 30px" align="center"><span style="color: #b3b2ab">ПОДПИСЬ</span></td>
-        <td style="width: 50%" align="center"><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></td>
-        <td style="width: 25%" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span></td>
-    </tr>
-</table>
+<footer>
+    <table style="width: 100%;font-size: 8px" border="1">
+        <tr style="width: 100%">
+            <td style="width: 8%; height: 30px" align="center">
+                <div><strong style="color: #b3b2ab;padding-top: 2px">СТР. 2</strong></div>
+            </td>
+            <td style="width: 37%" align="center">
+                <div><span style="color: #b3b2ab">ПОДПИСЬ</span></div>
+            </td>
+            <td style="width: 40%" align="center">
+                <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
+            </td>
+            <td style="width: 15%;" align="center">
+                <div><span style="color: #b3b2ab">ДАТА</span></div>
+            </td>
+        </tr>
+    </table>
+</footer>

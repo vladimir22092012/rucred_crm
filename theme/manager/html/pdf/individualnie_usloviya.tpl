@@ -5,10 +5,10 @@
     </tr>
     <tr style="width: 100%">
         <br>
-        <td style="width: 100%" align="center"><strong>Общество с ограниченной ответственностью</strong></td>
+        <td style="width: 100%" align="left"><strong>Общество с ограниченной ответственностью</strong></td>
     </tr>
     <tr style="width: 100%">
-        <td style="width: 100%" align="center"><strong>Микрокредитная компания «Русское кредитное общество»</strong></td>
+        <td style="width: 100%" align="left"><strong>Микрокредитная компания «Русское кредитное общество»</strong></td>
     </tr>
     <tr style="width: 100%">
         <br>
