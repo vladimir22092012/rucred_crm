@@ -43,6 +43,16 @@ class Groups extends Core
         return $id;
     }
 
+    public function delete_group($id)
+    {
+        $query = $this->db->placehold("
+        DELETE FROM s_groups 
+        WHERE id = ?
+        ", $id);
+
+        $this->db->query($query);
+    }
+
     public function last_id()
     {
         $query = $this->db->placehold("

@@ -42,6 +42,21 @@ class Branches extends Core
         return $results;
     }
 
+    public function get_branches_by_group($group_id)
+    {
+        $query = $this->db->placehold("
+        SELECT * 
+        FROM s_branches
+        WHERE group_id = ?
+        ", $group_id);
+
+        $this->db->query($query);
+
+        $results = $this->db->results();
+
+        return $results;
+    }
+
     public function last_id($company_id)
     {
         $query = $this->db->placehold("

@@ -37,10 +37,37 @@
                     data: {
                         action: 'update_group',
                         group_name: group_name,
-                        group_id : group_id
+                        group_id: group_id
                     },
                     success: function () {
                         location.reload();
+                    }
+                })
+            });
+
+            $('.delete_group').on('click', function (e) {
+                e.preventDefault();
+
+                let group_id = $(this).attr('data-group');
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'delete_group',
+                        group_id: group_id
+                    },
+                    success: function (resp) {
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                showCancelButton: false,
+                                confirmButtonText: 'ОК',
+                            })
+                        }
+                        else {
+                            location.reload();
+                        }
                     }
                 })
             })
@@ -98,14 +125,19 @@
                                                     <input type="button" class="btn btn-outline-info to_edit"
                                                            value="{$group->name}"></td>
                                                 <td class="group_name_edit" style="display: none">
-                                                    <input type="text" class="form-control group_name" style="width: 300px"
+                                                    <input type="text" class="form-control group_name"
+                                                           style="width: 300px"
                                                            value="{$group->name}">
-                                                    <input type="button" data-group="{$group->id}" class="btn btn-outline-success save_edit"
+                                                    <input type="button" data-group="{$group->id}"
+                                                           class="btn btn-outline-success save_edit"
                                                            value="Сохранить">
                                                     <input type="button" class="btn btn-outline-danger cancel_edit"
                                                            value="Отменить">
                                                 </td>
                                                 <td>{$group->number}</td>
+                                                <td><input type="button" data-group="{$group->id}"
+                                                           class="btn btn-outline-danger delete_group"
+                                                           value="Удалить"></td>
                                             </tr>
                                         {/foreach}
                                     {/if}

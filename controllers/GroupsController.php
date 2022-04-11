@@ -13,6 +13,10 @@ class GroupsController extends Controller
                 $this->action_update_group();
                 break;
 
+            case 'delete_group':
+                $this->action_delete_group();
+                break;
+
         endswitch;
 
         $groups = $this->Groups->get_groups();
@@ -70,5 +74,22 @@ class GroupsController extends Controller
             ];
 
         $this->Groups->update_group($group_id, $group);
+    }
+
+    private function action_delete_group()
+    {
+        $group_id = $this->request->post('group_id', 'integer');
+
+        $branches = $this->Branches->get_branches_by_group($group_id);
+
+        if(count($branches) > 1)
+        {
+            echo json_encode(['error' => 'Ошибка. Количество филиалов более 1']);
+            exit;
+        }
+
+        else{
+            $this->Groups->delete_group($group_id);
+        }
     }
 }
