@@ -14,6 +14,7 @@
             type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
     <script>
         $(function () {
             let order = {{json_encode($order)}};
@@ -35,36 +36,69 @@
                     $('input[id="change_fio1"]').trigger('click');
                 }
 
-                if(order['Regadressfull'] == order['Faktadressfull'])
+                if (order['Regadressfull'] == order['Faktadressfull'])
                     $('input[name="actual_address"]').trigger('click');
 
-                $('input[id="sex'+order['sex']+'"]').trigger('click');
+                $('input[id="sex' + order['sex'] + '"]').trigger('click');
 
-                if(order['push_not'] == 1)
+                if (order['push_not'] == 1)
                     $('input[name="push_not"]').prop('checked', true);
                 else
                     $('input[name="push_not"]').prop('checked', false);
 
-                if(order['sms_not'] == 1)
+                if (order['sms_not'] == 1)
                     $('input[name="sms_not"]').prop('checked', true);
                 else
                     $('input[name="sms_not"]').prop('checked', false);
 
-                if(order['email_not'] == 1)
+                if (order['email_not'] == 1)
                     $('input[name="email_not"]').prop('checked', true);
                 else
                     $('input[name="email_not"]').prop('checked', false);
 
-                if(order['massanger_not'] == 1)
+                if (order['massanger_not'] == 1)
                     $('input[name="massanger_not"]').prop('checked', true);
                 else
                     $('input[name="massanger_not"]').prop('checked', false);
 
-                $('input[id="foreign'+order['foreign_flag']+'"]').trigger('click');
-                $('input[id="foreign_husb_wife'+order['foreign_husb_wife']+'"]').trigger('click');
-                $('input[id="foreign_relative'+order['foreign_relative']+'"]').trigger('click');
-
+                $('input[id="foreign' + order['foreign_flag'] + '"]').trigger('click');
+                $('input[id="foreign_husb_wife' + order['foreign_husb_wife'] + '"]').trigger('click');
+                $('input[id="foreign_relative' + order['foreign_relative'] + '"]').trigger('click');
             }
+
+            $('.price').slick({
+                infinite: false,
+                speed: 300,
+                slidesToShow: 4,
+                slidesToScroll: 4,
+                responsive: [
+                    {
+                        breakpoint: 1024,
+                        settings: {
+                            slidesToShow: 3,
+                            slidesToScroll: 3,
+                            infinite: true,
+                        }
+                    },
+                    {
+                        breakpoint: 600,
+                        settings: {
+                            slidesToShow: 2,
+                            slidesToScroll: 2
+                        }
+                    },
+                    {
+                        breakpoint: 480,
+                        settings: {
+                            slidesToShow: 1,
+                            slidesToScroll: 1
+                        }
+                    }
+                    // You can unslick at a given breakpoint now by adding:
+                    // settings: "unslick"
+                    // instead of a settings object
+                ]
+            });
         })
     </script>
 {/capture}
@@ -72,17 +106,11 @@
 {capture name='page_styles'}
     <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet"/>
     <style>
-
         .price {
-            width: 100% !important;
-            display: flex;
-            flex-direction: row-reverse;
-            justify-content: space-between;
+            width: 100%;
         }
 
         .price_container {
-            margin: 0 auto;
-            display: flex;
             padding-top: 20px;
         }
 
@@ -126,6 +154,8 @@
     <link href="theme/manager/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet"
           type="text/css"/>
     <link href="theme/manager/assets/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
 {/capture}
 
 <div class="page-wrapper">
@@ -157,13 +187,13 @@
                     </div>
                     <div class="card-body">
                         <div class="form-body">
-                            <div class="row">
-                                <div class="price_info">
+                            <div class="row" style="width: 100%">
+                                <div class="price_info" style="width: 100%">
                                     <h2>Off-line заявка</h2>
                                     <p><span>Вид займа</span></p><br>
                                 </div>
                                 <br><br>
-                                <div class="price" id="pricelist" style="width: 100%;">
+                                <div class="price" id="pricelist">
                                     {foreach $loantypes as $loantype}
                                         <div class="price_container">
                                             <div class="price_basic" data-loan-period="{$loantype->max_period}"
@@ -172,7 +202,7 @@
                                                  id="{$loantype->id}"><br>
                                                 {if $loantype->online_flag == 1 }
                                                     <div>
-                                                            Доступен онлайн
+                                                        Доступен онлайн
                                                     </div>
                                                     <hr style="width: 80%; size: 5px">
                                                 {/if}
@@ -256,7 +286,8 @@
                                             <input style="width: 350px; margin-left: 25px" type="text" name="firstname"
                                                    class="form-control js-firstname-input"
                                                    placeholder="Имя" required value="{$order->firstname}"/>
-                                            <input class="form-control js-patronymic-input" style="width: 350px; margin-left: 25px"
+                                            <input class="form-control js-patronymic-input"
+                                                   style="width: 350px; margin-left: 25px"
                                                    name="patronymic"
                                                    placeholder="Отчество(если есть)" type="text"
                                                    value="{$order->patronymic}">
@@ -287,7 +318,8 @@
                                             />
                                             <input type="text" style="width: 180px; margin-left: 25px"
                                                    name="fio_change_date"
-                                                   class="form-control daterange fio_change_date" value="{$order->fio_change_date|date}">
+                                                   class="form-control daterange fio_change_date"
+                                                   value="{$order->fio_change_date|date}">
                                         </div>
                                         <br>
                                         <div style="width: 100%">
@@ -321,13 +353,16 @@
                                                     подразделения</label><br>
                                                 <input class="form-control passport_serial"
                                                        style="width: 100px; margin-left: 25px"
-                                                       type="text" name="passport_serial" value="{$order->passport_serial}"/>
+                                                       type="text" name="passport_serial"
+                                                       value="{$order->passport_serial}"/>
                                                 <input class="form-control passport_number"
                                                        style="width: 100px; margin-left: 25px"
-                                                       type="text" name="passport_number" value="{$order->passport_number}"/>
+                                                       type="text" name="passport_number"
+                                                       value="{$order->passport_number}"/>
                                                 <input class="form-control subdivision_code"
                                                        style="width: 180px; margin-left: 25px"
-                                                       type="text" name="subdivision_code" value="{$order->subdivision_code}"/>
+                                                       type="text" name="subdivision_code"
+                                                       value="{$order->subdivision_code}"/>
                                             </div>
                                             <br>
                                             <div style="width: 100%">
@@ -336,11 +371,13 @@
                                                     выдан</label><br>
                                                 <input class="form-control passport_issued"
                                                        style="width: 500px; margin-left: 25px"
-                                                       type="text" name="passport_issued" value="{$order->passport_issued}"/>
+                                                       type="text" name="passport_issued"
+                                                       value="{$order->passport_issued}"/>
                                                 <input type="text" style="width: 180px; margin-left: 25px"
                                                        id="passport_date"
                                                        name="passport_date"
-                                                       class="form-control daterange" value="{$order->passport_date|date}"/>
+                                                       class="form-control daterange"
+                                                       value="{$order->passport_date|date}"/>
                                             </div>
                                         </div>
                                         <br>
@@ -356,7 +393,8 @@
                                         <div style="width: 100%;">
                                             <label class="control-label">Адрес регистрации</label><br>
                                             <input class="form-control Regadress" name="Regadressfull"
-                                                   style="width: 700px; margin-left: 25px" type="text" value="{$order->Regadressfull}"/>
+                                                   style="width: 700px; margin-left: 25px" type="text"
+                                                   value="{$order->Regadressfull}"/>
                                             <input style="display: none" class="Registration" name="Regadress"/>
                                         </div>
                                         <br>
@@ -369,7 +407,8 @@
                                                     регистрации</label>
                                             </div>
                                             <input class="form-control Faktaddress" id="actual_address_toggle"
-                                                   style="width: 700px; margin-left: 25px" name="Faktadressfull" value="{$order->Faktadressfull}"
+                                                   style="width: 700px; margin-left: 25px" name="Faktadressfull"
+                                                   value="{$order->Faktadressfull}"
                                                    type="text"/>
                                         </div>
                                         <br>
@@ -407,7 +446,8 @@
                                         <div style="width: 100%">
                                             <label class="control-label">Электронная почта*</label><br>
                                             <input class="form-control" style="width: 350px; margin-left: 25px"
-                                                   type="text" name="email" placeholder="ivanov@mail.ru(необязательно)" value="{$order->email}"/>
+                                                   type="text" name="email" placeholder="ivanov@mail.ru(необязательно)"
+                                                   value="{$order->email}"/>
                                             <input type="button" style="margin-left: 25px" class="btn btn-success"
                                                    value="Отправить">
                                         </div>
@@ -477,7 +517,8 @@
                                                     {/foreach}
                                                 {/if}
                                             </select>
-                                            <select style="width: 300px; margin-left:10px" class="form-control my_company"
+                                            <select style="width: 300px; margin-left:10px"
+                                                    class="form-control my_company"
                                                     name="branch_select">
                                                 <option value="0" selected>Выберите из списка</option>
                                                 {if !empty($branches)}
@@ -532,7 +573,8 @@
                                                 </div>
                                                 <div class="form-check" style="margin-left: 25px"
                                                      id="profunion_toggle">
-                                                    <input class="form-check-input want_profunion" type="checkbox" value="1"
+                                                    <input class="form-check-input want_profunion" type="checkbox"
+                                                           value="1"
                                                            id="want_profunion" name="want_profunion">
                                                     <label class="form-check-label" for="want_profunion">
                                                         Оповестить о желании вступления в профсоюз
@@ -580,7 +622,8 @@
                                         <div style="width: 100%; display: none" id="foreign_husb_wife_toggle">
                                             <label class="control-label">ФИО Супруги(-а)</label><br>
                                             <input class="form-control fio_public_spouse" name="fio_public_spouse"
-                                                   style="width: 500px; margin-left: 25px" type="text" value="{$order->fio_public_spouse}"/>
+                                                   style="width: 500px; margin-left: 25px" type="text"
+                                                   value="{$order->fio_public_spouse}"/>
                                         </div>
                                         <br>
                                         <hr style="width: 100%; size: 5px">
@@ -605,7 +648,8 @@
                                         <div style="width: 100%; display: none" id="foreign_relative_toggle">
                                             <label class="control-label">ФИО родственника</label><br>
                                             <input class="form-control fio_relative" name="fio_relative"
-                                                   style="width: 500px; margin-left: 25px" type="text" value="{$order->fio_relative}"/>
+                                                   style="width: 500px; margin-left: 25px" type="text"
+                                                   value="{$order->fio_relative}"/>
                                         </div>
                                         <br>
                                         <hr style="width: 100%; size: 5px">
@@ -642,8 +686,9 @@
                                             <input type="submit" name="draft" style="margin-left: 100px"
                                                    class="btn btn-primary"
                                                    value="Сохранить черновик">
-                                                <input type="button" style="margin-left: 100px" class="btn btn-info to_form_loan"
-                                                       value="Сформировать условия">
+                                            <input type="button" style="margin-left: 100px"
+                                                   class="btn btn-info to_form_loan"
+                                                   value="Сформировать условия">
                                         </div>
                                         <br><br>
                                         <input style="display: none" name="loan_type_to_submit"
