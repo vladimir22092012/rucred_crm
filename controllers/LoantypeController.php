@@ -10,21 +10,17 @@ class LoantypeController extends Controller
             $loantype = new StdClass();
 
             $loantype->name = $this->request->post('name');
-            $loantype->organization_id = $this->request->post('organization_id', 'integer');
             $loantype->percent = $this->request->post('percent');
+            $loantype->percent = str_replace(',', '.', $loantype->percent);
             $loantype->profunion = $this->request->post('profunion');
-            $loantype->discount = $this->request->post('discount');
+            $loantype->profunion = str_replace(',', '.', $loantype->profunion);
             $loantype->min_amount = $this->request->post('min_amount');
             $loantype->max_amount = $this->request->post('max_amount', 'integer');
             $loantype->max_period = $this->request->post('max_period', 'integer');
-
-            $loantype->reason_flag = ($this->request->post('reason_flag', 'integer') == 1) ? 0 : 1;
-
+            $loantype->online_flag = $this->request->post('online_flag', 'integer');
 
             if (empty($loantype->name)) {
                 $this->design->assign('error', 'Укажите наименование вида кредита');
-            } elseif (empty($loantype->organization_id)) {
-                $this->design->assign('error', 'Выберите организацию');
             } elseif (empty($loantype->percent)) {
                 $this->design->assign('error', 'Выберите процентную ставку');
             } elseif (empty($loantype->max_amount)) {
@@ -33,7 +29,24 @@ class LoantypeController extends Controller
                 $this->design->assign('error', 'Укажите максимальный срок кредита');
             } else {
                 if (empty($loantype_id)) {
+
                     $loantype->id = $this->loantypes->add_loantype($loantype);
+
+                    $groups = $this->Groups->get_groups();
+
+                    foreach ($groups as $group) {
+
+                        $group =
+                            [
+                                'group_id' => $group->id,
+                                'loantype_id' => $loantype->id,
+                                'standart_percents' => $loantype->percent,
+                                'preferential_percents' => $loantype->profunion
+                            ];
+
+                        $this->GroupLoanTypes->add_group($group);
+                    }
+
                     $this->design->assign('success', 'Вид кредитования добавлен');
                 } else {
                     $loantype->id = $this->loantypes->update_loantype($loantype_id, $loantype);
@@ -60,6 +73,15 @@ class LoantypeController extends Controller
             $this->GroupLoanTypes->update_record($record);
         }
 
+        if ($this->request->post('action') == 'change_online_flag') {
+            $loantype_id = $this->request->post('loantype_id', 'integer');
+            $flag = $this->request->post('flag', 'integer');
+
+            $loan_update = ['online_flag' => $flag];
+
+            $this->Loantypes->update_loantype($loantype_id, $loan_update);
+        }
+
         if ($id = $this->request->get('id', 'integer')) {
             $loantype = $this->loantypes->get_loantype($id);
 
@@ -70,11 +92,6 @@ class LoantypeController extends Controller
 
         if (!empty($loantype))
             $this->design->assign('loantype', $loantype);
-
-        $organizations = array();
-        foreach ($this->offline->get_organizations() as $org)
-            $organizations[$org->id] = $org;
-        $this->design->assign('organizations', $organizations);
 
 
         return $this->design->fetch('offline/loantype.tpl');

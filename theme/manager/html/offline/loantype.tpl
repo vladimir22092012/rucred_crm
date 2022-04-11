@@ -8,6 +8,8 @@
     <script>
         $(function () {
 
+            let loantype_id = {{$loantype->id}};
+
             $('.edit-company-tarif').on('click', function (e) {
                 e.preventDefault();
 
@@ -15,14 +17,26 @@
 
                 let standart_percents = $(this).attr('data-standart-percents');
                 let preferential_percents = $(this).attr('data-preferential-percents');
-                let loantype_id = {{$loantype->id}};
                 let group_id = $(this).attr('data-group');
 
                 $('#standart_percents').val(standart_percents);
                 $('#preferential_percents').val(preferential_percents);
                 $('input[name=loantype_id]').val(loantype_id);
                 $('input[name=group_id]').val(group_id);
-            })
+            });
+
+            $('#online_flag').on('change', function (e) {
+                let flag = $(this).val();
+
+                $.ajax({
+                   method: 'POST',
+                   data: {
+                       action: 'change_online_flag',
+                       loantype_id: loantype_id,
+                       flag: flag
+                   }
+                });
+            });
         })
     </script>
 {/capture}
@@ -195,15 +209,13 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-5 ">
-                                                <label class="control-label">Организация</label>
+                                                <label class="control-label">Доступность</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <select name="organization_id" class="form-control">
-                                                    <option value=""></option>
-                                                    {foreach $organizations as $org}
-                                                        <option value="{$org->id}"
-                                                                {if $org->id == $loantype->organization_id}selected{/if}>{$org->name}</option>
-                                                    {/foreach}
+                                                <select name="online_flag" id="online_flag" class="form-control">
+                                                    <option value="1">Онлайн</option>
+                                                    <option value="2">Оффлайн</option>
+                                                    <option value="3">Везде</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -252,29 +264,18 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="percent"
-                                                       {if $loantype}value="{$loantype->percent}" {/if}/>
+                                                       {if $loantype}value="{$loantype->percent|number_format:2:',':' '}" {/if}/>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-5 ">
-                                                <label class="control-label">Процентная ставка профсоюз, %/день</label>
+                                                <label class="control-label">Льготная ставка, %/день</label>
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="profunion"
-                                                       {if $loantype}value="{$loantype->profunion}" {/if}/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-5 ">
-                                                <label class="control-label">Скидка, %/день</label>
-                                            </div>
-                                            <div class="col-7 ">
-                                                <input type="text" class="form-control" name="discount"
-                                                       {if $loantype}value="{$loantype->discount}" {/if}/>
+                                                       {if $loantype}value="{$loantype->profunion|number_format:2:',':' '}" {/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -285,7 +286,7 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="min_amount"
-                                                       value="{$loantype->min_amount}"/>
+                                                       value="{$loantype->min_amount|number_format:0:',':' '}"/>
                                             </div>
                                         </div>
                                     </div>
@@ -296,7 +297,7 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="max_amount"
-                                                       value="{$loantype->max_amount}"/>
+                                                       value="{$loantype->max_amount|number_format:0:',':' '}"/>
                                             </div>
                                         </div>
                                     </div>

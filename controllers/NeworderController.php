@@ -258,9 +258,6 @@ class NeworderController extends Controller
             $this->check_date();
         }
 
-        $organizations = $this->offline->get_organizations();
-        $this->design->assign('organizations', $organizations);
-
         $loantypes = array();
         foreach ($this->loantypes->get_loantypes() as $lt)
             $loantypes[$lt->id] = $lt;

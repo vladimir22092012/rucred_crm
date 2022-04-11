@@ -37,7 +37,7 @@ $(function () {
                 $('.alert-danger').hide();
 
 
-                let percents = $('.price_basic[id="' + loan_id + '"]').find('.percents:visible').text();
+                let percents = $('.price_basic[id="' + loan_id + '"]').find('.percents:visible').find('input').val();
 
                 let percent_per_month = ((percents / 100) * 365) / 12;
 
@@ -54,7 +54,10 @@ $(function () {
                     }
                 }
 
-                $('#final_sum').val(sum_to_pay.toFixed(2));
+                sum_to_pay = sum_to_pay.toFixed(2);
+                sum_to_pay = new Intl.NumberFormat("ru").format(sum_to_pay);
+
+                $('#final_sum').val(sum_to_pay);
             }
             else {
                 $('.alert-danger').fadeIn();

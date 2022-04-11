@@ -94,9 +94,6 @@
                             slidesToScroll: 1
                         }
                     }
-                    // You can unslick at a given breakpoint now by adding:
-                    // settings: "unslick"
-                    // instead of a settings object
                 ]
             });
         })
@@ -112,6 +109,7 @@
 
         .price_container {
             padding-top: 20px;
+            float: left;
         }
 
         .price_basic:hover {
@@ -154,8 +152,8 @@
     <link href="theme/manager/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet"
           type="text/css"/>
     <link href="theme/manager/assets/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css">
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css">
 {/capture}
 
 <div class="page-wrapper">
@@ -200,12 +198,6 @@
                                                  data-loan="{$loantype->id}" data-min-amount="{$loantype->min_amount}"
                                                  data-max-amount="{$loantype->max_amount}" data-loan-percents=""
                                                  id="{$loantype->id}"><br>
-                                                {if $loantype->online_flag == 1 }
-                                                    <div>
-                                                        Доступен онлайн
-                                                    </div>
-                                                    <hr style="width: 80%; size: 5px">
-                                                {/if}
                                                 <div class="height">
                                                     <h4>{$loantype->name}</h4>
                                                     <h5>от <span
@@ -215,15 +207,19 @@
                                                         Р</h5>
                                                 </div>
                                                 <hr style="width: 80%; size: 5px">
-                                                <div class="out_profunion">
+                                                <div class="out_profunion percents">
                                                     <h6>
-                                                        <span class="loantype-percents percents">{$loantype->percent}</span>%
+                                                        <span class="loantype-percents">{$loantype->percent|number_format:2:',':' '}</span>%
+                                                        <input type="hidden" class="percents"
+                                                               value="{$loantype->percent}">
                                                     </h6>
                                                     <span>За каждый день использования микрозаймом</span>
                                                 </div>
-                                                <div class="in_profunion" style="display: none">
+                                                <div class="in_profunion percents" style="display: none">
                                                     <h6>
-                                                        <span class="loantype-percents-profunion percents">{$loantype->profunion}</span>%
+                                                        <span class="loantype-percents-profunion">{$loantype->profunion|number_format:2:',':' '}</span>%
+                                                        <input type="hidden" class="percents"
+                                                               value="{$loantype->profunion}">
                                                     </h6>
                                                     <span>За каждый день использования микрозаймом</span>
                                                 </div>
@@ -258,7 +254,7 @@
                                             <label style="font-size: 12px" id="return_sum">Сумма возврата:</label>
                                             <label id="month_sum" style="display: none; font-size: 12px">Ежемесячный
                                                 платеж:</label>
-                                            <input class="form-control mask_number" name="probably_return_sum"
+                                            <input class="form-control" name="probably_return_sum"
                                                    id="final_sum"
                                                    style="margin-left: 10px; width: 100px" required
                                                    value="{$order->probably_return_sum}">

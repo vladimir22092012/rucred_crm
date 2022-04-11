@@ -23,6 +23,7 @@ class GroupsController extends Controller
         $name = $this->request->post('name');
 
         $last_id = $this->Groups->last_id();
+
         $number = $last_id + 1;
 
         if ($last_id < 10)
