@@ -66,6 +66,9 @@ class CompaniesController extends Controller
         if ($last_id < 10)
             $number = '0' . $number;
 
+        if(empty($last_id))
+            $number = '00';
+
         $branch =
             [
                 'group_id' => $group_id,

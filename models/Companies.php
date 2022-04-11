@@ -45,7 +45,7 @@ class Companies extends Core
         com.jur_address,
         com.phys_address
         FROM s_companies as com
-        JOIN s_groups as gr on com.group_id = gr.id
+        JOIN s_groups as gr on com.group_id = gr.number
         WHERE com.id = ?
         ", $id);
 
@@ -71,7 +71,7 @@ class Companies extends Core
         com.jur_address,
         com.phys_address
         FROM s_companies as com
-        JOIN s_groups as gr on com.group_id = gr.id
+        JOIN s_groups as gr on com.group_id = gr.number
         ");
 
         $this->db->query($query);

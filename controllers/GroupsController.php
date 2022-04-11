@@ -29,6 +29,9 @@ class GroupsController extends Controller
         if ($last_id < 10)
             $number = '0' . $number;
 
+        if(!$last_id || $last_id == 0)
+            $number = '00';
+
         $group =
             [
                 'name' => $name,
