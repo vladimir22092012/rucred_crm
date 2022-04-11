@@ -315,7 +315,7 @@
                                 class="hide-menu">Страницы сайта</span></a>
                 </li>
             {/if}
-            
+
                     {if in_array('analitics', $manager->permissions) || in_array('penalty_statistics', $manager->permissions)}
                         <li class="nav-small-cap">Аналитика</li>
                         <li {if in_array($module, ['DashboardController'])}class="active"{/if}>

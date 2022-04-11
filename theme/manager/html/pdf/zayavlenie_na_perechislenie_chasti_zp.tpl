@@ -30,10 +30,13 @@
     «Русское кредитное общество» Договора как займодавца в счёт погашения задолженности по микрозайму в соответствии с
     графиком платежей.<br>
 </div>
-<table style="width: 100%;" border="1">
+<div>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</div>
+<table style="width: 100%;" border="1" cellpadding="5">
     <tr style="width: 100%">
-        <td style="width: 20%; height: 50px"><span style="color: #b3b2ab">ПОДПИСЬ</span></td>
-        <td style="width: 40%"><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></td>
-        <td style="width: 40%"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span></td>
+        <td style="width: 25%; height: 30px" align="center"><span style="color: #b3b2ab">ПОДПИСЬ</span></td>
+        <td style="width: 50%" align="center"><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></td>
+        <td style="width: 25%" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span></td>
     </tr>
 </table>

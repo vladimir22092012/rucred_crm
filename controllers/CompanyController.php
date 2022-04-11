@@ -22,7 +22,7 @@ class CompanyController extends Controller
         return $this->design->fetch('company.tpl');
     }
 
-    private function action_add_branch()
+    public function action_add_branch()
     {
         $group_id = $this->request->post('group_id');
         $company_id = $this->request->post('company_id');

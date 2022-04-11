@@ -678,9 +678,6 @@ class OfflineOrderController extends Controller
         if ($order->amount > 15000)
             return array('error' => 'Сумма займа должна быть не более 15000 руб!');
 
-        if ($order->period > 14)
-            return array('error' => 'Срок займа должен быть не более 14 дней!');
-
         if ($order->status != 1)
             return array('error' => 'Неверный статус заявки, возможно Заявка уже одобрена или получен отказ');
 

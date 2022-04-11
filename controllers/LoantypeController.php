@@ -79,5 +79,4 @@ class LoantypeController extends Controller
 
         return $this->design->fetch('offline/loantype.tpl');
     }
-
 }

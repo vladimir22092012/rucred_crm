@@ -71,7 +71,7 @@ class UploadApp extends Core
                         {
                             if ($this->request->post('template'))
                                 $type = $this->request->post('template');
-                            
+
                             $this->Scans->delete_scan(array(
                                 'order_id' => (int)$this->request->post('order_id'),
                                 'type' => $type
