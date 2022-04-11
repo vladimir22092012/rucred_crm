@@ -141,7 +141,7 @@
                         <input type="text" class="form-control" name="name" id="name" value=""/>
                     </div>
                     <div class="form-group">
-                        <label for="eio_position" class="control-label">Дата выплаты:</label>
+                        <label for="eio_position" class="control-label">День выплаты:</label>
                         <input type="text" class="form-control" name="payday" id="payday" value=""/>
                     </div>
                     <div class="form-action">
