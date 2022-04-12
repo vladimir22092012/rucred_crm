@@ -98,7 +98,8 @@
                 <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
             </td>
             <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div></td>
+                <div><span style="color: #b3b2ab">ДАТА</span></div>
+            </td>
         </tr>
     </table>
 </footer>
@@ -179,7 +180,8 @@
                 <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
             </td>
             <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div></td>
+                <div><span style="color: #b3b2ab">ДАТА</span></div>
+            </td>
         </tr>
     </table>
 </footer>
@@ -268,7 +270,8 @@
                 <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
             </td>
             <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div></td>
+                <div><span style="color: #b3b2ab">ДАТА</span></div>
+            </td>
         </tr>
     </table>
 </footer>
@@ -351,7 +354,8 @@
                 <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
             </td>
             <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div></td>
+                <div><span style="color: #b3b2ab">ДАТА</span></div>
+            </td>
         </tr>
     </table>
 </footer>
@@ -419,7 +423,8 @@
                 <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
             </td>
             <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div></td>
+                <div><span style="color: #b3b2ab">ДАТА</span></div>
+            </td>
         </tr>
     </table>
 </footer>
@@ -435,7 +440,9 @@
             </td>
             <td style="width: 70%" align="left">С содержанием Общих условий получения и обслуживания микрозайма
                 Заёмщик ознакомлен и
-                согласен:<br><br>Подпись Заёмщика: _____________________<br><br>Общие условия Договора в печатном
+                согласен:<br><br>Подпись Заёмщика: _____________________ <img
+                        src="{$config->root_url}/theme/manager/html/pdf/i/warning.png" style="height: 12px;"><br><br>Общие
+                условия Договора в печатном
                 варианте выдаются Заимодавцем по требованию Заёмщика<br>
             </td>
         </tr>
@@ -500,7 +507,8 @@
                 <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
             </td>
             <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div></td>
+                <div><span style="color: #b3b2ab">ДАТА</span></div>
+            </td>
         </tr>
     </table>
 </footer>
@@ -562,7 +570,8 @@
                 <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
             </td>
             <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div></td>
+                <div><span style="color: #b3b2ab">ДАТА</span></div>
+            </td>
         </tr>
     </table>
 </footer>
@@ -675,7 +684,8 @@
                 <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
             </td>
             <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div></td>
+                <div><span style="color: #b3b2ab">ДАТА</span></div>
+            </td>
         </tr>
     </table>
 </footer>
@@ -684,7 +694,8 @@
 <div>
 
 </div>
-<div>В соответствии с требованиями действующего законодательства до подписания Индивидуальных условий Договора микрозайма
+<div>В соответствии с требованиями действующего законодательства до подписания Индивидуальных условий Договора
+    микрозайма
     Заёмщик заверяет Заимодавца, что:<br><br>(01) предварительно ознакомлен(-на) С Общими условиями выдачи микрозайма,
     размещёнными на официальном сайте
     Заимодавца;<br><br>(02) ознакомлен (-на) с размером полной стоимости микрозайма, перечнем и размерами
@@ -779,7 +790,8 @@
                 <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
             </td>
             <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div></td>
+                <div><span style="color: #b3b2ab">ДАТА</span></div>
+            </td>
         </tr>
     </table>
 </footer>
