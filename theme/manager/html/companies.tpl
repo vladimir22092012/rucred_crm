@@ -175,7 +175,7 @@
                         <label for="group_id" class="control-label">Группа:</label>
                         <select class="form-control" id="group_id" name="group">
                             {foreach $groups as $group}
-                                <option value="{$group->number}">{$group->name}</option>
+                                <option value="{$group->id}">{$group->name}</option>
                             {/foreach}
                         </select>
                     </div>
