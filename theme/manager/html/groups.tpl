@@ -29,8 +29,10 @@
             $('.save_edit').on('click', function (e) {
                 e.preventDefault();
 
-                let group_name = $(this).closest('.group_name').val();
+                let group_name = $(this).prev().val();
                 let group_id = $(this).attr('data-group');
+
+                console.log(group_name);
 
                 $.ajax({
                     method: 'POST',
@@ -40,7 +42,7 @@
                         group_id: group_id
                     },
                     success: function () {
-                        location.reload();
+
                     }
                 })
             });
@@ -138,8 +140,7 @@
                                                            value="{$group->name}"></td>
                                                 <td class="group_name_edit" style="display: none">
                                                     <input type="text" class="form-control group_name"
-                                                           style="width: 300px"
-                                                           value="{$group->name}">
+                                                           style="width: 300px" value="{$group->name}">
                                                     <input type="button" data-group="{$group->id}"
                                                            class="btn btn-outline-success save_edit"
                                                            value="Сохранить">
