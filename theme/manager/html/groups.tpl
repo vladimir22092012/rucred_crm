@@ -46,36 +46,35 @@
             });
 
             $('.action_add_group').on('click', function (e) {
-               e.preventDefault();
+                e.preventDefault();
 
-               $.ajax({
-                   method: 'POST',
-                   data: $('#add_group').serialize(),
-                   success: function () {
-                       location.reload();
-                   }
-               })
+                $.ajax({
+                    method: 'POST',
+                    data: $('#add_group').serialize(),
+                    success: function () {
+                        location.reload();
+                    }
+                })
             });
 
             $('.delete_group').on('click', function (e) {
-                e.preventDefault();
 
                 let group_id = $(this).attr('data-group');
 
                 $.ajax({
                     method: 'POST',
-                    dataType: 'JSON',
                     data: {
                         action: 'delete_group',
                         group_id: group_id
                     },
                     success: function (resp) {
-                        if (resp.length > 0) {
+
+                        if (resp.length>0) {
                             Swal.fire({
-                                title: resp['error'],
+                                title: resp,
                                 showCancelButton: false,
                                 confirmButtonText: 'ОК'
-                            })
+                            });
                         }
                         else {
                             location.reload();

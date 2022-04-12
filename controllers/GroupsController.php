@@ -84,7 +84,7 @@ class GroupsController extends Controller
 
         if(count($branches) > 1)
         {
-            echo json_encode(['error' => 'Ошибка. Количество филиалов более 1']);
+            echo 'Ошибка. Количество филиалов более 1';
             exit;
         }
 
