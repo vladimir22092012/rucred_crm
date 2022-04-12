@@ -41,6 +41,15 @@ class GroupLoanTypes extends Core
         return $id;
     }
 
+    public function delete_group($id)
+    {
+        $query = $this->db->placehold("
+        DELETE FROM s_group_loantypes 
+        WHERE group_id = ?", $id);
+
+        $this->db->query($query);
+    }
+
     public function update_record($record)
     {
         $query = $this->db->placehold("
