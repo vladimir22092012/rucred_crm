@@ -29,7 +29,7 @@
             $('.save_edit').on('click', function (e) {
                 e.preventDefault();
 
-                let group_name = $('.group_name').val();
+                let group_name = $(this).closest('.group_name').val();
                 let group_id = $(this).attr('data-group');
 
                 $.ajax({
@@ -43,6 +43,18 @@
                         location.reload();
                     }
                 })
+            });
+
+            $('.action_add_group').on('click', function (e) {
+               e.preventDefault();
+
+               $.ajax({
+                   method: 'POST',
+                   data: $('#add_group').serialize(),
+                   success: function () {
+                       location.reload();
+                   }
+               })
             });
 
             $('.delete_group').on('click', function (e) {
@@ -62,7 +74,7 @@
                             Swal.fire({
                                 title: resp['error'],
                                 showCancelButton: false,
-                                confirmButtonText: 'ОК',
+                                confirmButtonText: 'ОК'
                             })
                         }
                         else {
@@ -167,16 +179,15 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
-
                 <div class="alert" style="display:none"></div>
-                <form method="POST">
+                <form method="POST" id="add_group">
                     <input type="hidden" name="action" value="add_group">
                     <div class="form-group">
                         <label for="name" class="control-label">Наименование группы</label>
                         <input type="text" class="form-control" name="name" id="name" value=""/>
                     </div>
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
-                    <input type="submit" formmethod="post" class="btn btn-success" value="Сохранить">
+                    <input type="button" class="btn btn-success action_add_group" value="Сохранить">
                 </form>
             </div>
         </div>

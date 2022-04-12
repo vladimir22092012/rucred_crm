@@ -90,6 +90,7 @@ class GroupsController extends Controller
 
         else{
             $this->Groups->delete_group($group_id);
+            exit;
         }
     }
 }
