@@ -594,8 +594,8 @@
                 стоимость микрозайма в валюте
                 микрозайма: <br><strong>{$payment_schedule['result']['all_sum_pay']|number_format:2:',':' '}</strong>
                 (<strong>{$all_pay_sum_string_part_one|upper})</strong>
-                рублей
-                <strong>{if $all_pay_sum_string_part_two|upper}{$all_pay_sum_string_part_two|upper}{else}00{/if}</strong>
+                {$first_part_all_sum_pay|plural:'рубль':'рублей':'рубля'}
+                <strong>{if $all_pay_sum_string_part_two}{$all_pay_sum_string_part_two}{else}00{/if}</strong>
                 копеек<br>(05)
                 Полная стоимость микрозайма в процентах
                 годовых: <strong>{$percents}00%
@@ -606,7 +606,7 @@
                 <br><strong>{$payment_schedule['result']['all_loan_percents_pay']|number_format:2:',':' '}</strong>
                 (<strong>{$all_percents_string_part_one|upper}</strong>)
                 рублей
-                <strong>{if $all_percents_string_part_two|upper}{$all_percents_string_part_two|upper}{else}00{/if}</strong>
+                <strong>{if $all_percents_string_part_two}{$all_percents_string_part_two}{else}00{/if}</strong>
                 копеек<br>
             </td>
         </tr>

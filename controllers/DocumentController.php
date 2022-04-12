@@ -83,7 +83,7 @@ class DocumentController extends Controller
 
                 $this->check_date($date);
 
-                $loan_percents_pay = ($rest_sum * $percents_for_annuitet)/100;
+                $loan_percents_pay = ($rest_sum * $percents_for_annuitet) / 100;
 
                 $payment_schedule[$date->format('d.m.Y')] =
                     [
@@ -114,22 +114,18 @@ class DocumentController extends Controller
         }
 
         $all_pay_sum_string = explode('.', $payment_schedule['result']['all_sum_pay']);
+
         $all_pay_sum_string_part_one = $this->num2str($all_pay_sum_string[0]);
+        $all_pay_sum_string_part_two = substr($all_pay_sum_string[1], 0, 2);
 
-        if (count($all_pay_sum_string) > 1) {
-            $all_pay_sum_string_part_two = $this->num2str($all_pay_sum_string[1]);
-            $this->design->assign('all_pay_sum_string_part_two', $all_pay_sum_string_part_two);
-        }
-
+        $this->design->assign('all_pay_sum_string_part_two', $all_pay_sum_string_part_two);
         $this->design->assign('all_pay_sum_string_part_one', $all_pay_sum_string_part_one);
 
         $all_percents_string = explode('.', $payment_schedule['result']['all_loan_percents_pay']);
         $all_percents_string_part_one = $this->num2str($all_percents_string[0]);
 
-        if (count($all_percents_string) > 1) {
-            $all_percents_string_part_two = $this->num2str($all_percents_string[1]);
-            $this->design->assign('all_percents_string_part_two', $all_percents_string_part_two);
-        }
+        $all_percents_string_part_two = substr($all_percents_string[1], 0, 2);
+        $this->design->assign('all_percents_string_part_two', $all_percents_string_part_two);
 
         $percents_per_day_str = explode('.', $document->params->percent);
         $percents_per_day_str_part_one = $this->num2str($percents_per_day_str[0]);
@@ -144,7 +140,11 @@ class DocumentController extends Controller
 
         $this->design->assign('all_percents_string_part_one', $all_percents_string_part_one);
 
+        $first_part_all_sum_pay = explode('.', $payment_schedule['result']['all_sum_pay']);
+        $first_part_all_sum_pay = $first_part_all_sum_pay[0];
+
         $this->design->assign('payment_schedule', $payment_schedule);
+        $this->design->assign('first_part_all_sum_pay', $first_part_all_sum_pay);
 
 
         $percents_per_year = $document->params->percent * 365;
