@@ -60,7 +60,7 @@ class CompaniesController extends Controller
 
     private function action_add_brunch($group_id, $company_id, $branches_name, $branches_payday)
     {
-        $last_id = $this->Branches->last_id();
+        $last_id = $this->Branches->last_id($company_id);
         $number = $last_id + 1;
 
         if ($last_id < 10)
