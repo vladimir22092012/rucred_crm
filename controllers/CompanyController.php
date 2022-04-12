@@ -1,5 +1,7 @@
 <?php
 
+error_reporting(-1);
+ini_set('display_errors', 'On');
 class CompanyController extends Controller
 {
     public function fetch()
@@ -29,7 +31,7 @@ class CompanyController extends Controller
         $name = $this->request->post('name');
         $payday = $this->request->post('payday');
 
-        $last_id = $this->Branches->last_id();
+        $last_id = $this->Branches->last_id($company_id);
         $number = $last_id + 1;
 
         if ($last_id < 10)
