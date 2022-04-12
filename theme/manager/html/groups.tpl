@@ -32,8 +32,6 @@
                 let group_name = $(this).prev().val();
                 let group_id = $(this).attr('data-group');
 
-                console.log(group_name);
-
                 $.ajax({
                     method: 'POST',
                     data: {
@@ -42,7 +40,7 @@
                         group_id: group_id
                     },
                     success: function () {
-
+                        location.reload();
                     }
                 })
             });
@@ -72,7 +70,7 @@
                         group_id: group_id
                     },
                     success: function (resp) {
-                        if (resp['error']) {
+                        if (resp.length > 0) {
                             Swal.fire({
                                 title: resp['error'],
                                 showCancelButton: false,
