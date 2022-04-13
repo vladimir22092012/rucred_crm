@@ -32,10 +32,10 @@ class GroupsController extends Controller
 
         $last_id = $this->Groups->last_id();
 
-        $number = $last_id + 1;
-
         if ($last_id < 10)
-            $number = '0' . $number;
+            $number = '0' . $last_id;
+        else
+            $number = $last_id;
 
         if (!$last_id || $last_id == 0)
             $number = '00';
