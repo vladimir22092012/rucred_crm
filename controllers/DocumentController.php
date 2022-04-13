@@ -24,14 +24,17 @@ class DocumentController extends Controller
 
         $start_date = date('d', strtotime($document->params->date));
 
-        if($start_date < 10)
-        {
-            $plus_sum_percents = ($document->params->percent / 100) * $document->params->amount * 10-(int)$start_date;
+        if ($start_date < 10) {
+            $plus_sum_percents = ($document->params->percent / 100) * $document->params->amount * 10 - (int)$start_date;
         }
 
         $start_date = new DateTime(date('Y-m-d', strtotime($document->params->date)));
         $first_pay = new DateTime(date('Y-m-10', strtotime($document->params->date . '+1 month')));
         $end_date = new DateTime(date('Y-m-10', strtotime($document->params->probably_return_date)));
+
+        if (date_diff($start_date, $first_pay)->days < 30) {
+            $minus_sum_percents = ($document->params->percent / 100) * $document->params->amount * 30 - date_diff($start_date, $first_pay)->days;
+        }
 
 
         $period = date_diff($start_date, $end_date)->days;
@@ -72,15 +75,14 @@ class DocumentController extends Controller
 
             $payment_schedule[$first_pay->format('d.m.Y')] =
                 [
-                    'pay_sum' => $annoouitet_pay + $plus_sum_percents,
-                    'loan_percents_pay' => $annoouitet_pay - $document->params->amount + $plus_sum_percents,
+                    'pay_sum' => $annoouitet_pay,
+                    'loan_percents_pay' => $annoouitet_pay - $document->params->amount,
                     'loan_body_pay' => $document->params->amount,
                     'comission_pay' => 0.00,
                     'rest_pay' => 0.00
                 ];
 
-        }
-        else {
+        } else {
 
             $interval = new DateInterval('P1M');
             $daterange = new DatePeriod($first_pay, $interval, $end_date);
@@ -95,16 +97,29 @@ class DocumentController extends Controller
 
                 $loan_percents_pay = ($rest_sum * $percents_for_annuitet) / 100;
 
+                if($plus_sum_percents)
+                {
+                    $first_pay = $annoouitet_pay + $plus_sum_percents;
+                    $first_loan_percents_pay = $loan_percents_pay + $plus_sum_percents;
+                }
+
+                if($minus_sum_percents)
+                {
+                    $first_pay = $annoouitet_pay - $minus_sum_percents;
+                    $first_loan_percents_pay = $loan_percents_pay - $minus_sum_percents;
+                }
+
                 $payment_schedule[$date->format('d.m.Y')] =
                     [
-                        'pay_sum' => $annoouitet_pay + $plus_sum_percents,
-                        'loan_percents_pay' => $loan_percents_pay + $plus_sum_percents,
+                        'pay_sum' => ($plus_sum_percents != null || $minus_sum_percents != null) ? $first_pay : $annoouitet_pay,
+                        'loan_percents_pay' => ($plus_sum_percents != null || $minus_sum_percents != null) ? $first_loan_percents_pay : $loan_percents_pay,
                         'loan_body_pay' => $annoouitet_pay - $loan_percents_pay,
                         'comission_pay' => 0.00,
                         'rest_pay' => $rest_sum -= $annoouitet_pay
                     ];
 
-                $plus_sum_percents = 0;
+                $plus_sum_percents = null;
+                $minus_sum_percents = null;
             }
         }
 
