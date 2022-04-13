@@ -30,20 +30,23 @@ class GroupsController extends Controller
     {
         $name = $this->request->post('name');
 
-        $last_id = $this->Groups->last_id();
+        $last_number = $this->Groups->last_number();
 
-        if ($last_id < 10)
-            $number = '0' . $last_id;
-        else
-            $number = $last_id;
+        if (!$last_number) {
+            $last_number = '00';
+        }
+        if ($last_number < 10) {
+            $last_number += 1;
+            $last_number = '0' . $last_number;
+        } else {
+            $last_number += 1;
+        }
 
-        if (!$last_id || $last_id == 0)
-            $number = '00';
 
         $group =
             [
                 'name' => $name,
-                'number' => $number
+                'number' => $last_number
             ];
 
         $group_id = $this->Groups->add_group($group);

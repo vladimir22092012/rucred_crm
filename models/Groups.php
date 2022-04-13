@@ -53,15 +53,16 @@ class Groups extends Core
         $this->db->query($query);
     }
 
-    public function last_id()
+    public function last_number()
     {
         $query = $this->db->placehold("
-        SELECT MAX(`id`) as id
+        SELECT `number`
         FROM s_groups
+        order by id desc limit 1
         ");
 
         $this->db->query($query);
-        $id = $this->db->result('id');
+        $id = $this->db->result('number');
         return $id;
     }
 
