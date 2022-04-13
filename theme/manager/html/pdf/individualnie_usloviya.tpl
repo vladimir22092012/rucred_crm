@@ -598,7 +598,7 @@
                 <strong>{if $all_pay_sum_string_part_two}{$all_pay_sum_string_part_two}{else}00{/if}</strong>
                 копеек<br>(05)
                 Полная стоимость микрозайма в процентах
-                годовых: <strong>{$percents}00%
+                годовых: <strong>{$percents}%
                     ({$percents_per_year|upper} {if $second_part_percents|upper} ЦЕЛЫХ И {$second_part_percents|upper} ТЫСЯЧНЫХ ПРОЦЕНТОВ{/if}
                     )</strong>
                 годовых<br>(06) Общая сумма процентов за период пользования
