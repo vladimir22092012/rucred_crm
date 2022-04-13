@@ -33,7 +33,7 @@ class DocumentController extends Controller
         $end_date = new DateTime(date('Y-m-10', strtotime($document->params->probably_return_date)));
 
         if (date_diff($start_date, $first_pay)->days < 30) {
-            $minus_sum_percents = ($document->params->percent / 100) * $document->params->amount * 30 - date_diff($start_date, $first_pay)->days;
+            $minus_sum_percents = ($document->params->percent / 100) * $document->params->amount * (30 - date_diff($start_date, $first_pay)->days);
         }
 
 
