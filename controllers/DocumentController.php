@@ -22,6 +22,13 @@ class DocumentController extends Controller
         $loan = $this->Loantypes->get_loantype($loan_id);
         $this->design->assign('loan', $loan);
 
+        $start_date = date('d', strtotime($document->params->date));
+
+        if($start_date < 10)
+        {
+            $plus_sum_percents = ($document->params->percent / 100) * $document->params->amount * 10-(int)$start_date;
+        }
+
         $start_date = new DateTime(date('Y-m-d', strtotime($document->params->date)));
         $first_pay = new DateTime(date('Y-m-10', strtotime($document->params->date . '+1 month')));
         $end_date = new DateTime(date('Y-m-10', strtotime($document->params->probably_return_date)));
@@ -38,6 +45,7 @@ class DocumentController extends Controller
         $percent_per_month = (($document->params->percent / 100) * 365) / 12;
         $annoouitet_pay = $document->params->amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
 
+
         if (date_diff($start_date, $first_pay)->days < 20 && date_diff($start_date, $first_pay)->days > 3) {
             $first_pay_percents = clone $first_pay;
 
@@ -48,6 +56,7 @@ class DocumentController extends Controller
             $first_pay = new DateTime(date('Y-m-10', strtotime($document->params->date . '+1 month')));
             $first_pay->add(new DateInterval('P1M'));
             $first_pay = $this->check_date($first_pay);
+
 
             $payment_schedule[$first_pay_percents->format('d.m.Y')] =
                 [
@@ -63,14 +72,15 @@ class DocumentController extends Controller
 
             $payment_schedule[$first_pay->format('d.m.Y')] =
                 [
-                    'pay_sum' => $annoouitet_pay,
-                    'loan_percents_pay' => $annoouitet_pay - $document->params->amount,
+                    'pay_sum' => $annoouitet_pay + $plus_sum_percents,
+                    'loan_percents_pay' => $annoouitet_pay - $document->params->amount + $plus_sum_percents,
                     'loan_body_pay' => $document->params->amount,
                     'comission_pay' => 0.00,
                     'rest_pay' => 0.00
                 ];
 
-        } else {
+        }
+        else {
 
             $interval = new DateInterval('P1M');
             $daterange = new DatePeriod($first_pay, $interval, $end_date);
@@ -87,12 +97,14 @@ class DocumentController extends Controller
 
                 $payment_schedule[$date->format('d.m.Y')] =
                     [
-                        'pay_sum' => $annoouitet_pay,
-                        'loan_percents_pay' => $loan_percents_pay,
+                        'pay_sum' => $annoouitet_pay + $plus_sum_percents,
+                        'loan_percents_pay' => $loan_percents_pay + $plus_sum_percents,
                         'loan_body_pay' => $annoouitet_pay - $loan_percents_pay,
                         'comission_pay' => 0.00,
                         'rest_pay' => $rest_sum -= $annoouitet_pay
                     ];
+
+                $plus_sum_percents = 0;
             }
         }
 
