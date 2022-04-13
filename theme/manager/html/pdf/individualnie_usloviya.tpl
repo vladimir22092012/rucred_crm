@@ -665,7 +665,7 @@
     </tr>
     <tr>
         <td colspan="5">Полная стоимость микрозайма, % годовых:</td>
-        <td>{$percents}00%</td>
+        <td>{$percents}%</td>
     </tr>
 </table>
 <div>
