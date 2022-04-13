@@ -36,7 +36,7 @@
         </td>
         <td style="width: 36%" align="center">
             <div>Полная стоимость микрозайма в процентах годовых
-                <strong>{$percents}00%<br>
+                <strong>{$percents}%<br>
                     ({$percents_per_year|upper} {if $second_part_percents|upper} ЦЕЛЫХ И {$second_part_percents|upper} ТЫСЯЧНЫХ ПРОЦЕНТОВ{/if}
                     )</strong>
                 годовых

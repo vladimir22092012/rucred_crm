@@ -161,18 +161,21 @@ class DocumentController extends Controller
 
         $percents_per_year = $document->params->percent * 365;
         $percents = $percents_per_year;
-        $percents = number_format($percents, 1, ',', ' ');
+
+        $percents = number_format($percents, 3, ',', ' ');
+
         $this->design->assign('percents', $percents);
         $percents_str = explode(',', $percents);
 
         if (count($percents_str) > 1) {
-            $second_part_percents = $percents_str[1] . '00';
+            $second_part_percents = $percents_str[1];
             $second_part_percents = $this->num2str($second_part_percents);
             $this->design->assign('second_part_percents', $second_part_percents);
         }
 
         $percents_per_year = $this->num2str($percents_per_year);
         $this->design->assign('percents_per_year', $percents_per_year);
+
         $amount_to_string = $document->params->amount;
         $amount_to_string = $this->num2str($amount_to_string);
 
