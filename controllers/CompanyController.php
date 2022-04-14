@@ -35,17 +35,22 @@ class CompanyController extends Controller
         $name = $this->request->post('name');
         $payday = $this->request->post('payday');
 
-        $last_id = $this->Branches->last_id($company_id);
-        $number = $last_id + 1;
+        $last_number = $this->Branches->last_number($company_id);
 
-        if ($last_id < 10)
-            $number = '0' . $number;
-
+        if (!$last_number) {
+            $last_number = '00';
+        }
+        if ($last_number < 10) {
+            $last_number += 1;
+            $last_number = '0' . $last_number;
+        } else {
+            $last_number += 1;
+        }
         $branch =
             [
                 'group_id' => $group_id,
                 'company_id' => $company_id,
-                'number' => $number,
+                'number' => $last_number,
                 'name' => $name,
                 'payday' => $payday
             ];

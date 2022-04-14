@@ -57,16 +57,17 @@ class Branches extends Core
         return $results;
     }
 
-    public function last_id($company_id)
+    public function last_number($company_id)
     {
         $query = $this->db->placehold("
-        SELECT MAX(`id`) as id
-        FROM s_branches
-        WHERE company_id = ?
+        SELECT `number`
+        FROM s_companies
+        where company_id = ?
+        order by id desc limit 1
         ", (int)$company_id);
 
         $this->db->query($query);
-        $id = $this->db->result('id');
+        $id = $this->db->result('number');
         return $id;
     }
 }

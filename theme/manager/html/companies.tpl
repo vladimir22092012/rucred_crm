@@ -211,6 +211,10 @@
                         <label for="phys_address" class="control-label">Адрес местонахождения:</label>
                         <input type="text" class="form-control" name="phys_address" id="phys_address" value=""/>
                     </div>
+                    <div class="form-group">
+                        <label for="payday" class="control-label">День выплаты по умолчанию:</label>
+                        <input type="text" class="form-control" name="payday" id="payday" value=""/>
+                    </div>
                     <div>
                         <input type="button" class="btn btn-danger cancel" data-dismiss="modal" value="Отмена">
                         <input type="button" class="btn btn-success add_company" value="Сохранить">

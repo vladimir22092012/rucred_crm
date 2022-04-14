@@ -31,17 +31,24 @@ class CompaniesController extends Controller
         $kpp = $this->request->post('kpp');
         $jur_address = $this->request->post('jur_address');
         $phys_address = $this->request->post('phys_address');
+        $payday = $this->request->post('payday', 'integer');
 
-        $last_id = $this->Companies->last_id();
-        $number = $last_id + 1;
+        $last_number = $this->Companies->last_number($group_id);
 
-        if ($last_id < 10)
-            $number = '0' . $number;
+        if (!$last_number) {
+            $last_number = '00';
+        }
+        if ($last_number < 10) {
+            $last_number += 1;
+            $last_number = '0' . $last_number;
+        } else {
+            $last_number += 1;
+        }
 
         $company =
             [
                 'group_id' => $group_id,
-                'number' => $number,
+                'number' => $last_number,
                 'name' => $name,
                 'eio_position' => $eio_position,
                 'eio_fio' => $eio_fio,
@@ -54,26 +61,17 @@ class CompaniesController extends Controller
 
         $company_id = $this->Companies->add_company($company);
 
-        $this->action_add_brunch($group_id, $company_id, 'По умолчанию', 10);
+        $this->action_add_brunch($group_id, $company_id, 'По умолчанию', $payday);
         exit;
     }
 
     private function action_add_brunch($group_id, $company_id, $branches_name, $branches_payday)
     {
-        $last_id = $this->Branches->last_id($company_id);
-        $number = $last_id + 1;
-
-        if ($last_id < 10)
-            $number = '0' . $number;
-
-        if(empty($last_id))
-            $number = '00';
-
         $branch =
             [
                 'group_id' => $group_id,
                 'company_id' => $company_id,
-                'number' => $number,
+                'number' => 00,
                 'name' => $branches_name,
                 'payday' => $branches_payday
             ];

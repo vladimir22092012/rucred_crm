@@ -91,15 +91,17 @@ class Companies extends Core
         return $results;
     }
 
-    public function last_id()
+    public function last_number($group_id)
     {
         $query = $this->db->placehold("
-        SELECT MAX(`id`) as id
+        SELECT `number`
         FROM s_companies
-        ");
+        where group_id = ?
+        order by id desc limit 1
+        ", $group_id);
 
         $this->db->query($query);
-        $id = $this->db->result('id');
+        $id = $this->db->result('number');
         return $id;
     }
 }
