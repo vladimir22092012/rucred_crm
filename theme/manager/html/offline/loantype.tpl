@@ -143,7 +143,7 @@
                 </h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
-                    <li class="breadcrumb-item"><a href="loantypes">Виды кредитования</a></li>
+                    <li class="breadcrumb-item"><a href="loantypes">Продукты</a></li>
                     {if $loantype->id}
                         <li class="breadcrumb-item active">{$loantype->name}</li>
                     {else}

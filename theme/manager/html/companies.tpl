@@ -79,9 +79,9 @@
             <div class="col-md-6 col-8 align-self-center">
                 <h3 class="text-themecolor mb-0 mt-0">Компании</h3>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item">Главная</li>
-                    <li class="breadcrumb-item">Справочники</li>
-                    <li class="breadcrumb-item active">Компании</li>
+                    <li class="breadcrumb-item"><a href="/">Главная</a></li>
+                    <li class="breadcrumb-item"><a href="/">Справочники</a></li>
+                    <li class="breadcrumb-item active"><a href="/companies">Компании</a></li>
                 </ol>
             </div>
             <div class="col-md-6 col-4 align-self-center">
