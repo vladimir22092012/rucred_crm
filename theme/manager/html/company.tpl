@@ -25,7 +25,7 @@
                     method: 'POST',
                     data: form,
                     success: function () {
-
+                        location.reload();
                     }
                 })
             });
