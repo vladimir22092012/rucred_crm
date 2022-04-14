@@ -28,6 +28,17 @@ class Companies extends Core
         return $results;
     }
 
+    public function update_company($id, $company)
+    {
+        $query = $this->db->placehold("
+        UPDATE s_companies
+        SET ?%
+        WHERE id = ?
+        ", $company, $id);
+
+        $this->db->query($query);
+    }
+
     public function get_company_group($id)
     {
         $query = $this->db->placehold("

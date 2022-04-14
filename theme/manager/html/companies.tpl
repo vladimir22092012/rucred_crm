@@ -54,7 +54,7 @@
                 type: "party",
                 minChars: 3,
                 onSelect: function (suggestion) {
-                    $(this).val(suggestion.data.value);
+                    $(this).val(suggestion.value);
                     $('#kpp').val(suggestion.data.kpp);
                     $('#ogrn').val(suggestion.data.ogrn);
                     $('#inn').val(suggestion.data.inn);

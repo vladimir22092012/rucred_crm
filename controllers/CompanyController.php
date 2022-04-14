@@ -11,6 +11,10 @@ class CompanyController extends Controller
                 $this->action_add_branch();
                 break;
 
+            case 'edit_company':
+                $this->action_edit_company();
+                break;
+
         endswitch;
 
         $company_id = $this->request->get('id');
@@ -47,5 +51,32 @@ class CompanyController extends Controller
             ];
 
         $this->Branches->add_branch($branch);
+    }
+
+    private function action_edit_company()
+    {
+        $company_id = $this->request->post('company_id');
+        $name = $this->request->post('name');
+        $eio_position = $this->request->post('eio_position');
+        $eio_fio = $this->request->post('eio_fio');
+        $inn = $this->request->post('inn');
+        $ogrn = $this->request->post('ogrn');
+        $kpp = $this->request->post('kpp');
+        $jur_address = $this->request->post('jur_address');
+        $phys_address = $this->request->post('phys_address');
+
+        $company =
+            [
+                'name' => $name,
+                'eio_position' => $eio_position,
+                'eio_fio' => $eio_fio,
+                'inn' => $inn,
+                'ogrn' => $ogrn,
+                'kpp' => $kpp,
+                'jur_address' => $jur_address,
+                'phys_address' => $phys_address
+            ];
+
+        $this->Companies->update_company($company_id, $company);
     }
 }
