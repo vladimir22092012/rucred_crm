@@ -32,13 +32,15 @@ class GroupsController extends Controller
 
         $last_number = $this->Groups->last_number();
 
-        if (!$last_number) {
-            $last_number = '00';
-        }
-        if ($last_number < 10) {
+        if ($last_number && $last_number < 10) {
             $last_number += 1;
             $last_number = '0' . $last_number;
-        } else {
+        }
+
+        if ($last_number == false) {
+            $last_number = '00';
+        }
+        if($last_number &&  $last_number > 10) {
             $last_number += 1;
         }
 
@@ -84,6 +86,8 @@ class GroupsController extends Controller
         $group_id = $this->request->post('group_id', 'integer');
 
         $branches = $this->Branches->get_branches_by_group($group_id);
+
+        $this->GroupLoanTypes->delete_group($group_id);
 
         if(count($branches) > 1)
         {

@@ -35,13 +35,15 @@ class CompaniesController extends Controller
 
         $last_number = $this->Companies->last_number($group_id);
 
-        if (!$last_number) {
-            $last_number = '00';
-        }
-        if ($last_number < 10) {
+        if ($last_number && $last_number < 10) {
             $last_number += 1;
             $last_number = '0' . $last_number;
-        } else {
+        }
+
+        if ($last_number == false) {
+            $last_number = '00';
+        }
+        if($last_number &&  $last_number > 10) {
             $last_number += 1;
         }
 
