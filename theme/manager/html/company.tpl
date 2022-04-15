@@ -29,6 +29,54 @@
                     }
                 })
             });
+
+            $('.action-delete-company').on('click', function (e) {
+                e.preventDefault();
+
+                let company_id = $(this).attr('data-company-id');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'delete_company',
+                        company_id: company_id
+                    },
+                    success: function (resp) {
+                        location.replace('/companies');
+                    }
+                });
+            });
+
+            $('.add_branche').on('click', function (e) {
+                e.preventDefault();
+
+                let form = $('#add_branche_form').serialize();
+
+                $.ajax({
+                    method: 'POST',
+                    data: form,
+                    success: function () {
+                        location.reload();
+                    }
+                })
+            });
+
+            $('.delete_branch').on('click', function (e) {
+                e.preventDefault();
+
+                let branches_id = $(this).attr('data-branch-id');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'delete_branche',
+                        branches_id: branches_id
+                    },
+                    success: function (resp) {
+                        location.reload();
+                    }
+                });
+            });
         })
     </script>
 {/capture}
@@ -70,6 +118,9 @@
                                         <th colspan="2">Описание</th>
                                         <th><input type="button" class="btn btn-outline-info action-edit-company"
                                                    value="Редактировать компанию"></th>
+                                        <th><input type="button" data-company-id="{$company->com_id}"
+                                                   class="btn btn-outline-danger action-delete-company"
+                                                   value="Удалить компанию"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -125,6 +176,12 @@
                                             <td>{$branch->name}</td>
                                             <td>{$branch->payday}</td>
                                             <td>{$branch->fio} {$branch->phone}</td>
+                                            {if $branch->number != '00'}
+                                                <td>
+                                                    <input type="button" data-branch-id="{$branch->id}"
+                                                           class="btn btn-outline-danger delete_branch" value="Удалить">
+                                                </td>
+                                            {/if}
                                         </tr>
                                     {/foreach}
                                     </tbody>
@@ -153,7 +210,7 @@
             <div class="modal-body">
 
                 <div class="alert" style="display:none"></div>
-                <form method="POST">
+                <form method="POST" id="add_branche_form">
                     <input type="hidden" name="action" value="add_branch">
                     <input type="hidden" name="group_id" value="{$company->gr_id}">
                     <input type="hidden" name="company_id" value="{$company->com_id}">
@@ -173,10 +230,8 @@
                         <label for="phone" class="control-label">Контактный телефон:</label>
                         <input type="text" class="form-control" name="phone" id="phone" value=""/>
                     </div>
-                    <div class="form-action">
-                        <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
-                        <input type="submit" formmethod="post" class="btn btn-success" value="Сохранить">
-                    </div>
+                    <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
+                    <input type="button" formmethod="post" class="btn btn-success add_branche" value="Сохранить">
                 </form>
             </div>
         </div>

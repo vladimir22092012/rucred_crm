@@ -15,6 +15,14 @@ class CompanyController extends Controller
                 $this->action_edit_company();
                 break;
 
+            case 'delete_branche':
+                $this->action_delete_branche();
+                break;
+
+            case 'delete_company':
+                $this->action_delete_company();
+                break;
+
         endswitch;
 
         $company_id = $this->request->get('id');
@@ -87,5 +95,20 @@ class CompanyController extends Controller
             ];
 
         $this->Companies->update_company($company_id, $company);
+    }
+
+    private function action_delete_branche()
+    {
+        $branches_id = $this->request->post('branches_id', 'integer');
+
+        $this->Branches->delete_branche($branches_id);
+    }
+
+    private function action_delete_company()
+    {
+        $company_id = $this->request->post('company_id', 'integer');
+
+        $this->Companies->delete_company($company_id);
+        $this->Branches->delete_branches(['company_id' => $company_id]);
     }
 }

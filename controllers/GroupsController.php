@@ -97,6 +97,8 @@ class GroupsController extends Controller
 
         else{
             $this->Groups->delete_group($group_id);
+            $this->Companies->delete_companies($group_id);
+            $this->Branches->delete_branches(['group_id' => $group_id]);
             $this->GroupLoanTypes->delete_group($group_id);
             exit;
         }

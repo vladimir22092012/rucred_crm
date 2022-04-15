@@ -15,6 +15,26 @@ class Companies extends Core
         return $id;
     }
 
+    public function delete_companies($group_id)
+    {
+        $query = $this->db->placehold("
+        DELETE FROM s_companies
+        WHERE group_id = ?
+        ", $group_id);
+
+        $this->db->query($query);
+    }
+
+    public function delete_company($company_id)
+    {
+        $query = $this->db->placehold("
+        DELETE FROM s_companies
+        WHERE id = ?
+        ", $company_id);
+
+        $this->db->query($query);
+    }
+
     public function get_companies()
     {
         $query = $this->db->placehold("

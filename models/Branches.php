@@ -70,4 +70,35 @@ class Branches extends Core
         $id = $this->db->result('number');
         return $id;
     }
+
+    public function delete_branche($id){
+
+        $query = $this->db->placehold("
+        DELETE FROM s_branches
+        where id = ?
+        ", (int)$id);
+
+        $this->db->query($query);
+    }
+
+    public function delete_branches($array_id){
+
+        $group_id = '';
+        $company_id = '';
+
+        if(isset($array_id['group_id']))
+            $group_id = $this->db->placehold("AND group_id = ?", (int)$array_id['group_id']);
+
+        if(isset($array_id['company_id']))
+            $company_id = $this->db->placehold("AND company_id = ?", (int)$array_id['company_id']);
+
+        $query = $this->db->placehold("
+        DELETE FROM s_branches
+        where 1
+        $group_id
+        $company_id
+        ");
+
+        $this->db->query($query);
+    }
 }
