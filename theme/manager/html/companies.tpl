@@ -106,7 +106,7 @@
                                 <table id="config-table" class="table display table-striped dataTable">
                                     <thead>
                                     <tr>
-                                        <th class="">Группа</th>
+                                        <th>Группа</th>
                                         <th class="">Номер</th>
                                         <th class="">Компания</th>
                                         <th class="">Наименование группы</th>
@@ -119,11 +119,32 @@
                                         <th class="">Юридический адрес</th>
                                         <th class="">Адрес местонахождения</th>
                                     </tr>
+                                    <tr>
+                                        <th style="width: 120px">
+                                            <select class="form-control" id="group_filter">
+                                                <option value="none" selected>Фильтр</option>
+                                                {foreach $groups as $group}
+                                                    <option value="{$group->number}">{$group->number}</option>
+                                                {/foreach}
+                                            </select>
+                                        </th>
+                                        <th></th>
+                                        <th class=""></th>
+                                        <th class=""></th>
+                                        <th class=""></th>
+                                        <th class=""></th>
+                                        <th class=""></th>
+                                        <th class=""></th>
+                                        <th class=""></th>
+                                        <th class=""></th>
+                                        <th class=""></th>
+                                        <th class=""></th>
+                                    </tr>
                                     </thead>
                                     <tbody id="table-body">
                                     {if !empty($companies)}
                                         {foreach $companies as $company}
-                                            <tr onclick="location.href='company/{$company->id}'"
+                                            <tr class="companies" id="{$company->gr_number}" onclick="location.href='company/{$company->id}'"
                                                 onmouseover="this.style.backgroundColor='#AEA8F5';"
                                                 onmouseout="this.style.backgroundColor='white';">
                                                 <td>{$company->gr_number}</td>
