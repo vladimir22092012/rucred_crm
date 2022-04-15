@@ -94,7 +94,7 @@
                         
                     </div>
                     {*}
-                    
+                    {*}
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -135,7 +135,8 @@
                         </div>
                         
                     </div>
-                    
+                    {*}
+                    {*}
                     <hr class="mt-3 mb-4" />
                     
                     <div class="row">
@@ -169,7 +170,7 @@
                         </div>
                         
                     </div>
-                    
+                    {*}
                     <hr class="mt-3 mb-4" />
                     
                     <div class="row">
@@ -241,7 +242,7 @@
                     </div>
                                                             
                     <hr class="mt-3 mb-4" />
-                    
+                    {*}
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -268,7 +269,7 @@
                     </div>
                                         
                     <hr class="mt-3 mb-4" />
-                    
+                    {*}
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -287,7 +288,7 @@
                     </div>
                                         
                     <hr class="mt-3 mb-4" />
-                    
+                    {*}
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -350,6 +351,7 @@
                             </div>
                         </div>
                     </div>
+                    {*}
 {*}
                     <hr class="mt-3 mb-4" />
                     

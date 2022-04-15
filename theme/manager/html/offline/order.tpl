@@ -2030,9 +2030,7 @@
                                                      data-order="{$order->order_id}">
 
                                                     {foreach $scoring_types as $scoring_type}
-                                                        {if $scoring_type->name != 'fms'}
-                                                            {continue}
-                                                        {/if}
+                                                        
                                                         <div class="pl-2 pr-2 {if $scorings[$scoring_type->name]->status == 'new'}bg-light-warning{elseif $scorings[$scoring_type->name]->success}bg-light-success{else}bg-light-danger{/if}">
                                                             <div class="row {if !$scoring_type@last}border-bottom{/if}">
                                                                 <div class="col-12 col-sm-12 pt-2">

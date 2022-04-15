@@ -5,8 +5,6 @@ class ApikeysController extends Controller
     public function fetch()
     {
 
-return false;
-
         if ($this->request->method('post'))
         {
             $apikeys = $this->request->post('apikeys');
