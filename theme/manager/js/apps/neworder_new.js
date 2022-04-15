@@ -319,4 +319,69 @@ $(function () {
             delimiter: ' ',
         });
     });
+
+    $('.groups').on('change', function (e) {
+        e.preventDefault();
+
+        $('.my_company').empty();
+        $('.my_company').append('<option value="none">Выберите из списка</option>');
+        $('.branches').empty();
+        $('.branches').append('<option value="none">Выберите из списка</option>');
+
+        let group_id = $(this).val();
+
+        if (group_id != 'none') {
+            $.ajax({
+                dataType: 'JSON',
+                data: {
+                    action: 'get_companies',
+                    group_id: group_id
+                },
+                success: function (resp) {
+                    $('.my_company').show();
+
+                    for(let key in resp)
+                    {
+                        $('.my_company').append('<option value="'+resp[key]['id']+'">'+resp[key]['name']+'</option>')
+                    }
+                }
+            });
+        }
+        else
+        {
+            $('.my_company').hide();
+            $('.branches').hide();
+        }
+    });
+
+    $('.my_company').on('change', function (e) {
+        e.preventDefault();
+
+        $('.branches').empty();
+        $('.branches').append('<option value="none">Выберите из списка</option>');
+
+        let company_id = $(this).val();
+
+        if (company_id != 'none') {
+            $.ajax({
+                dataType: 'JSON',
+                data: {
+                    action: 'get_branches',
+                    company_id: company_id
+                },
+                success: function (resp) {
+                    $('.branches').show();
+
+                    for(let key in resp)
+                    {
+                        $('.branches').append('<option value="'+resp[key]['id']+'">'+resp[key]['name']+'</option>')
+                    }
+                }
+            });
+        }
+        else
+        {
+            $('.branches').hide();
+        }
+    })
 });

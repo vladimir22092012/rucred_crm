@@ -169,7 +169,7 @@
                                                 {$organizations[$loantype->organization_id]->name}
                                             </td>
                                             <td style="width: 60px;" class="jsgrid-cell jsgrid-align-center">
-                                                {$loantype->percent}
+                                                {$loantype->percent|number_format:2:',':' '}
                                             </td>
                                             <td style="width: 60px;" class="jsgrid-cell jsgrid-align-center">
                                                 {$loantype->charge}
@@ -178,7 +178,7 @@
                                                 {$loantype->insure}
                                             </td>
                                             <td style="width: 70px;" class="jsgrid-cell jsgrid-align-center">
-                                                {$loantype->max_amount}
+                                                {$loantype->max_amount|number_format:0:',':' '}
                                             </td>
                                             <td style="width: 70px;" class="jsgrid-cell jsgrid-align-center">
                                                 {$loantype->max_period}

@@ -35,11 +35,19 @@ class Companies extends Core
         $this->db->query($query);
     }
 
-    public function get_companies()
+    public function get_companies($filter = array())
     {
+
+        $group_id = '';
+
+        if($filter['group_id'])
+            $group_id = $this->db->placehold("AND group_id = ?", (int)$filter['group_id']);
+
         $query = $this->db->placehold("
         SELECT * 
         FROM s_companies
+        WHERE 1
+        $group_id
         ");
 
         $this->db->query($query);

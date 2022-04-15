@@ -46,7 +46,7 @@ class Loantypes extends Core
             WHERE 1
                 $id_filter
 				$keyword_filter
-            ORDER BY id DESC 
+            ORDER BY id ASC 
             $sql_limit
         ");
         $this->db->query($query);

@@ -258,16 +258,35 @@ class NeworderController extends Controller
             $this->check_date();
         }
 
+        if ($this->request->get('action') == 'get_companies') {
+
+            $group_id = $this->request->get('group_id');
+
+            $companies = $this->Companies->get_companies(['group_id' => $group_id]);
+
+            echo json_encode($companies);
+            exit;
+
+        }
+
+        if ($this->request->get('action') == 'get_branches') {
+
+            $company_id = $this->request->get('company_id');
+
+            $branches = $this->Branches->get_branches(['company_id' => $company_id]);
+
+            echo json_encode($branches);
+            exit;
+
+        }
+
         $loantypes = array();
         foreach ($this->loantypes->get_loantypes() as $lt)
             $loantypes[$lt->id] = $lt;
         $this->design->assign('loantypes', $loantypes);
 
-        $branches = $this->Branches->get_branches();
-        $this->design->assign('branches', $branches);
-
-        $companies = $this->Companies->get_companies();
-        $this->design->assign('companies', $companies);
+        $groups = $this->Groups->get_groups();
+        $this->design->assign('groups', $groups);
 
         return $this->design->fetch('offline/neworder.tpl');
     }

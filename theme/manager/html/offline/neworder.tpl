@@ -504,19 +504,23 @@
 
                                         <h3>Работодатель</h3><br>
                                         <div style="width: 100%; margin-left: 25px">
-                                            <select style="width: 500px" class="form-control my_company"
+                                            <select style="width: 500px" class="form-control groups"
                                                     name="company_select">
-                                                <option value="0" selected>Выберите из списка</option>
-                                                {if !empty($companies)}
-                                                    {foreach $companies as $company}
-                                                        <option value="{$company->id}">{$company->name}</option>
+                                                <option value="none" selected>Выберите из списка</option>
+                                                {if !empty($groups)}
+                                                    {foreach $groups as $group}
+                                                        <option value="{$group->id}">{$group->name}</option>
                                                     {/foreach}
                                                 {/if}
                                             </select>
-                                            <select style="width: 300px; margin-left:10px"
-                                                    class="form-control my_company"
+                                            <select style="width: 500px; margin-left:10px; display: none;" class="form-control my_company"
+                                                    name="company_select">
+                                                <option value="none" selected>Выберите из списка</option>
+                                            </select>
+                                            <select style="width: 300px; margin-left:10px; display: none;"
+                                                    class="form-control branches"
                                                     name="branch_select">
-                                                <option value="0" selected>Выберите из списка</option>
+                                                <option value="none" selected>Выберите из списка</option>
                                                 {if !empty($branches)}
                                                     {foreach $branches as $branch}
                                                         <option value="{$branch_id}">{$branch->name}</option>
