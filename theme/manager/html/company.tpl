@@ -112,6 +112,7 @@
                                         <td>Код</td>
                                         <td>Наименование филиала</td>
                                         <td>Дата выплаты</td>
+                                        <td>Контактная информация:</td>
                                         <td>
                                             <button class="btn float-right hidden-sm-down btn-outline-success add-company-modal">
                                                 <i class="mdi mdi-plus-circle"></i> Добавить филиал
@@ -123,6 +124,7 @@
                                             <td>{$company->gr_number}{$company->com_number}-{$branch->number}</td>
                                             <td>{$branch->name}</td>
                                             <td>{$branch->payday}</td>
+                                            <td>{$branch->fio} {$branch->phone}</td>
                                         </tr>
                                     {/foreach}
                                     </tbody>
@@ -131,10 +133,8 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
-
     </div>
 
     {include file='footer.tpl'}
@@ -164,6 +164,14 @@
                     <div class="form-group">
                         <label for="eio_position" class="control-label">День выплаты:</label>
                         <input type="text" class="form-control" name="payday" id="payday" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="fio" class="control-label">Начальник ТБ:</label>
+                        <input type="text" class="form-control" name="fio" id="fio" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone" class="control-label">Контактный телефон:</label>
+                        <input type="text" class="form-control" name="phone" id="phone" value=""/>
                     </div>
                     <div class="form-action">
                         <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">

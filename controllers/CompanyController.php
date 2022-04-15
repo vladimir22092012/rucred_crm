@@ -31,9 +31,11 @@ class CompanyController extends Controller
     public function action_add_branch()
     {
         $group_id = $this->request->post('group_id');
-        $company_id = $this->request->post('company_id');
+        $company_id = $this->request->post('company_id', 'integer');
         $name = $this->request->post('name');
         $payday = $this->request->post('payday');
+        $fio = $this->request->post('fio');
+        $phone = $this->request->post('phone');
 
         $last_number = $this->Branches->last_number($company_id);
 
@@ -42,9 +44,6 @@ class CompanyController extends Controller
             $last_number = '0' . $last_number;
         }
 
-        if ($last_number == false) {
-            $last_number = '00';
-        }
         if($last_number &&  $last_number > 10) {
             $last_number += 1;
         }
@@ -55,7 +54,9 @@ class CompanyController extends Controller
                 'company_id' => $company_id,
                 'number' => $last_number,
                 'name' => $name,
-                'payday' => $payday
+                'payday' => $payday,
+                'fio' => $fio,
+                'phone' => $phone
             ];
 
         $this->Branches->add_branch($branch);

@@ -61,7 +61,7 @@ class Branches extends Core
     {
         $query = $this->db->placehold("
         SELECT `number`
-        FROM s_companies
+        FROM s_branches
         where company_id = ?
         order by id desc limit 1
         ", (int)$company_id);

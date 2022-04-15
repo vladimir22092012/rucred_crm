@@ -41,7 +41,7 @@ class CompaniesController extends Controller
         }
 
         if ($last_number == false) {
-            $last_number = '00';
+            $last_number = '01';
         }
         if($last_number &&  $last_number > 10) {
             $last_number += 1;
@@ -73,7 +73,7 @@ class CompaniesController extends Controller
             [
                 'group_id' => $group_id,
                 'company_id' => $company_id,
-                'number' => 00,
+                'number' => '00',
                 'name' => $branches_name,
                 'payday' => $branches_payday
             ];
