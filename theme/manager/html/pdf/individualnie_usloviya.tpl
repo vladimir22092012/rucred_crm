@@ -51,7 +51,7 @@
         </td>
     </tr>
 </table>
-<div><h3>ДОГОВОР МИКРОЗАЙМА № {$order_id}</h3></div>
+<div><h3>ДОГОВОР МИКРОЗАЙМА № {$uid}</h3></div>
 <table>
     <tr>
         <td style="20%" align="left">город Москва</td>

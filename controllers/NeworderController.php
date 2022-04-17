@@ -186,6 +186,9 @@ class NeworderController extends Controller
                 $user['Faktroom'] = (!empty($Faktaddress->data->flat)) ? $Faktaddress->data->flat : '';
             }
 
+            $user['company_id'] = (int)$this->request->post('company', 'integer');
+
+
             if (empty($user['user_id'])) {
 
                 $user['stage_personal'] = 1;
