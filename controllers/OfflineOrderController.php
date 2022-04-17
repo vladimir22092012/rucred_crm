@@ -457,7 +457,6 @@ class OfflineOrderController extends Controller
                 $results[$type] = $this->documents->create_document(array(
                     'user_id' => $order->user_id,
                     'order_id' => $order->order_id,
-                    'contract_id' => ' ',
                     'type' => $type,
                     'params' => $order,
                 ));

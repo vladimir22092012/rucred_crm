@@ -31,12 +31,10 @@ class Branches extends Core
 
     public function get_branches($filter = array())
     {
-
         $company_id = '';
 
         if($filter['company_id'])
             $company_id = $this->db->placehold("AND company_id = ?", (int)$filter['company_id']);
-
 
         $query = $this->db->placehold("
         SELECT * 
@@ -49,6 +47,20 @@ class Branches extends Core
         $results = $this->db->results();
 
         return $results;
+    }
+
+    public function get_branch($id)
+    {
+        $query = $this->db->placehold("
+        SELECT * 
+        FROM s_branches
+        WHERE id = ?
+        ", $id);
+
+        $this->db->query($query);
+        $result = $this->db->result();
+
+        return $result;
     }
 
     public function get_branches_by_group($group_id)

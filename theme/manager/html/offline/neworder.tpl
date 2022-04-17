@@ -263,8 +263,8 @@
                                             <input type="button" class="btn btn-outline-info to_form_loan"
                                                    value="Сформировать">
                                         </div>
-                                        <input type="hidden" id="loan_percents" name="percent" class="form-control"
-                                               style="margin-left: 10px; width: 80px">
+                                        <input id="loan_percents" name="percent" class="form-control"
+                                               style="margin-left: 10px; width: 80px; display: none">
                                         <input type="hidden" id="max_period" name="max_period" class="form-control"
                                                style="margin-left: 10px; width: 80px">
                                     </div>
@@ -505,7 +505,7 @@
                                         <h3>Работодатель</h3><br>
                                         <div style="width: 100%; margin-left: 25px">
                                             <select style="width: 500px" class="form-control groups"
-                                                    name="company_select">
+                                                    name="group">
                                                 <option value="none" selected>Выберите из списка</option>
                                                 {if !empty($groups)}
                                                     {foreach $groups as $group}
@@ -513,19 +513,15 @@
                                                     {/foreach}
                                                 {/if}
                                             </select>
-                                            <select style="width: 500px; margin-left:10px; display: none;" class="form-control my_company"
-                                                    name="company_select">
+                                            <select style="width: 500px; margin-left:10px; display: none;"
+                                                    class="form-control my_company"
+                                                    name="company">
                                                 <option value="none" selected>Выберите из списка</option>
                                             </select>
                                             <select style="width: 300px; margin-left:10px; display: none;"
                                                     class="form-control branches"
-                                                    name="branch_select">
+                                                    name="branch">
                                                 <option value="none" selected>Выберите из списка</option>
-                                                {if !empty($branches)}
-                                                    {foreach $branches as $branch}
-                                                        <option value="{$branch_id}">{$branch->name}</option>
-                                                    {/foreach}
-                                                {/if}
                                             </select>
                                         </div>
                                         <br>
@@ -678,6 +674,71 @@
                                         </div>
                                         <br>
                                         <hr style="width: 100%; size: 5px">
+                                        <h4>Текущие банковские кредиты и займы:</h4>
+                                        <table class="jsgrid-table table table-striped table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th>Банк / МФО</th>
+                                                <th>Текущий долг, руб.</th>
+                                                <th>Ежемесячный платеж, руб.</th>
+                                                <th>Срок погашения, месяц и год</th>
+                                                <th>Ставка, % годовых</th>
+                                                <th>Наличие просрочек</th>
+                                                <th></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="credits_table">
+                                            <tr>
+                                                <td><input class="form-control" name="credits_bank_name[][credits_bank_name]" type="text"
+                                                           value=""></td>
+                                                <td><input class="form-control" name="credits_rest_sum[][credits_rest_sum]" type="text"
+                                                           value=""></td>
+                                                <td><input class="form-control" name="credits_month_pay[][credits_month_pay]" type="text"
+                                                           value=""></td>
+                                                <td><input class="form-control" name="credits_return_date[][credits_return_date]" type="text"
+                                                           value=""></td>
+                                                <td><input class="form-control" name="credits_percents[][credits_percents]" type="text"
+                                                           value=""></td>
+                                                <td><input class="form-control" name="credits_delay[][credits_delay]" type="text"
+                                                           value=""></td>
+                                                <td><input type="button"
+                                                           class="btn btn-outline-success add_to_credits_table"
+                                                           value="+"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <br>
+                                        <hr style="width: 100%; size: 5px">
+                                        <h4>Используемые банковские карты:</h4>
+                                        <table class="jsgrid-table table table-striped table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th>Банк / МФО</th>
+                                                <th>Лимит по банковской карте, руб.</th>
+                                                <th>Текущая задолженность, руб.</th>
+                                                <th>Срок действия карты, месяц и год</th>
+                                                <th>Наличие просрочек</th>
+                                                <th></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="cards_table">
+                                            <tr>
+                                                <td><input class="form-control" name="cards_bank_name[][cards_bank_name]" type="text"
+                                                           value=""></td>
+                                                <td><input class="form-control" name="cards_limit[][cards_limit]" type="text"
+                                                           value=""></td>
+                                                <td><input class="form-control" name="cards_rest_sum[][cards_rest_sum]" type="text"
+                                                           value=""></td>
+                                                <td><input class="form-control" name="cards_validity_period[][cards_validity_period]"
+                                                           type="text" value=""></td>
+                                                <td><input class="form-control" name="cards_delay[][cards_delay]" type="text"
+                                                           value=""></td>
+                                                <td><input type="button"
+                                                           class="btn btn-outline-success add_to_cards_table"
+                                                           value="+"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
                                         <br>
                                         <br>
                                         <div style="display: flex; width: 500px;" id="buttons_append">

@@ -340,15 +340,13 @@ $(function () {
                 success: function (resp) {
                     $('.my_company').show();
 
-                    for(let key in resp)
-                    {
-                        $('.my_company').append('<option value="'+resp[key]['id']+'">'+resp[key]['name']+'</option>')
+                    for (let key in resp) {
+                        $('.my_company').append('<option value="' + resp[key]['id'] + '">' + resp[key]['name'] + '</option>')
                     }
                 }
             });
         }
-        else
-        {
+        else {
             $('.my_company').hide();
             $('.branches').hide();
         }
@@ -372,16 +370,44 @@ $(function () {
                 success: function (resp) {
                     $('.branches').show();
 
-                    for(let key in resp)
-                    {
-                        $('.branches').append('<option value="'+resp[key]['id']+'">'+resp[key]['name']+'</option>')
+                    for (let key in resp) {
+                        $('.branches').append('<option value="' + resp[key]['id'] + '">' + resp[key]['name'] + '</option>')
                     }
                 }
             });
         }
-        else
-        {
+        else {
             $('.branches').hide();
         }
-    })
+    });
+
+    $('.add_to_credits_table').on('click', function (e) {
+        e.preventDefault();
+
+        $('#credits_table').append(
+            '<tr>' +
+            '<td><input class="form-control" name="credits_bank_name[][credits_bank_name]" type="text" value=""></td>' +
+            '<td><input class="form-control" name="credits_rest_sum[][credits_rest_sum]" type="text" value=""></td>' +
+            '<td><input class="form-control" name="credits_month_pay[][credits_month_pay]" type="text" value=""></td>' +
+            '<td><input class="form-control" name="credits_return_date[][credits_return_date]" type="text" value=""></td>' +
+            '<td><input class="form-control" name="credits_percents[][credits_percents]" type="text" value=""></td>' +
+            '<td><input class="form-control" name="credits_delay[][credits_delay]" type="text" value=""></td>' +
+            '<td></td>' +
+            '</tr>');
+    });
+
+    $('.add_to_cards_table').on('click', function (e) {
+        e.preventDefault();
+
+        $('#cards_table').append(
+            '<tr>' +
+            '<td><input class="form-control" name="cards_bank_name[][cards_bank_name]" type="text" value=""></td>' +
+            '<td><input class="form-control" name="cards_limit[][cards_limit]" type="text" value=""></td>' +
+            '<td><input class="form-control" name="cards_rest_sum[][cards_rest_sum]" type="text" value=""></td>' +
+            '<td><input class="form-control" name="cards_validity_period[][cards_validity_period]" type="text" value=""></td>' +
+            '<td><input class="form-control" name="cards_delay[][cards_delay]" type="text" value=""></td>' +
+            '<td></td>' +
+            '</tr>');
+    });
+
 });

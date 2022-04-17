@@ -8,9 +8,6 @@ class NeworderController extends Controller
     {
         if ($this->request->method('post')) {
 
-
-            $order = new StdClass();
-
             $amount = preg_replace("/[^,.0-9]/", '', $this->request->post('amount'));
             $start_date = $this->request->post('start_date');
             $start_date = date('Y-m-d', strtotime($start_date));
@@ -55,6 +52,25 @@ class NeworderController extends Controller
             $user['viber_num'] = trim($this->request->post('viber'));
             $user['whatsapp_num'] = trim($this->request->post('whatsapp'));
             $user['telegram_num'] = trim($this->request->post('telegram'));
+
+            $cards_bank_name = $this->request->post('cards_bank_name');
+            $cards_limit = $this->request->post('cards_limit');
+            $cards_rest_sum = $this->request->post('cards_rest_sum');
+            $cards_validity_period = $this->request->post('cards_validity_period');
+            $cards_delay = $this->request->post('cards_delay');
+
+            $credits_bank_name = $this->request->post('credits_bank_name');
+            $credits_rest_sum = $this->request->post('credits_rest_sum');
+            $credits_month_pay = $this->request->post('credits_month_pay');
+            $credits_return_date = $this->request->post('credits_return_date');
+            $credits_percents = $this->request->post('credits_percents');
+            $credits_delay = $this->request->post('credits_delay');
+
+            $credits_story = json_encode(array_replace_recursive($credits_bank_name, $credits_rest_sum, $credits_month_pay, $credits_return_date, $credits_percents, $credits_delay));
+            $cards_story = json_encode(array_replace_recursive($cards_bank_name, $cards_limit, $cards_rest_sum, $cards_validity_period, $cards_delay));
+
+            $user['credits_story'] = $credits_story;
+            $user['cards_story'] = $cards_story;
 
             $profunion = $this->request->post('profunion');
 
@@ -208,13 +224,55 @@ class NeworderController extends Controller
                     'manager_id' => $this->manager->id,
                     'status' => ($this->request->post('draft')) ? 12 : 1,
                     'offline' => 1,
-                    'percent' => $percent,
                     'charge' => $charge,
                     'insure' => $insure,
                     'loan_type' => (int)$loan_type,
                     'probably_return_date' => date('Y-m-d H:i:s', strtotime($this->request->post('end_date'))),
-                    'probably_return_sum' => preg_replace("/[^,.0-9]/", '', $this->request->post('probably_return_sum')),
+                    'probably_return_sum' => (int)preg_replace("/[^,.0-9]/", '', $this->request->post('probably_return_sum')),
+                    'group_id' => (int)$this->request->post('group'),
+                    'company_id' => (int)$this->request->post('company')
                 );
+
+
+                $loan_type_groups = $this->GroupLoanTypes->get_loantype_groups((int)$loan_type);
+
+                $record = array();
+
+                foreach ($loan_type_groups as $loantype_group) {
+                    if ($loantype_group['id'] == $order['group_id'])
+                        $record = $loantype_group;
+                }
+
+                if ($profunion == 0)
+                    $order['percent'] = (float)$record['standart_percents'];
+
+                else
+                    $order['percent'] = (float)$record['preferential_percents'];
+
+                $company = $this->Companies->get_company($order['company_id']);
+                $group = $this->Groups->get_group($order['group_id']);
+
+                $loan_type_number = ($loan_type < 10) ? '0' . $loan_type : $loan_type;
+
+                $personal_number = $user['personal_number'];
+                $last_number = $this->orders->last_order_number($user_id);
+
+                $uid = "$group->number $company->number $loan_type_number $personal_number";
+
+                if ($last_number && $last_number < 10) {
+                    $last_number += 1;
+                    $uid .= '0' . $last_number;
+                }
+
+                if ($last_number == false) {
+                    $uid .= ' 01';
+                }
+                if ($last_number && $last_number > 10) {
+                    $last_number += 1;
+                    $uid .= "$last_number";
+                }
+
+                $order['uid'] = $uid;
 
                 if (!empty(intval($this->request->post('order_id')))) {
                     $order_id = intval($this->request->post('order_id'));

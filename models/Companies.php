@@ -37,7 +37,6 @@ class Companies extends Core
 
     public function get_companies($filter = array())
     {
-
         $group_id = '';
 
         if($filter['group_id'])
@@ -52,6 +51,20 @@ class Companies extends Core
 
         $this->db->query($query);
         $results = $this->db->results();
+
+        return $results;
+    }
+
+    public function get_company($id)
+    {
+        $query = $this->db->placehold("
+        SELECT * 
+        FROM s_companies
+        WHERE id = ?
+        ", $id);
+
+        $this->db->query($query);
+        $results = $this->db->result();
 
         return $results;
     }

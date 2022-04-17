@@ -177,6 +177,21 @@ class Orders extends Core
 
         return $result;
     }
+
+    public function last_order_number($user_id)
+    {
+        $query = $this->db->placehold("
+        SELECT `number`
+        FROM s_orders
+        where user_id = ?
+        order by id desc limit 1
+        ", (int)$user_id);
+
+        $this->db->query($query);
+        $results = $this->db->result('number');
+
+        return $results;
+    }
     
 	public function get_orders($filter = array())
 	{
@@ -690,6 +705,7 @@ if ($this->is_developer){
 		$query = $this->db->placehold("
             INSERT INTO __orders SET ?%
         ", (array)$order);
+
         $this->db->query($query);
         $id = $this->db->insert_id();
         
