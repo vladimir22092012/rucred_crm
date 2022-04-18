@@ -253,11 +253,10 @@ class NeworderController extends Controller
                 else
                     $order['percent'] = (float)$record['preferential_percents'];
 
-
+                $rest_sum = $order['amount'];
                 $start_date = date('Y-m-d', strtotime($order['probably_start_date']));
                 $end_date = new DateTime(date('Y-m-10', strtotime($order['probably_return_date'])));
                 $percent_per_month = (($order['percent'] / 100) * 365) / 12;
-                $percents_for_annuitet = ($order['percent'] * 365) / 12;
                 $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
 
                 if(date('d', strtotime($start_date)) < 10)
@@ -270,11 +269,11 @@ class NeworderController extends Controller
                     {
                         $plus_loan_percents = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
 
-                        $rest_sum = ($annoouitet_pay * $loan->max_period) + $plus_loan_percents;
-
                         $sum_first_pay = $annoouitet_pay + $plus_loan_percents;
 
-                        $loan_percents_pay = ($rest_sum * $percents_for_annuitet) / 100;
+                        $loan_percents_pay = $rest_sum * $percent_per_month;
+
+                        $paydate->add(new DateInterval('P1M'));
 
                         $payment_schedule[$paydate->format('d.m.Y')] =
                             [
@@ -282,7 +281,7 @@ class NeworderController extends Controller
                                 'loan_percents_pay' => $annoouitet_pay - $loan_percents_pay,
                                 'loan_body_pay' => 0.00,
                                 'comission_pay' => 0.00,
-                                'rest_pay' => $rest_sum -= $sum_first_pay
+                                'rest_pay' => $rest_sum
                             ];
                         $paydate->add(new DateInterval('P1M'));
                     }
@@ -291,15 +290,13 @@ class NeworderController extends Controller
                     {
                         $sum_first_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
 
-                        $rest_sum = ($annoouitet_pay * $loan->max_period) - $sum_first_pay;
-
                         $payment_schedule[$paydate->format('d.m.Y')] =
                             [
                                 'pay_sum' => $sum_first_pay,
                                 'loan_percents_pay' => $sum_first_pay,
                                 'loan_body_pay' => 0.00,
                                 'comission_pay' => 0.00,
-                                'rest_pay' => $rest_sum -= $sum_first_pay
+                                'rest_pay' => $rest_sum
                             ];
                         $paydate->add(new DateInterval('P1M'));
                     }
@@ -314,7 +311,7 @@ class NeworderController extends Controller
 
                             $paydate = $this->check_pay_date($paydate);
 
-                            $loan_percents_pay = ($rest_sum * $percents_for_annuitet) / 100;
+                            $loan_percents_pay = $rest_sum * $percent_per_month;
 
                             $payment_schedule[$date->format('d.m.Y')] =
                                 [
@@ -322,7 +319,7 @@ class NeworderController extends Controller
                                     'loan_percents_pay' => $loan_percents_pay,
                                     'loan_body_pay' => $annoouitet_pay - $loan_percents_pay,
                                     'comission_pay' => 0.00,
-                                    'rest_pay' => $rest_sum -= $annoouitet_pay
+                                    'rest_pay' => $rest_sum -= $annoouitet_pay - $loan_percents_pay
                                 ];
                         }
                     }
@@ -339,8 +336,6 @@ class NeworderController extends Controller
 
 
                         $sum_first_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($first_pay, $issuance_date)->days;
-
-                        $rest_sum = ($annoouitet_pay * $loan->max_period) - $sum_first_pay;
 
                         $payment_schedule[$paydate->format('d.m.Y')] =
                             [
@@ -364,23 +359,18 @@ class NeworderController extends Controller
                         $sum_first_body_pay = $annoouitet_pay - $sum_first_pay;
                         $sum_first_percents_pay = $sum_first_pay - $sum_first_body_pay;
 
-                        $rest_sum = ($annoouitet_pay * $loan->max_period) - $minus_percents;
-
                         $payment_schedule[$paydate->format('d.m.Y')] =
                             [
                                 'pay_sum' => $sum_first_pay,
                                 'loan_percents_pay' => $sum_first_percents_pay,
                                 'loan_body_pay' => $sum_first_body_pay,
                                 'comission_pay' => 0.00,
-                                'rest_pay' => $rest_sum - $sum_first_pay
+                                'rest_pay' => $rest_sum - $sum_first_body_pay
                             ];
 
                         $paydate->add(new DateInterval('P1M'));
 
 
-                    }
-                    if(date_diff($first_pay, $issuance_date)->days >= 30){
-                        $rest_sum = $annoouitet_pay * $loan->max_period;
                     }
 
                     if($rest_sum != 0)
@@ -393,7 +383,7 @@ class NeworderController extends Controller
 
                             $date = $this->check_pay_date($date);
 
-                            $loan_percents_pay = ($rest_sum * $percents_for_annuitet) / 100;
+                            $loan_percents_pay = $rest_sum * $percent_per_month;
 
                             $payment_schedule[$date->format('d.m.Y')] =
                                 [
@@ -401,7 +391,7 @@ class NeworderController extends Controller
                                     'loan_percents_pay' => $loan_percents_pay,
                                     'loan_body_pay' => $annoouitet_pay - $loan_percents_pay,
                                     'comission_pay' => 0.00,
-                                    'rest_pay' => $rest_sum -= $annoouitet_pay
+                                    'rest_pay' => $rest_sum -= $annoouitet_pay - $loan_percents_pay
                                 ];
                         }
                     }
