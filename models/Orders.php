@@ -76,6 +76,7 @@ class Orders extends Core
                 o.loan_type,
                 o.probably_return_date,
                 o.probably_return_sum,
+                o.payment_schedule,
                 u.UID AS user_uid,
                 u.service_sms,
                 u.service_insurance,

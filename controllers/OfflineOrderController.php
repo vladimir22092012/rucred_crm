@@ -466,6 +466,19 @@ class OfflineOrderController extends Controller
 
         }
 
+        $payment_schedule = (array)json_decode($order->payment_schedule);
+
+        uksort($payment_schedule,
+            function( $a, $b){
+
+            if($a == $b)
+                return 0;
+
+            return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+        });
+
+        $this->design->assign('payment_schedule', $payment_schedule);
+
         $order = $this->orders->get_order($order_id);
 
         $filter['user_id'] = $order->user_id;

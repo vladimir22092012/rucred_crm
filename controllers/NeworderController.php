@@ -460,11 +460,7 @@ class NeworderController extends Controller
                     }
                 }
             }
-
-
             $this->design->assign('order', (object)$user);
-
-
         }
 
         if ($this->request->get('order_id')) {
