@@ -708,6 +708,7 @@ if ($this->is_developer){
         ", (array)$order);
 
         $this->db->query($query);
+
         $id = $this->db->insert_id();
         
         return $id;

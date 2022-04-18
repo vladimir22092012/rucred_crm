@@ -231,6 +231,7 @@ class NeworderController extends Controller
                     'insure' => $insure,
                     'loan_type' => (int)$loan_type,
                     'probably_return_date' => date('Y-m-d H:i:s', strtotime($this->request->post('end_date'))),
+                    'probably_start_date' => date('Y-m-d H:i:s', strtotime($this->request->post('start_date'))),
                     'probably_return_sum' => (int)preg_replace("/[^,.0-9]/", '', $this->request->post('probably_return_sum')),
                     'group_id' => (int)$this->request->post('group'),
                     'company_id' => (int)$this->request->post('company')
@@ -253,7 +254,7 @@ class NeworderController extends Controller
                     $order['percent'] = (float)$record['preferential_percents'];
 
 
-                $start_date = date('Y-m-d', strtotime($order['date']));
+                $start_date = date('Y-m-d', strtotime($order['probably_start_date']));
                 $end_date = new DateTime(date('Y-m-10', strtotime($order['probably_return_date'])));
                 $percent_per_month = (($order['percent'] / 100) * 365) / 12;
                 $percents_for_annuitet = ($order['percent'] * 365) / 12;
@@ -283,9 +284,10 @@ class NeworderController extends Controller
                                 'comission_pay' => 0.00,
                                 'rest_pay' => $rest_sum -= $sum_first_pay
                             ];
+                        $paydate->add(new DateInterval('P1M'));
                     }
 
-                    if($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days > 3)
+                    else
                     {
                         $sum_first_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
 
@@ -299,12 +301,12 @@ class NeworderController extends Controller
                                 'comission_pay' => 0.00,
                                 'rest_pay' => $rest_sum -= $sum_first_pay
                             ];
+                        $paydate->add(new DateInterval('P1M'));
                     }
 
 
                     if($rest_sum != 0)
                     {
-                        $paydate->add(new DateInterval('P1M'));
                         $interval = new DateInterval('P1M');
                         $daterange = new DatePeriod($paydate, $interval, $end_date);
 
@@ -335,6 +337,7 @@ class NeworderController extends Controller
 
                         $paydate = $this->check_pay_date($first_pay);
 
+
                         $sum_first_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($first_pay, $issuance_date)->days;
 
                         $rest_sum = ($annoouitet_pay * $loan->max_period) - $sum_first_pay;
@@ -347,6 +350,7 @@ class NeworderController extends Controller
                                 'comission_pay' => 0.00,
                                 'rest_pay' => $rest_sum
                             ];
+                        $paydate->add(new DateInterval('P1M'));
 
                     }
                     if(date_diff($first_pay, $issuance_date)->days > 20 && date_diff($first_pay, $issuance_date)->days < 30)
@@ -371,19 +375,23 @@ class NeworderController extends Controller
                                 'rest_pay' => $rest_sum - $sum_first_pay
                             ];
 
+                        $paydate->add(new DateInterval('P1M'));
 
+
+                    }
+                    if(date_diff($first_pay, $issuance_date)->days >= 30){
+                        $rest_sum = $annoouitet_pay * $loan->max_period;
                     }
 
                     if($rest_sum != 0)
                     {
                         $paydate = clone $first_pay;
-                        $paydate->add(new DateInterval('P1M'));
                         $interval = new DateInterval('P1M');
                         $daterange = new DatePeriod($paydate, $interval, $end_date);
 
                         foreach ($daterange as $date) {
 
-                            $paydate = $this->check_pay_date($paydate);
+                            $date = $this->check_pay_date($date);
 
                             $loan_percents_pay = ($rest_sum * $percents_for_annuitet) / 100;
 
