@@ -1687,7 +1687,7 @@
                                                 <input type="hidden" name="user_id" value="{$order->user_id}"/>
 
                                                 <h6 class="card-header">
-                                                    <span class="text-white">Данные о работе</span>
+                                                    <span class="text-white">График платежей</span>
                                                     <span class="float-right">
                                                             {penalty_button penalty_block='work'}
                                                         <a href="javascript:void(0);"
@@ -1700,53 +1700,52 @@
                                                 </h6>
 
                                                 <div class="row m-0 pt-2 view-block {if $work_error}hide{/if}">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group  mb-0 row">
-                                                            <label class="control-label col-md-4">Состоит ли в
-                                                                профсоюзе:</label>
-                                                            <div class="col-md-8">
-                                                                <p class="form-control-static">
-                                                                    {if $order->profunion == 0}
-                                                                        Не является членом профсоюза и не желает вступить
-                                                                    {elseif $order->profunion == 1}
-                                                                        Является членом профсоюза
-                                                                    {elseif $order->profunion == 2}
-                                                                        Не является членом профсоюза и желает вступить
-                                                                    {/if}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group  mb-0 row">
-                                                            <label class="control-label col-md-4">Работодатель:</label>
-                                                            <div class="col-md-8">
-                                                                <p class="form-control-static">
-                                                                    {$order->workplace}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group  mb-0 row">
-                                                            <label class="control-label col-md-4">Доход:</label>
-                                                            <div class="col-md-8">
-                                                                <p class="form-control-static">
-                                                                    {$order->income|number_format:0:',':' '}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group  mb-0 row">
-                                                            <label class="control-label col-md-4">Расход:</label>
-                                                            <div class="col-md-8">
-                                                                <p class="form-control-static">
-                                                                    {$order->expenses|number_format:0:',':' '}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    <table border="2">
+                                                        <thead>
+                                                        <tr style="width: 100%;">
+                                                            <th rowspan="3">Дата платежа</th>
+                                                            <th colspan="4">Платёж за расчётный период, руб.</th>
+                                                            <th rowspan="3">Остаток задолженности по микрозайму, руб.</th>
+                                                        </tr>
+                                                        <tr style="width: 100%;">
+                                                            <th rowspan="2">Сумма платежа</th>
+                                                            <th colspan="3">Структура платежа</th>
+                                                        </tr>
+                                                        <tr style="width: 100%;">
+                                                            <th>Погашение процентов</th>
+                                                            <th>Погашение основного долга</th>
+                                                            <th>Комиссии и другие платежи</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {if !empty($payment_schedule)}
+                                                        {foreach $payment_schedule as $date => $payment}
+                                                            {if $date != 'result'}
+                                                                <tr>
+                                                                    <td align="center">{$date}</td>
+                                                                    <td align="left">{$payment->pay_sum|number_format:2:',':' '}</td>
+                                                                    <td align="left">{$payment->loan_percents_pay|number_format:2:',':' '}</td>
+                                                                    <td align="left">{$payment->loan_body_pay|number_format:2:',':' '}</td>
+                                                                    <td align="left">{$payment->comission_pay|number_format:2:',':' '}</td>
+                                                                    <td align="left">{$payment->rest_pay|number_format:2:',':' '}</td>
+                                                                </tr>
+                                                            {/if}
+                                                        {/foreach}
+                                                        <tr>
+                                                            <td style="background-color: #b3b2ab">ИТОГО:</td>
+                                                            <td style="background-color: #b3b2ab">{$payment_schedule->result->all_sum_pay|number_format:2:',':' '}</td>
+                                                            <td style="background-color: #b3b2ab">{$payment_schedule->result->all_loan_percents_pay|number_format:2:',':' '}</td>
+                                                            <td style="background-color: #b3b2ab">{$payment_schedule->result->all_loan_body_pay|number_format:2:',':' '}</td>
+                                                            <td style="background-color: #b3b2ab">{$payment_schedule->result->all_comission_pay|number_format:2:',':' '}</td>
+                                                            <td style="background-color: #b3b2ab">{$payment_schedule->result->all_rest_pay_sum|number_format:2:',':' '}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="5">Полная стоимость микрозайма, % годовых:</td>
+                                                            <td>{$percents}%</td>
+                                                        </tr>
+                                                        {/if}
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             </form>
                                             <!-- /Данные о работе -->
@@ -1912,7 +1911,168 @@
                                                     {/if}
                                                 </div>
                                             </form>
-                                            <!-- /Данные о работе -->
+
+
+                                            <form action="{url}"
+                                                  class="border js-order-item-form mb-3 {if $penalties['work'] && $penalties['work']->status!=3}card-outline-danger{/if}"
+                                                  id="work_data_form">
+
+                                                <input type="hidden" name="action" value="work"/>
+                                                <input type="hidden" name="order_id" value="{$order->order_id}"/>
+                                                <input type="hidden" name="user_id" value="{$order->user_id}"/>
+
+                                                <h6 class="card-header">
+                                                    <span class="text-white">Дополнительная информация</span>
+                                                    <span class="float-right">
+                                                            {penalty_button penalty_block='work'}
+                                                        <a href="javascript:void(0);"
+                                                           class="text-white float-right js-edit-form js-event-add-click"
+                                                           data-event="35" data-manager="{$manager->id}"
+                                                           data-order="{$order->order_id}"
+                                                           data-user="{$order->user_id}"><i
+                                                                    class=" fas fa-edit"></i></a>
+                                                        </span>
+                                                </h6>
+
+                                                <div class="row m-0 pt-2 view-block {if $work_error}hide{/if}">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group  mb-0 row">
+                                                            <label class="control-label col-md-3">Состоит ли в
+                                                                браке:</label>
+                                                            <div class="col-md-6">
+                                                                <p class="form-control-static">
+                                                                    {if $order->sex == 0}
+                                                                        Не состоит
+                                                                    {elseif $order->sex == 1}
+                                                                        Состоит
+                                                                    {/if}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {if $order->sex == 1}
+                                                        <div class="col-md-6">
+                                                            <div class="form-group  mb-0 row">
+                                                                <label class="control-label col-md-6">ФИО
+                                                                    супруга(-и):</label>
+                                                                <div class="col-md-4">
+                                                                    <p class="form-control-static">
+                                                                        {$order->fio_spouse}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group  mb-0 row">
+                                                                <label class="control-label col-md-4">Телефон
+                                                                    супруга(-и):</label>
+                                                                <div class="col-md-5">
+                                                                    <p class="form-control-static">
+                                                                        {$order->phone_spouse}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {/if}
+                                                    {if $order->prev_fio != null || $order->prev_fio}
+                                                        <div class="col-md-6">
+                                                            <div class="form-group  mb-0 row">
+                                                                <label class="control-label col-md-6">Предыдущие
+                                                                    ФИО:</label>
+                                                                <div class="col-md-4">
+                                                                    <p class="form-control-static">
+                                                                        {$order->prev_fio}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group  mb-0 row">
+                                                                <label class="control-label col-md-4">Дата смены
+                                                                    ФИО:</label>
+                                                                <div class="col-md-5">
+                                                                    <p class="form-control-static">
+                                                                        {$order->fio_change_date|date}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {/if}
+                                                    <div class="col-md-12">
+                                                        <div class="form-group  mb-2 row">
+                                                            <label class="control-label col-md-10">Является ли
+                                                                иностранным публичным должностным лицом:</label>
+                                                            <div class="col-md-2">
+                                                                <p class="form-control-static">
+                                                                    {if $order->foreign_flag == 0}
+                                                                        Не является
+                                                                    {elseif $order->foreign_flag == 1}
+                                                                        Является
+                                                                    {/if}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group  mb-2 row">
+                                                            <label class="control-label col-md-10">Является ли
+                                                                супругом(-ой) иностранного публичного должностного
+                                                                лица:</label>
+                                                            <div class="col-md-2">
+                                                                <p class="form-control-static">
+                                                                    {if $order->foreign_husb_wife == 0}
+                                                                        Не является
+                                                                    {elseif $order->foreign_husb_wife == 1}
+                                                                        Является
+                                                                    {/if}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {if $order->foreign_husb_wife == 1}
+                                                        <div class="col-md-12">
+                                                            <div class="form-group  mb-2 row">
+                                                                <label class="control-label col-md-8">ФИО
+                                                                    супруга(-и):</label>
+                                                                <div class="col-md-4">
+                                                                    <p class="form-control-static">
+                                                                        {$order->fio_public_spouse}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {/if}
+                                                    <div class="col-md-12">
+                                                        <div class="form-group  mb-2 row">
+                                                            <label class="control-label col-md-10">Является ли близким
+                                                                родственником иностранного публичного должностного
+                                                                лица:</label>
+                                                            <div class="col-md-2">
+                                                                <p class="form-control-static">
+                                                                    {if $order->foreign_relative == 0}
+                                                                        Не является
+                                                                    {elseif $order->foreign_relative == 1}
+                                                                        Является
+                                                                    {/if}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {if $order->foreign_relative == 1}
+                                                        <div class="col-md-12">
+                                                            <div class="form-group  mb-2 row">
+                                                                <label class="control-label col-md-8">ФИО
+                                                                    родственника:</label>
+                                                                <div class="col-md-4">
+                                                                    <p class="form-control-static">
+                                                                        {$order->fio_relative}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {/if}
+                                                </div>
+                                            </form>
 
                                             <!-- Документы -->
                                             <form action="{url}"
