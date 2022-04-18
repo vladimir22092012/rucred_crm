@@ -39,10 +39,10 @@
         <!-- ============================================================== -->
         <!-- Row -->
         <form class="" method="POST" >
-            
+
             <div class="card">
                 <div class="card-body">
-                    
+
                     {*}
                     <div class="row">
                         <div class="col-12">
@@ -91,7 +91,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
                     {*}
                     {*}
@@ -117,7 +117,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-6">
                             <h4>ЮК</h4>
                             <div class="form-group mb-3">
@@ -133,12 +133,12 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
                     {*}
                     {*}
                     <hr class="mt-3 mb-4" />
-                    
+
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -168,11 +168,11 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
                     {*}
                     <hr class="mt-3 mb-4" />
-                    
+                    {*}
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -213,9 +213,9 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <hr class="mt-3 mb-4" />
-                    
+                    {*}
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -240,7 +240,7 @@
                             </div>
                         </div>
                     </div>
-                                                            
+
                     <hr class="mt-3 mb-4" />
                     {*}
                     <div class="row">
@@ -267,7 +267,7 @@
                             </div>
                         </div>
                     </div>
-                                        
+
                     <hr class="mt-3 mb-4" />
                     {*}
                     <div class="row">
@@ -286,7 +286,7 @@
                             </div>
                         </div>
                     </div>
-                                        
+
                     <hr class="mt-3 mb-4" />
                     {*}
                     <div class="row">
@@ -305,9 +305,9 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <hr class="mt-3 mb-4" />
-                    
+
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -332,9 +332,9 @@
                             </div>
                         </div>
                     </div>
-                                                            
+
                     <hr class="mt-3 mb-4" />
-                    
+
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -354,7 +354,7 @@
                     {*}
 {*}
                     <hr class="mt-3 mb-4" />
-                    
+
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -379,9 +379,9 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <hr class="mt-3 mb-4" />
-                    
+
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -407,11 +407,11 @@
                         </div>
                     </div>
 {*}
-                    
+
                 </div>
             </div>
-            
-        
+
+
             <div class="col-12 grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-width="12">
                 <div class="form-actions">
                     <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Сохранить</button>
