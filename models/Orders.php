@@ -709,12 +709,6 @@ if ($this->is_developer){
 
         $this->db->query($query);
         $id = $this->db->insert_id();
-
-        echo '<pre>';
-        var_dump($query);
-        var_dump($this->db->query($query));
-        var_dump($id);
-        exit;
         
         return $id;
     }
