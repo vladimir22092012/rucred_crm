@@ -11,13 +11,13 @@ return false;
         {
             $order_id = $this->request->post('order_id', 'integer');
             $action = $this->request->post('action', 'string');
-            
+
             switch($action):
-                
+
                 case 'change_manager':
                     $this->change_manager_action();
                 break;
-                
+
                 case 'fio':
                     $this->fio_action();
                 break;
@@ -29,11 +29,11 @@ return false;
                 case 'contacts':
                     $this->contacts_action();
                 break;
-                
+
                 case 'addresses':
                     $this->addresses_action();
                 break;
-                
+
                 case 'work':
                     $this->work_action();
                 break;
@@ -45,117 +45,117 @@ return false;
                 case 'cards':
                     $this->action_cards();
                 break;
-                
+
                 case 'contact_status':
                     $response = $this->action_contact_status();
                     $this->json_output($response);
                 break;
-                
+
                 case 'contactperson_status':
                     $response = $this->action_contactperson_status();
                     $this->json_output($response);
                 break;
-                
+
                 case 'status':
                     $status = $this->request->post('status', 'integer');
                     $response = $this->status_action($status);
                     $this->json_output($response);
-                break;                                
-                
+                break;
+
                 // принять заявку
-                case 'accept_order':                
+                case 'accept_order':
                     $response = $this->accept_order_action();
                     $this->json_output($response);
                 break;
-                
+
                 // одобрить заявку
                 case 'approve_order':
                     $response = $this->approve_order_action();
                     $this->json_output($response);
                 break;
-                
+
                 // одобрить заявку
                 case 'autoretry_accept':
                     $response = $this->autoretry_accept_action();
                     $this->json_output($response);
                 break;
-                
+
                 // отказать в заявке
                 case 'reject_order':
                     $response = $this->reject_order_action();
-                    $this->json_output($response);            
+                    $this->json_output($response);
                 break;
 
                 // подтвердить контракт
                 case 'confirm_contract':
                     $response = $this->confirm_contract_action();
-                    $this->json_output($response);            
+                    $this->json_output($response);
                 break;
 
                 case 'add_comment':
                     $this->action_add_comment();
                 break;
-                
+
                 case 'close_contract':
                     $this->action_close_contract();
                 break;
-                
+
                 case 'repay':
                     $this->action_repay();
                 break;
-                
+
                 case 'send_sms':
                     $this->send_sms_action();
-                break;                
+                break;
 
-                
+
                 case 'personal':
                     $this->action_personal();
                 break;
-                
+
                 case 'passport':
                     $this->action_passport();
                 break;
-                
+
                 case 'reg_address':
                     $this->reg_address_action();
                 break;
-                
+
                 case 'fakt_address':
                     $this->fakt_address_action();
                 break;
-                
+
                 case 'workdata':
                     $this->workdata_action();
                 break;
-                
+
                 case 'work_address':
                     $this->work_address_action();
                 break;
-                
+
                 case 'socials':
                     $this->socials_action();
                 break;
-                
+
                 case 'images':
                     $this->action_images();
                 break;
-                
+
                 case 'services':
                     $this->action_services();
                 break;
-                
+
                 case 'workout':
                     $this->action_workout();
                 break;
-                
+
                 case 'return_insure':
                     $this->action_return_insure();
                 break;
-                
-                
+
+
             endswitch;
-            
+
         }
         else
         {
@@ -177,27 +177,27 @@ return false;
 
                     // сохраняем историю займов из 1с
                     $client = $this->users->get_user($order->user_id);
-                    
+
                     $credits_history = $this->soap1c->get_client_credits($client->UID);
                     $this->users->save_loan_history($client->id, $credits_history);
-        
+
                     $client = $this->users->get_user($order->user_id);
                     $this->design->assign('client', $client);
 
                     $communications = $this->communications->get_communications(array('user_id' => $client->id));
                     $this->design->assign('communications', $communications);
-                    
+
                     // причина "не удалось выдать"
                     if ($order->status == 6)
                     {
                         if ($p2p = $this->best2pay->get_contract_p2pcredit($order->contract_id))
                         {
                             $p2p->response = unserialize($p2p->response);
-                            if (!empty($p2p->response)) 
+                            if (!empty($p2p->response))
                                 $p2p->response_xml = simplexml_load_string($p2p->response);
                             $this->design->assign('p2p', $p2p);
                         }
-                        
+
                         if ($client_orders = $this->orders->get_orders(array('user_id' => $order->user_id)))
                         {
                             $have_newest_order = 0;
@@ -209,7 +209,7 @@ return false;
                             $this->design->assign('have_newest_order', $have_newest_order);
                         }
                     }
-                    
+
                     $penalties = array();
                     foreach ($this->penalties->get_penalties(array('order_id'=>$order_id)) as $p)
                     {
@@ -217,9 +217,9 @@ return false;
                             $penalties[$p->block] = $p;
                     }
                     $this->design->assign('penalties', $penalties);
-                    
+
                     $this->design->assign('order', $order);
-                    
+
                     $comments = $this->comments->get_comments(array('user_id' => $order->user_id));
                     foreach ($comments as $comment)
                     {
@@ -227,23 +227,23 @@ return false;
                             $comment->letter = mb_substr($managers[$comment->manager_id]->name, 0, 1);
                     }
                     $this->design->assign('comments', $comments);
-                    
+
                     $files = $this->users->get_files(array('user_id'=>$order->user_id));
                     $this->design->assign('files', $files);
-                    
+
                     $documents = array();
                     foreach ($this->documents->get_documents(array('user_id'=>$order->user_id)) as $doc)
                     {
                         if (empty($doc->order_id) || $doc->order_id == $order_id)
                             $documents[] = $doc;
                     }
-                    
+
                     $this->design->assign('documents', $documents);
-                    
+
 
                     $user_close_orders = $this->orders->get_orders(array(
                         'user_id' => $order->user_id,
-                        'type' => 'base', 
+                        'type' => 'base',
                         'status' => array(7)
                     ));
                     $order->have_crm_closed = !empty($user_close_orders);
@@ -256,7 +256,7 @@ return false;
                                 if (!empty($contract_operation->transaction_id))
                                     $contract_operation->transaction = $this->transactions->get_transaction($contract_operation->transaction_id);
                         $this->design->assign('contract_operations', $contract_operations);
-                    
+
                         $contract = $this->contracts->get_contract((int)$order->contract_id);
                         $this->design->assign('contract', $contract);
                     }
@@ -266,7 +266,7 @@ return false;
                         $contract_insurance = $this->insurances->get_insurance($contract->insurance_id);
                         $this->design->assign('contract_insurance', $contract_insurance);
                     }
-                    
+
                     $need_update_scorings = 0;
                     $inactive_run_scorings = 0;
                     $scorings = array();
@@ -277,14 +277,14 @@ return false;
                             if ($scoring->type == 'juicescore')
                             {
                                 $scoring->body = unserialize($scoring->body);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scoring->body);echo '</pre><hr />';                            
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scoring->body);echo '</pre><hr />';
                             }
-                            
+
                             if ($scoring->type == 'efrsb')
                             {
                                 $scoring->body = @unserialize($scoring->body);
                             }
-                            
+
                             if ($scoring->type == 'scorista')
                             {
                                 $scoring->body = json_decode($scoring->body);
@@ -314,10 +314,10 @@ return false;
                             if ($scoring->type == 'nbki') {
                                 $scoring->body = unserialize($scoring->body);
                             }
-                            
-                            
+
+
                             $scorings[$scoring->type] = $scoring;
-                        
+
                             if ($scoring->status == 'new' || $scoring->status == 'process' || $scoring->status == 'repeat')
                             {
                                 $need_update_scorings = 1;
@@ -349,13 +349,13 @@ return false;
                             $changelog->manager = $managers[$changelog->manager_id];
                     }
                     $changelog_types = $this->changelogs->get_types();
-                    
+
                     $this->design->assign('changelog_types', $changelog_types);
                     $this->design->assign('changelogs', $changelogs);
-                    
+
                     $eventlogs = $this->eventlogs->get_logs(array('order_id' => $order_id));
                     $this->design->assign('eventlogs', $eventlogs);
-                    
+
                     $events = $this->eventlogs->get_events();
                     $this->design->assign('events', $events);
 
@@ -381,11 +381,11 @@ return false;
                         $cards[$card->id] = $card;
                     foreach ($cards as $card)
                         $card->duplicates = $this->cards->find_duplicates($order->user_id, $card->pan, $card->expdate);
-                    
+
                     $this->design->assign('cards', $cards);
-                    
-                    
-                    
+
+
+
                     // получаем комменты из 1С
                     $client = $this->users->get_user((int)$order->user_id);
                     if ($comments_1c_response = $this->soap1c->get_comments($client->UID))
@@ -396,57 +396,57 @@ return false;
                             foreach ($comments_1c_response->Комментарии as $comm)
                             {
                                 $comment_1c_item = new StdClass();
-                                
+
                                 $comment_1c_item->created = date('Y-m-d H:i:s', strtotime($comm->Дата));
                                 $comment_1c_item->text = $comm->Комментарий;
                                 $comment_1c_item->block = $comm->Блок;
-                                
+
                                 $comments_1c[] = $comment_1c_item;
                             }
                         }
-                        
+
                         usort($comments_1c, function($a, $b){
                             return strtotime($b->created) - strtotime($a->created);
                         });
-                        
+
                         $this->design->assign('comments_1c', $comments_1c);
-                        
+
                         $blacklist_comments = array();
                         if (!empty($comments_1c_response->Комментарии))
                         {
                             foreach ($comments_1c_response->Комментарии as $comm)
                             {
                                 $blacklist_comment = new StdClass();
-                                
+
                                 $blacklist_comment->created = date('Y-m-d H:i:s', strtotime($comm->Дата));
                                 $blacklist_comment->text = $comm->Комментарий;
                                 $blacklist_comment->block = $comm->Блок;
-                                
+
                                 $blacklist_comments[] = $blacklist_comment;
                             }
                         }
-                        
+
                         usort($blacklist_comments, function($a, $b){
                             return strtotime($b->created) - strtotime($a->created);
                         });
-                        
+
                         $this->design->assign('blacklist_comments', $blacklist_comments);
-    
-    
-            
+
+
+
                         $orders = array();
                         foreach ($this->orders->get_orders(array('user_id' => $order->user_id)) as $o)
                         {
                             if (!empty($o->contract_id))
                                 $o->contract = $this->contracts->get_contract($o->contract_id);
-                            
+
                             $orders[] = $o;
                         }
                         $this->design->assign('orders', $orders);
-            
+
         //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($comments_1c_response);echo '</pre><hr />';
                     }
-                    
+
                     if (in_array('looker_link', $this->manager->permissions))
                     {
                         $looker_link = $this->users->get_looker_link($order->user_id);
@@ -459,80 +459,80 @@ return false;
                 }
             }
         }
-        
+
         $scoring_types = array();
         foreach ($this->scorings->get_types(array('active'=>true)) as $type)
             $scoring_types[$type->name] = $type;
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scoring_types);echo '</pre><hr />';
         $this->design->assign('scoring_types', $scoring_types);
-        
+
         $reject_reasons = array();
         foreach ($this->reasons->get_reasons() as $r)
             $reject_reasons[$r->id] = $r;
         $this->design->assign('reject_reasons', $reject_reasons);
-        
+
         $order_statuses = $this->orders->get_statuses();
         $this->design->assign('order_statuses', $order_statuses);
-        
+
         $penalty_types = $this->penalties->get_types();
         $this->design->assign('penalty_types', $penalty_types);
 
         $sms_templates = $this->sms->get_templates(array('type' => 'order'));
         $this->design->assign('sms_templates', $sms_templates);
-        
+
         $body = $this->design->fetch('order.tpl');
-        
+
         if ($this->request->get('ajax', 'integer'))
         {
             echo $body;
             exit;
         }
-        
+
         return $body;
     }
-    
+
     private function action_contact_status()
     {
         $contact_status = $this->request->post('contact_status', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
-        
+
         $this->users->update_user($user_id, array('contact_status' => $contact_status));
-        
+
         return array('success' => 1, 'contact_status' => $contact_status);
     }
-    
+
     private function action_contactperson_status()
     {
         $contact_status = $this->request->post('contact_status', 'integer');
         $contactperson_id = $this->request->post('contactperson_id', 'integer');
-        
+
         $this->contactpersons->update_contactperson($contactperson_id, array('contact_status' => $contact_status));
-        
+
         return array('success' => 1, 'contact_status' => $contact_status);
     }
-    
+
     private function action_workout()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $workout = $this->request->post('workout', 'integer');
-        
+
         $this->orders->update_order($order_id, array('quality_workout' => $workout));
-        
+
         return array('success' => 1, 'contact_status' => $contact_status);
     }
-    
+
     private function confirm_contract_action()
     {
         $contract_id = $this->request->post('contract_id', 'integer');
         $code = $this->request->post('code', 'integer');
         $phone = $this->request->post('phone');
-        
+
         if (!($contract = $this->contracts->get_contract($contract_id)))
             return array('error'=>'Договор не найден');
-        
+
         if ($contract->status != 0)
             return array('error'=>'Договор не находится в статусе Новый!');
-        
+
         $db_code = $this->sms->get_code($phone);
         if ($contract->accept_code != $code)
         {
@@ -546,12 +546,12 @@ return false;
                 'accept_date' => date('Y-m-d H:i:s'),
                 'accept_ip' => $_SERVER['REMOTE_ADDR']
             ));
-            
+
             $this->orders->update_order($contract->order_id, array(
                 'status' => 4,
                 'confirm_date' => date('Y-m-d H:i:s'),
             ));
-            
+
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
                 'created' => date('Y-m-d H:i:s'),
@@ -561,18 +561,18 @@ return false;
                 'order_id' => $contract->order_id,
                 'user_id' => $contract->user_id,
             ));
-    
+
             return array('success' => 1, 'status' => 4, 'manager' => $this->manager->name);
-            
+
         }
-        
+
     }
-    
+
     private function change_manager_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $manager_id = $this->request->post('manager_id', 'integer');
-        
+
         if (!($order = $this->orders->get_order((int)$order_id)))
             return array('error'=>'Неизвестный ордер');
 
@@ -582,7 +582,7 @@ return false;
         if (!empty($order->id_1c))
         {
             $check_block = $this->soap1c->check_block_order_1c($order->id_1c);
-            
+
             if ($check_block == 'Block_1c')
             {
                 return array('error'=>'Заявка заблокирована в 1С', 'check_block'=>$check_block);
@@ -604,7 +604,7 @@ return false;
             $update['status'] = 1;
 
         $this->orders->update_order($order_id, $update);
-        
+
         $this->changelogs->add_changelog(array(
             'manager_id' => $this->manager->id,
             'created' => date('Y-m-d H:i:s'),
@@ -618,23 +618,23 @@ return false;
         return array('success' => 1, 'status' => 1, 'manager' => $this->manager->name);
 
     }
-    
+
     /**
      * OrderController::accept_order_action()
      * Принятие ордера в работу менеджером
-     * 
+     *
      * @return array
      */
     private function accept_order_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
-        
+
         if (!($order = $this->orders->get_order((int)$order_id)))
             return array('error'=>'Неизвестный ордер');
 
         if (!empty($order->manager_id) && $order->manager_id != $this->manager->id  && !in_array($this->manager->role, array('admin', 'developer')))
             return array('error'=>'Ордер уже принят другим пользователем', 'manager_id'=>$order->manager_id);
-        
+
         $update = array(
             'status' => 1,
             'manager_id' => $this->manager->id,
@@ -642,7 +642,7 @@ return false;
             'accept_date' => date('Y-m-d H:i:s'),
         );
         $this->orders->update_order($order_id, $update);
-        
+
         $this->changelogs->add_changelog(array(
             'manager_id' => $this->manager->id,
             'created' => date('Y-m-d H:i:s'),
@@ -653,10 +653,10 @@ return false;
             'user_id' => $order->user_id,
         ));
 
-        if (!empty($order->id_1c))
+        /* if (!empty($order->id_1c))
         {
             $check_block = $this->soap1c->check_block_order_1c($order->id_1c);
-            
+
             if ($check_block == 'Block_1c')
             {
                 return array('error'=>'Заявка заблокирована в 1С', 'check_block'=>$check_block);
@@ -665,11 +665,11 @@ return false;
             {
                 $this->soap1c->block_order_1c($order->id_1c, 1);
             }
-        }
-                
+        } */
+
         return array('success' => 1, 'status' => 1, 'manager' => $this->manager->name);
     }
-    
+
     /**
      * OrderController::approve_order_action()
      * Одобрениие заявки
@@ -678,25 +678,25 @@ return false;
     private function approve_order_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
-        
+
         if (!($order = $this->orders->get_order((int)$order_id)))
             return array('error'=>'Неизвестный ордер');
 
         if (!empty($order->manager_id) && $order->manager_id != $this->manager->id  && !in_array($this->manager->role, array('admin', 'developer')))
             return array('error' => 'Не хватает прав для выполнения операции');
-        
+
         if ($order->amount > 15000)
             return array('error' => 'Сумма займа должна быть не более 15000 руб!');
-        
+
         if ($order->period > 14)
             return array('error' => 'Срок займа должен быть не более 14 дней!');
-        
+
         if ($order->status != 1)
             return array('error' => 'Неверный статус заявки, возможно Заявка уже одобрена или получен отказ');
-        
+
         if ($order->user_id == 127551)
             return array('error' => 'По данному клиенту запрещена выдача!');
-        
+
         $update = array(
             'status' => 2,
             'manager_id' => $this->manager->id,
@@ -708,7 +708,7 @@ return false;
         );
 
         $this->orders->update_order($order_id, $update);
-        
+
         $this->changelogs->add_changelog(array(
             'manager_id' => $this->manager->id,
             'created' => date('Y-m-d H:i:s'),
@@ -718,9 +718,9 @@ return false;
             'order_id' => $order_id,
             'user_id' => $order->user_id,
         ));
-        
+
         $accept_code = rand(1000, 9999);
-        
+
         $new_contract = array(
             'order_id' => $order_id,
             'user_id' => $order->user_id,
@@ -738,44 +738,44 @@ return false;
             'accept_code' => $accept_code,
         );
         $contract_id = $this->contracts->add_contract($new_contract);
-        
+
         $this->orders->update_order($order_id, array('contract_id' => $contract_id));
-        
+
         if (!empty($order->id_1c))
         {
-            $resp = $this->soap1c->block_order_1c($order->id_1c, 0);
+            //$resp = $this->soap1c->block_order_1c($order->id_1c, 0);
         }
-        
+
         // отправялем смс
-        $msg = 'Активируй займ '.($order->amount*1).' в личном кабинете, код '.$accept_code.' nalichnoeplus.ru/lk';
-        $this->sms->send($order->phone_mobile, $msg);
-        
+        //$msg = 'Активируй займ '.($order->amount*1).' в личном кабинете, код '.$accept_code.' nalichnoeplus.ru/lk';
+        //$this->sms->send($order->phone_mobile, $msg);
+
 //        ящик: sale@nalichnoeplus.com
 //        заголовок: подтверждение выдачи
-//        текст: текст - полное сообщение, как в смс. 
-        $this->notify->email('sale@nalichnoeplus.com', 'Подтверждение выдачи', $msg);
-        
-        
+//        текст: текст - полное сообщение, как в смс.
+        //$this->notify->email('sale@nalichnoeplus.com', 'Подтверждение выдачи', $msg);
+
+
         return array('success'=>1, 'status'=>2);
-        
+
     }
-    
+
     private function autoretry_accept_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
-        
+
         if (!($order = $this->orders->get_order((int)$order_id)))
             return array('error'=>'Неизвестный ордер');
 
         if (!empty($order->manager_id) && $order->manager_id != $this->manager->id  && !in_array($this->manager->role, array('admin', 'developer')))
             return array('error' => 'Не хватает прав для выполнения операции');
-        
+
         if ($order->amount > 15000)
             return array('error' => 'Сумма займа должна быть не более 15000 руб!');
-        
+
         if ($order->period != 14)
             return array('error' => 'Срок займа должен быть 14 дней!');
-        
+
         $update = array(
             'status' => 2,
             'amount' => $order->autoretry_summ,
@@ -788,7 +788,7 @@ return false;
         );
 /*
         $this->orders->update_order($order_id, $update);
-        
+
         $this->changelogs->add_changelog(array(
             'manager_id' => $this->manager->id,
             'created' => date('Y-m-d H:i:s'),
@@ -798,9 +798,9 @@ return false;
             'order_id' => $order_id,
             'user_id' => $order->user_id,
         ));
-        
+
         $accept_code = rand(1000, 9999);
-        
+
         $new_contract = array(
             'order_id' => $order_id,
             'user_id' => $order->user_id,
@@ -818,31 +818,31 @@ return false;
             'accept_code' => $accept_code,
         );
         $contract_id = $this->contracts->add_contract($new_contract);
-        
+
         $this->orders->update_order($order_id, array('contract_id' => $contract_id));
-        
+
         if (!empty($order->id_1c))
             $resp = $this->soap1c->block_order_1c($order->id_1c, 0);
-        
+
         // отправялем смс
         $msg = 'Активируй займ '.($order->autoretry_summ*1).' в личном кабинете, код'.$accept_code.' nalichnoeplus.com/lk';
         $this->sms->send($order->phone_mobile, $msg);
-*/        
+*/
         return array('success'=>1, 'status'=>2);
-        
+
     }
-    
+
     private function reject_order_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $reason_id = $this->request->post('reason', 'integer');
         $status = $this->request->post('status', 'integer');
-        
+
         if (!($order = $this->orders->get_order((int)$order_id)))
             return array('error'=>'Неизвестный ордер');
-        
+
         $reason = $this->reasons->get_reason($reason_id);
-        
+
         $update = array(
             'status' => $status,
             'manager_id' => $this->manager->id,
@@ -858,23 +858,23 @@ return false;
 
         if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
             return array('error' => 'Не хватает прав для выполнения операции');
-    
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($order);echo '</pre><hr />';        
+
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($order);echo '</pre><hr />';
         $this->orders->update_order($order_id, $update);
 
-        $this->leadfinances->send_lead_to_leadfinances($order); //отправка лида по апи в leadfinances
-        $this->smssales->send_smssales($order);//отправка спама(продажа лидов по смс)
+        //$this->leadfinances->send_lead_to_leadfinances($order); //отправка лида по апи в leadfinances
+        //$this->smssales->send_smssales($order);//отправка спама(продажа лидов по смс)
 
-        
-        if (!empty($order->utm_source) && $order->utm_source == 'leadcraft' && !empty($order->id_1c) && !empty($order->click_hash)) {
+
+        /* if (!empty($order->utm_source) && $order->utm_source == 'leadcraft' && !empty($order->id_1c) && !empty($order->click_hash)) {
             try {
                 $this->leadgens->send_cancelled_postback($order->click_hash, $order->id_1c);
             } catch (\Throwable $th) {
                 //throw $th;
             }
-        }
-        
-        
+        } */
+
+
         $this->changelogs->add_changelog(array(
             'manager_id' => $this->manager->id,
             'created' => date('Y-m-d H:i:s'),
@@ -884,7 +884,7 @@ return false;
             'order_id' => $order_id,
             'user_id' => $order->user_id,
         ));
-        
+
         // отправляем письмо независимо от того сняли за причину отказа или нет
         $this->notify->send_reject_reason($order_id);
 
@@ -893,27 +893,27 @@ return false;
             'type' => 'REJECT_REASON',
             'order_id' => $order->order_id
         ));
-        
+
         // Снимаем за причину отказа
         if (empty($reject_operations))
         {
             if (!empty($order->service_reason) && $status == 3)
             {
-    
+
                 $service_summ = $this->settings->reject_reason_cost*100;
-                
+
                 $description = 'Услуга "Узнай причину отказа"';
-                
+
                 $response = $this->best2pay->recurrent($order->card_id, $service_summ, $description);
-    //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump(htmlspecialchars($response));echo '</pre><hr />';                
-                
+    //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump(htmlspecialchars($response));echo '</pre><hr />';
+
                 $xml = simplexml_load_string($response);
                 $b2p_status = (string)$xml->state;
-        
+
                 if ($b2p_status == 'APPROVED')
                 {
                     $transaction = $this->transactions->get_operation_transaction($xml->order_id, $xml->id);
-                    
+
                     $operation_id = $this->operations->add_operation(array(
                         'contract_id' => 0,
                         'user_id' => $order->user_id,
@@ -923,24 +923,24 @@ return false;
                         'created' => date('Y-m-d H:i:s'),
                         'transaction_id' => $transaction->id,
                     ));
-                    
+
                     $operation = $this->operations->get_operation($operation_id);
                     $operation->transaction = $this->transactions->get_transaction($transaction->id);
-                    
+
                     $resp = $this->soap1c->send_reject_reason($operation);
-                    
+
                     $this->operations->update_operation($operation->id, array(
                         'sent_status' => 2,
                         'sent_date' => date('Y-m-d H:i:s')
                     ));
-                    
-                    //Отправляем чек 
+
+                    //Отправляем чек
                     $this->cloudkassir->send_reject_reason($order_id);
-                    
-                    
+
+
                     return true;
         //echo __FILE__.' '.__LINE__.'<br /><pre>';echo(htmlspecialchars($recurring));echo $contract_id.'</pre><hr />';exit;
-                    
+
                 }
                 else
                 {
@@ -948,23 +948,23 @@ return false;
                 }
             }
         }
-        
-        if (!empty($order->id_1c))
+
+        /* if (!empty($order->id_1c))
         {
             $resp = $this->soap1c->block_order_1c($order->id_1c, 0);
             $this->soap1c->send_order_status($order->id_1c, 'Отказано');
-        }
-        
+        } */
+
         return array('success'=>1, 'status'=>$status);
     }
-    
+
     private function status_action($status)
     {
         $order_id = $this->request->post('order_id', 'integer');
-        
+
         if (!($order = $this->orders->get_order((int)$order_id)))
             return array('error'=>'Неизвестный ордер');
-        
+
         $update = array(
             'status' => $status,
         );
@@ -976,17 +976,17 @@ return false;
         {
             if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
                 return array('error'=>'Ордер уже принят другим пользователем', 'manager_id'=>$order->manager_id);
-            
+
             $update['manager_id'] = $this->manager->id;
             $old_values['manager_id'] = '';
         }
 
         if (!empty($order->manager_id) && $order->manager_id != $this->manager->id)
             return array('error' => 'Не хватает прав для выполнения операции');
-    
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($order);echo '</pre><hr />';        
+
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($order);echo '</pre><hr />';
         $this->orders->update_order($order_id, $update);
-        
+
         $this->changelogs->add_changelog(array(
             'manager_id' => $this->manager->id,
             'created' => date('Y-m-d H:i:s'),
@@ -999,47 +999,47 @@ return false;
 
         return array('success'=>1, 'status'=>$status);
     }
-    
+
     private function action_cards()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
     	$card_id = $this->request->post('card_id', 'integer');
-        
+
         $order = new StdClass();
         $order->order_id = $order_id;
         $order->user_id = $user_id;
         $order->card_id = $card_id;
-        
+
         $isset_order = $this->orders->get_order((int)$order_id);
-        
+
         $order->status = $isset_order->status;
         $order->manager_id = $isset_order->manager_id;
 
         $this->design->assign('order', $order);
-        
+
         $card_error = array();
-        
+
         if (empty($card_id))
             $card_error[] = 'empty_card';
-        
+
         if (empty($card_error))
         {
             $update = array(
                 'card_id' => $card_id
             );
-            
+
             $old_order = $this->orders->get_order($order_id);
             $old_values = array();
             foreach ($update as $key => $val)
-                if ($old_order->$key != $update[$key])            
+                if ($old_order->$key != $update[$key])
                     $old_values[$key] = $old_order->$key;
-            
+
             $log_update = array();
             foreach ($update as $k => $u)
                 if (isset($old_values[$k]))
                     $log_update[$k] = $u;
-            
+
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
                 'created' => date('Y-m-d H:i:s'),
@@ -1050,42 +1050,42 @@ return false;
             ));
 
             $this->orders->update_order($order_id, $update);
-            
+
         }
-        $this->design->assign('card_error', $card_error);        
-        
+        $this->design->assign('card_error', $card_error);
+
         $cards = array();
         foreach ($this->cards->get_cards(array('user_id'=>$order->user_id)) as $card)
             $cards[$card->id] = $card;
         $this->design->assign('cards', $cards);
 
     }
-    
+
     private function action_amount()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
     	$amount = $this->request->post('amount', 'integer');
     	$period = $this->request->post('period', 'integer');
-        
+
         $order = new StdClass();
         $order->order_id = $order_id;
         $order->user_id = $user_id;
         $order->amount = $amount;
         $order->period = $period;
-        
+
         $isset_order = $this->orders->get_order((int)$order_id);
-        
+
         $order->status = $isset_order->status;
         $order->manager_id = $isset_order->manager_id;
 
         $amount_error = array();
-        
+
         if (empty($amount))
             $amount_error[] = 'empty_amount';
         if (empty($period))
             $amount_error[] = 'empty_period';
-        
+
         if ($isset_order->status > 2 && !in_array($this->manager->role, array('admin', 'developer')))
         {
             $amount_error[] = 'Невозможно изменить сумму в этом статусе заявки';
@@ -1101,18 +1101,18 @@ return false;
                 'amount' => $amount,
                 'period' => $period
             );
-            
+
             $old_order = $this->orders->get_order($order_id);
             $old_values = array();
             foreach ($update as $key => $val)
-                if ($old_order->$key != $update[$key])            
+                if ($old_order->$key != $update[$key])
                     $old_values[$key] = $old_order->$key;
-            
+
             $log_update = array();
             foreach ($update as $k => $u)
                 if (isset($old_values[$k]))
                     $log_update[$k] = $u;
-            
+
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
                 'created' => date('Y-m-d H:i:s'),
@@ -1123,25 +1123,25 @@ return false;
             ));
 
             $this->orders->update_order($order_id, $update);
-            
+
             if (!empty($old_order->contract_id))
             {
                 $this->contracts->update_contract($old_order->contract_id, array(
-                    'amount' => $amount, 
+                    'amount' => $amount,
                     'period' => $period
                 ));
             }
         }
         $this->design->assign('amount_error', $amount_error);
     }
-    
+
     private function contactdata_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
-        
+
         $order = new StdClass();
-        
+
         $order->email = trim($this->request->post('email'));
         $order->birth = trim($this->request->post('birth'));
         $order->birth_place = trim($this->request->post('birth_place'));
@@ -1149,11 +1149,11 @@ return false;
         $order->passport_date = trim($this->request->post('passport_date'));
         $order->subdivision_code = trim($this->request->post('subdivision_code'));
         $order->passport_issued = trim($this->request->post('passport_issued'));
-        
+
         $order->social = trim($this->request->post('social'));
-        
+
         $contactdata_error = array();
-        
+
         if (empty($order->email))
             $personal_error[] = 'empty_email';
         if (empty($order->birth))
@@ -1170,8 +1170,8 @@ return false;
             $personal_error[] = 'empty_passport_issued';
         if (empty($order->social))
             $personal_error[] = 'empty_socials';
-        
-        
+
+
         if (empty($contactdata_error))
         {
             $update = array(
@@ -1190,12 +1190,12 @@ return false;
             foreach ($update as $key => $val)
                 if ($old_user->$key != $update[$key])
                     $old_values[$key] = $old_user->$key;
-            
+
             $log_update = array();
             foreach ($update as $k => $u)
                 if (isset($old_values[$k]))
                     $log_update[$k] = $u;
-            
+
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
                 'created' => date('Y-m-d H:i:s'),
@@ -1228,31 +1228,31 @@ return false;
                         $doc->params['subdivision_code'] = $order->subdivision_code;
                     if (isset($doc->params['passport_issued']))
                         $doc->params['passport_issued'] = $order->passport_issued;
-                
+
                     $this->documents->update_document($doc->id, array('params' => $doc->params));
                 }
             }
         }
-        
+
         $this->design->assign('contactdata_error', $contactdata_error);
-        
+
         $order->order_id = $order_id;
         $order->user_id = $user_id;
 
         $isset_order = $this->orders->get_order((int)$order_id);
-        
+
         $order->status = $isset_order->status;
         $order->manager_id = $isset_order->manager_id;
 
         $this->design->assign('order', $order);
-        
+
     }
 
     private function contacts_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
-        
+
         $order = new StdClass();
         $order->contact_person_name = trim($this->request->post('contact_person_name'));
         $order->contact_person_phone = trim($this->request->post('contact_person_phone'));
@@ -1260,9 +1260,9 @@ return false;
         $order->contact_person2_name = trim($this->request->post('contact_person2_name'));
         $order->contact_person2_phone = trim($this->request->post('contact_person2_phone'));
         $order->contact_person2_relation = trim($this->request->post('contact_person2_relation'));
-        
+
         $contacts_error = array();
-        
+
         if (empty($order->contact_person_name))
             $contacts_error[] = 'empty_contact_person_name';
         if (empty($order->contact_person_phone))
@@ -1271,7 +1271,7 @@ return false;
             $contacts_error[] = 'empty_contact_person2_name';
         if (empty($order->contact_person2_phone))
             $contacts_error[] = 'empty_contact_person2_phone';
-        
+
         if (empty($contacts_error))
         {
             $update = array(
@@ -1288,12 +1288,12 @@ return false;
             foreach ($update as $key => $val)
                 if ($old_user->$key != $update[$key])
                     $old_values[$key] = $old_user->$key;
-            
+
             $log_update = array();
             foreach ($update as $k => $u)
                 if (isset($old_values[$k]))
                     $log_update[$k] = $u;
-            
+
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
                 'created' => date('Y-m-d H:i:s'),
@@ -1306,25 +1306,25 @@ return false;
 
             $this->users->update_user($user_id, $update);
         }
-        
+
         $this->design->assign('contacts_error', $contacts_error);
-        
+
         $order->order_id = $order_id;
         $order->user_id = $user_id;
 
         $isset_order = $this->orders->get_order((int)$order_id);
-        
+
         $order->status = $isset_order->status;
         $order->manager_id = $isset_order->manager_id;
 
         $this->design->assign('order', $order);
-    }    
-    
+    }
+
     private function fio_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
-        
+
         $order = new StdClass();
         $order->lastname = trim($this->request->post('lastname'));
         $order->firstname = trim($this->request->post('firstname'));
@@ -1332,7 +1332,7 @@ return false;
         $order->phone_mobile = trim($this->request->post('phone_mobile'));
 
         $fio_error = array();
-        
+
         if (empty($order->lastname))
             $contacts_error[] = 'empty_lastname';
         if (empty($order->firstname))
@@ -1341,7 +1341,7 @@ return false;
             $contacts_error[] = 'empty_patronymic';
         if (empty($order->phone_mobile))
             $contacts_error[] = 'empty_phone_mobile';
-        
+
         if (empty($fio_error))
         {
             $update = array(
@@ -1356,12 +1356,12 @@ return false;
             foreach ($update as $key => $val)
                 if ($old_user->$key != $update[$key])
                     $old_values[$key] = $old_user->$key;
-            
+
             $log_update = array();
             foreach ($update as $k => $u)
                 if (isset($old_values[$k]))
                     $log_update[$k] = $u;
-            
+
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
                 'created' => date('Y-m-d H:i:s'),
@@ -1373,7 +1373,7 @@ return false;
             ));
 
             $this->users->update_user($user_id, $update);
-            
+
             // редактирование в документах
             if (!empty($user_id))
             {
@@ -1390,34 +1390,34 @@ return false;
                         $doc->params['fio'] = $order->lastname.' '.$order->firstname.' '.$order->patronymic;
                     if (isset($doc->params['phone']))
                         $doc->params['phone'] = $order->phone_mobile;
-                
+
                     $this->documents->update_document($doc->id, array('params' => $doc->params));
                 }
             }
-            
+
         }
-        
+
         $this->design->assign('fio_error', $fio_error);
-        
+
         $order->order_id = $order_id;
         $order->user_id = $user_id;
 
         $isset_order = $this->orders->get_order((int)$order_id);
-        
+
         $this->soap1c->update_fields($update, '', $isset_order->id_1c);
-        
+
         $order->status = $isset_order->status;
         $order->manager_id = $isset_order->manager_id;
         $order->phone_mobile = $isset_order->phone_mobile;
 
         $this->design->assign('order', $order);
-    }    
-    
+    }
+
     private function addresses_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
-        
+
         $order = new StdClass();
         $order->Regindex = trim($this->request->post('Regindex'));
         $order->Regregion = trim($this->request->post('Regregion'));
@@ -1433,7 +1433,7 @@ return false;
         $order->Reghousing = trim($this->request->post('Reghousing'));
         $order->Regbuilding = trim($this->request->post('Regbuilding'));
         $order->Regroom = trim($this->request->post('Regroom'));
-    
+
         $order->Faktindex = trim($this->request->post('Faktindex'));
         $order->Faktregion = trim($this->request->post('Faktregion'));
         $order->Faktregion_shorttype = trim($this->request->post('Faktregion_shorttype'));
@@ -1450,13 +1450,13 @@ return false;
         $order->Faktroom = trim($this->request->post('Faktroom'));
 
         $addresses_error = array();
-    
+
         if (empty($order->Regregion))
             $addresses_error[] = 'empty_regregion';
-        
+
         if (empty($order->Faktregion))
             $addresses_error[] = 'empty_faktregion';
-        
+
         if (empty($addresses_error))
         {
             $update = array(
@@ -1481,12 +1481,12 @@ return false;
             foreach ($update as $key => $val)
                 if ($old_user->$key != $update[$key])
                     $old_values[$key] = $old_user->$key;
-            
+
             $log_update = array();
             foreach ($update as $k => $u)
                 if (isset($old_values[$k]))
                     $log_update[$k] = $u;
-            
+
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
                 'created' => date('Y-m-d H:i:s'),
@@ -1521,12 +1521,12 @@ return false;
             foreach ($update as $key => $val)
                 if ($old_user->$key != $update[$key])
                     $old_values[$key] = $old_user->$key;
-            
+
             $log_update = array();
             foreach ($update as $k => $u)
                 if (isset($old_values[$k]))
                     $log_update[$k] = $u;
-            
+
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
                 'created' => date('Y-m-d H:i:s'),
@@ -1540,28 +1540,28 @@ return false;
             $this->users->update_user($user_id, $update);
 
         }
-        
+
         $this->design->assign('addresses_error', $addresses_error);
-        
+
         $order->order_id = $order_id;
         $order->user_id = $user_id;
 
         $isset_order = $this->orders->get_order((int)$order_id);
-        
+
         $order->status = $isset_order->status;
         $order->manager_id = $isset_order->manager_id;
-        
+
         $this->soap1c->update_fields($update, '', $isset_order->id_1c);
 
         $this->design->assign('order', $order);
 
     }
-    
+
     private function work_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
-        
+
         $order = new StdClass();
         $order->workplace = trim($this->request->post('workplace'));
         $order->workaddress = trim($this->request->post('workaddress'));
@@ -1573,9 +1573,9 @@ return false;
         $order->chief_name = trim($this->request->post('chief_name'));
         $order->chief_position = trim($this->request->post('chief_position'));
         $order->chief_phone = trim($this->request->post('chief_phone'));
-        
+
         $work_error = array();
-        
+
         if (empty($order->workplace))
             $work_error[] = 'empty_workplace';
         if (empty($order->profession))
@@ -1592,8 +1592,8 @@ return false;
             $work_error[] = 'empty_chief_phone';
         if (empty($order->chief_phone))
             $work_error[] = 'empty_chief_phone';
-        
-            
+
+
         if (empty($work_error))
         {
             $update = array(
@@ -1614,12 +1614,12 @@ return false;
             foreach ($update as $key => $val)
                 if ($old_user->$key != $update[$key])
                     $old_values[$key] = $old_user->$key;
-            
+
             $log_update = array();
             foreach ($update as $k => $u)
                 if (isset($old_values[$k]))
                     $log_update[$k] = $u;
-            
+
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
                 'created' => date('Y-m-d H:i:s'),
@@ -1633,32 +1633,32 @@ return false;
             $this->users->update_user($user_id, $update);
 
         }
-        
+
         $this->design->assign('work_error', $work_error);
-        
+
         $order->order_id = $order_id;
         $order->user_id = $user_id;
 
         $isset_order = $this->orders->get_order((int)$order_id);
-        
+
         $order->status = $isset_order->status;
         $order->manager_id = $isset_order->manager_id;
-        
+
         $this->soap1c->update_fields($update, '', $isset_order->id_1c);
 
         $this->design->assign('order', $order);
 
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     private function action_personal()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
-        
+
         $order = new StdClass();
         $order->lastname = trim($this->request->post('lastname'));
         $order->firstname = trim($this->request->post('firstname'));
@@ -1666,9 +1666,9 @@ return false;
         $order->gender = trim($this->request->post('gender'));
         $order->birth = trim($this->request->post('birth'));
         $order->birth_place = trim($this->request->post('birth_place'));
-        
+
         $personal_error = array();
-        
+
         if (empty($order->lastname))
             $personal_error[] = 'empty_lastname';
         if (empty($order->firstname))
@@ -1681,7 +1681,7 @@ return false;
             $personal_error[] = 'empty_birth';
         if (empty($order->birth_place))
             $personal_error[] = 'empty_birth_place';
-        
+
         if (empty($personal_error))
         {
             $update = array(
@@ -1698,12 +1698,12 @@ return false;
             foreach ($update as $key => $val)
                 if ($old_user->$key != $update[$key])
                     $old_values[$key] = $old_user->$key;
-            
+
             $log_update = array();
             foreach ($update as $k => $u)
                 if (isset($old_values[$k]))
                     $log_update[$k] = $u;
-            
+
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
                 'created' => date('Y-m-d H:i:s'),
@@ -1716,35 +1716,35 @@ return false;
 
             $this->users->update_user($user_id, $update);
         }
-        
+
         $this->design->assign('personal_error', $personal_error);
-        
+
         $order->order_id = $order_id;
         $order->user_id = $user_id;
 
         $isset_order = $this->orders->get_order((int)$order_id);
-        
+
         $order->status = $isset_order->status;
         $order->manager_id = $isset_order->manager_id;
-        
+
         $this->soap1c->update_fields($update, '', $isset_order->id_1c);
 
         $this->design->assign('order', $order);
     }
-    
+
     private function action_passport()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
-        
+
         $order = new StdClass();
         $order->passport_serial = trim($this->request->post('passport_serial'));
         $order->passport_date = trim($this->request->post('passport_date'));
         $order->subdivision_code = trim($this->request->post('subdivision_code'));
         $order->passport_issued = trim($this->request->post('passport_issued'));
-        
+
         $passport_error = array();
-        
+
         if (empty($order->passport_serial))
             $passport_error[] = 'empty_passport_serial';
         if (empty($order->passport_date))
@@ -1753,7 +1753,7 @@ return false;
             $passport_error[] = 'empty_subdivision_code';
         if (empty($order->passport_issued))
             $passport_error[] = 'empty_passport_issued';
-        
+
         if (empty($passport_error))
         {
             $update = array(
@@ -1768,12 +1768,12 @@ return false;
             foreach ($update as $key => $val)
                 if ($old_user->$key != $update[$key])
                     $old_values[$key] = $old_user->$key;
-            
+
             $log_update = array();
             foreach ($update as $k => $u)
                 if (isset($old_values[$k]))
                     $log_update[$k] = $u;
-            
+
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
                 'created' => date('Y-m-d H:i:s'),
@@ -1786,27 +1786,27 @@ return false;
 
             $this->users->update_user($user_id, $update);
         }
-        
+
         $this->design->assign('passport_error', $passport_error);
-        
+
         $order->order_id = $order_id;
         $order->user_id = $user_id;
 
         $isset_order = $this->orders->get_order((int)$order_id);
-        
+
         $order->status = $isset_order->status;
         $order->manager_id = $isset_order->manager_id;
-        
+
         $this->soap1c->update_fields($update, '', $isset_order->id_1c);
 
         $this->design->assign('order', $order);
     }
-    
+
     private function reg_address_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
-        
+
         $order = new StdClass();
         $order->Regindex = trim($this->request->post('Regindex'));
         $order->Regregion = trim($this->request->post('Regregion'));
@@ -1819,9 +1819,9 @@ return false;
         $order->Reghousing = trim($this->request->post('Reghousing'));
         $order->Regbuilding = trim($this->request->post('Regbuilding'));
         $order->Regroom = trim($this->request->post('Regroom'));
-    
+
         $regaddress_error = array();
-    
+
         if (empty($order->Regregion))
             $regaddress_error[] = 'empty_regregion';
         if (empty($order->Regcity))
@@ -1830,7 +1830,7 @@ return false;
             $regaddress_error[] = 'empty_regstreet';
         if (empty($order->Reghousing))
             $regaddress_error[] = 'empty_reghousing';
-        
+
         if (empty($regaddress_error))
         {
             $update = array(
@@ -1852,12 +1852,12 @@ return false;
             foreach ($update as $key => $val)
                 if ($old_user->$key != $update[$key])
                     $old_values[$key] = $old_user->$key;
-            
+
             $log_update = array();
             foreach ($update as $k => $u)
                 if (isset($old_values[$k]))
                     $log_update[$k] = $u;
-            
+
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
                 'created' => date('Y-m-d H:i:s'),
@@ -1870,27 +1870,27 @@ return false;
 
             $this->users->update_user($user_id, $update);
         }
-        
+
         $this->design->assign('regaddress_error', $regaddress_error);
-        
+
         $order->order_id = $order_id;
         $order->user_id = $user_id;
 
         $isset_order = $this->orders->get_order((int)$order_id);
-        
+
         $order->status = $isset_order->status;
         $order->manager_id = $isset_order->manager_id;
-        
+
         $this->soap1c->update_fields($update, '', $isset_order->id_1c);
 
         $this->design->assign('order', $order);
     }
-    
+
     private function fakt_address_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
-        
+
         $order = new StdClass();
         $order->Faktindex = trim($this->request->post('Faktindex'));
         $order->Faktregion = trim($this->request->post('Faktregion'));
@@ -1903,9 +1903,9 @@ return false;
         $order->Fakthousing = trim($this->request->post('Fakthousing'));
         $order->Faktbuilding = trim($this->request->post('Faktbuilding'));
         $order->Faktroom = trim($this->request->post('Faktroom'));
-    
+
         $faktaddress_error = array();
-    
+
         if (empty($order->Faktregion))
             $faktaddress_error[] = 'empty_faktregion';
         if (empty($order->Faktcity))
@@ -1914,7 +1914,7 @@ return false;
             $faktaddress_error[] = 'empty_faktstreet';
         if (empty($order->Fakthousing))
             $faktaddress_error[] = 'empty_fakthousing';
-        
+
         if (empty($faktaddress_error))
         {
             $update = array(
@@ -1936,12 +1936,12 @@ return false;
             foreach ($update as $key => $val)
                 if ($old_user->$key != $update[$key])
                     $old_values[$key] = $old_user->$key;
-            
+
             $log_update = array();
             foreach ($update as $k => $u)
                 if (isset($old_values[$k]))
                     $log_update[$k] = $u;
-            
+
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
                 'created' => date('Y-m-d H:i:s'),
@@ -1954,28 +1954,28 @@ return false;
 
             $this->users->update_user($user_id, $update);
         }
-        
+
         $this->design->assign('faktaddress_error', $faktaddress_error);
-        
+
         $order->order_id = $order_id;
         $order->user_id = $user_id;
 
         $isset_order = $this->orders->get_order((int)$order_id);
-        
+
         $order->status = $isset_order->status;
         $order->manager_id = $isset_order->manager_id;
-        
+
         $this->soap1c->update_fields($update, '', $isset_order->id_1c);
 
         $this->design->assign('order', $order);
     }
-    
-    
+
+
     private function workdata_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
-        
+
         $order = new StdClass();
         $order->work_scope = trim($this->request->post('work_scope'));
         $order->profession = trim($this->request->post('profession'));
@@ -1983,14 +1983,14 @@ return false;
         $order->workplace = trim($this->request->post('workplace'));
         $order->workdirector_name = trim($this->request->post('workdirector_name'));
         $order->income_base = trim($this->request->post('income_base'));
-        
+
         $workdata_error = array();
-        
+
         if (empty($order->work_scope))
             $workaddress_error[] = 'empty_work_scope';
         if (empty($order->income_base))
             $workaddress_error[] = 'empty_income_base';
-            
+
         if (empty($workdata_error))
         {
             $update = array(
@@ -2007,12 +2007,12 @@ return false;
             foreach ($update as $key => $val)
                 if ($old_user->$key != $update[$key])
                     $old_values[$key] = $old_user->$key;
-            
+
             $log_update = array();
             foreach ($update as $k => $u)
                 if (isset($old_values[$k]))
                     $log_update[$k] = $u;
-            
+
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
                 'created' => date('Y-m-d H:i:s'),
@@ -2025,28 +2025,28 @@ return false;
 
             $this->users->update_user($user_id, $update);
         }
-        
+
         $this->design->assign('workdata_error', $workdata_error);
-        
+
         $order->order_id = $order_id;
         $order->user_id = $user_id;
 
         $isset_order = $this->orders->get_order((int)$order_id);
-        
+
         $order->status = $isset_order->status;
         $order->manager_id = $isset_order->manager_id;
-        
+
         $this->soap1c->update_fields($update, '', $isset_order->id_1c);
 
         $this->design->assign('order', $order);
     }
-    
-    
+
+
     private function work_address_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
-        
+
         $order = new StdClass();
         $order->Workregion = trim($this->request->post('Workregion'));
         $order->Workcity = trim($this->request->post('Workcity'));
@@ -2054,9 +2054,9 @@ return false;
         $order->Workhousing = trim($this->request->post('Workhousing'));
         $order->Workbuilding = trim($this->request->post('Workbuilding'));
         $order->Workroom = trim($this->request->post('Workroom'));
-    
+
         $workaddress_error = array();
-    
+
         if (empty($order->Workregion))
             $workaddress_error[] = 'empty_workregion';
         if (empty($order->Workcity))
@@ -2065,7 +2065,7 @@ return false;
             $workaddress_error[] = 'empty_workstreet';
         if (empty($order->Workhousing))
             $workaddress_error[] = 'empty_workhousing';
-        
+
         if (empty($workaddress_error))
         {
             $update = array(
@@ -2082,12 +2082,12 @@ return false;
             foreach ($update as $key => $val)
                 if ($old_user->$key != $update[$key])
                     $old_values[$key] = $old_user->$key;
-            
+
             $log_update = array();
             foreach ($update as $k => $u)
                 if (isset($old_values[$k]))
                     $log_update[$k] = $u;
-            
+
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
                 'created' => date('Y-m-d H:i:s'),
@@ -2100,35 +2100,35 @@ return false;
 
             $this->users->update_user($user_id, $update);
         }
-        
+
         $this->design->assign('workaddress_error', $workaddress_error);
-        
+
         $order->order_id = $order_id;
         $order->user_id = $user_id;
 
         $isset_order = $this->orders->get_order((int)$order_id);
-        
+
         $order->status = $isset_order->status;
         $order->manager_id = $isset_order->manager_id;
-        
+
         $this->soap1c->update_fields($update, '', $isset_order->id_1c);
 
         $this->design->assign('order', $order);
     }
-    
+
     private function socials_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
-    	
+
         $order = new StdClass();
         $order->social_fb = trim($this->request->post('social_fb'));
         $order->social_inst = trim($this->request->post('social_inst'));
         $order->social_vk = trim($this->request->post('social_vk'));
         $order->social_ok = trim($this->request->post('social_ok'));
-        
+
         $socials_error = array();
-        
+
         if (empty($socials_error))
         {
             $update = array(
@@ -2143,12 +2143,12 @@ return false;
             foreach ($update as $key => $val)
                 if ($old_user->$key != $update[$key])
                     $old_values[$key] = $old_user->$key;
-            
+
             $log_update = array();
             foreach ($update as $k => $u)
                 if (isset($old_values[$k]))
                     $log_update[$k] = $u;
-            
+
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
                 'created' => date('Y-m-d H:i:s'),
@@ -2161,25 +2161,25 @@ return false;
 
             $this->users->update_user($user_id, $update);
         }
-        
+
         $this->design->assign('socials_error', $socials_error);
-        
+
         $order->order_id = $order_id;
         $order->user_id = $user_id;
 
         $isset_order = $this->orders->get_order((int)$order_id);
-        
+
         $order->status = $isset_order->status;
         $order->manager_id = $isset_order->manager_id;
 
         $this->design->assign('order', $order);
     }
-    
+
     private function action_images()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
-        
+
         $statuses = $this->request->post('status');
         foreach ($statuses as $file_id => $status)
         {
@@ -2204,7 +2204,7 @@ return false;
                     'file_id' => $file_id,
                 ));
             }
-        
+
             $this->users->update_file($file_id, array('status' => $status));
 
             if ($status == 3)
@@ -2224,25 +2224,25 @@ return false;
                     $this->users->update_user($user_id, array('stage_files'=>1));
                 else
                     $this->users->update_user($user_id, array('stage_files'=>0));
-                
+
             }
-            
-        
+
+
         }
-                
+
         $order = new StdClass();
         $order->order_id = $order_id;
         $order->user_id = $user_id;
 
         $isset_order = $this->orders->get_order((int)$order_id);
-        
+
         $order->status = $isset_order->status;
         $order->manager_id = $isset_order->manager_id;
 
         $this->design->assign('order', $order);
-        
+
         $files = $this->users->get_files(array('user_id'=>$user_id));
-        
+
         //Отправляемв 1с
         $need_send = array();
         $files_dir = str_replace('https://', 'http://', $this->config->front_url.'/files/users/');
@@ -2255,7 +2255,7 @@ return false;
                 $need_send_item->user_id = $f->user_id;
                 $need_send_item->type = $f->type;
                 $need_send_item->url = $files_dir.$f->name;
-                
+
                 $need_send[] = $need_send_item;
             }
         }
@@ -2266,22 +2266,22 @@ return false;
                 foreach ($need_send as $need_send_file)
                     $this->users->update_file($need_send_file->id, array('sent_1c' => 1, 'sent_date' => date('Y-m-d H:i:s')));
         }
-        
+
         $this->design->assign('files', $files);
     }
-    
+
     private function action_services()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
-    	
+
         $order = new StdClass();
         $order->service_sms = (int)$this->request->post('service_sms');
         $order->service_insurance = (int)$this->request->post('service_insurance');
         $order->service_reason = (int)$this->request->post('service_reason');
-        
+
         $services_error = array();
-        
+
         if (empty($services_error))
         {
             $update = array(
@@ -2295,12 +2295,12 @@ return false;
             foreach ($update as $key => $val)
                 if ($old_user->$key != $update[$key])
                     $old_values[$key] = $old_user->$key;
-            
+
             $log_update = array();
             foreach ($update as $k => $u)
                 if (isset($old_values[$k]))
                     $log_update[$k] = $u;
-            
+
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
                 'created' => date('Y-m-d H:i:s'),
@@ -2313,20 +2313,20 @@ return false;
 
             $this->users->update_user($user_id, $update);
         }
-        
+
         $this->design->assign('services_error', $services_error);
-        
+
         $order->order_id = $order_id;
         $order->user_id = $user_id;
 
         $isset_order = $this->orders->get_order((int)$order_id);
-        
+
         $order->status = $isset_order->status;
         $order->manager_id = $isset_order->manager_id;
 
         $this->design->assign('order', $order);
     }
-    
+
     private function action_add_comment()
     {
         $user_id = $this->request->post('user_id', 'integer');
@@ -2335,15 +2335,15 @@ return false;
         $text = $this->request->post('text');
         $official = $this->request->post('official', 'integer');
         $organization = $this->request->post('organization', 'string');
-        
+
         if (empty($text))
         {
             $this->json_output(array('error'=>'Напишите комментарий!'));
         }
         else
         {
-            
-            
+
+
             $comment = array(
                 'manager_id' => $this->manager->id,
                 'user_id' => $user_id,
@@ -2354,7 +2354,7 @@ return false;
                 'official' => $official,
                 'organization' => $organization,
             );
-            
+
             if ($comment_id = $this->comments->add_comment($comment))
             {
                 $this->json_output(array(
@@ -2377,7 +2377,7 @@ return false;
         $order_id = $this->request->post('order_id', 'integer');
         $comment = $this->request->post('comment');
         $close_date = $this->request->post('close_date');
-        
+
         if (empty($comment))
         {
             $this->json_output(array('error'=>'Напишите комментарий к закрытию!'));
@@ -2400,11 +2400,11 @@ return false;
                         'text' => 'Закрыт в CRM. '.$comment,
                         'created' => date('Y-m-d H:i:s'),
                     );
-                    
+
                     if ($comment_id = $this->comments->add_comment($comment))
                     {
                         $this->orders->update_order($order_id, array('status' => 7));
-                        
+
                         $this->contracts->update_contract($contract->id, array(
                             'status' => 3,
                             'close_date' => date('Y-m-d H:i:s', strtotime($close_date)),
@@ -2415,7 +2415,7 @@ return false;
                             'collection_status' => 0,
                             'collection_manager_id' => 0,
                         ));
-                        
+
                         $this->json_output(array(
                             'success' => 1,
                             'created' => date('d.m.Y H:i:s'),
@@ -2436,17 +2436,17 @@ return false;
             {
                 $this->json_output(array('error'=>'Заявка не найдена!'));
             }
-            
+
         }
     }
-    
+
     public function action_repay()
     {
     	$contract_id = $this->request->post('contract_id', 'integer');
-        
+
         if (!in_array('repay_button', $this->manager->permissions))
             $this->json_output(array('error'=>'Не хватает прав!'));
-            
+
         if ($contract = $this->contracts->get_contract($contract_id))
         {
             if ($order = $this->orders->get_order($contract->order_id))
@@ -2458,8 +2458,8 @@ return false;
                 else
                 {
                     $this->contracts->update_contract($contract->id, array('status' => 1));
-                    $this->orders->update_order($contract->order_id, array('status' => 4)); 
-                
+                    $this->orders->update_order($contract->order_id, array('status' => 4));
+
                     $this->changelogs->add_changelog(array(
                         'manager_id' => $this->manager->id,
                         'created' => date('Y-m-d H:i:s'),
@@ -2469,8 +2469,8 @@ return false;
                         'order_id' => $contract->order_id,
                         'user_id' => $contract->user_id,
                     ));
-                    
-                    
+
+
                     $this->json_output(array(
                         'success' => 1,
                         'created' => date('d.m.Y H:i:s'),
@@ -2478,7 +2478,7 @@ return false;
                         'manager_name' => $this->manager->name,
                     ));
                 }
-                
+
             }
             else
             {
@@ -2490,18 +2490,18 @@ return false;
             $this->json_output(array('error'=>'Договор не найден!'));
         }
     }
-    
+
     private function send_sms_action()
     {
         $yuk = $this->request->post('yuk', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
         $order_id = $this->request->post('order_id', 'integer');
         $template_id = $this->request->post('template_id', 'integer');
-        
-        $user = $this->users->get_user((int)$user_id);   
+
+        $user = $this->users->get_user((int)$user_id);
 
         $template = $this->sms->get_template($template_id);
-        
+
         if (!empty($order_id))
         {
             $order = $this->orders->get_order($order_id);
@@ -2512,12 +2512,12 @@ return false;
                 $template->template = str_replace('{$payment_link}', $payment_link, $template->template);
             }
         }
-                        
+
         $resp = $this->sms->send(
-            $user->phone_mobile, 
+            $user->phone_mobile,
             $template->template
         );
-        
+
         $sms_message_id = $this->sms->add_message(array(
             'user_id' => $user->id,
             'order_id' => $order_id,
@@ -2525,7 +2525,7 @@ return false;
             'message' => $template->template,
             'created' => date('Y-m-d H:i:s'),
         ));
-        
+
         $this->communications->add_communication(array(
             'user_id' => $user->id,
             'manager_id' => $this->manager->id,
@@ -2538,7 +2538,7 @@ return false;
             'yuk' => $yuk,
             'result' => serialize($resp),
         ));
-        
+
         $this->comments->add_comment(array(
             'user_id' => $user->id,
             'order_id' => $order_id,
@@ -2548,7 +2548,7 @@ return false;
             'organization' => empty($yuk) ? 'mkk' : 'yuk',
             'auto' => 1
         ));
-        
+
         $this->changelogs->add_changelog(array(
             'manager_id' => $this->manager->id,
             'created' => date('Y-m-d H:i:s'),
@@ -2558,7 +2558,7 @@ return false;
             'user_id' => $user->id,
             'order_id' => $order_id,
         ));
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';		
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';
         $this->json_output(array('success'=>true));
     }
 
@@ -2608,7 +2608,7 @@ return false;
                     {
                         $this->json_output(array('error'=>'Не найдена страховка'));
                     }
-                    
+
                 }
                 else
                 {

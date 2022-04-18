@@ -251,7 +251,7 @@ class OfflineOrderController extends Controller
                         foreach ($result_scorings as $scoring) {
                             if ($scoring->type == 'juicescore') {
                                 $scoring->body = unserialize($scoring->body);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scoring->body);echo '</pre><hr />';                            
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scoring->body);echo '</pre><hr />';
                             }
 
                             if ($scoring->type == 'efrsb') {
@@ -646,7 +646,7 @@ class OfflineOrderController extends Controller
             'user_id' => $order->user_id,
         ));
 
-        if (!empty($order->id_1c)) {
+        /* if (!empty($order->id_1c)) {
             $check_block = $this->soap1c->check_block_order_1c($order->id_1c);
 
             if ($check_block == 'Block_1c') {
@@ -654,7 +654,7 @@ class OfflineOrderController extends Controller
             } elseif ($check_block != 'Block_CRM') {
                 $this->soap1c->block_order_1c($order->id_1c, 1);
             }
-        }
+        } */
 
         return array('success' => 1, 'status' => 1, 'manager' => $this->manager->name);
     }
@@ -728,17 +728,17 @@ class OfflineOrderController extends Controller
         $this->orders->update_order($order_id, array('contract_id' => $contract_id));
 
         if (!empty($order->id_1c)) {
-            $resp = $this->soap1c->block_order_1c($order->id_1c, 0);
+            //$resp = $this->soap1c->block_order_1c($order->id_1c, 0);
         }
 
         // отправялем смс
-        $msg = 'Активируй займ ' . ($order->amount * 1) . ' в личном кабинете, код ' . $accept_code . ' nalichnoeplus.ru/lk';
-        $this->sms->send($order->phone_mobile, $msg);
+        //$msg = 'Активируй займ ' . ($order->amount * 1) . ' в личном кабинете, код ' . $accept_code . ' nalichnoeplus.ru/lk';
+        //$this->sms->send($order->phone_mobile, $msg);
 
 //        ящик: sale@nalichnoeplus.com
 //        заголовок: подтверждение выдачи
-//        текст: текст - полное сообщение, как в смс. 
-        $this->notify->email('sale@nalichnoeplus.com', 'Подтверждение выдачи', $msg);
+//        текст: текст - полное сообщение, как в смс.
+        //$this->notify->email('sale@nalichnoeplus.com', 'Подтверждение выдачи', $msg);
 
 
         return array('success' => 1, 'status' => 2);
@@ -844,7 +844,7 @@ class OfflineOrderController extends Controller
         if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
             return array('error' => 'Не хватает прав для выполнения операции');
 
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($order);echo '</pre><hr />';        
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($order);echo '</pre><hr />';
         $this->orders->update_order($order_id, $update);
 
         $this->changelogs->add_changelog(array(
@@ -903,7 +903,7 @@ class OfflineOrderController extends Controller
                         'sent_date' => date('Y-m-d H:i:s')
                     ));
 
-                    //Отправляем чек 
+                    //Отправляем чек
                     $this->cloudkassir->send_reject_reason($order_id);
 
 
@@ -916,10 +916,10 @@ class OfflineOrderController extends Controller
             }
         }
 
-        if (!empty($order->id_1c)) {
+        /* if (!empty($order->id_1c)) {
             $resp = $this->soap1c->block_order_1c($order->id_1c, 0);
             $this->soap1c->send_order_status($order->id_1c, 'Отказано');
-        }
+        } */
 
         return array('success' => 1, 'status' => $status);
     }
@@ -949,7 +949,7 @@ class OfflineOrderController extends Controller
         if (!empty($order->manager_id) && $order->manager_id != $this->manager->id)
             return array('error' => 'Не хватает прав для выполнения операции');
 
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($order);echo '</pre><hr />';        
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($order);echo '</pre><hr />';
         $this->orders->update_order($order_id, $update);
 
         $this->changelogs->add_changelog(array(
@@ -2459,7 +2459,7 @@ class OfflineOrderController extends Controller
             'user_id' => $user->id,
             'order_id' => $order_id,
         ));
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';		
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';
         $this->json_output(array('success' => true));
     }
 
