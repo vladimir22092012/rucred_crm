@@ -81,6 +81,7 @@ class CompanyController extends Controller
         $kpp = $this->request->post('kpp');
         $jur_address = $this->request->post('jur_address');
         $phys_address = $this->request->post('phys_address');
+        $payday = $this->request->post('payday');
 
         $company =
             [
@@ -95,6 +96,14 @@ class CompanyController extends Controller
             ];
 
         $this->Companies->update_company($company_id, $company);
+
+        $branches = $this->Branches->get_branches(['company_id' => (int)$company_id]);
+
+        foreach($branches as $branch)
+        {
+            if($branch->number == '00')
+                $this->Branches->update_branch(['payday' => $payday], $branch->id);
+        }
     }
 
     private function action_delete_branche()

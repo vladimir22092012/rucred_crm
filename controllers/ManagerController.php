@@ -6,60 +6,71 @@ class ManagerController extends Controller
     {
     	if ($this->request->method('post'))
         {
-            $user = new StdClass();
-            $user_id = $this->request->post('id', 'integer');
-            
-            $user->role = $this->request->post('role');
-            $user->name = $this->request->post('name');
-            $user->name_1c = $this->request->post('name_1c');
-            $user->email = $this->request->post('email');
-            $user->phone = $this->request->post('phone');
-            $user->login = $this->request->post('login');
-            $user->mango_number = $this->request->post('mango_number');
-
-            $user->collection_status_id = $this->request->post('collection_status_id', 'integer');
-            
-            $team_id = (array)$this->request->post('team_id');
-
-            if (!empty($team_id))
+            if($this->request->post('action', 'string'))
             {
-                $user->team_id = implode(',', $team_id);
+                switch ($this->request->post('action', 'string')):
+                    case 'activate_email':
+                        $this->action_activate_email();
+                        break;
+
+                endswitch;
             }
-            
-            if ($this->request->post('password'))
-                $user->password = $this->request->post('password');
-            
-            $errors = array();
-            
-            if (empty($user->role))
-                $errors[] = 'empty_role';
-            if (empty($user->name))
-                $errors[] = 'empty_name';
-            if (empty($user->login))
-                $errors[] = 'empty_login';
-            
-            if (empty($user_id) && empty($user->password))
-                $errors[] = 'empty_password';
-            
+            else{
+                $user = new StdClass();
+                $user_id = $this->request->post('id', 'integer');
+
+                $user->role = $this->request->post('role');
+                $user->name = $this->request->post('name');
+                $user->name_1c = $this->request->post('name_1c');
+                $user->email = $this->request->post('email');
+                $user->phone = $this->request->post('phone');
+                $user->login = $this->request->post('login');
+                $user->mango_number = $this->request->post('mango_number');
+
+                $user->collection_status_id = $this->request->post('collection_status_id', 'integer');
+
+                $team_id = (array)$this->request->post('team_id');
+
+                if (!empty($team_id))
+                {
+                    $user->team_id = implode(',', $team_id);
+                }
+
+                if ($this->request->post('password'))
+                    $user->password = $this->request->post('password');
+
+                $errors = array();
+
+                if (empty($user->role))
+                    $errors[] = 'empty_role';
+                if (empty($user->name))
+                    $errors[] = 'empty_name';
+                if (empty($user->login))
+                    $errors[] = 'empty_login';
+
+                if (empty($user_id) && empty($user->password))
+                    $errors[] = 'empty_password';
+
 //            if (!($this->soap1c->check_manager_name($user->name_1c)))
 //                $errors[] = 'name_1c_not_found';
-            
-            $this->design->assign('errors', $errors);
-            
+
+                $this->design->assign('errors', $errors);
+
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($_POST, $errors);echo '</pre><hr />';
-            if (empty($errors))
-            {
-                if (empty($user_id))
+                if (empty($errors))
                 {
-                    $user->id = $this->managers->add_manager($user);
-                    $this->design->assign('message_success', 'added');
+                    if (empty($user_id))
+                    {
+                        $user->id = $this->managers->add_manager($user);
+                        $this->design->assign('message_success', 'added');
+                    }
+                    else
+                    {
+                        $user->id = $this->managers->update_manager($user_id, $user);
+                        $this->design->assign('message_success', 'updated');
+                    }
+                    $user = $this->managers->get_manager($user->id);
                 }
-                else
-                {
-                    $user->id = $this->managers->update_manager($user_id, $user);
-                    $this->design->assign('message_success', 'updated');
-                }
-                $user = $this->managers->get_manager($user->id);
             }
         }
         else
@@ -124,6 +135,15 @@ class ManagerController extends Controller
         $this->design->assign('meta_title', $meta_title);
         
         return $this->design->fetch('manager.tpl');
+    }
+
+    private function action_activate_email()
+    {
+        $email = $this->request->post('email');
+        $token = sha1(uniqid($email, true));
+
+        var_dump($token);
+        exit;
     }
     
 }

@@ -22,6 +22,7 @@ $(function () {
                 location.reload();
             }
         })
+
     });
 
     $('.action-delete-company').on('click', function (e) {

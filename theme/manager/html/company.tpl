@@ -110,12 +110,12 @@
                                             <td>{$branch->name}</td>
                                             <td>{$branch->payday}</td>
                                             <td>{$branch->fio} {$branch->phone}</td>
+                                            <td>
                                             {if $branch->number != '00'}
-                                                <td>
                                                     <input type="button" data-branch-id="{$branch->id}"
                                                            class="btn btn-outline-danger delete_branch" value="Удалить">
-                                                </td>
                                             {/if}
+                                            </td>
                                         </tr>
                                     {/foreach}
                                     </tbody>
@@ -154,7 +154,11 @@
                     </div>
                     <div class="form-group">
                         <label for="eio_position" class="control-label">День выплаты:</label>
-                        <input type="text" class="form-control" name="payday" id="payday" value=""/>
+                        <select class="form-control" name="payday" id="payday">
+                            {for $i = 1 to 31}
+                                <option value="{$i}" {if $i == 10}selected{/if}>{$i}</option>
+                            {/for}
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="fio" class="control-label">Начальник ТБ:</label>
@@ -223,6 +227,14 @@
                         <label for="phys_address" class="control-label">Адрес местонахождения:</label>
                         <input type="text" class="form-control" name="phys_address" id="phys_address"
                                value="{$company->phys_address}"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="payday" class="control-label">День выплаты по умолчанию:</label>
+                        <select class="form-control" name="payday" id="payday">
+                            {for $i = 1 to 31}
+                                <option value="{$i}" {if $i == 10}selected{/if}>{$i}</option>
+                            {/for}
+                        </select>
                     </div>
                     <div>
                         <input type="button" class="btn btn-danger cancel" data-dismiss="modal" value="Отмена">

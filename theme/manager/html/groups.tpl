@@ -32,6 +32,7 @@
                 let group_name = $(this).prev().val();
                 let group_id = $(this).attr('data-group');
 
+
                 $.ajax({
                     method: 'POST',
                     data: {
@@ -39,7 +40,7 @@
                         group_name: group_name,
                         group_id: group_id
                     },
-                    success: function () {
+                    success: function (resp) {
                         location.reload();
                     }
                 })
@@ -145,9 +146,9 @@
                                                            value="Отменить">
                                                 </td>
                                                 <td>{$group->number}</td>
-                                                <td><input type="button" data-group="{$group->id}"
+                                                <td>{if $group->number != '00'}<input type="button" data-group="{$group->id}"
                                                            class="btn btn-outline-danger delete_group"
-                                                           value="Удалить"></td>
+                                                           value="Удалить"></td>{/if}
                                             </tr>
                                         {/foreach}
                                     {/if}

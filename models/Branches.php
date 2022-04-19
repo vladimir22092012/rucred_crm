@@ -15,6 +15,17 @@ class Branches extends Core
         return $id;
     }
 
+    public function update_branch($branch, $id)
+    {
+        $query = $this->db->placehold("
+        UPDATE s_branches
+        SET ?%
+        WHERE id = ?
+        ", $branch, $id);
+
+        $this->db->query($query);
+    }
+
     public function get_company_branches($company_id)
     {
         $query = $this->db->placehold("
