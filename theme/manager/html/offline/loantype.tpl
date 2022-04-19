@@ -264,7 +264,7 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="percent"
-                                                       {if $loantype}value="{$loantype->percent|number_format:2:',':' '}" {/if}/>
+                                                       {if $loantype}value="{$loantype->percent|number_format:3:',':' '}" {/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -275,7 +275,7 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="profunion"
-                                                       {if $loantype}value="{$loantype->profunion|number_format:2:',':' '}" {/if}/>
+                                                       {if $loantype}value="{$loantype->profunion|number_format:3:',':' '}" {/if}/>
                                             </div>
                                         </div>
                                     </div>
