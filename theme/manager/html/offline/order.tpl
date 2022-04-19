@@ -1733,15 +1733,15 @@
                                                         {/foreach}
                                                         <tr>
                                                             <td style="background-color: #b3b2ab">ИТОГО:</td>
-                                                            <td style="background-color: #b3b2ab">{$payment_schedule->result->all_sum_pay|number_format:2:',':' '}</td>
-                                                            <td style="background-color: #b3b2ab">{$payment_schedule->result->all_loan_percents_pay|number_format:2:',':' '}</td>
-                                                            <td style="background-color: #b3b2ab">{$payment_schedule->result->all_loan_body_pay|number_format:2:',':' '}</td>
-                                                            <td style="background-color: #b3b2ab">{$payment_schedule->result->all_comission_pay|number_format:2:',':' '}</td>
-                                                            <td style="background-color: #b3b2ab">{$payment_schedule->result->all_rest_pay_sum|number_format:2:',':' '}</td>
+                                                            <td style="background-color: #b3b2ab">{$payment_schedule['result']->all_sum_pay|number_format:2:',':' '}</td>
+                                                            <td style="background-color: #b3b2ab">{$payment_schedule['result']->all_loan_percents_pay|number_format:2:',':' '}</td>
+                                                            <td style="background-color: #b3b2ab">{$payment_schedule['result']->all_loan_body_pay|number_format:2:',':' '}</td>
+                                                            <td style="background-color: #b3b2ab">{$payment_schedule['result']->all_comission_pay|number_format:2:',':' '}</td>
+                                                            <td style="background-color: #b3b2ab">{$payment_schedule['result']->all_rest_pay_sum|number_format:2:',':' '}</td>
                                                         </tr>
                                                         <tr>
                                                             <td colspan="5">Полная стоимость микрозайма, % годовых:</td>
-                                                            <td>{$percents}%</td>
+                                                            <td>{($order->percent * $order->period)|number_format:2:',':' '}%</td>
                                                         </tr>
                                                         {/if}
                                                         </tbody>
