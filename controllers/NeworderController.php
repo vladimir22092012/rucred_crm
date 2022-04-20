@@ -290,7 +290,7 @@ class NeworderController extends Controller
                             'loan_percents_pay' => $loan_percents_pay,
                             'loan_body_pay' => $body_pay,
                             'comission_pay' => 0.00,
-                            'rest_pay' => $rest_sum
+                            'rest_pay' => $rest_sum -= $body_pay
                         ];
                     $paydate->add(new DateInterval('P1M'));
                 }
@@ -320,7 +320,7 @@ class NeworderController extends Controller
                             'loan_percents_pay' => $percents_pay,
                             'loan_body_pay' => ($body_pay)?$body_pay:0,
                             'comission_pay' => 0.00,
-                            'rest_pay' => $rest_sum - $body_pay
+                            'rest_pay' => $rest_sum -= $body_pay
                         ];
 
                     $paydate->add(new DateInterval('P1M'));
@@ -330,6 +330,7 @@ class NeworderController extends Controller
                 {
                     $paydate->setDate($paydate->format('Y'), $paydate->format('m'), 10);
                     $interval = new DateInterval('P1M');
+                    $end_date->setTime(0,0,1);
                     $daterange = new DatePeriod($paydate, $interval, $end_date);
 
                     foreach ($daterange as $date) {
