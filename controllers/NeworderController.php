@@ -364,10 +364,6 @@ class NeworderController extends Controller
                     $payment_schedule['result']['all_rest_pay_sum'] = 0.00;
                 }
 
-                echo '<pre>';
-                var_dump($payment_schedule);
-                exit;
-
                 $order['payment_schedule']  = json_encode($payment_schedule);
 
                 $company = $this->Companies->get_company($order['company_id']);
