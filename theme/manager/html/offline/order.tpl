@@ -8,8 +8,20 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery.maskedinput@1.4.1/src/jquery.maskedinput.min.js"
             type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
+    <script src="theme/manager/assets/plugins/daterangepicker/daterangepicker.js"></script>
     <script>
         $(function () {
+
+            moment.locale('ru');
+
+            $('.daterange').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true,
+                locale: {
+                    format: 'DD.MM.YYYY'
+                },
+            });
 
             $('.get-docs').on('click', function (e) {
                 e.preventDefault();
@@ -17,7 +29,7 @@
                 let order_id = $(this).attr('data-order');
                 let documents = {{json_encode($documents)}};
 
-                if(Object.keys(documents).length > 0){
+                if (Object.keys(documents).length > 0) {
                     Swal.fire({
                         title: 'Формирование документов приведет к удалению всех сканов',
                         showCancelButton: true,
@@ -39,7 +51,7 @@
                         }
                     });
                 }
-                else{
+                else {
                     $.ajax({
                         method: 'post',
                         data: {
@@ -216,6 +228,9 @@
             font-size: 13px !important;
         }
     </style>
+    <link href="theme/manager/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="theme/manager/assets/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
 {/capture}
 
 {function name='penalty_button'}
@@ -315,6 +330,9 @@
                                 <div class="col-8 col-md-3 col-lg-4">
                                     <h6 class="form-control-static float-left">
                                         дата заявки: {$order->date|date} {$order->date|time}
+                                    </h6>
+                                    <h6 class="form-control-static float-right">
+                                        персональный номер: {$order->personal_number}
                                     </h6>
                                     {if $order->penalty_date}
                                         <h6 class="form-control-static float-left">
@@ -432,21 +450,19 @@
                                             </div>
                                         {/if}
                                         <div class="row view-block ">
-                                            <div class="col-6 text-center">
+                                            <div class="col-4 text-center">
                                                 <h6>Сумма</h6>
                                                 <h4 class="text-primary">{$order->amount|number_format:0:',':' '}
                                                     руб</h4>
                                             </div>
-                                            <div class="col-6 text-center">
-                                                <h6>Срок</h6>
-                                                <h4 class="text-primary">{$order->period} {$order->period|plural:"день":"дней":"дня"}</h4>
+                                            <div class="col-4 text-center">
+                                                <h6>Тарифный план</h6>
+                                                <h4 class="text-primary">{$loantype->name}</h4>
                                             </div>
-                                            {if $order->antirazgon_amount}
-                                                <div class="col-12 text-center">
-                                                    <h4 class="text-danger">Максимальная
-                                                        сумма: {$order->antirazgon_amount} руб</h4>
-                                                </div>
-                                            {/if}
+                                            <div class="col-4 text-center">
+                                                <h6>Дата выдачи</h6>
+                                                <h4 class="text-primary">{$order->probably_start_date|date}</h4>
+                                            </div>
                                             {if $order->status <= 2 || in_array($manager->role, ['admin','developer'])}
                                                 <a href="javascript:void(0);"
                                                    class="text-info js-edit-form edit-amount js-event-add-click"
@@ -458,19 +474,29 @@
                                         </div>
 
                                         <div class="row edit-block hide">
-                                            <div class="col-6 col-md-3 text-center">
+                                            <div class="col-2">
                                                 <h6>Сумма</h6>
                                                 <input type="text" class="form-control" name="amount"
                                                        value="{$order->amount}"/>
                                             </div>
-                                            <div class="col-6 col-md-3 text-center">
-                                                <h6>Период</h6>
-                                                <input type="text" class="form-control" name="period"
-                                                       value="{$order->period}"/>
+                                            <div class="col-3">
+                                                <h6>Тарифный план</h6>
+                                                <select class="form-control">
+                                                    {foreach $loantypes as $loantype_select}
+                                                    <option value="{$loantype_select['id']}" {if $loantype_select['id'] == $loantype->id}selected{/if}>{$loantype_select['name']}</option>
+                                                    {/foreach}
+                                                </select>
                                             </div>
-                                            <div class="col-12 col-md-6">
+                                            <div class="col-3">
+                                                <h6>Дата выдачи</h6>
+                                                <input type="text" style="margin-left: 10px; width: 130px"
+                                                       id="probably_start_date"
+                                                       name="probably_start_date"
+                                                       class="form-control daterange"
+                                                       value="{$order->probably_start_date|date}">
+                                            </div>
+                                            <div class="col-4">
                                                 <div class="form-actions">
-                                                    <h6>&nbsp;</h6>
                                                     <button type="submit" class="btn btn-success js-event-add-click"
                                                             data-event="41" data-manager="{$manager->id}"
                                                             data-order="{$order->order_id}"
@@ -1705,7 +1731,8 @@
                                                         <tr style="width: 100%;">
                                                             <th rowspan="3">Дата платежа</th>
                                                             <th colspan="4">Платёж за расчётный период, руб.</th>
-                                                            <th rowspan="3">Остаток задолженности по микрозайму, руб.</th>
+                                                            <th rowspan="3">Остаток задолженности по микрозайму, руб.
+                                                            </th>
                                                         </tr>
                                                         <tr style="width: 100%;">
                                                             <th rowspan="2">Сумма платежа</th>
@@ -1719,30 +1746,34 @@
                                                         </thead>
                                                         <tbody>
                                                         {if !empty($payment_schedule)}
-                                                        {foreach $payment_schedule as $date => $payment}
-                                                            {if $date != 'result'}
-                                                                <tr>
-                                                                    <td align="center">{$date}</td>
-                                                                    <td align="left">{$payment->pay_sum|number_format:2:',':' '}</td>
-                                                                    <td align="left">{$payment->loan_percents_pay|number_format:2:',':' '}</td>
-                                                                    <td align="left">{$payment->loan_body_pay|number_format:2:',':' '}</td>
-                                                                    <td align="left">{$payment->comission_pay|number_format:2:',':' '}</td>
-                                                                    <td align="left">{$payment->rest_pay|number_format:2:',':' '}</td>
-                                                                </tr>
-                                                            {/if}
-                                                        {/foreach}
-                                                        <tr>
-                                                            <td style="background-color: #b3b2ab">ИТОГО:</td>
-                                                            <td style="background-color: #b3b2ab">{$payment_schedule['result']->all_sum_pay|number_format:2:',':' '}</td>
-                                                            <td style="background-color: #b3b2ab">{$payment_schedule['result']->all_loan_percents_pay|number_format:2:',':' '}</td>
-                                                            <td style="background-color: #b3b2ab">{$payment_schedule['result']->all_loan_body_pay|number_format:2:',':' '}</td>
-                                                            <td style="background-color: #b3b2ab">{$payment_schedule['result']->all_comission_pay|number_format:2:',':' '}</td>
-                                                            <td style="background-color: #b3b2ab">{$payment_schedule['result']->all_rest_pay_sum|number_format:2:',':' '}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td colspan="5">Полная стоимость микрозайма, % годовых:</td>
-                                                            <td>{($order->percent * $order->period)|number_format:2:',':' '}%</td>
-                                                        </tr>
+                                                            {foreach $payment_schedule as $date => $payment}
+                                                                {if $date != 'result'}
+                                                                    <tr>
+                                                                        <td align="center">{$date}</td>
+                                                                        <td align="left">{$payment->pay_sum|number_format:2:',':' '}</td>
+                                                                        <td align="left">{$payment->loan_percents_pay|number_format:2:',':' '}</td>
+                                                                        <td align="left">{$payment->loan_body_pay|number_format:2:',':' '}</td>
+                                                                        <td align="left">{$payment->comission_pay|number_format:2:',':' '}</td>
+                                                                        <td align="left">{$payment->rest_pay|number_format:2:',':' '}</td>
+                                                                    </tr>
+                                                                {/if}
+                                                            {/foreach}
+                                                            <tr>
+                                                                <td style="background-color: #b3b2ab">ИТОГО:</td>
+                                                                <td style="background-color: #b3b2ab">{$payment_schedule['result']->all_sum_pay|number_format:2:',':' '}</td>
+                                                                <td style="background-color: #b3b2ab">{$payment_schedule['result']->all_loan_percents_pay|number_format:2:',':' '}</td>
+                                                                <td style="background-color: #b3b2ab">{$payment_schedule['result']->all_loan_body_pay|number_format:2:',':' '}</td>
+                                                                <td style="background-color: #b3b2ab">{$payment_schedule['result']->all_comission_pay|number_format:2:',':' '}</td>
+                                                                <td style="background-color: #b3b2ab">{$payment_schedule['result']->all_rest_pay_sum|number_format:2:',':' '}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="5">Полная стоимость микрозайма, %
+                                                                    годовых:
+                                                                </td>
+                                                                <td>{($order->percent * $order->period)|number_format:2:',':' '}
+                                                                    %
+                                                                </td>
+                                                            </tr>
                                                         {/if}
                                                         </tbody>
                                                     </table>
@@ -2190,7 +2221,6 @@
                                                      data-order="{$order->order_id}">
 
                                                     {foreach $scoring_types as $scoring_type}
-                                                        
                                                         <div class="pl-2 pr-2 {if $scorings[$scoring_type->name]->status == 'new'}bg-light-warning{elseif $scorings[$scoring_type->name]->success}bg-light-success{else}bg-light-danger{/if}">
                                                             <div class="row {if !$scoring_type@last}border-bottom{/if}">
                                                                 <div class="col-12 col-sm-12 pt-2">

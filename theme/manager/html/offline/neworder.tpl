@@ -642,9 +642,10 @@
                                                 <td><input class="form-control"
                                                            name="credits_percents[][credits_percents]" type="text"
                                                            value=""></td>
-                                                <td><input class="form-control" name="credits_delay[][credits_delay]"
-                                                           type="text"
-                                                           value=""></td>
+                                                <td><select class="form-control" name="credits_delay[][credits_delay]">
+                                                        <option value="Да">Да</option>
+                                                        <option value="Нет">Нет</option>
+                                                    </select></td>
                                                 <td><input type="button"
                                                            class="btn btn-outline-success add_to_credits_table"
                                                            value="+"></td>
@@ -679,9 +680,11 @@
                                                 <td><input class="form-control"
                                                            name="cards_validity_period[][cards_validity_period]"
                                                            type="text" value=""></td>
-                                                <td><input class="form-control" name="cards_delay[][cards_delay]"
-                                                           type="text"
-                                                           value=""></td>
+                                                <td><select class="form-control" name="cards_delay[][cards_delay]">
+                                                        <option value="Да">Да</option>
+                                                        <option value="Нет">Нет</option>
+                                                    </select
+                                                </td>
                                                 <td><input type="button"
                                                            class="btn btn-outline-success add_to_cards_table"
                                                            value="+"></td>

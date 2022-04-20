@@ -477,6 +477,12 @@ class OfflineOrderController extends Controller
             return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
         });
 
+        $loantype = $this->Loantypes->get_loantype($order->loan_type);
+        $this->design->assign('loantype', $loantype);
+
+        $loantypes = $this->GroupLoanTypes->get_loantypes_on($order->group_id);
+        $this->design->assign('loantypes', $loantypes);
+
         $this->design->assign('payment_schedule', $payment_schedule);
 
         $order = $this->orders->get_order($order_id);

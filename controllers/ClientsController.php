@@ -5,9 +5,6 @@ class ClientsController extends Controller
     public function fetch()
     {
 
-return false;
-
-
         $items_per_page = 20;
 
     	$filter = array();

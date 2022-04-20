@@ -76,6 +76,8 @@ class Orders extends Core
                 o.loan_type,
                 o.probably_return_date,
                 o.probably_return_sum,
+                o.probably_start_date,
+                o.group_id,
                 o.payment_schedule,
                 u.UID AS user_uid,
                 u.service_sms,
@@ -167,7 +169,8 @@ class Orders extends Core
                 u.push_not,
                 u.sms_not,
                 u.email_not,
-                u.massanger_not
+                u.massanger_not,
+                u.personal_number
             FROM __orders AS o
             LEFT JOIN __users AS u
             ON u.id = o.user_id

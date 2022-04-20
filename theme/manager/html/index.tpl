@@ -215,6 +215,11 @@
                         <a class="" href="orders/" aria-expanded="false"><i class="mdi mdi-animation"></i><span
                                     class="hide-menu">Заявки</span></a>
                     </li>
+                    <li {if in_array($module, ['ClientController', 'ClientsController'])}class="active"{/if}>
+                        <a class="" href="clients/" aria-expanded="false"><i
+                                    class="mdi mdi-chart-bubble"></i><span
+                                    class="hide-menu">Клиенты</span></a>
+                    </li>
                     {*}
                     <li {if in_array($module, ['MissingController'])}class="active"{/if}>
                         <a class="" href="missing/" aria-expanded="false"><i class="mdi mdi-sleep"></i><span
@@ -295,13 +300,6 @@
 
                         <li {if in_array($module, ['CompaniesController'])}class="active"{/if}><a
                                     href="companies">Компании</a></li>
-
-                        {*}
-                        <li {if in_array($module, ['ClientController', 'ClientsController'])}class="active"{/if}>
-                            <a class="" href="clients/" aria-expanded="false"><span
-                                        class="hide-menu">Клиенты</span></a>
-                        </li>
-                        {*}
 
                         <li {if in_array($module, ['LoantypesController','LoantypeController'])}class="active"{/if}>
                             <a href="loantypes">Продукты</a></li>
