@@ -107,18 +107,18 @@
                                 <table id="config-table" class="table display table-striped dataTable">
                                     <thead>
                                     <tr>
-                                        <th>Группа</th>
+                                        <th>Группа, №</th>
                                         <th class="">Номер</th>
+                                        <th class="">Компанияб №</th>
+                                        <th class="">Группа</th>
                                         <th class="">Компания</th>
-                                        <th class="">Наименование группы</th>
-                                        <th class="">Наименование компании</th>
-                                        <th class="">Должность ЕИО</th>
-                                        <th class="">ФИО ЕИО</th>
+                                        <th class="">Должность</th>
+                                        <th class="">ФИО</th>
                                         <th class="">ИНН</th>
                                         <th class="">ОГРН</th>
                                         <th class="">КПП</th>
-                                        <th class="">Юридический адрес</th>
-                                        <th class="">Адрес местонахождения</th>
+                                        <th class="">Юр Адрес</th>
+                                        <th class="">Местонахождение</th>
                                     </tr>
                                     <tr>
                                         <th style="width: 120px">

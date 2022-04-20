@@ -19,14 +19,48 @@ class GroupLoanTypes extends Core
             $group = $this->Groups->get_group($result->group_id);
             $groups[] =
                 [
+                    'record_id' => $result->id,
                     'id' => $group->id,
                     'name' => $group->name,
+                    'standart_percents' => $result->standart_percents,
+                    'preferential_percents' => $result->preferential_percents,
+                    'on_off_flag' => $result->on_off_flag
+                ];
+        }
+
+        return $groups;
+    }
+
+    public function get_loantypes_on($group_id)
+    {
+        $query = $this->db->placehold("
+        SELECT * 
+        FROM s_group_loantypes
+        WHERE group_id = ?
+        and on_off_flag = 1
+        ", $group_id);
+
+        $this->db->query($query);
+        $results = $this->db->results();
+
+        $loantypes = [];
+
+        foreach ($results as $result) {
+            $loantype = $this->Loantypes->get_loantype($result->loantype_id);
+
+            $loantypes[] =
+                [
+                    'max_period' => $loantype->max_period,
+                    'id' => $loantype->id,
+                    'min_amount' => $loantype->min_amount,
+                    'max_amount' => $loantype->max_amount,
+                    'name' => $loantype->name,
                     'standart_percents' => $result->standart_percents,
                     'preferential_percents' => $result->preferential_percents
                 ];
         }
 
-        return $groups;
+        return $loantypes;
     }
 
     public function add_group($group)
@@ -61,6 +95,17 @@ class GroupLoanTypes extends Core
             (float)$record['preferential_percents'],
             $record['group_id'],
             $record['loantype_id']);
+
+        $this->db->query($query);
+    }
+
+    public function change_on_off_flag($record_id, $flag)
+    {
+        $query = $this->db->placehold("
+        UPDATE s_group_loantypes 
+        SET on_off_flag = ?
+        WHERE id = ?
+        ", (int)$flag, (int)$record_id);
 
         $this->db->query($query);
     }

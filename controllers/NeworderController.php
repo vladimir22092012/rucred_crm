@@ -430,8 +430,9 @@ class NeworderController extends Controller
             $group_id = $this->request->get('group_id');
 
             $companies = $this->Companies->get_companies(['group_id' => $group_id]);
+            $loantypes = $this->GroupLoanTypes->get_loantypes_on($group_id);
 
-            echo json_encode($companies);
+            echo json_encode(['companies' => $companies, 'loantypes' => $loantypes]);
             exit;
 
         }

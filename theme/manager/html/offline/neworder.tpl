@@ -65,37 +65,6 @@
                 $('input[id="foreign_husb_wife' + order['foreign_husb_wife'] + '"]').trigger('click');
                 $('input[id="foreign_relative' + order['foreign_relative'] + '"]').trigger('click');
             }
-
-            $('.price').slick({
-                infinite: false,
-                speed: 300,
-                slidesToShow: 4,
-                slidesToScroll: 4,
-                responsive: [
-                    {
-                        breakpoint: 1024,
-                        settings: {
-                            slidesToShow: 3,
-                            slidesToScroll: 3,
-                            infinite: true,
-                        }
-                    },
-                    {
-                        breakpoint: 600,
-                        settings: {
-                            slidesToShow: 2,
-                            slidesToScroll: 2
-                        }
-                    },
-                    {
-                        breakpoint: 480,
-                        settings: {
-                            slidesToShow: 1,
-                            slidesToScroll: 1
-                        }
-                    }
-                ]
-            });
         })
     </script>
 {/capture}
@@ -188,49 +157,70 @@
                             <div class="row" style="width: 100%">
                                 <div class="price_info" style="width: 100%">
                                     <h2>Off-line заявка</h2>
-                                    <p><span>Вид займа</span></p><br>
                                 </div>
                                 <br><br>
-                                <div class="price" id="pricelist">
-                                    {foreach $loantypes as $loantype}
-                                        <div class="price_container">
-                                            <div class="price_basic" data-loan-period="{$loantype->max_period}"
-                                                 data-loan="{$loantype->id}" data-min-amount="{$loantype->min_amount}"
-                                                 data-max-amount="{$loantype->max_amount}" data-loan-percents=""
-                                                 id="{$loantype->id}"><br>
-                                                <div class="height">
-                                                    <h4>{$loantype->name}</h4>
-                                                    <h5>от <span
-                                                                class="sum">{$loantype->min_amount|number_format:0:',':' '}</span>
-                                                        Р до
-                                                        <span class="sum">{$loantype->max_amount|number_format:0:',':' '}</span>
-                                                        Р</h5>
-                                                </div>
-                                                <hr style="width: 80%; size: 5px">
-                                                <div class="out_profunion percents">
-                                                    <h6>
-                                                        <span class="loantype-percents">{$loantype->percent|number_format:2:',':' '}</span>%
-                                                        <input type="hidden" class="percents"
-                                                               value="{$loantype->percent}">
-                                                    </h6>
-                                                    <span>За каждый день использования микрозаймом</span>
-                                                </div>
-                                                <div class="in_profunion percents" style="display: none">
-                                                    <h6>
-                                                        <span class="loantype-percents-profunion">{$loantype->profunion|number_format:2:',':' '}</span>%
-                                                        <input type="hidden" class="percents"
-                                                               value="{$loantype->profunion}">
-                                                    </h6>
-                                                    <span>За каждый день использования микрозаймом</span>
-                                                </div>
+                                <hr style="width: 100%; size: 5px">
+                                <form method="POST" id="forms" style="width: 100%">
+                                    <h3>Работодатель</h3><br>
+                                    <div style="width: 100%; margin-left: 25px">
+                                        <select style="width: 500px" class="form-control groups"
+                                                name="group">
+                                            <option value="none" selected>Выберите из списка</option>
+                                            {if !empty($groups)}
+                                                {foreach $groups as $group}
+                                                    <option value="{$group->id}">{$group->name}</option>
+                                                {/foreach}
+                                            {/if}
+                                        </select>
+                                        <select style="width: 500px; margin-left:10px; display: none;"
+                                                class="form-control my_company"
+                                                name="company">
+                                            <option value="none" selected>Выберите из списка</option>
+                                        </select>
+                                        <select style="width: 300px; margin-left:10px; display: none;"
+                                                class="form-control branches"
+                                                name="branch">
+                                            <option value="none" selected>Выберите из списка</option>
+                                        </select>
+                                    </div>
+                                    <hr style="width: 100%; size: 5px">
+                                    <br>
+                                    <h3>Членство в профсоюзе</h3><br>
+                                    <div style="width: 100%; margin: 30px 30px">
+                                        <div style="display: flex;">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="profunion"
+                                                       id="profunion1" value="1">
+                                                <label class="form-check-label" for="profunion1">
+                                                    Я член профсоюза
+                                                </label>
+                                            </div>
+                                            <div class="form-check" style="margin-left: 25px">
+                                                <input class="form-check-input" type="radio" name="profunion"
+                                                       id="profunion2" value="0" checked>
+                                                <label class="form-check-label" for="profunion2">
+                                                    Я не являюсь членом профсоюза
+                                                </label>
+                                            </div>
+                                            <div class="form-check" style="margin-left: 25px"
+                                                 id="profunion_toggle">
+                                                <input class="form-check-input want_profunion" type="checkbox"
+                                                       value="1"
+                                                       id="want_profunion" name="want_profunion">
+                                                <label class="form-check-label" for="want_profunion">
+                                                    Оповестить о желании вступления в профсоюз
+                                                </label>
                                             </div>
                                         </div>
-                                    {/foreach}
-                                </div>
+                                    </div>
+                                    <br>
+                                    <hr style="width: 100%; size: 5px">
+                                    <br>
+                                    <div class="price" id="pricelist">
 
-                                <hr style="width: 100%; size: 5px">
+                                    </div>
 
-                                <form method="POST" id="forms" style="width: 100%">
+                                    <hr style="width: 100%; size: 5px">
                                     <div class="loantype_settings" style="width: 100%; display: none">
                                         <div>
                                             <label style="font-size: 12px">Сумма:</label>
@@ -501,30 +491,7 @@
                                         <br>
                                         <hr style="width: 100%; size: 5px">
                                         <br>
-
                                         <h3>Работодатель</h3><br>
-                                        <div style="width: 100%; margin-left: 25px">
-                                            <select style="width: 500px" class="form-control groups"
-                                                    name="group">
-                                                <option value="none" selected>Выберите из списка</option>
-                                                {if !empty($groups)}
-                                                    {foreach $groups as $group}
-                                                        <option value="{$group->id}">{$group->name}</option>
-                                                    {/foreach}
-                                                {/if}
-                                            </select>
-                                            <select style="width: 500px; margin-left:10px; display: none;"
-                                                    class="form-control my_company"
-                                                    name="company">
-                                                <option value="none" selected>Выберите из списка</option>
-                                            </select>
-                                            <select style="width: 300px; margin-left:10px; display: none;"
-                                                    class="form-control branches"
-                                                    name="branch">
-                                                <option value="none" selected>Выберите из списка</option>
-                                            </select>
-                                        </div>
-                                        <br>
                                         <div style="width: 100%; display: flex">
                                             <div class="form-group">
                                                 <label style="margin-left: 25px!important;">Среднемесячный доход
@@ -549,35 +516,6 @@
                                             </div>
                                         </div>
                                         <br>
-                                        <hr style="width: 100%; size: 5px">
-                                        <h3>Членство в профсоюзе</h3><br>
-                                        <div style="width: 100%; margin: 30px 30px">
-                                            <div style="display: flex;">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="profunion"
-                                                           id="profunion1" value="1">
-                                                    <label class="form-check-label" for="profunion1">
-                                                        Я член профсоюза
-                                                    </label>
-                                                </div>
-                                                <div class="form-check" style="margin-left: 25px">
-                                                    <input class="form-check-input" type="radio" name="profunion"
-                                                           id="profunion2" value="0" checked>
-                                                    <label class="form-check-label" for="profunion2">
-                                                        Я не являюсь членом профсоюза
-                                                    </label>
-                                                </div>
-                                                <div class="form-check" style="margin-left: 25px"
-                                                     id="profunion_toggle">
-                                                    <input class="form-check-input want_profunion" type="checkbox"
-                                                           value="1"
-                                                           id="want_profunion" name="want_profunion">
-                                                    <label class="form-check-label" for="want_profunion">
-                                                        Оповестить о желании вступления в профсоюз
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
                                         <hr style="width: 100%; size: 5px">
                                         <br>
                                         <h4>Являетесь ли вы иностранным публичным должностным лицом?</h4><br>
@@ -689,17 +627,23 @@
                                             </thead>
                                             <tbody id="credits_table">
                                             <tr>
-                                                <td><input class="form-control" name="credits_bank_name[][credits_bank_name]" type="text"
+                                                <td><input class="form-control"
+                                                           name="credits_bank_name[][credits_bank_name]" type="text"
                                                            value=""></td>
-                                                <td><input class="form-control" name="credits_rest_sum[][credits_rest_sum]" type="text"
+                                                <td><input class="form-control"
+                                                           name="credits_rest_sum[][credits_rest_sum]" type="text"
                                                            value=""></td>
-                                                <td><input class="form-control" name="credits_month_pay[][credits_month_pay]" type="text"
+                                                <td><input class="form-control"
+                                                           name="credits_month_pay[][credits_month_pay]" type="text"
                                                            value=""></td>
-                                                <td><input class="form-control" name="credits_return_date[][credits_return_date]" type="text"
+                                                <td><input class="form-control"
+                                                           name="credits_return_date[][credits_return_date]" type="text"
                                                            value=""></td>
-                                                <td><input class="form-control" name="credits_percents[][credits_percents]" type="text"
+                                                <td><input class="form-control"
+                                                           name="credits_percents[][credits_percents]" type="text"
                                                            value=""></td>
-                                                <td><input class="form-control" name="credits_delay[][credits_delay]" type="text"
+                                                <td><input class="form-control" name="credits_delay[][credits_delay]"
+                                                           type="text"
                                                            value=""></td>
                                                 <td><input type="button"
                                                            class="btn btn-outline-success add_to_credits_table"
@@ -723,15 +667,20 @@
                                             </thead>
                                             <tbody id="cards_table">
                                             <tr>
-                                                <td><input class="form-control" name="cards_bank_name[][cards_bank_name]" type="text"
+                                                <td><input class="form-control"
+                                                           name="cards_bank_name[][cards_bank_name]" type="text"
                                                            value=""></td>
-                                                <td><input class="form-control" name="cards_limit[][cards_limit]" type="text"
+                                                <td><input class="form-control" name="cards_limit[][cards_limit]"
+                                                           type="text"
                                                            value=""></td>
-                                                <td><input class="form-control" name="cards_rest_sum[][cards_rest_sum]" type="text"
+                                                <td><input class="form-control" name="cards_rest_sum[][cards_rest_sum]"
+                                                           type="text"
                                                            value=""></td>
-                                                <td><input class="form-control" name="cards_validity_period[][cards_validity_period]"
+                                                <td><input class="form-control"
+                                                           name="cards_validity_period[][cards_validity_period]"
                                                            type="text" value=""></td>
-                                                <td><input class="form-control" name="cards_delay[][cards_delay]" type="text"
+                                                <td><input class="form-control" name="cards_delay[][cards_delay]"
+                                                           type="text"
                                                            value=""></td>
                                                 <td><input type="button"
                                                            class="btn btn-outline-success add_to_cards_table"
@@ -747,9 +696,6 @@
                                             <input type="submit" name="draft" style="margin-left: 100px"
                                                    class="btn btn-primary"
                                                    value="Сохранить черновик">
-                                            <input type="button" style="margin-left: 100px"
-                                                   class="btn btn-info to_form_loan"
-                                                   value="Сформировать условия">
                                         </div>
                                         <br><br>
                                         <input style="display: none" name="loan_type_to_submit"

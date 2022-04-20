@@ -29,12 +29,32 @@
                 let flag = $(this).val();
 
                 $.ajax({
-                   method: 'POST',
-                   data: {
-                       action: 'change_online_flag',
-                       loantype_id: loantype_id,
-                       flag: flag
-                   }
+                    method: 'POST',
+                    data: {
+                        action: 'change_online_flag',
+                        loantype_id: loantype_id,
+                        flag: flag
+                    }
+                });
+            });
+
+            $('.on_off_flag').on('change', function () {
+
+                let val = $(this).val();
+                let value = (val == 1) ? 0 : 1;
+                let record_id = $(this).attr('data-record');
+                let that = $(this);
+
+                $.ajax({
+                    method: 'POST',
+                    data:{
+                        action: 'change_on_off_flag',
+                        value: value,
+                        record_id: record_id
+                    },
+                    success: function () {
+                        that.val(value);
+                    }
                 });
             });
         })
@@ -227,6 +247,7 @@
                                                 <th align="center">Группа</th>
                                                 <th align="center">Процентная ставка</th>
                                                 <th align="center">Льготная ставка</th>
+                                                <th align="center">Вкл/Выкл</th>
                                                 <th></th>
                                             </tr>
                                             </thead>
@@ -235,8 +256,25 @@
                                                 {foreach $groups as $group}
                                                     <tr>
                                                         <td valign="middle">{$group['name']}</td>
-                                                        <td valign="middle">{$group['standart_percents']}</td>
-                                                        <td valign="middle">{$group['preferential_percents']}</td>
+                                                        <td valign="middle">{$group['standart_percents']|number_format:3:',':' '}</td>
+                                                        <td valign="middle">{$group['preferential_percents']|number_format:3:',':' '}</td>
+                                                        <td valign="middle">
+                                                            <div class="clearfix">
+                                                                <div class="float-left">
+                                                                    <div class="onoffswitch">
+                                                                        <input type="checkbox" name="on_off_flag"
+                                                                               data-record="{$group['record_id']}" class="onoffswitch-checkbox on_off_flag"
+                                                                               id="on_off_flag_{$group['id']}"
+                                                                               {if $group['on_off_flag'] == 1} checked="true" value="1" {else} value="0"{/if}>
+                                                                        <label class="onoffswitch-label"
+                                                                               for="on_off_flag_{$group['id']}">
+                                                                            <span class="onoffswitch-inner"></span>
+                                                                            <span class="onoffswitch-switch"></span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
                                                         <td><input type="button"
                                                                    data-group="{$group['id']}"
                                                                    data-standart-percents="{$group['standart_percents']}"

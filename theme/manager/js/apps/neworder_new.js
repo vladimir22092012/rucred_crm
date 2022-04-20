@@ -340,15 +340,94 @@ $(function () {
                 success: function (resp) {
                     $('.my_company').show();
 
-                    for (let key in resp) {
-                        $('.my_company').append('<option value="' + resp[key]['id'] + '">' + resp[key]['name'] + '</option>')
+                    if($('#pricelist').hasClass('slick-initialized'))
+                    {
+                        $('.price').slick('unslick');
                     }
+
+                    $('#pricelist').empty();
+
+                    for (let key in resp['companies']) {
+
+                        $('.my_company').append('<option value="' + resp['companies'][key]['id'] + '">' + resp['companies'][key]['name'] + '</option>')
+                    }
+
+                    for (let key in resp['loantypes']) {
+                        $('#pricelist').append(
+                            '<div class="price_container">' +
+                            '<div class="price_basic" data-loan-period="' + resp['loantypes'][key]['max_period'] + '"' +
+                            ' data-loan="' + resp['loantypes'][key]['id'] + '"' +
+                            ' data-min-amount="' + resp['loantypes'][key]['min_amount'] + '"' +
+                            ' data-max-amount="' + resp['loantypes'][key]['max_amount'] + '" data-loan-percents=""' +
+                            ' id="' + resp['loantypes'][key]['id'] + '"><br>' +
+                            '<div class="height">' +
+                            '<h4>' + resp['loantypes'][key]['name'] + '</h4>' +
+                            '<h5>от <span' +
+                            'class="sum">' + resp['loantypes'][key]['min_amount'] + '</span>' +
+                            'Р до' +
+                            '<span class="sum">' + resp['loantypes'][key]['max_amount'] + '</span>' +
+                            'Р</h5>' +
+                            '</div>' +
+                            '<hr style="width: 80%; size: 5px">' +
+                            '<div class="out_profunion percents">' +
+                            '<h6>' +
+                            '<span class="loantype-percents">' + resp['loantypes'][key]['standart_percents'] + '</span>%' +
+                            '<input type="hidden" class="percents"' +
+                            ' value="{$loantype->percent}">' +
+                            '</h6>' +
+                            '<span>За каждый день использования микрозаймом</span>' +
+                            '</div>' +
+                            '<div class="in_profunion percents" style="display: none">' +
+                            '<h6>' +
+                            '<span class="loantype-percents-profunion">' + resp['loantypes'][key]['preferential_percents'] + '</span>%' +
+                            '<input type="hidden" class="percents"' +
+                            ' value="{$loantype->profunion}">' +
+                            '</h6>' +
+                            '<span>За каждый день использования микрозаймом</span>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>'
+                        )
+                    }
+
+                    $('.price').slick({
+                        infinite: false,
+                        speed: 300,
+                        slidesToShow: 4,
+                        slidesToScroll: 4,
+                        responsive: [
+                            {
+                                breakpoint: 1024,
+                                settings: {
+                                    slidesToShow: 3,
+                                    slidesToScroll: 3,
+                                    infinite: true,
+                                }
+                            },
+                            {
+                                breakpoint: 600,
+                                settings: {
+                                    slidesToShow: 2,
+                                    slidesToScroll: 2
+                                }
+                            },
+                            {
+                                breakpoint: 480,
+                                settings: {
+                                    slidesToShow: 1,
+                                    slidesToScroll: 1
+                                }
+                            }
+                        ]
+                    });
                 }
             });
         }
         else {
             $('.my_company').hide();
             $('.branches').hide();
+            $('#pricelist').empty();
+            slider.slick('reinit');
         }
     });
 

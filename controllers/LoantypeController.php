@@ -82,6 +82,14 @@ class LoantypeController extends Controller
             $this->Loantypes->update_loantype($loantype_id, $loan_update);
         }
 
+        if ($this->request->post('action') == 'change_on_off_flag')
+        {
+            $record_id = $this->request->post('record_id', 'integer');
+            $flag = $this->request->post('value', 'integer');
+
+            $this->GroupLoanTypes->change_on_off_flag($record_id, $flag);
+        }
+
         if ($id = $this->request->get('id', 'integer')) {
             $loantype = $this->loantypes->get_loantype($id);
 
