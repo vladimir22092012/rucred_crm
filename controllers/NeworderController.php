@@ -265,6 +265,7 @@ class NeworderController extends Controller
 
                 if(date('d', strtotime($start_date)) < 10)
                 {
+
                     if($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < 3)
                     {
                         $plus_loan_percents = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
@@ -272,6 +273,7 @@ class NeworderController extends Controller
                         $loan_percents_pay = ($rest_sum * $percent_per_month) + $plus_loan_percents;
                         $body_pay = $sum_pay - $loan_percents_pay;
                         $paydate->add(new DateInterval('P1M'));
+                        $paydate = $this->check_pay_date($paydate);
 
                     }
 
@@ -304,7 +306,6 @@ class NeworderController extends Controller
                     }
                     if(date_diff($first_pay, $issuance_date)->days > 20 && date_diff($first_pay, $issuance_date)->days < 30)
                     {
-                        $paydate = $this->check_pay_date($first_pay);
                         $minus_percents = ($order['percent'] / 100) * $order['amount'] * (30 - date_diff($first_pay, $issuance_date)->days);
 
                         $sum_pay = $annoouitet_pay - $minus_percents;
@@ -327,12 +328,13 @@ class NeworderController extends Controller
 
                 if($rest_sum != 0)
                 {
+                    $paydate->setDate($paydate->format('Y'), $paydate->format('m'), 10);
                     $interval = new DateInterval('P1M');
                     $daterange = new DatePeriod($paydate, $interval, $end_date);
 
                     foreach ($daterange as $date) {
 
-                        $paydate = $this->check_pay_date($paydate);
+                        $date = $this->check_pay_date($date);
 
                         $loan_percents_pay = $rest_sum * $percent_per_month;
 
