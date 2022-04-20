@@ -17,12 +17,13 @@ $(function () {
     $('.to_form_loan').on('click', function (e) {
 
         let sum = $('#order_sum').val();
-        let loan_id = $(this).attr('data-loan');
-        let period = $(this).attr('data-loan-period');
-        let max_amount = $(this).attr('data-max-amount');
-        let min_amount = $(this).attr('data-min-amount');
+        let loan_id = Number($(this).attr('data-loan'));
+        let period = Number($(this).attr('data-loan-period'));
+        let max_amount = Number($(this).attr('data-max-amount'));
+        let min_amount = Number($(this).attr('data-min-amount'));
 
         sum = sum.replace(/[^0-9]/g, "");
+        sum = Number(sum);
 
 
         if (sum.length < 0 || sum == 0) {
@@ -38,6 +39,8 @@ $(function () {
 
 
                 let percents = $('.price_basic[id="' + loan_id + '"]').find('.percents:visible').find('input').val();
+
+                console.log(percents);
 
                 let percent_per_month = ((percents / 100) * 365) / 12;
 
@@ -67,7 +70,7 @@ $(function () {
         }
     });
 
-    $('.price_basic').on('click', function (e) {
+    $(document).on('click', '.price_basic', function (e) {
         e.preventDefault();
 
         $('.loantype_settings').show();
@@ -363,25 +366,25 @@ $(function () {
                             '<div class="height">' +
                             '<h4>' + resp['loantypes'][key]['name'] + '</h4>' +
                             '<h5>от <span' +
-                            'class="sum">' + resp['loantypes'][key]['min_amount'] + '</span>' +
-                            'Р до' +
-                            '<span class="sum">' + resp['loantypes'][key]['max_amount'] + '</span>' +
+                            'class="sum">' + new Intl.NumberFormat().format(resp['loantypes'][key]['min_amount']) + '</span>' +
+                            'Р до ' +
+                            '<span class="sum">' + new Intl.NumberFormat().format(resp['loantypes'][key]['max_amount']) + '</span>' +
                             'Р</h5>' +
                             '</div>' +
                             '<hr style="width: 80%; size: 5px">' +
                             '<div class="out_profunion percents">' +
                             '<h6>' +
-                            '<span class="loantype-percents">' + resp['loantypes'][key]['standart_percents'] + '</span>%' +
+                            '<span class="loantype-percents">' + new Intl.NumberFormat().format(resp['loantypes'][key]['standart_percents']) + '</span>%' +
                             '<input type="hidden" class="percents"' +
-                            ' value="{$loantype->percent}">' +
+                            ' value="'+resp['loantypes'][key]['standart_percents']+'">' +
                             '</h6>' +
                             '<span>За каждый день использования микрозаймом</span>' +
                             '</div>' +
                             '<div class="in_profunion percents" style="display: none">' +
                             '<h6>' +
-                            '<span class="loantype-percents-profunion">' + resp['loantypes'][key]['preferential_percents'] + '</span>%' +
+                            '<span class="loantype-percents-profunion">' + new Intl.NumberFormat().format(resp['loantypes'][key]['preferential_percents']) + '</span>%' +
                             '<input type="hidden" class="percents"' +
-                            ' value="{$loantype->profunion}">' +
+                            ' value="'+resp['loantypes'][key]['preferential_percents']+'">' +
                             '</h6>' +
                             '<span>За каждый день использования микрозаймом</span>' +
                             '</div>' +

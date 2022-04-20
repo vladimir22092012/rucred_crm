@@ -257,7 +257,7 @@ class NeworderController extends Controller
                 $start_date = date('Y-m-d', strtotime($order['probably_start_date']));
                 $end_date = new DateTime(date('Y-m-10', strtotime($order['probably_return_date'])));
                 $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
-                $paydate = $this->check_pay_date(new DateTime(date('Y-m-10', strtotime($start_date))));
+                $paydate = new DateTime(date('Y-m-10', strtotime($start_date)));
 
                 $percent_per_month = (($order['percent'] / 100) * 365) / 12;
                 $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
@@ -268,21 +268,25 @@ class NeworderController extends Controller
                     if($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < 3)
                     {
                         $plus_loan_percents = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
-                        $sum_first_pay = $annoouitet_pay + $plus_loan_percents;
+                        $sum_pay = $annoouitet_pay + $plus_loan_percents;
+                        $loan_percents_pay = ($rest_sum * $percent_per_month) + $plus_loan_percents;
+                        $body_pay = $sum_pay - $loan_percents_pay;
                         $paydate->add(new DateInterval('P1M'));
 
                     }
 
                     else
                     {
-                        $sum_first_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
+                        $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
+                        $loan_percents_pay = $sum_pay;
+                        $body_pay = 0;
                     }
 
                     $payment_schedule[$paydate->format('d.m.Y')] =
                         [
-                            'pay_sum' => $sum_first_pay,
-                            'loan_percents_pay' => $sum_first_pay,
-                            'loan_body_pay' => 0.00,
+                            'pay_sum' => $sum_pay,
+                            'loan_percents_pay' => $loan_percents_pay,
+                            'loan_body_pay' => $body_pay,
                             'comission_pay' => 0.00,
                             'rest_pay' => $rest_sum
                         ];
@@ -359,6 +363,10 @@ class NeworderController extends Controller
                     $payment_schedule['result']['all_comission_pay'] += $pay['comission_pay'];
                     $payment_schedule['result']['all_rest_pay_sum'] = 0.00;
                 }
+
+                echo '<pre>';
+                var_dump($payment_schedule);
+                exit;
 
                 $order['payment_schedule']  = json_encode($payment_schedule);
 
