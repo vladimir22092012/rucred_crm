@@ -723,6 +723,9 @@ if ($this->is_developer){
             UPDATE __orders SET ?% WHERE id = ?
         ", (array)$order, (int)$id);
         $this->db->query($query);
+
+        var_dump($query);
+        exit;
         
         return $id;
     }

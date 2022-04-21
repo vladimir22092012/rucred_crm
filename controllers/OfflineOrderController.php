@@ -14,6 +14,10 @@ class OfflineOrderController extends Controller
                     $this->change_manager_action();
                     break;
 
+                case 'edit_schedule':
+                    return $this->action_edit_schedule();
+                    break;
+
                 case 'fio':
                     $this->fio_action();
                     break;
@@ -469,13 +473,13 @@ class OfflineOrderController extends Controller
         $payment_schedule = (array)json_decode($order->payment_schedule);
 
         uksort($payment_schedule,
-            function( $a, $b){
+            function ($a, $b) {
 
-            if($a == $b)
-                return 0;
+                if ($a == $b)
+                    return 0;
 
-            return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
-        });
+                return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+            });
 
         $loantype = $this->Loantypes->get_loantype($order->loan_type);
         $this->design->assign('loantype', $loantype);
@@ -2518,5 +2522,41 @@ class OfflineOrderController extends Controller
         $this->users->update_user($user_id, $user);
     }
 
+    private function action_edit_schedule()
+    {
+        $date = $this->request->post('date');
+        $pay_sum = $this->request->post('pay_sum');
+        $loan_percents_pay = $this->request->post('loan_percents_pay');
+        $loan_body_pay = $this->request->post('loan_body_pay');
+        $comission_pay = $this->request->post('comission_pay');
+        $rest_pay = $this->request->post('rest_pay');
+        $order_id = $this->request->post('order_id');
+
+        $results['result'] = $this->request->post('result');
+
+        $payment_schedule = array_replace_recursive($date, $pay_sum, $loan_percents_pay, $loan_body_pay, $comission_pay, $rest_pay);
+
+        foreach ($payment_schedule as $date => $payment) {
+            $payment_schedule[$payment['date']] = array_slice($payment, 1);
+            $payment_schedule[$payment['date']]['pay_sum'] = preg_replace("/[^,.0-9]/", '', $payment['pay_sum']);
+            $payment_schedule[$payment['date']]['loan_percents_pay'] = preg_replace("/[^,.0-9]/", '', $payment['loan_percents_pay']);
+            $payment_schedule[$payment['date']]['loan_body_pay'] = preg_replace("/[^,.0-9]/", '', $payment['loan_body_pay']);
+            $payment_schedule[$payment['date']]['rest_pay'] = preg_replace("/[^,.0-9]/", '', $payment['rest_pay']);
+            unset($payment_schedule[$date]);
+        }
+
+        foreach ($results as $key => $result)
+        {
+            $results[$key]['all_sum_pay'] = preg_replace("/[^,.0-9]/", '', $result['all_sum_pay']);
+            $results[$key]['all_loan_percents_pay'] = preg_replace("/[^,.0-9]/", '', $result['all_loan_percents_pay']);
+            $results[$key]['all_loan_body_pay'] = preg_replace("/[^,.0-9]/", '', $result['all_loan_body_pay']);
+            $results[$key]['all_comission_pay'] = preg_replace("/[^,.0-9]/", '', $result['all_comission_pay']);
+            $results[$key]['all_rest_pay_sum'] = preg_replace("/[^,.0-9]/", '', $result['all_rest_pay_sum']);
+        }
+
+        $payment_schedule = array_merge($payment_schedule, $results);
+
+        $this->orders->update_order($order_id, ['payment_schedule' => json_encode($payment_schedule)]);
+    }
 
 }
