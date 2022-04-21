@@ -636,7 +636,7 @@
                                                 <td><input class="form-control"
                                                            name="credits_month_pay[][credits_month_pay]" type="text"
                                                            value=""></td>
-                                                <td><input class="form-control"
+                                                <td><input class="form-control validity_period"
                                                            name="credits_return_date[][credits_return_date]" type="text"
                                                            value=""></td>
                                                 <td><input class="form-control"
@@ -677,7 +677,7 @@
                                                 <td><input class="form-control" name="cards_rest_sum[][cards_rest_sum]"
                                                            type="text"
                                                            value=""></td>
-                                                <td><input class="form-control"
+                                                <td><input class="form-control validity_period"
                                                            name="cards_validity_period[][cards_validity_period]"
                                                            type="text" value=""></td>
                                                 <td><select class="form-control" name="cards_delay[][cards_delay]">
@@ -694,10 +694,10 @@
                                         <br>
                                         <br>
                                         <div style="display: flex; width: 500px;" id="buttons_append">
-                                            <input type="submit" name="create_new_order" class="btn btn-success"
+                                            <input style="display: none" type="submit" name="create_new_order" class="btn btn-success buttons_append"
                                                    value="Создать заявку">
-                                            <input type="submit" name="draft" style="margin-left: 100px"
-                                                   class="btn btn-primary"
+                                            <input type="submit" name="draft" style="margin-left: 100px; display: none;"
+                                                   class="btn btn-primary buttons_append"
                                                    value="Сохранить черновик">
                                         </div>
                                         <br><br>

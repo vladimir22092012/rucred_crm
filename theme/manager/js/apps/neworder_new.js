@@ -37,6 +37,8 @@ $(function () {
             if (parseInt(sum) >= parseInt(min_amount) && parseInt(sum) <= parseInt(max_amount)) {
                 $('.alert-danger').hide();
 
+                $('.buttons_append').show();
+
 
                 let percents = $('.price_basic[id="' + loan_id + '"]').find('.percents:visible').find('input').val();
 
@@ -301,6 +303,10 @@ $(function () {
         $(this).setCursorPosition(0);
     }).mask('99');
 
+    $('.validity_period').click(function () {
+        $(this).setCursorPosition(0);
+    }).mask('99/99');
+
     $('.js-lastname-input , .js-firstname-input , .js-patronymic-input').on('change', function () {
 
         let lastname = $('.js-lastname-input').val();
@@ -343,8 +349,7 @@ $(function () {
                 success: function (resp) {
                     $('.my_company').show();
 
-                    if($('#pricelist').hasClass('slick-initialized'))
-                    {
+                    if ($('#pricelist').hasClass('slick-initialized')) {
                         $('.price').slick('unslick');
                     }
 
@@ -356,6 +361,11 @@ $(function () {
                     }
 
                     for (let key in resp['loantypes']) {
+
+                        if (resp['loantypes'][key]['online_flag'] == 1)
+                            continue;
+
+
                         $('#pricelist').append(
                             '<div class="price_container">' +
                             '<div class="price_basic" data-loan-period="' + resp['loantypes'][key]['max_period'] + '"' +
@@ -376,7 +386,7 @@ $(function () {
                             '<h6>' +
                             '<span class="loantype-percents">' + new Intl.NumberFormat().format(resp['loantypes'][key]['standart_percents']) + '</span>%' +
                             '<input type="hidden" class="percents"' +
-                            ' value="'+resp['loantypes'][key]['standart_percents']+'">' +
+                            ' value="' + resp['loantypes'][key]['standart_percents'] + '">' +
                             '</h6>' +
                             '<span>За каждый день использования микрозаймом</span>' +
                             '</div>' +
@@ -384,7 +394,7 @@ $(function () {
                             '<h6>' +
                             '<span class="loantype-percents-profunion">' + new Intl.NumberFormat().format(resp['loantypes'][key]['preferential_percents']) + '</span>%' +
                             '<input type="hidden" class="percents"' +
-                            ' value="'+resp['loantypes'][key]['preferential_percents']+'">' +
+                            ' value="' + resp['loantypes'][key]['preferential_percents'] + '">' +
                             '</h6>' +
                             '<span>За каждый день использования микрозаймом</span>' +
                             '</div>' +

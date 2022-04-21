@@ -56,7 +56,8 @@ class GroupLoanTypes extends Core
                     'max_amount' => $loantype->max_amount,
                     'name' => $loantype->name,
                     'standart_percents' => $result->standart_percents,
-                    'preferential_percents' => $result->preferential_percents
+                    'preferential_percents' => $result->preferential_percents,
+                    'online_flag' => $loantype->online_flag
                 ];
         }
 

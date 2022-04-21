@@ -217,9 +217,9 @@ class Managers extends Core
 //            'add_penalty' => array('developer', 'admin', 'boss', 'quality_control', 'quality_control_plus'),
 //            'penalties' => array('developer', 'admin', 'boss', 'quality_control', 'quality_control_plus', 'user', 'big_user', 'cs_pc'),
 //            'collection_moving' => array('developer', 'admin', 'boss', 'quality_control', 'quality_control_plus', 'chief_collector', 'team_collector'),
-            'neworder' => array('developer', 'quality_control_plus', 'admin', 'cs_pc', 'city_manager'),
-            'offline' => array('developer', 'quality_control_plus', 'admin', 'cs_pc', 'city_manager'),
-            'offline_settings' => array('developer', 'quality_control_plus', 'admin', 'city_manager'),
+            'neworder' => array('developer', 'admin', 'underwriter'),
+            'offline' => array('developer', 'admin', 'underwriter', 'employer'),
+            'offline_settings' => array('developer', 'admin', 'underwriter', 'employer')
         );
         
         $access_permissions = array();

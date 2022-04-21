@@ -233,9 +233,9 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <select name="online_flag" id="online_flag" class="form-control">
-                                                    <option value="1">Онлайн</option>
-                                                    <option value="2">Оффлайн</option>
-                                                    <option value="3">Везде</option>
+                                                    <option value="1" {if $loantype->online_flag == 1}selected{/if}>Онлайн</option>
+                                                    <option value="2" {if $loantype->online_flag == 2}selected{/if}>Оффлайн</option>
+                                                    <option value="3" {if $loantype->online_flag == 3}selected{/if}>Везде</option>
                                                 </select>
                                             </div>
                                         </div>

@@ -209,6 +209,7 @@
             <nav class="sidebar-nav">
                 <ul id="sidebarnav">
 
+                    {if $manager->role != 'underwriter'}
                     <li class="nav-small-cap">Онлайн заявки</li>
 
                     <li {if in_array($module, ['OrderController', 'OrdersController'])}class="active"{/if}>
@@ -226,7 +227,7 @@
                                     class="hide-menu">Отвалы</span></a>
                     </li>
                     {*}
-
+                    {/if}
                     {if in_array('offline_settings', $manager->permissions) || in_array('offline', $manager->permissions)}
                         <li class="nav-small-cap">Оффлайн заявки</li>
                         {if in_array('offline', $manager->permissions)}
@@ -244,8 +245,8 @@
                     {/if}
 
 
-                    <li class="nav-small-cap">Управление</li>
                     {if in_array('managers', $manager->permissions)}
+                        <li class="nav-small-cap">Управление</li>
                         <li {if in_array($module, ['ManagerController', 'ManagersController'])}class="active"{/if}>
                             <a class="" href="managers/" aria-expanded="false"><i
                                         class="mdi mdi-account-multiple-outline"></i><span class="hide-menu">Пользователи</span></a>
@@ -258,7 +259,7 @@
                                         class="hide-menu">Логирование</span></a>
                         </li>
                     {/if}
-                    {if in_array('settings', $manager->permissions) || in_array('offline_settings', $manager->permissions)}
+                    {if in_array('settings', $manager->permissions) || in_array('offline_settings', $manager->permissions) && $manager->role != 'underwriter'}
                         <li {if in_array($module, ['SettingsController', 'OfflinePointsController', 'ScoringsController', 'ApikeysController', 'WhitelistController', 'BlacklistController', 'PenaltyTypesController'])}class="active"{/if}>
                             <a class="has-arrow" href="settings" aria-expanded="false"><i
                                         class="mdi mdi-settings"></i><span class="hide-menu">Настройки</span></a>
