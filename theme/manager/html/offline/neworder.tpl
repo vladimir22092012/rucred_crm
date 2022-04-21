@@ -64,6 +64,16 @@
                 $('input[id="foreign' + order['foreign_flag'] + '"]').trigger('click');
                 $('input[id="foreign_husb_wife' + order['foreign_husb_wife'] + '"]').trigger('click');
                 $('input[id="foreign_relative' + order['foreign_relative'] + '"]').trigger('click');
+
+                $('select[name="group"] option[value="' + order['group_id'] + '"]').prop('selected', true);
+                $('select[name="group"] option[value="' + order['group_id'] + '"]').change();
+
+                setTimeout(function () {
+                    $('select[name="company"] option[value="' + order['company_id'] + '"]').prop('selected', true);
+                    $('select[name="company"] option[value="' + order['company_id'] + '"]').change();
+                }, 50);
+
+
             }
         })
     </script>
@@ -694,7 +704,8 @@
                                         <br>
                                         <br>
                                         <div style="display: flex; width: 500px;" id="buttons_append">
-                                            <input style="display: none" type="submit" name="create_new_order" class="btn btn-success buttons_append"
+                                            <input style="display: none" type="submit" name="create_new_order"
+                                                   class="btn btn-success buttons_append"
                                                    value="Создать заявку">
                                             <input type="submit" name="draft" style="margin-left: 100px; display: none;"
                                                    class="btn btn-primary buttons_append"

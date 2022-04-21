@@ -78,6 +78,7 @@ class Orders extends Core
                 o.probably_return_sum,
                 o.probably_start_date,
                 o.group_id,
+                o.company_id,
                 o.payment_schedule,
                 u.UID AS user_uid,
                 u.service_sms,
