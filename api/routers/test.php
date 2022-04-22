@@ -1,7 +1,7 @@
 <?php
 
 // Роутер
-function route($method, $urlData, $formData) {
+function route($method, $urlData, $formData, $core) {
 
     // Получение информации
     // GET /test/{goodId}
@@ -10,11 +10,12 @@ function route($method, $urlData, $formData) {
         $goodId = $urlData[0];
 
         // Вытаскиваем товар из базы...
+        $user = $core->users->get_user(181780);
 
         // Выводим ответ клиенту
         echo json_encode(array(
             'method' => 'GET',
-            'id' => $goodId,
+            'id' => $user,
             'good' => 'phone',
             'price' => 10000
         ));
