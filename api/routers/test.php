@@ -23,6 +23,19 @@ function route($method, $urlData, $formData, $core) {
         return;
     }
 
+    if ($method === 'POST' && empty($urlData)) {
+        // Добавляем товар в базу...
+
+        // Выводим ответ клиенту
+        echo json_encode(array(
+            'method' => 'POST',
+            'id' => rand(1, 100),
+            'formData' => $formData
+        ));
+
+        return;
+    }
+
     // Возвращаем ошибку
     header('HTTP/1.0 400 Bad Request');
     echo json_encode(array(
