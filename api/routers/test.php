@@ -12,13 +12,15 @@ function route($method, $urlData, $formData, $core) {
         // Вытаскиваем товар из базы...
         $user = $core->users->get_user(181780);
 
-        // Выводим ответ клиенту
-        echo json_encode(array(
+        $res = [
             'method' => 'GET',
             'id' => $user,
             'good' => 'phone',
             'price' => 10000
-        ));
+        ];
+
+        // Выводим ответ клиенту
+        echo json_encode($res, JSON_PRETTY_PRINT);
 
         return;
     }
@@ -26,12 +28,14 @@ function route($method, $urlData, $formData, $core) {
     if ($method === 'POST' && empty($urlData)) {
         // Добавляем товар в базу...
 
-        // Выводим ответ клиенту
-        echo json_encode(array(
+        $res = [
             'method' => 'POST',
             'id' => rand(1, 100),
             'formData' => $formData
-        ));
+        ];
+
+        // Выводим ответ клиенту
+        echo json_encode($res, JSON_PRETTY_PRINT);
 
         return;
     }
