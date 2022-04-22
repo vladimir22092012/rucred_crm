@@ -2,7 +2,7 @@ $(function () {
 
     $('.add-company-modal').on('click', function () {
 
-        $('#modal_add_item').modal();
+        $('#modal_add_branch').modal();
     });
 
     $('.action-edit-company').on('click', function () {
@@ -42,11 +42,10 @@ $(function () {
         });
     });
 
-    $('.add_branche').on('click', function (e) {
+    $('#add_branche_form').on('submit', function (e) {
         e.preventDefault();
 
-        let form = $('#add_branche_form').serialize();
-
+        let form = $(this).serialize();
         $.ajax({
             method: 'POST',
             data: form,

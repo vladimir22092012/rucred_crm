@@ -42,12 +42,13 @@ class CompanyController extends Controller
         $this->design->assign('branches', $branches);
 
         return $this->design->fetch('company.tpl');
+        //return $this->action_add_branch();
     }
 
     public function action_add_branch()
     {
         $group_id = $this->request->post('group_id');
-        $company_id = $this->request->post('company_id', 'integer');
+        $company_id = $this->request->post('company_id');
         $name = $this->request->post('name');
         $payday = $this->request->post('payday');
         $fio = $this->request->post('fio');
@@ -55,12 +56,12 @@ class CompanyController extends Controller
 
         $last_number = $this->Branches->last_number($company_id);
 
-        if ($last_number && $last_number < 10) {
+        if ($last_number && $last_number < 9) {
             $last_number += 1;
             $last_number = '0' . $last_number;
         }
 
-        if($last_number &&  $last_number > 10) {
+        else{
             $last_number += 1;
         }
 

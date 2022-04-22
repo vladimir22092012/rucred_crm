@@ -137,7 +137,7 @@
 
 </div>
 
-<div id="modal_add_item" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+<div id="modal_add_branch" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
      aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
@@ -149,7 +149,7 @@
             <div class="modal-body">
 
                 <div class="alert" style="display:none"></div>
-                <form method="POST" id="add_branche_form">
+                <form id="add_branche_form">
                     <input type="hidden" name="action" value="add_branch">
                     <input type="hidden" name="group_id" value="{$company->gr_id}">
                     <input type="hidden" name="company_id" value="{$company->com_id}">
@@ -174,7 +174,7 @@
                         <input type="text" class="form-control" name="phone" id="phone" value=""/>
                     </div>
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
-                    <input type="button" formmethod="post" class="btn btn-success add_branche" value="Сохранить">
+                    <input type="submit" class="btn btn-success add_branche" value="Сохранить">
                 </form>
             </div>
         </div>
@@ -287,7 +287,7 @@
                         <input type="text" class="form-control edit_branch_form" name="phone" id="phone" value=""/>
                     </div>
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
-                    <input type="button" formmethod="post" class="btn btn-success action_edit_branch" value="Сохранить">
+                    <input type="button" class="btn btn-success action_edit_branch" value="Сохранить">
                 </form>
             </div>
         </div>
