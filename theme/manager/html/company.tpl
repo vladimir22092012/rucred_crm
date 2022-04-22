@@ -49,7 +49,7 @@
                                     <tr>
                                         <th>Позиция</th>
                                         <th>Код</th>
-                                        <th colspan="2">Описание</th>
+                                        <th colspan="3">Описание</th>
                                         <th><input type="button" class="btn btn-outline-info action-edit-company"
                                                    value="Редактировать компанию"></th>
                                         <th><input type="button" data-company-id="{$company->com_id}"
@@ -61,36 +61,36 @@
                                     <tr>
                                         <td>Наименование компании</td>
                                         <td>{$company->gr_number}{$company->com_number}</td>
-                                        <td colspan="4">{$company->com_name}</td>
+                                        <td colspan="5">{$company->com_name}</td>
                                     </tr>
                                     <tr>
                                         <td>Позиция</td>
                                         <td>{$company->gr_number}</td>
-                                        <td colspan="4">{$company->gr_name}</td>
+                                        <td colspan="5">{$company->gr_name}</td>
                                     </tr>
                                     <tr>
                                         <td>ИНН</td>
-                                        <td colspan="4">{$company->inn}</td>
+                                        <td colspan="6">{$company->inn}</td>
                                     </tr>
                                     <tr>
                                         <td>ОГРН</td>
-                                        <td colspan="4">{$company->ogrn}</td>
+                                        <td colspan="6">{$company->ogrn}</td>
                                     </tr>
                                     <tr>
                                         <td>КПП</td>
-                                        <td colspan="4">{$company->kpp}</td>
+                                        <td colspan="6">{$company->kpp}</td>
                                     </tr>
                                     <tr>
                                         <td>Юридический адрес</td>
-                                        <td colspan="4">{$company->jur_address}</td>
+                                        <td colspan="6">{$company->jur_address}</td>
                                     </tr>
                                     <tr>
                                         <td>Адрес местонахождения</td>
-                                        <td colspan="4">{$company->phys_address}</td>
+                                        <td colspan="6">{$company->phys_address}</td>
                                     </tr>
                                     <tr>
                                         <td>Руководитель</td>
-                                        <td colspan="4">{$company->eio_position} {$company->eio_fio}</td>
+                                        <td colspan="6">{$company->eio_position} {$company->eio_fio}</td>
                                     </tr>
                                     <tr>
                                         <td rowspan="{count($branches)+1}">Филиалы и даты выплат</td>
@@ -98,8 +98,9 @@
                                         <td>Наименование филиала</td>
                                         <td>Дата выплаты</td>
                                         <td>Контактная информация:</td>
-                                        <td>
-                                            <button class="btn float-right hidden-sm-down btn-outline-success add-company-modal">
+                                        <td></td>
+                                        <td colspan="2">
+                                            <button class="btn hidden-sm-down btn-outline-success add-company-modal">
                                                 <i class="mdi mdi-plus-circle"></i> Добавить филиал
                                             </button>
                                         </td>
@@ -115,6 +116,10 @@
                                                     <input type="button" data-branch-id="{$branch->id}"
                                                            class="btn btn-outline-danger delete_branch" value="Удалить">
                                             {/if}
+                                            </td>
+                                            <td>
+                                                <input type="button" data-branch-id="{$branch->id}"
+                                                       class="btn btn-outline-warning edit_branch" value="Редактировать">
                                             </td>
                                         </tr>
                                     {/foreach}
@@ -240,6 +245,49 @@
                         <input type="button" class="btn btn-danger cancel" data-dismiss="modal" value="Отмена">
                         <input type="button" class="btn btn-success save" value="Сохранить">
                     </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="edit_branch" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Редактировать филиал</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+
+                <div class="alert" style="display:none"></div>
+                <form method="POST" id="edit_branch_form">
+                    <input type="hidden" name="action" value="edit_branch">
+                    <input type="hidden" class="edit_branch_form" name="branch_id" value="">
+                    <div class="form-group">
+                        <label for="name" class="control-label">Наименование филиала</label>
+                        <input type="text" class="form-control edit_branch_form" name="name" id="name" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="eio_position" class="control-label">День выплаты:</label>
+                        <select class="form-control edit_branch_form" name="payday" id="payday">
+                            {for $i = 1 to 31}
+                                <option value="{$i}" >{$i}</option>
+                            {/for}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fio" class="control-label">Начальник ТБ:</label>
+                        <input type="text" class="form-control edit_branch_form" name="fio" id="fio" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone" class="control-label">Контактный телефон:</label>
+                        <input type="text" class="form-control edit_branch_form" name="phone" id="phone" value=""/>
+                    </div>
+                    <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
+                    <input type="button" formmethod="post" class="btn btn-success action_edit_branch" value="Сохранить">
                 </form>
             </div>
         </div>

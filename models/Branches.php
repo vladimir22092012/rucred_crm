@@ -133,4 +133,18 @@ class Branches extends Core
 
         $this->db->query($query);
     }
+
+    public function edit_branch($branch, $branch_id)
+    {
+        $query = $this->db->placehold("
+        UPDATE s_branches
+        SET ?%
+        WHERE id = ?
+        ", $branch, (int)$branch_id);
+
+        $this->db->query($query);
+        $id = $this->db->insert_id();
+
+        return $id;
+    }
 }

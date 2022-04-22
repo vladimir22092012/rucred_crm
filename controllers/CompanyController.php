@@ -11,6 +11,14 @@ class CompanyController extends Controller
                 $this->action_add_branch();
                 break;
 
+            case 'edit_branch':
+                $this->action_edit_branch();
+                break;
+
+            case 'get_branch':
+                $this->action_get_branch();
+                break;
+
             case 'edit_company':
                 $this->action_edit_company();
                 break;
@@ -119,5 +127,34 @@ class CompanyController extends Controller
 
         $this->Companies->delete_company($company_id);
         $this->Branches->delete_branches(['company_id' => $company_id]);
+    }
+
+    private function action_edit_branch()
+    {
+        $branch_id = $this->request->post('branch_id');
+        $name = $this->request->post('name');
+        $payday = $this->request->post('payday');
+        $fio = $this->request->post('fio');
+        $phone = $this->request->post('phone');
+
+        $branch =
+            [
+                'name' => $name,
+                'payday' => $payday,
+                'fio' => $fio,
+                'phone' => $phone
+            ];
+
+        $this->Branches->edit_branch($branch, $branch_id);
+    }
+
+    private function action_get_branch()
+    {
+        $branch_id = $this->request->post('branch_id');
+
+        $branch = $this->Branches->get_branch($branch_id);
+
+        echo json_encode($branch);
+        exit;
     }
 }
