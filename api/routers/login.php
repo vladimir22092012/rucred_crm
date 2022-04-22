@@ -4,28 +4,7 @@
 function route($method, $urlData, $formData, $core, $headers) {
 
     // Получение информации
-    // GET /test/{goodId}
-    if ($method === 'GET' && count($urlData) === 1) {
-        // Получаем id товара
-        $goodId = $urlData[0];
-
-        // Вытаскиваем товар из базы...
-        $user = $core->users->get_user(181780);
-
-        /* $res = [
-            'method' => 'GET',
-            'id' => $user,
-            'good' => 'phone',
-            'price' => 10000
-        ]; */
-        $res = $headers;
-
-        // Выводим ответ клиенту
-        echo json_encode($res, JSON_PRETTY_PRINT);
-
-        return;
-    }
-
+    // POST /auth
     if ($method === 'POST' && empty($urlData)) {
         // Добавляем товар в базу...
 

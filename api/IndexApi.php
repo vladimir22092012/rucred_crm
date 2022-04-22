@@ -6,6 +6,29 @@ ini_set('display_errors', 'On');
 chdir('..');
 require 'autoload.php';
 
+//получение заголовков из запроса
+$response = curl_exec($ch);
+$headers = get_headers_from_curl_response($response);
+
+function get_headers_from_curl_response($response)
+{
+    $headers = array();
+
+    $header_text = substr($response, 0, strpos($response, "\r\n\r\n"));
+
+    foreach (explode("\r\n", $header_text) as $i => $line)
+        if ($i === 0)
+            $headers['http_code'] = $line;
+        else
+        {
+            list ($key, $value) = explode(': ', $line);
+
+            $headers[$key] = $value;
+        }
+
+    return $headers;
+}
+
 $core = new Core();
 
 // Определяем метод запроса
@@ -46,4 +69,4 @@ $urlData = array_slice($urls, 1);
 
 // Подключаем файл-роутер и запускаем главную функцию
 include_once 'routers/' . $router . '.php';
-route($method, $urlData, $formData, $core);
+route($method, $urlData, $formData, $core, $headers);
