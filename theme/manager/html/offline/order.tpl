@@ -227,6 +227,41 @@
 
                     }
                 });
+            });
+
+            $('.edit_schedule').on('click', function (e) {
+                e.preventDefault();
+
+                $(this).hide();
+                $('.restructuring').hide();
+                $('.reset_shedule').show();
+                $('.cancel').show();
+                $('input[name="date[][date]"]').attr('readonly', false);
+
+                $('.cancel').on('click', function () {
+                    location.reload();
+                })
+            });
+
+            $('.restructuring').on('click', function (e) {
+                e.preventDefault();
+
+                $(this).hide();
+                $('.edit_schedule').hide();
+                $('.reset_shedule').show();
+                $('.cancel').show();
+                $('input[name="date[][date]"]').attr('readonly', false);
+                $('input[name="loan_percents_pay[][loan_percents_pay]"]').attr('readonly', false);
+                $('input[name="loan_body_pay[][loan_body_pay]"]').attr('readonly', false);
+                $('input[name="comission_pay[][comission_pay]"]').attr('readonly', false);
+
+                $('.cancel').on('click', function () {
+                    location.reload();
+                })
+            });
+
+            $('.js-edit-form').on('click', function () {
+                $('.reset_shedule').show();
             })
 
         });
@@ -1721,9 +1756,18 @@
                                             <!-- Данные о работе -->
                                             <h6 class="card-header">
                                                 <span class="text-white">График платежей</span>
-                                                <input style="margin-left: 30px" type="button"
+                                                <input style="margin-left: 30px; display: none" type="button"
                                                        class="btn btn-primary reset_shedule"
                                                        value="Переформировать график">
+                                                <input style="margin-left: 30px; display: none" type="button"
+                                                       class="btn btn-danger cancel"
+                                                       value="Отменить">
+                                                <input style="margin-left: 30px" type="button"
+                                                       class="btn btn-warning edit_schedule"
+                                                       value="Редактировать">
+                                                <input style="margin-left: 30px" type="button"
+                                                       class="btn btn-danger restructuring"
+                                                       value="Реструктуризация">
                                             </h6>
 
                                             <form id="payment_schedule">
@@ -1756,26 +1800,26 @@
                                                                         <td><input type="text"
                                                                                    class="form-control daterange"
                                                                                    name="date[][date]"
-                                                                                   value="{$date}"></td>
+                                                                                   value="{$date}" readonly></td>
                                                                         <td><input type="text" class="form-control"
                                                                                    name="pay_sum[][pay_sum]"
-                                                                                   value="{$payment->pay_sum|number_format:2:',':' '}">
+                                                                                   value="{$payment->pay_sum|number_format:2:',':' '}" readonly>
                                                                         </td>
                                                                         <td><input type="text" class="form-control"
                                                                                    name="loan_percents_pay[][loan_percents_pay]"
-                                                                                   value="{$payment->loan_percents_pay|number_format:2:',':' '}">
+                                                                                   value="{$payment->loan_percents_pay|number_format:2:',':' '}" readonly>
                                                                         </td>
                                                                         <td><input type="text" class="form-control"
                                                                                    name="loan_body_pay[][loan_body_pay]"
-                                                                                   value="{$payment->loan_body_pay|number_format:2:',':' '}">
+                                                                                   value="{$payment->loan_body_pay|number_format:2:',':' '}" readonly>
                                                                         </td>
                                                                         <td><input type="text" class="form-control"
                                                                                    name="comission_pay[][comission_pay]"
-                                                                                   value="{$payment->comission_pay|number_format:2:',':' '}">
+                                                                                   value="{$payment->comission_pay|number_format:2:',':' '}" readonly>
                                                                         </td>
                                                                         <td><input type="text" class="form-control"
                                                                                    name="rest_pay[][rest_pay]"
-                                                                                   value="{$payment->rest_pay|number_format:2:',':' '}">
+                                                                                   value="{$payment->rest_pay|number_format:2:',':' '}" readonly>
                                                                         </td>
                                                                     </tr>
                                                                 {/if}
