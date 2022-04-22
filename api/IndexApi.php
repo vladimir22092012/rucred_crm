@@ -3,8 +3,7 @@
 error_reporting(-1);
 ini_set('display_errors', 'On');
 
-chdir('..');
-require 'autoload.php';
+require_once( __DIR__ . '/../vendor/autoload.php');
 
 //получение заголовков из запроса
 $headers = getallheaders();
