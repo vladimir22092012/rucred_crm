@@ -501,7 +501,7 @@
                                         <br>
                                         <hr style="width: 100%; size: 5px">
                                         <br>
-                                        <h3>Работодатель</h3><br>
+                                        <h4>Работодатель</h4><br>
                                         <div style="width: 100%; display: flex">
                                             <div class="form-group">
                                                 <label style="margin-left: 25px!important;">Среднемесячный доход
@@ -525,6 +525,32 @@
                                                        placeholder="необязательно" type="text">
                                             </div>
                                         </div>
+                                        <br>
+                                        <hr style="width: 100%; size: 5px">
+                                        <br>
+                                        <h4>Аттестация</h4><br>
+                                        <table class="jsgrid-table table table-striped table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th>Дата</th>
+                                                <th>Комментарий</th>
+                                                <th><input type="button"
+                                                           class="btn btn-outline-success add_to_attestation_table"
+                                                           value="+"></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="attestation_table">
+                                            <tr>
+                                                <td><input class="form-control daterange"
+                                                           name="date[][date]" type="text"
+                                                           value=""></td>
+                                                <td><input class="form-control"
+                                                           name="comment[][comment]" type="text"
+                                                           value=""></td>
+                                                <td></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
                                         <br>
                                         <hr style="width: 100%; size: 5px">
                                         <br>
