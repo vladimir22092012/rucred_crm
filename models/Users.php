@@ -487,6 +487,19 @@ class Users extends Core
         $this->db->query("SELECT id FROM __files WHERE name = ?");
         return $this->db->result('id');
     }
-    
 
+    public function check_busy_number($number)
+    {
+        $query = $this->db->placehold("
+        SELECT id
+        FROM s_users
+        WHERE personal_number = ? 
+        ", (int)$number);
+
+        $this->db->query($query);
+
+        $result = $this->db->result('id');
+
+        return $result;
+    }
 }

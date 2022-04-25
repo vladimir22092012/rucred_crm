@@ -502,4 +502,42 @@ $(function () {
             '</tr>');
     });
 
+    $('.add_to_attestation_table').on('click', function (e) {
+        e.preventDefault();
+
+        $('#attestation_table').append(
+            '<tr>' +
+            '<td><input class="form-control daterange" name="date[][date]" type="text" value=""></td>' +
+            '<td><input class="form-control mask_number" name="comment[][comment]" type="text" value=""></td>' +
+            '<td></td>' +
+            '</tr>');
+
+        moment.locale('ru');
+
+        $('.daterange').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            locale: {
+                format: 'DD.MM.YYYY'
+            },
+        });
+    });
+
+    $('.phone_num').on('paste', function (e) {
+
+        let phone_number = e.originalEvent.clipboardData.getData('text');
+
+        phone_number = phone_number.match(/\d+/g).join([]);
+
+        if (phone_number.length > 10) {
+            final_number = phone_number.slice(-10);
+            $(this).val(final_number);
+        }
+        else {
+            phone_number = Number(phone_number);
+            $(this).val(phone_number);
+        }
+        $(this).mask("+7(999)999-9999");
+    });
+
 });

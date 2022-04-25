@@ -817,28 +817,12 @@
     </tr>
     <br>
     <tr>
-        <td style="width: 45%">р/с 40701810801300001564 в АО «АЛЬФА-БАНК», БИК 044525593, к/с 30101810200000000593 в ГУ
+        <td style="width: 45%">р/с {$settlements[0]->payment}  в {$settlements[0]->name}, БИК {$settlements[0]->bik}, к/с {$settlements[0]->cors} в ГУ
             Банка России по ЦФО
         </td>
         <td style="width: 10%"></td>
         <td style="width: 45%"> {$account_number}, БИК {$bik_bank}, открытый в {$bank_name}
         </td>
-    </tr>
-    <br>
-    <tr>
-        <td style="width: 45%">р/с 40701810200070000086 в АО «МИнБанк», БИК 044525600, к/с 30101810300000000600 в ГУ
-            Банка России по ЦФО
-        </td>
-        <td style="width: 10%"></td>
-        <td style="width: 45%"></td>
-    </tr>
-    <br>
-    <tr>
-        <td style="width: 45%">р/с 40701810300000000347 в ПАО «РосДорБанк», БИК 044525666, к/с 30101810945250000666 в ГУ
-            Банка России по ЦФО
-        </td>
-        <td style="width: 10%"></td>
-        <td style="width: 45%"></td>
     </tr>
     <br>
     <br>

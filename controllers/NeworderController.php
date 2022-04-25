@@ -66,6 +66,13 @@ class NeworderController extends Controller
             $credits_percents = $this->request->post('credits_percents');
             $credits_delay = $this->request->post('credits_delay');
 
+            $attestation_date = $this->request->post('date');
+            $attestation_comment = $this->request->post('comment');
+
+            $attestations = json_encode(array_replace_recursive($attestation_date, $attestation_comment));
+
+            $user['attestation'] = $attestations;
+
             $credits_story = json_encode(array_replace_recursive($credits_bank_name, $credits_rest_sum, $credits_month_pay, $credits_return_date, $credits_percents, $credits_delay));
             $cards_story = json_encode(array_replace_recursive($cards_bank_name, $cards_limit, $cards_rest_sum, $cards_validity_period, $cards_delay));
 
