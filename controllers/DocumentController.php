@@ -27,6 +27,9 @@ class DocumentController extends Controller
 
         $this->design->assign('settlements', $settlements);
 
+        $company = $this->Companies->get_company($document->params->company_id);
+        $this->design->assign('company', $company);
+
         $loan_id = $document->params->loan_type;
         $loan = $this->Loantypes->get_loantype($loan_id);
         $this->design->assign('loan', $loan);
