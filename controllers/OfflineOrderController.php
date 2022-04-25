@@ -86,6 +86,12 @@ class OfflineOrderController extends Controller
                     $this->json_output($response);
                     break;
 
+                // совершить выплату по заявку
+                case 'delivery_order':
+                    $response = $this->delivery_order_action();
+                    $this->json_output($response);
+                    break;
+
                 // одобрить заявку
                 case 'autoretry_accept':
                     $response = $this->autoretry_accept_action();
@@ -684,7 +690,7 @@ class OfflineOrderController extends Controller
 
     /**
      * OrderController::approve_order_action()
-     * Одобрениие заявки
+     * Одобрение заявки
      * @return array
      */
     private function approve_order_action()
@@ -766,6 +772,17 @@ class OfflineOrderController extends Controller
 
         return array('success' => 1, 'status' => 2);
 
+    }
+
+    /**
+     * OrderController::delivery_order_action()
+     *  Оплата ордера менеджером
+     *
+     * @return array
+     */
+    private function delivery_order_action()
+    {
+        return array('success' => 1, 'status' => 1);
     }
 
     private function autoretry_accept_action()
