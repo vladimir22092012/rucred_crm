@@ -179,7 +179,7 @@
                                             </td>
                                             <td style="width: 50px;" class="jsgrid-cell jsgrid-align-right">
                                                 <div class="js-visible-view">
-                                                    <a href="loantype/{$loantype->id}" class="text-info js-edit-item" title="Редактировать"><i class=" fas fa-edit"></i></a>
+                                                    <a href="" class="text-info" title="Редактировать"><i class=" fas fa-edit"></i></a>
                                                     <a href="#" class="text-danger js-delete-item" title="Удалить"><i class="far fa-trash-alt"></i></a>
                                                 </div>
                                             </td>
