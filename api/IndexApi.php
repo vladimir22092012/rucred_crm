@@ -3,17 +3,20 @@
 error_reporting(-1);
 ini_set('display_errors', 'On');
 
-//use Api\routers\Test3;
-
 require_once( __DIR__ . '/../vendor/autoload.php');
 
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
-    $r->addRoute('GET', '/api/users', 'routers/test2.php');
     $r->addRoute('GET', '/api/test/{id:\d+}', 'Api\routers\Test3@get');
     // {id} must be a number (\d+)
     $r->addRoute('GET', '/user/{id:\d+}', 'get_user_handler');
     // The /{title} suffix is optional
     $r->addRoute('GET', '/articles/{id:\d+}[/{title}]', 'get_article_handler');
+    $r->addGroup('/api', function (FastRoute\RouteCollector $r) {
+        $r->addRoute('POST', '/test', 'Api\routers\Test@test');
+        $r->addRoute('GET', '/do-another-thing', 'handler');
+        $r->addRoute('GET', '/do-something-else', 'handler');
+        $r->post('/post-route', 'Api\routers\Test3@tme2');
+    });
 });
 
 // Fetch method and URI from somewhere
@@ -27,6 +30,7 @@ if (false !== $pos = strpos($uri, '?')) {
 $uri = rawurldecode($uri);
 
 $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
+
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::NOT_FOUND:
         // ... 404 Not Found
