@@ -6,16 +6,14 @@ ini_set('display_errors', 'On');
 require_once( __DIR__ . '/../vendor/autoload.php');
 
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
-    $r->addRoute('GET', '/api/test/{id:\d+}', 'Api\routers\Test3@get');
+    /* $r->addRoute('GET', '/api/test/{id:\d+}', 'Api\routers\Test3@get');
     // {id} must be a number (\d+)
     $r->addRoute('GET', '/user/{id:\d+}', 'get_user_handler');
     // The /{title} suffix is optional
-    $r->addRoute('GET', '/articles/{id:\d+}[/{title}]', 'get_article_handler');
+    $r->addRoute('GET', '/articles/{id:\d+}[/{title}]', 'get_article_handler'); */
     $r->addGroup('/api', function (FastRoute\RouteCollector $r) {
         $r->addRoute('POST', '/test', 'Api\routers\Test@test');
-        $r->addRoute('GET', '/do-another-thing', 'handler');
-        $r->addRoute('GET', '/do-something-else', 'handler');
-        $r->post('/post-route', 'Api\routers\Test3@tme2');
+        $r->post('/login', 'Api\routers\LoginApi@run');
     });
 });
 
@@ -41,10 +39,10 @@ switch ($routeInfo[0]) {
         break;
     case FastRoute\Dispatcher::FOUND:
         $handler = $routeInfo[1];
-        $vars = $routeInfo[2];
+        $vars = ($httpMethod == 'POST')? $_POST : $routeInfo[2];
         //require $handler;
         list($class, $method) = explode("@", $handler, 2);
-        call_user_func_array(array(new $class, $method), $vars);
+        call_user_func_array(array(new $class, $method), array($vars));
         //var_dump($handler);
         // ... call $handler with $vars
         break;

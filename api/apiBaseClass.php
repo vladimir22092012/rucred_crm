@@ -8,6 +8,15 @@ use Firebase\JWT\Key;
 class apiBaseClass extends \Core {
 
     public $checkToken  = false;
+    public $tokenJWT;
+    public $userIdFromToken;
+
+    public function __construct()
+    {
+    	parent::__construct();
+        $this->get_jwt_token();
+        
+    }
 
     public function json_response($res) {
       header("Content-type: application/json; charset=UTF-8");
@@ -16,32 +25,43 @@ class apiBaseClass extends \Core {
     }
 
     public function get_jwt_token() {
+        if ($this->checkToken) {
+            $this->tokenJWT =  $this->getBearerToken();
+            $this->check_token();
+        }
 
-        $headers = $this->getAuthorizationHeader();
-        
-        var_dump($headers);
-        /* $key = 'example_key';
+        $key = 'example_key';
         $payload = [
             'iss' => 'http://example.org',
-            'aud' => 'http://example.com',
             'iat' => time(), //дата выдачи токена
             'nbf' => time(), //дата активации токена
             'exp' => time() + 50, //время жизни токена
+            'user_id' => 123
         ];
-        $test = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vZXhhbXBsZS5vcmciLCJhdWQiOiJodHRwOi8vZXhhbXBsZS5jb20iLCJpYXQiOjE2NTA4OTMxNTEsIm5iZiI6MTY1MDg5MzE1MSwiZXhwIjoxNjUwODkzMjAxfQ.PA9fLGuCc8sN-woVpkCAKoyXAkU2T_9liyq8_1cjYo0';
+        $test = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vZXhhbXBsZS5vcmciLCJpYXQiOjE2NTA4OTkzNjgsIm5iZiI6MTY1MDg5OTM2OCwiZXhwIjoxNjUwODk5NDE4fQ.pjjoOFb5KpEjZ1PZ4rUJm59Dp9sjrL2GyLHDxi30DG0';
 //var_dump(time());
 
 
-        $jwt = JWT::encode($payload, $key, 'HS256');
+        //$jwt = JWT::encode($payload, $key, 'HS256');
         //var_dump($jwt);
 
         //$decoded = JWT::decode($jwt, new Key($key, 'HS256'));
         //var_dump($decoded);
         //JWT::$leeway = 5; // $leeway in seconds
-        $decoded = JWT::decode($test, new Key($key, 'HS256'));
-        var_dump($decoded); */
+        //$decoded = JWT::decode($test, new Key($key, 'HS256'));
+        //var_dump($decoded);
 
     }
+
+    public function check_token() {
+        try {
+            $decoded = JWT::decode($this->tokenJWT, new Key(APIConstants::$KEY, 'HS256'));
+            $this->userIdFromToken = $decoded['user_id'];
+        } catch (\Throwable $th) {
+            $msg = 'Ошибка JWT токена';
+            $this->error_response($msg);
+        }
+      }
 
     public function error_response($msg) {
         header("Content-type: application/json; charset=UTF-8");
