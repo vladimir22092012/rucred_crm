@@ -1,54 +1,47 @@
 <?php
 
-namespace Api;
-use Core\Core;
-
 error_reporting(-1);
 ini_set('display_errors', 'On');
 
+//use Api\routers\Test3;
+
 require_once( __DIR__ . '/../vendor/autoload.php');
 
-//получение заголовков из запроса
-$headers = getallheaders();
+$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
+    $r->addRoute('GET', '/api/users', 'routers/test2.php');
+    $r->addRoute('GET', '/api/test/{id:\d+}', 'Api\routers\Test3@get');
+    // {id} must be a number (\d+)
+    $r->addRoute('GET', '/user/{id:\d+}', 'get_user_handler');
+    // The /{title} suffix is optional
+    $r->addRoute('GET', '/articles/{id:\d+}[/{title}]', 'get_article_handler');
+});
 
-$core = new Core();
+// Fetch method and URI from somewhere
+$httpMethod = $_SERVER['REQUEST_METHOD'];
+$uri = $_SERVER['REQUEST_URI'];
 
-// Определяем метод запроса
-$method = $_SERVER['REQUEST_METHOD'];
-
-// Получаем данные из тела запроса
-$formData = getFormData($method);
-
-// Получение данных из тела запроса
-function getFormData($method) {
-
-    // GET или POST: данные возвращаем как есть
-    if ($method === 'GET') return $_GET;
-    if ($method === 'POST') return $_POST;
-
-    // PUT, PATCH или DELETE
-    $data = array();
-    $exploded = explode('&', file_get_contents('php://input'));
-
-    foreach($exploded as $pair) {
-        $item = explode('=', $pair);
-        if (count($item) == 2) {
-            $data[urldecode($item[0])] = urldecode($item[1]);
-        }
-    }
-
-    return $data;
+// Strip query string (?foo=bar) and decode URI
+if (false !== $pos = strpos($uri, '?')) {
+    $uri = substr($uri, 0, $pos);
 }
+$uri = rawurldecode($uri);
 
-// Разбираем url
-$url = (isset($_GET['q'])) ? $_GET['q'] : '';
-$url = rtrim($url, '/');
-$urls = explode('/', $url);
-
-// Определяем роутер и url data
-$router = $urls[0];
-$urlData = array_slice($urls, 1);
-
-// Подключаем файл-роутер и запускаем главную функцию
-include_once 'routers/' . $router . '.php';
-route($method, $urlData, $formData, $core, $headers);
+$routeInfo = $dispatcher->dispatch($httpMethod, $uri);
+switch ($routeInfo[0]) {
+    case FastRoute\Dispatcher::NOT_FOUND:
+        // ... 404 Not Found
+        break;
+    case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
+        $allowedMethods = $routeInfo[1];
+        // ... 405 Method Not Allowed
+        break;
+    case FastRoute\Dispatcher::FOUND:
+        $handler = $routeInfo[1];
+        $vars = $routeInfo[2];
+        //require $handler;
+        list($class, $method) = explode("@", $handler, 2);
+        call_user_func_array(array(new $class, $method), $vars);
+        //var_dump($handler);
+        // ... call $handler with $vars
+        break;
+}
