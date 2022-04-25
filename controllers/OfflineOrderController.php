@@ -782,7 +782,45 @@ class OfflineOrderController extends Controller
      */
     private function delivery_order_action()
     {
-        return array('success' => 1, 'status' => 1);
+        $order_id = $this->request->post('order_id', 'integer');
+
+        $best2pay_endpoint = "https://test.best2pay.net/webapi/";
+        $action = "Register";
+        $request_url = $best2pay_endpoint . $action;
+
+        $best2pay_password = 'test';
+
+        $best2pay_sector = 3159;
+        $best2pay_amount = 150000;
+        $best2pay_currency = 643;
+        $best2pay_email = 'mail@mail.mail';
+        $best2pay_phone = 8911111111111;
+        $best2pay_description = 'Оплата товара';
+        $best2pay_signature = base64_encode(md5($best2pay_sector . $best2pay_amount . $best2pay_currency . $best2pay_password));
+
+        try {
+            $ch = curl_init($request_url);
+            $headers = array(
+                "Content-Type: application/x-www-form-urlencoded",
+            );
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+                'sector' => $best2pay_sector,
+                'amount' => $best2pay_amount,
+                'currency' => $best2pay_currency,
+                'email' => $best2pay_email,
+                'phone' => $best2pay_phone,
+                'description' => $best2pay_description,
+                'signature' => $best2pay_signature,
+            ], JSON_THROW_ON_ERROR));
+            $best2pay_response = curl_exec($ch);
+            curl_close($ch);
+            return array('success' => 1);
+        } catch (Exception $e) {
+            return array('success' => 0);
+        }
     }
 
     private function autoretry_accept_action()
