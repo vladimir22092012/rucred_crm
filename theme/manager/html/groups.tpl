@@ -99,8 +99,7 @@
             <div class="col-md-6 col-8 align-self-center">
                 <h3 class="text-themecolor mb-0 mt-0">Группы</h3>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item">Главная</li>
-                    <li class="breadcrumb-item">Справочники</li>
+                    <li class="breadcrumb-item"><a href="/">Главная</a></li>
                     <li class="breadcrumb-item active">Группы</li>
                 </ol>
             </div>
@@ -108,7 +107,6 @@
                 <button class="btn float-right hidden-sm-down btn-success add-company-modal">
                     <i class="mdi mdi-plus-circle"></i> Добавить
                 </button>
-
             </div>
         </div>
 

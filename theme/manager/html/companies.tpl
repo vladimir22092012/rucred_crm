@@ -109,7 +109,7 @@
                                     <tr>
                                         <th>Группа, №</th>
                                         <th class="">Номер</th>
-                                        <th class="">Компанияб №</th>
+                                        <th class="">Компания №</th>
                                         <th class="">Группа</th>
                                         <th class="">Компания</th>
                                         <th class="">Должность</th>

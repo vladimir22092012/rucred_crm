@@ -502,4 +502,23 @@ $(function () {
             '</tr>');
     });
 
+    $('.phone_num').on('paste', function(e){
+
+        let phone_number = e.originalEvent.clipboardData.getData('text');
+
+        phone_number = phone_number.match(/\d+/g).join([]);
+
+        if(phone_number.length > 10)
+        {
+            final_number = phone_number.slice(-10);
+            $(this).val(final_number);
+        }
+        else
+        {
+            phone_number = Number(phone_number);
+            $(this).val(phone_number);
+        }
+        $(this).mask("+7(999)999-9999");
+    });
+
 });

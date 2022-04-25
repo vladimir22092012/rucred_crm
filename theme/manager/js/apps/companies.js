@@ -5,6 +5,10 @@ $(function () {
         $('#modal_add_branch').modal();
     });
 
+    $('.add_settlement').on('click', function () {
+       $('#add_settlement').modal();
+    });
+
     $('.action-edit-company').on('click', function () {
 
         $('#modal_edit_company').modal();
@@ -100,8 +104,6 @@ $(function () {
                 branch_id: branch_id
             },
             success: function (branch) {
-                console.log(branch);
-
                 $('input[class="edit_branch_form"][name="branch_id"]').val(branch['id']);
                 $('input[class="form-control edit_branch_form"][name="name"]').val(branch['name']);
                 $('select[class="form-control edit_branch_form"] option[value="'+branch['payday']+'"]').prop('selected', true);
@@ -121,6 +123,85 @@ $(function () {
         $.ajax({
             method: 'POST',
             data: form,
+            success: function () {
+                location.reload();
+            }
+        });
+    });
+
+    $('.action_add_settlement').on('click', function (e) {
+        e.preventDefault();
+
+        let form = $('#add_settlement_form').serialize();
+
+        $.ajax({
+            method: 'POST',
+            data: form,
+            success: function () {
+                location.reload();
+            }
+        });
+    });
+
+    $('.std_flag').on('change', function () {
+
+        let settlement_id = $(this).val();
+
+        $.ajax({
+            method: 'POST',
+            data: {
+                action: 'change_std_flag',
+                settlement_id: settlement_id
+            }
+        });
+    });
+
+    $('.update_settlement').on('click', function () {
+
+        let settlement_id = $(this).attr('data-settlement');
+
+        $.ajax({
+            method: 'POST',
+            dataType: 'JSON',
+            data: {
+                action: 'get_settlement',
+                settlement_id: settlement_id
+            },
+            success: function (settlement) {
+                $('input[class="update_settlement_form"][name="settlement_id"]').val(settlement['id']);
+                $('input[class="form-control update_settlement_form"][name="name"]').val(settlement['name']);
+                $('input[class="form-control update_settlement_form"][name="payment"]').val(settlement['payment']);
+                $('input[class="form-control update_settlement_form"][name="cors"]').val(settlement['cors']);
+                $('input[class="form-control update_settlement_form"][name="bik"]').val(settlement['bik']);
+            }
+        });
+
+        $('#update_settlement').modal();
+
+        $('.action_update_settlement').on('click', function () {
+
+            let form = $('#update_settlement_form').serialize();
+
+            $.ajax({
+                method: 'POST',
+                data: form,
+                success: function () {
+                    location.reload();
+                }
+            });
+        });
+    });
+
+    $('.delete_settlement').on('click', function () {
+
+        let settlement_id = $(this).attr('data-settlement');
+
+        $.ajax({
+            method: 'POST',
+            data: {
+                action: 'delete_settlement',
+                settlement_id: settlement_id
+            },
             success: function () {
                 location.reload();
             }

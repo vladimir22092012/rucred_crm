@@ -640,10 +640,10 @@
                                                 <td><input class="form-control"
                                                            name="credits_bank_name[][credits_bank_name]" type="text"
                                                            value=""></td>
-                                                <td><input class="form-control"
+                                                <td><input class="form-control mask_number"
                                                            name="credits_rest_sum[][credits_rest_sum]" type="text"
                                                            value=""></td>
-                                                <td><input class="form-control"
+                                                <td><input class="form-control mask_number"
                                                            name="credits_month_pay[][credits_month_pay]" type="text"
                                                            value=""></td>
                                                 <td><input class="form-control validity_period"
@@ -678,13 +678,13 @@
                                             </thead>
                                             <tbody id="cards_table">
                                             <tr>
-                                                <td><input class="form-control"
+                                                <td><input class="form-control "
                                                            name="cards_bank_name[][cards_bank_name]" type="text"
                                                            value=""></td>
-                                                <td><input class="form-control" name="cards_limit[][cards_limit]"
+                                                <td><input class="form-control mask_number" name="cards_limit[][cards_limit]"
                                                            type="text"
                                                            value=""></td>
-                                                <td><input class="form-control" name="cards_rest_sum[][cards_rest_sum]"
+                                                <td><input class="form-control mask_number" name="cards_rest_sum[][cards_rest_sum]"
                                                            type="text"
                                                            value=""></td>
                                                 <td><input class="form-control validity_period"

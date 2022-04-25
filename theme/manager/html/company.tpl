@@ -92,13 +92,49 @@
                                         <td>Руководитель</td>
                                         <td colspan="6">{$company->eio_position} {$company->eio_fio}</td>
                                     </tr>
+                                    {if $company->com_id == 2}
+                                        <tr>
+                                            <td rowspan="{count($settlements)+1}">Расчетные счета</td>
+                                            <td>Наименование банка</td>
+                                            <td>Номер расчетного счета</td>
+                                            <td>Номер корреспондентского счета</td>
+                                            <td>БИК</td>
+                                            <td align="center">По умолчанию</td>
+                                            <td><input type="button" class="btn btn-outline-success add_settlement"
+                                                       value="Добавить счет"></td>
+                                        </tr>
+                                        {foreach $settlements as $settlement}
+                                            <tr>
+                                                <td>{$settlement->name}</td>
+                                                <td>{$settlement->payment}</td>
+                                                <td>{$settlement->cors}</td>
+                                                <td>{$settlement->bik}</td>
+                                                <td align="center">
+                                                    <input type="radio" class="form-check-input std_flag" name="std"
+                                                           id="std{$settlement->id}"
+                                                           value="{$settlement->id}"
+                                                           {if $settlement->std == 1}checked{/if}>
+                                                </td>
+                                                <td>
+                                                    <input type="button" data-settlement="{$settlement->id}"
+                                                           class="btn btn-outline-warning update_settlement"
+                                                           value="Ред">
+                                                    <input type="button" data-settlement="{$settlement->id}"
+                                                           class="btn btn-outline-danger delete_settlement"
+                                                           value="Удалить">
+                                                </td>
+                                            </tr>
+                                        {/foreach}
+                                    {/if}
+                                    <tr style="height: 50px">
+                                        <td colspan="7"></td>
+                                    </tr>
                                     <tr>
                                         <td rowspan="{count($branches)+1}">Филиалы и даты выплат</td>
                                         <td>Код</td>
                                         <td>Наименование филиала</td>
                                         <td>Дата выплаты</td>
                                         <td>Контактная информация:</td>
-                                        <td></td>
                                         <td colspan="2">
                                             <button class="btn hidden-sm-down btn-outline-success add-company-modal">
                                                 <i class="mdi mdi-plus-circle"></i> Добавить филиал
@@ -112,14 +148,15 @@
                                             <td>{$branch->payday}</td>
                                             <td>{$branch->fio} {$branch->phone}</td>
                                             <td>
-                                            {if $branch->number != '00'}
+                                                {if $branch->number != '00'}
                                                     <input type="button" data-branch-id="{$branch->id}"
                                                            class="btn btn-outline-danger delete_branch" value="Удалить">
-                                            {/if}
+                                                {/if}
                                             </td>
                                             <td>
                                                 <input type="button" data-branch-id="{$branch->id}"
-                                                       class="btn btn-outline-warning edit_branch" value="Редактировать">
+                                                       class="btn btn-outline-warning edit_branch"
+                                                       value="Редактировать">
                                             </td>
                                         </tr>
                                     {/foreach}
@@ -274,7 +311,7 @@
                         <label for="eio_position" class="control-label">День выплаты:</label>
                         <select class="form-control edit_branch_form" name="payday" id="payday">
                             {for $i = 1 to 31}
-                                <option value="{$i}" >{$i}</option>
+                                <option value="{$i}">{$i}</option>
                             {/for}
                         </select>
                     </div>
@@ -288,6 +325,83 @@
                     </div>
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
                     <input type="button" class="btn btn-success action_edit_branch" value="Сохранить">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="add_settlement" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Добавить счет</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+
+                <div class="alert" style="display:none"></div>
+                <form method="POST" id="add_settlement_form">
+                    <input type="hidden" name="action" value="add_settlement">
+                    <div class="form-group">
+                        <label for="name" class="control-label">Наименование банка:</label>
+                        <input type="text" class="form-control" name="name" id="name" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment" class="control-label">Расчетный счет:</label>
+                        <input type="text" class="form-control" name="payment" id="payment" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="cors" class="control-label">Корреспондентский счет:</label>
+                        <input type="text" class="form-control" name="cors" id="cors" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="bik" class="control-label">БИК: </label>
+                        <input type="text" class="form-control" name="bik" id="bik" value=""/>
+                    </div>
+                    <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
+                    <input type="button" class="btn btn-success action_add_settlement" value="Сохранить">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="update_settlement" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Добавить счет</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert" style="display:none"></div>
+                <form method="POST" id="update_settlement_form">
+                    <input type="hidden" name="action" value="update_settlement">
+                    <input type="hidden" class="update_settlement_form" name="settlement_id" value="">
+                    <div class="form-group">
+                        <label for="name" class="control-label">Наименование банка:</label>
+                        <input type="text" class="form-control update_settlement_form" name="name" id="name" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment" class="control-label">Расчетный счет:</label>
+                        <input type="text" class="form-control update_settlement_form" name="payment" id="payment"
+                               value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="cors" class="control-label">Корреспондентский счет:</label>
+                        <input type="text" class="form-control update_settlement_form" name="cors" id="cors" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="bik" class="control-label">БИК: </label>
+                        <input type="text" class="form-control update_settlement_form" name="bik" id="bik" value=""/>
+                    </div>
+                    <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
+                    <input type="button" class="btn btn-success action_update_settlement" value="Сохранить">
                 </form>
             </div>
         </div>

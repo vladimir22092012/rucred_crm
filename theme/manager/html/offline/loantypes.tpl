@@ -105,7 +105,7 @@
                         <i class="fas fa-plus-circle"></i>
                         <span>Добавить новый</span>
                     </a>
-                </div>                    
+                </div>
             </div>        
         </div>
         <!-- ============================================================== -->
@@ -131,23 +131,20 @@
                                         <th style="width: 160px;" class="jsgrid-header-cell jsgrid-align-left jsgrid-header-sortable {if $sort == 'order_id_desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'order_id_asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
                                             Наименование
                                         </th>
-                                        <th style="width: 160px;" class="jsgrid-header-cell jsgrid-align-left jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            Организация
+                                        <th style="width: 60px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            Процентная ставка
                                         </th>
                                         <th style="width: 60px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            Процент
+                                            Льготная ставка
                                         </th>
                                         <th style="width: 60px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            Ответ-ть
-                                        </th>
-                                        <th style="width: 60px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            Страховка
+                                            Мин. сумма
                                         </th>
                                         <th style="width: 70px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             Макс.&nbsp;сумма
                                         </th>
                                         <th style="width: 70px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            Макс.&nbsp;срок
+                                            Количество выплат
                                         </th>
                                         <th style="width: 50px;" class="jsgrid-header-cell "></th>
                                     </tr>
@@ -165,17 +162,14 @@
                                                     <strong>{$loantype->name|escape}</strong>
                                                 </a>
                                             </td>
-                                            <td style="width: 160px;" class="jsgrid-cell jsgrid-align-left">
-                                                {$organizations[$loantype->organization_id]->name}
-                                            </td>
                                             <td style="width: 60px;" class="jsgrid-cell jsgrid-align-center">
                                                 {$loantype->percent|number_format:2:',':' '}
                                             </td>
                                             <td style="width: 60px;" class="jsgrid-cell jsgrid-align-center">
-                                                {$loantype->charge}
+                                                {$loantype->profunion|number_format:2:',':' '}
                                             </td>
-                                            <td style="width: 60px;" class="jsgrid-cell jsgrid-align-center">
-                                                {$loantype->insure}
+                                            <td style="width: 70px;" class="jsgrid-cell jsgrid-align-center">
+                                                {$loantype->min_amount|number_format:0:',':' '}
                                             </td>
                                             <td style="width: 70px;" class="jsgrid-cell jsgrid-align-center">
                                                 {$loantype->max_amount|number_format:0:',':' '}
