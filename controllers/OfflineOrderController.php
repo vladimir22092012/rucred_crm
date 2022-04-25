@@ -684,7 +684,7 @@ class OfflineOrderController extends Controller
 
     /**
      * OrderController::approve_order_action()
-     * Одобрениие заявки
+     * Одобрение заявки
      * @return array
      */
     private function approve_order_action()
