@@ -18,6 +18,15 @@ class DocumentController extends Controller
             $this->design->assign($param_name, $param_value);
         }
 
+        $settlements = $this->OrganisationSettlements->get_settlements();
+
+        foreach ($settlements as $key => $settlement) {
+            if ($settlement->std != 1)
+                unset($settlements[$key]);
+        }
+
+        $this->design->assign('settlements', $settlements);
+
         $loan_id = $document->params->loan_type;
         $loan = $this->Loantypes->get_loantype($loan_id);
         $this->design->assign('loan', $loan);
@@ -97,14 +106,12 @@ class DocumentController extends Controller
 
                 $loan_percents_pay = ($rest_sum * $percents_for_annuitet) / 100;
 
-                if($plus_sum_percents)
-                {
+                if ($plus_sum_percents) {
                     $first_pay = $annoouitet_pay + $plus_sum_percents;
                     $first_loan_percents_pay = $loan_percents_pay + $plus_sum_percents;
                 }
 
-                if($minus_sum_percents)
-                {
+                if ($minus_sum_percents) {
                     $first_pay = $annoouitet_pay - $minus_sum_percents;
                     $first_loan_percents_pay = $loan_percents_pay - $minus_sum_percents;
                 }
