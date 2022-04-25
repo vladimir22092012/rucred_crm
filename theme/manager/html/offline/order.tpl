@@ -1772,22 +1772,19 @@
 
                                             <form id="payment_schedule">
                                                 <div class="row m-0 pt-2 view-block {if $work_error}hide{/if}">
-                                                    <table border="2">
-                                                        <thead>
+                                                    <table border="2" style="font-size: 15px">
+                                                        <thead align="center">
                                                         <tr style="width: 100%;">
-                                                            <th rowspan="3">Дата платежа</th>
-                                                            <th colspan="4">Платёж за расчётный период, руб.</th>
-                                                            <th rowspan="3">Остаток задолженности по микрозайму, руб.
+                                                            <th rowspan="3">Дата</th>
+                                                            <th rowspan="3">Сумма</th>
+                                                            <th colspan="3">Структура платежа</th>
+                                                            <th rowspan="3">Остаток долга, руб.
                                                             </th>
                                                         </tr>
                                                         <tr style="width: 100%;">
-                                                            <th rowspan="2">Сумма платежа</th>
-                                                            <th colspan="3">Структура платежа</th>
-                                                        </tr>
-                                                        <tr style="width: 100%;">
-                                                            <th>Погашение процентов</th>
-                                                            <th>Погашение основного долга</th>
-                                                            <th>Комиссии и другие платежи</th>
+                                                            <th>Проценты</th>
+                                                            <th>Осн. долг</th>
+                                                            <th>Др. платежи</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -1803,23 +1800,28 @@
                                                                                    value="{$date}" readonly></td>
                                                                         <td><input type="text" class="form-control"
                                                                                    name="pay_sum[][pay_sum]"
-                                                                                   value="{$payment->pay_sum|number_format:2:',':' '}" readonly>
+                                                                                   value="{$payment->pay_sum|number_format:2:',':' '}"
+                                                                                   readonly>
                                                                         </td>
                                                                         <td><input type="text" class="form-control"
                                                                                    name="loan_percents_pay[][loan_percents_pay]"
-                                                                                   value="{$payment->loan_percents_pay|number_format:2:',':' '}" readonly>
+                                                                                   value="{$payment->loan_percents_pay|number_format:2:',':' '}"
+                                                                                   readonly>
                                                                         </td>
                                                                         <td><input type="text" class="form-control"
                                                                                    name="loan_body_pay[][loan_body_pay]"
-                                                                                   value="{$payment->loan_body_pay|number_format:2:',':' '}" readonly>
+                                                                                   value="{$payment->loan_body_pay|number_format:2:',':' '}"
+                                                                                   readonly>
                                                                         </td>
                                                                         <td><input type="text" class="form-control"
                                                                                    name="comission_pay[][comission_pay]"
-                                                                                   value="{$payment->comission_pay|number_format:2:',':' '}" readonly>
+                                                                                   value="{$payment->comission_pay|number_format:2:',':' '}"
+                                                                                   readonly>
                                                                         </td>
                                                                         <td><input type="text" class="form-control"
                                                                                    name="rest_pay[][rest_pay]"
-                                                                                   value="{$payment->rest_pay|number_format:2:',':' '}" readonly>
+                                                                                   value="{$payment->rest_pay|number_format:2:',':' '}"
+                                                                                   readonly>
                                                                         </td>
                                                                     </tr>
                                                                 {/if}
@@ -1848,17 +1850,16 @@
                                                                            value="{$payment_schedule['result']->all_rest_pay_sum|number_format:2:',':' '}"
                                                                            readonly></td>
                                                             </tr>
-                                                            <tr>
-                                                                <td colspan="5">Полная стоимость микрозайма, %
-                                                                    годовых:
-                                                                </td>
-                                                                <td>{($order->percent * $order->period)|number_format:2:',':' '}
-                                                                    %
-                                                                </td>
-                                                            </tr>
                                                         {/if}
                                                         </tbody>
                                                     </table>
+                                                    <div>
+                                                        <br>
+                                                        <label>Полная стоимость микрозайма, %
+                                                            годовых:</label>
+                                                        <span>{($order->percent * $order->period)|number_format:2:',':' '}
+                                                            %</span>
+                                                    </div>
                                             </form>
                                         </div>
                                         <!-- /Данные о работе -->
