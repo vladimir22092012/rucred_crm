@@ -3,7 +3,7 @@
 namespace Api\routers;
 
 use Api\apiBaseClass;
-use Api\APIConstants;
+use Api\apiConstants;
 use Firebase\JWT\JWT;
 
 class LoginApi extends apiBaseClass {
