@@ -120,6 +120,18 @@ class Users extends Core
 
         return $result;
     }
+
+    public function get_user_by_phone($phone)
+	{
+		$query = $this->db->placehold("
+            SELECT id, phone_mobile, password 
+            FROM __users
+            WHERE phone_mobile = ?
+        ", (int)$phone);
+        $this->db->query($query);
+        $result = $this->db->result();
+        return $result;
+    }
     
 	public function get_users($filter = array())
 	{

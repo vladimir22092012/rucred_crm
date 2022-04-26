@@ -21,35 +21,15 @@ class apiBaseClass extends \Core {
     public function json_response($res) {
       header("Content-type: application/json; charset=UTF-8");
       echo json_encode($res, JSON_PRETTY_PRINT);
-      return;
+      exit;
     }
 
     public function get_jwt_token() {
+        
         if ($this->checkToken) {
             $this->tokenJWT =  $this->getBearerToken();
             $this->check_token();
         }
-
-        $key = 'example_key';
-        $payload = [
-            'iss' => 'http://example.org',
-            'iat' => time(), //дата выдачи токена
-            'nbf' => time(), //дата активации токена
-            'exp' => time() + 50, //время жизни токена
-            'user_id' => 123
-        ];
-        $test = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vZXhhbXBsZS5vcmciLCJpYXQiOjE2NTA4OTkzNjgsIm5iZiI6MTY1MDg5OTM2OCwiZXhwIjoxNjUwODk5NDE4fQ.pjjoOFb5KpEjZ1PZ4rUJm59Dp9sjrL2GyLHDxi30DG0';
-//var_dump(time());
-
-
-        //$jwt = JWT::encode($payload, $key, 'HS256');
-        //var_dump($jwt);
-
-        //$decoded = JWT::decode($jwt, new Key($key, 'HS256'));
-        //var_dump($decoded);
-        //JWT::$leeway = 5; // $leeway in seconds
-        //$decoded = JWT::decode($test, new Key($key, 'HS256'));
-        //var_dump($decoded);
 
     }
 
@@ -69,7 +49,7 @@ class apiBaseClass extends \Core {
             'error' => $msg
         ];
         echo json_encode($res, JSON_PRETTY_PRINT);
-        return;
+        exit;
     }
 
     public function getAuthorizationHeader() {

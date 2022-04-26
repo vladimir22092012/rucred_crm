@@ -1,4 +1,5 @@
 <?php
+
 namespace Api;
 
 class APIConstants {
