@@ -782,20 +782,30 @@ class OfflineOrderController extends Controller
      */
     private function delivery_order_action()
     {
-        $order_id = $this->request->post('order_id', 'integer');
+        $order_id = (int) $this->request->post('order_id', 'integer');
+        $order = $this->orders->get_order($order_id);
 
-        $best2pay_endpoint = "https://test.best2pay.net/webapi/";
+        if (!$order) {
+            return array('error' => 'Неизвестный ордер');
+        }
+
+        if (!empty($order->manager_id) && $order->manager_id !== $this->manager->id && !in_array($this->manager->role, array('admin', 'developer'))) {
+            return array('error' => 'Не хватает прав для выполнения операции');
+        }
+
+        $best2pay_endpoint = $this->config->best2pay_endpoint;
         $action = "Register";
         $request_url = $best2pay_endpoint . $action;
 
-        $best2pay_password = 'test';
+        $best2pay_sector = (int) $this->config->best2pay_current_sector_id;
 
-        $best2pay_sector = 3159;
-        $best2pay_amount = 150000;
-        $best2pay_currency = 643;
-        $best2pay_email = 'mail@mail.mail';
-        $best2pay_phone = 8911111111111;
-        $best2pay_description = 'Оплата товара';
+        $best2pay_password = $this->config->best2pay_sector3159_pass;
+
+        $best2pay_amount = $order->amount;
+        $best2pay_currency = $this->config->best2pay_currency;
+        $best2pay_email = $order->email;
+        $best2pay_phone = $order->phone_mobile;
+        $best2pay_description = 'Регистрация отправки денег по заявке ' . $order_id;
         $best2pay_signature = base64_encode(md5($best2pay_sector . $best2pay_amount . $best2pay_currency . $best2pay_password));
 
         try {
@@ -814,10 +824,12 @@ class OfflineOrderController extends Controller
                 'phone' => $best2pay_phone,
                 'description' => $best2pay_description,
                 'signature' => $best2pay_signature,
+                'mode' => 0,
             ], JSON_THROW_ON_ERROR));
             $best2pay_response = curl_exec($ch);
             curl_close($ch);
-            return array('success' => 1);
+            $delivery_id = (int) simplexml_load_string($best2pay_response)->id;
+            return array('success' => 1, 'delivery_id' => $delivery_id);
         } catch (Exception $e) {
             return array('success' => 0);
         }
