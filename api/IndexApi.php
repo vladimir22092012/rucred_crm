@@ -22,11 +22,14 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
         $r->addRoute('POST', '/test', 'Api\routers\Test@test');
         //Авторизация
         $r->post('/login', 'Api\routers\LoginApi@run');
-        //Отправка смс
+        //Отправка смс (код)
         $r->post('/send/sms/code', 'Api\routers\SmsApi@sendCode');
         //Регистрация
         $r->post('/registration/stage/main', 'Api\routers\RegistrationApi@stageMain');
         $r->post('/registration/stage/personal', 'Api\routers\RegistrationApi@stagePersonal');
+        $r->post('/registration/stage/passport', 'Api\routers\RegistrationApi@stagePassport');
+        $r->post('/registration/stage/address', 'Api\routers\RegistrationApi@stageAddress');
+        $r->post('/registration/stage/work', 'Api\routers\RegistrationApi@stageWork');
     });
 });
 
