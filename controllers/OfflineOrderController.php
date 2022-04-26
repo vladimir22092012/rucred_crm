@@ -824,14 +824,55 @@ class OfflineOrderController extends Controller
                 'phone' => $best2pay_phone,
                 'description' => $best2pay_description,
                 'signature' => $best2pay_signature,
-                'mode' => 0,
             ], JSON_THROW_ON_ERROR));
             $best2pay_response = curl_exec($ch);
             curl_close($ch);
+            $best2pay_response_xml = simplexml_load_string($best2pay_response);
+            $best2pay_response_xml_name = $best2pay_response_xml->getName();
+            if ($best2pay_response_xml_name === 'error' ) {
+                return array('error' => $best2pay_response_xml->description);
+            }
             $delivery_id = (int) simplexml_load_string($best2pay_response)->id;
-            return array('success' => 1, 'delivery_id' => $delivery_id);
         } catch (Exception $e) {
             return array('success' => 0);
+        }
+
+        if (!$delivery_id) {
+            return array('error' => 'Регистрация заявки завершилась неудачей');
+        }
+
+        $best2pay_endpoint = $this->config->best2pay_endpoint;
+        $action = "PurchaseBySectorCard";
+        $request_url = $best2pay_endpoint . $action;
+
+        $best2pay_description = 'Отправка денег по заявке ' . $order_id;
+
+        $best2pay_signature = base64_encode(md5($best2pay_sector . $delivery_id . $best2pay_password));
+
+        try {
+            $ch = curl_init($request_url);
+            $headers = array(
+                "Content-Type: application/x-www-form-urlencoded",
+            );
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+                'sector' => $best2pay_sector,
+                'id' => $delivery_id,
+                'description' => $best2pay_description,
+                'signature' => $best2pay_signature,
+            ], JSON_THROW_ON_ERROR));
+            $best2pay_response = curl_exec($ch);
+            curl_close($ch);
+            $best2pay_response_xml = simplexml_load_string($best2pay_response);
+            $best2pay_response_xml_name = $best2pay_response_xml->getName();
+            if ($best2pay_response_xml_name === 'error' ) {
+                return array('error' => $best2pay_response_xml->description);
+            }
+            return array('success' => 1);
+        } catch (Exception $e) {
+            return array('error' => 1);
         }
     }
 
