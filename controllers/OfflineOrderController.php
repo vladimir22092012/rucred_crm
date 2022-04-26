@@ -14,6 +14,10 @@ class OfflineOrderController extends Controller
                     $this->change_manager_action();
                     break;
 
+                case 'edit_schedule':
+                    return $this->action_edit_schedule();
+                    break;
+
                 case 'fio':
                     $this->fio_action();
                     break;
@@ -79,6 +83,12 @@ class OfflineOrderController extends Controller
                 // одобрить заявку
                 case 'approve_order':
                     $response = $this->approve_order_action();
+                    $this->json_output($response);
+                    break;
+
+                // совершить выплату по заявку
+                case 'delivery_order':
+                    $response = $this->delivery_order_action();
                     $this->json_output($response);
                     break;
 
@@ -469,13 +479,19 @@ class OfflineOrderController extends Controller
         $payment_schedule = (array)json_decode($order->payment_schedule);
 
         uksort($payment_schedule,
-            function( $a, $b){
+            function ($a, $b) {
 
-            if($a == $b)
-                return 0;
+                if ($a == $b)
+                    return 0;
 
-            return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
-        });
+                return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+            });
+
+        $loantype = $this->Loantypes->get_loantype($order->loan_type);
+        $this->design->assign('loantype', $loantype);
+
+        $loantypes = $this->GroupLoanTypes->get_loantypes_on($order->group_id);
+        $this->design->assign('loantypes', $loantypes);
 
         $this->design->assign('payment_schedule', $payment_schedule);
 
@@ -674,7 +690,7 @@ class OfflineOrderController extends Controller
 
     /**
      * OrderController::approve_order_action()
-     * Одобрениие заявки
+     * Одобрение заявки
      * @return array
      */
     private function approve_order_action()
@@ -756,6 +772,170 @@ class OfflineOrderController extends Controller
 
         return array('success' => 1, 'status' => 2);
 
+    }
+
+    /**
+     * OrderController::delivery_order_action()
+     *  Оплата ордера менеджером
+     *
+     * @return array
+     */
+    private function delivery_order_action()
+    {
+        $order_id = (int) $this->request->post('order_id', 'integer');
+        $order = $this->orders->get_order($order_id);
+
+        if (!$order) {
+            return array('error' => 'Неизвестный ордер');
+        }
+
+        if (!empty($order->manager_id) && $order->manager_id !== $this->manager->id && !in_array($this->manager->role, array('admin', 'developer'))) {
+            return array('error' => 'Не хватает прав для выполнения операции');
+        }
+
+        if ($order->delivery_id) {
+            return array('error' => 'Заявка на выплату по этому ордеру уже зарегистрирована');
+        }
+
+        $best2pay_endpoint = $this->config->best2pay_endpoint;
+        $action = "Register";
+        $request_url = $best2pay_endpoint . $action;
+
+        $best2pay_sector = (int) $this->config->best2pay_current_sector_id;
+
+        $best2pay_password = $this->config->best2pay_sector3159_pass;
+
+        $best2pay_amount = $order->amount;
+        $best2pay_currency = $this->config->best2pay_currency;
+        $best2pay_email = $order->email;
+        $best2pay_phone = $order->phone_mobile;
+        $best2pay_description = 'Регистрация отправки денег по заявке ' . $order_id;
+        $best2pay_signature = base64_encode(md5($best2pay_sector . $best2pay_amount . $best2pay_currency . $best2pay_password));
+
+        try {
+            $ch = curl_init($request_url);
+            $headers = array(
+                "Content-Type: application/x-www-form-urlencoded",
+            );
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+                'sector' => $best2pay_sector,
+                'reference' => $order_id,
+                'amount' => $best2pay_amount,
+                'currency' => $best2pay_currency,
+                'email' => $best2pay_email,
+                'phone' => $best2pay_phone,
+                'description' => $best2pay_description,
+                'signature' => $best2pay_signature,
+            ], JSON_THROW_ON_ERROR));
+            $best2pay_response = curl_exec($ch);
+            curl_close($ch);
+            $best2pay_response_xml = simplexml_load_string($best2pay_response);
+            $best2pay_response_xml_name = $best2pay_response_xml->getName();
+            if ($best2pay_response_xml_name === 'error' ) {
+                return array('error' => $best2pay_response_xml->description);
+            }
+            $delivery_id = (int) simplexml_load_string($best2pay_response)->id;
+            if ($delivery_id === 0) {
+                return array('error' => 'Регистрация оплаты прошла неудачно');
+            }
+            $this->orders->update_order($order_id, array('delivery_id' => $delivery_id));
+        } catch (Exception $e) {
+            return array('error' => 1);
+        }
+
+        $best2pay_endpoint = $this->config->best2pay_endpoint;
+        $action = "PurchaseBySectorCard";
+        $request_url = $best2pay_endpoint . $action;
+
+        $best2pay_description = 'Отправка денег по заявке ' . $order_id;
+
+        $best2pay_signature = base64_encode(md5($best2pay_sector . $delivery_id . $best2pay_password));
+
+        try {
+            $ch = curl_init($request_url);
+            $headers = array(
+                "Content-Type: application/x-www-form-urlencoded",
+            );
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+                'sector' => $best2pay_sector,
+                'id' => $delivery_id,
+                'description' => $best2pay_description,
+                'signature' => $best2pay_signature,
+            ], JSON_THROW_ON_ERROR));
+            $best2pay_response = curl_exec($ch);
+            curl_close($ch);
+            $best2pay_response_xml = simplexml_load_string($best2pay_response);
+            $best2pay_response_xml_name = $best2pay_response_xml->getName();
+            if ($best2pay_response_xml_name === 'error' ) {
+                return array('error' => $best2pay_response_xml->description);
+            }
+            $this->orders->update_order($order_id, array('status' => 9));
+            return array('success' => 1);
+        } catch (Exception $e) {
+            return array('error' => 1);
+        }
+    }
+
+    /**
+     * OrderController::delivery_order_status_action()
+     *  Проверка статуса выплаты ордера
+     *
+     * @return array
+     */
+    private function delivery_order_status_action()
+    {
+        $order_id = (int) $this->request->post('order_id', 'integer');
+        $order = $this->orders->get_order($order_id);
+
+        if (!$order) {
+            return array('error' => 'Неизвестный ордер');
+        }
+
+        if (!empty($order->manager_id) && $order->manager_id !== $this->manager->id && !in_array($this->manager->role, array('admin', 'developer'))) {
+            return array('error' => 'Не хватает прав для выполнения операции');
+        }
+
+        $best2pay_endpoint = $this->config->best2pay_endpoint;
+        $action = "Order";
+        $request_url = $best2pay_endpoint . $action;
+
+        $best2pay_sector = (int) $this->config->best2pay_current_sector_id;
+
+        $best2pay_reference = $order_id;
+
+        $best2pay_password = $this->config->best2pay_sector3159_pass;
+
+        $best2pay_signature = base64_encode(md5($best2pay_sector . $best2pay_reference . $best2pay_password));
+
+        try {
+            $ch = curl_init($request_url);
+            $headers = array(
+                "Content-Type: application/x-www-form-urlencoded",
+            );
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+                'sector' => $best2pay_sector,
+                'reference' => $best2pay_reference,
+                'signature' => $best2pay_signature,
+            ], JSON_THROW_ON_ERROR));
+            $best2pay_response = curl_exec($ch);
+            curl_close($ch);
+            $best2pay_response_xml = simplexml_load_string($best2pay_response);
+            $best2pay_response_xml_name = $best2pay_response_xml->getName();
+            if ($best2pay_response_xml_name === 'error' ) {
+                return array('error' => $best2pay_response_xml->description);
+            }
+        } catch (Exception $e) {
+            return array('error' => 1);
+        }
     }
 
     private function autoretry_accept_action()
@@ -2512,5 +2692,41 @@ class OfflineOrderController extends Controller
         $this->users->update_user($user_id, $user);
     }
 
+    private function action_edit_schedule()
+    {
+        $date = $this->request->post('date');
+        $pay_sum = $this->request->post('pay_sum');
+        $loan_percents_pay = $this->request->post('loan_percents_pay');
+        $loan_body_pay = $this->request->post('loan_body_pay');
+        $comission_pay = $this->request->post('comission_pay');
+        $rest_pay = $this->request->post('rest_pay');
+        $order_id = $this->request->post('order_id');
+
+        $results['result'] = $this->request->post('result');
+
+        $payment_schedule = array_replace_recursive($date, $pay_sum, $loan_percents_pay, $loan_body_pay, $comission_pay, $rest_pay);
+
+        foreach ($payment_schedule as $date => $payment) {
+            $payment_schedule[$payment['date']] = array_slice($payment, 1);
+            $payment_schedule[$payment['date']]['pay_sum'] = preg_replace("/[^,.0-9]/", '', $payment['pay_sum']);
+            $payment_schedule[$payment['date']]['loan_percents_pay'] = preg_replace("/[^,.0-9]/", '', $payment['loan_percents_pay']);
+            $payment_schedule[$payment['date']]['loan_body_pay'] = preg_replace("/[^,.0-9]/", '', $payment['loan_body_pay']);
+            $payment_schedule[$payment['date']]['rest_pay'] = preg_replace("/[^,.0-9]/", '', $payment['rest_pay']);
+            unset($payment_schedule[$date]);
+        }
+
+        foreach ($results as $key => $result)
+        {
+            $results[$key]['all_sum_pay'] = preg_replace("/[^,.0-9]/", '', $result['all_sum_pay']);
+            $results[$key]['all_loan_percents_pay'] = preg_replace("/[^,.0-9]/", '', $result['all_loan_percents_pay']);
+            $results[$key]['all_loan_body_pay'] = preg_replace("/[^,.0-9]/", '', $result['all_loan_body_pay']);
+            $results[$key]['all_comission_pay'] = preg_replace("/[^,.0-9]/", '', $result['all_comission_pay']);
+            $results[$key]['all_rest_pay_sum'] = preg_replace("/[^,.0-9]/", '', $result['all_rest_pay_sum']);
+        }
+
+        $payment_schedule = array_merge($payment_schedule, $results);
+
+        $this->orders->update_order($order_id, ['payment_schedule' => json_encode($payment_schedule)]);
+    }
 
 }

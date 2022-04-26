@@ -17,12 +17,13 @@ $(function () {
     $('.to_form_loan').on('click', function (e) {
 
         let sum = $('#order_sum').val();
-        let loan_id = $(this).attr('data-loan');
-        let period = $(this).attr('data-loan-period');
-        let max_amount = $(this).attr('data-max-amount');
-        let min_amount = $(this).attr('data-min-amount');
+        let loan_id = Number($(this).attr('data-loan'));
+        let period = Number($(this).attr('data-loan-period'));
+        let max_amount = Number($(this).attr('data-max-amount'));
+        let min_amount = Number($(this).attr('data-min-amount'));
 
         sum = sum.replace(/[^0-9]/g, "");
+        sum = Number(sum);
 
 
         if (sum.length < 0 || sum == 0) {
@@ -36,8 +37,12 @@ $(function () {
             if (parseInt(sum) >= parseInt(min_amount) && parseInt(sum) <= parseInt(max_amount)) {
                 $('.alert-danger').hide();
 
+                $('.buttons_append').show();
+
 
                 let percents = $('.price_basic[id="' + loan_id + '"]').find('.percents:visible').find('input').val();
+
+                console.log(percents);
 
                 let percent_per_month = ((percents / 100) * 365) / 12;
 
@@ -67,7 +72,7 @@ $(function () {
         }
     });
 
-    $('.price_basic').on('click', function (e) {
+    $(document).on('click', '.price_basic', function (e) {
         e.preventDefault();
 
         $('.loantype_settings').show();
@@ -298,6 +303,10 @@ $(function () {
         $(this).setCursorPosition(0);
     }).mask('99');
 
+    $('.validity_period').click(function () {
+        $(this).setCursorPosition(0);
+    }).mask('99/99');
+
     $('.js-lastname-input , .js-firstname-input , .js-patronymic-input').on('change', function () {
 
         let lastname = $('.js-lastname-input').val();
@@ -340,15 +349,98 @@ $(function () {
                 success: function (resp) {
                     $('.my_company').show();
 
-                    for (let key in resp) {
-                        $('.my_company').append('<option value="' + resp[key]['id'] + '">' + resp[key]['name'] + '</option>')
+                    if ($('#pricelist').hasClass('slick-initialized')) {
+                        $('.price').slick('unslick');
                     }
+
+                    $('#pricelist').empty();
+
+                    for (let key in resp['companies']) {
+
+                        $('.my_company').append('<option value="' + resp['companies'][key]['id'] + '">' + resp['companies'][key]['name'] + '</option>')
+                    }
+
+                    for (let key in resp['loantypes']) {
+
+                        if (resp['loantypes'][key]['online_flag'] == 1)
+                            continue;
+
+
+                        $('#pricelist').append(
+                            '<div class="price_container">' +
+                            '<div class="price_basic" data-loan-period="' + resp['loantypes'][key]['max_period'] + '"' +
+                            ' data-loan="' + resp['loantypes'][key]['id'] + '"' +
+                            ' data-min-amount="' + resp['loantypes'][key]['min_amount'] + '"' +
+                            ' data-max-amount="' + resp['loantypes'][key]['max_amount'] + '" data-loan-percents=""' +
+                            ' id="' + resp['loantypes'][key]['id'] + '"><br>' +
+                            '<div class="height">' +
+                            '<h4>' + resp['loantypes'][key]['name'] + '</h4>' +
+                            '<h5>от <span' +
+                            'class="sum">' + new Intl.NumberFormat().format(resp['loantypes'][key]['min_amount']) + '</span>' +
+                            'Р до ' +
+                            '<span class="sum">' + new Intl.NumberFormat().format(resp['loantypes'][key]['max_amount']) + '</span>' +
+                            'Р</h5>' +
+                            '</div>' +
+                            '<hr style="width: 80%; size: 5px">' +
+                            '<div class="out_profunion percents">' +
+                            '<h6>' +
+                            '<span class="loantype-percents">' + new Intl.NumberFormat().format(resp['loantypes'][key]['standart_percents']) + '</span>%' +
+                            '<input type="hidden" class="percents"' +
+                            ' value="' + resp['loantypes'][key]['standart_percents'] + '">' +
+                            '</h6>' +
+                            '<span>За каждый день использования микрозаймом</span>' +
+                            '</div>' +
+                            '<div class="in_profunion percents" style="display: none">' +
+                            '<h6>' +
+                            '<span class="loantype-percents-profunion">' + new Intl.NumberFormat().format(resp['loantypes'][key]['preferential_percents']) + '</span>%' +
+                            '<input type="hidden" class="percents"' +
+                            ' value="' + resp['loantypes'][key]['preferential_percents'] + '">' +
+                            '</h6>' +
+                            '<span>За каждый день использования микрозаймом</span>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>'
+                        )
+                    }
+
+                    $('.price').slick({
+                        infinite: false,
+                        speed: 300,
+                        slidesToShow: 4,
+                        slidesToScroll: 4,
+                        responsive: [
+                            {
+                                breakpoint: 1024,
+                                settings: {
+                                    slidesToShow: 3,
+                                    slidesToScroll: 3,
+                                    infinite: true,
+                                }
+                            },
+                            {
+                                breakpoint: 600,
+                                settings: {
+                                    slidesToShow: 2,
+                                    slidesToScroll: 2
+                                }
+                            },
+                            {
+                                breakpoint: 480,
+                                settings: {
+                                    slidesToShow: 1,
+                                    slidesToScroll: 1
+                                }
+                            }
+                        ]
+                    });
                 }
             });
         }
         else {
             $('.my_company').hide();
             $('.branches').hide();
+            $('#pricelist').empty();
+            slider.slick('reinit');
         }
     });
 
@@ -408,6 +500,44 @@ $(function () {
             '<td><input class="form-control" name="cards_delay[][cards_delay]" type="text" value=""></td>' +
             '<td></td>' +
             '</tr>');
+    });
+
+    $('.add_to_attestation_table').on('click', function (e) {
+        e.preventDefault();
+
+        $('#attestation_table').append(
+            '<tr>' +
+            '<td><input class="form-control daterange" name="date[][date]" type="text" value=""></td>' +
+            '<td><input class="form-control mask_number" name="comment[][comment]" type="text" value=""></td>' +
+            '<td></td>' +
+            '</tr>');
+
+        moment.locale('ru');
+
+        $('.daterange').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            locale: {
+                format: 'DD.MM.YYYY'
+            },
+        });
+    });
+
+    $('.phone_num').on('paste', function (e) {
+
+        let phone_number = e.originalEvent.clipboardData.getData('text');
+
+        phone_number = phone_number.match(/\d+/g).join([]);
+
+        if (phone_number.length > 10) {
+            final_number = phone_number.slice(-10);
+            $(this).val(final_number);
+        }
+        else {
+            phone_number = Number(phone_number);
+            $(this).val(phone_number);
+        }
+        $(this).mask("+7(999)999-9999");
     });
 
 });

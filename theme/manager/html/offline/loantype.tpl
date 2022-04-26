@@ -29,12 +29,32 @@
                 let flag = $(this).val();
 
                 $.ajax({
-                   method: 'POST',
-                   data: {
-                       action: 'change_online_flag',
-                       loantype_id: loantype_id,
-                       flag: flag
-                   }
+                    method: 'POST',
+                    data: {
+                        action: 'change_online_flag',
+                        loantype_id: loantype_id,
+                        flag: flag
+                    }
+                });
+            });
+
+            $('.on_off_flag').on('change', function () {
+
+                let val = $(this).val();
+                let value = (val == 1) ? 0 : 1;
+                let record_id = $(this).attr('data-record');
+                let that = $(this);
+
+                $.ajax({
+                    method: 'POST',
+                    data:{
+                        action: 'change_on_off_flag',
+                        value: value,
+                        record_id: record_id
+                    },
+                    success: function () {
+                        that.val(value);
+                    }
                 });
             });
         })
@@ -213,9 +233,9 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <select name="online_flag" id="online_flag" class="form-control">
-                                                    <option value="1">Онлайн</option>
-                                                    <option value="2">Оффлайн</option>
-                                                    <option value="3">Везде</option>
+                                                    <option value="1" {if $loantype->online_flag == 1}selected{/if}>Онлайн</option>
+                                                    <option value="2" {if $loantype->online_flag == 2}selected{/if}>Оффлайн</option>
+                                                    <option value="3" {if $loantype->online_flag == 3}selected{/if}>Везде</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -227,6 +247,7 @@
                                                 <th align="center">Группа</th>
                                                 <th align="center">Процентная ставка</th>
                                                 <th align="center">Льготная ставка</th>
+                                                <th align="center">Вкл/Выкл</th>
                                                 <th></th>
                                             </tr>
                                             </thead>
@@ -235,8 +256,25 @@
                                                 {foreach $groups as $group}
                                                     <tr>
                                                         <td valign="middle">{$group['name']}</td>
-                                                        <td valign="middle">{$group['standart_percents']}</td>
-                                                        <td valign="middle">{$group['preferential_percents']}</td>
+                                                        <td valign="middle">{$group['standart_percents']|number_format:3:',':' '}</td>
+                                                        <td valign="middle">{$group['preferential_percents']|number_format:3:',':' '}</td>
+                                                        <td valign="middle">
+                                                            <div class="clearfix">
+                                                                <div class="float-left">
+                                                                    <div class="onoffswitch">
+                                                                        <input type="checkbox" name="on_off_flag"
+                                                                               data-record="{$group['record_id']}" class="onoffswitch-checkbox on_off_flag"
+                                                                               id="on_off_flag_{$group['id']}"
+                                                                               {if $group['on_off_flag'] == 1} checked="true" value="1" {else} value="0"{/if}>
+                                                                        <label class="onoffswitch-label"
+                                                                               for="on_off_flag_{$group['id']}">
+                                                                            <span class="onoffswitch-inner"></span>
+                                                                            <span class="onoffswitch-switch"></span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
                                                         <td><input type="button"
                                                                    data-group="{$group['id']}"
                                                                    data-standart-percents="{$group['standart_percents']}"
@@ -264,7 +302,7 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="percent"
-                                                       {if $loantype}value="{$loantype->percent|number_format:2:',':' '}" {/if}/>
+                                                       {if $loantype}value="{$loantype->percent|number_format:3:',':' '}" {/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -275,7 +313,7 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="profunion"
-                                                       {if $loantype}value="{$loantype->profunion|number_format:2:',':' '}" {/if}/>
+                                                       {if $loantype}value="{$loantype->profunion|number_format:3:',':' '}" {/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -361,7 +399,7 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h4 class="modal-title">Добавить группу</h4>
+                <h4 class="modal-title">Редактировать компанию</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">

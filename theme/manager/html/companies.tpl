@@ -11,6 +11,7 @@
     <script src="theme/manager/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/companies.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
+    <script src="https://unpkg.com/validator@latest/validator.min.js"></script>
     <script>
         $(function () {
 
@@ -106,18 +107,18 @@
                                 <table id="config-table" class="table display table-striped dataTable">
                                     <thead>
                                     <tr>
-                                        <th>Группа</th>
+                                        <th>Группа, №</th>
                                         <th class="">Номер</th>
+                                        <th class="">Компания №</th>
+                                        <th class="">Группа</th>
                                         <th class="">Компания</th>
-                                        <th class="">Наименование группы</th>
-                                        <th class="">Наименование компании</th>
-                                        <th class="">Должность ЕИО</th>
-                                        <th class="">ФИО ЕИО</th>
+                                        <th class="">Должность</th>
+                                        <th class="">ФИО</th>
                                         <th class="">ИНН</th>
                                         <th class="">ОГРН</th>
                                         <th class="">КПП</th>
-                                        <th class="">Юридический адрес</th>
-                                        <th class="">Адрес местонахождения</th>
+                                        <th class="">Юр Адрес</th>
+                                        <th class="">Местонахождение</th>
                                     </tr>
                                     <tr>
                                         <th style="width: 120px">
@@ -144,7 +145,8 @@
                                     <tbody id="table-body">
                                     {if !empty($companies)}
                                         {foreach $companies as $company}
-                                            <tr class="companies" id="{$company->gr_number}" onclick="location.href='company/{$company->id}'"
+                                            <tr class="companies" id="{$company->gr_number}"
+                                                onclick="location.href='company/{$company->id}'"
                                                 onmouseover="this.style.backgroundColor='#AEA8F5';"
                                                 onmouseout="this.style.backgroundColor='white';">
                                                 <td>{$company->gr_number}</td>
@@ -234,7 +236,11 @@
                     </div>
                     <div class="form-group">
                         <label for="payday" class="control-label">День выплаты по умолчанию:</label>
-                        <input type="text" class="form-control" name="payday" id="payday" value=""/>
+                        <select class="form-control" name="payday" id="payday">
+                            {for $i = 1 to 31}
+                                <option value="{$i}" {if $i == 10}selected{/if}>{$i}</option>
+                            {/for}
+                        </select>
                     </div>
                     <div>
                         <input type="button" class="btn btn-danger cancel" data-dismiss="modal" value="Отмена">

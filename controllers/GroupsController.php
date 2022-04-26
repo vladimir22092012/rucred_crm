@@ -71,7 +71,7 @@ class GroupsController extends Controller
     private function action_update_group()
     {
         $group_id = $this->request->post('group_id', 'integer');
-        $group_name = $this->request->post('group_name', 'string');
+        $group_name = $this->request->post('group_name');
 
         $group =
             [
