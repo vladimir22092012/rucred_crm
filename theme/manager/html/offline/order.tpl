@@ -262,6 +262,42 @@
 
             $('.js-edit-form').on('click', function () {
                 $('.reset_shedule').show();
+            });
+
+            $('.send_money').on('click', function (e) {
+                e.preventDefault();
+
+                let order_id = $(this).attr('data-order');
+
+                Swal.fire({
+                    title: 'Отправить деньги?',
+                    showCancelButton: true,
+                    confirmButtonText: 'Да',
+                    cancelButtonText: 'Нет',
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            method: 'POST',
+                            dataType: 'JSON',
+                            data: {
+                                action: 'delivery_order',
+                                order_id: order_id
+                            },
+                            success: function (resp) {
+                                if (resp['success'] == 1) {
+                                    Swal.fire({
+                                        title: 'Деньги успешно отправлены'
+                                    })
+                                } else {
+                                    Swal.fire({
+                                        title: 'Произошла ошибка'
+                                    })
+                                }
+                            }
+                        });
+                    }
+                });
             })
 
         });
@@ -573,7 +609,6 @@
                                             </button>
                                         </div>
                                     {/if}
-
                                     {if $order->status == 1 && $order->manager_id != $manager->id}
                                         <div class="pt-1 pb-2 js-accept-order-block">
                                             <button class="btn btn-info btn-block js-accept-order js-event-add-click"
@@ -601,6 +636,14 @@
                                             </button>
                                         </div>
                                     {/if}
+
+                                    <div class="pt-1 pb-2">
+                                        <button class="btn btn-info btn-lg btn-block send_money"
+                                                data-order="{$order->order_id}">
+                                            <i class="fas fa-hospital-symbol"></i>
+                                            <span>Отправить деньги</span>
+                                        </button>
+                                    </div>
 
                                     <div class="js-order-status">
                                         {if $order->status == 2}
