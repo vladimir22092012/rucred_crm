@@ -23,7 +23,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
         //Авторизация
         $r->post('/login', 'Api\routers\LoginApi@run');
         //Отправка смс
-        $r->post('/send/sms', 'Api\routers\SmsApi@send');
+        $r->post('/send/sms/code', 'Api\routers\SmsApi@sendCode');
         //Регистрация
         $r->post('/registration/stage/main', 'Api\routers\RegistrationApi@stageMain');
         $r->post('/registration/stage/personal', 'Api\routers\RegistrationApi@stagePersonal');

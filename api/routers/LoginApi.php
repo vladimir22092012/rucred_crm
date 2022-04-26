@@ -29,11 +29,10 @@ class LoginApi extends apiBaseClass {
         }
 
         $check = $this->checkUser($login, $password);
-        if (! $check['error']) {
-          
-        } else {
+        if ($check['error']) {
           $this->error_response($check['msg']);
         }
+        
         $token = $this->makeToken();
         $res = ['token' => $token];
 

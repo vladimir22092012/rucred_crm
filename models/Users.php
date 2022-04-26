@@ -500,5 +500,14 @@ class Users extends Core
         return $this->db->result('id');
     }
     
+    public function get_phone_user($phone)
+    {
+        $query = $this->db->placehold("
+            SELECT id FROM __users WHERE phone_mobile = ?
+        ", (string)$phone);
+        $this->db->query($query);
+        
+        return $this->db->result('id');
+    }
 
 }
