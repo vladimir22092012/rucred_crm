@@ -108,7 +108,6 @@
                                     <thead>
                                     <tr>
                                         <th>Группа, №</th>
-                                        <th class="">Номер</th>
                                         <th class="">Компания №</th>
                                         <th class="">Компания</th>
                                         <th class="">Должность</th>
@@ -128,7 +127,6 @@
                                                 {/foreach}
                                             </select>
                                         </th>
-                                        <th></th>
                                         <th class=""></th>
                                         <th class=""></th>
                                         <th class=""></th>
@@ -149,7 +147,6 @@
                                                 onmouseover="this.style.backgroundColor='#AEA8F5';"
                                                 onmouseout="this.style.backgroundColor='white';">
                                                 <td>{$company->gr_number}, {$company->gr_name}</td>
-                                                <td>{$company->com_number}</td>
                                                 <td>{$company->gr_number}{$company->com_number}</td>
                                                 <td>{$company->com_name}</td>
                                                 <td>{$company->eio_position}</td>
