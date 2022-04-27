@@ -24,6 +24,10 @@ class CompanyController extends Controller
                 $this->action_edit_company();
                 break;
 
+            case 'change_blocked_flag':
+                $this->action_change_blocked_flag_company();
+                break;
+
             case 'delete_branche':
                 $this->action_delete_branche();
                 break;
@@ -135,6 +139,13 @@ class CompanyController extends Controller
             if ($branch->number == '00')
                 $this->Branches->update_branch(['payday' => $payday], $branch->id);
         }
+    }
+
+    private function action_change_blocked_flag_company()
+    {
+        $company_id = $this->request->post('company_id', 'integer');
+        $blocked_flag = $this->request->post('value', 'integer');
+        $this->Companies->update_company($company_id, ['blocked' => $blocked_flag]);
     }
 
     private function action_delete_branche()
