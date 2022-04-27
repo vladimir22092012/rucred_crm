@@ -110,7 +110,6 @@
                                         <th>Группа, №</th>
                                         <th class="">Номер</th>
                                         <th class="">Компания №</th>
-                                        <th class="">Группа</th>
                                         <th class="">Компания</th>
                                         <th class="">Должность</th>
                                         <th class="">ФИО</th>
@@ -125,7 +124,7 @@
                                             <select class="form-control" id="group_filter">
                                                 <option value="none" selected>Фильтр</option>
                                                 {foreach $groups as $group}
-                                                    <option value="{$group->number}">{$group->number}</option>
+                                                    <option value="{$group->number}">{$group->number}, </option>
                                                 {/foreach}
                                             </select>
                                         </th>
@@ -149,10 +148,9 @@
                                                 onclick="location.href='company/{$company->id}'"
                                                 onmouseover="this.style.backgroundColor='#AEA8F5';"
                                                 onmouseout="this.style.backgroundColor='white';">
-                                                <td>{$company->gr_number}</td>
+                                                <td>{$company->gr_number}, {$company->gr_name}</td>
                                                 <td>{$company->com_number}</td>
                                                 <td>{$company->gr_number}{$company->com_number}</td>
-                                                <td>{$company->gr_name}</td>
                                                 <td>{$company->com_name}</td>
                                                 <td>{$company->eio_position}</td>
                                                 <td>{$company->eio_fio}</td>
