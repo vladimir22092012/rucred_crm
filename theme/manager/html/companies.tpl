@@ -124,7 +124,7 @@
                                             <select class="form-control" id="group_filter">
                                                 <option value="none" selected>Фильтр</option>
                                                 {foreach $groups as $group}
-                                                    <option value="{$group->number}">{$group->number}, </option>
+                                                    <option value="{$group->number}">{$group->number}, {$group->name}</option>
                                                 {/foreach}
                                             </select>
                                         </th>
