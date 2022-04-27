@@ -148,7 +148,7 @@
                                                 onmouseout="this.style.backgroundColor='white';">
                                                 <td>{$company->gr_number}, {$company->gr_name}</td>
                                                 <td>{$company->gr_number}{$company->com_number}</td>
-                                                <td>{$company->com_name}</td>
+                                                <td>{$company->com_name} {if ($company->blocked)}<span class="label label-danger">Blocked</span>{/if}</td>
                                                 <td>{$company->eio_position}</td>
                                                 <td>{$company->eio_fio}</td>
                                                 <td>{$company->inn}</td>
