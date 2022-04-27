@@ -700,17 +700,29 @@ class OfflineOrderController extends Controller
         if (!($order = $this->orders->get_order((int)$order_id)))
             return array('error' => 'Неизвестный ордер');
 
-        if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
-            return array('error' => 'Не хватает прав для выполнения операции');
-
-        if ($order->amount > 15000)
-            return array('error' => 'Сумма займа должна быть не более 15000 руб!');
-
         if ($order->status != 1)
             return array('error' => 'Неверный статус заявки, возможно Заявка уже одобрена или получен отказ');
 
         if ($order->user_id == 127551)
             return array('error' => 'По данному клиенту запрещена выдача!');
+
+        $loan = $this->Loantypes->get_loantype($order->loan_type);
+
+        $query = $this->db->placehold("
+        SELECT COUNT(*) as `count`
+        FROM s_scans
+        WHERE user_id = ?
+        AND order_id = ?
+        ", (int)$order->user_id, (int)$order->order_id);
+
+        $this->db->query($query);
+        $count = $this->db->result('count');
+
+        if($count < 9)
+            return array('error' => 'Приложены не все сканы!');
+
+        if($order->amount < $loan->min_amount && $order->amount > $loan->max_amount)
+            return array('error' => 'Проверьте сумму займа!');
 
         $update = array(
             'status' => 2,
