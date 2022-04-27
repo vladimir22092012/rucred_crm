@@ -298,6 +298,21 @@
                         });
                     }
                 });
+            });
+
+            $('.photo_status').on('change', function () {
+
+                let status = $(this).val();
+                let file_id = $(this).attr('data-file');
+
+                $.ajax({
+                    method: 'POST',
+                    data:{
+                        action: 'change_photo_status',
+                        status: status,
+                        file_id: file_id
+                    }
+                });
             })
 
         });
@@ -2708,11 +2723,11 @@
                                                             </div>
                                                         {/if}
                                                     </li>
-                                                    <select class="form-control">
-                                                        <option>Выберите тип документа</option>
-                                                        <option>Паспорт: разворот</option>
-                                                        <option>Паспорт: регистрация</option>
-                                                        <option>Селфи с паспортом</option>
+                                                    <select class="form-control photo_status" data-file="{$file->id}" name="photo_status">
+                                                        <option value="1" {if $file->type == 'document'}selected{/if}>Выберите тип документа</option>
+                                                        <option value="2" {if $file->type == 'Паспорт: разворот'}selected{/if}>Паспорт: разворот</option>
+                                                        <option value="3" {if $file->type == 'Паспорт: регистрация'}selected{/if}>Паспорт: регистрация</option>
+                                                        <option value="4" {if $file->type == 'Селфи с паспортом'}selected{/if}>Селфи с паспортом</option>
                                                     </select>
                                                 </div>
                                             {/foreach}
