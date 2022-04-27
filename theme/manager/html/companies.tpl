@@ -104,7 +104,7 @@
                         <h6 class="card-subtitle"></h6>
                         <div class="table-responsive m-t-40">
                             <div class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
-                                <table id="config-table" class="table display table-striped dataTable">
+                                <table id="config-table" class="table display table-striped dataTable" style="font-size: 14px">
                                     <thead>
                                     <tr>
                                         <th>Группа, №</th>
