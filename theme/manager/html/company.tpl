@@ -49,7 +49,20 @@
                                     <tr>
                                         <th>Позиция</th>
                                         <th>Код</th>
-                                        <th colspan="3">Описание</th>
+                                        <th colspan="2">Описание</th>
+                                        <th>
+                                            <span>Блокировка</span>
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" name="blocked_flag"
+                                                       data-company-id="{$company->com_id}" class="onoffswitch-checkbox action-block-company"
+                                                       id="on_off_flag_{$company->com_id}"
+                                                        {if $company->blocked} checked="true" value="1" {else} value="0"{/if}>
+                                                <label class="onoffswitch-label" for="on_off_flag_{$company->com_id}">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </th>
                                         <th><input type="button" class="btn btn-outline-info action-edit-company"
                                                    value="Редактировать компанию"></th>
                                         <th><input type="button" data-company-id="{$company->com_id}"
