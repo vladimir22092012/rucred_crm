@@ -120,6 +120,18 @@ class Users extends Core
 
         return $result;
     }
+
+    public function get_user_by_phone($phone)
+	{
+		$query = $this->db->placehold("
+            SELECT id, phone_mobile, password 
+            FROM __users
+            WHERE phone_mobile = ?
+        ", (int)$phone);
+        $this->db->query($query);
+        $result = $this->db->result();
+        return $result;
+    }
     
 	public function get_users($filter = array())
 	{
@@ -486,6 +498,39 @@ class Users extends Core
     {
         $this->db->query("SELECT id FROM __files WHERE name = ?");
         return $this->db->result('id');
+    }
+    
+    public function get_phone_user($phone)
+    {
+        $query = $this->db->placehold("
+            SELECT id FROM __users WHERE phone_mobile = ?
+        ", (string)$phone);
+        $this->db->query($query);
+        
+        return $this->db->result('id');
+    }
+
+    public function find_clone($passport_serial, $lastname, $firstname, $patronymic, $birth)
+    {
+        $passport_serial = str_replace(array(' ', '-'), '', $passport_serial);
+    	$passport_serial_prepare = substr($passport_serial, 0, 4).'-'.substr($passport_serial, 4, 6);
+        $this->db->query("
+            SELECT id FROM __users WHERE passport_serial = ?
+        ", $passport_serial_prepare);
+        if ($id = $this->db->result('id'))
+            return $id;
+        
+        $this->db->query("
+            SELECT id FROM __users 
+            WHERE lastname LIKE '%".$this->db->escape($lastname)."%'
+            AND firstname LIKE '%".$this->db->escape($firstname)."%'
+            AND patronymic LIKE '%".$this->db->escape($patronymic)."%'
+            AND birth = ?
+        ", $birth);
+        if ($id = $this->db->result('id'))
+            return $id;
+
+        return NULL;
     }
 
     public function check_busy_number($number)
