@@ -84,6 +84,7 @@ class Orders extends Core
                 o.company_id,
                 o.payment_schedule,
                 o.delivery_id,
+                o.psk,
                 u.UID AS user_uid,
                 u.service_sms,
                 u.service_insurance,

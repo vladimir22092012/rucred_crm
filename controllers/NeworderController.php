@@ -366,13 +366,40 @@ class NeworderController extends Controller
                         'all_rest_pay_sum' => 0.00
                     ];
 
+                $dates[0] = date('d.m.Y', strtotime($this->request->post('start_date')));
+                $payments[0] = -$amount;
+
                 foreach ($payment_schedule as $date => $pay) {
+                    $payments[] = $pay['pay_sum'];
+                    $dates[] = date('d.m.Y', strtotime($date));
                     $payment_schedule['result']['all_sum_pay'] += $pay['pay_sum'];
                     $payment_schedule['result']['all_loan_percents_pay'] += $pay['loan_percents_pay'];
                     $payment_schedule['result']['all_loan_body_pay'] += $pay['loan_body_pay'];
                     $payment_schedule['result']['all_comission_pay'] += $pay['comission_pay'];
                     $payment_schedule['result']['all_rest_pay_sum'] = 0.00;
                 }
+
+                array_pop($dates);
+                array_pop($payments);
+
+                foreach ($dates as $date) {
+
+                    $date = new DateTime(date('Y-m-d H:i:s', strtotime($date)));
+
+                    $new_dates[] = mktime(
+                        $date->format('H'),
+                        $date->format('i'),
+                        $date->format('s'),
+                        $date->format('m'),
+                        $date->format('d'),
+                        $date->format('Y')
+                    );
+                }
+
+                $xirr = round($this->Financial->XIRR($payments, $new_dates) * 100, 3);
+                $xirr /= 100;
+
+                $order['psk'] = round(((pow((1+$xirr), (1/12)) - 1) * 12)*100, 3);
 
                 $order['payment_schedule']  = json_encode($payment_schedule);
 
