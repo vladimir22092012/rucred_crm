@@ -19,6 +19,7 @@
         var $this = $(input);
 
         var $fileblock = $this.closest('.form_file_item');
+
         var _type = $this.data('type');
 
         var form_data = new FormData();
@@ -449,9 +450,8 @@ console.log(resp);
                                     text: resp.error,
                                     type: 'error',
                                 });
-                                setTimeout(function(){
-                                    location.href = 'orders';
-                                }, 5000);
+
+                                location.reload();
                             }
                             else
                             {

@@ -224,7 +224,7 @@ class DocumentController extends Controller
         $tpl = $this->design->fetch('pdf/' . $document->template);
 
         if ($this->request->get('action') == 'download_file') {
-            $download = true;
+            $download = $document->params->personal_number.'_';
             $this->pdf->create($tpl, $document->name, $document->template, $download);
         } else {
             $this->pdf->create($tpl, $document->name, $document->template);
@@ -287,10 +287,6 @@ class DocumentController extends Controller
         return trim(preg_replace('/ {2,}/', ' ', join(' ', $out)));
     }
 
-    /**
-     * Склоняем словоформу
-     * @ author runcore
-     */
     private function morph($n, $f1, $f2, $f5)
     {
         $n = abs(intval($n)) % 100;
