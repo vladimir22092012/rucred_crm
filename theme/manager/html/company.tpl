@@ -6,12 +6,28 @@
           href="theme/manager/assets/plugins/datatables.net-bs4/css/dataTables.bootstrap4.css">
     <link rel="stylesheet" type="text/css"
           href="theme/manager/assets/plugins/datatables.net-bs4/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="//unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 {/capture}
 
 {capture name='page_scripts'}
     <script src="theme/manager/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     <script src="theme/manager/assets/plugins/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="theme/manager/assets/plugins/datatables.net-bs4/js/dataTables.responsive.min.js"></script>
+    <script src="//unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <script>
+        window.Dropzone.options.fileEmployersUpload = {
+            url: "/company/{$company->com_id}",
+            parallelUploads: 1,
+            maxFilesize: 1,
+            maxFiles:1,
+            init: function() {
+                this.on("maxfilesexceeded", function(file) {
+                    this.removeAllFiles();
+                    this.addFile(file);
+                });
+            },
+        };
+    </script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/companies.js"></script>
 {/capture}
 
@@ -181,6 +197,13 @@
                     <div class="card-body">
                         <h4 class="card-title">Списки сотрудников</h4>
                         <p class="card-text">В этот раздел можно импортировать списки сотрудников компании для проверки при одобрении заявки на кредит</p>
+                        <div>
+                            <form class="dropzone import_workers_list_form" id="file-employers-upload">
+                                <input type="hidden" name="action" value="import_workers_list">
+                                <input type="hidden" name="company_id" value="{$company->com_id}">
+                            </form>
+                        </div>
+                        <div></div>
                     </div>
                 </div>
             </div>

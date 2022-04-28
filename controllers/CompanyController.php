@@ -1,7 +1,6 @@
 <?php
 
-error_reporting(-1);
-ini_set('display_errors', 'On');
+use App\Services\FileParserService;
 
 class CompanyController extends Controller
 {
@@ -261,8 +260,8 @@ class CompanyController extends Controller
     {
         $company_id = $this->request->post('company_id');
         $input_file  = $_FILES['file']['size'] ? $_FILES['file'] : null;
-        if (!$input_file || ($input_file['error'] === UPLOAD_ERR_OK)) {
-            echo json_encode(['company_id' => $company_id], JSON_THROW_ON_ERROR);
+        if (!$input_file) {
+            echo json_encode(['error' => 1]);
             exit;
         }
         $input_file_tmp = empty($input_file['tmp_name']) ? null : $input_file['tmp_name'];
@@ -270,6 +269,10 @@ class CompanyController extends Controller
         $output_file_name = uniqid('', true) . '-' . time() . '.' . $input_file_ext;
         $output_file = ROOT . '/files/' . $output_file_name;
         move_uploaded_file($input_file_tmp, $output_file);
-        return ['success' => 1];
+
+        (new FileParserService)->parse($output_file);
+
+        echo json_encode(['success' => 1]);
+        exit;
     }
 }
