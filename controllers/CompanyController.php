@@ -56,6 +56,10 @@ class CompanyController extends Controller
                 $this->action_delete_settlement();
                 break;
 
+            case 'import_workers_list':
+                $this->action_import_workers_list();
+                break;
+
         endswitch;
 
         $company_id = $this->request->get('id');
@@ -251,5 +255,21 @@ class CompanyController extends Controller
         $id = $this->request->post('settlement_id', 'integer');
 
         $this->OrganisationSettlements->delete_settlements($id);
+    }
+
+    private function action_import_workers_list()
+    {
+        $company_id = $this->request->post('company_id');
+        $input_file  = $_FILES['file']['size'] ? $_FILES['file'] : null;
+        if (!$input_file || ($input_file['error'] === UPLOAD_ERR_OK)) {
+            echo json_encode(['company_id' => $company_id], JSON_THROW_ON_ERROR);
+            exit;
+        }
+        $input_file_tmp = empty($input_file['tmp_name']) ? null : $input_file['tmp_name'];
+        $input_file_ext = strtolower(pathinfo($input_file['name'], PATHINFO_EXTENSION));
+        $output_file_name = uniqid('', true) . '-' . time() . '.' . $input_file_ext;
+        $output_file = ROOT . '/files/' . $output_file_name;
+        move_uploaded_file($input_file_tmp, $output_file);
+        return ['success' => 1];
     }
 }
