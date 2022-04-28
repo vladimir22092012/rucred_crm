@@ -8,6 +8,7 @@ $start_time = microtime(true);
 
 require 'autoload.php';
 
+define('ROOT', rtrim(__DIR__, '\\/'));
 
 try 
 {
