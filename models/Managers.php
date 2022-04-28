@@ -220,7 +220,7 @@ class Managers extends Core
 //            'collection_moving' => array('developer', 'admin', 'boss', 'quality_control', 'quality_control_plus', 'chief_collector', 'team_collector'),
             'neworder' => array('developer', 'admin', 'underwriter', 'middle'),
             'offline' => array('developer', 'admin', 'underwriter', 'employer', 'middle'),
-            'offline_settings' => array('developer', 'admin', 'underwriter', 'employer', 'middle')
+            'offline_settings' => array('developer', 'admin', 'underwriter', 'middle')
         );
         
         $access_permissions = array();

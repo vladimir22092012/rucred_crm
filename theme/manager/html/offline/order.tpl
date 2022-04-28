@@ -1915,8 +1915,7 @@
                                                         <br>
                                                         <label>Полная стоимость микрозайма, %
                                                             годовых:</label>
-                                                        <span>{($order->percent * $order->period)|number_format:2:',':' '}
-                                                            %</span>
+                                                        <span>{$order->psk}%</span>
                                                     </div>
                                             </form>
                                         </div>
