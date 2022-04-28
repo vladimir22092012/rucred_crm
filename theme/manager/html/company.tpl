@@ -30,18 +30,16 @@
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
                     <li class="breadcrumb-item"><a href="/">Справочники</a></li>
                     <li class="breadcrumb-item"><a href="/companies">Компании</a></li>
-                    <li class="breadcrumb-item active">Реестр компании</li>
+                    <li class="breadcrumb-item active">{$company->com_name}</li>
                 </ol>
             </div>
         </div>
 
         <div class="row">
             <div class="col-12">
-
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title"></h4>
-                        <h6 class="card-subtitle"></h6>
+                        <h2 class="card-title">{$company->com_name}</h2>
                         <div class="table-responsive m-t-40">
                             <div class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
                                 <table id="config-table" class="table display table-striped dataTable">
@@ -177,6 +175,12 @@
                                 </table>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Списки сотрудников</h4>
+                        <p class="card-text">В этот раздел можно импортировать списки сотрудников компании для проверки при одобрении заявки на кредит</p>
                     </div>
                 </div>
             </div>
