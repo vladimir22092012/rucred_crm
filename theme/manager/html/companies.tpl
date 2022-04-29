@@ -175,7 +175,7 @@
 
 </div>
 
-<div id="modal_add_item" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+<div id="modal_add_branch" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
      aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
