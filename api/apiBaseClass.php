@@ -36,12 +36,12 @@ class apiBaseClass extends \Core {
     public function check_token() {
         try {
             $decoded = JWT::decode($this->tokenJWT, new Key(APIConstants::$KEY, 'HS256'));
-            $this->userIdFromToken = $decoded['user_id'];
+            $this->userIdFromToken = $decoded->user_id;
         } catch (\Throwable $th) {
             $msg = 'Ошибка JWT токена';
             $this->error_response($msg);
         }
-      }
+    }
 
     public function error_response($msg) {
         header("Content-type: application/json; charset=UTF-8");

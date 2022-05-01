@@ -5,6 +5,11 @@ ini_set('display_errors', 'On');
 
 require_once( __DIR__ . '/../vendor/autoload.php');
 
+//Более красивый и информативный вывод ошибок
+$whoops = new \Whoops\Run;
+$whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+$whoops->register();
+
 /* 
     Все запросы находятся в группе /api
     Роуты могут добавляться 2 способами:
@@ -19,7 +24,7 @@ require_once( __DIR__ . '/../vendor/autoload.php');
 
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addGroup('/api', function (FastRoute\RouteCollector $r) {
-        $r->addRoute('POST', '/test', 'Api\routers\Test@test');
+        $r->addRoute('GET', '/test', 'Api\routers\Test@test');
         //Авторизация
         $r->post('/login', 'Api\routers\LoginApi@run');
         //Отправка смс (код)
@@ -30,6 +35,12 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
         $r->post('/registration/stage/passport', 'Api\routers\RegistrationApi@stagePassport');
         $r->post('/registration/stage/address', 'Api\routers\RegistrationApi@stageAddress');
         $r->post('/registration/stage/work', 'Api\routers\RegistrationApi@stageWork');
+        //Аккаунт
+        $r->post('/account/profile', 'Api\routers\AccountApi@getProfile');
+        $r->post('/account/orders', 'Api\routers\AccountApi@getOrders');
+        $r->post('/account/documents', 'Api\routers\AccountApi@getDocuments');
+        $r->post('/account/photos', 'Api\routers\AccountApi@getFiles');
+        $r->post('/account/photos/add', 'Api\routers\AccountApi@addFiles');
     });
 });
 

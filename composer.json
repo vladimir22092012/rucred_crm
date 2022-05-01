@@ -1,13 +1,18 @@
 {
     "require": {
         "firebase/php-jwt": "^6.1",
-        "nikic/fast-route": "^1.3"
+        "nikic/fast-route": "^1.3",
+        "filp/whoops": "^2.14",
+        "league/flysystem": "^2.4",
+        "league/flysystem-ftp": "^2.4"
     },
     "autoload": {
         "psr-4": {
-            "Api\\": "api/",
-            "Core\\": "core/"
+            "Api\\": "api/"
         },
         "files": ["autoload.php"]
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^5.4"
     }
 }

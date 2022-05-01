@@ -6,8 +6,6 @@ use Api\apiBaseClass;
 
 class Test extends apiBaseClass {
 
-    public $checkToken  = true;
-
     public function get($vars) {
       var_dump(1111);
     }
@@ -23,7 +21,7 @@ class Test extends apiBaseClass {
             'good' => 'phone',
             'price' => 10000
         ];
-var_dump(222);
+dd($res);
         //$this->json_response($res);
         // Выводим ответ клиенту
         /* echo json_encode($res, JSON_PRETTY_PRINT);
