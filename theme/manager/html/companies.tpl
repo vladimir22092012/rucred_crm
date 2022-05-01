@@ -104,13 +104,11 @@
                         <h6 class="card-subtitle"></h6>
                         <div class="table-responsive m-t-40">
                             <div class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
-                                <table id="config-table" class="table display table-striped dataTable">
+                                <table id="config-table" class="table display table-striped dataTable" style="font-size: 14px">
                                     <thead>
                                     <tr>
                                         <th>Группа, №</th>
-                                        <th class="">Номер</th>
                                         <th class="">Компания №</th>
-                                        <th class="">Группа</th>
                                         <th class="">Компания</th>
                                         <th class="">Должность</th>
                                         <th class="">ФИО</th>
@@ -125,11 +123,10 @@
                                             <select class="form-control" id="group_filter">
                                                 <option value="none" selected>Фильтр</option>
                                                 {foreach $groups as $group}
-                                                    <option value="{$group->number}">{$group->number}</option>
+                                                    <option value="{$group->number}">{$group->number}, {$group->name}</option>
                                                 {/foreach}
                                             </select>
                                         </th>
-                                        <th></th>
                                         <th class=""></th>
                                         <th class=""></th>
                                         <th class=""></th>
@@ -149,11 +146,9 @@
                                                 onclick="location.href='company/{$company->id}'"
                                                 onmouseover="this.style.backgroundColor='#AEA8F5';"
                                                 onmouseout="this.style.backgroundColor='white';">
-                                                <td>{$company->gr_number}</td>
-                                                <td>{$company->com_number}</td>
+                                                <td>{$company->gr_number}, {$company->gr_name}</td>
                                                 <td>{$company->gr_number}{$company->com_number}</td>
-                                                <td>{$company->gr_name}</td>
-                                                <td>{$company->com_name}</td>
+                                                <td>{$company->com_name} {if ($company->blocked)}<span class="label label-danger">Blocked</span>{/if}</td>
                                                 <td>{$company->eio_position}</td>
                                                 <td>{$company->eio_fio}</td>
                                                 <td>{$company->inn}</td>
@@ -180,7 +175,7 @@
 
 </div>
 
-<div id="modal_add_item" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+<div id="modal_add_branch" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
      aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">

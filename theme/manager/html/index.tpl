@@ -209,7 +209,7 @@
             <nav class="sidebar-nav">
                 <ul id="sidebarnav">
 
-                    {if $manager->role != 'underwriter'}
+                    {if !in_array($manager->role, ['underwriter', 'employer'])}
                     <li class="nav-small-cap">Онлайн заявки</li>
 
                     <li {if in_array($module, ['OrderController', 'OrdersController'])}class="active"{/if}>
@@ -236,7 +236,7 @@
                                             class="mdi mdi-animation"></i><span class="hide-menu">Заявки</span></a>
                             </li>
                         {/if}
-                        {if in_array('offline', $manager->permissions)}
+                        {if in_array('offline', $manager->permissions) && $manager->role != 'employer'}
                             <li{if in_array($module, ['OfflineOrdersController'])} class="active"{/if}>
                                 <a class="" href="drafts/" aria-expanded="false"><i class="mdi mdi-database"></i><span class="hide-menu">Черновики</span></a>
                             </li>

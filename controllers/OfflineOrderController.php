@@ -14,6 +14,10 @@ class OfflineOrderController extends Controller
                     $this->change_manager_action();
                     break;
 
+                case 'change_photo_status':
+                    $this->action_change_photo_status();
+                    break;
+
                 case 'edit_schedule':
                     return $this->action_edit_schedule();
                     break;
@@ -700,17 +704,29 @@ class OfflineOrderController extends Controller
         if (!($order = $this->orders->get_order((int)$order_id)))
             return array('error' => 'Неизвестный ордер');
 
-        if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
-            return array('error' => 'Не хватает прав для выполнения операции');
-
-        if ($order->amount > 15000)
-            return array('error' => 'Сумма займа должна быть не более 15000 руб!');
-
         if ($order->status != 1)
             return array('error' => 'Неверный статус заявки, возможно Заявка уже одобрена или получен отказ');
 
         if ($order->user_id == 127551)
             return array('error' => 'По данному клиенту запрещена выдача!');
+
+        $loan = $this->Loantypes->get_loantype($order->loan_type);
+
+        $query = $this->db->placehold("
+        SELECT COUNT(*) as `count`
+        FROM s_scans
+        WHERE user_id = ?
+        AND order_id = ?
+        ", (int)$order->user_id, (int)$order->order_id);
+
+        $this->db->query($query);
+        $count = $this->db->result('count');
+
+        if ($count < 9)
+            return array('error' => 'Приложены не все сканы!');
+
+        if ($order->amount < $loan->min_amount && $order->amount > $loan->max_amount)
+            return array('error' => 'Проверьте сумму займа!');
 
         $update = array(
             'status' => 2,
@@ -782,7 +798,7 @@ class OfflineOrderController extends Controller
      */
     private function delivery_order_action()
     {
-        $order_id = (int) $this->request->post('order_id', 'integer');
+        $order_id = (int)$this->request->post('order_id', 'integer');
         $order = $this->orders->get_order($order_id);
 
         if (!$order) {
@@ -801,7 +817,7 @@ class OfflineOrderController extends Controller
         $action = "Register";
         $request_url = $best2pay_endpoint . $action;
 
-        $best2pay_sector = (int) $this->config->best2pay_current_sector_id;
+        $best2pay_sector = (int)$this->config->best2pay_current_sector_id;
 
         $best2pay_password = $this->config->best2pay_sector3159_pass;
 
@@ -834,10 +850,10 @@ class OfflineOrderController extends Controller
             curl_close($ch);
             $best2pay_response_xml = simplexml_load_string($best2pay_response);
             $best2pay_response_xml_name = $best2pay_response_xml->getName();
-            if ($best2pay_response_xml_name === 'error' ) {
+            if ($best2pay_response_xml_name === 'error') {
                 return array('error' => $best2pay_response_xml->description);
             }
-            $delivery_id = (int) simplexml_load_string($best2pay_response)->id;
+            $delivery_id = (int)simplexml_load_string($best2pay_response)->id;
             if ($delivery_id === 0) {
                 return array('error' => 'Регистрация оплаты прошла неудачно');
             }
@@ -872,7 +888,7 @@ class OfflineOrderController extends Controller
             curl_close($ch);
             $best2pay_response_xml = simplexml_load_string($best2pay_response);
             $best2pay_response_xml_name = $best2pay_response_xml->getName();
-            if ($best2pay_response_xml_name === 'error' ) {
+            if ($best2pay_response_xml_name === 'error') {
                 return array('error' => $best2pay_response_xml->description);
             }
             $this->orders->update_order($order_id, array('status' => 9));
@@ -890,7 +906,7 @@ class OfflineOrderController extends Controller
      */
     private function delivery_order_status_action()
     {
-        $order_id = (int) $this->request->post('order_id', 'integer');
+        $order_id = (int)$this->request->post('order_id', 'integer');
         $order = $this->orders->get_order($order_id);
 
         if (!$order) {
@@ -905,7 +921,7 @@ class OfflineOrderController extends Controller
         $action = "Order";
         $request_url = $best2pay_endpoint . $action;
 
-        $best2pay_sector = (int) $this->config->best2pay_current_sector_id;
+        $best2pay_sector = (int)$this->config->best2pay_current_sector_id;
 
         $best2pay_reference = $order_id;
 
@@ -930,7 +946,7 @@ class OfflineOrderController extends Controller
             curl_close($ch);
             $best2pay_response_xml = simplexml_load_string($best2pay_response);
             $best2pay_response_xml_name = $best2pay_response_xml->getName();
-            if ($best2pay_response_xml_name === 'error' ) {
+            if ($best2pay_response_xml_name === 'error') {
                 return array('error' => $best2pay_response_xml->description);
             }
         } catch (Exception $e) {
@@ -2715,8 +2731,7 @@ class OfflineOrderController extends Controller
             unset($payment_schedule[$date]);
         }
 
-        foreach ($results as $key => $result)
-        {
+        foreach ($results as $key => $result) {
             $results[$key]['all_sum_pay'] = preg_replace("/[^,.0-9]/", '', $result['all_sum_pay']);
             $results[$key]['all_loan_percents_pay'] = preg_replace("/[^,.0-9]/", '', $result['all_loan_percents_pay']);
             $results[$key]['all_loan_body_pay'] = preg_replace("/[^,.0-9]/", '', $result['all_loan_body_pay']);
@@ -2727,6 +2742,38 @@ class OfflineOrderController extends Controller
         $payment_schedule = array_merge($payment_schedule, $results);
 
         $this->orders->update_order($order_id, ['payment_schedule' => json_encode($payment_schedule)]);
+    }
+
+    private function action_change_photo_status()
+    {
+        $status = $this->request->post('status', 'integer');
+        $file_id = $this->request->post('file_id');
+
+        $type = 'document';
+
+        switch ($status):
+
+            case 2:
+                $type = 'Паспорт: разворот';
+                break;
+
+            case 3:
+                $type = 'Паспорт: регистрация';
+                break;
+
+            case 4:
+                $type = 'Селфи с паспортом';
+                break;
+
+        endswitch;
+
+        $query = $this->db->placehold("
+        UPDATE s_files
+        SET `type` = ?
+        WHERE id = ?
+        ", (string)$type, (int)$file_id);
+
+        $this->db->query($query);
     }
 
 }

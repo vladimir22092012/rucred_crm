@@ -6,12 +6,28 @@
           href="theme/manager/assets/plugins/datatables.net-bs4/css/dataTables.bootstrap4.css">
     <link rel="stylesheet" type="text/css"
           href="theme/manager/assets/plugins/datatables.net-bs4/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="//unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 {/capture}
 
 {capture name='page_scripts'}
     <script src="theme/manager/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     <script src="theme/manager/assets/plugins/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="theme/manager/assets/plugins/datatables.net-bs4/js/dataTables.responsive.min.js"></script>
+    <script src="//unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <script>
+        window.Dropzone.options.fileEmployersUpload = {
+            url: "/company/{$company->com_id}",
+            parallelUploads: 1,
+            maxFilesize: 1,
+            maxFiles:1,
+            init: function() {
+                this.on("maxfilesexceeded", function(file) {
+                    this.removeAllFiles();
+                    this.addFile(file);
+                });
+            },
+        };
+    </script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/companies.js"></script>
 {/capture}
 
@@ -30,18 +46,16 @@
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
                     <li class="breadcrumb-item"><a href="/">Справочники</a></li>
                     <li class="breadcrumb-item"><a href="/companies">Компании</a></li>
-                    <li class="breadcrumb-item active">Реестр компании</li>
+                    <li class="breadcrumb-item active">{$company->com_name}</li>
                 </ol>
             </div>
         </div>
 
         <div class="row">
             <div class="col-12">
-
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title"></h4>
-                        <h6 class="card-subtitle"></h6>
+                        <h2 class="card-title">{$company->com_name}</h2>
                         <div class="table-responsive m-t-40">
                             <div class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
                                 <table id="config-table" class="table display table-striped dataTable">
@@ -49,7 +63,20 @@
                                     <tr>
                                         <th>Позиция</th>
                                         <th>Код</th>
-                                        <th colspan="3">Описание</th>
+                                        <th colspan="2">Описание</th>
+                                        <th>
+                                            <span>Блокировка</span>
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" name="blocked_flag"
+                                                       data-company-id="{$company->com_id}" class="onoffswitch-checkbox action-block-company"
+                                                       id="on_off_flag_{$company->com_id}"
+                                                        {if $company->blocked} checked="true" value="1" {else} value="0"{/if}>
+                                                <label class="onoffswitch-label" for="on_off_flag_{$company->com_id}">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </th>
                                         <th><input type="button" class="btn btn-outline-info action-edit-company"
                                                    value="Редактировать компанию"></th>
                                         <th><input type="button" data-company-id="{$company->com_id}"
@@ -164,6 +191,19 @@
                                 </table>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Списки сотрудников</h4>
+                        <p class="card-text">В этот раздел можно импортировать списки сотрудников компании для проверки при одобрении заявки на кредит</p>
+                        <div>
+                            <form class="dropzone import_workers_list_form" id="file-employers-upload">
+                                <input type="hidden" name="action" value="import_workers_list">
+                                <input type="hidden" name="company_id" value="{$company->com_id}">
+                            </form>
+                        </div>
+                        <div></div>
                     </div>
                 </div>
             </div>

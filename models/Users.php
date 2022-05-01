@@ -448,7 +448,8 @@ class Users extends Core
     public function add_file($file)
     {
 		$query = $this->db->placehold("
-            INSERT INTO __files SET ?%, created = NOW()
+            INSERT INTO __files 
+            SET ?%, created = NOW()
         ", (array)$file);
         $this->db->query($query);
         $id = $this->db->insert_id();

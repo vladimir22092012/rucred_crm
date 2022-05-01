@@ -9,6 +9,24 @@ $(function () {
        $('#add_settlement').modal();
     });
 
+    $('.action-block-company').on('change', function () {
+        let val = $(this).val();
+        let value = (val == 1) ? 0 : 1;
+        let company_id = $(this).attr('data-company-id');
+        let that = $(this);
+        $.ajax({
+            method: 'POST',
+            data:{
+                action: 'change_blocked_flag',
+                company_id: company_id,
+                value: value
+            },
+            success: function () {
+                that.val(value);
+            }
+        });
+    });
+
     $('.action-edit-company').on('click', function () {
 
         $('#modal_edit_company').modal();
