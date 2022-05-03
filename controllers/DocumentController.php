@@ -34,121 +34,23 @@ class DocumentController extends Controller
         $loan = $this->Loantypes->get_loantype($loan_id);
         $this->design->assign('loan', $loan);
 
-        $start_date = date('d', strtotime($document->params->date));
-
-        if ($start_date < 10) {
-            $plus_sum_percents = ($document->params->percent / 100) * $document->params->amount * 10 - (int)$start_date;
-        }
-
-        $start_date = new DateTime(date('Y-m-d', strtotime($document->params->date)));
-        $first_pay = new DateTime(date('Y-m-10', strtotime($document->params->date . '+1 month')));
+        $start_date = new DateTime(date('Y-m-d', strtotime($document->params->probably_start_date)));
         $end_date = new DateTime(date('Y-m-10', strtotime($document->params->probably_return_date)));
-
-        if (date_diff($start_date, $first_pay)->days < 30) {
-            $minus_sum_percents = ($document->params->percent / 100) * $document->params->amount * (30 - date_diff($start_date, $first_pay)->days);
-        }
-
 
         $period = date_diff($start_date, $end_date)->days;
 
         $this->design->assign('period', $period);
 
-        $first_pay = $this->check_date($first_pay);
+        $payment_schedule = json_decode($document->params->payment_schedule, true);
 
-        $payment_schedule = array();
+        uksort($payment_schedule,
+            function ($a, $b) {
 
-        $percent_per_month = (($document->params->percent / 100) * 365) / 12;
-        $annoouitet_pay = $document->params->amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
+                if ($a == $b)
+                    return 0;
 
-
-        if (date_diff($start_date, $first_pay)->days < 20 && date_diff($start_date, $first_pay)->days > 3) {
-            $first_pay_percents = clone $first_pay;
-
-            $period_pay_percents = date_diff($first_pay_percents, $start_date)->days;
-
-            $sum_first_pay = ($document->params->percent / 100) * $document->params->amount * $period_pay_percents;
-
-            $first_pay = new DateTime(date('Y-m-10', strtotime($document->params->date . '+1 month')));
-            $first_pay->add(new DateInterval('P1M'));
-            $first_pay = $this->check_date($first_pay);
-
-
-            $payment_schedule[$first_pay_percents->format('d.m.Y')] =
-                [
-                    'pay_sum' => $sum_first_pay,
-                    'loan_percents_pay' => $sum_first_pay,
-                    'loan_body_pay' => 0.00,
-                    'comission_pay' => 0.00,
-                    'rest_pay' => $annoouitet_pay
-                ];
-        }
-
-        if ($first_pay->format('m') == $end_date->format('m')) {
-
-            $payment_schedule[$first_pay->format('d.m.Y')] =
-                [
-                    'pay_sum' => $annoouitet_pay,
-                    'loan_percents_pay' => $annoouitet_pay - $document->params->amount,
-                    'loan_body_pay' => $document->params->amount,
-                    'comission_pay' => 0.00,
-                    'rest_pay' => 0.00
-                ];
-
-        } else {
-
-            $interval = new DateInterval('P1M');
-            $daterange = new DatePeriod($first_pay, $interval, $end_date);
-            $percents_for_annuitet = ($document->params->percent * 365) / 12;
-            $rest_sum = $annoouitet_pay * $loan->max_period;
-
-            foreach ($daterange as $date) {
-
-                $date = new DateTime(date('Y-m-d', strtotime($date->format('Y-m-10'))));
-
-                $this->check_date($date);
-
-                $loan_percents_pay = ($rest_sum * $percents_for_annuitet) / 100;
-
-                if ($plus_sum_percents) {
-                    $first_pay = $annoouitet_pay + $plus_sum_percents;
-                    $first_loan_percents_pay = $loan_percents_pay + $plus_sum_percents;
-                }
-
-                if ($minus_sum_percents) {
-                    $first_pay = $annoouitet_pay - $minus_sum_percents;
-                    $first_loan_percents_pay = $loan_percents_pay - $minus_sum_percents;
-                }
-
-                $payment_schedule[$date->format('d.m.Y')] =
-                    [
-                        'pay_sum' => ($plus_sum_percents != null || $minus_sum_percents != null) ? $first_pay : $annoouitet_pay,
-                        'loan_percents_pay' => ($plus_sum_percents != null || $minus_sum_percents != null) ? $first_loan_percents_pay : $loan_percents_pay,
-                        'loan_body_pay' => $annoouitet_pay - $loan_percents_pay,
-                        'comission_pay' => 0.00,
-                        'rest_pay' => $rest_sum -= $annoouitet_pay
-                    ];
-
-                $plus_sum_percents = null;
-                $minus_sum_percents = null;
-            }
-        }
-
-        $payment_schedule['result'] =
-            [
-                'all_sum_pay' => 0.00,
-                'all_loan_percents_pay' => 0.00,
-                'all_loan_body_pay' => 0.00,
-                'all_comission_pay' => 0.00,
-                'all_rest_pay_sum' => 0.00
-            ];
-
-        foreach ($payment_schedule as $date => $pay) {
-            $payment_schedule['result']['all_sum_pay'] += $pay['pay_sum'];
-            $payment_schedule['result']['all_loan_percents_pay'] += $pay['loan_percents_pay'];
-            $payment_schedule['result']['all_loan_body_pay'] += $pay['loan_body_pay'];
-            $payment_schedule['result']['all_comission_pay'] += $pay['comission_pay'];
-            $payment_schedule['result']['all_rest_pay_sum'] = 0.00;
-        }
+                return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+            });
 
         $all_pay_sum_string = explode('.', $payment_schedule['result']['all_sum_pay']);
 
@@ -184,7 +86,7 @@ class DocumentController extends Controller
         $this->design->assign('first_part_all_sum_pay', $first_part_all_sum_pay);
 
 
-        $percents_per_year = $document->params->percent * 365;
+        $percents_per_year = $document->params->psk;
         $percents = $percents_per_year;
 
         $percents = number_format($percents, 3, ',', ' ');
