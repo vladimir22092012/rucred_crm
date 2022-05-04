@@ -306,6 +306,7 @@ class NeworderController extends Controller
 
                     $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
                     $first_pay = new DateTime(date('Y-m-10', strtotime($start_date.'+1 month')));
+                    $count_days_this_month = (int)date('t', strtotime($first_pay));
                     $paydate = $this->check_pay_date($first_pay);
 
                     if(date_diff($first_pay, $issuance_date)->days < 20)
@@ -313,16 +314,16 @@ class NeworderController extends Controller
                         $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($first_pay, $issuance_date)->days;
                         $percents_pay = $sum_pay;
                     }
-                    if(date_diff($first_pay, $issuance_date)->days >= 20 && date_diff($first_pay, $issuance_date)->days < 30)
+                    if(date_diff($first_pay, $issuance_date)->days >= 20 && date_diff($first_pay, $issuance_date)->days < $count_days_this_month)
                     {
-                        $minus_percents = ($order['percent'] / 100) * $order['amount'] * (30 - date_diff($first_pay, $issuance_date)->days);
+                        $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($first_pay, $issuance_date)->days);
 
                         $sum_pay = $annoouitet_pay - $minus_percents;
                         $percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
                         $body_pay = $sum_pay - $percents_pay;
 
                     }
-                    if(date_diff($first_pay, $issuance_date)->days >= 30)
+                    if(date_diff($first_pay, $issuance_date)->days >= $count_days_this_month)
                     {
 
                         $sum_pay = $annoouitet_pay;
