@@ -280,7 +280,7 @@ class CompanyController extends Controller
 
         $company_check_id = $this->CompanyChecks->add_company_check($company_id, json_encode(['workers' => $workers], JSON_THROW_ON_ERROR));
 
-        echo json_encode(['success' => 1, 'company_check_id' => $company_check_id,'workers' => $workers]);
+        echo json_encode(['success' => 1, 'company_check_id' => $company_check_id, 'workers' => $workers]);
         exit;
     }
 }
