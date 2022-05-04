@@ -307,13 +307,45 @@
 
                 $.ajax({
                     method: 'POST',
-                    data:{
+                    data: {
                         action: 'change_photo_status',
                         status: status,
                         file_id: file_id
                     }
                 });
-            })
+            });
+
+            $('.accept-order').on('click', function (e) {
+                e.preventDefault();
+                let order_id = $(this).attr('data-order');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'accept_by_employer',
+                        order_id: order_id
+                    },
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            });
+
+            $('.reject-order').on('click', function (e) {
+                e.preventDefault();
+                let order_id = $(this).attr('data-order');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'reject_by_employer',
+                        order_id: order_id
+                    },
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            });
 
         });
     </script>
@@ -614,28 +646,7 @@
                                     </form>
                                 </div>
                                 <div class="col-12 col-md-6 col-lg-3">
-                                    {if !$order->manager_id && $order->status == 0}
-                                        <div class="pt-3 js-accept-order-block">
-                                            <button class="btn btn-info btn-lg btn-block js-accept-order js-event-add-click"
-                                                    data-event="10" data-manager="{$manager->id}"
-                                                    data-order="{$order->order_id}" data-user="{$order->user_id}">
-                                                <i class="fas fa-hospital-symbol"></i>
-                                                <span>Принять</span>
-                                            </button>
-                                        </div>
-                                    {/if}
-                                    {if $order->status == 1 && $order->manager_id != $manager->id}
-                                        <div class="pt-1 pb-2 js-accept-order-block">
-                                            <button class="btn btn-info btn-block js-accept-order js-event-add-click"
-                                                    data-event="11" data-user="{$order->user_id}"
-                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
-                                                <i class="fas fa-hospital-symbol"></i>
-                                                <span>Перепринять</span>
-                                            </button>
-                                        </div>
-                                    {/if}
-
-                                    {if $order->status == 1}
+                                    {if $order->status == 14}
                                         <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
                                             <button class="btn btn-success btn-block js-approve-order js-event-add-click"
                                                     data-event="12" data-user="{$order->user_id}"
@@ -651,20 +662,36 @@
                                             </button>
                                         </div>
                                     {/if}
-
-                                    <div class="pt-1 pb-2">
-                                        <button class="btn btn-info btn-lg btn-block send_money"
-                                                data-order="{$order->order_id}">
-                                            <i class="fas fa-hospital-symbol"></i>
-                                            <span>Отправить деньги</span>
-                                        </button>
-                                    </div>
+                                    {if $order->status == 1}
+                                        {if in_array($manager->role, ['developer', 'admin', 'middle', 'employer'])}
+                                            <div>
+                                                <button class="btn btn-success btn-block accept-order"
+                                                        data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Принять</span>
+                                                </button>
+                                                <button class="btn btn-danger btn-block reject-order"
+                                                        data-user="{$order->user_id}"
+                                                        data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                                    <i class="fas fa-times-circle"></i>
+                                                    <span>Отклонить</span>
+                                                </button>
+                                            </div>
+                                            {else}
+                                            <div class="card card-primary">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">У работодателя</h4>
+                                                    <h6>Договор {$contract->number}</h6>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                    {/if}
 
                                     <div class="js-order-status">
-                                        {if $order->status == 2}
+                                        {if $order->status == 14}
                                             <div class="card card-success mb-1">
                                                 <div class="box text-center">
-                                                    <h4 class="text-white mb-0">Одобрена</h4>
+                                                    <h4 class="text-white mb-0">Р.Подтверждена</h4>
                                                 </div>
                                             </div>
                                             <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
@@ -690,27 +717,14 @@
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <a href="javascript:void(0);" class="js-sms-send"
-                                                   data-contract="{$order->contract_id}">
-                                                    <span>Отправить смс код</span>
-                                                    <span class="js-sms-timer"></span>
-                                                </a>
-                                            </form>
-                                        {/if}
-                                        {if $order->status == 3}
-                                            <div class="card card-danger">
-                                                <div class="box text-center">
-                                                    <h4 class="text-white">Отказ</h4>
-                                                    <small title="Причина отказа">
-                                                        <i>{$reject_reasons[$order->reason_id]->admin_name}</i></small>
-                                                    {if $order->antirazgon_date}
-                                                        <br/>
-                                                        <strong class="text-white">
-                                                            <small>Мараторий до {$order->antirazgon_date|date}</small>
-                                                        </strong>
-                                                    {/if}
+                                                <div class="pt-1 pb-2">
+                                                    <button class="btn btn-info btn-lg btn-block send_money"
+                                                            data-order="{$order->order_id}">
+                                                        <i class="fas fa-hospital-symbol"></i>
+                                                        <span>Отправить деньги</span>
+                                                    </button>
                                                 </div>
-                                            </div>
+                                            </form>
                                         {/if}
                                         {if $order->status == 4}
                                             <div class="card card-primary">
@@ -804,7 +818,6 @@
                                                 {/if}
                                             {/if}
                                         {/if}
-
                                         {if $order->status == 7}
                                             <div class="card card-primary">
                                                 <div class="box text-center">
@@ -819,6 +832,13 @@
                                                     <h4 class="text-white">Отказ клиента</h4>
                                                     <small title="Причина отказа">
                                                         <i>{$reject_reasons[$order->reason_id]->admin_name}</i></small>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 15}
+                                            <div class="card card-danger">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Р.Отклонена</h4>
                                                 </div>
                                             </div>
                                         {/if}
@@ -2658,7 +2678,7 @@
                                                 <div style="display: flex; flex-direction: column; margin-left: 15px">
                                                     <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
                                                         <a class="image-popup-fit-width js-event-add-click"
-                                                        href="javascript:void(0);"
+                                                           href="javascript:void(0);"
                                                            onclick="window.open('{$config->back_url}/files/users/{$file->name}');"
                                                            data-event="50" data-manager="{$manager->id}"
                                                            data-order="{$order->order_id}"
@@ -2722,11 +2742,23 @@
                                                             </div>
                                                         {/if}
                                                     </li>
-                                                    <select class="form-control photo_status" data-file="{$file->id}" name="photo_status">
-                                                        <option value="1" {if $file->type == 'document'}selected{/if}>Выберите тип документа</option>
-                                                        <option value="2" {if $file->type == 'Паспорт: разворот'}selected{/if}>Паспорт: разворот</option>
-                                                        <option value="3" {if $file->type == 'Паспорт: регистрация'}selected{/if}>Паспорт: регистрация</option>
-                                                        <option value="4" {if $file->type == 'Селфи с паспортом'}selected{/if}>Селфи с паспортом</option>
+                                                    <select class="form-control photo_status" data-file="{$file->id}"
+                                                            name="photo_status">
+                                                        <option value="1" {if $file->type == 'document'}selected{/if}>
+                                                            Выберите тип документа
+                                                        </option>
+                                                        <option value="2"
+                                                                {if $file->type == 'Паспорт: разворот'}selected{/if}>
+                                                            Паспорт: разворот
+                                                        </option>
+                                                        <option value="3"
+                                                                {if $file->type == 'Паспорт: регистрация'}selected{/if}>
+                                                            Паспорт: регистрация
+                                                        </option>
+                                                        <option value="4"
+                                                                {if $file->type == 'Селфи с паспортом'}selected{/if}>
+                                                            Селфи с паспортом
+                                                        </option>
                                                     </select>
                                                 </div>
                                             {/foreach}
