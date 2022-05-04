@@ -72,6 +72,22 @@ $(function () {
         }
     });
 
+    $('#start_date').on('change', function () {
+        let start_date = $(this).val();
+        let loan_id = $('.to_form_loan').attr('data-loan');
+
+        $.ajax({
+            dataType: 'JSON',
+            data: {
+                start_date: start_date,
+                loan_id: loan_id
+            },
+            success: function (suc) {
+                $('#end_date').val(suc['date'])
+            }
+        });
+    });
+
     $(document).on('click', '.price_basic', function (e) {
         e.preventDefault();
 
