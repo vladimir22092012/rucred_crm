@@ -3,7 +3,7 @@
 namespace Api\routers;
 
 use Api\apiBaseClass;
-use Api\APIConstants;
+use Api\apiConstants;
 
 class AccountApi extends apiBaseClass {
 
