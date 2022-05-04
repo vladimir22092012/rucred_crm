@@ -891,6 +891,9 @@ class OfflineOrderController extends Controller
             if ($best2pay_response_xml_name === 'error') {
                 return array('error' => $best2pay_response_xml->description);
             }
+            if ($best2pay_response_xml->state->__toString() !== 'APPROVED') {
+                return array('error' => 'Платёж не прошел');
+            }
             $this->orders->update_order($order_id, array('status' => 9));
             return array('success' => 1);
         } catch (Exception $e) {
