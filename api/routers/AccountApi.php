@@ -3,7 +3,7 @@
 namespace Api\routers;
 
 use Api\apiBaseClass;
-use Api\APIConstants;
+use Api\apiConstants;
 
 class AccountApi extends apiBaseClass {
 
@@ -122,7 +122,7 @@ class AccountApi extends apiBaseClass {
         $res = [];
 
         foreach ($files as $key => $file) {
-          $res['files'][$key]['type'] = $file->name;
+          $res['files'][$key]['type'] = $file->type;
           $res['files'][$key]['link'] = APIConstants::$URL_SITE . 'files/users/' . $file->name;
         }
 
