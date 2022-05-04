@@ -513,6 +513,18 @@ class OfflineOrderController extends Controller
 
         $documents = $this->documents->get_documents($filter);
 
+        $query = $this->db->placehold("
+        SELECT *
+        FROM s_scans
+        where user_id = ?
+        AND `type` = 'ndfl'
+        ", $order->user_id);
+
+        $this->db->query($query);
+        $ndfl = $this->db->result();
+
+        $this->design->assign('ndfl', $ndfl);
+
         $scans = $this->Scans->get_scans_by_order_id($order_id);
 
         foreach ($documents as $document) {

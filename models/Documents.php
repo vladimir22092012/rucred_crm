@@ -164,7 +164,7 @@ class Documents extends Core
 
         return $result;
     }
-    
+
     
 	public function get_document($id)
 	{
@@ -236,6 +236,7 @@ class Documents extends Core
                 $client_visible_filter
                 $type_filter
  	            $keyword_filter
+ 	            AND `type` != 'ndfl'
             ORDER BY id ASC 
             $sql_limit
         ");

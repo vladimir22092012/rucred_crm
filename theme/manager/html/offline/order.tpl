@@ -347,6 +347,34 @@
                 });
             });
 
+            $('.ndfl').on('change', function (e) {
+
+                console.log($(this));
+
+
+                let form_data = new FormData();
+
+                form_data.append('file', e.target.files[0]);
+                form_data.append('user_id', $(this).attr('data-user'));
+                form_data.append('type', 'ndfl');
+                form_data.append('action', 'add');
+                form_data.append('template', $(this).attr('id'));
+                form_data.append('order_id', $(this).attr('data-order'));
+                form_data.append('notreplace', '1');
+                form_data.append('ndfl', 'yes');
+
+                $.ajax({
+                    url: '/ajax/upload.php',
+                    data: form_data,
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    success: function (resp) {
+                        
+                    }
+                });
+            });
+
         });
     </script>
 {/capture}
@@ -2341,6 +2369,43 @@
                                                     </div>
                                                     <hr style="width: 100%; size: 2px">
                                                 {/foreach}
+                                                <div style="width: 100%!important; height: 30px; margin-left: 15px; display: flex; vertical-align: middle">
+                                                    <div class="form-group" style="width: 55%!important">
+                                                        <label class="control-label">Справка 2-НФДЛ</label>
+                                                    </div>
+                                                    <div>
+                                                        {if !empty($ndfl)}
+                                                        <a target="_blank"
+                                                           href="http://51.250.26.168/document?id={$ndfl->id}&action=download_file"><input
+                                                                    type="button"
+                                                                    class="btn btn-outline-success download_doc"
+                                                                    value="Сохранить"></a>
+                                                        {/if}
+                                                    </div>
+                                                    {if empty($ndfl)}
+                                                    <div class="btn-group"
+                                                         style="margin-left: 217px; height: 35px">
+                                                            <button type="button"
+                                                                    class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
+                                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                                    aria-expanded="false">
+                                                                <span class="sr-only">Toggle Dropdown</span>
+                                                            </button>
+                                                            <div class="dropdown-menu">
+                                                                <input type="file" name="ndfl"
+                                                                       class="ndfl"
+                                                                       id="ndfl"
+                                                                       data-user="{$order->user_id}"
+                                                                       data-order="{$order->order_id}"
+                                                                       value="" style="display:none" multiple/>
+                                                                <label for="ndfl"
+                                                                       class="dropdown-item">Приложить
+                                                                    справку</label>
+                                                            </div>
+                                                        {/if}
+                                                    </div>
+                                                </div>
+                                                <hr style="width: 100%; size: 2px">
                                             {/if}
                                         </form>
                                     </div>
