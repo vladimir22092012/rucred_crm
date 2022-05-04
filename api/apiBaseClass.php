@@ -4,7 +4,7 @@ namespace Api;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use Api\APIConstants;
+use Api\apiConstants;
 
 class apiBaseClass extends \Core {
 
