@@ -20,7 +20,7 @@ class CompanyChecks extends Core
         ORDER BY created DESC
         LIMIT 5
         ", $company_id);
-        return $this->db->result();
+        return $this->db->results();
     }
 
     public function get_last_company_check($company_id)
