@@ -266,13 +266,11 @@ class NeworderController extends Controller
                 $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
                 $paydate = new DateTime(date('Y-m-10', strtotime($start_date)));
 
-                $percent_per_month = (($order['percent'] / 100) * 365) / 12;
+                $percent_per_month = ((0.225 / 100) * 365) / 12;
                 $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
-
 
                 if(date('d', strtotime($start_date)) < 10)
                 {
-
                     if($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < 3)
                     {
                         $plus_loan_percents = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
@@ -310,8 +308,9 @@ class NeworderController extends Controller
                     if(date_diff($first_pay, $issuance_date)->days < 20)
                     {
                         $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($first_pay, $issuance_date)->days;
+                        $percents_pay = $sum_pay;
                     }
-                    if(date_diff($first_pay, $issuance_date)->days > 20 && date_diff($first_pay, $issuance_date)->days < 30)
+                    if(date_diff($first_pay, $issuance_date)->days > 20 && date_diff($first_pay, $issuance_date)->days <= 30)
                     {
                         $minus_percents = ($order['percent'] / 100) * $order['amount'] * (30 - date_diff($first_pay, $issuance_date)->days);
 
@@ -319,6 +318,12 @@ class NeworderController extends Controller
                         $body_pay = $annoouitet_pay - $sum_pay;
                         $percents_pay = $sum_pay - $body_pay;
 
+                    }
+                    if(date_diff($first_pay, $issuance_date)->days >= 30)
+                    {
+                        $sum_pay = $annoouitet_pay;
+                        $percents_pay = $rest_sum * $percent_per_month;
+                        $body_pay = $sum_pay - $percents_pay;
                     }
 
                     $payment_schedule[$paydate->format('d.m.Y')] =
