@@ -25,6 +25,9 @@
                     this.removeAllFiles();
                     this.addFile(file);
                 });
+                this.on("complete", function (file) {
+                    location.reload();
+                });
             },
         };
     </script>
@@ -203,7 +206,20 @@
                                 <input type="hidden" name="company_id" value="{$company->com_id}">
                             </form>
                         </div>
-                        <div></div>
+                        <div>
+                            <table class="table">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Created</th>
+                                </tr>
+                                {foreach $company_checks as $company_check}
+                                    <tr>
+                                        <td>{$company_check->id}</td>
+                                        <td>{$company_check->created}</td>
+                                    </tr>
+                                {/foreach}
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
