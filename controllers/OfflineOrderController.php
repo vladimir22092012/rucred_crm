@@ -819,7 +819,7 @@ class OfflineOrderController extends Controller
 
         $best2pay_sector = (int)$this->config->best2pay_current_sector_id;
 
-        $best2pay_password = $this->config->best2pay_sector3159_pass;
+        $best2pay_password = $this->config->best2pay_sector3721_pass;
 
         $best2pay_amount = $order->amount;
         $best2pay_currency = $this->config->best2pay_currency;
