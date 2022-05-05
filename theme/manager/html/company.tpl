@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css"
           href="theme/manager/assets/plugins/datatables.net-bs4/css/responsive.dataTables.min.css">
     <link rel="stylesheet" href="//unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet"/>
 {/capture}
 
 {capture name='page_scripts'}
@@ -14,6 +15,8 @@
     <script src="theme/manager/assets/plugins/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="theme/manager/assets/plugins/datatables.net-bs4/js/dataTables.responsive.min.js"></script>
     <script src="//unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/companies.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
     <script>
         window.Dropzone.options.fileEmployersUpload = {
             url: "/company/{$company->com_id}",
@@ -31,7 +34,6 @@
             },
         };
     </script>
-    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/companies.js"></script>
 {/capture}
 
 <div class="page-wrapper">
@@ -402,20 +404,20 @@
                 <form method="POST" id="add_settlement_form">
                     <input type="hidden" name="action" value="add_settlement">
                     <div class="form-group">
-                        <label for="name" class="control-label">Наименование банка:</label>
-                        <input type="text" class="form-control" name="name" id="name" value=""/>
+                        <label for="name_settlement" class="control-label">Наименование банка:</label>
+                        <input type="text" class="form-control" name="name" id="name_settlement" value=""/>
                     </div>
                     <div class="form-group">
                         <label for="payment" class="control-label">Расчетный счет:</label>
                         <input type="text" class="form-control" name="payment" id="payment" value=""/>
                     </div>
                     <div class="form-group">
-                        <label for="cors" class="control-label">Корреспондентский счет:</label>
-                        <input type="text" class="form-control" name="cors" id="cors" value=""/>
+                        <label for="correspondent_account" class="control-label">Корреспондентский счет:</label>
+                        <input type="text" class="form-control" name="cors" id="correspondent_account" value=""/>
                     </div>
                     <div class="form-group">
-                        <label for="bik" class="control-label">БИК: </label>
-                        <input type="text" class="form-control" name="bik" id="bik" value=""/>
+                        <label for="bik_settlement" class="control-label">БИК: </label>
+                        <input type="text" class="form-control" name="bik" id="bik_settlement" value=""/>
                     </div>
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
                     <input type="button" class="btn btn-success action_add_settlement" value="Сохранить">

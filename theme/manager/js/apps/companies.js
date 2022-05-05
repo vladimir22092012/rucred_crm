@@ -1,5 +1,7 @@
 $(function () {
 
+    let token_dadata = "25c845f063f9f3161487619f630663b2d1e4dcd7";
+
     $('.add-company-modal').on('click', function () {
 
         $('#modal_add_branch').modal();
@@ -224,5 +226,17 @@ $(function () {
                 location.reload();
             }
         });
-    })
+    });
+
+    $('#name_settlement').suggestions({
+        token: token_dadata,
+        type: "BANK",
+        minChars: 3,
+        onSelect: function (suggestion) {
+            console.log(suggestion);
+            $(this).val(suggestion.value);
+            $('#correspondent_account').val(suggestion.data.correspondent_account);
+            $('#bik_settlement').val(suggestion.data.bic);
+        }
+    });
 });
