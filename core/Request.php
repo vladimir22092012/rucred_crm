@@ -71,7 +71,7 @@ class Request extends Core
 
 	private function stripslashes_recursive($var)
 	{
-		if(get_magic_quotes_gpc())
+		if(false)
 		{
 			$res = null;
 			if(is_array($var))
@@ -107,7 +107,7 @@ class Request extends Core
 		$url = @parse_url($_SERVER["REQUEST_URI"]);
 		parse_str($url['query'], $query);
 		
-		if(get_magic_quotes_gpc())
+		if(false)
 			foreach($query as &$v)
 			{
 				if(!is_array($v))
