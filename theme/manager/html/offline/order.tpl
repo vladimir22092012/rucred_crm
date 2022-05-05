@@ -362,6 +362,7 @@
                 form_data.append('order_id', $(this).attr('data-order'));
                 form_data.append('notreplace', '1');
                 form_data.append('ndfl', 'yes');
+                form_data.append('name', e.target.files[0]['name']);
 
                 $.ajax({
                     url: '/ajax/upload.php',
@@ -370,7 +371,7 @@
                     processData: false,
                     contentType: false,
                     success: function (resp) {
-                        
+                        location.reload();
                     }
                 });
             });
@@ -2375,10 +2376,10 @@
                                                     </div>
                                                     <div>
                                                         {if !empty($ndfl)}
-                                                        <a target="_blank"
-                                                           href="http://51.250.26.168/document?id={$ndfl->id}&action=download_file"><input
+                                                        <a download target="_blank"
+                                                           href="{$config->back_url}/files/users/{$ndfl->name}"><input
                                                                     type="button"
-                                                                    class="btn btn-outline-success download_doc"
+                                                                    class="btn btn-outline-success"
                                                                     value="Сохранить"></a>
                                                         {/if}
                                                     </div>
@@ -2402,8 +2403,8 @@
                                                                        class="dropdown-item">Приложить
                                                                     справку</label>
                                                             </div>
-                                                        {/if}
                                                     </div>
+                                                    {/if}
                                                 </div>
                                                 <hr style="width: 100%; size: 2px">
                                             {/if}

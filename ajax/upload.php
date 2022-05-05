@@ -95,7 +95,7 @@ class UploadApp extends Core
 
                             $file_id = $this->Scans->add_scan(array(
                                 'user_id' => $this->user->id,
-                                'name' => $new_filename,
+                                'name' => $this->request->post('name'),
                                 'type' => $type,
                                 'status' => 0,
                                 'order_id' => (int)$this->request->post('order_id')
