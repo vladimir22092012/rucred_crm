@@ -121,29 +121,47 @@ class DocumentController extends Controller
         $tpl = $this->design->fetch('pdf/' . $document->template);
 
         if ($this->request->get('action') == 'download_file') {
-            $download = $document->params->personal_number.'_';
+
+            $fio = $document->params->lastname . ' ' . mb_substr($document->params->firstname, 0, 1) . mb_substr($document->params->patronymic, 0, 1);
+            $uid = $document->params->uid;
+            $employer = explode(' ', $uid);
+            $employer = "$employer[0]$employer[1]";
+            $date = date('Y-m-d', strtotime($document->params->probably_start_date));
+            $bank = ($document->params->settlement_id == 2) ? 'МИнБанк' : 'РосДорБанк';
+
+            if ($document->template == 'individualnie_usloviya.tpl')
+                $download = $fio . ' - Договор микрозайма ' . $uid . ' ' . "($date)" . ' ' . $bank;
+
+            if ($document->template == 'soglasie_na_obr_pers_dannih.tpl')
+                $download = $fio . ' - Согласие на обработку ПД ' . $uid . ' ' . "($date)";
+
+            if ($document->template == 'soglasie_rdb.tpl')
+                $download = $fio . ' - Согласие на идентификацию через банк РДБ ' . $uid . ' ' . "($date)";
+
+            if ($document->template == 'soglasie_minb.tpl')
+                $download = $fio . ' - Согласие на идентификацию через банк МИНБ ' . $uid . ' ' . "($date)";
+
+            if ($document->template == 'soglasie_rabotadatelu.tpl')
+                $download = $fio . ' - Согласие на обработку и передачу ПД работодателю ' . $employer . ' ' . "($date)";
+
+            if ($document->template == 'soglasie_rukred_rabotadatel.tpl')
+                $download = $fio . " - Согласие работодателю $employer на обработку и передачу ПД " . "($date)";
+
+            if ($document->template == 'soglasie_na_kred_otchet.tpl')
+                $download = $fio . " - Согласие на запрос КО " . "($date)";
+
+            if ($document->template == 'zayavlenie_na_perechislenie_chasti_zp.tpl')
+                $download = $fio . " - Обязательство подать заявление работодателю $employer  на перечисление" . "($date)";
+
+            if ($document->template == 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl')
+                $download = $fio . " - Заявление работодателю $employer  на перечисление по микрозайму " . "($date)";
+
+
             $this->pdf->create($tpl, $document->name, $document->template, $download);
         } else {
             $this->pdf->create($tpl, $document->name, $document->template);
         }
 
-    }
-
-    private function check_date($date)
-    {
-
-        for ($i = 0; $i <= 15; $i++) {
-
-            $check_date = $this->WeekendCalendar->check_date($date->format('Y-m-d'));
-
-            if ($check_date == null) {
-                break;
-            } else {
-                $date->sub(new DateInterval('P1D'));
-            }
-        }
-
-        return $date;
     }
 
     private function num2str($num)

@@ -2366,12 +2366,15 @@
                                             {/if}
                                             {if !empty($documents)}
                                                 {foreach $documents as $document}
-                                                    <div style="width: 100%!important; height: 30px; margin-left: 15px; display: flex; vertical-align: middle"
+                                                    <div style="width: 100%!important; height: 50px; margin-left: 5px; display: flex; vertical-align: middle"
                                                          id="{$document->id}">
-                                                        <div class="form-group" style="width: 55%!important">
+                                                        <div class="form-group" style="width: 10px!important; margin-left: 5px">
+                                                            <label class="control-label">{$document->numeration}</label>
+                                                        </div>
+                                                        <div class="form-group" style="width: 50%!important; margin-left: 15px">
                                                             <label class="control-label">{$document->name}</label>
                                                         </div>
-                                                        <div>
+                                                        <div style="margin-left: 10px">
                                                             <a target="_blank"
                                                                href="http://51.250.26.168/document?id={$document->id}&action=download_file"><input
                                                                         type="button"
@@ -2435,7 +2438,7 @@
                                                     </div>
                                                     {if empty($ndfl)}
                                                         <div class="btn-group"
-                                                             style="margin-left: 217px; height: 35px">
+                                                             style="margin-left: 210px; height: 35px">
                                                             <button type="button"
                                                                     class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
                                                                     data-toggle="dropdown" aria-haspopup="true"
