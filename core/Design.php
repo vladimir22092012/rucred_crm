@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(dirname(__FILE__)).'/Smarty/libs/Smarty.class.php');
+//require_once(dirname(dirname(__FILE__)).'/Smarty/libs/Smarty.class.php');
 
 class Design extends Core
 {
@@ -22,7 +22,7 @@ class Design extends Core
 		
 
 		$this->smarty->compile_dir = $this->config->root_dir.'/compiled/'.$theme;
-		$this->smarty->template_dir = $this->config->root_dir.'/theme/'.$theme.'/html';		
+		$this->smarty->template_dir = $this->config->root_dir.'/public/theme/'.$theme.'/html';
 
 		// Создаем папку для скомпилированных шаблонов текущей темы
 		if(!is_dir($this->smarty->compile_dir))

@@ -11,7 +11,8 @@
         "filp/whoops": "^2.14",
         "league/flysystem": "^2.4",
         "league/flysystem-ftp": "^2.4",
-        "nuovo/spreadsheet-reader": "^0.5.11"
+        "nuovo/spreadsheet-reader": "^0.5.11",
+        "smarty/smarty": "^4.1"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
