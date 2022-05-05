@@ -518,15 +518,20 @@ $(function () {
             '</tr>');
     });
 
-    $('.add_to_attestation_table').on('click', function (e) {
-        e.preventDefault();
+    $('.add_to_attestation_table').on('click', function () {
 
-        $('#attestation_table').append(
-            '<tr>' +
+        let html =
+            $('<tr>' +
             '<td><input class="form-control daterange" name="date[][date]" type="text" value=""></td>' +
-            '<td><input class="form-control mask_number" name="comment[][comment]" type="text" value=""></td>' +
-            '<td></td>' +
+            '<td><input class="form-control" name="comment[][comment]" type="text" value=""></td>' +
+            '<td><div type="button" class="btn btn-outline-danger remove_from_attestation_table">-</div></td>' +
             '</tr>');
+
+        $('.remove_from_attestation_table', html).on('click', function() {
+            $(this).closest('tr').remove();
+        });
+
+        $('#attestation_table').append(html);
 
         moment.locale('ru');
 

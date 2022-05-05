@@ -20,7 +20,8 @@ class Documents extends Core
         'SOGLASIE_RUKRED_RABOTODATEL' => 'soglasie_rukred_rabotadatel.tpl',
         'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP' => 'zayavlenie_na_perechislenie_chasti_zp.tpl',
         'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR' => 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl',
-        'INDIVIDUALNIE_USLOVIA' => 'individualnie_usloviya.tpl'
+        'INDIVIDUALNIE_USLOVIA' => 'individualnie_usloviya.tpl',
+        //'DOP_SOGLASHENIE_K_TRUDOVOMU_DOGOVORU' => 'dop_soglash_k_trud_dogovoru.tpl'
     );
     
     
@@ -33,7 +34,8 @@ class Documents extends Core
         'SOGLASIE_RUKRED_RABOTODATEL' => 'Согласие Рукред Работодателю',
         'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP' => 'Заявление на перечисление части зп в счет обслуживания микрозайма',
         'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR' => 'Обязательство на подачу заявления о перечислении части заработной платы на счёт третьего лица',
-        'INDIVIDUALNIE_USLOVIA' => 'Индивидуальные условия микрозайма'
+        'INDIVIDUALNIE_USLOVIA' => 'Индивидуальные условия микрозайма',
+        //'DOP_SOGLASHENIE_K_TRUDOVOMU_DOGOVORU' => 'Дополнительное соглашение к договору микрозайма'
     );
     
     private $client_visible = array(
@@ -133,6 +135,7 @@ class Documents extends Core
             'client_visible' => $this->client_visible[$data['type']],
             'params' => $data['params'],
             'created' => date('Y-m-d H:i:s'),
+            'numeration' => $data['numeration']
         );
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($created);echo '</pre><hr />';
         $id =  $this->add_document($created);

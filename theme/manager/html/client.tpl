@@ -74,13 +74,15 @@
 
                     let user_id = $(this).attr('data-user');
                     let number = $('input[class="form-control number_edit_form number"]').val();
+                    let order_id = {{$order->order_id}};
 
                     $.ajax({
                         method: 'POST',
                         data: {
                             action: 'edit_personal_number',
                             user_id: user_id,
-                            number: number
+                            number: number,
+                            order_id: order_id
                         },
                         success: function (resp) {
                             if (resp == 'error') {
@@ -1674,7 +1676,7 @@
                                             <tr>
                                                 <td class="text-info">
                                                     <a target="_blank"
-                                                       href="{$config->front_url}/document/{$document->user_id}/{$document->id}">
+                                                       href="http://51.250.26.168/document/{$document->id}">
                                                         <i class="fas fa-file-pdf fa-lg"></i>&nbsp;
                                                         {$document->name|escape}
                                                     </a>

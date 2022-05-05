@@ -179,6 +179,10 @@ class OfflineOrderController extends Controller
                     $this->action_workout();
                     break;
 
+                case 'edit_personal_number':
+                    return $this->action_edit_personal_number();
+                    break;
+
 
             endswitch;
 
@@ -468,19 +472,28 @@ class OfflineOrderController extends Controller
 
             $order = $this->orders->get_order($order_id);
 
+            $settlement = $this->OrganisationSettlements->get_std_settlement();
+
             $doc_types =
                 [
-                    'DOP_SOGLASHENIE_K_TRUDOVOMU_DOGOVORU', 'SOGLASIE_MINB', 'SOGLASIE_NA_KRED_OTCHET', 'SOGLASIE_NA_OBR_PERS_DANNIH',
-                    'SOGLASIE_RABOTODATEL', 'SOGLASIE_RDB', 'SOGLASIE_RUKRED_RABOTODATEL',
-                    'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP', 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR', 'INDIVIDUALNIE_USLOVIA'
+                    '1.1' => 'INDIVIDUALNIE_USLOVIA',
+                    '1.3' => 'DOP_SOGLASHENIE_K_TRUDOVOMU_DOGOVORU',
+                    '2.1' => 'SOGLASIE_NA_OBR_PERS_DANNIH',
+                    '2.2' => ($settlement->id == 2) ? 'SOGLASIE_MINB' : 'SOGLASIE_RDB',
+                    '2.3' => 'SOGLASIE_RABOTODATEL',
+                    '2.4' => 'SOGLASIE_RUKRED_RABOTODATEL',
+                    '2.5' => 'SOGLASIE_NA_KRED_OTCHET',
+                    '3.1' => 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP',
+                    '3.2' => 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR'
                 ];
 
-            foreach ($doc_types as $type) {
+            foreach ($doc_types as $key => $type) {
                 $results[$type] = $this->documents->create_document(array(
                     'user_id' => $order->user_id,
                     'order_id' => $order->order_id,
                     'type' => $type,
                     'params' => $order,
+                    'numeration' => (string)$key
                 ));
             }
 
@@ -2811,6 +2824,38 @@ class OfflineOrderController extends Controller
         $order_id = (int)$this->request->post('order_id');
 
         $this->orders->update_order($order_id, ['status' => 15]);
+    }
+
+    private function action_edit_personal_number()
+    {
+        $user_id = (int)$this->request->post('user_id');
+        $order_id = (int)$this->request->post('order_id');
+        $number = (int)$this->request->post('number');
+
+        $check = $this->users->check_busy_number($number);
+
+        if ($check && $check != 0) {
+            echo 'error';
+            exit;
+        } else {
+
+            $query = $this->db->placehold("
+            SELECT uid
+            FROM s_orders
+            WHERE id = $order_id
+            ");
+
+            $this->db->query($query);
+            $uid = $this->db->result('uid');
+
+            $uid = explode(' ', $uid);
+            $uid[3] = (string)$number;
+            $uid = implode(' ', $uid);
+
+            $this->users->update_user($user_id, ['personal_number' => $number]);
+            $this->orders->update_order($order_id, ['uid' => $uid]);
+            exit;
+        }
     }
 
 }
