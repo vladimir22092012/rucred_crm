@@ -393,10 +393,6 @@ class NeworderController extends Controller
                 array_pop($dates);
                 array_pop($payments);
 
-                echo '<pre>';
-                var_dump($payment_schedule);
-                exit;
-
                 foreach ($dates as $date) {
 
                     $date = new DateTime(date('Y-m-d H:i:s', strtotime($date)));
