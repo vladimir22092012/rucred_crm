@@ -5,6 +5,9 @@ class ManagersController extends Controller
     public function fetch()
     {
 
+        if($this->manager->role == 'underwriter')
+            header('Location: /offline_orders');
+
         if (!in_array('managers', $this->manager->permissions))
         	return $this->design->fetch('403.tpl');
         

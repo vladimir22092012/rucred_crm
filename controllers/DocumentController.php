@@ -18,14 +18,9 @@ class DocumentController extends Controller
             $this->design->assign($param_name, $param_value);
         }
 
-        $settlements = $this->OrganisationSettlements->get_settlements();
+        $settlement = $this->OrganisationSettlements->get_settlement($document->params->settlement_id);
 
-        foreach ($settlements as $key => $settlement) {
-            if ($settlement->std != 1)
-                unset($settlements[$key]);
-        }
-
-        $this->design->assign('settlements', $settlements);
+        $this->design->assign('settlement', $settlement);
 
         $company = $this->Companies->get_company($document->params->company_id);
         $this->design->assign('company', $company);

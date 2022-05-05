@@ -179,6 +179,10 @@ class OfflineOrderController extends Controller
                     $this->action_workout();
                     break;
 
+                case 'edit_personal_number':
+                    return $this->action_edit_personal_number();
+                    break;
+
 
             endswitch;
 
@@ -470,10 +474,20 @@ class OfflineOrderController extends Controller
 
             $doc_types =
                 [
-                    'DOP_SOGLASHENIE_K_TRUDOVOMU_DOGOVORU', 'SOGLASIE_MINB', 'SOGLASIE_NA_KRED_OTCHET', 'SOGLASIE_NA_OBR_PERS_DANNIH',
-                    'SOGLASIE_RABOTODATEL', 'SOGLASIE_RDB', 'SOGLASIE_RUKRED_RABOTODATEL',
+                    'DOP_SOGLASHENIE_K_TRUDOVOMU_DOGOVORU','SOGLASIE_NA_KRED_OTCHET', 'SOGLASIE_NA_OBR_PERS_DANNIH',
+                    'SOGLASIE_RABOTODATEL', 'SOGLASIE_RUKRED_RABOTODATEL',
                     'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP', 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR', 'INDIVIDUALNIE_USLOVIA'
                 ];
+
+            $settlement = $this->OrganisationSettlements->get_std_settlement();
+
+            if($settlement->id == 2)
+                $doc_types[] = 'SOGLASIE_MINB';
+
+            if($settlement->id == 3)
+                $doc_types[] = 'SOGLASIE_RDB';
+
+
 
             foreach ($doc_types as $type) {
                 $results[$type] = $this->documents->create_document(array(
@@ -2811,6 +2825,38 @@ class OfflineOrderController extends Controller
         $order_id = (int)$this->request->post('order_id');
 
         $this->orders->update_order($order_id, ['status' => 15]);
+    }
+
+    private function action_edit_personal_number()
+    {
+        $user_id = (int)$this->request->post('user_id');
+        $order_id = (int)$this->request->post('order_id');
+        $number = (int)$this->request->post('number');
+
+        $check = $this->users->check_busy_number($number);
+
+        if ($check && $check != 0) {
+            echo 'error';
+            exit;
+        } else {
+
+            $query = $this->db->placehold("
+            SELECT uid
+            FROM s_orders
+            WHERE id = $order_id
+            ");
+
+            $this->db->query($query);
+            $uid = $this->db->result('uid');
+
+            $uid = explode(' ', $uid);
+            $uid[3] = (string)$number;
+            $uid = implode(' ', $uid);
+
+            $this->users->update_user($user_id, ['personal_number' => $number]);
+            $this->orders->update_order($order_id, ['uid' => $uid]);
+            exit;
+        }
     }
 
 }

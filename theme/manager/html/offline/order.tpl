@@ -349,9 +349,6 @@
 
             $('.ndfl').on('change', function (e) {
 
-                console.log($(this));
-
-
                 let form_data = new FormData();
 
                 form_data.append('file', e.target.files[0]);
@@ -375,6 +372,51 @@
                     }
                 });
             });
+
+            $('.edit_personal_number').on('click', function (e) {
+                e.preventDefault();
+
+
+                $(this).hide();
+                $('.show_personal_number').hide();
+                $('.number_edit_form').show();
+
+                $('.cancel_edit').on('click', function () {
+                    $('.number_edit_form').hide();
+                    $('.edit_personal_number').show();
+                    $('.show_personal_number').show();
+                });
+
+                $('.accept_edit').on('click', function () {
+                    e.preventDefault();
+
+                    let user_id = $(this).attr('data-user');
+                    let number = $('input[class="form-control number_edit_form number"]').val();
+                    let order_id = {{$order->order_id}};
+
+                    $.ajax({
+                        method: 'POST',
+                        data: {
+                            action: 'edit_personal_number',
+                            user_id: user_id,
+                            number: number,
+                            order_id: order_id
+                        },
+                        success: function (resp) {
+                            if (resp == 'error') {
+                                Swal.fire({
+                                    title: 'Такой номер уже зарегистрирован',
+                                    confirmButtonText: 'ОК'
+                                });
+                            }
+                            else {
+                                location.reload();
+                            }
+                        }
+                    })
+
+                });
+            })
 
         });
     </script>
@@ -489,23 +531,31 @@
                                     </h4>
                                 </div>
                                 <div class="col-8 col-md-3 col-lg-4">
-                                    <h6 class="form-control-static float-left">
-                                        дата заявки: {$order->date|date} {$order->date|time}
-                                    </h6>
-                                    <h6 class="form-control-static float-right">
-                                        персональный номер: {$order->personal_number}
-                                    </h6>
+                                    <h5 class="form-control-static float-left">
+                                        Дата заявки: {$order->date|date} {$order->date|time}
+                                    </h5>
                                     {if $order->penalty_date}
                                         <h6 class="form-control-static float-left">
                                             дата решения: {$order->penalty_date|date} {$order->penalty_date|time}
                                         </h6>
                                     {/if}
                                 </div>
-                                <div class="col-12 col-md-6 col-lg-3 ">
-                                    {if $looker_link && !$order->offline}
-                                        <a href="{$looker_link}" target="_blank" class="btn btn-info float-right"><i
-                                                    class=" fas fa-address-book"></i> Смотреть ЛК</a>
-                                    {/if}
+                                <div class="col-12 col-md-3 col-lg-3">
+                                    <h5 class="form-control-static">Номер
+                                        клиента: <span class="show_personal_number">{$client->personal_number}</span>
+                                        <a href="" data-user="{$client->id}" class="text-info edit_personal_number">
+                                            <i class=" fas fa-edit"></i></a>
+                                    </h5>
+                                    <input type="text" class="form-control number_edit_form number"
+                                           style="width: 80px; display: none"
+                                           value="{$client->personal_number}">
+                                    <input type="button" style="display: none"
+                                           data-user="{$client->id}"
+                                           class="btn btn-success number_edit_form accept_edit"
+                                           value="Сохранить">
+                                    <input type="button" style="display: none"
+                                           class="btn btn-danger number_edit_form cancel_edit"
+                                           value="Отмена">
                                 </div>
                                 <div class="col-12 col-md-6 col-lg-3 ">
                                     <h6 class="js-order-manager text-right">
@@ -706,7 +756,7 @@
                                                     <span>Отклонить</span>
                                                 </button>
                                             </div>
-                                            {else}
+                                        {else}
                                             <div class="card card-primary">
                                                 <div class="box text-center">
                                                     <h4 class="text-white">У работодателя</h4>
@@ -1889,8 +1939,8 @@
                                                             </th>
                                                         </tr>
                                                         <tr style="width: 100%;">
-                                                            <th>Проценты</th>
                                                             <th>Осн. долг</th>
+                                                            <th>Проценты</th>
                                                             <th>Др. платежи</th>
                                                         </tr>
                                                         </thead>
@@ -1911,13 +1961,13 @@
                                                                                    readonly>
                                                                         </td>
                                                                         <td><input type="text" class="form-control"
-                                                                                   name="loan_percents_pay[][loan_percents_pay]"
-                                                                                   value="{$payment->loan_percents_pay|number_format:2:',':' '}"
+                                                                                   name="loan_body_pay[][loan_body_pay]"
+                                                                                   value="{$payment->loan_body_pay|number_format:2:',':' '}"
                                                                                    readonly>
                                                                         </td>
                                                                         <td><input type="text" class="form-control"
-                                                                                   name="loan_body_pay[][loan_body_pay]"
-                                                                                   value="{$payment->loan_body_pay|number_format:2:',':' '}"
+                                                                                   name="loan_percents_pay[][loan_percents_pay]"
+                                                                                   value="{$payment->loan_percents_pay|number_format:2:',':' '}"
                                                                                    readonly>
                                                                         </td>
                                                                         <td><input type="text" class="form-control"
@@ -1941,12 +1991,12 @@
                                                                            value="{$payment_schedule['result']->all_sum_pay|number_format:2:',':' '}"
                                                                            readonly></td>
                                                                 <td><input type="text" class="form-control"
-                                                                           name="result[all_loan_percents_pay]"
-                                                                           value="{$payment_schedule['result']->all_loan_percents_pay|number_format:2:',':' '}"
-                                                                           readonly></td>
-                                                                <td><input type="text" class="form-control"
                                                                            name="result[all_loan_body_pay]"
                                                                            value="{$payment_schedule['result']->all_loan_body_pay|number_format:2:',':' '}"
+                                                                           readonly></td>
+                                                                <td><input type="text" class="form-control"
+                                                                           name="result[all_loan_percents_pay]"
+                                                                           value="{$payment_schedule['result']->all_loan_percents_pay|number_format:2:',':' '}"
                                                                            readonly></td>
                                                                 <td><input type="text" class="form-control"
                                                                            name="result[all_comission_pay]"
@@ -2376,16 +2426,16 @@
                                                     </div>
                                                     <div>
                                                         {if !empty($ndfl)}
-                                                        <a download target="_blank"
-                                                           href="{$config->back_url}/files/users/{$ndfl->name}"><input
-                                                                    type="button"
-                                                                    class="btn btn-outline-success"
-                                                                    value="Сохранить"></a>
+                                                            <a download target="_blank"
+                                                               href="{$config->back_url}/files/users/{$ndfl->name}"><input
+                                                                        type="button"
+                                                                        class="btn btn-outline-success"
+                                                                        value="Сохранить"></a>
                                                         {/if}
                                                     </div>
                                                     {if empty($ndfl)}
-                                                    <div class="btn-group"
-                                                         style="margin-left: 217px; height: 35px">
+                                                        <div class="btn-group"
+                                                             style="margin-left: 217px; height: 35px">
                                                             <button type="button"
                                                                     class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
                                                                     data-toggle="dropdown" aria-haspopup="true"
@@ -2403,7 +2453,7 @@
                                                                        class="dropdown-item">Приложить
                                                                     справку</label>
                                                             </div>
-                                                    </div>
+                                                        </div>
                                                     {/if}
                                                 </div>
                                                 <hr style="width: 100%; size: 2px">

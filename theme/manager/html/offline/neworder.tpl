@@ -72,8 +72,6 @@
                     $('select[name="company"] option[value="' + order['company_id'] + '"]').prop('selected', true);
                     $('select[name="company"] option[value="' + order['company_id'] + '"]').change();
                 }, 50);
-
-
             }
         })
     </script>
@@ -248,7 +246,7 @@
                                             <input type="text" style="margin-left: 10px; width: 130px" id="end_date"
                                                    name="end_date"
                                                    class="form-control daterange"
-                                                   value="{$order->probably_return_date|date}">
+                                                   value="{$order->probably_return_date|date}" readonly>
                                         </div>
                                         <div>
                                             <label style="font-size: 12px" id="return_sum">Сумма возврата:</label>
@@ -529,10 +527,10 @@
                                         <hr style="width: 100%; size: 5px">
                                         <br>
                                         <h4>Аттестация</h4><br>
-                                        <table class="jsgrid-table table table-striped table-hover">
+                                        <table class="jsgrid-table table table-striped">
                                             <thead>
                                             <tr>
-                                                <th>Дата</th>
+                                                <th>Дата окончания</th>
                                                 <th>Комментарий</th>
                                                 <th><input type="button"
                                                            class="btn btn-outline-success add_to_attestation_table"

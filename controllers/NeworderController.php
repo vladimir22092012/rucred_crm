@@ -226,6 +226,13 @@ class NeworderController extends Controller
 
                 $this->users->update_user($user_id, $user);
 
+                $settlements = $this->OrganisationSettlements->get_settlements();
+
+                foreach ($settlements as $key => $settlement) {
+                    if ($settlement->std != 1)
+                        $settlement_std = $settlement;
+                }
+
                 $order = array(
                     'user_id' => $user_id,
                     'amount' => $amount,
@@ -241,7 +248,8 @@ class NeworderController extends Controller
                     'probably_start_date' => date('Y-m-d H:i:s', strtotime($this->request->post('start_date'))),
                     'probably_return_sum' => (int)preg_replace("/[^,.0-9]/", '', $this->request->post('probably_return_sum')),
                     'group_id' => (int)$this->request->post('group'),
-                    'company_id' => (int)$this->request->post('company')
+                    'company_id' => (int)$this->request->post('company'),
+                    'settlement_id' => (int)$settlement_std->id
                 );
 
                 $loan_type_groups = $this->GroupLoanTypes->get_loantype_groups((int)$loan_type);
