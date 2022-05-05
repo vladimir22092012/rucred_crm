@@ -306,7 +306,7 @@ class NeworderController extends Controller
 
                     $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
                     $first_pay = new DateTime(date('Y-m-10', strtotime($start_date.'+1 month')));
-                    $count_days_this_month = (int)date('t', strtotime($first_pay));
+                    $count_days_this_month = date('t', strtotime($issuance_date->format('Y-m-d')));
                     $paydate = $this->check_pay_date($first_pay);
 
                     if(date_diff($first_pay, $issuance_date)->days < 20)
@@ -316,6 +316,7 @@ class NeworderController extends Controller
                     }
                     if(date_diff($first_pay, $issuance_date)->days >= 20 && date_diff($first_pay, $issuance_date)->days < $count_days_this_month)
                     {
+
                         $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($first_pay, $issuance_date)->days);
 
                         $sum_pay = $annoouitet_pay - $minus_percents;
@@ -391,6 +392,10 @@ class NeworderController extends Controller
 
                 array_pop($dates);
                 array_pop($payments);
+
+                echo '<pre>';
+                var_dump($payment_schedule);
+                exit;
 
                 foreach ($dates as $date) {
 
