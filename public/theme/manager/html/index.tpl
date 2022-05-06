@@ -13,7 +13,7 @@
     <link rel="icon" href="/favicon.ico"/>
     <title>{$meta_title}</title>
 
-    {if $canonical}
+    {if isset($canonical)}
         <link rel="canonical" href="{$canonical}"/>
     {/if}
     <!-- Bootstrap Core CSS -->
@@ -88,70 +88,72 @@
                                 class="nav-link sidebartoggler hidden-sm-down text-muted waves-effect waves-dark"
                                 href="javascript:void(0)"><i class="icon-arrow-left-circle"></i></a></li>
 
-                    {if in_array('notifications', $manager->permissions) || in_array('penalties', $manager->permissions)}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-muted text-muted waves-effect waves-dark" href=""
-                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="mdi mdi-message"></i>
-                                {if $active_notifications || $penalty_notifications}
-                                    <div class="notify">
-                                        <span class="heartbit"></span>
-                                        <span class="point"></span>
-                                    </div>
-                                {/if}
-                            </a>
-                            <div class="dropdown-menu mailbox animated bounceInDown">
-                                <ul>
-                                    {if $active_notifications}
-                                        <li>
-                                            <div class="drop-title">Напоминания</div>
-                                        </li>
-                                        <li>
-                                            <div class="message-center">
-                                                <!-- Message -->
-                                                {foreach $active_notifications as $an}
-                                                    <a href="sudblock_notifications">
-                                                        <div class="btn btn-danger btn-circle">
-                                                            !
-                                                        </div>
-                                                        <div class="mail-contnet">
-                                                            <h5>{$an->event->action}</h5>
-                                                            <span class="mail-desc">{$an->comment}</span>
-                                                            <span class="time">{$an->notification_date|date}</span>
-                                                        </div>
-                                                    </a>
-                                                {/foreach}
-                                                <!-- Message -->
-                                            </div>
-                                        </li>
+                    {if isset($manager)}
+                        {if in_array('notifications', $manager->permissions) || in_array('penalties', $manager->permissions)}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-muted text-muted waves-effect waves-dark" href=""
+                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="mdi mdi-message"></i>
+                                    {if $active_notifications || $penalty_notifications}
+                                        <div class="notify">
+                                            <span class="heartbit"></span>
+                                            <span class="point"></span>
+                                        </div>
                                     {/if}
+                                </a>
+                                <div class="dropdown-menu mailbox animated bounceInDown">
+                                    <ul>
+                                        {if $active_notifications}
+                                            <li>
+                                                <div class="drop-title">Напоминания</div>
+                                            </li>
+                                            <li>
+                                                <div class="message-center">
+                                                    <!-- Message -->
+                                                    {foreach $active_notifications as $an}
+                                                        <a href="sudblock_notifications">
+                                                            <div class="btn btn-danger btn-circle">
+                                                                !
+                                                            </div>
+                                                            <div class="mail-contnet">
+                                                                <h5>{$an->event->action}</h5>
+                                                                <span class="mail-desc">{$an->comment}</span>
+                                                                <span class="time">{$an->notification_date|date}</span>
+                                                            </div>
+                                                        </a>
+                                                    {/foreach}
+                                                    <!-- Message -->
+                                                </div>
+                                            </li>
+                                        {/if}
 
-                                    {if $penalty_notifications}
-                                        <li>
-                                            <div class="drop-title">Штрафы</div>
-                                        </li>
-                                        <li>
-                                            <div class="message-center">
-                                                <!-- Message -->
-                                                {foreach $penalty_notifications as $pn}
-                                                    <a href="order/{$pn->order_id}">
-                                                        <div class="btn btn-danger btn-circle">
-                                                            <i class="mdi-alert-octagon mdi"></i>
-                                                        </div>
-                                                        <div class="mail-contnet">
-                                                            <h5>{$pn->type->name}</h5>
-                                                            <span class="mail-desc">{$pn->comment}</span>
-                                                            <span class="time">{$pn->created|date} {$pn->created|time}</span>
-                                                        </div>
-                                                    </a>
-                                                {/foreach}
-                                                <!-- Message -->
-                                            </div>
-                                        </li>
-                                    {/if}
-                                </ul>
-                            </div>
-                        </li>
+                                        {if $penalty_notifications}
+                                            <li>
+                                                <div class="drop-title">Штрафы</div>
+                                            </li>
+                                            <li>
+                                                <div class="message-center">
+                                                    <!-- Message -->
+                                                    {foreach $penalty_notifications as $pn}
+                                                        <a href="order/{$pn->order_id}">
+                                                            <div class="btn btn-danger btn-circle">
+                                                                <i class="mdi-alert-octagon mdi"></i>
+                                                            </div>
+                                                            <div class="mail-contnet">
+                                                                <h5>{$pn->type->name}</h5>
+                                                                <span class="mail-desc">{$pn->comment}</span>
+                                                                <span class="time">{$pn->created|date} {$pn->created|time}</span>
+                                                            </div>
+                                                        </a>
+                                                    {/foreach}
+                                                    <!-- Message -->
+                                                </div>
+                                            </li>
+                                        {/if}
+                                    </ul>
+                                </div>
+                            </li>
+                        {/if}
                     {/if}
 
                 </ul>
@@ -159,6 +161,7 @@
                 <!-- ============================================================== -->
                 <!-- User profile and search -->
                 <!-- ============================================================== -->
+                {if isset($manager)}
                 <ul class="navbar-nav my-lg-0">
 
                     <li class="nav-item dropdown">
@@ -193,6 +196,7 @@
                     </li>
 
                 </ul>
+                {/if}
             </div>
         </nav>
     </header>
@@ -207,8 +211,8 @@
         <div class="scroll-sidebar">
             <!-- Sidebar navigation-->
             <nav class="sidebar-nav">
+                {if isset($manager)}
                 <ul id="sidebarnav">
-
                     {if !in_array($manager->role, ['underwriter', 'employer'])}
                     <li class="nav-small-cap">Онлайн заявки</li>
 
@@ -245,8 +249,6 @@
                         {/if}
 
                     {/if}
-
-
                     {if in_array('managers', $manager->permissions)}
                         <li class="nav-small-cap">Управление</li>
                         <li {if in_array($module, ['ManagerController', 'ManagersController'])}class="active"{/if}>
@@ -285,7 +287,7 @@
                     </ul>
                 </li>
             {/if}
-            {if in_array('handbooks', $manager->permissions) || in_array('sms_templates', $manager->permissions) || in_array('tags', $manager->permissions) || in_array('communications', $manager->permissions)}
+                    {if in_array('handbooks', $manager->permissions) || in_array('sms_templates', $manager->permissions) || in_array('tags', $manager->permissions) || in_array('communications', $manager->permissions)}
                 <li {if in_array($module, ['HandbooksController', 'ReasonsController', 'SmsTemplatesController', 'SettingsCommunicationsController', 'TicketStatusesController', 'TicketReasonsController'])}class="active"{/if}>
                     <a class="has-arrow" href="#" aria-expanded="false"><i class="mdi mdi-database"></i><span
                                 class="hide-menu">Справочники</span></a>
@@ -487,6 +489,7 @@
                                         {/if}
                     {*}
                 </ul>
+                {/if}
             </nav>
             <!-- End Sidebar navigation -->
         </div>

@@ -44,7 +44,7 @@
             <div class="login-box card">
             <div class="card-body">
 
-                {if !$select_offline_point}
+                {if !isset($select_offline_point)}
 
                 <form class="form-horizontal form-material" id="loginform" method="POST">
 
@@ -52,16 +52,16 @@
                         <img src="theme/{$settings->theme|escape}/assets/images/logo.png" alt="homepage" class="dark-logo" />
                     </div>
 
-                    {if $error}
+                    {if isset($error)}
                     <div class="alert alert-danger mt-5">
-                        {if $error == 'login_incorrect'}Логин или пароль не совпадают
+                        {if $error === 'login_incorrect'}Логин или пароль не совпадают
                         {else}{$error}{/if}
                     </div>
                     {/if}
 
                     <div class="form-group mt-5">
                         <div class="col-xs-12">
-                            <input class="form-control" type="text" required="" name="login" value="{$login|escape}" placeholder="Логин"> </div>
+                            <input class="form-control" type="text" required="" name="login" value="{if isset($login)}{$login|escape}{/if}" placeholder="Логин"> </div>
                         </div>
                     <div class="form-group">
                         <div class="col-xs-12">
