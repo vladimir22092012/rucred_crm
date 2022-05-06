@@ -11,8 +11,8 @@ class File extends \Core {
     }
 
     public function test() {
-        
-        dd(123);
+   
+        dd(1234);
         //TODO: загрузку файлов на удаленный сервер (фронт) по ftp 
 
     }

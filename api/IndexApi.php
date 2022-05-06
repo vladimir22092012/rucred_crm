@@ -40,7 +40,12 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
         $r->post('/account/orders', 'Api\routers\AccountApi@getOrders');
         $r->post('/account/documents', 'Api\routers\AccountApi@getDocuments');
         $r->post('/account/photos', 'Api\routers\AccountApi@getFiles');
-        $r->post('/account/photos/add', 'Api\routers\AccountApi@addFiles');
+        $r->post('/account/photo/add', 'Api\routers\AccountApi@addFile');
+        $r->post('/account/requesits', 'Api\routers\AccountApi@getRequesits');
+        $r->post('/account/requesits/card/add', 'Api\routers\AccountApi@addCardRequesits');
+        $r->post('/account/requesits/account/add', 'Api\routers\AccountApi@addAccountRequesits');
+        $r->post('/account/loans', 'Api\routers\AccountApi@getLoans');
+        $r->post('/account/loan/current', 'Api\routers\AccountApi@getCurrentLoan');
     });
 });
 
