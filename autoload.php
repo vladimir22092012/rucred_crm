@@ -2,8 +2,6 @@
 
 function core_autoload($classname)
 {
-    define('ROOT', rtrim(__DIR__, '\\/'));
-
     if (file_exists(__DIR__ .'/core/'.$classname.'.php'))
         require __DIR__ .'/core/'.$classname.'.php';
     if (file_exists(__DIR__ .'/models/'.$classname.'.php'))
