@@ -725,7 +725,7 @@
                                     </form>
                                 </div>
                                 <div class="col-12 col-md-6 col-lg-3">
-                                    {if $order->status == 14}
+                                    {if $order->status == 14 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
                                         <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
                                             <button class="btn btn-success btn-block js-approve-order js-event-add-click"
                                                     data-event="12" data-user="{$order->user_id}"
@@ -767,43 +767,12 @@
                                     {/if}
 
                                     <div class="js-order-status">
-                                        {if $order->status == 14}
+                                        {if $order->status == 14 && in_array($manager->role, ['developer', 'admin', 'middle', 'employer'])}
                                             <div class="card card-success mb-1">
                                                 <div class="box text-center">
                                                     <h4 class="text-white mb-0">Р.Подтверждена</h4>
                                                 </div>
                                             </div>
-                                            <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
-                                                    data-event="13" data-user="{$order->user_id}"
-                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
-                                                <i class="fas fa-times-circle"></i>
-                                                <span>Отказать</span>
-                                            </button>
-                                            <form class=" pt-1 js-confirm-contract">
-                                                <div class="input-group">
-                                                    <input type="hidden" name="contract_id" class="js-contract-id"
-                                                           value="{$order->contract_id}"/>
-                                                    <input type="hidden" name="phone" class="js-contract-phone"
-                                                           value="{$order->phone_mobile}"/>
-                                                    <input type="text" class="form-control js-contract-code"
-                                                           placeholder="SMS код"
-                                                           value="{if $is_developer}{$contract->accept_code}{/if}"/>
-                                                    <div class="input-group-append">
-                                                        <button class="btn btn-info js-event-add-click" type="submit"
-                                                                data-event="14" data-user="{$order->user_id}"
-                                                                data-order="{$order->order_id}"
-                                                                data-manager="{$manager->id}">Подтвердить
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div class="pt-1 pb-2">
-                                                    <button class="btn btn-info btn-lg btn-block send_money"
-                                                            data-order="{$order->order_id}">
-                                                        <i class="fas fa-hospital-symbol"></i>
-                                                        <span>Отправить деньги</span>
-                                                    </button>
-                                                </div>
-                                            </form>
                                         {/if}
                                         {if $order->status == 4}
                                             <div class="card card-primary">
@@ -812,6 +781,15 @@
                                                     <h6>Договор {$contract->number}</h6>
                                                 </div>
                                             </div>
+                                            <form class=" pt-1 js-confirm-contract">
+                                                <div class="pt-1 pb-2">
+                                                    <button class="btn btn-info btn-lg btn-block send_money"
+                                                            data-order="{$order->order_id}">
+                                                        <i class="fas fa-hospital-symbol"></i>
+                                                        <span>Отправить деньги</span>
+                                                    </button>
+                                                </div>
+                                            </form>
                                         {/if}
                                         {if $order->status == 5}
                                             {if $contract->status == 4}
