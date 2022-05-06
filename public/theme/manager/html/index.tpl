@@ -228,12 +228,12 @@
                                     class="hide-menu">Клиенты</span></a>
                     </li>
                     {/if}
-                    {*}
+                    {*
                     <li {if in_array($module, ['MissingController'])}class="active"{/if}>
                         <a class="" href="missing/" aria-expanded="false"><i class="mdi mdi-sleep"></i><span
                                     class="hide-menu">Отвалы</span></a>
                     </li>
-                    {*}
+                    *}
                     {if in_array('offline_settings', $manager->permissions) || in_array('offline', $manager->permissions)}
                         <li class="nav-small-cap">Оффлайн заявки</li>
                         {if in_array('offline', $manager->permissions)}
@@ -311,7 +311,7 @@
                     </ul>
                 </li>
             {/if}
-                    {*}
+                    {*
             {if in_array('pages', $manager->permissions)}
                 <li {if in_array($module, ['PageController', 'PagesController'])}class="active"{/if}>
                     <a class="" href="pages" aria-expanded="false"><i class="mdi mdi-application"></i><span
@@ -487,7 +487,7 @@
                                             <a class="" href="statistics" aria-expanded="false"><i class="mdi mdi-file-chart"></i><span class="hide-menu">Статистика</span></a>
                                         </li>
                                         {/if}
-                    {*}
+                    *}
                 </ul>
                 {/if}
             </nav>
