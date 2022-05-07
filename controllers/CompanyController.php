@@ -70,9 +70,11 @@ class CompanyController extends Controller
 
         $company = $this->Companies->get_company_group($company_id);
         $branches = $this->Branches->get_company_branches($company_id);
+        $company_checks = $this->CompanyChecks->get_five_company_checks($company_id);
 
         $this->design->assign('company', $company);
         $this->design->assign('branches', $branches);
+        $this->design->assign('company_checks', $company_checks);
 
         return $this->design->fetch('company.tpl');
     }
@@ -270,9 +272,17 @@ class CompanyController extends Controller
         $output_file = ROOT . '/files/' . $output_file_name;
         move_uploaded_file($input_file_tmp, $output_file);
 
-        (new FileParserService)->parse($output_file);
+        $parser = new FileParserService;
+        $workers = $parser->parse($output_file);
 
-        echo json_encode(['success' => 1]);
+        if (!$workers) {
+            echo json_encode(['error' => 'Список сотрудников в файле не найден']);
+            exit;
+        }
+
+        $company_check_id = $this->CompanyChecks->add_company_check($company_id, json_encode(['workers' => $workers], JSON_THROW_ON_ERROR));
+
+        echo json_encode(['success' => 1, 'company_check_id' => $company_check_id, 'workers' => $workers]);
         exit;
     }
 }

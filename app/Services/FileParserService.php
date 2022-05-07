@@ -13,15 +13,15 @@ class FileParserService {
             return null;
         }
         $reader->ChangeSheet(0);
-        $key = null;
+        $key = false;
         foreach ($reader as $row)
         {
             $key = array_search('Сотрудник', $row, true);
-            if ($key) {
+            if (is_int($key)) {
                 break;
             }
         }
-        if (!$key) {
+        if ($key === false) {
             return null;
         }
         $workers = [];

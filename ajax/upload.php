@@ -67,8 +67,7 @@ class UploadApp extends Core
 
                         $this->response->filename = $this->config->root_url . '/' . $this->config->user_files_dir . $new_filename;
 
-                        if($this->request->post('is_it_scans') == 'yes')
-                        {
+                        if ($this->request->post('is_it_scans') == 'yes') {
                             if ($this->request->post('template'))
                                 $type = $this->request->post('template');
 
@@ -85,8 +84,23 @@ class UploadApp extends Core
                                 'status' => 0,
                                 'order_id' => (int)$this->request->post('order_id')
                             ));
-                        }
-                        else{
+                        } elseif ($this->request->post('ndfl') == 'yes') {
+
+                            $type = 'ndfl';
+                            $this->Scans->delete_scan(array(
+                                'order_id' => (int)$this->request->post('order_id'),
+                                'type' => $type
+                            ));
+
+
+                            $file_id = $this->Scans->add_scan(array(
+                                'user_id' => $this->user->id,
+                                'name' => $this->request->post('name'),
+                                'type' => $type,
+                                'status' => 0,
+                                'order_id' => (int)$this->request->post('order_id')
+                            ));
+                        } else {
                             $file_id = $this->response->id = $this->users->add_file(array(
                                 'user_id' => $this->user->id,
                                 'name' => $new_filename,

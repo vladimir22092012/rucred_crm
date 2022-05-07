@@ -35,7 +35,7 @@ class Pdf extends Core
 
         if($download)
         {
-            $this->tcpdf->Output($download.$filename.'.pdf', 'D');
+            $this->tcpdf->Output($download.'.pdf', 'D');
         }
         else
         {

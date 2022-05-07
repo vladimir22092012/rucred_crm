@@ -14,6 +14,14 @@ class OfflineOrderController extends Controller
                     $this->change_manager_action();
                     break;
 
+                case 'accept_by_employer':
+                    $this->action_accept_by_employer();
+                    break;
+
+                case 'reject_by_employer':
+                    $this->action_reject_by_employer();
+                    break;
+
                 case 'change_photo_status':
                     $this->action_change_photo_status();
                     break;
@@ -169,6 +177,10 @@ class OfflineOrderController extends Controller
 
                 case 'workout':
                     $this->action_workout();
+                    break;
+
+                case 'edit_personal_number':
+                    return $this->action_edit_personal_number();
                     break;
 
 
@@ -460,19 +472,28 @@ class OfflineOrderController extends Controller
 
             $order = $this->orders->get_order($order_id);
 
+            $settlement = $this->OrganisationSettlements->get_std_settlement();
+
             $doc_types =
                 [
-                    'DOP_SOGLASHENIE_K_TRUDOVOMU_DOGOVORU', 'SOGLASIE_MINB', 'SOGLASIE_NA_KRED_OTCHET', 'SOGLASIE_NA_OBR_PERS_DANNIH',
-                    'SOGLASIE_RABOTODATEL', 'SOGLASIE_RDB', 'SOGLASIE_RUKRED_RABOTODATEL',
-                    'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP', 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR', 'INDIVIDUALNIE_USLOVIA'
+                    '1.1' => 'INDIVIDUALNIE_USLOVIA',
+                    '1.3' => 'DOP_SOGLASHENIE_K_TRUDOVOMU_DOGOVORU',
+                    '2.1' => 'SOGLASIE_NA_OBR_PERS_DANNIH',
+                    '2.2' => ($settlement->id == 2) ? 'SOGLASIE_MINB' : 'SOGLASIE_RDB',
+                    '2.3' => 'SOGLASIE_RABOTODATEL',
+                    '2.4' => 'SOGLASIE_RUKRED_RABOTODATEL',
+                    '2.5' => 'SOGLASIE_NA_KRED_OTCHET',
+                    '3.1' => 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP',
+                    '3.2' => 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR'
                 ];
 
-            foreach ($doc_types as $type) {
+            foreach ($doc_types as $key => $type) {
                 $results[$type] = $this->documents->create_document(array(
                     'user_id' => $order->user_id,
                     'order_id' => $order->order_id,
                     'type' => $type,
                     'params' => $order,
+                    'numeration' => (string)$key
                 ));
             }
 
@@ -504,6 +525,18 @@ class OfflineOrderController extends Controller
         $filter['user_id'] = $order->user_id;
 
         $documents = $this->documents->get_documents($filter);
+
+        $query = $this->db->placehold("
+        SELECT *
+        FROM s_scans
+        where user_id = ?
+        AND `type` = 'ndfl'
+        ", $order->user_id);
+
+        $this->db->query($query);
+        $ndfl = $this->db->result();
+
+        $this->design->assign('ndfl', $ndfl);
 
         $scans = $this->Scans->get_scans_by_order_id($order_id);
 
@@ -704,9 +737,6 @@ class OfflineOrderController extends Controller
         if (!($order = $this->orders->get_order((int)$order_id)))
             return array('error' => 'Неизвестный ордер');
 
-        if ($order->status != 1)
-            return array('error' => 'Неверный статус заявки, возможно Заявка уже одобрена или получен отказ');
-
         if ($order->user_id == 127551)
             return array('error' => 'По данному клиенту запрещена выдача!');
 
@@ -819,7 +849,7 @@ class OfflineOrderController extends Controller
 
         $best2pay_sector = (int)$this->config->best2pay_current_sector_id;
 
-        $best2pay_password = $this->config->best2pay_sector3159_pass;
+        $best2pay_password = $this->config->best2pay_sector3721_pass;
 
         $best2pay_amount = $order->amount;
         $best2pay_currency = $this->config->best2pay_currency;
@@ -890,6 +920,9 @@ class OfflineOrderController extends Controller
             $best2pay_response_xml_name = $best2pay_response_xml->getName();
             if ($best2pay_response_xml_name === 'error') {
                 return array('error' => $best2pay_response_xml->description);
+            }
+            if ($best2pay_response_xml->state->__toString() !== 'APPROVED') {
+                return array('error' => 'Платёж не прошел');
             }
             $this->orders->update_order($order_id, array('status' => 9));
             return array('success' => 1);
@@ -2774,6 +2807,52 @@ class OfflineOrderController extends Controller
         ", (string)$type, (int)$file_id);
 
         $this->db->query($query);
+    }
+
+    private function action_accept_by_employer()
+    {
+        $order_id = (int)$this->request->post('order_id');
+
+        $this->orders->update_order($order_id, ['status' => 14]);
+    }
+
+    private function action_reject_by_employer()
+    {
+        $order_id = (int)$this->request->post('order_id');
+
+        $this->orders->update_order($order_id, ['status' => 15]);
+    }
+
+    private function action_edit_personal_number()
+    {
+        $user_id = (int)$this->request->post('user_id');
+        $order_id = (int)$this->request->post('order_id');
+        $number = (int)$this->request->post('number');
+
+        $check = $this->users->check_busy_number($number);
+
+        if ($check && $check != 0) {
+            echo 'error';
+            exit;
+        } else {
+
+            $query = $this->db->placehold("
+            SELECT uid
+            FROM s_orders
+            WHERE id = $order_id
+            ");
+
+            $this->db->query($query);
+            $uid = $this->db->result('uid');
+
+            $uid = explode(' ', $uid);
+            $uid[3] = (string)$number;
+            $uid = implode(' ', $uid);
+
+            $this->users->update_user($user_id, ['personal_number' => $number]);
+            $this->orders->update_order($order_id, ['uid' => $uid]);
+            exit;
+        }
     }
 
 }

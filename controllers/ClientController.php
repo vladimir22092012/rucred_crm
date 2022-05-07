@@ -87,6 +87,7 @@ class ClientController extends Controller
 
 
             $documents = $this->documents->get_documents(array('user_id' => $client->id));
+
             $this->design->assign('documents', $documents);
 
             $managers = array();
@@ -915,6 +916,7 @@ class ClientController extends Controller
     private function action_edit_personal_number()
     {
         $user_id = (int)$this->request->post('user_id');
+        $order_id = (int)$this->request->post('order_id');
         $number = (int)$this->request->post('number');
 
         $check = $this->users->check_busy_number($number);
@@ -923,7 +925,22 @@ class ClientController extends Controller
             echo 'error';
             exit;
         } else {
+
+            $query = $this->db->placehold("
+            SELECT uid
+            FROM s_orders
+            WHERE id = $order_id
+            ");
+
+            $this->db->query($query);
+            $uid = $this->db->result('uid');
+
+            $uid = explode(' ', $uid);
+            $uid[3] = (string)$number;
+            $uid = implode(' ', $uid);
+
             $this->users->update_user($user_id, ['personal_number' => $number]);
+            $this->orders->update_order($order_id, ['uid' => $uid]);
             exit;
         }
     }

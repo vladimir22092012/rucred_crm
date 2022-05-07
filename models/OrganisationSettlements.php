@@ -32,6 +32,21 @@ class OrganisationSettlements extends Core
         return $results;
     }
 
+    public function get_std_settlement()
+    {
+        $query = $this->db->placehold("
+        SELECT *
+        FROM s_organization_settlements
+        WHERE std = 1
+        ");
+
+        $this->db->query($query);
+
+        $results = $this->db->result();
+
+        return $results;
+    }
+
     public function add_settlements($settlement)
     {
         $query = $this->db->placehold("

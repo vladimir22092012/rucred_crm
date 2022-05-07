@@ -346,6 +346,12 @@
                                                         <span class="label label-inverse">Погашен</span>
                                                     {elseif $order->status == 8}
                                                         <span class="label label-danger">Отказ клиента</span>
+                                                    {elseif $order->status == 9}
+                                                        <span class="label label-primary">Выдан</span>
+                                                    {elseif $order->status == 14}
+                                                        <span class="label label-success">Р.Подтверждена</span>
+                                                    {elseif $order->status == 15}
+                                                        <span class="label label-danger">Р.Отклонена</span>
                                                     {/if}
                                                 </small>
                                             </td>

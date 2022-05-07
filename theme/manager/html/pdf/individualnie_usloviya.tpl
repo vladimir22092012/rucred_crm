@@ -670,7 +670,7 @@
     </tr>
 </table>
 <div>
-    <br><br><br><br><br><br><br><br><br><br><br>
+    <br><br><br><br><br><br><br><br>
 </div>
 <footer>
     <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
@@ -818,8 +818,8 @@
     </tr>
     <br>
     <tr>
-        <td style="width: 45%">р/с {$settlements[0]->payment} в {$settlements[0]->name}, БИК {$settlements[0]->bik},
-            к/с {$settlements[0]->cors} в ГУ
+        <td style="width: 45%">р/с {$settlement->payment} в {$settlement->name}, БИК {$settlement->bik},
+            к/с {$settlement->cors} в ГУ
             Банка России по ЦФО
         </td>
         <td style="width: 10%"></td>
