@@ -416,7 +416,13 @@
                     })
 
                 });
-            })
+            });
+
+            let manager_role = {{json_encode($manager->role)}};
+            console.log(manager_role);
+
+            if (manager_role == 'employer')
+                $('.fa-edit').hide();
 
         });
     </script>
@@ -479,7 +485,6 @@
     <!-- Container fluid  -->
     <!-- ============================================================== -->
     <div class="container-fluid">
-
         <div class="row page-titles">
             <div class="col-md-6 col-8 align-self-center">
                 <h4 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i> Заявка №{$order->order_id}</h4>
@@ -544,7 +549,7 @@
                                     <h5 class="form-control-static">Номер
                                         клиента: <span class="show_personal_number">{$client->personal_number}</span>
                                         <a href="" data-user="{$client->id}" class="text-info edit_personal_number">
-                                            <i class=" fas fa-edit"></i></a>
+                                            <i class="fas fa-edit"></i></a>
                                     </h5>
                                     <input type="text" class="form-control number_edit_form number"
                                            style="width: 80px; display: none"
@@ -596,16 +601,6 @@
                                             </h6>
                                             <h4>
                                                 <span>{$order->phone_mobile}</span>
-                                                <button class="js-mango-call mango-call js-event-add-click"
-                                                        data-phone="{$order->phone_mobile}" title="Выполнить звонок"
-                                                        data-event="60" data-manager="{$manager->id}"
-                                                        data-order="{$order->order_id}" data-user="{$order->user_id}">
-                                                    <i class="fas fa-mobile-alt"></i>
-                                                </button>
-                                                <button class="js-open-sms-modal mango-call {if $order->contract->sold}js-yuk{/if}"
-                                                        data-user="{$order->user_id}" data-order="{$order->order_id}">
-                                                    <i class=" far fa-share-square"></i>
-                                                </button>
                                             </h4>
                                             <a href="javascript:void(0);"
                                                class="text-info js-edit-form edit-amount js-event-add-click"
@@ -918,6 +913,7 @@
                                     <span class="hidden-xs-down">Персональная информация</span>
                                 </a>
                             </li>
+                            {if $manager->role != 'employer'}
                             <li class="nav-item">
                                 <a class="nav-link js-event-add-click" data-toggle="tab" href="#comments" role="tab"
                                    aria-selected="false" data-event="21" data-user="{$order->user_id}"
@@ -953,6 +949,7 @@
                                     <span class="hidden-xs-down">Кредитная история</span>
                                 </a>
                             </li>
+                            {/if}
                         </ul>
 
                         <!-- Tab panes -->
@@ -1891,18 +1888,20 @@
                                             <!-- Данные о работе -->
                                             <h6 class="card-header">
                                                 <span class="text-white">График платежей</span>
-                                                <input style="margin-left: 30px; display: none" type="button"
-                                                       class="btn btn-primary reset_shedule"
-                                                       value="Переформировать график">
-                                                <input style="margin-left: 30px; display: none" type="button"
-                                                       class="btn btn-danger cancel"
-                                                       value="Отменить">
-                                                <input style="margin-left: 30px" type="button"
-                                                       class="btn btn-warning edit_schedule"
-                                                       value="Редактировать">
-                                                <input style="margin-left: 30px" type="button"
-                                                       class="btn btn-danger restructuring"
-                                                       value="Реструктуризация">
+                                                {if $manager->role != 'employer'}
+                                                    <input style="margin-left: 30px; display: none" type="button"
+                                                           class="btn btn-primary reset_shedule"
+                                                           value="Переформировать график">
+                                                    <input style="margin-left: 30px; display: none" type="button"
+                                                           class="btn btn-danger cancel"
+                                                           value="Отменить">
+                                                    <input style="margin-left: 30px" type="button"
+                                                           class="btn btn-warning edit_schedule"
+                                                           value="Редактировать">
+                                                    <input style="margin-left: 30px" type="button"
+                                                           class="btn btn-danger restructuring"
+                                                           value="Реструктуризация">
+                                                {/if}
                                             </h6>
 
                                             <form id="payment_schedule">
@@ -2334,11 +2333,12 @@
                                             {if $order->status != 9}
                                                 <h6 class="card-header">
                                                     <span class="text-white">Документы</span>
-                                                    <input style="margin-left: 30px" type="button"
-                                                           class="btn btn-primary get-docs"
-                                                           data-order="{$order->order_id}"
-                                                           value="Сформировать документы">
-
+                                                    {if $manager->role != 'employer'}
+                                                        <input style="margin-left: 30px" type="button"
+                                                               class="btn btn-primary get-docs"
+                                                               data-order="{$order->order_id}"
+                                                               value="Сформировать документы">
+                                                    {/if}
                                                 </h6>
                                                 <br>
                                             {/if}
@@ -2346,10 +2346,12 @@
                                                 {foreach $documents as $document}
                                                     <div style="width: 100%!important; height: 50px; margin-left: 5px; display: flex; vertical-align: middle"
                                                          id="{$document->id}">
-                                                        <div class="form-group" style="width: 10px!important; margin-left: 5px">
+                                                        <div class="form-group"
+                                                             style="width: 10px!important; margin-left: 5px">
                                                             <label class="control-label">{$document->numeration}</label>
                                                         </div>
-                                                        <div class="form-group" style="width: 50%!important; margin-left: 15px">
+                                                        <div class="form-group"
+                                                             style="width: 50%!important; margin-left: 15px">
                                                             <label class="control-label">{$document->name}</label>
                                                         </div>
                                                         <div style="margin-left: 10px">
@@ -2379,23 +2381,25 @@
                                                                 </a>
                                                             {/if}
                                                             {if $order->status != 9}
-                                                                <button type="button"
-                                                                        class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
-                                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                                        aria-expanded="false">
-                                                                    <span class="sr-only">Toggle Dropdown</span>
-                                                                </button>
-                                                                <div class="dropdown-menu">
-                                                                    <input type="file" name="new_scan"
-                                                                           id="{$document->template}"
-                                                                           class="new_scan"
-                                                                           data-user="{$order->user_id}"
-                                                                           data-order="{$order->order_id}"
-                                                                           value="" style="display:none" multiple/>
-                                                                    <label for="{$document->template}"
-                                                                           class="dropdown-item">Приложить
-                                                                        скан</label>
-                                                                </div>
+                                                                {if $manager->role != 'employer'}
+                                                                    <button type="button"
+                                                                            class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
+                                                                            data-toggle="dropdown" aria-haspopup="true"
+                                                                            aria-expanded="false">
+                                                                        <span class="sr-only">Toggle Dropdown</span>
+                                                                    </button>
+                                                                    <div class="dropdown-menu">
+                                                                        <input type="file" name="new_scan"
+                                                                               id="{$document->template}"
+                                                                               class="new_scan"
+                                                                               data-user="{$order->user_id}"
+                                                                               data-order="{$order->order_id}"
+                                                                               value="" style="display:none" multiple/>
+                                                                        <label for="{$document->template}"
+                                                                               class="dropdown-item">Приложить
+                                                                            скан</label>
+                                                                    </div>
+                                                                {/if}
                                                             {/if}
                                                         </div>
                                                     </div>
@@ -2894,7 +2898,7 @@
                                 </form>
                                 <!-- -->
                                 <form method="POST" enctype="multipart/form-data">
-
+                                    {if $manager->role != 'employer'}
                                     <div class="form_file_item">
                                         <input type="file" name="new_file" class="new_file" id="new_file"
                                                data-user="{$order->user_id}" value="" style="display:none"/>
@@ -2903,8 +2907,8 @@
                                             <span>Добавить</span>
                                         </label>
                                     </div>
+                                    {/if}
                                 </form>
-
                             </div>
                         </div>
 
