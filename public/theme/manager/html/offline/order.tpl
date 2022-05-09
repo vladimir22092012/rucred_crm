@@ -1935,27 +1935,27 @@
                                                                                    value="{$date}" readonly></td>
                                                                         <td><input type="text" class="form-control"
                                                                                    name="pay_sum[][pay_sum]"
-                                                                                   value="{$payment->pay_sum|number_format:2:',':' '}"
+                                                                                   value="{$payment->pay_sum|floatval|number_format:2:',':' '}"
                                                                                    readonly>
                                                                         </td>
                                                                         <td><input type="text" class="form-control"
                                                                                    name="loan_body_pay[][loan_body_pay]"
-                                                                                   value="{$payment->loan_body_pay|number_format:2:',':' '}"
+                                                                                   value="{$payment->loan_body_pay|floatval|number_format:2:',':' '}"
                                                                                    readonly>
                                                                         </td>
                                                                         <td><input type="text" class="form-control"
                                                                                    name="loan_percents_pay[][loan_percents_pay]"
-                                                                                   value="{$payment->loan_percents_pay|number_format:2:',':' '}"
+                                                                                   value="{$payment->loan_percents_pay|floatval|number_format:2:',':' '}"
                                                                                    readonly>
                                                                         </td>
                                                                         <td><input type="text" class="form-control"
                                                                                    name="comission_pay[][comission_pay]"
-                                                                                   value="{$payment->comission_pay|number_format:2:',':' '}"
+                                                                                   value="{$payment->comission_pay|floatval|number_format:2:',':' '}"
                                                                                    readonly>
                                                                         </td>
                                                                         <td><input type="text" class="form-control"
                                                                                    name="rest_pay[][rest_pay]"
-                                                                                   value="{$payment->rest_pay|number_format:2:',':' '}"
+                                                                                   value="{$payment->rest_pay|floatval|number_format:2:',':' '}"
                                                                                    readonly>
                                                                         </td>
                                                                     </tr>
@@ -1966,23 +1966,23 @@
                                                                            value="ИТОГО:" disabled></td>
                                                                 <td><input type="text" class="form-control"
                                                                            name="result[all_sum_pay]"
-                                                                           value="{$payment_schedule['result']->all_sum_pay|number_format:2:',':' '}"
+                                                                           value="{$payment_schedule['result']->all_sum_pay|floatval|number_format:2:',':' '}"
                                                                            readonly></td>
                                                                 <td><input type="text" class="form-control"
                                                                            name="result[all_loan_body_pay]"
-                                                                           value="{$payment_schedule['result']->all_loan_body_pay|number_format:2:',':' '}"
+                                                                           value="{$payment_schedule['result']->all_loan_body_pay|floatval|number_format:2:',':' '}"
                                                                            readonly></td>
                                                                 <td><input type="text" class="form-control"
                                                                            name="result[all_loan_percents_pay]"
-                                                                           value="{$payment_schedule['result']->all_loan_percents_pay|number_format:2:',':' '}"
+                                                                           value="{$payment_schedule['result']->all_loan_percents_pay|floatval|number_format:2:',':' '}"
                                                                            readonly></td>
                                                                 <td><input type="text" class="form-control"
                                                                            name="result[all_comission_pay]"
-                                                                           value="{$payment_schedule['result']->all_comission_pay|number_format:2:',':' '}"
+                                                                           value="{$payment_schedule['result']->all_comission_pay|floatval|number_format:2:',':' '}"
                                                                            readonly></td>
                                                                 <td><input type="text" class="form-control"
                                                                            name="result[all_rest_pay_sum]"
-                                                                           value="{$payment_schedule['result']->all_rest_pay_sum|number_format:2:',':' '}"
+                                                                           value="{$payment_schedule['result']->all_rest_pay_sum|floatval|number_format:2:',':' '}"
                                                                            readonly></td>
                                                             </tr>
                                                         {/if}
@@ -2557,7 +2557,7 @@
                                                                             <i class="fas fa-undo"></i>
                                                                         </a>
                                                                     {else}
-                                                                        <a class="btn-load {if in_array(, $audit_types)}loading{/if} text-info js-run-scorings run-scoring-btn float-right"
+                                                                        <a class="btn-load {*{if in_array(, $audit_types)}loading{/if}*} text-info js-run-scorings run-scoring-btn float-right"
                                                                            data-type="{$scoring_type->name}"
                                                                            data-order="{$order->order_id}"
                                                                            href="javascript:void(0);">
@@ -3118,9 +3118,9 @@
                                     <tbody>
                                     {foreach $contract_operations as $operation}
                                         <tr class="
-                                                    {if in_array($operation->type, ['PAY'])}table-success{/if} 
-                                                    {if in_array($operation->type, ['PERCENTS', 'CHARGE', 'PENI'])}table-danger{/if} 
-                                                    {if in_array($operation->type, ['P2P'])}table-info{/if} 
+                                                    {if in_array($operation->type, ['PAY'])}table-success{/if}
+                                                    {if in_array($operation->type, ['PERCENTS', 'CHARGE', 'PENI'])}table-danger{/if}
+                                                    {if in_array($operation->type, ['P2P'])}table-info{/if}
                                                     {if in_array($operation->type, ['INSURANCE'])}table-warning{/if}
                                                 ">
                                             <td>
