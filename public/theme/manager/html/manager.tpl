@@ -1,4 +1,4 @@
-{if $user->id}
+{if isset($user->id)}
     {$meta_title="Профиль пользователя `$user->name`" scope=parent}
 {else}
     {$meta_title="Новый пользователь" scope=parent}
@@ -196,7 +196,7 @@
 
                                     <input type="hidden" name="id" value="{$user->id}"/>
 
-                                    {if $errors}
+                                    {if isset($errors)}
                                         <div class="col-md-12">
                                             <ul class="alert alert-danger">
                                                 {if in_array('empty_role', (array)$errors)}
@@ -220,7 +220,7 @@
                                         </div>
                                     {/if}
 
-                                    {if $message_success}
+                                    {if isset($message_success)}
                                         <div class="col-md-12">
                                             <div class="alert alert-success">
                                                 {if $message_success == 'added'}Новый пользователь добавлен{/if}
