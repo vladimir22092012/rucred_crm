@@ -11,15 +11,16 @@ class Design extends Core
 
 		// Создаем и настраиваем Смарти
 		$this->smarty = new Smarty();
+        $this->smarty->muteUndefinedOrNullWarnings();
 		$this->smarty->compile_check = $this->config->smarty_compile_check;
 		$this->smarty->caching = $this->config->smarty_caching;
 		$this->smarty->cache_lifetime = $this->config->smarty_cache_lifetime;
 		$this->smarty->debugging = $this->config->smarty_debugging;
-		$this->smarty->error_reporting = E_ALL & ~E_NOTICE;
+        $this->smarty->setErrorReporting(E_ALL & ~E_WARNING & ~E_NOTICE);
 
 		// Берем тему из настроек
 		$theme = $this->settings->theme;
-		
+
 
 		$this->smarty->compile_dir = $this->config->root_dir.'/compiled/'.$theme;
 		$this->smarty->template_dir = $this->config->root_dir.'/public/theme/'.$theme.'/html';
@@ -27,23 +28,23 @@ class Design extends Core
 		// Создаем папку для скомпилированных шаблонов текущей темы
 		if(!is_dir($this->smarty->compile_dir))
 			mkdir($this->smarty->compile_dir, 0777);
-						
+
 		$this->smarty->cache_dir = 'cache';
-				
-		$this->smarty->registerPlugin('modifier', 'resize',		array($this, 'resize_modifier'));		
+
+		$this->smarty->registerPlugin('modifier', 'resize',		array($this, 'resize_modifier'));
 		$this->smarty->registerPlugin('modifier', 'token',		array($this, 'token_modifier'));
-		$this->smarty->registerPlugin('modifier', 'plural',		array($this, 'plural_modifier'));		
-		$this->smarty->registerPlugin('function', 'url', 		array($this, 'url_modifier'));		
-		$this->smarty->registerPlugin('modifier', 'first',		array($this, 'first_modifier'));		
-		$this->smarty->registerPlugin('modifier', 'cut',		array($this, 'cut_modifier'));		
-		$this->smarty->registerPlugin('modifier', 'date',		array($this, 'date_modifier'));		
-		$this->smarty->registerPlugin('modifier', 'time',		array($this, 'time_modifier'));		
+		$this->smarty->registerPlugin('modifier', 'plural',		array($this, 'plural_modifier'));
+		$this->smarty->registerPlugin('function', 'url', 		array($this, 'url_modifier'));
+		$this->smarty->registerPlugin('modifier', 'first',		array($this, 'first_modifier'));
+		$this->smarty->registerPlugin('modifier', 'cut',		array($this, 'cut_modifier'));
+		$this->smarty->registerPlugin('modifier', 'date',		array($this, 'date_modifier'));
+		$this->smarty->registerPlugin('modifier', 'time',		array($this, 'time_modifier'));
 		$this->smarty->registerPlugin('function', 'api',		array($this, 'api_plugin'));
 
 		if($this->config->smarty_html_minify)
 			$this->smarty->loadFilter('output', 'trimwhitespace');
 	}
-	
+
 	public function assign($var, $value)
 	{
 		return $this->smarty->assign($var, $value);
@@ -56,47 +57,47 @@ class Design extends Core
 		$this->assign('settings',	$this->settings);
 		return $this->smarty->fetch($template);
 	}
-	
+
 	public function set_templates_dir($dir)
 	{
-		$this->smarty->template_dir = $dir;			
+		$this->smarty->template_dir = $dir;
 	}
 
 	public function set_compiled_dir($dir)
 	{
 		$this->smarty->compile_dir = $dir;
 	}
-	
+
 	public function get_var($name)
 	{
 		return $this->smarty->getTemplateVars($name);
 	}
-	
+
 	public function clear_cache()
 	{
-		$this->smarty->clearAllCache();	
+		$this->smarty->clearAllCache();
 	}
 
 	private function is_mobile_browser()
 	{
-		$user_agent = $_SERVER['HTTP_USER_AGENT']; 
+		$user_agent = $_SERVER['HTTP_USER_AGENT'];
 		$http_accept = isset($_SERVER['HTTP_ACCEPT'])?$_SERVER['HTTP_ACCEPT']:'';
 
 		if(eregi('iPad', $user_agent))
 			return false;
-		
+
 		if(stristr($user_agent, 'windows') && !stristr($user_agent, 'windows ce'))
 			return false;
-		
+
 		if(eregi('windows ce|iemobile|mobile|symbian|mini|wap|pda|psp|up.browser|up.link|mmp|midp|phone|pocket', $user_agent))
 			return true;
-	
+
 		if(stristr($http_accept, 'text/vnd.wap.wml') || stristr($http_accept, 'application/vnd.wap.xhtml+xml'))
 			return true;
-			
+
 		if(!empty($_SERVER['HTTP_X_WAP_PROFILE']) || !empty($_SERVER['HTTP_PROFILE']) || !empty($_SERVER['X-OperaMini-Features']) || !empty($_SERVER['UA-pixels']))
 			return true;
-	
+
 		$agents = array(
 		'acs-'=>'acs-',
 		'alav'=>'alav',
@@ -188,24 +189,24 @@ class Design extends Core
 		'winw'=>'winw',
 		'xda-'=>'xda-'
 		);
-		
+
 		if(!empty($agents[substr($_SERVER['HTTP_USER_AGENT'], 0, 4)]))
 	    	return true;
-	}	
+	}
 
 
 	public function resize_modifier($filename, $width=0, $height=0, $set_watermark=false)
 	{
 		$resized_filename = $this->image->add_resize_params($filename, $width, $height, $set_watermark);
 		$resized_filename_encoded = $resized_filename;
-		
+
 		if(substr($resized_filename_encoded, 0, 7) == 'http://')
 			$resized_filename_encoded = rawurlencode($resized_filename_encoded);
 
 		$resized_filename_encoded = rawurlencode($resized_filename_encoded);
-        
+
         return $resized_filename_encoded;
-        
+
 		return '//www.boostra.ru'.'/'.$this->config->resized_images_dir.$resized_filename_encoded.'?'.$this->config->token($resized_filename);
 	}
 
@@ -224,7 +225,7 @@ class Design extends Core
 
 	public function plural_modifier($number, $singular, $plural1, $plural2=null)
 	{
-		$number = abs($number); 
+		$number = abs($number);
 		if(!empty($plural2))
 		{
 		$p1 = $number%10;
@@ -244,7 +245,7 @@ class Design extends Core
 			else
 				return $plural1;
 		}
-	
+
 	}
 
 	public function first_modifier($params = array())
@@ -261,19 +262,19 @@ class Design extends Core
 	    else
 	    	return array_slice($array, 0, count($array)+$num, true);
 	}
-	
+
 	public function date_modifier($date, $format = null)
 	{
 		if(empty($date))
 			$date = date("Y-m-d");
 	    return date(empty($format)?$this->settings->date_format:$format, strtotime($date));
 	}
-	
+
 	public function time_modifier($date, $format = null)
 	{
 	    return date(empty($format)?'H:i:s':$format, strtotime($date));
 	}
-	
+
 	public function api_plugin($params, &$smarty)
 	{
 		if(!isset($params['module']))
@@ -289,5 +290,5 @@ class Design extends Core
 		unset($params['var']);
 		$res = $this->$module->$method($params);
 		$smarty->assign($var, $res);
-	}	
+	}
 }

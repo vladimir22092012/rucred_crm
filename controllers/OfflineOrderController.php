@@ -737,9 +737,6 @@ class OfflineOrderController extends Controller
         if (!($order = $this->orders->get_order((int)$order_id)))
             return array('error' => 'Неизвестный ордер');
 
-        if ($order->status != 1)
-            return array('error' => 'Неверный статус заявки, возможно Заявка уже одобрена или получен отказ');
-
         if ($order->user_id == 127551)
             return array('error' => 'По данному клиенту запрещена выдача!');
 
