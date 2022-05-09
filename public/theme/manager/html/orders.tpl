@@ -5,19 +5,19 @@
 {/if}
 
 {capture name='page_scripts'}
-    
+
     <script src="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
 
     <script src="theme/manager/assets/plugins/moment/moment.js"></script>
-    
+
     <script src="theme/manager/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
     <!-- Date range Plugin JavaScript -->
     <script src="theme/manager/assets/plugins/timepicker/bootstrap-timepicker.min.js"></script>
     <script src="theme/manager/assets/plugins/daterangepicker/daterangepicker.js"></script>
-     
+
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/orders.js?v=1.14"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/order.js?v=1.16"></script>
-    
+
 
 {/capture}
 
@@ -72,14 +72,14 @@
                         </a>
                         {/if}
                     </div>
-                    
+
                     {if $manager->role == 'quality_control' || $manager->role == 'quality_control_plus'}
-                    
+
                     <div class="col-6 dropdown text-right hidden-sm-down ">
-                        
+
                         <div class="js-period-filter">
-                            <input type="hidden" value="{$issuance_period}" id="filter_period" name="issuance_period" />     
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
+                            <input type="hidden" value="{$issuance_period}" id="filter_period" name="issuance_period" />
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-calendar-alt"></i>
                                 {if $issuance_period == 'today'}Сегодня
                                 {elseif $issuance_period == 'yesterday'}Вчера
@@ -89,15 +89,15 @@
                                 {elseif $issuance_period == 'all'}За все время
                                 {elseif $issuance_period == 'optional'}Произвольный
                                 {else}{$issuance_period}{/if}
-                                
+
                             </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"> 
-                                <a class="dropdown-item js-period-link {if $issuance_period == 'today'}active{/if}" href="{url issuance_period='today' page=null}">Сегодня</a> 
-                                <a class="dropdown-item js-period-link {if $issuance_period == 'yesterday'}active{/if}" href="{url issuance_period='yesterday' page=null}">Вчера</a> 
-                                <a class="dropdown-item js-period-link {if $issuance_period == 'month'}active{/if}" href="{url issuance_period='month' page=null}">В этом месяце</a> 
-                                <a class="dropdown-item js-period-link {if $issuance_period == 'year'}active{/if}" href="{url issuance_period='year' page=null}">В этом году</a> 
-                                <a class="dropdown-item js-period-link {if $issuance_period == 'all'}active{/if}" href="{url issuance_period='all' page=null}">За все время</a> 
-                                <a class="dropdown-item js-open-daterange {if $issuance_period == 'optional'}active{/if}" href="{url issuance_period='optional' page=null}">Произвольный</a> 
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item js-period-link {if $issuance_period == 'today'}active{/if}" href="{url issuance_period='today' page=null}">Сегодня</a>
+                                <a class="dropdown-item js-period-link {if $issuance_period == 'yesterday'}active{/if}" href="{url issuance_period='yesterday' page=null}">Вчера</a>
+                                <a class="dropdown-item js-period-link {if $issuance_period == 'month'}active{/if}" href="{url issuance_period='month' page=null}">В этом месяце</a>
+                                <a class="dropdown-item js-period-link {if $issuance_period == 'year'}active{/if}" href="{url issuance_period='year' page=null}">В этом году</a>
+                                <a class="dropdown-item js-period-link {if $issuance_period == 'all'}active{/if}" href="{url issuance_period='all' page=null}">За все время</a>
+                                <a class="dropdown-item js-open-daterange {if $issuance_period == 'optional'}active{/if}" href="{url issuance_period='optional' page=null}">Произвольный</a>
                             </div>
                         </div>
                         <div class="js-daterange-filter input-group mt-3" {if $issuance_period!='optional'}style="display:none"{/if}>
@@ -110,13 +110,13 @@
                         </div>
 
                     </div>
-                    
+
                     {else}
-                    
+
                     <div class="col-6 dropdown text-right hidden-sm-down">
                         <div class="js-period-filter">
-                            <input type="hidden" value="{$period}" id="filter_period" name="period" />     
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
+                            <input type="hidden" value="{$period}" id="filter_period" name="period" />
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-calendar-alt"></i>
                                 {if $period == 'today'}Сегодня
                                 {elseif $period == 'yesterday'}Вчера
@@ -126,15 +126,15 @@
                                 {elseif $period == 'all'}За все время
                                 {elseif $period == 'optional'}Произвольный
                                 {else}{$period}{/if}
-                                
+
                             </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"> 
-                                <a class="dropdown-item js-period-link {if $period == 'today'}active{/if}" href="{url period='today' page=null}">Сегодня</a> 
-                                <a class="dropdown-item js-period-link {if $period == 'yesterday'}active{/if}" href="{url period='yesterday' page=null}">Вчера</a> 
-                                <a class="dropdown-item js-period-link {if $period == 'month'}active{/if}" href="{url period='month' page=null}">В этом месяце</a> 
-                                <a class="dropdown-item js-period-link {if $period == 'year'}active{/if}" href="{url period='year' page=null}">В этом году</a> 
-                                <a class="dropdown-item js-period-link {if $period == 'all'}active{/if}" href="{url period='all' page=null}">За все время</a> 
-                                <a class="dropdown-item js-open-daterange {if $period == 'optional'}active{/if}" href="{url period='optional' page=null}">Произвольный</a> 
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item js-period-link {if $period == 'today'}active{/if}" href="{url period='today' page=null}">Сегодня</a>
+                                <a class="dropdown-item js-period-link {if $period == 'yesterday'}active{/if}" href="{url period='yesterday' page=null}">Вчера</a>
+                                <a class="dropdown-item js-period-link {if $period == 'month'}active{/if}" href="{url period='month' page=null}">В этом месяце</a>
+                                <a class="dropdown-item js-period-link {if $period == 'year'}active{/if}" href="{url period='year' page=null}">В этом году</a>
+                                <a class="dropdown-item js-period-link {if $period == 'all'}active{/if}" href="{url period='all' page=null}">За все время</a>
+                                <a class="dropdown-item js-open-daterange {if $period == 'optional'}active{/if}" href="{url period='optional' page=null}">Произвольный</a>
                             </div>
                         </div>
 
@@ -149,7 +149,7 @@
 
                     </div>
                     {/if}
-                    
+
                 </div>
             </div>
         </div>
@@ -165,15 +165,15 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Список заявок </h4>
-                        
+
                         <div class="clearfix">
                             <div class="js-filter-status mb-2 float-left">
-                                
+
                                 {foreach $statuses as $status_id => $status}
                                 {if !$status_id}{$status_id='new'}{/if}
                                 <a href="{if $filter_status==$status_id}{url status=null page=null}{else}{url status=$status_id page=null}{/if}" class="btn btn-xs {if $filter_status==$status_id}btn-warning{else}btn-outline-warning{/if}">{$status}</a>
                                 {/foreach}
-                                
+
                                 {*}
                                 <a href="{if $filter_status=='new'}{url status=null page=null}{else}{url status='new' page=null}{/if}" class="btn btn-xs {if $filter_status=='new'}btn-warning{else}btn-outline-warning{/if}">Новая</a>
                                 <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 page=null}{/if}" class="btn btn-xs {if $filter_status==1}btn-info{else}btn-outline-info{/if}">Принята</a>
@@ -198,7 +198,7 @@
                                 {/if}
                             </div>
                         </div>
-                        
+
                         <div id="basicgrid" class="jsgrid" style="position: relative; width: 100%;">
                             <div class="jsgrid-grid-header jsgrid-header-scrollbar">
                                 <table class="jsgrid-table table table-striped table-hover">
@@ -256,7 +256,7 @@
                                         {/if}
                                     </tr>
                                     <tr class="jsgrid-filter-row" id="search_form">
-                                    
+
                                         <td style="width: 70px;" class="jsgrid-cell jsgrid-align-right">
                                             <input type="hidden" name="sort" value="{$sort}" />
                                             <input type="text" name="order_id" value="{$search['order_id']}" class="form-control input-sm">
@@ -311,10 +311,10 @@
                                         <tr class="jsgrid-row js-order-row {if ($manager->role == 'quality_control' || $manager->role == 'quality_control_plus') && $order->quality_workout}workout-row{/if}">
                                             <td style="width: 70px;" class="jsgrid-cell jsgrid-align-right">
                                                 <a href="order/{$order->order_id}">{$order->order_id}</a>
-                                                {if $order->contract}<div><small>{$order->contract->number}</small></div>{/if}
+                                                {if isset($order->contract)}<div><small>{$order->contract->number}</small></div>{/if}
                                                 <small>
                                                     <span class="label label-primary">{$statuses[$order->status]}</span>
-                                                    
+
                                                     {*if $order->status == 0}<span class="label label-warning">Новая</span>
                                                     {elseif $order->status == 1}<span class="label label-info">Принята</span>
                                                     {elseif $order->status == 2}<span class="label label-success">Одобрена</span>
@@ -328,10 +328,10 @@
                                                 </small>
                                             </td>
                                             <td style="width: 70px;" class="jsgrid-cell">
-                                                {$order->date|date} 
+                                                {$order->date|date}
                                                 {$order->date|time}
                                                 {if $manager->role == 'quality_control' || $manager->role == 'quality_control_plus'}
-                                                    {if $order->contract}
+                                                    {if isset($order->contract)}
                                                         <small>
                                                         Выдан: {$order->contract->inssuance_date|date}
                                                         {$order->contract->inssuance_date|time}
@@ -340,7 +340,7 @@
                                                 {/if}
                                             </td>
                                             <td style="width: 70px;" class="jsgrid-cell">
-                                                {$order->amount} 
+                                                {$order->amount}
                                             </td>
                                             <td style="width: 60px;" class="jsgrid-cell">
                                                 {if $order->period}
@@ -349,8 +349,8 @@
                                             </td>
                                             <td style="width: 150px;" class="jsgrid-cell">
                                                 <a href="client/{$order->user_id}">
-                                                {$order->lastname} 
-                                                {$order->firstname} 
+                                                {$order->lastname}
+                                                {$order->firstname}
                                                 {$order->patronymic}
                                                 </a>
                                                 <br />
@@ -379,7 +379,7 @@
                                                 {/if}
                                             </td>
                                             <td style="width: 150px;" class="jsgrid-cell">
-                                                {$order->employer} 
+                                                {$order->employer}
                                             </td>
                                             <td style="width: 70px;" class="jsgrid-cell">
                                                 {$order->birth}
@@ -389,7 +389,7 @@
                                                 <button class="{*js-mango-call*} mango-call" data-phone="{$order->phone_mobile}" title="Выполнить звонок">
                                                     <i class="fas fa-mobile-alt"></i>
                                                 </button>
-                                                <button class="{*js-open-sms-modal*} mango-call {if $order->contract->sold}js-yuk{/if}" data-user="{$order->user_id}" data-order="{$order->order_id}">
+                                                <button class="{*js-open-sms-modal*} mango-call {if isset($order->contract)}{if $order->contract->sold}js-yuk{/if}{/if}" data-user="{$order->user_id}" data-order="{$order->order_id}">
                                                     <i class=" far fa-share-square"></i>
                                                 </button>
                                             </td>
@@ -409,14 +409,14 @@
                                                 <div class="custom-checkbox mt-1 custom-control">
                                                     <input id="workout_{$order->order_id}" type="checkbox" class="custom-control-input js-workout-input" value="{$order->order_id}" name="workout" {if $order->quality_workout}checked="true"{/if} />
                                                     <label for="workout_{$order->order_id}" class="custom-control-label"><small>Проверен</small></label>
-                                                </div>                                                
+                                                </div>
                                             </td>
                                             {else}
                                             <td style="width: 100px;padding:0" class="jsgrid-cell">
                                                 <div style="max-height:128px;padding:5px 0 5px 5px;;overflow-y:auto;overflow-x:hidden">
                                                     {foreach $scoring_types as $sc}
                                                     {*foreach $order->scorings as $sc*}
-                                                    <span {if $sc->string_result}data-toggle="tooltip" title="{$sc->string_result|escape} {if $sc->type == 'scorista'}{$sc->scorista_ball}{/if}"{/if} class="label label-sm {if in_array($sc->status, ['new','process'])}label-warning{elseif $sc->success}label-success{elseif in_array($sc->status,['repeat', 'new', 'process', 'import', 'wait'])}label-warning{else}label-danger{/if}">{$sc->short_title|escape}</span>
+                                                    <span {if isset($sc->string_result)}data-toggle="tooltip" title="{$sc->string_result|escape} {if $sc->type == 'scorista'}{$sc->scorista_ball}{/if}"{/if} class="label label-sm {if isset($sc->status)}{if in_array($sc->status, ['new','process'])}label-warning{elseif $sc->success}label-success{elseif in_array($sc->status,['repeat', 'new', 'process', 'import', 'wait'])}label-warning{else}label-danger{/if}{/if}">{$sc->short_title|escape}</span>
                                                     {/foreach}
                                                 </div>
                                             </td>
@@ -426,9 +426,9 @@
                                     </tbody>
                                 </table>
                             </div>
-                            
+
                             {include file='pagination.tpl'}
-                            
+
                         </div>
                     </div>
                 </div>
@@ -454,17 +454,17 @@
 <div id="modal_send_sms" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
-            
+
             <div class="modal-header">
                 <h4 class="modal-title">Отправить смс-сообщение?</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
-                
-                
+
+
                 <div class="card">
                     <div class="card-body">
-                        
+
                         <div class="tab-content tabcontent-border p-3" id="myTabContent">
                             <div role="tabpanel" class="tab-pane fade active show" id="waiting_reason" aria-labelledby="home-tab">
                                 <form class="js-sms-form">
@@ -476,7 +476,7 @@
                                         <label for="name" class="control-label">Выберите шаблон сообщения:</label>
                                         <select name="template_id" class="form-control">
                                             {foreach $sms_templates as $sms_template}
-                                            
+
                                             <option value="{$sms_template->id}" title="{$sms_template->template|escape}">
                                                 {$sms_template->name|escape} ({$sms_template->template})
                                             </option>
