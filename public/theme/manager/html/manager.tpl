@@ -138,9 +138,9 @@
                     <div class="card-body">
                         <center class="mt-4">
 
-                            <h4 class="card-title mt-2">{$user->name}</h4>
+                            <h4 class="card-title mt-2">{$user->name|default:""}</h4>
                             <h6 class="card-subtitle">
-                                {$roles[$user->role]}
+                                {$roles[$user->role|default:""]}
                             </h6>
                             {*}
                             <div class="row text-center justify-content-md-center">
@@ -155,26 +155,28 @@
                     </div>
                     <div class="card-body">
                         <small class="text-muted">Последний IP адрес</small>
-                        <h6>{$user->last_ip}</h6>
+                        <h6>{$user->last_ip|default:""}</h6>
                         <small class="text-muted p-t-30 db">Последняя активность</small>
                         <h6>
-                            {if $user->last_visit}
+                            {if isset($user->last_visit)}
                                 {$user->last_visit|date} {$user->last_visit|time}
                             {/if}
                         </h6>
                     </div>
 
-                    {if $user->id && in_array('block_manager', $manager->permissions)}
-                        <div class="mt-2 pt-2 pb-2 text-center">
-                            <button {if $user->blocked}style="display:none"{/if}
-                                    class="btn btn-danger btn-lg js-block-button" data-manager="{$user->id}">
-                                Заблокировать
-                            </button>
-                            <button {if !$user->blocked}style="display:none"{/if}
-                                    class="btn btn-success btn-lg js-unblock-button" data-manager="{$user->id}">
-                                Разблокировать
-                            </button>
-                        </div>
+                    {if isset($user->id)}
+                        {if $user->id && in_array('block_manager', $manager->permissions)}
+                            <div class="mt-2 pt-2 pb-2 text-center">
+                                <button {if $user->blocked}style="display:none"{/if}
+                                        class="btn btn-danger btn-lg js-block-button" data-manager="{$user->id}">
+                                    Заблокировать
+                                </button>
+                                <button {if !$user->blocked}style="display:none"{/if}
+                                        class="btn btn-success btn-lg js-unblock-button" data-manager="{$user->id}">
+                                    Разблокировать
+                                </button>
+                            </div>
+                        {/if}
                     {/if}
                 </div>
             </div>
@@ -186,7 +188,7 @@
                     <ul class="nav nav-tabs profile-tab" role="tablist">
                         <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#settings" role="tab">Основные</a>
                         </li>
-                        <li class="nav-item" {if $user->role!='team_collector'}style="display:none"{/if}>
+                        <li class="nav-item" {if isset($user)}{if $user->role!='team_collector'}style="display:none"{/if}{/if}>
                             <a class="nav-link" data-toggle="tab" href="#team" role="tab">Команда</a>
                         </li>
                     </ul>
@@ -197,7 +199,7 @@
                             <div class="tab-pane active" id="settings" role="tabpanel">
                                 <div class="card-body">
 
-                                    <input type="hidden" name="id" value="{$user->id}"/>
+                                    {if isset($user->id)}<input type="hidden" name="id" value="{$user->id}"/>{/if}
 
                                     {if isset($errors)}
                                         <div class="col-md-12">
@@ -233,7 +235,7 @@
                                     {/if}
 
                                     <div class="form-group {if in_array('empty_role', (array)$errors)}has-danger{/if}">
-                                        {if isset($user)}
+                                        {if isset($user->id)}
                                             {if $user->id != $manager->id || ($user->id == $manager->id && in_array($manager->role, ['admin', 'developer']))}
                                                 <label class="col-sm-12">Роль</label>
                                                 <div class="col-sm-12">
@@ -267,8 +269,7 @@
                                         {else}
                                             <label class="col-sm-12">Роль</label>
                                             <div class="col-sm-12">
-                                                <select name="role" class="form-control form-control-line"
-                                                        required="true">
+                                                <select name="role" class="form-control form-control-line" required="true">
                                                     <option value=""></option>
                                                     {foreach $roles as $role => $role_name}
                                                         {if $manager->role == 'chief_collector' || $manager->role == 'team_collector'}
@@ -294,25 +295,25 @@
                                         <div class="form-group {if in_array('empty_name', (array)$errors)}has-danger{/if}">
                                             <label class="col-md-12">Пользователь</label>
                                             <div class="col-md-12">
-                                                <input type="text" name="name" value="{$user->name|escape}"
+                                                <input type="text" name="name" value="{if isset($user)}{$user->name|escape}{/if}"
                                                        class="form-control form-control-line" required="true"/>
                                                 {if in_array('empty_name', (array)$errors)}
                                                     <small class="form-control-feedback">Укажите имя!</small>
                                                 {/if}
                                             </div>
                                         </div>
-                                        {*}
+                                        {*
                                         <div class="form-group">
                                             <label class="col-md-12">Имя для обмена 1С</label>
                                             <div class="col-md-12">
                                                 <input type="text" name="name_1c" value="{$user->name_1c|escape}" class="form-control form-control-line" />
                                             </div>
                                         </div>
-                                        {*}
+                                        *}
                                         <div class="form-group {if in_array('empty_login', (array)$errors)}has-danger{/if}">
                                             <label for="login" class="col-md-12">Логин для входа</label>
                                             <div class="col-md-12">
-                                                <input type="text" id="login" name="login" value="{$user->login|escape}"
+                                                <input type="text" id="login" name="login" value="{if isset($user)}{$user->login|escape}{/if}"
                                                        class="form-control form-control-line" required="true"/>
                                                 {if in_array('empty_login', (array)$errors)}
                                                     <small class="form-control-feedback">Укажите логин!</small>
@@ -323,9 +324,7 @@
                                     <div class="form-group {if in_array('empty_password', (array)$errors)}has-danger{/if}">
                                         <label class="col-md-12">{if isset($user->id)}Новый пароль{else}Пароль{/if}</label>
                                         <div class="col-md-12">
-                                            <input type="password" name="password" value=""
-                                                   class="form-control form-control-line"
-                                                   {if !$user->id}required="true"{/if} />
+                                            <input type="password" name="password" value="" class="form-control form-control-line" {if !isset($user->id)}required="true"{/if} />
                                             {if in_array('empty_password', (array)$errors)}
                                                 <small class="form-control-feedback">Укажите пароль!</small>
                                             {/if}
@@ -334,8 +333,7 @@
                                     <div class="form-group">
                                         <label class="col-md-5">Email</label>
                                         <div class="col-md-12">
-                                            <input type="text" name="email" value="{$user->email|default: ""}"
-                                                   class="form-control">
+                                            <input type="text" name="email" value="{$user->email|default: ""}" class="form-control">
                                         </div>
                                     </div>
                                     <div class="form-group">
