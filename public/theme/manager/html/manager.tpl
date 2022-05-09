@@ -109,13 +109,16 @@
         <div class="row page-titles">
             <div class="col-md-6 col-8 align-self-center">
                 <h3 class="text-themecolor mb-0 mt-0">
-                    {if $user->id}Профиль {$user->name|escape}
+                    {if isset($user->id)}Профиль {$user->name|escape}
                     {else}Создать нового пользователя{/if}
                 </h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
                     <li class="breadcrumb-item"><a href="managers">Пользователи</a></li>
-                    <li class="breadcrumb-item active">Профиль</li>
+                    <li class="breadcrumb-item active">
+                        {if isset($user->id)}Профиль {$user->name|escape}
+                        {else}Создать нового пользователя{/if}
+                    </li>
                 </ol>
             </div>
             <div class="col-md-6 col-4 align-self-center">
@@ -230,7 +233,38 @@
                                     {/if}
 
                                     <div class="form-group {if in_array('empty_role', (array)$errors)}has-danger{/if}">
-                                        {if $user->id != $manager->id || ($user->id == $manager->id && in_array($manager->role, ['admin', 'developer']))}
+                                        {if isset($user)}
+                                            {if $user->id != $manager->id || ($user->id == $manager->id && in_array($manager->role, ['admin', 'developer']))}
+                                                <label class="col-sm-12">Роль</label>
+                                                <div class="col-sm-12">
+                                                    <select name="role" class="form-control form-control-line"
+                                                            required="true">
+                                                        <option value=""></option>
+                                                        {foreach $roles as $role => $role_name}
+                                                            {if $manager->role == 'chief_collector' || $manager->role == 'team_collector'}
+                                                                {if $role == 'collector' || $role == 'team_collector' || $role == 'user'}
+                                                                    <option value="{$role}"
+                                                                            {if $user->role == $role}selected="true"{/if}>{$role_name|escape}</option>
+                                                                {/if}
+                                                            {elseif $manager->role == 'city_manager'}
+                                                                {if $role == 'cs_pc'}
+                                                                    <option value="{$role}"
+                                                                            {if $user->role == $role}selected="true"{/if}>{$role_name|escape}</option>
+                                                                {/if}
+                                                            {else}
+                                                                <option value="{$role}"
+                                                                        {if $user->role == $role}selected="true"{/if}>{$role_name|escape}</option>
+                                                            {/if}
+                                                        {/foreach}
+                                                    </select>
+                                                    {if in_array('empty_role', (array)$errors)}
+                                                        <small class="form-control-feedback">Выберите роль!</small>
+                                                    {/if}
+                                                </div>
+                                            {else}
+                                                <input type="hidden" name="role" value="{$user->role}"/>
+                                            {/if}
+                                        {else}
                                             <label class="col-sm-12">Роль</label>
                                             <div class="col-sm-12">
                                                 <select name="role" class="form-control form-control-line"
@@ -239,17 +273,14 @@
                                                     {foreach $roles as $role => $role_name}
                                                         {if $manager->role == 'chief_collector' || $manager->role == 'team_collector'}
                                                             {if $role == 'collector' || $role == 'team_collector' || $role == 'user'}
-                                                                <option value="{$role}"
-                                                                        {if $user->role == $role}selected="true"{/if}>{$role_name|escape}</option>
+                                                                <option value="{$role}">{$role_name|escape}</option>
                                                             {/if}
                                                         {elseif $manager->role == 'city_manager'}
                                                             {if $role == 'cs_pc'}
-                                                                <option value="{$role}"
-                                                                        {if $user->role == $role}selected="true"{/if}>{$role_name|escape}</option>
+                                                                <option value="{$role}">{$role_name|escape}</option>
                                                             {/if}
                                                         {else}
-                                                            <option value="{$role}"
-                                                                    {if $user->role == $role}selected="true"{/if}>{$role_name|escape}</option>
+                                                            <option value="{$role}">{$role_name|escape}</option>
                                                         {/if}
                                                     {/foreach}
                                                 </select>
@@ -257,8 +288,6 @@
                                                     <small class="form-control-feedback">Выберите роль!</small>
                                                 {/if}
                                             </div>
-                                        {else}
-                                            <input type="hidden" name="role" value="{$user->role}"/>
                                         {/if}
                                     </div>
                                     {if in_array('admins', $manager->permissions)}
@@ -292,7 +321,7 @@
                                         </div>
                                     {/if}
                                     <div class="form-group {if in_array('empty_password', (array)$errors)}has-danger{/if}">
-                                        <label class="col-md-12">{if $user->id}Новый пароль{else}Пароль{/if}</label>
+                                        <label class="col-md-12">{if isset($user->id)}Новый пароль{else}Пароль{/if}</label>
                                         <div class="col-md-12">
                                             <input type="password" name="password" value=""
                                                    class="form-control form-control-line"
@@ -305,18 +334,18 @@
                                     <div class="form-group">
                                         <label class="col-md-5">Email</label>
                                         <div class="col-md-12">
-                                            <input type="text" name="email" value="{$user->email}"
+                                            <input type="text" name="email" value="{$user->email|default: ""}"
                                                    class="form-control">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-md-5">Телефон</label>
                                         <div class="col-md-12">
-                                            <input type="text" name="phone" value="{$user->phone}"
+                                            <input type="text" name="phone" value="{$user->phone|default: ""}"
                                                    class="form-control form-control-line">
                                         </div>
                                     </div>
-                                    {*}
+                                    {*
                                                                         {if in_array($manager->role, ['chief_collector','admin','developer'])}
 
                                                                         <div class="form-group">
@@ -349,7 +378,7 @@
                                                                                 <input type="text" name="mango_number" value="{$user->mango_number}" class="form-control form-control-line" />
                                                                             </div>
                                                                         </div>
-                                    {*}
+                                    *}
                                     <div class="form-group">
                                         <div class="col-sm-12">
                                             <button class="btn btn-success" type="submit">Сохранить</button>
