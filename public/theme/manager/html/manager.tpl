@@ -8,6 +8,50 @@
     <script>
 
         $(function () {
+
+            $('.edit_phone').click(function (e) {
+                e.preventDefault();
+
+                $(this).hide();
+                $('.show_phone').hide();
+                $('.phone_edit_form').show();
+
+                $('.cancel_edit').click(function (e) {
+                    e.preventDefault();
+
+                    $('.phone_edit_form').hide();
+                    $('.edit_phone').show();
+                    $('.show_phone').show();
+                });
+
+                $('.accept_edit').click(function (e) {
+                    e.preventDefault();
+
+                    let user_id = $(this).attr('data-user');
+                    let phone = $('input[class="form-control phone_edit_form phone"]').val();
+
+                    $.ajax({
+                        method: 'POST',
+                        data: {
+                            action: 'edit_phone',
+                            user_id: user_id,
+                            phone: phone,
+                        },
+                        success: function (resp) {
+                            if (resp == 'error') {
+                                Swal.fire({
+                                    title: 'Такой номер уже зарегистрирован',
+                                    confirmButtonText: 'ОК'
+                                });
+                            }
+                            else {
+                                location.reload();
+                            }
+                        }
+                    })
+                });
+            });
+
             $('.js-block-button').click(function (e) {
                 e.preventDefault();
 
@@ -343,6 +387,22 @@
                                                    class="form-control form-control-line">
                                         </div>
                                     </div>
+                                    <div class="col-12">
+                                        <h5 class="form-control-static">Телефон <a href="#" data-user="{$client->id}" class="text-info edit_phone"><i class="fas fa-edit"></i></a></h5>
+                                        <div class="show_phone">{$user->phone|default: "Телефон не введён"}</div>
+                                        <div class="phone_edit_form" style="display: none">
+                                            <div class="mb-3">
+                                                <input type="text" class="form-control phone" value="{$user->phone|default: ""}">
+                                            </div>
+                                            <input type="button"
+                                                   data-user="{$user->id}"
+                                                   class="btn btn-success accept_edit"
+                                                   value="Сохранить">
+                                            <input type="button"
+                                                   class="btn btn-danger cancel_edit"
+                                                   value="Отмена">
+                                        </div>
+                                    </div>
                                     {*
                                                                         {if in_array($manager->role, ['chief_collector','admin','developer'])}
 
@@ -382,7 +442,6 @@
                                             <button class="btn btn-success" type="submit">Сохранить</button>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
 

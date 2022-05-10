@@ -10,7 +10,9 @@ class ManagerController extends Controller
                     case 'activate_email':
                         $this->action_activate_email();
                         break;
-
+                    case 'edit_phone':
+                        $this->action_edit_phone();
+                        break;
                 endswitch;
             } else {
                 $user = new StdClass();
@@ -126,6 +128,17 @@ class ManagerController extends Controller
         $token = sha1(uniqid($email, true));
 
         var_dump($token);
+        exit;
+    }
+
+    private function action_edit_phone()
+    {
+        $phone= $this->request->post('phone');
+        $resp = $this->sms->send(
+            $phone,
+            'test'
+        );
+        var_dump($phone);
         exit;
     }
 
