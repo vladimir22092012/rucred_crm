@@ -147,8 +147,9 @@
                                                 <td>{$doc->created|date}</td>
                                                 <td>{$doc->name}</td>
                                                 <td>{$doc->description}</td>
-                                                <td><input type="button" class="btn btn-outline-success"
-                                                           value="Скачать"></td>
+                                                <td><a download target="_blank"
+                                                       href="{$config->back_url}/files/users/{$doc->filename}"><input type="button" class="btn btn-outline-success"
+                                                                                                                   value="Скачать"></a></td>
                                                 <td></td>
                                                 <td></td>
                                             </tr>
