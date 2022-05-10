@@ -38,15 +38,20 @@ class Companies extends Core
     public function get_companies($filter = array())
     {
         $group_id = '';
+        $blocked = '';
 
-        if ($filter['group_id'])
+        if (isset($filter['group_id']))
             $group_id = $this->db->placehold("AND group_id = ?", (int)$filter['group_id']);
+
+        if (isset($filter['blocked']))
+            $blocked = $this->db->placehold("AND blocked = ?", (int)$filter['blocked']);
 
         $query = $this->db->placehold("
         SELECT * 
         FROM s_companies
         WHERE 1
         $group_id
+        $blocked
         ");
 
         $this->db->query($query);

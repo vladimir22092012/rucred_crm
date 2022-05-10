@@ -179,15 +179,6 @@
             }
         });
 
-        let user = {{json_encode($user)}};
-
-        if(user){
-            $('select[class="form-control groups"] option[value="' + user['group_id'] + '"]').prop('selected', true);
-            $('select[class="form-control groups"] option[value="' + user['group_id'] + '"]').change();
-            $('select[class="form-control companies"] option[value="' + user['company'] + '"]').prop('selected', true);
-        }
-
-
         /*$('.check_email').on('click', function (e) {
             e.preventDefault();
 
@@ -451,21 +442,26 @@
                                         <div class="form-group">
                                             <label class="col-md-12">Группа</label>
                                             <div class="col-md-12">
-                                                <select class="form-control groups">
+                                                <select class="form-control groups" name="groups">
                                                     <option value="none" selected>Выберите из списка</option>
                                                     {if !empty($groups)}
                                                         {foreach $groups as $group}
-                                                            <option value="{$group->id}">{$group->name}</option>
+                                                            <option value="{$group->id}" {if $user->group_id == $group->id}selected{/if}>{$group->name}</option>
                                                         {/foreach}
                                                     {/if}
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group company_block" style="display:none">
+                                        <div class="form-group company_block" {if $user->company_id == 0}style="display:none"{/if}>
                                             <label class="col-md-12">Компания</label>
                                             <div class="col-md-12">
-                                                <select class="form-control companies">
+                                                <select class="form-control companies" name="companies">
                                                     <option value="none" selected>Выберите из списка</option>
+                                                    {if !empty($companies)}
+                                                        {foreach $companies as $company}
+                                                            <option value="{$company->id}" {if $user->company_id == $company->id}selected{/if}>{$company->name}</option>
+                                                        {/foreach}
+                                                    {/if}
                                                 </select>
                                             </div>
                                         </div>
