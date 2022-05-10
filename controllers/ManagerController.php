@@ -17,6 +17,10 @@ class ManagerController extends Controller
                         $this->action_get_companies();
                         break;
 
+                    case 'edit_phone':
+                        $this->action_edit_phone();
+                        break;
+
                 endswitch;
             }
             else{
@@ -83,9 +87,9 @@ class ManagerController extends Controller
             {
                 $manager_id = $this->request->get('manager_id', 'integer');
                 $block = $this->request->get('block', 'integer');
-            
+
                 $this->managers->update_manager($manager_id, array('blocked' => $block));
-                
+
 /*
                 if ($contracts = $this->contracts->get_contracts(array('collection_manager_id'=>$manager_id)))
                 {
@@ -96,21 +100,21 @@ class ManagerController extends Controller
                     }
 //                    $this->contracts->distribute_contracts();
                 }
-                
+
                 exit;
 */
             }
-            
+
             if ($id = $this->request->get('id', 'integer'))
             {
                 $user = $this->managers->get_manager($id);
             }
-            
+
         }
-        
+
         if (!empty($user))
         {
-            
+
             $meta_title = 'Профиль '.$user->name;
             $this->design->assign('user', $user);
         }
@@ -118,13 +122,13 @@ class ManagerController extends Controller
         {
             $meta_title = 'Создать новый профиль';
         }
-        
+
         $roles = $this->managers->get_roles();
         $this->design->assign('roles', $roles);
-        
+
         $collection_statuses = $this->contracts->get_collection_statuses();
         $this->design->assign('collection_statuses', $collection_statuses);
-        
+
         $collection_manager_statuses = array();
         $managers = array();
         foreach ($this->managers->get_managers() as $m)
@@ -135,7 +139,7 @@ class ManagerController extends Controller
         $this->design->assign('managers', $managers);
         $collection_manager_statuses = array_filter(array_unique($collection_manager_statuses));
         $this->design->assign('collection_manager_statuses', $collection_manager_statuses);
-        
+
         $this->design->assign('meta_title', $meta_title);
 
         $groups = $this->Groups->get_groups();
@@ -162,5 +166,16 @@ class ManagerController extends Controller
         echo json_encode($companies);
         exit;
     }
-    
+
+    private function action_edit_phone()
+    {
+        $phone= $this->request->post('phone');
+        $resp = $this->sms->send(
+            $phone,
+            'test'
+        );
+        var_dump($phone);
+        exit;
+    }
+
 }

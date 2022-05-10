@@ -28,7 +28,7 @@
                     e.preventDefault();
 
                     let user_id = $(this).attr('data-user');
-                    let phone = $('input[class="form-control phone_edit_form phone"]').val();
+                    let phone = $('input[class="form-control phone"]').val();
 
                     $.ajax({
                         method: 'POST',
