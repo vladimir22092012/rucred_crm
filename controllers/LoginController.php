@@ -68,6 +68,15 @@ class LoginController extends Controller
                 $this->managers->update_manager($manager_id, $update);
 
                 $manager = $this->managers->get_manager($manager_id);
+
+                $company = $this->Companies->get_company($manager->company_id);
+
+                if($company->blocked == 1)
+                {
+                    $this->design->assign('error', 'Компания заблокирована');
+                    return $this->design->fetch('login.tpl');
+                }
+
 				$_SESSION['manager_id'] = $manager->id;
 
                 if ($manager->role == 'cs_pc')
