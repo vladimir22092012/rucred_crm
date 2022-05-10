@@ -140,8 +140,9 @@ class ManagerController extends Controller
 
         $groups = $this->Groups->get_groups();
 
-        var_dump($groups);
-        exit;
+        $this->design->assign('groups', $groups);
+
+        return $this->design->fetch('manager.tpl');
     }
 
     private function action_activate_email()
