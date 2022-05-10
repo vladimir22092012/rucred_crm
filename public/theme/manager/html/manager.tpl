@@ -502,7 +502,7 @@
                                                         <div class="input-group show_phone_code" style="display: none">
                                                             <input type="text" class="form-control code" placeholder="Введите код из смс">
                                                             <div class="input-group-append">
-                                                                <button class="btn btn-primary accept_edit_with_code" type="button">Подтвердить</button>
+                                                                <button class="btn btn-primary accept_edit_with_code" type="button" data-user="{$user->id}">Подтвердить</button>
                                                             </div>
                                                         </div>
                                                     </div>
