@@ -14,6 +14,7 @@
 
                 $(this).hide();
                 $('.show_phone').hide();
+                $('.show_phone_code').hide();
                 $('.phone_edit_form').show();
 
                 $('.cancel_edit').click(function (e) {
@@ -45,6 +46,35 @@
                                 });
                             }
                             else {
+                                $('.show_phone_code').show();
+                            }
+                        }
+                    })
+                });
+
+                $('.accept_edit_with_code').click(function (e) {
+                    e.preventDefault();
+
+                    let user_id = $(this).attr('data-user');
+                    let phone = $('input[class="form-control phone"]').val();
+                    let code = $('input[class="form-control code"]').val();
+
+                    $.ajax({
+                        method: 'POST',
+                        data: {
+                            action: 'edit_phone_with_code',
+                            user_id: user_id,
+                            phone: phone,
+                            code: code,
+                        },
+                        success: function (response) {
+                            console.log(JSON.parse(response));
+                            if (JSON.parse(response).error === 1) {
+                                Swal.fire({
+                                    title: 'Неверный код',
+                                    confirmButtonText: 'ОК'
+                                });
+                            } else {
                                 location.reload();
                             }
                         }
@@ -459,15 +489,29 @@
                                         <div class="show_phone">{$user->phone|default: "Телефон не введён"}</div>
                                         <div class="phone_edit_form" style="display: none">
                                             <div class="mb-3">
-                                                <input type="text" class="form-control phone" value="{$user->phone|default: ""}">
+                                                <div class="form-row">
+                                                    <div class="col">
+                                                        <input type="text" class="form-control phone" value="{$user->phone|default: ""}">
+                                                    </div>
+                                                    <div class="col">
+                                                        <input type="button"
+                                                               data-user="{$user->id}"
+                                                               class="btn btn-success accept_edit"
+                                                               value="Сохранить">
+                                                        <input type="button"
+                                                               class="btn btn-danger cancel_edit"
+                                                               value="Отмена">
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="input-group show_phone_code" style="display: none">
+                                                            <input type="text" class="form-control code" placeholder="Введите код из смс">
+                                                            <div class="input-group-append">
+                                                                <button class="btn btn-primary accept_edit_with_code" type="button">Подтвердить</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <input type="button"
-                                                   data-user="{$user->id}"
-                                                   class="btn btn-success accept_edit"
-                                                   value="Сохранить">
-                                            <input type="button"
-                                                   class="btn btn-danger cancel_edit"
-                                                   value="Отмена">
                                         </div>
                                     </div>
                                     {*

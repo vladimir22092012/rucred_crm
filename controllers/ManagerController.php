@@ -21,6 +21,10 @@ class ManagerController extends Controller
                         $this->action_edit_phone();
                         break;
 
+                    case 'edit_phone_with_code':
+                        $this->action_edit_phone_with_code();
+                        break;
+
                 endswitch;
             }
             else{
@@ -170,11 +174,38 @@ class ManagerController extends Controller
     private function action_edit_phone()
     {
         $phone= $this->request->post('phone');
-        $resp = $this->sms->send(
+        $code = random_int(1000, 9999);
+        $response = $this->sms->send(
             $phone,
-            'test'
+            $code
         );
-        var_dump($phone);
+        $this->db->query('
+        INSERT INTO s_sms_messages
+        SET phone = ?, code = ?, response = ?, ip = ?, created = ?
+        ', $phone, $code, $response['resp'], $_SERVER['REMOTE_ADDR'] ?? '', date('Y-m-d H:i:s'));
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_edit_phone_with_code()
+    {
+        $phone= $this->request->post('phone');
+        $code = $this->request->post('code');
+
+        $this->db->query("
+        SELECT code, created
+        FROM s_sms_messages
+        WHERE phone = ?
+        AND code = ?
+        ORDER BY created DESC
+        LIMIT 1
+        ", $phone, $code);
+        $results = $this->db->results();
+        if (empty($results)) {
+            echo json_encode(['error' => 1]);
+            exit;
+        }
+        echo json_encode(['success' => 1]);
         exit;
     }
 
