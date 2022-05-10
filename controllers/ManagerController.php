@@ -13,6 +13,10 @@ class ManagerController extends Controller
                         $this->action_activate_email();
                         break;
 
+                    case 'get_companies':
+                        $this->action_get_companies();
+                        break;
+
                 endswitch;
             }
             else{
@@ -133,6 +137,9 @@ class ManagerController extends Controller
         $this->design->assign('collection_manager_statuses', $collection_manager_statuses);
         
         $this->design->assign('meta_title', $meta_title);
+
+        $groups = $this->Groups->get_groups();
+        $this->design->assign('groups', $groups);
         
         return $this->design->fetch('manager.tpl');
     }
@@ -143,6 +150,15 @@ class ManagerController extends Controller
         $token = sha1(uniqid($email, true));
 
         var_dump($token);
+        exit;
+    }
+
+    private function action_get_companies(){
+
+        $group_id = $this->request->post('group_id');
+        $companies = $this->Companies->get_companies(['group_id' => $group_id]);
+
+        echo json_encode($companies);
         exit;
     }
     
