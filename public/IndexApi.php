@@ -10,7 +10,7 @@ $whoops = new \Whoops\Run;
 $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
 $whoops->register();
 
-/* 
+/*
     Все запросы находятся в группе /api
     Роуты могут добавляться 2 способами:
     $r->post('/login', 'Api\routers\LoginApi@run');
