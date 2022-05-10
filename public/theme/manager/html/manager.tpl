@@ -8,13 +8,57 @@
     <script>
 
         $(function () {
+
+            $('.edit_phone').click(function (e) {
+                e.preventDefault();
+
+                $(this).hide();
+                $('.show_phone').hide();
+                $('.phone_edit_form').show();
+
+                $('.cancel_edit').click(function (e) {
+                    e.preventDefault();
+
+                    $('.phone_edit_form').hide();
+                    $('.edit_phone').show();
+                    $('.show_phone').show();
+                });
+
+                $('.accept_edit').click(function (e) {
+                    e.preventDefault();
+
+                    let user_id = $(this).attr('data-user');
+                    let phone = $('input[class="form-control phone_edit_form phone"]').val();
+
+                    $.ajax({
+                        method: 'POST',
+                        data: {
+                            action: 'edit_phone',
+                            user_id: user_id,
+                            phone: phone,
+                        },
+                        success: function (resp) {
+                            if (resp == 'error') {
+                                Swal.fire({
+                                    title: 'Такой номер уже зарегистрирован',
+                                    confirmButtonText: 'ОК'
+                                });
+                            }
+                            else {
+                                location.reload();
+                            }
+                        }
+                    })
+                });
+            });
+
             $('.js-block-button').click(function (e) {
                 e.preventDefault();
 
                 if ($(this).hasClass('loading'))
                     return false;
 
-                var manager_id = $(this).data('manager')
+                var manager_id = $(this).data('manager');
 
                 $.ajax({
                     data: {
@@ -76,6 +120,43 @@
                 $('.js-status-' + _id).fadeIn();
             }
         });
+
+        $('.groups').on('change', function (e) {
+            e.preventDefault();
+
+            $('.company_block').show();
+            $('.companies').empty();
+            $('.companies').append('<option value="none">Выберите из списка</option>');
+
+            let group_id = $(this).val();
+
+            if (group_id != 'none') {
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'get_companies',
+                        group_id: group_id
+                    },
+                    success: function (companies) {
+                        for (let company in companies) {
+                            $('.companies').append('<option value="' + companies[company]['id'] + '">' + companies[company]['name'] + '</option>')
+                        }
+                    }
+                });
+            } else {
+                $('.company_block').hide();
+            }
+        });
+
+        let user = {{json_encode($user)}};
+
+        if(user){
+            $('select[class="form-control groups"] option[value="' + user['group_id'] + '"]').prop('selected', true);
+            $('select[class="form-control groups"] option[value="' + user['group_id'] + '"]').change();
+            $('select[class="form-control companies"] option[value="' + user['company'] + '"]').prop('selected', true);
+        }
+
 
         /*$('.check_email').on('click', function (e) {
             e.preventDefault();
@@ -188,7 +269,8 @@
                     <ul class="nav nav-tabs profile-tab" role="tablist">
                         <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#settings" role="tab">Основные</a>
                         </li>
-                        <li class="nav-item" {if isset($user)}{if $user->role!='team_collector'}style="display:none"{/if}{/if}>
+                        <li class="nav-item"
+                            {if isset($user)}{if $user->role!='team_collector'}style="display:none"{/if}{/if}>
                             <a class="nav-link" data-toggle="tab" href="#team" role="tab">Команда</a>
                         </li>
                     </ul>
@@ -269,7 +351,8 @@
                                         {else}
                                             <label class="col-sm-12">Роль</label>
                                             <div class="col-sm-12">
-                                                <select name="role" class="form-control form-control-line" required="true">
+                                                <select name="role" class="form-control form-control-line"
+                                                        required="true">
                                                     <option value=""></option>
                                                     {foreach $roles as $role => $role_name}
                                                         {if $manager->role == 'chief_collector' || $manager->role == 'team_collector'}
@@ -295,7 +378,8 @@
                                         <div class="form-group {if in_array('empty_name', (array)$errors)}has-danger{/if}">
                                             <label class="col-md-12">Пользователь</label>
                                             <div class="col-md-12">
-                                                <input type="text" name="name" value="{if isset($user)}{$user->name|escape}{/if}"
+                                                <input type="text" name="name"
+                                                       value="{if isset($user)}{$user->name|escape}{/if}"
                                                        class="form-control form-control-line" required="true"/>
                                                 {if in_array('empty_name', (array)$errors)}
                                                     <small class="form-control-feedback">Укажите имя!</small>
@@ -313,7 +397,8 @@
                                         <div class="form-group {if in_array('empty_login', (array)$errors)}has-danger{/if}">
                                             <label for="login" class="col-md-12">Логин для входа</label>
                                             <div class="col-md-12">
-                                                <input type="text" id="login" name="login" value="{if isset($user)}{$user->login|escape}{/if}"
+                                                <input type="text" id="login" name="login"
+                                                       value="{if isset($user)}{$user->login|escape}{/if}"
                                                        class="form-control form-control-line" required="true"/>
                                                 {if in_array('empty_login', (array)$errors)}
                                                     <small class="form-control-feedback">Укажите логин!</small>
@@ -324,16 +409,42 @@
                                     <div class="form-group {if in_array('empty_password', (array)$errors)}has-danger{/if}">
                                         <label class="col-md-12">{if isset($user->id)}Новый пароль{else}Пароль{/if}</label>
                                         <div class="col-md-12">
-                                            <input type="password" name="password" value="" class="form-control form-control-line" {if !isset($user->id)}required="true"{/if} />
+                                            <input type="password" name="password" value=""
+                                                   class="form-control form-control-line"
+                                                   {if !isset($user->id)}required="true"{/if} />
                                             {if in_array('empty_password', (array)$errors)}
                                                 <small class="form-control-feedback">Укажите пароль!</small>
                                             {/if}
                                         </div>
                                     </div>
+                                    {if in_array($manager->role, ['admin', 'developer'])}
+                                        <div class="form-group">
+                                            <label class="col-md-12">Группа</label>
+                                            <div class="col-md-12">
+                                                <select class="form-control groups">
+                                                    <option value="none" selected>Выберите из списка</option>
+                                                    {if !empty($groups)}
+                                                        {foreach $groups as $group}
+                                                            <option value="{$group->id}">{$group->name}</option>
+                                                        {/foreach}
+                                                    {/if}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group company_block" style="display:none">
+                                            <label class="col-md-12">Компания</label>
+                                            <div class="col-md-12">
+                                                <select class="form-control companies">
+                                                    <option value="none" selected>Выберите из списка</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    {/if}
                                     <div class="form-group">
                                         <label class="col-md-5">Email</label>
                                         <div class="col-md-12">
-                                            <input type="text" name="email" value="{$user->email|default: ""}" class="form-control">
+                                            <input type="text" name="email" value="{$user->email|default: ""}"
+                                                   class="form-control">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -341,6 +452,22 @@
                                         <div class="col-md-12">
                                             <input type="text" name="phone" value="{$user->phone|default: ""}"
                                                    class="form-control form-control-line">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <h5 class="form-control-static">Телефон <a href="#" data-user="{$client->id}" class="text-info edit_phone"><i class="fas fa-edit"></i></a></h5>
+                                        <div class="show_phone">{$user->phone|default: "Телефон не введён"}</div>
+                                        <div class="phone_edit_form" style="display: none">
+                                            <div class="mb-3">
+                                                <input type="text" class="form-control phone" value="{$user->phone|default: ""}">
+                                            </div>
+                                            <input type="button"
+                                                   data-user="{$user->id}"
+                                                   class="btn btn-success accept_edit"
+                                                   value="Сохранить">
+                                            <input type="button"
+                                                   class="btn btn-danger cancel_edit"
+                                                   value="Отмена">
                                         </div>
                                     </div>
                                     {*
@@ -382,7 +509,6 @@
                                             <button class="btn btn-success" type="submit">Сохранить</button>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
 

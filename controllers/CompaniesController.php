@@ -11,7 +11,14 @@ class CompaniesController extends Controller
 
         endswitch;
 
-        $companies = $this->Companies->get_companies_groups();
+        if ($this->request->get('sort', 'string')) {
+            $sort = $this->request->get('sort', 'string');
+        }
+
+        $filter['sort'] = $sort;
+        $this->design->assign('sort', $sort);
+
+        $companies = $this->Companies->get_companies_groups($filter);
         $groups = $this->Groups->get_groups();
 
         $this->design->assign('companies', $companies);

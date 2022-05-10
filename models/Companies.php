@@ -39,7 +39,7 @@ class Companies extends Core
     {
         $group_id = '';
 
-        if($filter['group_id'])
+        if ($filter['group_id'])
             $group_id = $this->db->placehold("AND group_id = ?", (int)$filter['group_id']);
 
         $query = $this->db->placehold("
@@ -108,8 +108,96 @@ class Companies extends Core
         return $result;
     }
 
-    public function get_companies_groups()
+    public function get_companies_groups($filter = array())
     {
+        $sort = 'gr.id asc';
+
+        if (!empty($filter['sort'])) {
+            switch ($filter['sort']):
+
+                case 'group_asc':
+                    $sort = 'gr.id ASC';
+                    break;
+
+                case 'group_desc':
+                    $sort = 'gr.id DESC';
+                    break;
+
+                case 'company_num_asc':
+                    $sort = 'com_number ASC';
+                    break;
+
+                case 'company_num_desc':
+                    $sort = 'com_number DESC';
+                    break;
+
+                case 'company_name_asc':
+                    $sort = 'com.name ASC';
+                    break;
+
+                case 'company_name_desc':
+                    $sort = 'com.name DESC';
+                    break;
+
+                case 'eio_asc':
+                    $sort = 'com.eio_position ASC';
+                    break;
+
+                case 'eio_desc':
+                    $sort = 'com.eio_position DESC';
+                    break;
+
+                case 'fio_asc':
+                    $sort = 'com.eio_fio ASC';
+                    break;
+
+                case 'fio_desc':
+                    $sort = 'com.eio_fio DESC';
+                    break;
+
+                case 'inn_asc':
+                    $sort = 'com.inn ASC';
+                    break;
+
+                case 'inn_desc':
+                    $sort = 'com.inn DESC';
+                    break;
+
+                case 'ogrn_asc':
+                    $sort = 'com.ogrn ASC';
+                    break;
+
+                case 'ogrn_desc':
+                    $sort = 'com.ogrn DESC';
+                    break;
+
+                case 'kpp_asc':
+                    $sort = 'com.kpp ASC';
+                    break;
+
+                case 'kpp_desc':
+                    $sort = 'com.kpp DESC';
+                    break;
+
+                case 'jur_addr_asc':
+                    $sort = 'com.jur_address ASC';
+                    break;
+
+                case 'jur_addr_desc':
+                    $sort = 'com.jur_address DESC';
+                    break;
+
+                case 'fakt_asc':
+                    $sort = 'com.phys_address ASC';
+                    break;
+
+                case 'fakt_desc':
+                    $sort = 'com.phys_address DESC';
+                    break;
+
+            endswitch;
+        }
+
         $query = $this->db->placehold("
         SELECT gr.number as gr_number,
         com.number as com_number,
@@ -123,9 +211,11 @@ class Companies extends Core
         com.kpp,
         com.jur_address,
         com.phys_address,
-        com.blocked
+        com.blocked,
+        gr.id
         FROM s_companies as com
         JOIN s_groups as gr on com.group_id = gr.id
+        ORDER BY $sort
         ");
 
         $this->db->query($query);
