@@ -35,6 +35,10 @@ class ManagerController extends Controller
                 $user->login = $this->request->post('login');
                 $user->mango_number = $this->request->post('mango_number');
 
+                $user->group_id = ($this->request->post('groups')) ? (int)$this->request->post('groups') : 0;
+                $user->company_id = ($this->request->post('companies')) ? (int)$this->request->post('companies') : 0;
+
+
                 $user->collection_status_id = $this->request->post('collection_status_id', 'integer');
 
                 $team_id = (array)$this->request->post('team_id');
@@ -143,6 +147,11 @@ class ManagerController extends Controller
         $this->design->assign('meta_title', $meta_title);
 
         $groups = $this->Groups->get_groups();
+
+        if($user->company_id != 0 && $user->group_id != 0 ){
+            $companies = $this->Companies->get_companies(['group_id' => $user->group_id ]);
+            $this->design->assign('companies', $companies);
+        }
 
         $this->design->assign('groups', $groups);
 
