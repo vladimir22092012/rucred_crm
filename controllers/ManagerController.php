@@ -139,6 +139,10 @@ class ManagerController extends Controller
         $this->design->assign('meta_title', $meta_title);
 
         $groups = $this->Groups->get_groups();
+
+        var_dump($groups);
+        exit;
+
         $this->design->assign('groups', $groups);
         
         return $this->design->fetch('manager.tpl');
