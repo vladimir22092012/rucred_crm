@@ -104,26 +104,78 @@
                         <h6 class="card-subtitle"></h6>
                         <div class="table-responsive m-t-40">
                             <div class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
-                                <table id="config-table" class="table display table-striped dataTable" style="font-size: 14px">
+                                <table id="config-table" class="table display table-striped dataTable"
+                                       style="font-size: 14px">
                                     <thead>
                                     <tr>
-                                        <th>Группа, №</th>
-                                        <th class="">Компания №</th>
-                                        <th class="">Компания</th>
-                                        <th class="">Должность</th>
-                                        <th class="">ФИО</th>
-                                        <th class="">ИНН</th>
-                                        <th class="">ОГРН</th>
-                                        <th class="">КПП</th>
-                                        <th class="">Юр Адрес</th>
-                                        <th class="">Местонахождение</th>
+                                        <th
+                                            class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'group_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'group_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'group_asc'}<a href="{url page=null sort='group_desc'}">
+                                                    Группа, №</a>
+                                            {else}<a href="{url page=null sort='group_asc'}">Группа, №</a>{/if}
+                                        </th>
+                                        <th
+                                                class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'company_num_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'company_num_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'company_num_asc'}<a href="{url page=null sort='company_num_desc'}">
+                                                    Компания №</a>
+                                            {else}<a href="{url page=null sort='company_num_asc'}">Компания №</a>{/if}
+                                        </th>
+                                        <th
+                                                class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'company_name_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'company_name_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'company_name_asc'}<a href="{url page=null sort='company_name_desc'}">
+                                                    Компания</a>
+                                            {else}<a href="{url page=null sort='company_name_asc'}">Компания</a>{/if}
+                                        </th>
+                                        <th
+                                                class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'eio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'eio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'eio_asc'}<a href="{url page=null sort='eio_desc'}">
+                                                    Должность</a>
+                                            {else}<a href="{url page=null sort='eio_asc'}">Должность</a>{/if}
+                                        </th>
+                                        <th
+                                                class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'fio_asc'}<a href="{url page=null sort='fio_desc'}">
+                                                    ФИО</a>
+                                            {else}<a href="{url page=null sort='fio_asc'}">ФИО</a>{/if}
+                                        </th>
+                                        <th
+                                                class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'inn_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'inn_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'inn_asc'}<a href="{url page=null sort='inn_desc'}">
+                                                    ИНН</a>
+                                            {else}<a href="{url page=null sort='inn_asc'}">ИНН</a>{/if}
+                                        </th>
+                                        <th
+                                                class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'ogrn_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'ogrn_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'ogrn_asc'}<a href="{url page=null sort='ogrn_desc'}">
+                                                    ОГРН</a>
+                                            {else}<a href="{url page=null sort='ogrn_asc'}">ОГРН</a>{/if}
+                                        </th>
+                                        <th
+                                                class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'kpp_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'kpp_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'kpp_asc'}<a href="{url page=null sort='kpp_desc'}">
+                                                    КПП</a>
+                                            {else}<a href="{url page=null sort='kpp_asc'}">КПП</a>{/if}
+                                        </th>
+                                        <th
+                                                class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'jur_addr_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'jur_addr_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'jur_addr_asc'}<a href="{url page=null sort='jur_addr_desc'}">
+                                                    Юр Адрес</a>
+                                            {else}<a href="{url page=null sort='jur_addr_asc'}">Юр Адрес</a>{/if}
+                                        </th>
+                                        <th
+                                                class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'fakt_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fakt_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'fakt_asc'}<a href="{url page=null sort='fakt_desc'}">
+                                                    Местонахождение</a>
+                                            {else}<a href="{url page=null sort='fakt_asc'}">Местонахождение</a>{/if}
+                                        </th>
                                     </tr>
                                     <tr>
                                         <th style="width: 120px">
                                             <select class="form-control" id="group_filter">
                                                 <option value="none" selected>Фильтр</option>
                                                 {foreach $groups as $group}
-                                                    <option value="{$group->number}">{$group->number}, {$group->name}</option>
+                                                    <option value="{$group->number}">{$group->number}
+                                                        , {$group->name}</option>
                                                 {/foreach}
                                             </select>
                                         </th>
@@ -148,7 +200,9 @@
                                                 onmouseout="this.style.backgroundColor='white';">
                                                 <td>{$company->gr_number}, {$company->gr_name}</td>
                                                 <td>{$company->gr_number}{$company->com_number}</td>
-                                                <td>{$company->com_name} {if ($company->blocked)}<span class="label label-danger">Blocked</span>{/if}</td>
+                                                <td>{$company->com_name} {if ($company->blocked)}
+                                                        <span class="label label-danger">Blocked</span>
+                                                    {/if}</td>
                                                 <td>{$company->eio_position}</td>
                                                 <td>{$company->eio_fio}</td>
                                                 <td>{$company->inn}</td>
