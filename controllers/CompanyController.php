@@ -59,6 +59,10 @@ class CompanyController extends Controller
                 $this->action_import_workers_list();
                 break;
 
+            case 'add_document':
+                $this->action_add_document();
+                break;
+
         endswitch;
 
         $company_id = $this->request->get('id');
@@ -69,6 +73,9 @@ class CompanyController extends Controller
         }
 
         $company = $this->Companies->get_company_group($company_id);
+        $docs = $this->Docs->get_docs($company_id);
+        $this->design->assign('docs', $docs);
+
         $branches = $this->Branches->get_company_branches($company_id);
         $company_checks = $this->CompanyChecks->get_five_company_checks($company_id);
 
@@ -284,5 +291,29 @@ class CompanyController extends Controller
 
         echo json_encode(['success' => 1, 'company_check_id' => $company_check_id, 'workers' => $workers]);
         exit;
+    }
+
+    private function action_add_document()
+    {
+        $company_id = $this->request->post('company_id');
+        $date_doc = date('Y-m-d', strtotime($this->request->post('date_doc')));
+        $name = $this->request->post('name');
+        $comment = $this->request->post('comment');
+        $doc = $_FILES['doc'];
+
+        $new_filename = md5(microtime() . rand()) . '.' . $doc['name'];
+
+        move_uploaded_file($doc['tmp_name'], $this->config->root_dir . $this->config->user_files_dir . $new_filename);
+
+        $document =
+            [
+                'company_id' => (int)$company_id,
+                'created' => $date_doc,
+                'name' => $name,
+                'description' => $comment,
+                'filename' => $new_filename
+            ];
+
+        $this->Docs->add_doc($document);
     }
 }
