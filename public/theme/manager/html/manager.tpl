@@ -149,15 +149,6 @@
             }
         });
 
-        let user = {{json_encode($user)}};
-
-        if(user){
-            $('select[class="form-control groups"] option[value="' + user['group_id'] + '"]').prop('selected', true);
-            $('select[class="form-control groups"] option[value="' + user['group_id'] + '"]').change();
-            $('select[class="form-control companies"] option[value="' + user['company'] + '"]').prop('selected', true);
-        }
-
-
         /*$('.check_email').on('click', function (e) {
             e.preventDefault();
 
