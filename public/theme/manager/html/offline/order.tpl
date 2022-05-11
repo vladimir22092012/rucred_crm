@@ -424,6 +424,33 @@
             if (manager_role == 'employer')
                 $('.fa-edit').hide();
 
+
+            $('.accept_changes').on('click', function (e) {
+
+                let form = $('#loan_settings').serialize();
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: form,
+                    success: function (resp) {
+                        if (resp['error']) {
+                            let error = '<li>' + resp['error'] + '</li>';
+                            $('.settings_error').show();
+                            $('.settings_error_list').append(error);
+
+                            setTimeout(function () {
+                                $('.settings_error_list').empty();
+                                $('.settings_error').fadeOut();
+                            }, 3000);
+                        }
+                        if (resp['success']) {
+                            location.reload();
+                        }
+                    }
+                })
+            })
+
         });
     </script>
 {/capture}
@@ -640,21 +667,14 @@
                                     </form>
                                 </div>
                                 <div class="col-12 col-md-8 col-lg-6">
-                                    <form action="{url}" class="mb-3 p-2 border js-order-item-form js-check-amount"
-                                          id="amount_form">
-
-                                        <input type="hidden" name="action" value="amount"/>
+                                    <form class="mb-3 p-2 border" id="loan_settings">
+                                        <input type="hidden" name="action" value="change_loan_settings"/>
                                         <input type="hidden" name="order_id" value="{$order->order_id}"/>
                                         <input type="hidden" name="user_id" value="{$order->user_id}"/>
-                                        {if $amount_error}
-                                            <div class="text-danger pt-3">
-                                                <ul>
-                                                    {foreach $amount_error as $er}
-                                                        <li>{$er}</li>
-                                                    {/foreach}
-                                                </ul>
-                                            </div>
-                                        {/if}
+                                        <div class="text-danger pt-3 settings_error" style="display: none">
+                                            <ul class="settings_error_list" style="list-style-type: none">
+                                            </ul>
+                                        </div>
                                         <div class="row view-block ">
                                             <div class="col-4 text-center">
                                                 <h6>Сумма</h6>
@@ -687,7 +707,7 @@
                                             </div>
                                             <div class="col-3">
                                                 <h6>Тарифный план</h6>
-                                                <select class="form-control">
+                                                <select class="form-control" name="loan_tarif">
                                                     {foreach $loantypes as $loantype_select}
                                                         <option value="{$loantype_select['id']}"
                                                                 {if $loantype_select['id'] == $loantype->id}selected{/if}>{$loantype_select['name']}</option>
@@ -703,17 +723,15 @@
                                                        value="{$order->probably_start_date|date}">
                                             </div>
                                             <div class="col-4">
-                                                <div class="form-actions">
-                                                    <button type="submit" class="btn btn-success js-event-add-click"
-                                                            data-event="41" data-manager="{$manager->id}"
-                                                            data-order="{$order->order_id}"
-                                                            data-user="{$order->user_id}"><i class="fa fa-check"></i>
-                                                        Сохранить
-                                                    </button>
-                                                    <button type="button" class="btn btn-inverse js-cancel-edit">
-                                                        Отмена
-                                                    </button>
+                                                <div class="btn btn-success accept_changes"
+                                                     data-manager="{$manager->id}"
+                                                     data-order="{$order->order_id}"
+                                                     data-user="{$order->user_id}">
+                                                    Сохранить
                                                 </div>
+                                                <button type="button" class="btn btn-inverse js-cancel-edit">
+                                                    Отмена
+                                                </button>
                                             </div>
                                         </div>
 
@@ -914,41 +932,42 @@
                                 </a>
                             </li>
                             {if $manager->role != 'employer'}
-                            <li class="nav-item">
-                                <a class="nav-link js-event-add-click" data-toggle="tab" href="#comments" role="tab"
-                                   aria-selected="false" data-event="21" data-user="{$order->user_id}"
-                                   data-order="{$order->order_id}" data-manager="{$manager->id}">
-                                    <span class="hidden-sm-up"><i class="ti-user"></i></span>
-                                    <span class="hidden-xs-down">
+                                <li class="nav-item">
+                                    <a class="nav-link js-event-add-click" data-toggle="tab" href="#comments" role="tab"
+                                       aria-selected="false" data-event="21" data-user="{$order->user_id}"
+                                       data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                        <span class="hidden-sm-up"><i class="ti-user"></i></span>
+                                        <span class="hidden-xs-down">
                                             Комментарии {if $comments|count > 0}<span
-                                                class="label label-rounded label-primary">{$comments|count}</span>{/if}
+                                                    class="label label-rounded label-primary">{$comments|count}</span>{/if}
                                         </span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link js-event-add-click" data-toggle="tab" href="#logs" role="tab"
-                                   aria-selected="true" data-event="23" data-user="{$order->user_id}"
-                                   data-order="{$order->order_id}" data-manager="{$manager->id}">
-                                    <span class="hidden-sm-up"><i class="ti-server"></i></span>
-                                    <span class="hidden-xs-down">Логирование</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link js-event-add-click" data-toggle="tab" href="#operations" role="tab"
-                                   aria-selected="true" data-event="24" data-user="{$order->user_id}"
-                                   data-order="{$order->order_id}" data-manager="{$manager->id}">
-                                    <span class="hidden-sm-up"><i class="ti-list-ol"></i></span>
-                                    <span class="hidden-xs-down">Операции</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link js-event-add-click" data-toggle="tab" href="#history" role="tab"
-                                   aria-selected="true" data-event="25" data-user="{$order->user_id}"
-                                   data-order="{$order->order_id}" data-manager="{$manager->id}">
-                                    <span class="hidden-sm-up"><i class="ti-save-alt"></i></span>
-                                    <span class="hidden-xs-down">Кредитная история</span>
-                                </a>
-                            </li>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link js-event-add-click" data-toggle="tab" href="#logs" role="tab"
+                                       aria-selected="true" data-event="23" data-user="{$order->user_id}"
+                                       data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                        <span class="hidden-sm-up"><i class="ti-server"></i></span>
+                                        <span class="hidden-xs-down">Логирование</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link js-event-add-click" data-toggle="tab" href="#operations"
+                                       role="tab"
+                                       aria-selected="true" data-event="24" data-user="{$order->user_id}"
+                                       data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                        <span class="hidden-sm-up"><i class="ti-list-ol"></i></span>
+                                        <span class="hidden-xs-down">Операции</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link js-event-add-click" data-toggle="tab" href="#history" role="tab"
+                                       aria-selected="true" data-event="25" data-user="{$order->user_id}"
+                                       data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                        <span class="hidden-sm-up"><i class="ti-save-alt"></i></span>
+                                        <span class="hidden-xs-down">Кредитная история</span>
+                                    </a>
+                                </li>
                             {/if}
                         </ul>
 
@@ -2899,14 +2918,14 @@
                                 <!-- -->
                                 <form method="POST" enctype="multipart/form-data">
                                     {if $manager->role != 'employer'}
-                                    <div class="form_file_item">
-                                        <input type="file" name="new_file" class="new_file" id="new_file"
-                                               data-user="{$order->user_id}" value="" style="display:none"/>
-                                        <label for="new_file" class="btn btn-large btn-primary">
-                                            <i class="fa fa-plus-circle"></i>
-                                            <span>Добавить</span>
-                                        </label>
-                                    </div>
+                                        <div class="form_file_item">
+                                            <input type="file" name="new_file" class="new_file" id="new_file"
+                                                   data-user="{$order->user_id}" value="" style="display:none"/>
+                                            <label for="new_file" class="btn btn-large btn-primary">
+                                                <i class="fa fa-plus-circle"></i>
+                                                <span>Добавить</span>
+                                            </label>
+                                        </div>
                                     {/if}
                                 </form>
                             </div>

@@ -54,6 +54,10 @@ class OfflineOrderController extends Controller
                     $this->action_amount();
                     break;
 
+                case 'change_loan_settings':
+                    $this->action_change_loan_settings();
+                    break;
+
                 case 'inn_change':
                     $this->action_inn_change();
                     break;
@@ -2853,6 +2857,212 @@ class OfflineOrderController extends Controller
             $this->orders->update_order($order_id, ['uid' => $uid]);
             exit;
         }
+    }
+
+    private function action_change_loan_settings()
+    {
+        $order_id = (int)$this->request->post('order_id');
+        $amount = $this->request->post('amount');
+        $loan_tarif = $this->request->post('loan_tarif');
+        $probably_start_date = $this->request->post('probably_start_date');
+        $loantype = $this->Loantypes->get_loantype((int)$loan_tarif);
+
+        $probably_return_date = new DateTime(date('Y-m-10', strtotime($probably_start_date . '+' . $loantype->max_period . 'month')));
+        $probably_return_date = $this->check_pay_date($probably_return_date);
+
+        if ($amount < $loantype->min_amount || $amount > $loantype->max_amount) {
+            echo json_encode(['error' => 'Проверьте сумму займа']);
+            exit;
+        }
+
+        $order =
+            [
+                'amount' => $amount,
+                'loan_type' => (int)$loan_tarif,
+                'probably_start_date' => date('Y-m-d', strtotime($probably_start_date)),
+                'probably_return_date' => $probably_return_date->format('Y-m-d')
+            ];
+
+        $this->orders->update_order($order_id, $order);
+        $this->action_reform_schedule($order_id);
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_reform_schedule($order_id)
+    {
+        $order = $this->orders->get_order($order_id);
+
+        $order = (array)$order;
+        $loan = $this->Loantypes->get_loantype($order['loan_type']);
+
+        $rest_sum = $order['amount'];
+        $start_date = date('Y-m-d', strtotime($order['probably_start_date']));
+        $end_date = new DateTime(date('Y-m-10', strtotime($order['probably_return_date'])));
+        $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
+        $paydate = new DateTime(date('Y-m-10', strtotime($start_date)));
+
+        $percent_per_month = (($order['percent'] / 100) * 365) / 12;
+        $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
+
+        if (date('d', strtotime($start_date)) < 10) {
+            if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < 3) {
+                $plus_loan_percents = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
+                $sum_pay = $annoouitet_pay + $plus_loan_percents;
+                $loan_percents_pay = ($rest_sum * $percent_per_month) + $plus_loan_percents;
+                $body_pay = $sum_pay - $loan_percents_pay;
+                $paydate->add(new DateInterval('P1M'));
+                $paydate = $this->check_pay_date($paydate);
+
+            } else {
+                $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
+                $loan_percents_pay = $sum_pay;
+                $body_pay = 0;
+            }
+
+            $payment_schedule[$paydate->format('d.m.Y')] =
+                [
+                    'pay_sum' => $sum_pay,
+                    'loan_percents_pay' => $loan_percents_pay,
+                    'loan_body_pay' => $body_pay,
+                    'comission_pay' => 0.00,
+                    'rest_pay' => $rest_sum -= $body_pay
+                ];
+            $paydate->add(new DateInterval('P1M'));
+        } else {
+
+            $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
+            $first_pay = new DateTime(date('Y-m-10', strtotime($start_date . '+1 month')));
+            $count_days_this_month = date('t', strtotime($issuance_date->format('Y-m-d')));
+            $paydate = $this->check_pay_date($first_pay);
+
+            if (date_diff($first_pay, $issuance_date)->days < 20) {
+                $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($first_pay, $issuance_date)->days;
+                $percents_pay = $sum_pay;
+            }
+            if (date_diff($first_pay, $issuance_date)->days >= 20 && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
+
+                $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($first_pay, $issuance_date)->days);
+
+                $sum_pay = $annoouitet_pay - $minus_percents;
+                $percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
+                $body_pay = $sum_pay - $percents_pay;
+
+            }
+            if (date_diff($first_pay, $issuance_date)->days >= $count_days_this_month) {
+
+                $sum_pay = $annoouitet_pay;
+                $percents_pay = $rest_sum * $percent_per_month;
+                $body_pay = $sum_pay - $percents_pay;
+            }
+
+            $payment_schedule[$paydate->format('d.m.Y')] =
+                [
+                    'pay_sum' => $sum_pay,
+                    'loan_percents_pay' => $percents_pay,
+                    'loan_body_pay' => ($body_pay) ? $body_pay : 0,
+                    'comission_pay' => 0.00,
+                    'rest_pay' => $rest_sum -= $body_pay
+                ];
+
+            $paydate->add(new DateInterval('P1M'));
+        }
+
+        if ($rest_sum != 0) {
+            $paydate->setDate($paydate->format('Y'), $paydate->format('m'), 10);
+            $interval = new DateInterval('P1M');
+            $end_date->setTime(0, 0, 1);
+            $daterange = new DatePeriod($paydate, $interval, $end_date);
+
+            foreach ($daterange as $date) {
+
+                $date = $this->check_pay_date($date);
+
+                $loan_percents_pay = $rest_sum * $percent_per_month;
+
+                $payment_schedule[$date->format('d.m.Y')] =
+                    [
+                        'pay_sum' => $annoouitet_pay,
+                        'loan_percents_pay' => $loan_percents_pay,
+                        'loan_body_pay' => $annoouitet_pay - $loan_percents_pay,
+                        'comission_pay' => 0.00,
+                        'rest_pay' => $rest_sum -= $annoouitet_pay - $loan_percents_pay
+                    ];
+            }
+        }
+
+        $payment_schedule['result'] =
+            [
+                'all_sum_pay' => 0.00,
+                'all_loan_percents_pay' => 0.00,
+                'all_loan_body_pay' => 0.00,
+                'all_comission_pay' => 0.00,
+                'all_rest_pay_sum' => 0.00
+            ];
+
+        $dates[0] = date('d.m.Y', strtotime($this->request->post('start_date')));
+        $payments[0] = -$order['amount'];
+
+        foreach ($payment_schedule as $date => $pay) {
+            if ($date != 'result') {
+                $payments[] = $pay['pay_sum'];
+                $dates[] = date('d.m.Y', strtotime($date));
+                $payment_schedule['result']['all_sum_pay'] += $pay['pay_sum'];
+                $payment_schedule['result']['all_loan_percents_pay'] += $pay['loan_percents_pay'];
+                $payment_schedule['result']['all_loan_body_pay'] += $pay['loan_body_pay'];
+                $payment_schedule['result']['all_comission_pay'] += $pay['comission_pay'];
+                $payment_schedule['result']['all_rest_pay_sum'] = 0.00;
+            }
+        }
+
+        array_pop($dates);
+        array_pop($payments);
+
+        foreach ($dates as $date) {
+
+            $date = new DateTime(date('Y-m-d H:i:s', strtotime($date)));
+
+            $new_dates[] = mktime(
+                $date->format('H'),
+                $date->format('i'),
+                $date->format('s'),
+                $date->format('m'),
+                $date->format('d'),
+                $date->format('Y')
+            );
+        }
+
+        $xirr = round($this->Financial->XIRR($payments, $new_dates) * 100, 3);
+        $xirr /= 100;
+
+        $order['psk'] = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
+
+        $order['payment_schedule'] = json_encode($payment_schedule);
+
+        $update_order =
+            [
+                'psk' => $order['psk'],
+                'payment_schedule' => $order['payment_schedule']
+            ];
+
+        $this->orders->update_order($order_id, $update_order);
+    }
+
+    private function check_pay_date($date)
+    {
+
+        for ($i = 0; $i <= 15; $i++) {
+
+            $check_date = $this->WeekendCalendar->check_date($date->format('Y-m-d'));
+
+            if ($check_date == null) {
+                break;
+            } else {
+                $date->sub(new DateInterval('P1D'));
+            }
+        }
+
+        return $date;
     }
 
 }
