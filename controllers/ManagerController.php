@@ -218,7 +218,32 @@ class ManagerController extends Controller
             exit;
         }
         $result = $this->managers->update_manager($user_id, ['phone' => $phone]);
-        var_dump($result);
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_edit_password()
+    {
+        $user_id= $this->request->post('user_id');
+        $old_password = $this->request->post('old_password');
+        $new_password = $this->request->post('new_password');
+
+        $this->db->query("
+        SELECT id, password
+        FROM s_users
+        WHERE user_id = ?
+        ORDER BY created DESC
+        LIMIT 1
+        ", $user_id);
+        $results = $this->db->results();
+
+        var_dump($results);
+
+        if (empty($results)) {
+            echo json_encode(['error' => 1]);
+            exit;
+        }
+        $result = $this->managers->update_manager($user_id, ['password' => $new_password]);
         echo json_encode(['success' => 1]);
         exit;
     }
