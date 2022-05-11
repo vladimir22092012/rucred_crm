@@ -2,6 +2,16 @@ $(function () {
 
     let token_dadata = "25c845f063f9f3161487619f630663b2d1e4dcd7";
 
+    moment.locale('ru');
+
+    $('.daterange').daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true,
+        locale: {
+            format: 'DD.MM.YYYY'
+        },
+    });
+
     $('.add-company-modal').on('click', function () {
 
         $('#modal_add_branch').modal();
@@ -9,6 +19,10 @@ $(function () {
 
     $('.add_settlement').on('click', function () {
        $('#add_settlement').modal();
+    });
+
+    $('.add_document').on('click', function () {
+       $('#add_document').modal();
     });
 
     $('.action-block-company').on('change', function () {
@@ -238,5 +252,22 @@ $(function () {
             $('#correspondent_account').val(suggestion.data.correspondent_account);
             $('#bik_settlement').val(suggestion.data.bic);
         }
+    });
+    
+    $('.action_add_doc').on('click', function () {
+
+        let file = $('#doc')[0].files;
+        let form_data = new FormData($('#add_document_form')[0]);
+        form_data.append('file', file);
+
+        $.ajax({
+            method: 'POST',
+            data: form_data,
+            processData: false,
+            contentType: false,
+            success: function (resp) {
+                location.reload();
+            }
+        })
     });
 });

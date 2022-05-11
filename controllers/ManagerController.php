@@ -13,6 +13,18 @@ class ManagerController extends Controller
                         $this->action_activate_email();
                         break;
 
+                    case 'get_companies':
+                        $this->action_get_companies();
+                        break;
+
+                    case 'edit_phone':
+                        $this->action_edit_phone();
+                        break;
+
+                    case 'edit_phone_with_code':
+                        $this->action_edit_phone_with_code();
+                        break;
+
                 endswitch;
             }
             else{
@@ -26,6 +38,10 @@ class ManagerController extends Controller
                 $user->phone = $this->request->post('phone');
                 $user->login = $this->request->post('login');
                 $user->mango_number = $this->request->post('mango_number');
+
+                $user->group_id = ($this->request->post('groups')) ? (int)$this->request->post('groups') : 0;
+                $user->company_id = ($this->request->post('companies')) ? (int)$this->request->post('companies') : 0;
+
 
                 $user->collection_status_id = $this->request->post('collection_status_id', 'integer');
 
@@ -79,9 +95,9 @@ class ManagerController extends Controller
             {
                 $manager_id = $this->request->get('manager_id', 'integer');
                 $block = $this->request->get('block', 'integer');
-            
+
                 $this->managers->update_manager($manager_id, array('blocked' => $block));
-                
+
 /*
                 if ($contracts = $this->contracts->get_contracts(array('collection_manager_id'=>$manager_id)))
                 {
@@ -92,21 +108,21 @@ class ManagerController extends Controller
                     }
 //                    $this->contracts->distribute_contracts();
                 }
-                
+
                 exit;
 */
             }
-            
+
             if ($id = $this->request->get('id', 'integer'))
             {
                 $user = $this->managers->get_manager($id);
             }
-            
+
         }
-        
+
         if (!empty($user))
         {
-            
+
             $meta_title = 'Профиль '.$user->name;
             $this->design->assign('user', $user);
         }
@@ -114,13 +130,13 @@ class ManagerController extends Controller
         {
             $meta_title = 'Создать новый профиль';
         }
-        
+
         $roles = $this->managers->get_roles();
         $this->design->assign('roles', $roles);
-        
+
         $collection_statuses = $this->contracts->get_collection_statuses();
         $this->design->assign('collection_statuses', $collection_statuses);
-        
+
         $collection_manager_statuses = array();
         $managers = array();
         foreach ($this->managers->get_managers() as $m)
@@ -131,9 +147,18 @@ class ManagerController extends Controller
         $this->design->assign('managers', $managers);
         $collection_manager_statuses = array_filter(array_unique($collection_manager_statuses));
         $this->design->assign('collection_manager_statuses', $collection_manager_statuses);
-        
+
         $this->design->assign('meta_title', $meta_title);
-        
+
+        $groups = $this->Groups->get_groups();
+
+        if($user->company_id != 0 && $user->group_id != 0 ){
+            $companies = $this->Companies->get_companies(['group_id' => $user->group_id ]);
+            $this->design->assign('companies', $companies);
+        }
+
+        $this->design->assign('groups', $groups);
+
         return $this->design->fetch('manager.tpl');
     }
 
@@ -145,5 +170,82 @@ class ManagerController extends Controller
         var_dump($token);
         exit;
     }
-    
+
+    private function action_get_companies(){
+
+        $group_id = $this->request->post('group_id');
+        $companies = $this->Companies->get_companies(['group_id' => $group_id]);
+
+        echo json_encode($companies);
+        exit;
+    }
+
+    private function action_edit_phone()
+    {
+        $phone= $this->request->post('phone');
+        $user_id= $this->request->post('user_id');
+        $code = random_int(1000, 9999);
+        $response = $this->sms->send(
+            $phone,
+            $code
+        );
+        $this->db->query('
+        INSERT INTO s_sms_messages
+        SET phone = ?, code = ?, response = ?, ip = ?, user_id = ?, created = ?
+        ', $phone, $code, $response['resp'], $_SERVER['REMOTE_ADDR'] ?? '', $user_id, date('Y-m-d H:i:s'));
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_edit_phone_with_code()
+    {
+        $phone= $this->request->post('phone');
+        $code = $this->request->post('code');
+        $user_id= $this->request->post('user_id');
+
+        $this->db->query("
+        SELECT code, created
+        FROM s_sms_messages
+        WHERE phone = ?
+        AND code = ?
+        AND user_id = ?
+        ORDER BY created DESC
+        LIMIT 1
+        ", $phone, $code, $user_id);
+        $results = $this->db->results();
+        if (empty($results)) {
+            echo json_encode(['error' => 1]);
+            exit;
+        }
+        $result = $this->managers->update_manager($user_id, ['phone' => $phone]);
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_edit_password()
+    {
+        $user_id= $this->request->post('user_id');
+        $old_password = $this->request->post('old_password');
+        $new_password = $this->request->post('new_password');
+
+        $this->db->query("
+        SELECT id, password
+        FROM s_users
+        WHERE user_id = ?
+        ORDER BY created DESC
+        LIMIT 1
+        ", $user_id);
+        $results = $this->db->results();
+
+        var_dump($results);
+
+        if (empty($results)) {
+            echo json_encode(['error' => 1]);
+            exit;
+        }
+        $result = $this->managers->update_manager($user_id, ['password' => $new_password]);
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
 }

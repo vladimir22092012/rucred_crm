@@ -6,11 +6,17 @@
           href="theme/manager/assets/plugins/datatables.net-bs4/css/dataTables.bootstrap4.css">
     <link rel="stylesheet" type="text/css"
           href="theme/manager/assets/plugins/datatables.net-bs4/css/responsive.dataTables.min.css">
-    <link rel="stylesheet" href="//unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+    <link rel="stylesheet" href="//unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css"/>
     <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet"/>
+    <link href="theme/manager/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="theme/manager/assets/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
 {/capture}
 
 {capture name='page_scripts'}
+    <script src="theme/manager/assets/plugins/moment/moment.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
+    <script src="theme/manager/assets/plugins/daterangepicker/daterangepicker.js"></script>
     <script src="theme/manager/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     <script src="theme/manager/assets/plugins/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="theme/manager/assets/plugins/datatables.net-bs4/js/dataTables.responsive.min.js"></script>
@@ -22,9 +28,9 @@
             url: "/company/{$company->com_id}",
             parallelUploads: 1,
             maxFilesize: 1,
-            maxFiles:1,
-            init: function() {
-                this.on("maxfilesexceeded", function(file) {
+            maxFiles: 1,
+            init: function () {
+                this.on("maxfilesexceeded", function (file) {
                     this.removeAllFiles();
                     this.addFile(file);
                 });
@@ -73,7 +79,8 @@
                                             <span>Блокировка</span>
                                             <div class="onoffswitch">
                                                 <input type="checkbox" name="blocked_flag"
-                                                       data-company-id="{$company->com_id}" class="onoffswitch-checkbox action-block-company"
+                                                       data-company-id="{$company->com_id}"
+                                                       class="onoffswitch-checkbox action-block-company"
                                                        id="on_off_flag_{$company->com_id}"
                                                         {if $company->blocked} checked="true" value="1" {else} value="0"{/if}>
                                                 <label class="onoffswitch-label" for="on_off_flag_{$company->com_id}">
@@ -123,6 +130,33 @@
                                     <tr>
                                         <td>Руководитель</td>
                                         <td colspan="6">{$company->eio_position} {$company->eio_fio}</td>
+                                    </tr>
+                                    <tr>
+                                        <td {if !empty($docs)}rowspan="{count($docs)+1}"{/if}>Документы компании</td>
+                                        <td>Дата документа</td>
+                                        <td>Название документа</td>
+                                        <td>Комментарий</td>
+                                        <td>Скан</td>
+                                        <td></td>
+                                        <td><input type="button" class="btn btn-outline-success add_document"
+                                                   value="Добавить документ"></td>
+                                    </tr>
+                                    {if !empty($docs)}
+                                        {foreach $docs as $doc}
+                                            <tr>
+                                                <td>{$doc->created|date}</td>
+                                                <td>{$doc->name}</td>
+                                                <td>{$doc->description}</td>
+                                                <td><a download target="_blank"
+                                                       href="{$config->back_url}/files/users/{$doc->filename}"><input type="button" class="btn btn-outline-success"
+                                                                                                                   value="Скачать"></a></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        {/foreach}
+                                    {/if}
+                                    <tr style="height: 50px">
+                                        <td colspan="7"></td>
                                     </tr>
                                     {if $company->com_id == 2}
                                         <tr>
@@ -201,7 +235,8 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Списки сотрудников</h4>
-                        <p class="card-text">В этот раздел можно импортировать списки сотрудников компании для проверки при одобрении заявки на кредит</p>
+                        <p class="card-text">В этот раздел можно импортировать списки сотрудников компании для проверки
+                            при одобрении заявки на кредит</p>
                         <div>
                             <form class="dropzone import_workers_list_form" id="file-employers-upload">
                                 <input type="hidden" name="action" value="import_workers_list">
@@ -460,6 +495,45 @@
                     </div>
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
                     <input type="button" class="btn btn-success action_update_settlement" value="Сохранить">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="add_document" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Добавить счет</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert" style="display:none"></div>
+                <form method="POST" id="add_document_form">
+                    <input type="hidden" name="action" value="add_document">
+                    <input type="hidden" name="company_id" value="{$company->com_id}">
+                    <div class="form-group">
+                        <label for="date_doc" class="control-label">Дата документа:</label>
+                        <input type="text" class="form-control daterange" name="date_doc" id="date_doc" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="control-label">Название документа:</label>
+                        <input type="text" class="form-control" name="name" id="name" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment" class="control-label">Комментарий:</label>
+                        <input type="text" class="form-control" name="comment" id="comment"
+                               value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="doc" class="control-label">Прикрепить документ</label>
+                        <input type="file" class="custom-file-control" name="doc" id="doc" value=""/>
+                    </div>
+                    <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
+                    <input type="button" class="btn btn-success action_add_doc" value="Сохранить">
                 </form>
             </div>
         </div>

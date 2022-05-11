@@ -14,6 +14,7 @@
 
                 $(this).hide();
                 $('.show_phone').hide();
+                $('.show_phone_code').hide();
                 $('.phone_edit_form').show();
 
                 $('.cancel_edit').click(function (e) {
@@ -28,7 +29,7 @@
                     e.preventDefault();
 
                     let user_id = $(this).attr('data-user');
-                    let phone = $('input[class="form-control phone_edit_form phone"]').val();
+                    let phone = $('input[class="form-control phone"]').val();
 
                     $.ajax({
                         method: 'POST',
@@ -45,6 +46,35 @@
                                 });
                             }
                             else {
+                                $('.show_phone_code').show();
+                            }
+                        }
+                    })
+                });
+
+                $('.accept_edit_with_code').click(function (e) {
+                    e.preventDefault();
+
+                    let user_id = $(this).attr('data-user');
+                    let phone = $('input[class="form-control phone"]').val();
+                    let code = $('input[class="form-control code"]').val();
+
+                    $.ajax({
+                        method: 'POST',
+                        data: {
+                            action: 'edit_phone_with_code',
+                            user_id: user_id,
+                            phone: phone,
+                            code: code,
+                        },
+                        success: function (response) {
+                            console.log(JSON.parse(response));
+                            if (JSON.parse(response).error === 1) {
+                                Swal.fire({
+                                    title: 'Неверный код',
+                                    confirmButtonText: 'ОК'
+                                });
+                            } else {
                                 location.reload();
                             }
                         }
@@ -148,15 +178,6 @@
                 $('.company_block').hide();
             }
         });
-
-        let user = {{json_encode($user)}};
-
-        if(user){
-            $('select[class="form-control groups"] option[value="' + user['group_id'] + '"]').prop('selected', true);
-            $('select[class="form-control groups"] option[value="' + user['group_id'] + '"]').change();
-            $('select[class="form-control companies"] option[value="' + user['company'] + '"]').prop('selected', true);
-        }
-
 
         /*$('.check_email').on('click', function (e) {
             e.preventDefault();
@@ -421,21 +442,26 @@
                                         <div class="form-group">
                                             <label class="col-md-12">Группа</label>
                                             <div class="col-md-12">
-                                                <select class="form-control groups">
+                                                <select class="form-control groups" name="groups">
                                                     <option value="none" selected>Выберите из списка</option>
                                                     {if !empty($groups)}
                                                         {foreach $groups as $group}
-                                                            <option value="{$group->id}">{$group->name}</option>
+                                                            <option value="{$group->id}" {if $user->group_id == $group->id}selected{/if}>{$group->name}</option>
                                                         {/foreach}
                                                     {/if}
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group company_block" style="display:none">
+                                        <div class="form-group company_block" {if $user->company_id == 0}style="display:none"{/if}>
                                             <label class="col-md-12">Компания</label>
                                             <div class="col-md-12">
-                                                <select class="form-control companies">
+                                                <select class="form-control companies" name="companies">
                                                     <option value="none" selected>Выберите из списка</option>
+                                                    {if !empty($companies)}
+                                                        {foreach $companies as $company}
+                                                            <option value="{$company->id}" {if $user->company_id == $company->id}selected{/if}>{$company->name}</option>
+                                                        {/foreach}
+                                                    {/if}
                                                 </select>
                                             </div>
                                         </div>
@@ -459,15 +485,29 @@
                                         <div class="show_phone">{$user->phone|default: "Телефон не введён"}</div>
                                         <div class="phone_edit_form" style="display: none">
                                             <div class="mb-3">
-                                                <input type="text" class="form-control phone" value="{$user->phone|default: ""}">
+                                                <div class="form-row">
+                                                    <div class="col">
+                                                        <input type="text" class="form-control phone" value="{$user->phone|default: ""}">
+                                                    </div>
+                                                    <div class="col">
+                                                        <input type="button"
+                                                               data-user="{$user->id}"
+                                                               class="btn btn-success accept_edit"
+                                                               value="Сохранить">
+                                                        <input type="button"
+                                                               class="btn btn-danger cancel_edit"
+                                                               value="Отмена">
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="input-group show_phone_code" style="display: none">
+                                                            <input type="text" class="form-control code" placeholder="Введите код из смс">
+                                                            <div class="input-group-append">
+                                                                <button class="btn btn-primary accept_edit_with_code" type="button" data-user="{$user->id}">Подтвердить</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <input type="button"
-                                                   data-user="{$user->id}"
-                                                   class="btn btn-success accept_edit"
-                                                   value="Сохранить">
-                                            <input type="button"
-                                                   class="btn btn-danger cancel_edit"
-                                                   value="Отмена">
                                         </div>
                                     </div>
                                     {*
