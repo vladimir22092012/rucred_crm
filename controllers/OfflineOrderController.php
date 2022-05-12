@@ -2750,7 +2750,7 @@ class OfflineOrderController extends Controller
         $date = $this->request->post('date');
         $pay_sum = $this->request->post('pay_sum');
         $loan_percents_pay = $this->request->post('loan_percents_pay');
-        $loan_body_pay = $this->request->post('loan_body_pay');
+        $loan_body_pay = mb_convert_encoding($this->request->post('loan_body_pay'), 'UTF-8');
         $comission_pay = $this->request->post('comission_pay');
         $rest_pay = $this->request->post('rest_pay');
         $order_id = $this->request->post('order_id');
@@ -2761,19 +2761,19 @@ class OfflineOrderController extends Controller
 
         foreach ($payment_schedule as $date => $payment) {
             $payment_schedule[$payment['date']] = array_slice($payment, 1);
-            $payment_schedule[$payment['date']]['pay_sum'] = preg_replace("/[^,.0-9]/", '', $payment['pay_sum']);
-            $payment_schedule[$payment['date']]['loan_percents_pay'] = preg_replace("/[^,.0-9]/", '', $payment['loan_percents_pay']);
-            $payment_schedule[$payment['date']]['loan_body_pay'] = preg_replace("/[^,.0-9]/", '', $payment['loan_body_pay']);
-            $payment_schedule[$payment['date']]['rest_pay'] = preg_replace("/[^,.0-9]/", '', $payment['rest_pay']);
+            $payment_schedule[$payment['date']]['pay_sum'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['pay_sum']);
+            $payment_schedule[$payment['date']]['loan_percents_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['loan_percents_pay']);
+            $payment_schedule[$payment['date']]['loan_body_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['loan_body_pay']);
+            $payment_schedule[$payment['date']]['rest_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['rest_pay']);
             unset($payment_schedule[$date]);
         }
 
         foreach ($results as $key => $result) {
-            $results[$key]['all_sum_pay'] = preg_replace("/[^,.0-9]/", '', $result['all_sum_pay']);
-            $results[$key]['all_loan_percents_pay'] = preg_replace("/[^,.0-9]/", '', $result['all_loan_percents_pay']);
-            $results[$key]['all_loan_body_pay'] = preg_replace("/[^,.0-9]/", '', $result['all_loan_body_pay']);
-            $results[$key]['all_comission_pay'] = preg_replace("/[^,.0-9]/", '', $result['all_comission_pay']);
-            $results[$key]['all_rest_pay_sum'] = preg_replace("/[^,.0-9]/", '', $result['all_rest_pay_sum']);
+            $results[$key]['all_sum_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_sum_pay']);
+            $results[$key]['all_loan_percents_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_loan_percents_pay']);
+            $results[$key]['all_loan_body_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_loan_body_pay']);
+            $results[$key]['all_comission_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_comission_pay']);
+            $results[$key]['all_rest_pay_sum'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_rest_pay_sum']);
         }
 
         $payment_schedule = array_merge($payment_schedule, $results);
