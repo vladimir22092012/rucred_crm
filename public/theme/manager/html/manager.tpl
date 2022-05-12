@@ -82,6 +82,79 @@
                 });
             });
 
+            $('.edit_email').click(function (e) {
+                e.preventDefault();
+
+                $(this).hide();
+                $('.show_email').hide();
+                $('.show_email_code').hide();
+                $('.email_edit_form').show();
+
+                $('.cancel_edit').click(function (e) {
+                    e.preventDefault();
+
+                    $('.email_edit_form').hide();
+                    $('.edit_email').show();
+                    $('.show_email').show();
+                });
+
+                $('.accept_edit').click(function (e) {
+                    e.preventDefault();
+
+                    let user_id = $(this).attr('data-user');
+                    let email = $('input[class="form-control email"]').val();
+
+                    $.ajax({
+                        method: 'POST',
+                        data: {
+                            action: 'edit_email',
+                            user_id: user_id,
+                            email: email,
+                        },
+                        success: function (resp) {
+                            if (resp == 'error') {
+                                Swal.fire({
+                                    title: 'Такой номер уже зарегистрирован',
+                                    confirmButtonText: 'ОК'
+                                });
+                            }
+                            else {
+                                $('.show_email_code').show();
+                            }
+                        }
+                    })
+                });
+
+                $('.accept_edit_email_with_code').click(function (e) {
+                    e.preventDefault();
+
+                    let user_id = $(this).attr('data-user');
+                    let email = $('input[class="form-control email"]').val();
+                    let code = $('input[class="form-control code"]').val();
+
+                    $.ajax({
+                        method: 'POST',
+                        data: {
+                            action: 'edit_email_with_code',
+                            user_id: user_id,
+                            email: email,
+                            code: code,
+                        },
+                        success: function (response) {
+                            console.log(JSON.parse(response));
+                            if (JSON.parse(response).error === 1) {
+                                Swal.fire({
+                                    title: 'Неверный код',
+                                    confirmButtonText: 'ОК'
+                                });
+                            } else {
+                                location.reload();
+                            }
+                        }
+                    })
+                });
+            });
+
             $('.edit_password').click(function (e) {
                 e.preventDefault();
 
@@ -584,13 +657,46 @@
                                             </div>
                                         </div>
                                     {/if}
-                                    <div class="form-group">
-                                        <label class="col-md-5">Email</label>
-                                        <div class="col-md-12">
-                                            <input type="text" name="email" value="{$user->email|default: ""}"
-                                                   class="form-control">
+                                    {if in_array($manager->role, ['admin', 'developer'])}
+                                        <div class="form-group">
+                                            <label class="col-md-5">Email</label>
+                                            <div class="col-md-12">
+                                                <input type="text" name="email" value="{$user->email|default: ""}"
+                                                       class="form-control">
+                                            </div>
                                         </div>
-                                    </div>
+                                    {else}
+                                        <div class="col-12">
+                                            <h5 class="form-control-static">Email <a href="#" data-user="{$client->id}" class="text-info edit_email"><i class="fas fa-edit"></i></a></h5>
+                                            <div class="show_email">{$user->email|default: "Email не введён"}</div>
+                                            <div class="email_edit_form" style="display: none">
+                                                <div class="mb-3">
+                                                    <div class="form-row">
+                                                        <div class="col">
+                                                            <input type="text" class="form-control email" value="{$user->email|default: ""}">
+                                                        </div>
+                                                        <div class="col">
+                                                            <input type="button"
+                                                                   data-user="{$user->id}"
+                                                                   class="btn btn-success accept_edit"
+                                                                   value="Сохранить">
+                                                            <input type="button"
+                                                                   class="btn btn-danger cancel_edit"
+                                                                   value="Отмена">
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <div class="input-group show_email_code" style="display: none">
+                                                                <input type="text" class="form-control code" placeholder="Введите код из письма">
+                                                                <div class="input-group-append">
+                                                                    <button class="btn btn-primary accept_edit_email_with_code" type="button" data-user="{$user->id}">Подтвердить</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {/if}
                                     {if in_array($manager->role, ['admin', 'developer'])}
                                         <div class="form-group">
                                             <label class="col-md-5">Телефон</label>
@@ -622,7 +728,7 @@
                                                             <div class="input-group show_phone_code" style="display: none">
                                                                 <input type="text" class="form-control code" placeholder="Введите код из смс">
                                                                 <div class="input-group-append">
-                                                                    <button class="btn btn-primary accept_edit_with_code" type="button" data-user="{$user->id}">Подтвердить</button>
+                                                                    <button class="btn btn-primary accept_edit_email_with_code" type="button" data-user="{$user->id}">Подтвердить</button>
                                                                 </div>
                                                             </div>
                                                         </div>

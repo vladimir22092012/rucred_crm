@@ -17,6 +17,14 @@ class ManagerController extends Controller
                         $this->action_get_companies();
                         break;
 
+                    case 'edit_email':
+                        $this->action_edit_email();
+                        break;
+
+                    case 'edit_email_with_code':
+                        $this->action_edit_email_with_code();
+                        break;
+
                     case 'edit_phone':
                         $this->action_edit_phone();
                         break;
@@ -181,6 +189,49 @@ class ManagerController extends Controller
         $companies = $this->Companies->get_companies(['group_id' => $group_id]);
 
         echo json_encode($companies);
+        exit;
+    }
+
+    private function action_edit_email()
+    {
+        $email = $this->request->post('email');
+        $user_id= $this->request->post('user_id');
+        $code = random_int(1000, 9999);
+//        $response = $this->emails->send(
+//            $email,
+//            $code
+//        );
+        $result = $this->db->query('
+        INSERT INTO s_email_messages
+        SET user_id = ?, email = ?, code = ?, created = ?
+        ', $user_id, $email, $code, date('Y-m-d H:i:s'));
+
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_edit_email_with_code()
+    {
+        $user_id= $this->request->post('user_id');
+        $email = $this->request->post('email');
+        $code = $this->request->post('code');
+
+        $this->db->query("
+        SELECT code, created
+        FROM s_email_messages
+        WHERE user_id = ?
+        AND email = ?
+        AND code = ?
+        ORDER BY created DESC
+        LIMIT 1
+        ", $user_id, $email, $code);
+        $results = $this->db->results();
+        if (empty($results)) {
+            echo json_encode(['error' => 1]);
+            exit;
+        }
+        $result = $this->managers->update_manager($user_id, ['email' => $email]);
+        echo json_encode(['success' => 1]);
         exit;
     }
 
