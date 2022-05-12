@@ -419,7 +419,6 @@
             });
 
             let manager_role = {{json_encode($manager->role)}};
-            console.log(manager_role);
 
             if (manager_role == 'employer')
                 $('.fa-edit').hide();
@@ -449,8 +448,47 @@
                         }
                     }
                 })
-            })
+            });
 
+            let error = 0;
+
+            $('.restructure_od').on('change', function () {
+
+                let loan_od = 0;
+                let period = $('.rest_sum').length;
+
+                $('.restructure_od').each(function () {
+                    let val = $(this).val();
+                    val = val.replace(' ', '');
+                    val = val.replace(' ', '');
+                    val = val.replace(',', '.');
+
+                    loan_od = loan_od + parseFloat(val);
+                });
+
+                let sum = loan_od.toFixed(2);
+
+                let loan_amount = ({json_encode($order->amount)});
+
+                let reason = loan_amount - sum;
+                reason = reason.toFixed(2);
+
+                if (reason == 0.00) {
+                    $('.rest_sum').eq(period - 1).removeClass('warning_rest_sum');
+                    $('input[name="result[all_loan_body_pay]"]').removeClass('warning_rest_sum');
+                }
+                else {
+                    $('.rest_sum').eq(period - 1).addClass('warning_rest_sum');
+                    $('input[name="result[all_loan_body_pay]"]').addClass('warning_rest_sum');
+                    error = 1;
+                }
+
+                let last_od = loan_amount - reason;
+
+                $('.rest_sum').eq(period - 1).val(reason);
+                $('input[name="result[all_loan_body_pay]"]').val(new Intl.NumberFormat('ru-RU').format(last_od));
+
+            });
         });
     </script>
 {/capture}
@@ -462,6 +500,10 @@
     <style>
         label, p, .btn {
             font-size: 13px !important;
+        }
+
+        .warning_rest_sum {
+            border: 2px solid #a90009;
         }
     </style>
     <link href="theme/manager/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet"
@@ -1956,22 +1998,26 @@
                                                                                    value="{$payment->pay_sum|floatval|number_format:2:',':' '}"
                                                                                    readonly>
                                                                         </td>
-                                                                        <td><input type="text" class="form-control"
+                                                                        <td><input type="text"
+                                                                                   class="form-control restructure_od"
                                                                                    name="loan_body_pay[][loan_body_pay]"
                                                                                    value="{$payment->loan_body_pay|floatval|number_format:2:',':' '}"
                                                                                    readonly>
                                                                         </td>
-                                                                        <td><input type="text" class="form-control"
+                                                                        <td><input type="text"
+                                                                                   class="form-control restructure_prc"
                                                                                    name="loan_percents_pay[][loan_percents_pay]"
                                                                                    value="{$payment->loan_percents_pay|floatval|number_format:2:',':' '}"
                                                                                    readonly>
                                                                         </td>
-                                                                        <td><input type="text" class="form-control"
+                                                                        <td><input type="text"
+                                                                                   class="form-control restructure_cms"
                                                                                    name="comission_pay[][comission_pay]"
                                                                                    value="{$payment->comission_pay|floatval|number_format:2:',':' '}"
                                                                                    readonly>
                                                                         </td>
-                                                                        <td><input type="text" class="form-control"
+                                                                        <td><input type="text"
+                                                                                   class="form-control rest_sum"
                                                                                    name="rest_pay[][rest_pay]"
                                                                                    value="{$payment->rest_pay|floatval|number_format:2:',':' '}"
                                                                                    readonly>
