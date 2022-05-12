@@ -25,6 +25,10 @@ class ManagerController extends Controller
                         $this->action_edit_phone_with_code();
                         break;
 
+                    case 'edit_password':
+                        $this->action_edit_password();
+                        break;
+
                 endswitch;
             }
             else{
@@ -228,22 +232,13 @@ class ManagerController extends Controller
         $old_password = $this->request->post('old_password');
         $new_password = $this->request->post('new_password');
 
-        $this->db->query("
-        SELECT id, password
-        FROM s_users
-        WHERE user_id = ?
-        ORDER BY created DESC
-        LIMIT 1
-        ", $user_id);
-        $results = $this->db->results();
+        $result = $this->managers->check_password_by_id($user_id, $old_password);
 
-        var_dump($results);
-
-        if (empty($results)) {
+        if (empty($result)) {
             echo json_encode(['error' => 1]);
             exit;
         }
-        $result = $this->managers->update_manager($user_id, ['password' => $new_password]);
+        $this->managers->update_manager($user_id, ['password' => $new_password]);
         echo json_encode(['success' => 1]);
         exit;
     }
