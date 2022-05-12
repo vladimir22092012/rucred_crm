@@ -82,6 +82,156 @@
                 });
             });
 
+            $('.edit_email').click(function (e) {
+                e.preventDefault();
+
+                $(this).hide();
+                $('.show_email').hide();
+                $('.show_email_code').hide();
+                $('.email_edit_form').show();
+
+                $('.cancel_edit').click(function (e) {
+                    e.preventDefault();
+
+                    $('.email_edit_form').hide();
+                    $('.edit_email').show();
+                    $('.show_email').show();
+                });
+
+                $('.accept_edit').click(function (e) {
+                    e.preventDefault();
+
+                    let user_id = $(this).attr('data-user');
+                    let email = $('input[class="form-control email"]').val();
+
+                    $.ajax({
+                        method: 'POST',
+                        data: {
+                            action: 'edit_email',
+                            user_id: user_id,
+                            email: email,
+                        },
+                        success: function (resp) {
+                            if (resp == 'error') {
+                                Swal.fire({
+                                    title: 'Такой номер уже зарегистрирован',
+                                    confirmButtonText: 'ОК'
+                                });
+                            }
+                            else {
+                                $('.show_email_code').show();
+                            }
+                        }
+                    })
+                });
+
+                $('.accept_edit_email_with_code').click(function (e) {
+                    e.preventDefault();
+
+                    let user_id = $(this).attr('data-user');
+                    let email = $('input[class="form-control email"]').val();
+                    let code = $('input[class="form-control code"]').val();
+
+                    $.ajax({
+                        method: 'POST',
+                        data: {
+                            action: 'edit_email_with_code',
+                            user_id: user_id,
+                            email: email,
+                            code: code,
+                        },
+                        success: function (response) {
+                            console.log(JSON.parse(response));
+                            if (JSON.parse(response).error === 1) {
+                                Swal.fire({
+                                    title: 'Неверный код',
+                                    confirmButtonText: 'ОК'
+                                });
+                            } else {
+                                location.reload();
+                            }
+                        }
+                    })
+                });
+            });
+
+            $('.edit_password').click(function (e) {
+                e.preventDefault();
+
+                $(this).hide();
+                $('.show_password').hide();
+                $('.password_edit_form').show();
+
+                $('.cancel_edit').click(function (e) {
+                    e.preventDefault();
+
+                    $('.password_edit_form').hide();
+                    $('.edit_password').show();
+                    $('.show_password').show();
+                });
+
+                $('.accept_edit').click(function (e) {
+                    e.preventDefault();
+
+                    let user_id = $(this).attr('data-user');
+                    let old_password = $('input[class="form-control old_password"]').val();
+                    let new_password = $('input[class="form-control new_password"]').val();
+                    let new_password_confirmation = $('input[class="form-control new_password_confirmation"]').val();
+
+                    if (new_password === new_password_confirmation) {
+                        $.ajax({
+                            method: 'POST',
+                            data: {
+                                action: 'edit_password',
+                                user_id: user_id,
+                                old_password: old_password,
+                                new_password: new_password,
+                            },
+                            success: function (resp) {
+                                if (resp == 'error') {
+                                    Swal.fire({
+                                        title: 'Такой номер уже зарегистрирован',
+                                        confirmButtonText: 'ОК'
+                                    });
+                                }
+                                else {
+                                    location.reload();
+                                }
+                            }
+                        })
+                    }
+                });
+
+                $('.accept_edit_with_code').click(function (e) {
+                    e.preventDefault();
+
+                    let user_id = $(this).attr('data-user');
+                    let phone = $('input[class="form-control phone"]').val();
+                    let code = $('input[class="form-control code"]').val();
+
+                    $.ajax({
+                        method: 'POST',
+                        data: {
+                            action: 'edit_phone_with_code',
+                            user_id: user_id,
+                            phone: phone,
+                            code: code,
+                        },
+                        success: function (response) {
+                            console.log(JSON.parse(response));
+                            if (JSON.parse(response).error === 1) {
+                                Swal.fire({
+                                    title: 'Неверный код',
+                                    confirmButtonText: 'ОК'
+                                });
+                            } else {
+                                location.reload();
+                            }
+                        }
+                    })
+                });
+            });
+
             $('.js-block-button').click(function (e) {
                 e.preventDefault();
 
@@ -427,17 +577,58 @@
                                             </div>
                                         </div>
                                     {/if}
-                                    <div class="form-group {if in_array('empty_password', (array)$errors)}has-danger{/if}">
-                                        <label class="col-md-12">{if isset($user->id)}Новый пароль{else}Пароль{/if}</label>
-                                        <div class="col-md-12">
-                                            <input type="password" name="password" value=""
-                                                   class="form-control form-control-line"
-                                                   {if !isset($user->id)}required="true"{/if} />
-                                            {if in_array('empty_password', (array)$errors)}
-                                                <small class="form-control-feedback">Укажите пароль!</small>
-                                            {/if}
+                                    {if in_array($manager->role, ['admin', 'developer'])}
+                                        <div class="form-group {if in_array('empty_password', (array)$errors)}has-danger{/if}">
+                                            <label class="col-md-12">{if isset($user->id)}Новый пароль{else}Пароль{/if}</label>
+                                            <div class="col-md-12">
+                                                <input type="password" name="password" value=""
+                                                       class="form-control form-control-line"
+                                                       {if !isset($user->id)}required="true"{/if} />
+                                                {if in_array('empty_password', (array)$errors)}
+                                                    <small class="form-control-feedback">Укажите пароль!</small>
+                                                {/if}
+                                            </div>
                                         </div>
-                                    </div>
+                                    {else}
+                                        <div class="col-12">
+                                            <h5 class="form-control-static">Пароль <a href="#" data-user="{$client->id}" class="text-info edit_password"><i class="fas fa-edit"></i></a></h5>
+                                            <div class="show_password">*********</div>
+                                            <div class="password_edit_form" style="display: none">
+                                                <div class="mb-3">
+                                                    <label>Старый пароль</label>
+                                                    <div>
+                                                        <input type="password" name="old_password" value="" class="form-control old_password"
+                                                               {if !isset($user->id)}required="true"{/if} />
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label>Новый пароль</label>
+                                                    <div>
+                                                        <input type="password" name="new_password" value=""
+                                                               class="form-control new_password"
+                                                               {if !isset($user->id)}required="true"{/if} />
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label>Повторите пароль</label>
+                                                    <div>
+                                                        <input type="password" name="new_password_confirmation" value=""
+                                                               class="form-control new_password_confirmation"
+                                                               {if !isset($user->id)}required="true"{/if} />
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <input type="button"
+                                                           data-user="{$user->id}"
+                                                           class="btn btn-success accept_edit"
+                                                           value="Сохранить">
+                                                    <input type="button"
+                                                           class="btn btn-danger cancel_edit"
+                                                           value="Отмена">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {/if}
                                     {if in_array($manager->role, ['admin', 'developer'])}
                                         <div class="form-group">
                                             <label class="col-md-12">Группа</label>
@@ -466,50 +657,86 @@
                                             </div>
                                         </div>
                                     {/if}
-                                    <div class="form-group">
-                                        <label class="col-md-5">Email</label>
-                                        <div class="col-md-12">
-                                            <input type="text" name="email" value="{$user->email|default: ""}"
-                                                   class="form-control">
+                                    {if in_array($manager->role, ['admin', 'developer'])}
+                                        <div class="form-group">
+                                            <label class="col-md-5">Email</label>
+                                            <div class="col-md-12">
+                                                <input type="text" name="email" value="{$user->email|default: ""}"
+                                                       class="form-control">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-md-5">Телефон</label>
-                                        <div class="col-md-12">
-                                            <input type="text" name="phone" value="{$user->phone|default: ""}"
-                                                   class="form-control form-control-line">
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <h5 class="form-control-static">Телефон <a href="#" data-user="{$client->id}" class="text-info edit_phone"><i class="fas fa-edit"></i></a></h5>
-                                        <div class="show_phone">{$user->phone|default: "Телефон не введён"}</div>
-                                        <div class="phone_edit_form" style="display: none">
-                                            <div class="mb-3">
-                                                <div class="form-row">
-                                                    <div class="col">
-                                                        <input type="text" class="form-control phone" value="{$user->phone|default: ""}">
-                                                    </div>
-                                                    <div class="col">
-                                                        <input type="button"
-                                                               data-user="{$user->id}"
-                                                               class="btn btn-success accept_edit"
-                                                               value="Сохранить">
-                                                        <input type="button"
-                                                               class="btn btn-danger cancel_edit"
-                                                               value="Отмена">
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <div class="input-group show_phone_code" style="display: none">
-                                                            <input type="text" class="form-control code" placeholder="Введите код из смс">
-                                                            <div class="input-group-append">
-                                                                <button class="btn btn-primary accept_edit_with_code" type="button" data-user="{$user->id}">Подтвердить</button>
+                                    {else}
+                                        <div class="col-12">
+                                            <h5 class="form-control-static">Email <a href="#" data-user="{$client->id}" class="text-info edit_email"><i class="fas fa-edit"></i></a></h5>
+                                            <div class="show_email">{$user->email|default: "Email не введён"}</div>
+                                            <div class="email_edit_form" style="display: none">
+                                                <div class="mb-3">
+                                                    <div class="form-row">
+                                                        <div class="col">
+                                                            <input type="text" class="form-control email" value="{$user->email|default: ""}">
+                                                        </div>
+                                                        <div class="col">
+                                                            <input type="button"
+                                                                   data-user="{$user->id}"
+                                                                   class="btn btn-success accept_edit"
+                                                                   value="Сохранить">
+                                                            <input type="button"
+                                                                   class="btn btn-danger cancel_edit"
+                                                                   value="Отмена">
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <div class="input-group show_email_code" style="display: none">
+                                                                <input type="text" class="form-control code" placeholder="Введите код из письма">
+                                                                <div class="input-group-append">
+                                                                    <button class="btn btn-primary accept_edit_email_with_code" type="button" data-user="{$user->id}">Подтвердить</button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    {/if}
+                                    {if in_array($manager->role, ['admin', 'developer'])}
+                                        <div class="form-group">
+                                            <label class="col-md-5">Телефон</label>
+                                            <div class="col-md-12">
+                                                <input type="text" name="phone" value="{$user->phone|default: ""}"
+                                                       class="form-control form-control-line">
+                                            </div>
+                                        </div>
+                                    {else}
+                                        <div class="col-12">
+                                            <h5 class="form-control-static">Телефон <a href="#" data-user="{$client->id}" class="text-info edit_phone"><i class="fas fa-edit"></i></a></h5>
+                                            <div class="show_phone">{$user->phone|default: "Телефон не введён"}</div>
+                                            <div class="phone_edit_form" style="display: none">
+                                                <div class="mb-3">
+                                                    <div class="form-row">
+                                                        <div class="col">
+                                                            <input type="text" class="form-control phone" value="{$user->phone|default: ""}">
+                                                        </div>
+                                                        <div class="col">
+                                                            <input type="button"
+                                                                   data-user="{$user->id}"
+                                                                   class="btn btn-success accept_edit"
+                                                                   value="Сохранить">
+                                                            <input type="button"
+                                                                   class="btn btn-danger cancel_edit"
+                                                                   value="Отмена">
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <div class="input-group show_phone_code" style="display: none">
+                                                                <input type="text" class="form-control code" placeholder="Введите код из смс">
+                                                                <div class="input-group-append">
+                                                                    <button class="btn btn-primary accept_edit_email_with_code" type="button" data-user="{$user->id}">Подтвердить</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {/if}
                                     {*
                                                                         {if in_array($manager->role, ['chief_collector','admin','developer'])}
 
@@ -544,11 +771,13 @@
                                                                             </div>
                                                                         </div>
                                     *}
-                                    <div class="form-group">
-                                        <div class="col-sm-12">
-                                            <button class="btn btn-success" type="submit">Сохранить</button>
+                                    {if in_array($manager->role, ['admin', 'developer'])}
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <button class="btn btn-success" type="submit">Сохранить</button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    {/if}
                                 </div>
                             </div>
 
