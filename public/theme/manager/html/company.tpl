@@ -40,6 +40,30 @@
             },
         };
     </script>
+    <script>
+        $(function () {
+
+            $('.searchable').on('change', function (e) {
+                e.preventDefault();
+
+                $('.branches_list').show();
+
+                $('.searchable').each(function () {
+                    let value = $(this).val();
+                    let index = $(this).parent().index() + 1;
+
+                    if (value && value.length > 0) {
+                        $('td:nth-child(' + index + ')').each(function () {
+                            let find_value = $(this).text();
+                            if (find_value.includes(value) === false) {
+                                $(this).closest('.branches_list').hide();
+                            }
+                        });
+                    }
+                });
+            });
+        })
+    </script>
 {/capture}
 
 <div class="page-wrapper">
@@ -196,7 +220,7 @@
                                         <td colspan="7"></td>
                                     </tr>
                                     <tr>
-                                        <td rowspan="{count($branches)+1}">Филиалы и даты выплат</td>
+                                        <td rowspan="{count($branches)+2}">Филиалы и даты выплат</td>
                                         <td>Код</td>
                                         <td>Наименование филиала</td>
                                         <td>Дата выплаты</td>
@@ -207,8 +231,15 @@
                                             </button>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td><input type="text" class="form-control searchable"></td>
+                                        <td></td>
+                                        <td><input type="text" class="form-control searchable"></td>
+                                        <td colspan="2"></td>
+                                    </tr>
                                     {foreach $branches as $branch}
-                                        <tr>
+                                        <tr class="branches_list">
                                             <td>{$company->gr_number}{$company->com_number}-{$branch->number}</td>
                                             <td>{$branch->name}</td>
                                             <td>{$branch->payday}</td>
