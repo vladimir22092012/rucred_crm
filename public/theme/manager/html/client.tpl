@@ -74,15 +74,13 @@
 
                     let user_id = $(this).attr('data-user');
                     let number = $('input[class="form-control number_edit_form number"]').val();
-                    let order_id = {{$order->order_id}};
 
                     $.ajax({
                         method: 'POST',
                         data: {
                             action: 'edit_personal_number',
                             user_id: user_id,
-                            number: number,
-                            order_id: order_id
+                            number: number
                         },
                         success: function (resp) {
                             if (resp == 'error') {
@@ -95,8 +93,7 @@
                                 location.reload();
                             }
                         }
-                    })
-
+                    });
                 });
             })
         })
@@ -175,14 +172,15 @@
                                                     клиента:
                                                 </small>
                                                 <small class="show_personal_number">{$client->personal_number}</small>
-                                                <a href="" data-user="{$client->id}"
+                                                <a data-user="{$client->id}"
                                                    class="text-info edit_personal_number"><i
                                                             class=" fas fa-edit"></i></a>
                                                 <input type="text" class="form-control number_edit_form number"
                                                        style="width: 80px; display: none"
                                                        value="{$client->personal_number}">
                                                 <input type="button" style="display: none"
-                                                       data-user="{$client->id}" class="btn btn-success number_edit_form accept_edit"
+                                                       data-user="{$client->id}"
+                                                       class="btn btn-success number_edit_form accept_edit"
                                                        value="Сохранить">
                                                 <input type="button" style="display: none"
                                                        class="btn btn-danger number_edit_form cancel_edit"
