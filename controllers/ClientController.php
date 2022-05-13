@@ -918,6 +918,8 @@ class ClientController extends Controller
         $user_id = (int)$this->request->post('user_id');
         $number = (int)$this->request->post('number');
 
+        $number = str_pad($number, 6, 0, STR_PAD_LEFT);
+
         $check = $this->users->check_busy_number($number);
 
         if ($check && $check != 0) {

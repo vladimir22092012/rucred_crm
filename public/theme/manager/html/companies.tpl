@@ -64,6 +64,26 @@
                     $('#jur_address').val(suggestion.data.address.value);
                 }
             });
+
+            $('.searchable:not(select)').on('change', function (e) {
+                e.preventDefault();
+
+                $('table tbody tr').show();
+
+                $('.searchable:not(select)').each(function () {
+                    let value = $(this).val();
+                    let index = $(this).parent().index() + 1;
+
+                    if (value && value.length > 0) {
+                        $('td:nth-child(' + index + ')').each(function () {
+                            let find_value = $(this).text();
+                            if (find_value.includes(value) === false) {
+                                $(this).closest('tr').hide();
+                            }
+                        });
+                    }
+                });
+            });
         })
     </script>
 {/capture}
@@ -109,20 +129,22 @@
                                     <thead>
                                     <tr>
                                         <th
-                                            class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'group_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'group_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                                class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'group_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'group_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'group_asc'}<a href="{url page=null sort='group_desc'}">
                                                     Группа, №</a>
                                             {else}<a href="{url page=null sort='group_asc'}">Группа, №</a>{/if}
                                         </th>
                                         <th
                                                 class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'company_num_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'company_num_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'company_num_asc'}<a href="{url page=null sort='company_num_desc'}">
+                                            {if $sort == 'company_num_asc'}<a
+                                                href="{url page=null sort='company_num_desc'}">
                                                     Компания №</a>
                                             {else}<a href="{url page=null sort='company_num_asc'}">Компания №</a>{/if}
                                         </th>
                                         <th
                                                 class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'company_name_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'company_name_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'company_name_asc'}<a href="{url page=null sort='company_name_desc'}">
+                                            {if $sort == 'company_name_asc'}<a
+                                                href="{url page=null sort='company_name_desc'}">
                                                     Компания</a>
                                             {else}<a href="{url page=null sort='company_name_asc'}">Компания</a>{/if}
                                         </th>
@@ -179,16 +201,15 @@
                                                 {/foreach}
                                             </select>
                                         </th>
-                                        <th class=""></th>
-                                        <th class=""></th>
-                                        <th class=""></th>
-                                        <th class=""></th>
-                                        <th class=""></th>
-                                        <th class=""></th>
-                                        <th class=""></th>
-                                        <th class=""></th>
-                                        <th class=""></th>
-                                        <th class=""></th>
+                                        <th class=""><input type="text" class="form-control searchable"></th>
+                                        <th class=""><input type="text" class="form-control searchable"></th>
+                                        <th class=""><input type="text" class="form-control searchable"></th>
+                                        <th class=""><input type="text" class="form-control searchable"></th>
+                                        <th class=""><input type="text" class="form-control searchable"></th>
+                                        <th class=""><input type="text" class="form-control searchable"></th>
+                                        <th class=""><input type="text" class="form-control searchable"></th>
+                                        <th class=""><input type="text" class="form-control searchable"></th>
+                                        <th class=""><input type="text" class="form-control searchable"></th>
                                     </tr>
                                     </thead>
                                     <tbody id="table-body">
@@ -199,17 +220,17 @@
                                                 onmouseover="this.style.backgroundColor='#AEA8F5';"
                                                 onmouseout="this.style.backgroundColor='white';">
                                                 <td>{$company->gr_number}, {$company->gr_name}</td>
-                                                <td>{$company->gr_number}{$company->com_number}</td>
-                                                <td>{$company->com_name} {if ($company->blocked)}
+                                                <td class="com-number">{$company->gr_number}{$company->com_number}</td>
+                                                <td class="com-name">{$company->com_name} {if ($company->blocked)}
                                                         <span class="label label-danger">Blocked</span>
                                                     {/if}</td>
-                                                <td>{$company->eio_position}</td>
-                                                <td>{$company->eio_fio}</td>
-                                                <td>{$company->inn}</td>
-                                                <td>{$company->ogrn}</td>
-                                                <td>{$company->kpp}</td>
-                                                <td>{$company->jur_address}</td>
-                                                <td>{$company->phys_address}</td>
+                                                <td class="eio-pos">{$company->eio_position}</td>
+                                                <td class="eio-fio">{$company->eio_fio}</td>
+                                                <td class="inn">{$company->inn}</td>
+                                                <td class="ogrn">{$company->ogrn}</td>
+                                                <td class="kpp">{$company->kpp}</td>
+                                                <td class="jur">{$company->jur_address}</td>
+                                                <td class="phys">{$company->phys_address}</td>
                                             </tr>
                                         {/foreach}
                                     {/if}
