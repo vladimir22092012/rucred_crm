@@ -65,38 +65,22 @@
                 }
             });
 
-            $('.searchable').on('change', function (e) {
+            $('.searchable:not(select)').on('change', function (e) {
                 e.preventDefault();
 
-                $('.searchable').each(function () {
+                $('table tbody tr').show();
+
+                $('.searchable:not(select)').each(function () {
                     let value = $(this).val();
-                    let index = $(this).parent().index();
-                    index ++;
+                    let index = $(this).parent().index() + 1;
 
-                    if(value.length === 0){
-
+                    if (value && value.length > 0) {
                         $('td:nth-child(' + index + ')').each(function () {
-                            $(this).closest('tr').show();
+                            let find_value = $(this).text();
+                            if (find_value.includes(value) === false) {
+                                $(this).closest('tr').hide();
+                            }
                         });
-                    }
-
-                    $('td:nth-child(' + index + ')').each(function () {
-                        let find_value = $(this).text();
-                        if (find_value.includes(value) === false) {
-                            $(this).closest('tr').hide();
-                        }
-                    });
-                });
-
-                let that = $(this);
-                let value = that.val();
-                let index = that.parent().index();
-                index ++;
-
-                $('td:nth-child(' + index + ')').each(function () {
-                    let find_value = $(this).text();
-                    if (find_value.includes(value) === false) {
-                        $(this).closest('tr').hide();
                     }
                 });
             });
