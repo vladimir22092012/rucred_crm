@@ -19,8 +19,6 @@
         $(function () {
             let order = {{json_encode($order)}};
             if (order) {
-                $('.price_basic[id="' + order['loan_type'] + '"]').trigger('click');
-
                 if (parseInt(order['profunion']) == 3) {
                     $('input[id="profunion2"]').trigger('click');
                     $('input[id="want_profunion"]').trigger('click');
@@ -71,7 +69,9 @@
                 setTimeout(function () {
                     $('select[name="company"] option[value="' + order['company_id'] + '"]').prop('selected', true);
                     $('select[name="company"] option[value="' + order['company_id'] + '"]').change();
-                }, 50);
+                    $('#' + order['company_id'] +'').trigger('click');
+                    $('.to_form_loan').trigger('click');
+                }, 500);
             }
         })
     </script>
@@ -121,10 +121,6 @@
             position: static !important;
         }
 
-        .icon_messag {
-            position: relative;
-            right: 31em;
-        }
     </style>
     <link href="theme/manager/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet"
           type="text/css"/>
@@ -427,10 +423,18 @@
                                             <label class="control-label" style="margin-left: 240px">Моб. телефон</label><br>
                                             <input class="form-control fio_spouse"
                                                    style="width: 350px; margin-left: 25px"
-                                                   type="text" name="fio_spouse" value="{$order->fio_spouse}"/>
+                                                   type="text" name="fio_spouse[lastname]" value="{$fio_spouse[0]}"/>
                                             <input class="form-control phone_num phone_spouse"
                                                    style="width: 200px; margin-left: 25px"
-                                                   type="text" name="phone_spouse" value="{$order->phone_spouse}"/>
+                                                   type="text" name="phone_spouse"
+                                                   value="{$order->phone_spouse}"/><br><br>
+                                            <input class="form-control fio_spouse"
+                                                   style="width: 350px; margin-left: 25px"
+                                                   type="text" name="fio_spouse[firstname]"
+                                                   value="{$fio_spouse[1]}"/><br><br>
+                                            <input class="form-control fio_spouse"
+                                                   style="width: 350px; margin-left: 25px"
+                                                   type="text" name="fio_spouse[patronymic]" value="{$fio_spouse[2]}"/>
                                         </div>
                                         <br>
 
@@ -448,24 +452,33 @@
                                         <br>
                                         <h4>Мессенджер для связи</h4><br>
                                         <div style="width: 100%">
+                                            <img class="icon_messag"
+                                                 src="https://img.icons8.com/ios-glyphs/344/viber.png" width="30"
+                                                 height="30">
                                             <input class="form-control phone_num"
                                                    style="width: 450px; margin-left: 25px"
                                                    type="text" name="viber" value="{$order->viber_num}">
+                                            <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
+                                                   name="viber_same">
+                                            <label>Совпадает с номером мобильного</label><br><br>
                                             <img class="icon_messag"
-                                                 src="https://img.icons8.com/ios-glyphs/344/viber.png" width="30"
-                                                 height="30"><br><br>
+                                                 src="https://img.icons8.com/office/344/whatsapp--v1.png" width="30"
+                                                 height="30">
                                             <input class="form-control phone_num"
                                                    style="width: 450px; margin-left: 25px"
                                                    type="text" name="whatsapp" value="{$order->whatsapp_num}">
+                                            <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
+                                                   name="whatsapp_same">
+                                            <label>Совпадает с номером мобильного</label><br><br>
                                             <img class="icon_messag"
-                                                 src="https://img.icons8.com/office/344/whatsapp--v1.png" width="30"
-                                                 height="30"><br><br>
+                                                 src="https://img.icons8.com/color/344/telegram-app--v1.png" width="30"
+                                                 height="30">
                                             <input class="form-control phone_num"
                                                    style="width: 450px; margin-left: 25px"
                                                    type="text" name="telegram" value="{$order->telegram_num}">
-                                            <img class="icon_messag"
-                                                 src="https://img.icons8.com/color/344/telegram-app--v1.png" width="30"
-                                                 height="30"><br><br>
+                                            <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
+                                                   name="telegram_same">
+                                            <label>Совпадает с номером мобильного</label><br><br>
                                         </div>
                                         <br>
                                         <h4>Основные каналы связи</h4>
@@ -538,15 +551,34 @@
                                             </tr>
                                             </thead>
                                             <tbody id="attestation_table">
-                                            <tr>
-                                                <td><input class="form-control daterange"
-                                                           name="date[][date]" type="text"
-                                                           value=""></td>
-                                                <td><input class="form-control"
-                                                           name="comment[][comment]" type="text"
-                                                           value=""></td>
-                                                <td></td>
-                                            </tr>
+                                            {if !empty($order->attestation)}
+                                                {foreach json_decode($order->attestation) as $attestation}
+                                                    <tr>
+                                                        <td><input class="form-control daterange"
+                                                                   name="date[][date]" type="text"
+                                                                   value="{$attestation->date}"></td>
+                                                        <td><input class="form-control"
+                                                                   name="comment[][comment]" type="text"
+                                                                   value="{$attestation->comment}"></td>
+                                                        <td>
+                                                            <div type="button"
+                                                                 class="btn btn-outline-danger remove_from_attestation_table">
+                                                                -
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                {/foreach}
+                                            {else}
+                                                <tr>
+                                                    <td><input class="form-control daterange"
+                                                               name="date[][date]" type="text"
+                                                               value=""></td>
+                                                    <td><input class="form-control"
+                                                               name="comment[][comment]" type="text"
+                                                               value=""></td>
+                                                    <td></td>
+                                                </tr>
+                                            {/if}
                                             </tbody>
                                         </table>
                                         <br>
@@ -660,30 +692,61 @@
                                             </tr>
                                             </thead>
                                             <tbody id="credits_table">
-                                            <tr>
-                                                <td><input class="form-control"
-                                                           name="credits_bank_name[][credits_bank_name]" type="text"
-                                                           value=""></td>
-                                                <td><input class="form-control mask_number"
-                                                           name="credits_rest_sum[][credits_rest_sum]" type="text"
-                                                           value=""></td>
-                                                <td><input class="form-control mask_number"
-                                                           name="credits_month_pay[][credits_month_pay]" type="text"
-                                                           value=""></td>
-                                                <td><input class="form-control validity_period"
-                                                           name="credits_return_date[][credits_return_date]" type="text"
-                                                           value=""></td>
-                                                <td><input class="form-control"
-                                                           name="credits_percents[][credits_percents]" type="text"
-                                                           value=""></td>
-                                                <td><select class="form-control" name="credits_delay[][credits_delay]">
-                                                        <option value="Да">Да</option>
-                                                        <option value="Нет">Нет</option>
-                                                    </select></td>
-                                                <td><input type="button"
-                                                           class="btn btn-outline-success add_to_credits_table"
-                                                           value="+"></td>
-                                            </tr>
+                                            {if !empty($order->credits_story)}
+                                                {foreach json_decode($order->credits_story) as $credits_story}
+                                                    <tr>
+                                                        <td><input class="form-control"
+                                                                   name="credits_bank_name[][credits_bank_name]" type="text"
+                                                                   value="{$credits_story->credits_bank_name}"></td>
+                                                        <td><input class="form-control mask_number"
+                                                                   name="credits_rest_sum[][credits_rest_sum]" type="text"
+                                                                   value="{$credits_story->credits_rest_sum}"></td>
+                                                        <td><input class="form-control mask_number"
+                                                                   name="credits_month_pay[][credits_month_pay]" type="text"
+                                                                   value="{$credits_story->credits_month_pay}"></td>
+                                                        <td><input class="form-control validity_period"
+                                                                   name="credits_return_date[][credits_return_date]" type="text"
+                                                                   value="{$credits_story->credits_return_date}"></td>
+                                                        <td><input class="form-control"
+                                                                   name="credits_percents[][credits_percents]" type="text"
+                                                                   value="{$credits_story->credits_percents}"></td>
+                                                        <td><select class="form-control" name="credits_delay[][credits_delay]">
+                                                                <option value="Да">Да</option>
+                                                                <option value="Нет">Нет</option>
+                                                            </select></td>
+                                                        {if $credits_story@iteration == 1}
+                                                            <td><input type="button"
+                                                                       class="btn btn-outline-success add_to_credits_table"
+                                                                       value="+"></td>
+                                                        {/if}
+                                                    </tr>
+                                                {/foreach}
+                                            {else}
+                                                <tr>
+                                                    <td><input class="form-control"
+                                                               name="credits_bank_name[][credits_bank_name]" type="text"
+                                                               value=""></td>
+                                                    <td><input class="form-control mask_number"
+                                                               name="credits_rest_sum[][credits_rest_sum]" type="text"
+                                                               value=""></td>
+                                                    <td><input class="form-control mask_number"
+                                                               name="credits_month_pay[][credits_month_pay]" type="text"
+                                                               value=""></td>
+                                                    <td><input class="form-control validity_period"
+                                                               name="credits_return_date[][credits_return_date]" type="text"
+                                                               value=""></td>
+                                                    <td><input class="form-control"
+                                                               name="credits_percents[][credits_percents]" type="text"
+                                                               value=""></td>
+                                                    <td><select class="form-control" name="credits_delay[][credits_delay]">
+                                                            <option value="Да">Да</option>
+                                                            <option value="Нет">Нет</option>
+                                                        </select></td>
+                                                    <td><input type="button"
+                                                               class="btn btn-outline-success add_to_credits_table"
+                                                               value="+"></td>
+                                                </tr>
+                                            {/if}
                                             </tbody>
                                         </table>
                                         <br>
@@ -701,28 +764,61 @@
                                             </tr>
                                             </thead>
                                             <tbody id="cards_table">
-                                            <tr>
-                                                <td><input class="form-control "
-                                                           name="cards_bank_name[][cards_bank_name]" type="text"
-                                                           value=""></td>
-                                                <td><input class="form-control mask_number" name="cards_limit[][cards_limit]"
-                                                           type="text"
-                                                           value=""></td>
-                                                <td><input class="form-control mask_number" name="cards_rest_sum[][cards_rest_sum]"
-                                                           type="text"
-                                                           value=""></td>
-                                                <td><input class="form-control validity_period"
-                                                           name="cards_validity_period[][cards_validity_period]"
-                                                           type="text" value=""></td>
-                                                <td><select class="form-control" name="cards_delay[][cards_delay]">
-                                                        <option value="Да">Да</option>
-                                                        <option value="Нет">Нет</option>
-                                                    </select
-                                                </td>
-                                                <td><input type="button"
-                                                           class="btn btn-outline-success add_to_cards_table"
-                                                           value="+"></td>
-                                            </tr>
+                                            {if !empty($order->cards_story)}
+                                                {foreach json_decode($order->cards_story) as $cards_story}
+                                                    <tr>
+                                                        <td><input class="form-control "
+                                                                   name="cards_bank_name[][cards_bank_name]" type="text"
+                                                                   value="{$cards_story->cards_bank_name}"></td>
+                                                        <td><input class="form-control mask_number"
+                                                                   name="cards_limit[][cards_limit]"
+                                                                   type="text"
+                                                                   value="{$cards_story->cards_limit}"></td>
+                                                        <td><input class="form-control mask_number"
+                                                                   name="cards_rest_sum[][cards_rest_sum]"
+                                                                   type="text"
+                                                                   value="{$cards_story->cards_rest_sum}"></td>
+                                                        <td><input class="form-control validity_period"
+                                                                   name="cards_validity_period[][cards_validity_period]"
+                                                                   type="text" value="{$credits_story->cards_validity_period}"></td>
+                                                        <td><select class="form-control" name="cards_delay[][cards_delay]">
+                                                                <option value="Да">Да</option>
+                                                                <option value="Нет">Нет</option>
+                                                            </select
+                                                        </td>
+                                                        {if $credits_story@iteration == 1}
+                                                            <td><input type="button"
+                                                                       class="btn btn-outline-success add_to_cards_table"
+                                                                       value="+"></td>
+                                                        {/if}
+                                                    </tr>
+                                                {/foreach}
+                                            {else}
+                                                <tr>
+                                                    <td><input class="form-control "
+                                                               name="cards_bank_name[][cards_bank_name]" type="text"
+                                                               value=""></td>
+                                                    <td><input class="form-control mask_number"
+                                                               name="cards_limit[][cards_limit]"
+                                                               type="text"
+                                                               value=""></td>
+                                                    <td><input class="form-control mask_number"
+                                                               name="cards_rest_sum[][cards_rest_sum]"
+                                                               type="text"
+                                                               value=""></td>
+                                                    <td><input class="form-control validity_period"
+                                                               name="cards_validity_period[][cards_validity_period]"
+                                                               type="text" value=""></td>
+                                                    <td><select class="form-control" name="cards_delay[][cards_delay]">
+                                                            <option value="Да">Да</option>
+                                                            <option value="Нет">Нет</option>
+                                                        </select
+                                                    </td>
+                                                    <td><input type="button"
+                                                               class="btn btn-outline-success add_to_cards_table"
+                                                               value="+"></td>
+                                                </tr>
+                                            {/if}
                                             </tbody>
                                         </table>
                                         <br>

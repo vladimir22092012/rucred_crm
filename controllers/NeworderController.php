@@ -1,6 +1,6 @@
 <?php
 error_reporting(-1);
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'On');
 
 class NeworderController extends Controller
 {
@@ -48,10 +48,6 @@ class NeworderController extends Controller
             $user['account_number'] = trim($this->request->post('account_number'));
             $user['bank_name'] = trim($this->request->post('bank_name'));
             $user['bik_bank'] = trim($this->request->post('bik_bank'));
-
-            $user['viber_num'] = trim($this->request->post('viber'));
-            $user['whatsapp_num'] = trim($this->request->post('whatsapp'));
-            $user['telegram_num'] = trim($this->request->post('telegram'));
 
             $cards_bank_name = $this->request->post('cards_bank_name');
             $cards_limit = $this->request->post('cards_limit');
@@ -101,6 +97,8 @@ class NeworderController extends Controller
 
             $user['sex'] = (int)$this->request->post('sex');
             $user['fio_spouse'] = $this->request->post('fio_spouse');
+            $user['fio_spouse'] = implode(' ', $user['fio_spouse']);
+
             $user['phone_spouse'] = $this->request->post('phone_spouse');
 
             $user['foreign_flag'] = (int)$this->request->post('foreign');
@@ -111,6 +109,26 @@ class NeworderController extends Controller
 
 
             $user['phone_mobile'] = trim((string)$this->request->post('phone'));
+
+            if ($this->request->post('viber_same') == 1) {
+                $user['viber_num'] = $user['phone_mobile'];
+            } else {
+                $user['viber_num'] = trim($this->request->post('viber'));
+            }
+
+            if ($this->request->post('whatsapp_same') == 1) {
+                $user['viber_num'] = $user['phone_mobile'];
+            } else {
+                $user['viber_num'] = trim($this->request->post('whatsapp'));
+            }
+
+            if ($this->request->post('telegram_same') == 1) {
+                $user['viber_num'] = $user['phone_mobile'];
+            } else {
+                $user['viber_num'] = trim($this->request->post('telegram'));
+            }
+
+
             $user['email'] = trim((string)$this->request->post('email'));
             $user['gender'] = trim((string)$this->request->post('gender'));
             $user['birth'] = trim((string)$this->request->post('birth'));
@@ -277,10 +295,8 @@ class NeworderController extends Controller
                 $percent_per_month = (($order['percent'] / 100) * 365) / 12;
                 $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
 
-                if(date('d', strtotime($start_date)) < 10)
-                {
-                    if($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < 3)
-                    {
+                if (date('d', strtotime($start_date)) < 10) {
+                    if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < 3) {
                         $plus_loan_percents = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
                         $sum_pay = $annoouitet_pay + $plus_loan_percents;
                         $loan_percents_pay = ($rest_sum * $percent_per_month) + $plus_loan_percents;
@@ -288,10 +304,7 @@ class NeworderController extends Controller
                         $paydate->add(new DateInterval('P1M'));
                         $paydate = $this->check_pay_date($paydate);
 
-                    }
-
-                    else
-                    {
+                    } else {
                         $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
                         $loan_percents_pay = $sum_pay;
                         $body_pay = 0;
@@ -306,21 +319,18 @@ class NeworderController extends Controller
                             'rest_pay' => $rest_sum -= $body_pay
                         ];
                     $paydate->add(new DateInterval('P1M'));
-                }
-                else{
+                } else {
 
                     $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
-                    $first_pay = new DateTime(date('Y-m-10', strtotime($start_date.'+1 month')));
+                    $first_pay = new DateTime(date('Y-m-10', strtotime($start_date . '+1 month')));
                     $count_days_this_month = date('t', strtotime($issuance_date->format('Y-m-d')));
                     $paydate = $this->check_pay_date($first_pay);
 
-                    if(date_diff($first_pay, $issuance_date)->days < 20)
-                    {
+                    if (date_diff($first_pay, $issuance_date)->days < 20) {
                         $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($first_pay, $issuance_date)->days;
                         $percents_pay = $sum_pay;
                     }
-                    if(date_diff($first_pay, $issuance_date)->days >= 20 && date_diff($first_pay, $issuance_date)->days < $count_days_this_month)
-                    {
+                    if (date_diff($first_pay, $issuance_date)->days >= 20 && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
 
                         $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($first_pay, $issuance_date)->days);
 
@@ -329,8 +339,7 @@ class NeworderController extends Controller
                         $body_pay = $sum_pay - $percents_pay;
 
                     }
-                    if(date_diff($first_pay, $issuance_date)->days >= $count_days_this_month)
-                    {
+                    if (date_diff($first_pay, $issuance_date)->days >= $count_days_this_month) {
 
                         $sum_pay = $annoouitet_pay;
                         $percents_pay = $rest_sum * $percent_per_month;
@@ -341,7 +350,7 @@ class NeworderController extends Controller
                         [
                             'pay_sum' => $sum_pay,
                             'loan_percents_pay' => $percents_pay,
-                            'loan_body_pay' => ($body_pay)?$body_pay:0,
+                            'loan_body_pay' => ($body_pay) ? $body_pay : 0,
                             'comission_pay' => 0.00,
                             'rest_pay' => $rest_sum -= $body_pay
                         ];
@@ -349,11 +358,10 @@ class NeworderController extends Controller
                     $paydate->add(new DateInterval('P1M'));
                 }
 
-                if($rest_sum != 0)
-                {
+                if ($rest_sum != 0) {
                     $paydate->setDate($paydate->format('Y'), $paydate->format('m'), 10);
                     $interval = new DateInterval('P1M');
-                    $end_date->setTime(0,0,1);
+                    $end_date->setTime(0, 0, 1);
                     $daterange = new DatePeriod($paydate, $interval, $end_date);
 
                     foreach ($daterange as $date) {
@@ -386,17 +394,17 @@ class NeworderController extends Controller
                 $payments[0] = -$amount;
 
                 foreach ($payment_schedule as $date => $pay) {
-                    $payments[] = $pay['pay_sum'];
-                    $dates[] = date('d.m.Y', strtotime($date));
-                    $payment_schedule['result']['all_sum_pay'] += $pay['pay_sum'];
-                    $payment_schedule['result']['all_loan_percents_pay'] += $pay['loan_percents_pay'];
-                    $payment_schedule['result']['all_loan_body_pay'] += $pay['loan_body_pay'];
-                    $payment_schedule['result']['all_comission_pay'] += $pay['comission_pay'];
-                    $payment_schedule['result']['all_rest_pay_sum'] = 0.00;
+                    if($date != 'result')
+                    {
+                        $payments[] = $pay['pay_sum'];
+                        $dates[] = date('d.m.Y', strtotime($date));
+                        $payment_schedule['result']['all_sum_pay'] += $pay['pay_sum'];
+                        $payment_schedule['result']['all_loan_percents_pay'] += $pay['loan_percents_pay'];
+                        $payment_schedule['result']['all_loan_body_pay'] += $pay['loan_body_pay'];
+                        $payment_schedule['result']['all_comission_pay'] += $pay['comission_pay'];
+                        $payment_schedule['result']['all_rest_pay_sum'] = 0.00;
+                    }
                 }
-
-                array_pop($dates);
-                array_pop($payments);
 
                 foreach ($dates as $date) {
 
@@ -415,34 +423,36 @@ class NeworderController extends Controller
                 $xirr = round($this->Financial->XIRR($payments, $new_dates) * 100, 3);
                 $xirr /= 100;
 
-                $order['psk'] = round(((pow((1+$xirr), (1/12)) - 1) * 12)*100, 3);
+                $order['psk'] = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
 
-                $order['payment_schedule']  = json_encode($payment_schedule);
+                $order['payment_schedule'] = json_encode($payment_schedule);
 
                 $company = $this->Companies->get_company($order['company_id']);
                 $group = $this->Groups->get_group($order['group_id']);
 
                 $loan_type_number = ($loan_type < 10) ? '0' . $loan_type : $loan_type;
 
-                $personal_number = $user['personal_number'];
-                $last_number = $this->orders->last_order_number($user_id);
+                if(isset($user['personal_number'])){
+                    $personal_number = $user['personal_number'];
+                    $last_number = $this->orders->last_order_number($user_id);
 
-                $uid = "$group->number $company->number $loan_type_number $personal_number";
+                    $uid = "$group->number $company->number $loan_type_number $personal_number";
 
-                if ($last_number && $last_number < 10) {
-                    $last_number += 1;
-                    $uid .= '0' . $last_number;
+                    if ($last_number && $last_number < 10) {
+                        $last_number += 1;
+                        $uid .= '0' . $last_number;
+                    }
+
+                    if ($last_number == false) {
+                        $uid .= ' 01';
+                    }
+                    if ($last_number && $last_number > 10) {
+                        $last_number += 1;
+                        $uid .= "$last_number";
+                    }
+
+                    $order['uid'] = $uid;
                 }
-
-                if ($last_number == false) {
-                    $uid .= ' 01';
-                }
-                if ($last_number && $last_number > 10) {
-                    $last_number += 1;
-                    $uid .= "$last_number";
-                }
-
-                $order['uid'] = $uid;
 
                 if (!empty(intval($this->request->post('order_id')))) {
                     $order_id = intval($this->request->post('order_id'));
@@ -468,6 +478,7 @@ class NeworderController extends Controller
             $order_id = $this->request->get('order_id');
 
             $order = $this->orders->get_order($order_id);
+            $fio_spouse = explode(' ', $order->fio_spouse);
 
             $passport_serial = explode(' ', $order->passport_serial);
 
@@ -475,6 +486,7 @@ class NeworderController extends Controller
             $order->passport_number = $passport_serial[1];
 
             $this->design->assign('order', $order);
+            $this->design->assign('fio_spouse', $fio_spouse);
         }
 
         if ($this->request->get('start_date')) {
