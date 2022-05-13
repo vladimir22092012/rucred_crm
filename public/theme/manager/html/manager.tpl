@@ -278,7 +278,7 @@
                     }
                 })
             });
-        })
+        });
 
         $('.js-filter-status').click(function (e) {
             e.preventDefault();
@@ -286,7 +286,7 @@
             var _id = $(this).data('status');
 
             if ($(this).hasClass('active')) {
-                $(this).removeClass('active')
+                $(this).removeClass('active');
 
                 $('.js-status-item').fadeIn();
 
@@ -643,7 +643,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group company_block" {if $user->company_id == 0}style="display:none"{/if}>
+                                        <div class="form-group company_block" {if $user->company_id == 0 && $user->group_id == 0}style="display:none"{/if}>
                                             <label class="col-md-12">Компания</label>
                                             <div class="col-md-12">
                                                 <select class="form-control companies" name="companies">
