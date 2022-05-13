@@ -164,7 +164,7 @@ class ManagerController extends Controller
 
         $groups = $this->Groups->get_groups();
 
-        if($user->company_id != 0 && $user->group_id != 0 ){
+        if($user->group_id != 0 ){
             $companies = $this->Companies->get_companies(['group_id' => $user->group_id ]);
             $this->design->assign('companies', $companies);
         }
