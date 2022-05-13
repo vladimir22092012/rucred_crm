@@ -69,7 +69,9 @@
                 setTimeout(function () {
                     $('select[name="company"] option[value="' + order['company_id'] + '"]').prop('selected', true);
                     $('select[name="company"] option[value="' + order['company_id'] + '"]').change();
-                }, 1000);
+                    $('#' + order['company_id'] +'').trigger('click');
+                    $('.to_form_loan').trigger('click');
+                }, 500);
             }
         })
     </script>
@@ -694,27 +696,21 @@
                                                 {foreach json_decode($order->credits_story) as $credits_story}
                                                     <tr>
                                                         <td><input class="form-control"
-                                                                   name="credits_bank_name[][credits_bank_name]"
-                                                                   type="text"
+                                                                   name="credits_bank_name[][credits_bank_name]" type="text"
                                                                    value="{$credits_story->credits_bank_name}"></td>
                                                         <td><input class="form-control mask_number"
-                                                                   name="credits_rest_sum[][credits_rest_sum]"
-                                                                   type="text"
+                                                                   name="credits_rest_sum[][credits_rest_sum]" type="text"
                                                                    value="{$credits_story->credits_rest_sum}"></td>
                                                         <td><input class="form-control mask_number"
-                                                                   name="credits_month_pay[][credits_month_pay]"
-                                                                   type="text"
+                                                                   name="credits_month_pay[][credits_month_pay]" type="text"
                                                                    value="{$credits_story->credits_month_pay}"></td>
                                                         <td><input class="form-control validity_period"
-                                                                   name="credits_return_date[][credits_return_date]"
-                                                                   type="text"
+                                                                   name="credits_return_date[][credits_return_date]" type="text"
                                                                    value="{$credits_story->credits_return_date}"></td>
                                                         <td><input class="form-control"
-                                                                   name="credits_percents[][credits_percents]"
-                                                                   type="text"
+                                                                   name="credits_percents[][credits_percents]" type="text"
                                                                    value="{$credits_story->credits_percents}"></td>
-                                                        <td><select class="form-control"
-                                                                    name="credits_delay[][credits_delay]">
+                                                        <td><select class="form-control" name="credits_delay[][credits_delay]">
                                                                 <option value="Да">Да</option>
                                                                 <option value="Нет">Нет</option>
                                                             </select></td>
@@ -737,14 +733,12 @@
                                                                name="credits_month_pay[][credits_month_pay]" type="text"
                                                                value=""></td>
                                                     <td><input class="form-control validity_period"
-                                                               name="credits_return_date[][credits_return_date]"
-                                                               type="text"
+                                                               name="credits_return_date[][credits_return_date]" type="text"
                                                                value=""></td>
                                                     <td><input class="form-control"
                                                                name="credits_percents[][credits_percents]" type="text"
                                                                value=""></td>
-                                                    <td><select class="form-control"
-                                                                name="credits_delay[][credits_delay]">
+                                                    <td><select class="form-control" name="credits_delay[][credits_delay]">
                                                             <option value="Да">Да</option>
                                                             <option value="Нет">Нет</option>
                                                         </select></td>
@@ -786,10 +780,8 @@
                                                                    value="{$cards_story->cards_rest_sum}"></td>
                                                         <td><input class="form-control validity_period"
                                                                    name="cards_validity_period[][cards_validity_period]"
-                                                                   type="text"
-                                                                   value="{$credits_story->cards_validity_period}"></td>
-                                                        <td><select class="form-control"
-                                                                    name="cards_delay[][cards_delay]">
+                                                                   type="text" value="{$credits_story->cards_validity_period}"></td>
+                                                        <td><select class="form-control" name="cards_delay[][cards_delay]">
                                                                 <option value="Да">Да</option>
                                                                 <option value="Нет">Нет</option>
                                                             </select
