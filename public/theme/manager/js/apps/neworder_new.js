@@ -544,6 +544,10 @@ $(function () {
         });
     });
 
+    $('.remove_from_attestation_table').on('click', function() {
+        $(this).closest('tr').remove();
+    });
+
     $('.phone_num').on('paste', function (e) {
 
         let phone_number = e.originalEvent.clipboardData.getData('text');

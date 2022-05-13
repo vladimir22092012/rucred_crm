@@ -171,7 +171,10 @@ class Orders extends Core
                 u.sms_not,
                 u.email_not,
                 u.massanger_not,
-                u.personal_number
+                u.personal_number,
+                u.attestation,
+                u.credits_story,
+                u.cards_story
             FROM __orders AS o
             LEFT JOIN __users AS u
             ON u.id = o.user_id
