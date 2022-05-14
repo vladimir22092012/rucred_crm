@@ -12,7 +12,8 @@ class Orders extends Core
         8 => 'Отказ клиента',
         12 => 'Черновик',
         14 => 'Р.Подтверждена',
-        15 => 'Р.Отклонена'
+        15 => 'Р.Отклонена',
+        16 => 'Удалена'
     );
 
     public function get_statuses()
@@ -179,6 +180,7 @@ class Orders extends Core
             LEFT JOIN __users AS u
             ON u.id = o.user_id
             WHERE o.id = ?
+            and `status` != 16
         ", (int)$id);
         $this->db->query($query);
         $result = $this->db->result();
@@ -533,6 +535,7 @@ class Orders extends Core
             LEFT JOIN __users AS u
             ON u.id = o.user_id
             WHERE 1
+            and `status` != 16
                 $id_filter
                 $offline_filter
                 $user_id_filter
@@ -672,6 +675,7 @@ class Orders extends Core
             LEFT JOIN __users AS u
             ON u.id = o.user_id
             WHERE 1
+            and `status` != 16
                 $id_filter
                 $offline_filter
                 $status_filter
