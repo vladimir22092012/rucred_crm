@@ -329,6 +329,20 @@
             }
         });
 
+        $('#block_manager').on('change', function () {
+            let value = ($(this).val() == 0) ? 1 : 0;
+            let manager_id = $(this).attr('data-manager');
+
+            $.ajax({
+                method: 'POST',
+                data:{
+                    action: 'block_manager',
+                    value: value,
+                    manager_id: manager_id
+                }
+            });
+        })
+
         /*$('.check_email').on('click', function (e) {
             e.preventDefault();
 
@@ -413,7 +427,23 @@
                             {if isset($user->last_visit)}
                                 {$user->last_visit|date} {$user->last_visit|time}
                             {/if}
+                        </h6><br>
+                        <h6>
+                            Заблокирован
                         </h6>
+                        <div class="clearfix">
+                            <div class="float-left">
+                                <div class="onoffswitch">
+                                    <input type="checkbox" name="block_manager" id="block_manager"
+                                           class="onoffswitch-checkbox block_manager" data-manager="{$user->id}"
+                                            {if $user->blocked == 1} checked="true" value="1" {else} value="0"{/if}>
+                                    <label class="onoffswitch-label" for="block_manager">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {if isset($user->id)}
@@ -591,13 +621,16 @@
                                         </div>
                                     {else}
                                         <div class="col-12">
-                                            <h5 class="form-control-static">Пароль <a href="#" data-user="{$client->id}" class="text-info edit_password"><i class="fas fa-edit"></i></a></h5>
+                                            <h5 class="form-control-static">Пароль <a href="#" data-user="{$client->id}"
+                                                                                      class="text-info edit_password"><i
+                                                            class="fas fa-edit"></i></a></h5>
                                             <div class="show_password">*********</div>
                                             <div class="password_edit_form" style="display: none">
                                                 <div class="mb-3">
                                                     <label>Старый пароль</label>
                                                     <div>
-                                                        <input type="password" name="old_password" value="" class="form-control old_password"
+                                                        <input type="password" name="old_password" value=""
+                                                               class="form-control old_password"
                                                                {if !isset($user->id)}required="true"{/if} />
                                                     </div>
                                                 </div>
@@ -637,20 +670,23 @@
                                                     <option value="none" selected>Выберите из списка</option>
                                                     {if !empty($groups)}
                                                         {foreach $groups as $group}
-                                                            <option value="{$group->id}" {if $user->group_id == $group->id}selected{/if}>{$group->name}</option>
+                                                            <option value="{$group->id}"
+                                                                    {if $user->group_id == $group->id}selected{/if}>{$group->name}</option>
                                                         {/foreach}
                                                     {/if}
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group company_block" {if $user->company_id == 0 && $user->group_id == 0}style="display:none"{/if}>
+                                        <div class="form-group company_block"
+                                             {if $user->company_id == 0 && $user->group_id == 0}style="display:none"{/if}>
                                             <label class="col-md-12">Компания</label>
                                             <div class="col-md-12">
                                                 <select class="form-control companies" name="companies">
                                                     <option value="none" selected>Выберите из списка</option>
                                                     {if !empty($companies)}
                                                         {foreach $companies as $company}
-                                                            <option value="{$company->id}" {if $user->company_id == $company->id}selected{/if}>{$company->name}</option>
+                                                            <option value="{$company->id}"
+                                                                    {if $user->company_id == $company->id}selected{/if}>{$company->name}</option>
                                                         {/foreach}
                                                     {/if}
                                                 </select>
@@ -667,13 +703,16 @@
                                         </div>
                                     {else}
                                         <div class="col-12">
-                                            <h5 class="form-control-static">Email <a href="#" data-user="{$client->id}" class="text-info edit_email"><i class="fas fa-edit"></i></a></h5>
+                                            <h5 class="form-control-static">Email <a href="#" data-user="{$client->id}"
+                                                                                     class="text-info edit_email"><i
+                                                            class="fas fa-edit"></i></a></h5>
                                             <div class="show_email">{$user->email|default: "Email не введён"}</div>
                                             <div class="email_edit_form" style="display: none">
                                                 <div class="mb-3">
                                                     <div class="form-row">
                                                         <div class="col">
-                                                            <input type="text" class="form-control email" value="{$user->email|default: ""}">
+                                                            <input type="text" class="form-control email"
+                                                                   value="{$user->email|default: ""}">
                                                         </div>
                                                         <div class="col">
                                                             <input type="button"
@@ -685,10 +724,15 @@
                                                                    value="Отмена">
                                                         </div>
                                                         <div class="col-4">
-                                                            <div class="input-group show_email_code" style="display: none">
-                                                                <input type="text" class="form-control code" placeholder="Введите код из письма">
+                                                            <div class="input-group show_email_code"
+                                                                 style="display: none">
+                                                                <input type="text" class="form-control code"
+                                                                       placeholder="Введите код из письма">
                                                                 <div class="input-group-append">
-                                                                    <button class="btn btn-primary accept_edit_email_with_code" type="button" data-user="{$user->id}">Подтвердить</button>
+                                                                    <button class="btn btn-primary accept_edit_email_with_code"
+                                                                            type="button" data-user="{$user->id}">
+                                                                        Подтвердить
+                                                                    </button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -707,13 +751,17 @@
                                         </div>
                                     {else}
                                         <div class="col-12">
-                                            <h5 class="form-control-static">Телефон <a href="#" data-user="{$client->id}" class="text-info edit_phone"><i class="fas fa-edit"></i></a></h5>
+                                            <h5 class="form-control-static">Телефон <a href="#"
+                                                                                       data-user="{$client->id}"
+                                                                                       class="text-info edit_phone"><i
+                                                            class="fas fa-edit"></i></a></h5>
                                             <div class="show_phone">{$user->phone|default: "Телефон не введён"}</div>
                                             <div class="phone_edit_form" style="display: none">
                                                 <div class="mb-3">
                                                     <div class="form-row">
                                                         <div class="col">
-                                                            <input type="text" class="form-control phone" value="{$user->phone|default: ""}">
+                                                            <input type="text" class="form-control phone"
+                                                                   value="{$user->phone|default: ""}">
                                                         </div>
                                                         <div class="col">
                                                             <input type="button"
@@ -725,10 +773,15 @@
                                                                    value="Отмена">
                                                         </div>
                                                         <div class="col-4">
-                                                            <div class="input-group show_phone_code" style="display: none">
-                                                                <input type="text" class="form-control code" placeholder="Введите код из смс">
+                                                            <div class="input-group show_phone_code"
+                                                                 style="display: none">
+                                                                <input type="text" class="form-control code"
+                                                                       placeholder="Введите код из смс">
                                                                 <div class="input-group-append">
-                                                                    <button class="btn btn-primary accept_edit_email_with_code" type="button" data-user="{$user->id}">Подтвердить</button>
+                                                                    <button class="btn btn-primary accept_edit_email_with_code"
+                                                                            type="button" data-user="{$user->id}">
+                                                                        Подтвердить
+                                                                    </button>
                                                                 </div>
                                                             </div>
                                                         </div>

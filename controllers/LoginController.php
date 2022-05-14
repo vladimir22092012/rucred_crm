@@ -76,6 +76,10 @@ class LoginController extends Controller
                     $this->design->assign('error', 'Компания заблокирована');
                     return $this->design->fetch('login.tpl');
                 }
+                if($manager->blocked == 1){
+                    $this->design->assign('error', 'Ваш кабинет заблокирован');
+                    return $this->design->fetch('login.tpl');
+                }
 
 				$_SESSION['manager_id'] = $manager->id;
 
