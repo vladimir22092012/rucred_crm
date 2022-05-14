@@ -37,6 +37,10 @@ class ManagerController extends Controller
                         $this->action_edit_password();
                         break;
 
+                    case 'block_manager':
+                        $this->action_block_manager();
+                        break;
+
                 endswitch;
             }
             else{
@@ -292,6 +296,14 @@ class ManagerController extends Controller
         $this->managers->update_manager($user_id, ['password' => $new_password]);
         echo json_encode(['success' => 1]);
         exit;
+    }
+
+    private function action_block_manager()
+    {
+        $flag = $this->request->post('value');
+        $manager_id = $this->request->post('manager_id');
+
+        $this->managers->update_manager($manager_id, ['blocked' => $flag]);
     }
 
 }
