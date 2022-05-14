@@ -2421,14 +2421,14 @@
                                                         </div>
                                                         <div style="margin-left: 10px">
                                                             <a target="_blank"
-                                                               href="http://51.250.26.168/document?id={$document->id}&action=download_file"><input
+                                                               href="{$config->root_url}/document?id={$document->id}&action=download_file"><input
                                                                         type="button"
                                                                         class="btn btn-outline-success download_doc"
                                                                         value="Сохранить"></a>
                                                         </div>
                                                         <div style="margin-left: 10px">
                                                             <a target="_blank"
-                                                               href="http://51.250.26.168/document/{$document->id}"><input
+                                                               href="{$config->root_url}/document/{$document->id}"><input
                                                                         type="button"
                                                                         class="btn btn-outline-warning print_doc"
                                                                         value="Распечатать"></a>
