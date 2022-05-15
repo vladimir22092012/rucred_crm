@@ -6,7 +6,7 @@ class CompanyController extends Controller
 {
     public function fetch()
     {
-        switch ($this->request->post('action', 'string')):
+        switch ($this->request->post('action', 'string')) :
             case 'add_branch':
                 $this->action_add_branch();
                 break;
@@ -62,7 +62,6 @@ class CompanyController extends Controller
             case 'add_document':
                 $this->action_add_document();
                 break;
-
         endswitch;
 
         $company_id = $this->request->get('id');
@@ -148,8 +147,9 @@ class CompanyController extends Controller
         $branches = $this->Branches->get_branches(['company_id' => (int)$company_id]);
 
         foreach ($branches as $branch) {
-            if ($branch->number == '00')
+            if ($branch->number == '00') {
                 $this->Branches->update_branch(['payday' => $payday], $branch->id);
+            }
         }
     }
 

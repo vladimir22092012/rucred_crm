@@ -4,8 +4,7 @@ class CollectionPeriodsController extends Controller
 {
     public function fetch()
     {
-    	if ($this->request->method('post'))
-        {
+        if ($this->request->method('post')) {
             $this->settings->collection_periods = $this->request->post('collection_periods');
         }
         
@@ -16,5 +15,4 @@ class CollectionPeriodsController extends Controller
         
         return $this->design->fetch('collection_periods.tpl');
     }
-    
 }

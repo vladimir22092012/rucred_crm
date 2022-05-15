@@ -5,9 +5,8 @@ class DashboardController extends Controller
     public function fetch()
     {
 
-return false;
+        return false;
 
-    	return $this->design->fetch('dashboard.tpl');
+        return $this->design->fetch('dashboard.tpl');
     }
-    
 }

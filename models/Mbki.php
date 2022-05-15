@@ -7,7 +7,7 @@ class Mbki extends Core
     
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
         
         $this->login = $this->settings->apikeys['mbki']['login'];
         $this->password = $this->settings->apikeys['mbki']['password'];
@@ -22,7 +22,9 @@ class Mbki extends Core
         );
         
         $resp = $this->send($data);
-echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';
+        echo __FILE__.' '.__LINE__.'<br /><pre>';
+        var_dump($resp);
+        echo '</pre><hr />';
         return $resp;
     }
     
@@ -35,7 +37,7 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';
         );
         
         $ch = curl_init($url);
-//        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers); 
+//        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_VERBOSE, 1);
@@ -43,7 +45,7 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';
 //        curl_setopt($ch, CURLOPT_SSLVERSION, 3);
 //        curl_setopt($ch, CURLOPT_CAINFO, $this->config->root_dir.'files/certificates/ssl.croinform.cer');
 //        curl_setopt($ch, CURLOPT_CAPATH, $this->config->root_dir.'files/certificates/cacer.p7b');
-//        curl_setopt($ch, CURLOPT_SSLCERT, $this->config->root_dir.'files/certificates/ssl.croinform.cer'); 
+//        curl_setopt($ch, CURLOPT_SSLCERT, $this->config->root_dir.'files/certificates/ssl.croinform.cer');
         
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 0);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
@@ -53,15 +55,16 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';
         $result = curl_exec($ch);
         $info = curl_getinfo($ch);
         
-        if ($result === false)
-        {
+        if ($result === false) {
             $error = curl_error($ch);
             $errno = curl_errno($ch);
-echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($errno, $error);echo '</pre><hr />';
+            echo __FILE__.' '.__LINE__.'<br /><pre>';
+            var_dump($errno, $error);
+            echo '</pre><hr />';
         }
         curl_close($ch);
         
-echo $result;        
+        echo $result;
         return $result;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
 class WeekendCalendar extends Core
-
 {
     public function check_date($date)
     {

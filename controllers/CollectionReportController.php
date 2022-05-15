@@ -3,41 +3,41 @@ class CollectionReportController extends Controller
 {
     public function fetch()
     {
-    	$filter = array();
+        $filter = array();
         
-        if (!($period = $this->request->get('period')))
+        if (!($period = $this->request->get('period'))) {
             $period = 'month';
+        }
         
-        switch ($period):
-             case 'today':
+        switch ($period) :
+            case 'today':
                 $filter['date_from'] = date('Y-m-d');
-             break;
+                break;
              
-             case 'yesterday':
+            case 'yesterday':
                 $filter['date_from'] = date('Y-m-d', time() - 86400);
                 $filter['date_to'] = date('Y-m-d', time() - 86400);
-             break;
+                break;
              
-             case 'month':
-                $filter['date_from'] = date('Y-m-01');                
-             break;
+            case 'month':
+                $filter['date_from'] = date('Y-m-01');
+                break;
              
-             case 'year':
+            case 'year':
                 $filter['date_from'] = date('Y-01-01');
-             break;
+                break;
              
-             case 'all':
+            case 'all':
                 $filter['date_from'] = null;
                 $filter['date_to'] = null;
-             break;
+                break;
              
-             case 'optional':
+            case 'optional':
                 $daterange = $this->request->get('daterange');
                 $filter_daterange = array_map('trim', explode('-', $daterange));
                 $filter['date_from'] = date('Y-m-d', strtotime($filter_daterange[0]));
-                $filter['date_to'] = date('Y-m-d', strtotime($filter_daterange[1]));                
-             break;
-             
+                $filter['date_to'] = date('Y-m-d', strtotime($filter_daterange[1]));
+                break;
         endswitch;
 
         $this->design->assign('period', $period);
@@ -53,8 +53,7 @@ class CollectionReportController extends Controller
         $total->total_brutto = 0;
         $total->total_netto = 0;
 
-        foreach ($this->managers->get_managers(array('role' => 'collector')) as $m)
-        {
+        foreach ($this->managers->get_managers(array('role' => 'collector')) as $m) {
             $m->items = array();
             $m->closed = 0;
             $m->prolongation = 0;
@@ -70,30 +69,27 @@ class CollectionReportController extends Controller
             $collectors[$m->id] = $m;
         }
         
-        if ($status = $this->request->get('status', 'integer'))
-        {
+        if ($status = $this->request->get('status', 'integer')) {
             $filter['status'] = $status;
             
-            $collectors = array_filter($collectors, function($var) use ($status){
+            $collectors = array_filter($collectors, function ($var) use ($status) {
                 return $var->collection_status_id == $status;
             });
             $this->design->assign('filter_status', $status);
         }
         
-        if ($this->manager->role == 'team_collector')
-        {
+        if ($this->manager->role == 'team_collector') {
             $team_id = (array)$this->manager->team_id;
-            $collectors = array_filter($collectors, function($var) use ($team_id){
+            $collectors = array_filter($collectors, function ($var) use ($team_id) {
                 return in_array($var->id, $team_id);
             });
         }
         
-        if ($this->manager->role == 'collector')
-        {
+        if ($this->manager->role == 'collector') {
             $collector_id = $this->manager->id;
-            $collectors = array_filter($collectors, function($var) use ($collector_id){
+            $collectors = array_filter($collectors, function ($var) use ($collector_id) {
                 return $var->id == $collector_id;
-            });            
+            });
         }
         
         $m = new StdClass();
@@ -113,13 +109,9 @@ class CollectionReportController extends Controller
         $collectors[0] = $m;
         
         
-        if ($collections = $this->collections->get_collections($filter))
-        {
-
-            foreach ($collections as $col)
-            {
-                if (!empty($collectors[intval($col->manager_id)]))
-                {
+        if ($collections = $this->collections->get_collections($filter)) {
+            foreach ($collections as $col) {
+                if (!empty($collectors[intval($col->manager_id)])) {
                     $col->contract = $this->contracts->get_contract($col->contract_id);
                     $col->user = $this->users->get_user($col->contract->user_id);
                     
@@ -127,13 +119,11 @@ class CollectionReportController extends Controller
                     
                     $collectors[intval($col->manager_id)]->actions++;
                     $total->actions++;
-                    if ($col->closed) 
-                    {
+                    if ($col->closed) {
                         $collectors[intval($col->manager_id)]->closed++;
                         $total->closed++;
                     }
-                    if ($col->prolongation)
-                    {
+                    if ($col->prolongation) {
                         $collectors[intval($col->manager_id)]->prolongation++;
                         $total->prolongation++;
                     }
@@ -150,19 +140,15 @@ class CollectionReportController extends Controller
                     $total->totals += $col->body_summ + $col->percents_summ + $col->charge_summ + $col->peni_summ + $col->commision_summ;
                     $total->total_netto += $col->body_summ + $col->percents_summ + $col->charge_summ + $col->peni_summ;
                     $total->total_brutto += $col->percents_summ + $col->charge_summ + $col->peni_summ;
-
-        
-        
                 }
             }
         }
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($collections);echo '</pre><hr />';
 
-        @uasort($collectors, function($a, $b){
+        @uasort($collectors, function ($a, $b) {
             return $a->collection_status_id - $b->collection_status_id;
         });
-        if ($this->manager->role == 'collector')
-        {
+        if ($this->manager->role == 'collector') {
             unset($collectors[0]);
         }
         
@@ -174,5 +160,4 @@ class CollectionReportController extends Controller
         
         return $this->design->fetch('collection_report.tpl');
     }
-    
 }

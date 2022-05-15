@@ -5,7 +5,7 @@ class Helpers extends Core
 
     public function get_regional_time($region)
     {
-    	$region_times = array(
+        $region_times = array(
             "адыгея" => 0,
             "башкортостан" => 2,
             "бурятия" => 5,
@@ -32,7 +32,7 @@ class Helpers extends Core
             "красноярский" => 4,
             "приморский" => 7,
             "ставропольский",
-            "хабаровский" => 7, 
+            "хабаровский" => 7,
             "амурская" => 6,
             "архангельская" => 0,
             "астраханская" => 1,
@@ -95,8 +95,9 @@ class Helpers extends Core
         $region = trim(mb_strtolower($region));
         
         $shift = 0;
-        if (isset($region_times[$region]))
+        if (isset($region_times[$region])) {
             $shift = $region_times[$region];
+        }
         
         return date('Y-m-d H:i:s', time() + $shift * 3600);
     }
@@ -109,17 +110,18 @@ class Helpers extends Core
         array('T', '2', 'H', 'e', 'D', '1', '8', 'P', 'o', 'g'),
         array('O', 'u', 'Z', 'h', '0', 'I', 'J', '7', 'a', 'L'),
         array('v', 'w', 'p', 'E', 't', '5', 'b', '9', 'l', 'R'),
-        array('d', '3', 'q', 'C', 'U', 'M', 'y', 'X', 'K', 'j'),        
+        array('d', '3', 'q', 'C', 'U', 'M', 'y', 'X', 'K', 'j'),
     );
     
     public function c2o_encode($id)
     {
-    	$code = '';
+        $code = '';
         
         $chars = str_split($id);
         
-        if (count($chars) != 6)
+        if (count($chars) != 6) {
             return false;
+        }
         
         $code .= $this->c2o_codes[5][$chars[5]];
         $code .= $this->c2o_codes[4][$chars[4]];
@@ -132,12 +134,13 @@ class Helpers extends Core
     
     public function c2o_decode($code)
     {
-    	$id = '';
+        $id = '';
         
         $chars = str_split($code);
         
-        if (count($chars) != 6)
+        if (count($chars) != 6) {
             return false;
+        }
 
         $id .= array_search($chars[5], $this->c2o_codes[0]);
         $id .= array_search($chars[4], $this->c2o_codes[1]);
@@ -147,10 +150,5 @@ class Helpers extends Core
         $id .= array_search($chars[0], $this->c2o_codes[5]);
         
         return $id;
-    	
     }
-    
-    
-
-
 }

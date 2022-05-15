@@ -6,53 +6,47 @@ class SudblockContractsController extends Controller
     {
         $items_per_page = 50;
 
-    	if ($this->request->method('post'))
-        {
-            switch ($this->request->post('action', 'string')):
-            
+        if ($this->request->method('post')) {
+            switch ($this->request->post('action', 'string')) :
                 case 'manager':
                     $this->set_manager_action();
-                break;
+                    break;
                 
                 case 'status':
                     $this->set_status_action();
-                break;
+                    break;
                 
                 case 'ready_document':
                     $this->ready_document_action();
-                break;
+                    break;
 
                 case 'workout':
                     $this->set_workout_action();
-                break;
+                    break;
                 
 
 
 
                 case 'contactperson_comment':
                     $this->contactperson_comment_action();
-                break;
+                    break;
                 
                 case 'sud_label':
                     $this->set_sud_label_action();
-                break;
+                    break;
                 
                 case 'send_sms':
                     $this->send_sms_action();
-                break;
-                
+                    break;
             endswitch;
-        }
-        else
-        {
-            if ($this->request->get('download'))
-            {
+        } else {
+            if ($this->request->get('download')) {
                 $this->download_action();
             }
         }
         
         $order_ids = array();
-    	$user_ids = array();
+        $user_ids = array();
         $contracts = array();
         
         $filter = array();
@@ -60,57 +54,50 @@ class SudblockContractsController extends Controller
         $sms_templates = $this->sms->get_templates(array('type' => 'collection'));
         $this->design->assign('sms_templates', $sms_templates);
         
-        if (!($period = $this->request->get('period')))
+        if (!($period = $this->request->get('period'))) {
             $period = 'all';
+        }
 
-        switch ($period):
+        switch ($period) :
+            case 'month':
+                $filter['inssuance_date_from'] = date('Y-m-01');
+                break;
              
-             case 'month':
-                $filter['inssuance_date_from'] = date('Y-m-01');                
-             break;
-             
-             case 'year':
+            case 'year':
                 $filter['inssuance_date_from'] = date('Y-01-01');
-             break;
+                break;
              
-             case 'all':
+            case 'all':
                 $filter['inssuance_date_from'] = null;
                 $filter['inssuance_date_to'] = null;
-             break;
+                break;
              
-             case 'optional':
+            case 'optional':
                 $daterange = $this->request->get('daterange');
                 $filter_daterange = array_map('trim', explode('-', $daterange));
                 $filter['inssuance_date_from'] = date('Y-m-d', strtotime($filter_daterange[0]));
-                $filter['inssuance_date_to'] = date('Y-m-d', strtotime($filter_daterange[1]));                
-             break;
-             
+                $filter['inssuance_date_to'] = date('Y-m-d', strtotime($filter_daterange[1]));
+                break;
         endswitch;
         $this->design->assign('period', $period);
         
-        if ($search = $this->request->get('search'))
-        {
+        if ($search = $this->request->get('search')) {
             $filter['search'] = array_filter($search);
             $this->design->assign('search', array_filter($search));
         }
         
         
-        if ($this->manager->role == 'exactor' || $this->manager->role == 'sudblock')
-        {
+        if ($this->manager->role == 'exactor' || $this->manager->role == 'sudblock') {
             $filter['manager_id'] = $this->manager->id;
-        }
-        elseif ($manager_id = $this->request->get('manager_id'))
-        {
+        } elseif ($manager_id = $this->request->get('manager_id')) {
             $filter['manager_id'] = $manager_id;
         }
         
-        if ($status = $this->request->get('status'))
-        {
+        if ($status = $this->request->get('status')) {
             $filter['status'] = $status;
         }
         
-        if (!($sort = $this->request->get('sort')))
-        {
+        if (!($sort = $this->request->get('sort'))) {
             $sort = 'manager_id_asc';
         }
         $this->design->assign('sort', $sort);
@@ -118,45 +105,43 @@ class SudblockContractsController extends Controller
         
         $filter['sort_workout'] = 1;
         
-        if ($page_count = $this->request->get('page_count'))
-        {
+        if ($page_count = $this->request->get('page_count')) {
             setcookie('page_count', $page_count, time()+86400*30, '/');
-            if ($page_count == 'all')
+            if ($page_count == 'all') {
                 $items_per_page = 10000;
-            else
+            } else {
                 $items_per_page = $page_count;
+            }
                 
             $this->design->assign('page_count', $page_count);
-        }
-        elseif (!empty($_COOKIE['page_count']))
-        {
-            if ($_COOKIE['page_count'] == 'all')
+        } elseif (!empty($_COOKIE['page_count'])) {
+            if ($_COOKIE['page_count'] == 'all') {
                 $items_per_page = 10000;
-            else
-                $items_per_page = $_COOKIE['page_count'];            
+            } else {
+                $items_per_page = $_COOKIE['page_count'];
+            }
         
             $this->design->assign('page_count', $_COOKIE['page_count']);
         }
 
 
         $current_page = $this->request->get('page', 'integer');
-		$current_page = max(1, $current_page);
-		$this->design->assign('current_page_num', $current_page);
-		$this->design->assign('items_per_page', $items_per_page);
+        $current_page = max(1, $current_page);
+        $this->design->assign('current_page_num', $current_page);
+        $this->design->assign('items_per_page', $items_per_page);
 
-		$contracts_count = $this->sudblock->count_contracts($filter);
-		
-		$pages_num = ceil($contracts_count/$items_per_page);
-		$this->design->assign('total_pages_num', $pages_num);
-		$this->design->assign('total_orders_count', $contracts_count);
+        $contracts_count = $this->sudblock->count_contracts($filter);
+        
+        $pages_num = ceil($contracts_count/$items_per_page);
+        $this->design->assign('total_pages_num', $pages_num);
+        $this->design->assign('total_orders_count', $contracts_count);
 
-		$filter['page'] = $current_page;
-		$filter['limit'] = $items_per_page;
+        $filter['page'] = $current_page;
+        $filter['limit'] = $items_per_page;
         
         $filter['sort_workout'] = 1;
         
-        foreach ($this->sudblock->get_contracts($filter) as $con)
-        {
+        foreach ($this->sudblock->get_contracts($filter) as $con) {
             $date1 = new DateTime(date('Y-m-d', strtotime($con->created)));
             $date2 = new DateTime(date('Y-m-d'));
                 
@@ -166,18 +151,14 @@ class SudblockContractsController extends Controller
             $contracts[$con->id] = $con;
         }
 
-        if (!empty($contracts))
-        {
-            
-            
-            
+        if (!empty($contracts)) {
             $this->design->assign('contracts', $contracts);
-            
         }
         
         $statuses = array();
-        foreach ($this->sudblock->get_statuses() as $st)
+        foreach ($this->sudblock->get_statuses() as $st) {
             $statuses[$st->id] = $st;
+        }
         $this->design->assign('statuses', $statuses);
         
         
@@ -220,7 +201,6 @@ class SudblockContractsController extends Controller
             'ready' => $ready
         ));
         exit;
-        
     }
 
     private function set_workout_action()
@@ -273,10 +253,8 @@ class SudblockContractsController extends Controller
         $contactperson_id = $this->request->post('contactperson_id', 'integer');
         $order_id = $this->request->post('order_id', 'integer');
         
-        if ($contactperson = $this->contactpersons->get_contactperson($contactperson_id))
-        {
-            if (!empty($comment))
-            {
+        if ($contactperson = $this->contactpersons->get_contactperson($contactperson_id)) {
+            if (!empty($comment)) {
                 $this->contactpersons->update_contactperson($contactperson_id, array('comment' => $comment));
                 $this->comments->add_comment(array(
                     'order_id' => $order_id,
@@ -289,15 +267,10 @@ class SudblockContractsController extends Controller
                     'status' => 0,
                 ));
                 $this->json_output(array('success' => 1));
-            }
-            else
-            {
+            } else {
                 $this->json_output(array('error' => 'Напишите комментарий'));
-                
             }
-        }
-        else
-        {
+        } else {
             $this->json_output(array('error' => 'Контакное лицо не найдено'));
         }
         exit;
@@ -309,12 +282,12 @@ class SudblockContractsController extends Controller
         $user_id = $this->request->post('user_id', 'integer');
         $template_id = $this->request->post('template_id', 'integer');
         
-        $user = $this->users->get_user((int)$user_id);   
+        $user = $this->users->get_user((int)$user_id);
 
         $template = $this->sms->get_template($template_id);
         
         $resp = $this->sms->send(
-            /*'79276928586'*/$user->phone_mobile, 
+            /*'79276928586'*/            $user->phone_mobile,
             $template->template
         );
         
@@ -334,15 +307,16 @@ class SudblockContractsController extends Controller
             'new_values' => $template->template,
             'user_id' => $user->id,
         ));
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';		
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';
         $this->json_output(array('success'=>true));
     }
 
     private function download_action()
     {
         $managers = array();
-        foreach ($this->managers->get_managers() as $m)
+        foreach ($this->managers->get_managers() as $m) {
             $managers[$m->id] = $m;
+        }
 
         $filename = 'files/reports/sudblock.xls';
         require $this->config->root_dir.'PHPExcel/Classes/PHPExcel.php';
@@ -350,38 +324,39 @@ class SudblockContractsController extends Controller
         $contracts = array();
         $user_ids = array();
         $first_contract_ids = array();
-        foreach ($this->sudblock->get_contracts() as $c)
-        {
+        foreach ($this->sudblock->get_contracts() as $c) {
             $user_ids[] = $c->user_id;
             $contracts[$c->id] = $c;
             $first_contract_ids[] = $c->contract_id;
         }
         
-        if (!empty($user_ids))
-        {
+        if (!empty($user_ids)) {
             $users = array();
-            foreach ($this->users->get_users(array('id'=>$user_ids)) as $u)
+            foreach ($this->users->get_users(array('id'=>$user_ids)) as $u) {
                 $users[$u->id] = $u;
+            }
         }
         
-        if (!empty($first_contract_ids))
-        {
+        if (!empty($first_contract_ids)) {
             $first_contracts = array();
-            foreach ($this->contracts->get_contracts(array('id'=>$first_contract_ids)) as $fc)
+            foreach ($this->contracts->get_contracts(array('id'=>$first_contract_ids)) as $fc) {
                 $first_contracts[$fc->id] = $fc;
+            }
         }
 
-        foreach ($contracts as $contract)
-        {
-            if (isset($users[$contract->user_id]))
+        foreach ($contracts as $contract) {
+            if (isset($users[$contract->user_id])) {
                 $contract->user = $users[$contract->user_id];
-            if (isset($first_contracts[$contract->contract_id]))
+            }
+            if (isset($first_contracts[$contract->contract_id])) {
                 $contract->first_contract = $first_contracts[$contract->contract_id];
+            }
         }
 
         $statuses = array();
-        foreach ($this->sudblock->get_statuses() as $st)
+        foreach ($this->sudblock->get_statuses() as $st) {
             $statuses[$st->id] = $st;
+        }
 
 
         $excel = new PHPExcel();
@@ -438,47 +413,46 @@ class SudblockContractsController extends Controller
 
         
         $i = 2;
-        foreach ($contracts as $contract)
-        {
+        foreach ($contracts as $contract) {
             $date1 = new DateTime(date('Y-m-d', strtotime($contract->created)));
-            $date2 = new DateTime(date('Y-m-d'));    
+            $date2 = new DateTime(date('Y-m-d'));
             $diff = $date2->diff($date1);
             $contract->delay = $diff->days;
             
             //TODO: дата последней оплаты
-            if ($pay_operations = $this->operations->get_operations(array('contract_id'=>$contract->contract_id, 'type'=>'PAY')))
-            {
-                $date_pay_operations = NULL;
-                foreach ($pay_operations as $po)
-                {
-                    if (empty($date_pay_operations) || strtotime($po->created) > strtotime($date_pay_operations))
+            if ($pay_operations = $this->operations->get_operations(array('contract_id'=>$contract->contract_id, 'type'=>'PAY'))) {
+                $date_pay_operations = null;
+                foreach ($pay_operations as $po) {
+                    if (empty($date_pay_operations) || strtotime($po->created) > strtotime($date_pay_operations)) {
                         $date_pay_operations = $po->created;
+                    }
                 }
-                if (!empty($date_pay_operations))
-                {
+                if (!empty($date_pay_operations)) {
                     $date1 = new DateTime(date('Y-m-d', strtotime($date_pay_operations)));
-                    $date2 = new DateTime(date('Y-m-d'));    
+                    $date2 = new DateTime(date('Y-m-d'));
                     $diff = $date2->diff($date1);
                     $contract->last_payment_delay = $diff->days;
                 }
             }
             
             $text_cessions = '';
-            if (!empty($contract->cession_info))
-                foreach ($contract->cession_info as $ci)
-                {
+            if (!empty($contract->cession_info)) {
+                foreach ($contract->cession_info as $ci) {
                     $text_cessions .= $ci->number;
-                    if (!empty($ci->date))
+                    if (!empty($ci->date)) {
                         $text_cessions .= ' от '.$ci->date.' ';
+                    }
                 }
+            }
             $contract_status = '';
             
             $active_sheet->setCellValue('A'.$i, '');// Орг
             $active_sheet->setCellValue('B'.$i, '');// Дата действия
-            if ($contract->status < 2)
+            if ($contract->status < 2) {
                 $active_sheet->setCellValue('C'.$i, 'Займ выдача '.$contract->first_number.' от '.$contract->first_contract->inssuance_date);
-            else
+            } else {
                 $active_sheet->setCellValue('C'.$i, 'Судебный Договор '.$contract->id.' от '.$contract->created);
+            }
             $active_sheet->setCellValue('D'.$i, $contract->first_number);
             $active_sheet->setCellValue('E'.$i, $text_cessions);
             $active_sheet->setCellValue('F'.$i, '');//---Территориальный орган ФССП
@@ -501,7 +475,7 @@ class SudblockContractsController extends Controller
             $i++;
         }
         
-        $objWriter = PHPExcel_IOFactory::createWriter($excel,'Excel5');
+        $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
 
         $objWriter->save($this->config->root_dir.$filename);
         

@@ -14,7 +14,6 @@ class DocumentController extends Controller
         $document = $this->documents->get_document($id);
 
         foreach ($document->params as $param_name => $param_value) {
-
             $this->design->assign($param_name, $param_value);
         }
 
@@ -38,14 +37,17 @@ class DocumentController extends Controller
 
         $payment_schedule = json_decode($document->params->payment_schedule, true);
 
-        uksort($payment_schedule,
+        uksort(
+            $payment_schedule,
             function ($a, $b) {
 
-                if ($a == $b)
+                if ($a == $b) {
                     return 0;
+                }
 
                 return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
-            });
+            }
+        );
 
         $all_pay_sum_string = explode('.', $payment_schedule['result']['all_sum_pay']);
 
@@ -121,7 +123,6 @@ class DocumentController extends Controller
         $tpl = $this->design->fetch('pdf/' . $document->template);
 
         if ($this->request->get('action') == 'download_file') {
-
             $fio = $document->params->lastname . ' ' . mb_substr($document->params->firstname, 0, 1) . mb_substr($document->params->patronymic, 0, 1);
             $uid = $document->params->uid;
             $employer = explode(' ', $uid);
@@ -129,39 +130,47 @@ class DocumentController extends Controller
             $date = date('Y-m-d', strtotime($document->params->probably_start_date));
             $bank = ($document->params->settlement_id == 2) ? 'МИнБанк' : 'РосДорБанк';
 
-            if ($document->template == 'individualnie_usloviya.tpl')
+            if ($document->template == 'individualnie_usloviya.tpl') {
                 $download = $fio . ' - Договор микрозайма ' . $uid . ' ' . "($date)" . ' ' . $bank;
+            }
 
-            if ($document->template == 'soglasie_na_obr_pers_dannih.tpl')
+            if ($document->template == 'soglasie_na_obr_pers_dannih.tpl') {
                 $download = $fio . ' - Согласие на обработку ПД ' . $uid . ' ' . "($date)";
+            }
 
-            if ($document->template == 'soglasie_rdb.tpl')
+            if ($document->template == 'soglasie_rdb.tpl') {
                 $download = $fio . ' - Согласие на идентификацию через банк РДБ ' . $uid . ' ' . "($date)";
+            }
 
-            if ($document->template == 'soglasie_minb.tpl')
+            if ($document->template == 'soglasie_minb.tpl') {
                 $download = $fio . ' - Согласие на идентификацию через банк МИНБ ' . $uid . ' ' . "($date)";
+            }
 
-            if ($document->template == 'soglasie_rabotadatelu.tpl')
+            if ($document->template == 'soglasie_rabotadatelu.tpl') {
                 $download = $fio . ' - Согласие на обработку и передачу ПД работодателю ' . $employer . ' ' . "($date)";
+            }
 
-            if ($document->template == 'soglasie_rukred_rabotadatel.tpl')
+            if ($document->template == 'soglasie_rukred_rabotadatel.tpl') {
                 $download = $fio . " - Согласие работодателю $employer на обработку и передачу ПД " . "($date)";
+            }
 
-            if ($document->template == 'soglasie_na_kred_otchet.tpl')
+            if ($document->template == 'soglasie_na_kred_otchet.tpl') {
                 $download = $fio . " - Согласие на запрос КО " . "($date)";
+            }
 
-            if ($document->template == 'zayavlenie_na_perechislenie_chasti_zp.tpl')
+            if ($document->template == 'zayavlenie_na_perechislenie_chasti_zp.tpl') {
                 $download = $fio . " - Обязательство подать заявление работодателю $employer  на перечисление" . "($date)";
+            }
 
-            if ($document->template == 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl')
+            if ($document->template == 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl') {
                 $download = $fio . " - Заявление работодателю $employer  на перечисление по микрозайму " . "($date)";
+            }
 
 
             $this->pdf->create($tpl, $document->name, $document->template, $download);
         } else {
             $this->pdf->create($tpl, $document->name, $document->template);
         }
-
     }
 
     private function num2str($num)
@@ -186,18 +195,27 @@ class DocumentController extends Controller
         $out = array();
         if (intval($rub) > 0) {
             foreach (str_split($rub, 3) as $uk => $v) { // by 3 symbols
-                if (!intval($v)) continue;
+                if (!intval($v)) {
+                    continue;
+                }
                 $uk = sizeof($unit) - $uk - 1; // unit key
                 $gender = $unit[$uk][3];
                 list($i1, $i2, $i3) = array_map('intval', str_split($v, 1));
                 // mega-logic
                 $out[] = $hundred[$i1]; # 1xx-9xx
-                if ($i2 > 1) $out[] = $tens[$i2] . ' ' . $ten[$gender][$i3]; # 20-99
-                else $out[] = $i2 > 0 ? $a20[$i3] : $ten[$gender][$i3]; # 10-19 | 1-9
+                if ($i2 > 1) {
+                    $out[] = $tens[$i2] . ' ' . $ten[$gender][$i3]; # 20-99
+                } else {
+                    $out[] = $i2 > 0 ? $a20[$i3] : $ten[$gender][$i3]; # 10-19 | 1-9
+                }
                 // units without rub & kop
-                if ($uk > 1) $out[] = $this->morph($v, $unit[$uk][0], $unit[$uk][1], $unit[$uk][2]);
+                if ($uk > 1) {
+                    $out[] = $this->morph($v, $unit[$uk][0], $unit[$uk][1], $unit[$uk][2]);
+                }
             } //foreach
-        } else $out[] = $nul;
+        } else {
+            $out[] = $nul;
+        }
 
         return trim(preg_replace('/ {2,}/', ' ', join(' ', $out)));
     }
@@ -205,10 +223,16 @@ class DocumentController extends Controller
     private function morph($n, $f1, $f2, $f5)
     {
         $n = abs(intval($n)) % 100;
-        if ($n > 10 && $n < 20) return $f5;
+        if ($n > 10 && $n < 20) {
+            return $f5;
+        }
         $n = $n % 10;
-        if ($n > 1 && $n < 5) return $f2;
-        if ($n == 1) return $f1;
+        if ($n > 1 && $n < 5) {
+            return $f2;
+        }
+        if ($n == 1) {
+            return $f1;
+        }
         return $f5;
     }
 }

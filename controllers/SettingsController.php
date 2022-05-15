@@ -5,10 +5,9 @@ class SettingsController extends Controller
     public function fetch()
     {
 
-return false;
+        return false;
 
-        if ($this->request->method('post'))
-        {
+        if ($this->request->method('post')) {
             $this->settings->loan_min_summ = $this->request->post('loan_min_summ', 'integer');
             $this->settings->loan_default_summ = $this->request->post('loan_default_summ', 'integer');
             $this->settings->loan_max_summ = $this->request->post('loan_max_summ', 'integer');
@@ -28,10 +27,7 @@ return false;
             $this->settings->cession_amount = $this->request->post('cession_amount', 'integer');
             
             $this->settings->report_email = $this->request->post('report_email');
-        }
-        else
-        {
-            
+        } else {
         }
         
 

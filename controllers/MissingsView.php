@@ -2,24 +2,24 @@
 
 require_once 'View.php';
 
-class MissingsView extends View {
+class MissingsView extends View
+{
 
-    public function fetch() {
-        if (!in_array('missings', $this->manager->permissions))
+    public function fetch()
+    {
+        if (!in_array('missings', $this->manager->permissions)) {
             return $this->design->fetch('403.tpl');
+        }
         
-        if ($this->request->method('post'))
-        {
-            switch ($this->request->post('action', 'string')):
-                
+        if ($this->request->method('post')) {
+            switch ($this->request->post('action', 'string')) :
                 case 'set_manager':
-                    $this->set_manager_action();    
-                break;
+                    $this->set_manager_action();
+                    break;
                 
                 case 'close_missing':
-                    $this->close_missing_action();    
-                break;
-                
+                    $this->close_missing_action();
+                    break;
             endswitch;
         }
         
@@ -29,8 +29,7 @@ class MissingsView extends View {
 
         $filter['missing'] = 300;
         
-        if (in_array($this->manager->role, array('contact_center')))
-        {
+        if (in_array($this->manager->role, array('contact_center'))) {
             $filter['missing_status'] = 0;
 //            $filter['missing_manager_id'] = $this->manager->id;
         }
@@ -68,7 +67,7 @@ class MissingsView extends View {
         $calls = $this->mango->get_calls(array('user_id'=>$usersId));
         foreach ($clients as $client) {
             foreach ($calls as $call) {
-                if($client->id == $call->id){
+                if ($client->id == $call->id) {
                     $client->dump = $call;
                     $client->dump->callDate = date('d-m-Y H:i:s', $call->create_time);
                 }
@@ -76,41 +75,28 @@ class MissingsView extends View {
         }
         
 
-        $clients = array_map(function($var) {
-            if (!empty($var->additional_data_added))
-            {
+        $clients = array_map(function ($var) {
+            if (!empty($var->additional_data_added)) {
                 $var->stages = 7;
                 $var->last_stage_date = $var->additional_data_added_date;
-            }
-            elseif (!empty($var->files_added))
-            {
+            } elseif (!empty($var->files_added)) {
                 $var->stages = 6;
                 $var->last_stage_date = $var->files_added_date;
-            }
-            elseif (!empty($var->card_added))
-            {
+            } elseif (!empty($var->card_added)) {
                 $var->stages = 5;
                 $var->last_stage_date = $var->card_added_date;
-            }
-            elseif (!empty($var->accept_data_added))
-            {
+            } elseif (!empty($var->accept_data_added)) {
                 $var->stages = 4;
                 $var->last_stage_date = $var->accept_data_added_date;
-            }
-            elseif (!empty($var->address_data_added))
-            {
+            } elseif (!empty($var->address_data_added)) {
                 $var->stages = 3;
                 $var->last_stage_date = $var->address_data_added_date;
-            }
-            elseif (!empty($var->personal_data_added))
-            {
+            } elseif (!empty($var->personal_data_added)) {
                 $var->stages = 2;
                 $var->last_stage_date = $var->personal_data_added_date;
-            }
-            else
-            {
+            } else {
                 $var->stages = 1;
-                $var->last_stage_date = $var->created;                
+                $var->last_stage_date = $var->created;
             }
 
             return $var;
@@ -147,65 +133,43 @@ class MissingsView extends View {
     
     public function set_manager_action()
     {
-        if ($user_id = $this->request->post('user_id', 'integer'))
-        {
-            if ($user = $this->users->get_user($user_id))
-            {
-                if (empty($user->missing_manager_id))
-                {
+        if ($user_id = $this->request->post('user_id', 'integer')) {
+            if ($user = $this->users->get_user($user_id)) {
+                if (empty($user->missing_manager_id)) {
                     $this->users->update_user($user_id, array(
                         'missing_manager_id' => $this->manager->id
                     ));
                     
                     $this->json_output(array('success' => 1, 'manager_name' => $this->manager->name));
-                }
-                else
-                {
+                } else {
                     $this->json_output(array('error' => 'Заявка уже принята'));
                 }
-            }
-            else
-            {
+            } else {
                 $this->json_output(array('error' => 'UNDEFINED_USER'));
             }
-        }
-        else
-        {
+        } else {
             $this->json_output(array('error' => 'EMPTY_USER_ID'));
         }
-    	
     }
     
     public function close_missing_action()
     {
-        if ($user_id = $this->request->post('user_id', 'integer'))
-        {
-            if ($user = $this->users->get_user($user_id))
-            {
-                if (empty($user->missing_status))
-                {
+        if ($user_id = $this->request->post('user_id', 'integer')) {
+            if ($user = $this->users->get_user($user_id)) {
+                if (empty($user->missing_status)) {
                     $this->users->update_user($user_id, array(
                         'missing_status' => 1
                     ));
                     
                     $this->json_output(array('success' => 1));
-                }
-                else
-                {
+                } else {
                     $this->json_output(array('error' => 'Заявка уже завершена'));
                 }
-            }
-            else
-            {
+            } else {
                 $this->json_output(array('error' => 'UNDEFINED_USER'));
             }
-        }
-        else
-        {
+        } else {
             $this->json_output(array('error' => 'EMPTY_USER_ID'));
         }
-    	
-    	
     }
-    
 }

@@ -225,14 +225,16 @@ class Orders extends Core
         $workout_sort = '';
         $sort = 'order_id DESC';
 
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND o.id IN (?@)", array_map('intval', (array)$filter['id']));
+        }
 
-        if (!empty($filter['status']))
+        if (!empty($filter['status'])) {
             $status_filter = $this->db->placehold("AND o.status IN (?@)", (array)$filter['status']);
+        }
 
         if (!empty($filter['client'])) {
-            switch ($filter['client']):
+            switch ($filter['client']) :
                 case 'new':
                     $client_filter = $this->db->placehold("AND o.client_status = 'nk'");
                     break;
@@ -245,41 +247,54 @@ class Orders extends Core
             endswitch;
         }
 
-        if (!empty($filter['type']))
+        if (!empty($filter['type'])) {
             $type_filter = $this->db->placehold("AND o.type IN (?@)", (array)$filter['type']);
+        }
 
-        if (!empty($filter['user_id']))
+        if (!empty($filter['user_id'])) {
             $user_id_filter = $this->db->placehold("AND o.user_id IN (?@)", array_map('intval', (array)$filter['user_id']));
+        }
 
-        if (isset($filter['offline']))
+        if (isset($filter['offline'])) {
             $offline_filter = $this->db->placehold("AND o.offline = ?", (int)$filter['offline']);
+        }
 
-        if (!empty($filter['date_from']))
+        if (!empty($filter['date_from'])) {
             $date_from_filter = $this->db->placehold("AND DATE(o.date) >= ?", $filter['date_from']);
+        }
 
-        if (!empty($filter['date_to']))
+        if (!empty($filter['date_to'])) {
             $date_to_filter = $this->db->placehold("AND DATE(o.date) <= ?", $filter['date_to']);
+        }
 
-        if (!empty($filter['issuance_date_from']))
+        if (!empty($filter['issuance_date_from'])) {
             $issuance_date_from_filter = $this->db->placehold("AND o.id IN (SELECT order_id FROM __contracts WHERE DATE(inssuance_date) >= ?)", $filter['issuance_date_from']);
+        }
 
-        if (!empty($filter['issuance_date_to']))
+        if (!empty($filter['issuance_date_to'])) {
             $issuance_date_to_filter = $this->db->placehold("AND o.id IN (SELECT order_id FROM __contracts WHERE DATE(inssuance_date) <= ?)", $filter['issuance_date_to']);
+        }
 
-        if (isset($filter['autoretry']))
+        if (isset($filter['autoretry'])) {
             $autoretry_filter = $this->db->placehold("AND o.autoretry = ?", (int)$filter['autoretry']);
+        }
 
         if (!empty($filter['search'])) {
-            if (!empty($filter['search']['order_id']))
+            if (!empty($filter['search']['order_id'])) {
                 $search_filter .= $this->db->placehold(' AND (o.id = ? OR o.id IN(SELECT order_id FROM __contracts WHERE number LIKE "%' . $this->db->escape($filter['search']['order_id']) . '%"))', (int)$filter['search']['order_id']);
-            if (!empty($filter['search']['date']))
+            }
+            if (!empty($filter['search']['date'])) {
                 $search_filter .= $this->db->placehold(' AND DATE(o.date) = ?', date('Y-m-d', strtotime($filter['search']['date'])));
-            if (!empty($filter['search']['amount']))
+            }
+            if (!empty($filter['search']['amount'])) {
                 $search_filter .= $this->db->placehold(' AND o.amount = ?', (int)$filter['search']['amount']);
-            if (!empty($filter['search']['period']))
+            }
+            if (!empty($filter['search']['period'])) {
                 $search_filter .= $this->db->placehold(' AND o.period = ?', (int)$filter['search']['period']);
-            if (!empty($filter['search']['employer']))
+            }
+            if (!empty($filter['search']['employer'])) {
                 $search_filter .= $this->db->placehold(' AND o.employer LIKE "%' . $this->db->escape($filter['search']['employer']) . '%"');
+            }
             if (!empty($filter['search']['fio'])) {
                 $fio_filter = array();
                 $expls = array_map('trim', explode(' ', $filter['search']['fio']));
@@ -291,43 +306,51 @@ class Orders extends Core
                 $search_filter .= implode(' AND ', $fio_filter);
                 $search_filter .= $this->db->placehold(')');
             }
-            if (!empty($filter['search']['birth']))
+            if (!empty($filter['search']['birth'])) {
                 $search_filter .= $this->db->placehold(' AND DATE(u.birth) = ?', date('Y-m-d', strtotime($filter['search']['birth'])));
-            if (!empty($filter['search']['phone']))
+            }
+            if (!empty($filter['search']['phone'])) {
                 $search_filter .= $this->db->placehold(" AND u.phone_mobile LIKE '%" . $this->db->escape(str_replace(array(' ', '-', '(', ')', '+'), '', $filter['search']['phone'])) . "%'");
-            if (!empty($filter['search']['region']))
+            }
+            if (!empty($filter['search']['region'])) {
                 $search_filter .= $this->db->placehold(" AND u.Regregion LIKE '%" . $this->db->escape($filter['search']['region']) . "%'");
-            if (!empty($filter['search']['status']))
+            }
+            if (!empty($filter['search']['status'])) {
                 $search_filter .= $this->db->placehold(" AND o.1c_status LIKE '%" . $this->db->escape($filter['search']['status']) . "%'");
+            }
 
             if (!empty($filter['search']['manager_id'])) {
-                if ($filter['search']['manager_id'] == 'none')
+                if ($filter['search']['manager_id'] == 'none') {
                     $search_filter .= $this->db->placehold(" AND (o.manager_id = 0 OR o.manager_id IS NULL)");
-                else
+                } else {
                     $search_filter .= $this->db->placehold(" AND o.manager_id = ?", (int)$filter['search']['manager_id']);
+                }
             }
         }
 
         if (isset($filter['keyword'])) {
             $keywords = explode(' ', $filter['keyword']);
-            foreach ($keywords as $keyword)
+            foreach ($keywords as $keyword) {
                 $keyword_filter .= $this->db->placehold('AND (o.name LIKE "%' . $this->db->escape(trim($keyword)) . '%" )');
+            }
         }
 
-        if (!empty($filter['current']))
+        if (!empty($filter['current'])) {
             $current_filter = $this->db->placehold("AND (o.manager_id = ? OR (o.manager_id IS NULL AND o.status = 0))", (int)$filter['current']);
+        }
 
-        if (isset($filter['limit']))
+        if (isset($filter['limit'])) {
             $limit = max(1, intval($filter['limit']));
+        }
 
-        if (isset($filter['page']))
+        if (isset($filter['page'])) {
             $page = max(1, intval($filter['page']));
+        }
 
         $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page - 1) * $limit, $limit);
 
         if (!empty($filter['sort'])) {
-            switch ($filter['sort']):
-
+            switch ($filter['sort']) :
                 case 'order_id_asc':
                     $sort = 'order_id ASC';
                     break;
@@ -407,12 +430,12 @@ class Orders extends Core
                 case 'penalty_desc':
                     $sort = 'o.penalty_date DESC';
                     break;
-
             endswitch;
         }
 
-        if (!empty($filter['workout_sort']))
+        if (!empty($filter['workout_sort'])) {
             $workout_sort = 'o.quality_workout ASC, ';
+        }
 
         $query = $this->db->placehold("
             SELECT 
@@ -581,41 +604,54 @@ class Orders extends Core
         $client_filter = '';
         $keyword_filter = '';
 
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
+        }
 
-        if (isset($filter['offline']))
+        if (isset($filter['offline'])) {
             $offline_filter = $this->db->placehold("AND o.offline = ?", (int)$filter['offline']);
+        }
 
-        if (!empty($filter['status']))
+        if (!empty($filter['status'])) {
             $status_filter = $this->db->placehold("AND o.status IN (?@)", (array)$filter['status']);
+        }
 
-        if (!empty($filter['type']))
+        if (!empty($filter['type'])) {
             $type_filter = $this->db->placehold("AND o.type IN (?@)", (array)$filter['type']);
+        }
 
-        if (!empty($filter['date_from']))
+        if (!empty($filter['date_from'])) {
             $date_from_filter = $this->db->placehold("AND DATE(o.date) >= ?", $filter['date_from']);
+        }
 
-        if (!empty($filter['date_to']))
+        if (!empty($filter['date_to'])) {
             $date_to_filter = $this->db->placehold("AND DATE(o.date) <= ?", $filter['date_to']);
+        }
 
-        if (!empty($filter['issuance_date_from']))
+        if (!empty($filter['issuance_date_from'])) {
             $issuance_date_from_filter = $this->db->placehold("AND o.id IN (SELECT order_id FROM __contracts WHERE DATE(inssuance_date) >= ?)", $filter['issuance_date_from']);
+        }
 
-        if (!empty($filter['issuance_date_to']))
+        if (!empty($filter['issuance_date_to'])) {
             $issuance_date_to_filter = $this->db->placehold("AND o.id IN (SELECT order_id FROM __contracts WHERE DATE(inssuance_date) <= ?)", $filter['issuance_date_to']);
+        }
 
         if (!empty($filter['search'])) {
-            if (!empty($filter['search']['order_id']))
+            if (!empty($filter['search']['order_id'])) {
                 $search_filter .= $this->db->placehold(' AND (o.id = ? OR o.id IN(SELECT order_id FROM __contracts WHERE number LIKE "%' . $this->db->escape($filter['search']['order_id']) . '%"))', (int)$filter['search']['order_id']);
-            if (!empty($filter['search']['date']))
+            }
+            if (!empty($filter['search']['date'])) {
                 $search_filter .= $this->db->placehold(' AND DATE(o.date) = ?', date('Y-m-d', strtotime($filter['search']['date'])));
-            if (!empty($filter['search']['amount']))
+            }
+            if (!empty($filter['search']['amount'])) {
                 $search_filter .= $this->db->placehold(' AND o.amount = ?', (int)$filter['search']['amount']);
-            if (!empty($filter['search']['period']))
+            }
+            if (!empty($filter['search']['period'])) {
                 $search_filter .= $this->db->placehold(' AND o.period = ?', (int)$filter['search']['period']);
-            if (!empty($filter['search']['employer']))
+            }
+            if (!empty($filter['search']['employer'])) {
                 $search_filter .= $this->db->placehold(' AND o.employer LIKE "%' . $this->db->escape($filter['search']['employer']) . '%"');
+            }
             if (!empty($filter['search']['fio'])) {
                 $fio_filter = array();
                 $expls = array_map('trim', explode(' ', $filter['search']['fio']));
@@ -627,30 +663,36 @@ class Orders extends Core
                 $search_filter .= implode(' AND ', $fio_filter);
                 $search_filter .= $this->db->placehold(')');
             }
-            if (!empty($filter['search']['birth']))
+            if (!empty($filter['search']['birth'])) {
                 $search_filter .= $this->db->placehold(' AND DATE(u.birth) = ?', date('Y-m-d', strtotime($filter['search']['birth'])));
-            if (!empty($filter['search']['phone']))
+            }
+            if (!empty($filter['search']['phone'])) {
                 $search_filter .= $this->db->placehold(" AND u.phone_mobile LIKE '%" . $this->db->escape(str_replace(array(' ', '-', '(', ')', '+'), '', $filter['search']['phone'])) . "%'");
-            if (!empty($filter['search']['region']))
+            }
+            if (!empty($filter['search']['region'])) {
                 $search_filter .= $this->db->placehold(" AND u.Regregion LIKE '%" . $this->db->escape($filter['search']['region']) . "%'");
-            if (!empty($filter['search']['status']))
+            }
+            if (!empty($filter['search']['status'])) {
                 $search_filter .= $this->db->placehold(" AND o.1c_status LIKE '%" . $this->db->escape($filter['search']['status']) . "%'");
+            }
             if (!empty($filter['search']['manager_id'])) {
-                if ($filter['search']['manager_id'] == 'none')
+                if ($filter['search']['manager_id'] == 'none') {
                     $search_filter .= $this->db->placehold(" AND (o.manager_id = 0 OR o.manager_id IS NULL)");
-                else
+                } else {
                     $search_filter .= $this->db->placehold(" AND o.manager_id = ?", (int)$filter['search']['manager_id']);
+                }
             }
         }
 
         if (isset($filter['keyword'])) {
             $keywords = explode(' ', $filter['keyword']);
-            foreach ($keywords as $keyword)
+            foreach ($keywords as $keyword) {
                 $keyword_filter .= $this->db->placehold('AND (name LIKE "%' . $this->db->escape(trim($keyword)) . '%" )');
+            }
         }
 
         if (!empty($filter['client'])) {
-            switch ($filter['client']):
+            switch ($filter['client']) :
                 case 'new':
                     $client_filter = $this->db->placehold("AND o.client_status = 'nk'");
                     break;
@@ -663,11 +705,13 @@ class Orders extends Core
             endswitch;
         }
 
-        if (!empty($filter['current']))
+        if (!empty($filter['current'])) {
             $current_filter = $this->db->placehold("AND (o.manager_id = ? OR (o.manager_id IS NULL AND o.status = 0))", (int)$filter['current']);
+        }
 
-        if (isset($filter['autoretry']))
+        if (isset($filter['autoretry'])) {
             $autoretry_filter = $this->db->placehold("AND o.autoretry = ?", $filter['autoretry']);
+        }
 
         $query = $this->db->placehold("
             SELECT COUNT(o.id) AS count
