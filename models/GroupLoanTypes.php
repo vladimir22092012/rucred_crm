@@ -87,15 +87,18 @@ class GroupLoanTypes extends Core
 
     public function update_record($record)
     {
-        $query = $this->db->placehold("
+        $query = $this->db->placehold(
+            "
         UPDATE s_group_loantypes 
         SET standart_percents = ?, preferential_percents = ?
         WHERE group_id = ?
         AND loantype_id = ? 
-        ", (float)$record['standart_percents'],
+        ",
+            (float)$record['standart_percents'],
             (float)$record['preferential_percents'],
             $record['group_id'],
-            $record['loantype_id']);
+            $record['loantype_id']
+        );
 
         $this->db->query($query);
     }

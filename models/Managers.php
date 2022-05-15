@@ -4,9 +4,9 @@ class Managers extends Core
 {
     private $salt = '0c7540eb7e65b553ec1ba6b20de79608';
 
-	public function get_manager($id)
-	{
-		$query = $this->db->placehold("
+    public function get_manager($id)
+    {
+        $query = $this->db->placehold("
             SELECT *
             FROM __managers
             WHERE id = ?
@@ -14,46 +14,53 @@ class Managers extends Core
         $this->db->query($query);
         $result = $this->db->result();
 
-        if (!empty($result->team_id))
+        if (!empty($result->team_id)) {
             $result->team_id = explode(',', $result->team_id);
+        }
 
         return $result;
     }
 
-	public function get_managers($filter = array())
-	{
-		$id_filter = '';
-		$role_filter = '';
-		$blocked_filter = '';
-		$collection_status_filter = '';
+    public function get_managers($filter = array())
+    {
+        $id_filter = '';
+        $role_filter = '';
+        $blocked_filter = '';
+        $collection_status_filter = '';
         $keyword_filter = '';
         $limit = 1000;
-		$page = 1;
+        $page = 1;
 
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
+        }
 
-        if (!empty($filter['role']))
+        if (!empty($filter['role'])) {
             $role_filter = $this->db->placehold("AND role IN (?@)", (array)$filter['role']);
+        }
 
-        if (isset($filter['blocked']))
+        if (isset($filter['blocked'])) {
             $blocked_filter = $this->db->placehold("AND blocked = ?", (int)$filter['blocked']);
+        }
 
-        if (!empty($filter['collection_status']))
+        if (!empty($filter['collection_status'])) {
             $collection_status_filter = $this->db->placehold("AND collection_status_id IN (?@)", (array)$filter['collection_status']);
+        }
 
-		if(isset($filter['keyword']))
-		{
-			$keywords = explode(' ', $filter['keyword']);
-			foreach($keywords as $keyword)
-				$keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
-		}
+        if (isset($filter['keyword'])) {
+            $keywords = explode(' ', $filter['keyword']);
+            foreach ($keywords as $keyword) {
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
+            }
+        }
 
-		if(isset($filter['limit']))
-			$limit = max(1, intval($filter['limit']));
+        if (isset($filter['limit'])) {
+            $limit = max(1, intval($filter['limit']));
+        }
 
-		if(isset($filter['page']))
-			$page = max(1, intval($filter['page']));
+        if (isset($filter['page'])) {
+            $page = max(1, intval($filter['page']));
+        }
 
         $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page-1)*$limit, $limit);
 
@@ -70,46 +77,49 @@ class Managers extends Core
             $sql_limit
         ");
         $this->db->query($query);
-        if ($results = $this->db->results())
-        {
-            foreach ($results as $result)
-            {
-                if (!empty($result->team_id))
+        if ($results = $this->db->results()) {
+            foreach ($results as $result) {
+                if (!empty($result->team_id)) {
                     $result->team_id = explode(',', $result->team_id);
+                }
             }
         }
 
         return $results;
-	}
+    }
 
-	public function count_managers($filter = array())
-	{
+    public function count_managers($filter = array())
+    {
         $id_filter = '';
         $role_filter = '';
         $blocked_filter = '';
         $collection_status_filter = '';
         $keyword_filter = '';
 
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
+        }
 
-        if (!empty($filter['role']))
+        if (!empty($filter['role'])) {
             $role_filter = $this->db->placehold("AND role IN (?@)", (array)$filter['role']);
+        }
 
-        if (isset($filter['blocked']))
+        if (isset($filter['blocked'])) {
             $blocked_filter = $this->db->placehold("AND blocked = ?", (int)$filter['blocked']);
+        }
 
-        if (!empty($filter['collection_status']))
+        if (!empty($filter['collection_status'])) {
             $collection_status_filter = $this->db->placehold("AND collection_status_id IN (?@)", (array)$filter['collection_status']);
+        }
 
-        if(isset($filter['keyword']))
-		{
-			$keywords = explode(' ', $filter['keyword']);
-			foreach($keywords as $keyword)
-				$keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
-		}
+        if (isset($filter['keyword'])) {
+            $keywords = explode(' ', $filter['keyword']);
+            foreach ($keywords as $keyword) {
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
+            }
+        }
 
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             SELECT COUNT(id) AS count
             FROM __managers
             WHERE 1
@@ -127,12 +137,13 @@ class Managers extends Core
 
     public function add_manager($manager)
     {
-		$manager = (array)$manager;
+        $manager = (array)$manager;
 
-        if (!empty($manager['password']))
+        if (!empty($manager['password'])) {
             $manager['password'] = $this->hash_password($manager['password']);
+        }
 
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             INSERT INTO __managers SET ?%
         ", (array)$manager);
         $this->db->query($query);
@@ -144,10 +155,11 @@ class Managers extends Core
 
     public function update_manager($id, $manager)
     {
-		$manager = (array)$manager;
+        $manager = (array)$manager;
 
-        if (!empty($manager['password']))
+        if (!empty($manager['password'])) {
             $manager['password'] = $this->hash_password($manager['password']);
+        }
 
         $query = $this->db->placehold("
             UPDATE __managers SET ?% WHERE id = ?
@@ -159,7 +171,7 @@ class Managers extends Core
 
     public function delete_manager($id)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             DELETE FROM __managers WHERE id = ?
         ", (int)$id);
         $this->db->query($query);
@@ -183,8 +195,9 @@ class Managers extends Core
     {
         $roles = $this->get_roles();
 
-        if (!isset($roles[$role]))
+        if (!isset($roles[$role])) {
             throw new Exception('Неизвестная роль пользователя: '.$role);
+        }
 
         $list_permissions = array(
             'managers' => array('developer', 'admin', 'boss', 'chief_collector', 'team_collector', 'chief_exactor', 'chief_sudblock', 'city_manager'), // просмотр менеджеров
@@ -224,9 +237,11 @@ class Managers extends Core
         );
 
         $access_permissions = array();
-        foreach ($list_permissions  as $permission => $permission_roles)
-            if (in_array($role, $permission_roles))
+        foreach ($list_permissions as $permission => $permission_roles) {
+            if (in_array($role, $permission_roles)) {
                 $access_permissions[] = $permission;
+            }
+        }
 
         return $access_permissions;
     }
@@ -235,7 +250,7 @@ class Managers extends Core
     {
         $password = $this->hash_password($password);
 
-    	$query = $this->db->placehold("
+        $query = $this->db->placehold("
             SELECT id
             FROM __managers
             WHERE login = ?

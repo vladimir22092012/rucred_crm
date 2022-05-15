@@ -40,11 +40,13 @@ class Companies extends Core
         $group_id = '';
         $blocked = '';
 
-        if (isset($filter['group_id']))
+        if (isset($filter['group_id'])) {
             $group_id = $this->db->placehold("AND group_id = ?", (int)$filter['group_id']);
+        }
 
-        if (isset($filter['blocked']))
+        if (isset($filter['blocked'])) {
             $blocked = $this->db->placehold("AND blocked = ?", (int)$filter['blocked']);
+        }
 
         $query = $this->db->placehold("
         SELECT * 
@@ -118,8 +120,7 @@ class Companies extends Core
         $sort = 'gr.id asc';
 
         if (!empty($filter['sort'])) {
-            switch ($filter['sort']):
-
+            switch ($filter['sort']) :
                 case 'group_asc':
                     $sort = 'gr.id ASC';
                     break;
@@ -199,7 +200,6 @@ class Companies extends Core
                 case 'fakt_desc':
                     $sort = 'com.phys_address DESC';
                     break;
-
             endswitch;
         }
 

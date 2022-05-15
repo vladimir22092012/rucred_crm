@@ -7,7 +7,7 @@ class Scorista extends Core
     
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
         
         $this->username = $this->settings->apikeys['scorista']['username'];
         $this->token = $this->settings->apikeys['scorista']['token'];
@@ -16,12 +16,10 @@ class Scorista extends Core
     
     public function create($order_id)
     {
-        if ($order = $this->orders->get_order((int)$order_id))
-        {
+        if ($order = $this->orders->get_order((int)$order_id)) {
             $user = $this->users->get_user((int)$order->user_id);
             
-            if (empty($user))
-            {
+            if (empty($user)) {
                 return (object)array('error' => 'undefined_user');
             }
             
@@ -53,10 +51,12 @@ class Scorista extends Core
             $addressRegistration->city = $user->Regcity;
             $addressRegistration->street = $user->Regstreet;
             $addressRegistration->house = $user->Reghousing;
-            if ($user->Regbuilding)
+            if ($user->Regbuilding) {
                 $addressRegistration->building = $user->Regbuilding;
-            if ($user->Regroom)
+            }
+            if ($user->Regroom) {
                 $addressRegistration->flat = $user->Regroom;
+            }
             
             $persona->addressRegistration = $addressRegistration;
             
@@ -67,10 +67,12 @@ class Scorista extends Core
             $addressResidential->city = $user->Faktcity;
             $addressResidential->street = $user->Faktstreet;
             $addressResidential->house = $user->Fakthousing;
-            if ($user->Faktbuilding)
+            if ($user->Faktbuilding) {
                 $addressResidential->building = $user->Faktbuilding;
-            if ($user->Faktroom)
+            }
+            if ($user->Faktroom) {
                 $addressResidential->flat = $user->Faktroom;
+            }
             
             $persona->addressResidential = $addressResidential;
             
@@ -139,9 +141,7 @@ class Scorista extends Core
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($data);echo '</pre><hr />';
             
             return $this->send($data);
-        }
-        else
-        {
+        } else {
             return (object)array('error' => 'undefined_order');
         }
     }
@@ -173,7 +173,7 @@ class Scorista extends Core
         $ch = curl_init($url);
         
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers); 
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
         curl_setopt($ch, CURLOPT_POST, 1);
         

@@ -8,7 +8,7 @@ class Bias extends Core
 
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
         
         $this->login = 'yno_khmelik';//$this->settings->apikeys['bias']['login'];
         $this->password = 'Adele2011!';//$this->settings->apikeys['bias']['password'];

@@ -7,7 +7,7 @@ class Juicescore extends Core
     
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
         $this->key = $this->settings->apikeys['juicescore']['api_key'];
     }
@@ -15,8 +15,9 @@ class Juicescore extends Core
     
     public function getscore($order_id)
     {
-        if (!($order = $this->orders->get_order((int)$order_id)))
+        if (!($order = $this->orders->get_order((int)$order_id))) {
             return false;
+        }
         
         $email_expls = explode('@', $order->email);
         $prepare_email = substr($email_expls[0], 0, -1);
@@ -49,7 +50,7 @@ class Juicescore extends Core
             'card_expiration_date' => '',
             'response_content_type' => 'json',
         );
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($params);echo '</pre><hr />';        
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($params);echo '</pre><hr />';
 //exit;
         $url = $this->url.'?'.http_build_query($params);
         
@@ -67,7 +68,6 @@ class Juicescore extends Core
         curl_close($ch);
         
         return $res;
-        
     }
     
     public function test()
@@ -101,7 +101,7 @@ class Juicescore extends Core
             &country_code_billing=RU
             &version=12
         ';
-"
+        "
 $endpoint = 'http://example.com/endpoint';
 $params = array('foo' => 'bar');
 $url = $endpoint . '?' . http_build_query($params);
@@ -129,6 +129,8 @@ curl_setopt($ch, CURLOPT_URL, $url);
         
         curl_close($ch);
         
-echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($res);echo '</pre><hr />';
+        echo __FILE__.' '.__LINE__.'<br /><pre>';
+        var_dump($res);
+        echo '</pre><hr />';
     }
 }

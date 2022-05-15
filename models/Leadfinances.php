@@ -4,7 +4,8 @@ class Leadfinances extends Core
 {
     private $log_dir  = 'logs/';
 
-    public function send_lead_to_leadfinances($order) {
+    public function send_lead_to_leadfinances($order)
+    {
         $token = '97d5488adca24070b182b441e4295dc3';
 
         $phone = $order->phone_mobile;
@@ -58,19 +59,21 @@ class Leadfinances extends Core
     {
         $log_filename = $this->log_dir.$filename;
         
-        if (date('d', filemtime($log_filename)) != date('d'))
-        {
+        if (date('d', filemtime($log_filename)) != date('d')) {
             $archive_filename = $this->log_dir.'archive/'.date('ymd', filemtime($log_filename)).'.'.$filename;
             rename($log_filename, $archive_filename);
-            file_put_contents($log_filename, "\xEF\xBB\xBF");            
+            file_put_contents($log_filename, "\xEF\xBB\xBF");
         }
         
-        if (isset($request['TextJson']))        
+        if (isset($request['TextJson'])) {
             $request['TextJson'] = json_decode($request['TextJson']);
-        if (isset($request['ArrayContracts']))        
+        }
+        if (isset($request['ArrayContracts'])) {
             $request['ArrayContracts'] = json_decode($request['ArrayContracts']);
-        if (isset($request['ArrayOplata']))        
+        }
+        if (isset($request['ArrayOplata'])) {
             $request['ArrayOplata'] = json_decode($request['ArrayOplata']);
+        }
         
         $str = PHP_EOL.'==================================================================='.PHP_EOL;
         $str .= date('d.m.Y H:i:s').PHP_EOL;

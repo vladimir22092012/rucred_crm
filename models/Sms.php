@@ -11,7 +11,7 @@ class Sms extends Core
     private $yuk_originator;
     private $yuk_connect_id;
 
-	private $template_types = array(
+    private $template_types = array(
         'collection' => 'Коллекшен',
         'order' => 'Выдача',
         'smssales' => 'Продажа по смс'
@@ -19,7 +19,7 @@ class Sms extends Core
 
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
         $this->login = $this->settings->apikeys['sms']['login'];
         $this->password = $this->settings->apikeys['sms']['password'];
@@ -34,7 +34,7 @@ class Sms extends Core
 
     public function get_originator($yuk)
     {
-    	return empty($yuk) ? $this->originator : $this->yuk_originator;
+        return empty($yuk) ? $this->originator : $this->yuk_originator;
     }
 
 
@@ -54,7 +54,7 @@ class Sms extends Core
     {
         $phone = $this->clear_phone($phone);
 
-    	return $this->send_smsc($phone, $message);
+        return $this->send_smsc($phone, $message);
     }
 
 
@@ -90,7 +90,7 @@ class Sms extends Core
         $password = 'Ee6-eEF-w7f';
 
 
-    	$url = 'http://smsc.ru/sys/send.php?login='.$login.'&psw='.$password.'&phones='.$phone.'&mes='.$message.'';
+        $url = 'http://smsc.ru/sys/send.php?login='.$login.'&psw='.$password.'&phones='.$phone.'&mes='.$message.'';
 
         $resp = file_get_contents($url);
 
@@ -100,7 +100,7 @@ class Sms extends Core
 
     public function get_code($phone)
     {
-    	$query = $this->db->placehold("
+        $query = $this->db->placehold("
             SELECT code
             FROM __sms_messages
             WHERE phone = ?
@@ -114,9 +114,9 @@ class Sms extends Core
         return $code;
     }
 
-	public function get_message($id)
-	{
-		$query = $this->db->placehold("
+    public function get_message($id)
+    {
+        $query = $this->db->placehold("
             SELECT *
             FROM __sms_messages
             WHERE id = ?
@@ -127,32 +127,36 @@ class Sms extends Core
         return $result;
     }
 
-	public function get_messages($filter = array())
-	{
-		$id_filter = '';
+    public function get_messages($filter = array())
+    {
+        $id_filter = '';
         $keyword_filter = '';
         $phone_filter = '';
         $limit = 1000;
-		$page = 1;
+        $page = 1;
 
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
+        }
 
-        if (!empty($filter['phone']))
+        if (!empty($filter['phone'])) {
             $phone_filter = $this->db->placehold("AND phone = ?", $this->clear_phone($filter['phone']));
+        }
 
-		if(isset($filter['keyword']))
-		{
-			$keywords = explode(' ', $filter['keyword']);
-			foreach($keywords as $keyword)
-				$keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
-		}
+        if (isset($filter['keyword'])) {
+            $keywords = explode(' ', $filter['keyword']);
+            foreach ($keywords as $keyword) {
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
+            }
+        }
 
-		if(isset($filter['limit']))
-			$limit = max(1, intval($filter['limit']));
+        if (isset($filter['limit'])) {
+            $limit = max(1, intval($filter['limit']));
+        }
 
-		if(isset($filter['page']))
-			$page = max(1, intval($filter['page']));
+        if (isset($filter['page'])) {
+            $page = max(1, intval($filter['page']));
+        }
 
         $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page-1)*$limit, $limit);
 
@@ -170,28 +174,30 @@ class Sms extends Core
         $results = $this->db->results();
 
         return $results;
-	}
+    }
 
-	public function count_messages($filter = array())
-	{
+    public function count_messages($filter = array())
+    {
         $id_filter = '';
         $phone_filter = '';
         $keyword_filter = '';
 
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
+        }
 
-        if (!empty($filter['phone']))
+        if (!empty($filter['phone'])) {
             $phone_filter = $this->db->placehold("AND phone = ?", $this->clear_phone($filter['phone']));
+        }
 
-        if(isset($filter['keyword']))
-		{
-			$keywords = explode(' ', $filter['keyword']);
-			foreach($keywords as $keyword)
-				$keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
-		}
+        if (isset($filter['keyword'])) {
+            $keywords = explode(' ', $filter['keyword']);
+            foreach ($keywords as $keyword) {
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
+            }
+        }
 
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             SELECT COUNT(id) AS count
             FROM __sms_messages
             WHERE 1
@@ -207,10 +213,11 @@ class Sms extends Core
 
     public function add_message($message)
     {
-		$message = (array)$message;
+        $message = (array)$message;
 
-        if (isset($message['phone']))
+        if (isset($message['phone'])) {
             $message['phone'] = $this->clear_phone($message['phone']);
+        }
 
         $query = $this->db->placehold("
             INSERT INTO __sms_messages SET ?%
@@ -223,12 +230,13 @@ class Sms extends Core
 
     public function update_message($id, $message)
     {
-		$message = (array)$message;
+        $message = (array)$message;
 
-        if (isset($message['phone']))
+        if (isset($message['phone'])) {
             $message['phone'] = $this->clear_phone($message['phone']);
+        }
 
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             UPDATE __sms_messages SET ?% WHERE id = ?
         ", $message, (int)$id);
         $this->db->query($query);
@@ -238,7 +246,7 @@ class Sms extends Core
 
     public function delete_message($id)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             DELETE FROM __sms_messages WHERE id = ?
         ", (int)$id);
         $this->db->query($query);
@@ -252,8 +260,8 @@ class Sms extends Core
     }
 
     public function get_template($id)
-	{
-		$query = $this->db->placehold("
+    {
+        $query = $this->db->placehold("
             SELECT *
             FROM __sms_templates
             WHERE id = ?
@@ -264,32 +272,36 @@ class Sms extends Core
         return $result;
     }
 
-	public function get_templates($filter = array())
-	{
-		$id_filter = '';
-		$type_filter = '';
+    public function get_templates($filter = array())
+    {
+        $id_filter = '';
+        $type_filter = '';
         $keyword_filter = '';
         $limit = 1000;
-		$page = 1;
+        $page = 1;
 
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
+        }
 
-        if (!empty($filter['type']))
+        if (!empty($filter['type'])) {
             $type_filter = $this->db->placehold("AND type = ?", (string)$filter['type']);
+        }
 
-		if(isset($filter['keyword']))
-		{
-			$keywords = explode(' ', $filter['keyword']);
-			foreach($keywords as $keyword)
-				$keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
-		}
+        if (isset($filter['keyword'])) {
+            $keywords = explode(' ', $filter['keyword']);
+            foreach ($keywords as $keyword) {
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
+            }
+        }
 
-		if(isset($filter['limit']))
-			$limit = max(1, intval($filter['limit']));
+        if (isset($filter['limit'])) {
+            $limit = max(1, intval($filter['limit']));
+        }
 
-		if(isset($filter['page']))
-			$page = max(1, intval($filter['page']));
+        if (isset($filter['page'])) {
+            $page = max(1, intval($filter['page']));
+        }
 
         $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page-1)*$limit, $limit);
 
@@ -307,28 +319,30 @@ class Sms extends Core
         $results = $this->db->results();
 
         return $results;
-	}
+    }
 
-	public function count_templates($filter = array())
-	{
+    public function count_templates($filter = array())
+    {
         $id_filter = '';
         $type_filter = '';
         $keyword_filter = '';
 
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
+        }
 
-        if (!empty($filter['type']))
+        if (!empty($filter['type'])) {
             $type_filter = $this->db->placehold("AND type = ?", (string)$filter['type']);
+        }
 
-        if(isset($filter['keyword']))
-		{
-			$keywords = explode(' ', $filter['keyword']);
-			foreach($keywords as $keyword)
-				$keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
-		}
+        if (isset($filter['keyword'])) {
+            $keywords = explode(' ', $filter['keyword']);
+            foreach ($keywords as $keyword) {
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
+            }
+        }
 
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             SELECT COUNT(id) AS count
             FROM __sms_templates
             WHERE 1
@@ -344,7 +358,7 @@ class Sms extends Core
 
     public function add_template($sms_template)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             INSERT INTO __sms_templates SET ?%
         ", (array)$sms_template);
         $this->db->query($query);
@@ -355,7 +369,7 @@ class Sms extends Core
 
     public function update_template($id, $sms_template)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             UPDATE __sms_templates SET ?% WHERE id = ?
         ", (array)$sms_template, (int)$id);
         $this->db->query($query);
@@ -365,7 +379,7 @@ class Sms extends Core
 
     public function delete_template($id)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             DELETE FROM __sms_templates WHERE id = ?
         ", (int)$id);
         $this->db->query($query);

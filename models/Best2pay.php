@@ -4,7 +4,7 @@ class Best2pay extends Core
 {
     /**
      * Тестовые карты
-     * 
+     *
         2200200111114591, 05/2022, 426 // отмена
         5570725111081379, 05/2022, 415 с 3ds // проведена
         4809388889655340, 05/2022, 195 // проведена
@@ -18,7 +18,7 @@ class Best2pay extends Core
     
     /** пары сектор => пароль
     private $sectors = array(
-        'PAY_CREDIT' => '2241', //сектор для отправки кредита на карту клиента 
+        'PAY_CREDIT' => '2241', //сектор для отправки кредита на карту клиента
         'RECURRENT' => '2516', // сектор для совершения рекурентных платежей
         'ADD_CARD' => '2516', // сектор для привязки карты
         'PAYMENT' => '2242' // сектор для оплаты любой картой
@@ -32,17 +32,17 @@ class Best2pay extends Core
     */
     
     private $sectors = array(
-        'PAY_CREDIT' => '8304', //сектор для отправки кредита на карту клиента 
+        'PAY_CREDIT' => '8304', //сектор для отправки кредита на карту клиента
         'RECURRENT' => '8303', // сектор для совершения рекурентных платежей
         'ADD_CARD' => '8303', // сектор для привязки карты
         'PAYMENT' => '8305' // сектор для оплаты любой картой
     );
     
     private $passwords = array(
-        '7180' => 'K89SL24', //сектор для отправки кредита на карту клиента 
+        '7180' => 'K89SL24', //сектор для отправки кредита на карту клиента
         '7179' => 'i05Jpu8', // сектор для совершения рекурентных платежей
         '7184' => 'Fu3K3yl6', // сектор для привязки карты
-        '7182' => '8F0dMq0', // сектор для оплаты любой картой        
+        '7182' => '8F0dMq0', // сектор для оплаты любой картой
 
         '8303' => 'H16phg0',
         '8304' => '5aF52ladm0',
@@ -56,12 +56,12 @@ class Best2pay extends Core
     
     public function get_sectors()
     {
-    	return $this->sectors;
+        return $this->sectors;
     }
     
     public function get_sector($type)
     {
-    	return isset($this->sectors[$type]) ? $this->sectors[$type] : null;
+        return isset($this->sectors[$type]) ? $this->sectors[$type] : null;
     }
     
     public function return_insurance($transaction, $contract)
@@ -76,14 +76,14 @@ class Best2pay extends Core
             'currency' => $this->currency_code,
         );
         $data['signature'] = $this->get_signature(array(
-            $data['sector'], 
-            $data['id'], 
-            $data['amount'], 
-            $data['currency'], 
+            $data['sector'],
+            $data['id'],
+            $data['amount'],
+            $data['currency'],
             $password
         ));
         
-    	$b2p_order = $this->send('Reverse', $data);
+        $b2p_order = $this->send('Reverse', $data);
 
         $xml = simplexml_load_string($b2p_order);
         $b2p_status = (string)$xml->state;
@@ -95,13 +95,12 @@ class Best2pay extends Core
             'register_id' => $transaction->register_id,
             'reference' => $transaction->id,
             'description' => 'Возврат страховки по договору',
-            'created' => date('Y-m-d H:i:s'),            
+            'created' => date('Y-m-d H:i:s'),
             'body' => serialize($data),
             'callback_response' => $b2p_order,
         ));
         
-        if (!empty($b2p_status))
-        {
+        if (!empty($b2p_status)) {
             $this->operations->add_operation(array(
                 'contract_id' => $contract->id,
                 'order_id' => $contract->order_id,
@@ -119,9 +118,9 @@ class Best2pay extends Core
     
     /**
      * Best2pay::get_payment_link()
-     * 
+     *
      * Метод возвращает ссылку для оплаты любой картой
-     * 
+     *
      * @param int $amount - Сумма платежа в копейках
      * @param string $contract_id - Номер договора
      * @return string
@@ -134,8 +133,9 @@ class Best2pay extends Core
                 
         $fee = max($this->min_fee, floatval($amount * $this->fee));
         
-        if (!($contract = $this->contracts->get_contract($contract_id)))
+        if (!($contract = $this->contracts->get_contract($contract_id))) {
             return false;
+        }
         
         $description = 'Оплата по договору '.$contract_id;
         
@@ -151,15 +151,15 @@ class Best2pay extends Core
             'url' => $this->config->front_url.'/best2pay_callback/payment',
         );
         $data['signature'] = $this->get_signature(array(
-            $data['sector'], 
-            $data['amount'], 
-            $data['currency'], 
-//            $data['fee'], 
+            $data['sector'],
+            $data['amount'],
+            $data['currency'],
+//            $data['fee'],
             $password
         ));
         
         $b2p_order_id = $this->send('Register', $data);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($b2p_order_id);echo '</pre><hr />';        
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($b2p_order_id);echo '</pre><hr />';
 
 
         $transaction_id = $this->transactions->add_transaction(array(
@@ -185,9 +185,9 @@ class Best2pay extends Core
 
     /**
      * Best2pay::add_card()
-     * 
+     *
      * Метод возврашает ссылку для привязки карты
-     * 
+     *
      * @param integer $user_id
      * @param integer $sector
      * @return string $link
@@ -197,17 +197,20 @@ class Best2pay extends Core
 //        $password = $this->settings->apikeys['best2pay'][$sector];
         $password = $this->passwords[$sector];
                 
-        $amount = 100; 
+        $amount = 100;
         $description = 'Привязка карты'; // описание операции
         
-        if (!($user = $this->users->get_user((int)$user_id)))
+        if (!($user = $this->users->get_user((int)$user_id))) {
             return false;
+        }
         
         $user_address = $user->Regstreet_shorttype.' '.$user->Regstreet.', д.'.$user->Reghousing;
-        if (!empty($user->Regbuilding))
+        if (!empty($user->Regbuilding)) {
             $user_address .= ', стр.'.$user->Regbuilding;
-        if (!empty($user->Regroom))
+        }
+        if (!empty($user->Regroom)) {
             $user_address .= ', кв.'.$user->Regroom;
+        }
         
         $user_city = $user->Regregion_shorttype.' '.$user->Regregion.' '.$user->Regcity_shorttype.' '.$user->Regcity;
         
@@ -256,10 +259,9 @@ class Best2pay extends Core
         $data['signature'] = $this->get_signature(array($sector, $b2p_order_id, $password));
 
         $link = $this->url.'webapi/Purchase?'.http_build_query($data);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';echo(htmlspecialchars($b2p_order));echo '</pre><hr />';  
+//echo __FILE__.' '.__LINE__.'<br /><pre>';echo(htmlspecialchars($b2p_order));echo '</pre><hr />';
         
         return $link;
-
     }
         
     /**
@@ -274,19 +276,23 @@ class Best2pay extends Core
 //        $password = $this->settings->apikeys['best2pay'][$sector];
         $password = $this->passwords[$sector];
                         
-        if (!($contract = $this->contracts->get_contract($contract_id)))
+        if (!($contract = $this->contracts->get_contract($contract_id))) {
             return false;
+        }
         
-        if ($contract->status != 1)
+        if ($contract->status != 1) {
             return false;
+        }
         
         $this->contracts->update_contract($contract->id, array('status' => 9));
         
-        if (!($user = $this->users->get_user((int)$contract->user_id)))
+        if (!($user = $this->users->get_user((int)$contract->user_id))) {
             return false;
+        }
 
-        if (!($card = $this->cards->get_card((int)$contract->card_id)))
+        if (!($card = $this->cards->get_card((int)$contract->card_id))) {
             return false;
+        }
 
         $data = array(
             'sector' => $sector,
@@ -297,11 +303,11 @@ class Best2pay extends Core
             'token' => $card->token,
         );
         $data['signature'] = $this->get_signature(array(
-            $data['sector'], 
-            $data['amount'], 
-            $data['currency'], 
-//            $data['pan'], 
-            $data['token'], 
+            $data['sector'],
+            $data['amount'],
+            $data['currency'],
+//            $data['pan'],
+            $data['token'],
             $password
         ));
         
@@ -309,25 +315,24 @@ class Best2pay extends Core
             'contract_id' => $contract->id,
             'user_id' => $user->id,
             'date' => date('Y-m-d H:i:s'),
-            'body' => $data, 
+            'body' => $data,
             'sector' => $sector,
         );
-        if ($p2pcredit_id = $this->add_p2pcredit($p2pcredit))
-        {
+        if ($p2pcredit_id = $this->add_p2pcredit($p2pcredit)) {
             $response = $this->send('P2PCredit', $data, 'gateweb');
             
             $xml = simplexml_load_string($response);
             $status = (string)$xml->order_state;
             
             $this->update_p2pcredit($p2pcredit_id, array(
-                'response' => $response, 
+                'response' => $response,
                 'status' => $status,
                 'register_id' => (string)$xml->order_id,
                 'operation_id' => (string)$xml->id,
                 'complete_date' => date('Y-m-d H:i:s'),
             ));
     
-    //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump(htmlspecialchars($response));echo '</pre><hr />';        
+    //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump(htmlspecialchars($response));echo '</pre><hr />';
     
             return $status;
         }
@@ -341,11 +346,13 @@ class Best2pay extends Core
         
 //        $fee = max($this->min_fee, floatval($amount * $this->fee));
                 
-        if (!($card = $this->cards->get_card($card_id)))
+        if (!($card = $this->cards->get_card($card_id))) {
             return false;
+        }
     
-        if (!($user = $this->users->get_user((int)$card->user_id)))
+        if (!($user = $this->users->get_user((int)$card->user_id))) {
             return false;
+        }
         
         $data = array(
             'sector' => $sector,
@@ -355,11 +362,11 @@ class Best2pay extends Core
 //            'fee' => $fee
         );
         $data['signature'] = $this->get_signature(array(
-            $data['sector'], 
-            $data['id'], 
-            $data['amount'], 
-//            $data['fee'], 
-            $data['currency'], 
+            $data['sector'],
+            $data['id'],
+            $data['amount'],
+//            $data['fee'],
+            $data['currency'],
             $password
         ));
 
@@ -378,9 +385,7 @@ class Best2pay extends Core
         $status = (string)$xml->state;
 
 
-        if ($status == 'APPROVED')
-        {
-            
+        if ($status == 'APPROVED') {
             $contract = $this->contracts->get_contract($contract_id);
             
             $payment_amount = $amount / 100;
@@ -395,13 +400,10 @@ class Best2pay extends Core
             ));
             
             // списываем долг
-            if ($contract->loan_percents_summ > $payment_amount)
-            {
+            if ($contract->loan_percents_summ > $payment_amount) {
                 $new_loan_percents_summ = $contract->loan_percents_summ - $payment_amount;
                 $new_loan_body_summ = $contract->loan_body_summ;
-            }
-            else
-            {
+            } else {
                 $new_loan_percents_summ = 0;
                 $new_loan_body_summ = ($contract->loan_body_summ + $contract->loan_percents_summ) - $payment_amount;
             }
@@ -412,10 +414,9 @@ class Best2pay extends Core
             ));
             
             // закрываем кредит
-            if ($new_loan_body_summ <= 0)
-            {
+            if ($new_loan_body_summ <= 0) {
                 $this->contracts->update_contract($contract->id, array(
-                    'status' => 3, 
+                    'status' => 3,
                 ));
                 
                 $this->orders->update_order($contract->order_id, array(
@@ -426,13 +427,9 @@ class Best2pay extends Core
             
             return true;
 //echo __FILE__.' '.__LINE__.'<br /><pre>';echo(htmlspecialchars($recurring));echo $contract_id.'</pre><hr />';exit;
-            
-        }
-        else
-        {
+        } else {
             return false;
         }
-        
     }
     
     public function recurrent($card_id, $amount, $description)
@@ -442,17 +439,18 @@ class Best2pay extends Core
         
 //        $fee = max($this->min_fee, floatval($amount * $this->fee));
                 
-        if (!($card = $this->cards->get_card($card_id)))
+        if (!($card = $this->cards->get_card($card_id))) {
             return false;
+        }
     
         $sector = $card->sector;
         $password = $this->passwords[$sector];
 
-        if (!($user = $this->users->get_user((int)$card->user_id)))
+        if (!($user = $this->users->get_user((int)$card->user_id))) {
             return false;
+        }
         
-        if ($user->id == 166508)
-        {
+        if ($user->id == 166508) {
             $sector = '8303';
             $password = $this->passwords[$sector];
         }
@@ -467,10 +465,10 @@ class Best2pay extends Core
             'error_number' => 3,
         );
         $data['signature'] = $this->get_signature(array(
-            $data['sector'], 
-            $data['id'], 
-            $data['amount'], 
-            $data['currency'], 
+            $data['sector'],
+            $data['id'],
+            $data['amount'],
+            $data['currency'],
             $password
         ));
         $change_rec = $this->send('ChangeRec', $data);
@@ -484,18 +482,18 @@ class Best2pay extends Core
 //            'fee' => $fee
         );
         $data['signature'] = $this->get_signature(array(
-            $data['sector'], 
-            $data['id'], 
-            $data['amount'], 
-//            $data['fee'], 
-            $data['currency'], 
+            $data['sector'],
+            $data['id'],
+            $data['amount'],
+//            $data['fee'],
+            $data['currency'],
             $password
         ));
 
         $recurring = $this->send('Recurring', $data);
 
         $xml = simplexml_load_string($recurring);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump('$recurring', $recurring);echo '</pre><hr />';        
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump('$recurring', $recurring);echo '</pre><hr />';
         $transaction_id = $this->transactions->add_transaction(array(
             'user_id' => $user->id,
             'amount' => $amount,
@@ -510,8 +508,6 @@ class Best2pay extends Core
         ));
 
         return $recurring;
-
-        
     }
     
 
@@ -523,7 +519,7 @@ class Best2pay extends Core
     
     public function get_operation_info($sector, $register_id, $operation_id)
     {
-        $password = $this->passwords[$sector]; 
+        $password = $this->passwords[$sector];
                
         $data = array(
             'sector' => $sector,
@@ -574,9 +570,10 @@ class Best2pay extends Core
     
     private function get_signature($data)
     {
-    	$str = '';
-        foreach ($data as $item)
+        $str = '';
+        foreach ($data as $item) {
             $str .= $item;
+        }
         
         $md5 = md5($str);
         $signature = base64_encode($md5);
@@ -650,7 +647,7 @@ class Best2pay extends Core
             'reference' => $user_id,
             'description' => $description,
             'created' => date('Y-m-d H:i:s'),
-        ));      
+        ));
 //exit;
         // получаем ссылку на привязку карты
         $data = array(
@@ -664,7 +661,7 @@ class Best2pay extends Core
         return $link;
     }
     
-	public function get_contract_p2pcredit($contract_id)
+    public function get_contract_p2pcredit($contract_id)
     {
         $query = $this->db->placehold("
             SELECT *
@@ -674,49 +671,51 @@ class Best2pay extends Core
             LIMIT 1
         ", (int)$contract_id);
         $this->db->query($query);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($query);echo '</pre><hr />';        
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($query);echo '</pre><hr />';
         return $this->db->result();
     }
     
-	public function get_p2pcredit($id)
-	{
-		$query = $this->db->placehold("
+    public function get_p2pcredit($id)
+    {
+        $query = $this->db->placehold("
             SELECT * 
             FROM __p2pcredits
             WHERE id = ?
         ", (int)$id);
         $this->db->query($query);
-        if ($result = $this->db->result())
-        {
+        if ($result = $this->db->result()) {
             $result->body = unserialize($result->body);
             $result->response = unserialize($result->response);
         }
-	
+    
         return $result;
     }
     
-	public function get_p2pcredits($filter = array())
-	{
-		$id_filter = '';
+    public function get_p2pcredits($filter = array())
+    {
+        $id_filter = '';
         $keyword_filter = '';
         $limit = 1000;
-		$page = 1;
+        $page = 1;
         
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
+        }
         
-		if(isset($filter['keyword']))
-		{
-			$keywords = explode(' ', $filter['keyword']);
-			foreach($keywords as $keyword)
-				$keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
-		}
+        if (isset($filter['keyword'])) {
+            $keywords = explode(' ', $filter['keyword']);
+            foreach ($keywords as $keyword) {
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
+            }
+        }
         
-		if(isset($filter['limit']))
-			$limit = max(1, intval($filter['limit']));
+        if (isset($filter['limit'])) {
+            $limit = max(1, intval($filter['limit']));
+        }
 
-		if(isset($filter['page']))
-			$page = max(1, intval($filter['page']));
+        if (isset($filter['page'])) {
+            $page = max(1, intval($filter['page']));
+        }
             
         $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page-1)*$limit, $limit);
 
@@ -730,34 +729,33 @@ class Best2pay extends Core
             $sql_limit
         ");
         $this->db->query($query);
-        if ($results = $this->db->results())
-        {
-            foreach ($results as $result)
-            {
+        if ($results = $this->db->results()) {
+            foreach ($results as $result) {
                 $result->body = unserialize($result->body);
                 $result->response = unserialize($result->response);
             }
         }
         
         return $results;
-	}
+    }
     
-	public function count_p2pcredits($filter = array())
-	{
+    public function count_p2pcredits($filter = array())
+    {
         $id_filter = '';
         $keyword_filter = '';
         
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
-		
-        if(isset($filter['keyword']))
-		{
-			$keywords = explode(' ', $filter['keyword']);
-			foreach($keywords as $keyword)
-				$keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
-		}
+        }
+        
+        if (isset($filter['keyword'])) {
+            $keywords = explode(' ', $filter['keyword']);
+            foreach ($keywords as $keyword) {
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
+            }
+        }
                 
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             SELECT COUNT(id) AS count
             FROM __p2pcredits
             WHERE 1
@@ -766,7 +764,7 @@ class Best2pay extends Core
         ");
         $this->db->query($query);
         $count = $this->db->result('count');
-	
+    
         return $count;
     }
     
@@ -774,12 +772,14 @@ class Best2pay extends Core
     {
         $p2pcredit = (array)$p2pcredit;
         
-        if (isset($p2pcredit['body']))
+        if (isset($p2pcredit['body'])) {
             $p2pcredit['body'] = serialize($p2pcredit['body']);
-        if (isset($p2pcredit['response']))
+        }
+        if (isset($p2pcredit['response'])) {
             $p2pcredit['response'] = serialize($p2pcredit['response']);
+        }
         
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             INSERT INTO __p2pcredits SET ?%
         ", $p2pcredit);
         $this->db->query($query);
@@ -792,12 +792,14 @@ class Best2pay extends Core
     {
         $p2pcredit = (array)$p2pcredit;
         
-        if (isset($p2pcredit['body']))
+        if (isset($p2pcredit['body'])) {
             $p2pcredit['body'] = serialize($p2pcredit['body']);
-        if (isset($p2pcredit['response']))
+        }
+        if (isset($p2pcredit['response'])) {
             $p2pcredit['response'] = serialize($p2pcredit['response']);
+        }
         
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             UPDATE __p2pcredits SET ?% WHERE id = ?
         ", $p2pcredit, (int)$id);
         $this->db->query($query);
@@ -807,10 +809,9 @@ class Best2pay extends Core
     
     public function delete_p2pcredit($id)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             DELETE FROM __p2pcredits WHERE id = ?
         ", (int)$id);
         $this->db->query($query);
     }
-        
 }
