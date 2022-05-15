@@ -29,13 +29,11 @@ class LoantypeController extends Controller
                 $this->design->assign('error', 'Укажите максимальный срок кредита');
             } else {
                 if (empty($loantype_id)) {
-
                     $loantype->id = $this->loantypes->add_loantype($loantype);
 
                     $groups = $this->Groups->get_groups();
 
                     foreach ($groups as $group) {
-
                         $group =
                             [
                                 'group_id' => $group->id,
@@ -52,7 +50,6 @@ class LoantypeController extends Controller
                     $loantype->id = $this->loantypes->update_loantype($loantype_id, $loantype);
                     $this->design->assign('success', 'Вид кредитования изменен');
                 }
-
             }
         }
 
@@ -82,8 +79,7 @@ class LoantypeController extends Controller
             $this->Loantypes->update_loantype($loantype_id, $loan_update);
         }
 
-        if ($this->request->post('action') == 'change_on_off_flag')
-        {
+        if ($this->request->post('action') == 'change_on_off_flag') {
             $record_id = $this->request->post('record_id', 'integer');
             $flag = $this->request->post('value', 'integer');
 
@@ -98,8 +94,9 @@ class LoantypeController extends Controller
         }
 
 
-        if (!empty($loantype))
+        if (!empty($loantype)) {
             $this->design->assign('loantype', $loantype);
+        }
 
 
         return $this->design->fetch('offline/loantype.tpl');

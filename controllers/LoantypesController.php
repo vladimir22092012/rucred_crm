@@ -4,15 +4,12 @@ class LoantypesController extends Controller
 {
     public function fetch()
     {
-        if ($this->request->method('post'))
-        {
-            switch ($this->request->post('action', 'string')):
-                
+        if ($this->request->method('post')) {
+            switch ($this->request->post('action', 'string')) :
                 case 'delete':
                     $id = $this->request->post('id', 'integer');
                     $this->loantypes->delete_loantype($id);
-                break;
-                
+                    break;
             endswitch;
         }
         
@@ -20,12 +17,12 @@ class LoantypesController extends Controller
         $this->design->assign('loantypes', $loantypes);
         
         $organizations = array();
-        foreach ($this->offline->get_organizations() as $org)
+        foreach ($this->offline->get_organizations() as $org) {
             $organizations[$org->id] = $org;
+        }
         $this->design->assign('organizations', $organizations);
         
 
-    	return $this->design->fetch('offline/loantypes.tpl');
+        return $this->design->fetch('offline/loantypes.tpl');
     }
-    
 }

@@ -4,25 +4,17 @@ class OfflinePointsController extends Controller
 {
     public function fetch()
     {
-        if ($this->request->method('post'))
-        {
-            switch ($this->request->post('action', 'string')):
-                
+        if ($this->request->method('post')) {
+            switch ($this->request->post('action', 'string')) :
                 case 'add':
-                    
                     $city = trim($this->request->post('city'));
                     $address = trim($this->request->post('address'));
                     
-                    if (empty($city))
-                    {
+                    if (empty($city)) {
                         $this->json_output(array('error' => 'Укажите название города'));
-                    }
-                    elseif (empty($address))
-                    {
+                    } elseif (empty($address)) {
                         $this->json_output(array('error' => 'Укажите адрес'));
-                    }
-                    else
-                    {
+                    } else {
                         $item = array(
                             'city' => $city,
                             'address' => $address,
@@ -30,31 +22,25 @@ class OfflinePointsController extends Controller
                         $id = $this->offline->add_point($item);
                         
                         $this->json_output(array(
-                            'id' => $id, 
-                            'city' => $city, 
-                            'address' => $address, 
+                            'id' => $id,
+                            'city' => $city,
+                            'address' => $address,
                             'success' => 'Отделение добавлено добавлен'
                         ));
                     }
                     
-                break;
+                    break;
                 
                 case 'update':
-                    
                     $id = $this->request->post('id', 'integer');
                     $city = trim($this->request->post('city'));
                     $address = trim($this->request->post('address'));
                     
-                    if (empty($city))
-                    {
+                    if (empty($city)) {
                         $this->json_output(array('error' => 'Укажите название города'));
-                    }
-                    elseif (empty($address))
-                    {
+                    } elseif (empty($address)) {
                         $this->json_output(array('error' => 'Укажите адрес'));
-                    }
-                    else
-                    {
+                    } else {
                         $item = array(
                             'city' => $city,
                             'address' => $address,
@@ -62,28 +48,26 @@ class OfflinePointsController extends Controller
                         $this->offline->update_point($id, $item);
                         
                         $this->json_output(array(
-                            'id' => $id, 
-                            'city' => $city, 
+                            'id' => $id,
+                            'city' => $city,
                             'address' => $address,
                             'success' => 'Отделение обновлено'
-                        ));                        
+                        ));
                     }
                     
-                break;
+                    break;
                 
                 case 'delete':
-                    
                     $id = $this->request->post('id', 'integer');
                     
                     $this->offline->delete_point($id);
                     
                     $this->json_output(array(
-                        'id' => $id, 
+                        'id' => $id,
                         'success' => 'Отделение удалено'
                     ));
                     
-                break;
-                
+                    break;
             endswitch;
         }
         
@@ -92,6 +76,4 @@ class OfflinePointsController extends Controller
         
         return $this->design->fetch('offline/points.tpl');
     }
-    
-    
 }

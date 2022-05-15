@@ -4,11 +4,12 @@ class WagesController extends Controller
 {
     public function fetch()
     {
-    	$years = array();
+        $years = array();
         $start = 2021;
         $current_year = date('Y');
-        for ($i = $start; $i <= $current_year; $i++)
+        for ($i = $start; $i <= $current_year; $i++) {
             $years[] = $i;
+        }
         $this->design->assign('years', $years);
         $this->design->assign('filter_year', $current_year);
         
@@ -31,8 +32,7 @@ class WagesController extends Controller
         $this->design->assign('filter_month', $current_month);
         
         
-        if ($this->request->get('report'))
-        {
+        if ($this->request->get('report')) {
             $filter_manager_id = $this->request->get('manager_id');
             $filter_year = $this->request->get('year');
             $filter_month = $this->request->get('month');
@@ -41,20 +41,13 @@ class WagesController extends Controller
             $this->design->assign('filter_month', $filter_month);
             $this->design->assign('filter_manager_id', $filter_manager_id);
             
-            if (empty($filter_manager_id))
-            {
+            if (empty($filter_manager_id)) {
                 $this->design->assign('error', 'Выберите сотрудника для формирования отчета');
-            }
-            elseif (empty($filter_year))
-            {
+            } elseif (empty($filter_year)) {
                 $this->design->assign('error', 'Выберите год для формирования отчета');
-            }
-            elseif (empty($filter_month))
-            {
+            } elseif (empty($filter_month)) {
                 $this->design->assign('error', 'Выберите месяц для формирования отчета');
-            }
-            else
-            {
+            } else {
                 $report = new StdClass();
                 $report->contracts = array();
                 $report->total_inssuance = 0;
@@ -67,8 +60,7 @@ class WagesController extends Controller
                 $from_date = $filter_year.'-'.($filter_month < 10 ? '0'.$filter_month : $filter_month).'-01';
                 $to_date = $filter_year.'-'.($filter_month < 10 ? '0'.$filter_month : $filter_month).'-'.$month_count;
                 $days = array();
-                for ($i = 1; $i <= $month_count; $i++)
-                {
+                for ($i = 1; $i <= $month_count; $i++) {
                     $index = $filter_year.($filter_month < 10 ? '0'.$filter_month : $filter_month).($i < 10 ? '0'.$i : $i);
 
                     $days[$index] = new StdClass();
@@ -81,11 +73,11 @@ class WagesController extends Controller
                     
                     $days[$index]->date = $filter_year.'-'.($filter_month < 10 ? '0'.$filter_month : $filter_month).'-'.($i < 10 ? '0'.$i : $i);
                 }
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($days);echo '</pre><hr />';                
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($days);echo '</pre><hr />';
                 $report->days = $days;
                 
                 
-                // выдачи                
+                // выдачи
                 $query = $this->db->placehold("
                     SELECT *
                     FROM __contracts AS c
@@ -98,25 +90,21 @@ class WagesController extends Controller
                 ", array(2,3,4), $filter_manager_id, $from_date, $to_date);
                 $this->db->query($query);
                 
-                if ($contracts = $this->db->results())
-                {
-                    foreach ($contracts as $contract)
-                    {
+                if ($contracts = $this->db->results()) {
+                    foreach ($contracts as $contract) {
                         $index = date('Ymd', strtotime($contract->inssuance_date));
                         
                         $report->days[$index]->day_inssuance += $contract->amount;
                         $report->total_inssuance += $contract->amount;
                         $report->days[$index]->contracts[] = $contract;
                         
-                        if ($contract->client_status == 'nk')
-                        {
+                        if ($contract->client_status == 'nk') {
                             $report->days[$index]->day_nk++;
-                            $report->total_nk++; 
+                            $report->total_nk++;
                         }
-                        if ($contract->client_status == 'pk' || $contract->client_status == 'crm')
-                        {
+                        if ($contract->client_status == 'pk' || $contract->client_status == 'crm') {
                             $report->days[$index]->day_pk++;
-                            $report->total_pk++; 
+                            $report->total_pk++;
                         }
                     }
                 }
@@ -141,10 +129,8 @@ class WagesController extends Controller
                 ", $filter_manager_id, $from_date, $to_date);
                 $this->db->query($query);
                 
-                if ($payments = $this->db->results())
-                {
-                    foreach ($payments as $payment)
-                    {
+                if ($payments = $this->db->results()) {
+                    foreach ($payments as $payment) {
                         $index = date('Ymd', strtotime($payment->created));
                         
                         $days[$index]->day_percents += $payment->loan_percents_summ + $payment->loan_charge_summ + $payment->loan_peni_summ;
@@ -155,17 +141,17 @@ class WagesController extends Controller
                                 
                 $report->coef = $report->total_percents / $report->total_inssuance;
                 
-                if ($report->coef < 0.36)
+                if ($report->coef < 0.36) {
                     $stavka = 0;
-                elseif ($report->coef < 0.38)
+                } elseif ($report->coef < 0.38) {
                     $stavka = 3;
-                elseif ($report->coef < 0.4)
+                } elseif ($report->coef < 0.4) {
                     $stavka = 4;
-                else
+                } else {
                     $stavka = 5;
+                }
                 
-                foreach ($report->days as $day)
-                {
+                foreach ($report->days as $day) {
                     $day->percents_zp = round($day->day_percents * $stavka / 100, 2);
                     
                     $day->day_wage = $day->percents_zp;
@@ -176,28 +162,28 @@ class WagesController extends Controller
                 $report->sbor_dr = 100;
                 
                 $report->premia_nk = 0;
-                if ($report->total_nk > 30) // план по новым клиентам 30
+                if ($report->total_nk > 30) { // план по новым клиентам 30
                     $report->premia_nk = ($report->total_nk - 30) * 250;
+                }
                 
                 $report->premia_sbor = 0;
-                if ($report->coef > 0.36)
-                {
-                    if ($report->total_inssuance > 450000)
+                if ($report->coef > 0.36) {
+                    if ($report->total_inssuance > 450000) {
                         $report->premia_sbor = 4000;
-                    elseif ($report->total_inssuance > 400000)
+                    } elseif ($report->total_inssuance > 400000) {
                         $report->premia_sbor = 3500;
-                    elseif ($report->total_inssuance > 350000)
+                    } elseif ($report->total_inssuance > 350000) {
                         $report->premia_sbor = 3000;
-                    elseif ($report->total_inssuance > 300000)
+                    } elseif ($report->total_inssuance > 300000) {
                         $report->premia_sbor = 2500;
-/*                
+                    }
+/*
                 Если РЕЙТИНГ >= 36 тогда:
 Если ОД (в пункту 5) >= 450000 то "Премия за сбор 36%" = 4000
 Если ОД (в пункту 5) >= 400000 то "Премия за сбор 36%" = 3500
 Если ОД (в пункту 5) >= 350000 то "Премия за сбор 36%" = 3000
 Если ОД (в пункту 5) >= 300000 то "Премия за сбор 36%" = 2500
 */
-                    
                 }
                 
                 $report->total = $report->total_wage + $report->card + $report->premia_nk + $report->premia_sbor - $report->sbor_dr;
@@ -211,5 +197,4 @@ class WagesController extends Controller
         
         return $this->design->fetch('offline/wages.tpl');
     }
-    
 }

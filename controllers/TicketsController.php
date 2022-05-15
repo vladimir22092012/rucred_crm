@@ -6,7 +6,6 @@ class TicketsController extends Controller
     {
         
         
-    	return $this->design->fetch('tickets.tpl');
+        return $this->design->fetch('tickets.tpl');
     }
-    
 }

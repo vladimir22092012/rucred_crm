@@ -4,25 +4,17 @@ class PenaltyTypesController extends Controller
 {
     public function fetch()
     {
-        if ($this->request->method('post'))
-        {
-            switch ($this->request->post('action', 'string')):
-                
+        if ($this->request->method('post')) {
+            switch ($this->request->post('action', 'string')) :
                 case 'add':
-                    
                     $name = trim($this->request->post('name'));
                     $cost = trim($this->request->post('cost'));
                     
-                    if (empty($name))
-                    {
+                    if (empty($name)) {
                         $this->json_output(array('error' => 'Укажите название штрафа'));
-                    }
-                    elseif (empty($cost))
-                    {
+                    } elseif (empty($cost)) {
                         $this->json_output(array('error' => 'Укажите сумму штрафа'));
-                    }
-                    else
-                    {
+                    } else {
                         $item = array(
                             'name' => $name,
                             'cost' => $cost,
@@ -30,31 +22,25 @@ class PenaltyTypesController extends Controller
                         $id = $this->penalties->add_type($item);
                         
                         $this->json_output(array(
-                            'id' => $id, 
-                            'name' => $name, 
-                            'cost' => $cost, 
+                            'id' => $id,
+                            'name' => $name,
+                            'cost' => $cost,
                             'success' => 'Штраф добавлен'
                         ));
                     }
                     
-                break;
+                    break;
                 
                 case 'update':
-                    
                     $id = $this->request->post('id', 'integer');
                     $name = trim($this->request->post('name'));
                     $cost = trim($this->request->post('cost'));
                     
-                    if (empty($name))
-                    {
+                    if (empty($name)) {
                         $this->json_output(array('error' => 'Укажите название штрафа'));
-                    }
-                    elseif (empty($cost))
-                    {
+                    } elseif (empty($cost)) {
                         $this->json_output(array('error' => 'Укажите сумму штрафа'));
-                    }
-                    else
-                    {
+                    } else {
                         $item = array(
                             'name' => $name,
                             'cost' => $cost,
@@ -62,28 +48,26 @@ class PenaltyTypesController extends Controller
                         $this->penalties->update_type($id, $item);
                         
                         $this->json_output(array(
-                            'id' => $id, 
-                            'name' => $name, 
+                            'id' => $id,
+                            'name' => $name,
                             'cost' => $cost,
                             'success' => 'Штраф обновлен'
-                        ));                        
+                        ));
                     }
                     
-                break;
+                    break;
                 
                 case 'delete':
-                    
                     $id = $this->request->post('id', 'integer');
                     
                     $this->penalties->delete_type($id);
                     
                     $this->json_output(array(
-                        'id' => $id, 
+                        'id' => $id,
                         'success' => 'Штраф удален'
                     ));
                     
-                break;
-                
+                    break;
             endswitch;
         }
         
@@ -93,6 +77,4 @@ class PenaltyTypesController extends Controller
         
         return $this->design->fetch('penalty_types.tpl');
     }
-    
-    
 }
