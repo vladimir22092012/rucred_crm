@@ -13,8 +13,7 @@ $(function () {
     });
 
     $('.add-company-modal').on('click', function () {
-
-        $('#modal_add_branch').modal();
+        $('#add-company-modal').modal();
     });
 
     $('.add_settlement').on('click', function () {

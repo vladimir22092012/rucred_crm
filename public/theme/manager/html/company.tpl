@@ -113,10 +113,11 @@
                                                 </label>
                                             </div>
                                         </th>
-                                        <th><input type="button" class="btn btn-outline-info action-edit-company"
+                                        <th><input type="button"
+                                                   class="btn btn-outline-info action-edit-company button-fixed"
                                                    value="Редактировать компанию"></th>
                                         <th><input type="button" data-company-id="{$company->com_id}"
-                                                   class="btn btn-outline-danger action-delete-company"
+                                                   class="btn btn-outline-danger action-delete-company button-fixed"
                                                    value="Удалить компанию"></th>
                                     </tr>
                                     </thead>

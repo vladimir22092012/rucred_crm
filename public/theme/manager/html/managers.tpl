@@ -45,6 +45,7 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Пользователь</th>
+                                        <th>Компания</th>
                                         <th>IP адрес</th>
                                         <th>Активность</th>
                                         <th>Роль</th>
@@ -58,6 +59,9 @@
                                         <td>
                                             <a href="manager/{$m->id}">{$m->name}</a>
                                             {if $m->blocked}<br /><span class="badge badge-danger">Заблокирован</span>{/if}
+                                        </td>
+                                        <td>
+                                            {$m->company_name}
                                         </td>
                                         <td>{$m->last_ip}</td>
                                         <td>

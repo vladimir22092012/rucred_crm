@@ -489,6 +489,22 @@
                 $('input[name="result[all_loan_body_pay]"]').val(new Intl.NumberFormat('ru-RU').format(last_od));
 
             });
+
+            $('.delete_order').on('click', function (e) {
+                e.preventDefault();
+                let order_id = $(this).attr('data-order');
+
+                $.ajax({
+                    method: 'POST',
+                    data:{
+                        action: 'delete_order',
+                        order_id: order_id
+                    },
+                    success: function () {
+                        location.replace('/offline_orders');
+                    }
+                })
+            })
         });
     </script>
 {/capture}
@@ -2421,14 +2437,14 @@
                                                         </div>
                                                         <div style="margin-left: 10px">
                                                             <a target="_blank"
-                                                               href="http://51.250.26.168/document?id={$document->id}&action=download_file"><input
+                                                               href="{$config->root_url}/document?id={$document->id}&action=download_file"><input
                                                                         type="button"
                                                                         class="btn btn-outline-success download_doc"
                                                                         value="Сохранить"></a>
                                                         </div>
                                                         <div style="margin-left: 10px">
                                                             <a target="_blank"
-                                                               href="http://51.250.26.168/document/{$document->id}"><input
+                                                               href="{$config->root_url}/document/{$document->id}"><input
                                                                         type="button"
                                                                         class="btn btn-outline-warning print_doc"
                                                                         value="Распечатать"></a>
@@ -2962,7 +2978,8 @@
                                     </div>
                                 </form>
                                 <!-- -->
-                                <form method="POST" enctype="multipart/form-data">
+                                <div style="display: flex; width: 100%; justify-content: space-between">
+                                <form method="POST" style="width: 50%" enctype="multipart/form-data">
                                     {if $manager->role != 'employer'}
                                         <div class="form_file_item">
                                             <input type="file" name="new_file" class="new_file" id="new_file"
@@ -2974,6 +2991,10 @@
                                         </div>
                                     {/if}
                                 </form>
+                                <div type="button" class="btn btn-outline-danger delete_order" data-order="{$order->order_id}" style="height: 38px">
+                                    Удалить заявку
+                                </div>
+                                </div>
                             </div>
                         </div>
 

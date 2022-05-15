@@ -183,6 +183,10 @@ class OfflineOrderController extends Controller
                     $this->action_workout();
                     break;
 
+                case 'delete_order':
+                    $this->action_delete_order();
+                    break;
+
                 case 'edit_personal_number':
                     return $this->action_edit_personal_number();
                     break;
@@ -3063,6 +3067,13 @@ class OfflineOrderController extends Controller
         }
 
         return $date;
+    }
+
+    private function action_delete_order(){
+
+        $order_id = $this->request->post('order_id');
+
+        $this->orders->update_order($order_id, ['status' => 16]);
     }
 
 }

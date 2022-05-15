@@ -5,11 +5,17 @@
     <link rel="stylesheet" type="text/css"
           href="theme/manager/assets/plugins/datatables.net-bs4/css/dataTables.bootstrap4.css">
     <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet"/>
+    <link href="theme/manager/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="theme/manager/assets/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
 {/capture}
 
 {capture name='page_scripts'}
-    <script src="theme/manager/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
+    <script src="theme/manager/assets/plugins/moment/moment.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
+    <script src="theme/manager/assets/plugins/daterangepicker/daterangepicker.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/companies.js"></script>
+    <script src="theme/manager/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
     <script src="https://unpkg.com/validator@latest/validator.min.js"></script>
     <script>
@@ -107,7 +113,7 @@
             </div>
             <div class="col-md-6 col-4 align-self-center">
                 <button class="btn float-right hidden-sm-down btn-success add-company-modal">
-                    <i class="mdi mdi-plus-circle"></i> Добавить
+                    Добавить
                 </button>
             </div>
             {if !empty($error)}
@@ -250,7 +256,7 @@
 
 </div>
 
-<div id="modal_add_branch" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+<div id="add-company-modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
      aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
