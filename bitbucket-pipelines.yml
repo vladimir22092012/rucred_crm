@@ -7,6 +7,6 @@ pipelines:
     stage:
       - step:
           name: Deploy
-          deployment: production
+          deployment: stage
           script:
             - chmod +x deployer.phar && ./deployer.phar deploy
