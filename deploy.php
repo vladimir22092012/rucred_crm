@@ -11,6 +11,7 @@ set('repository', 'git@bitbucket.org:rukred/rucred-crm.git');
 set('branch', 'stage');
 set('default_stage', 'stage');
 set('php_fpm_version', '8.0');
+set('ssh_arguments', ['-o UserKnownHostsFile=/dev/null', '-o StrictHostKeyChecking=no']);
 set('shared_dirs', ['configuration']);
 
 host('51.250.98.13')
