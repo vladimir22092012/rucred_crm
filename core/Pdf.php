@@ -33,12 +33,9 @@ class Pdf extends Core
 
         $this->tcpdf->IncludeJS("print();");
 
-        if($download)
-        {
+        if ($download) {
             $this->tcpdf->Output($download.'.pdf', 'D');
-        }
-        else
-        {
+        } else {
             $this->tcpdf->Output($filename, 'I');
         }
     }
