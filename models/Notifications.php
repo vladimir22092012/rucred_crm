@@ -58,37 +58,38 @@ class Notifications extends Core
     
     public function get_events()
     {
-    	return array_map(function($var){
-    	   return (object)$var;
-    	}, $this->events);
+        return array_map(function ($var) {
+            return (object)$var;
+        }, $this->events);
     }
     
     public function get_event($id)
     {
-    	if (isset($this->events[$id]))
+        if (isset($this->events[$id])) {
             return (object)$this->events[$id];
+        }
         
-        return NULL;
+        return null;
     }
     
     
-	public function get_notification($id)
-	{
-		$query = $this->db->placehold("
+    public function get_notification($id)
+    {
+        $query = $this->db->placehold("
             SELECT * 
             FROM __notifications
             WHERE id = ?
         ", (int)$id);
         $this->db->query($query);
         $result = $this->db->result();
-	
+    
         return $result;
     }
     
-	public function get_notifications($filter = array())
-	{
-		$id_filter = '';
-		$sudblock_contract_id_filter = '';
+    public function get_notifications($filter = array())
+    {
+        $id_filter = '';
+        $sudblock_contract_id_filter = '';
         $collection_contract_id_filter = '';
         $notification_date_filter = '';
         $done_filter = '';
@@ -96,41 +97,50 @@ class Notifications extends Core
         $collection_mode_filter = '';
         $keyword_filter = '';
         $limit = 1000;
-		$page = 1;
+        $page = 1;
         
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
+        }
         
-        if (!empty($filter['sudblock_contract_id']))
+        if (!empty($filter['sudblock_contract_id'])) {
             $sudblock_contract_id_filter = $this->db->placehold("AND sudblock_contract_id IN (?@)", array_map('intval', (array)$filter['sudblock_contract_id']));
+        }
         
-        if (!empty($filter['collection_contract_id']))
+        if (!empty($filter['collection_contract_id'])) {
             $collection_contract_id_filter = $this->db->placehold("AND collection_contract_id IN (?@)", array_map('intval', (array)$filter['collection_contract_id']));
+        }
         
-        if (!empty($filter['sudblock_mode']))
+        if (!empty($filter['sudblock_mode'])) {
             $sudblock_mode_filter = $this->db->placehold("AND sudblock_contract_id > 0");
+        }
         
-        if (!empty($filter['collection_mode']))
+        if (!empty($filter['collection_mode'])) {
             $collection_mode_filter = $this->db->placehold("AND collection_contract_id > 0");
+        }
         
-        if (!empty($filter['notification_date']))
+        if (!empty($filter['notification_date'])) {
             $notification_date_filter = $this->db->placehold("AND DATE(notification_date) = ?", $filter['notification_date']);
+        }
         
-        if (isset($filter['done']))
+        if (isset($filter['done'])) {
             $done_filter = $this->db->placehold("AND done = ?", (int)$filter['done']);
+        }
         
-		if(isset($filter['keyword']))
-		{
-			$keywords = explode(' ', $filter['keyword']);
-			foreach($keywords as $keyword)
-				$keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
-		}
+        if (isset($filter['keyword'])) {
+            $keywords = explode(' ', $filter['keyword']);
+            foreach ($keywords as $keyword) {
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
+            }
+        }
         
-		if(isset($filter['limit']))
-			$limit = max(1, intval($filter['limit']));
+        if (isset($filter['limit'])) {
+            $limit = max(1, intval($filter['limit']));
+        }
 
-		if(isset($filter['page']))
-			$page = max(1, intval($filter['page']));
+        if (isset($filter['page'])) {
+            $page = max(1, intval($filter['page']));
+        }
             
         $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page-1)*$limit, $limit);
 
@@ -153,10 +163,10 @@ class Notifications extends Core
         $results = $this->db->results();
 
         return $results;
-	}
+    }
     
-	public function count_notifications($filter = array())
-	{
+    public function count_notifications($filter = array())
+    {
         $id_filter = '';
         $sudblock_contract_id_filter = '';
         $collection_contract_id_filter = '';
@@ -166,35 +176,42 @@ class Notifications extends Core
         $done_filter = '';
         $keyword_filter = '';
         
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
-		
-        if (!empty($filter['sudblock_contract_id']))
+        }
+        
+        if (!empty($filter['sudblock_contract_id'])) {
             $sudblock_contract_id_filter = $this->db->placehold("AND sudblock_contract_id IN (?@)", array_map('intval', (array)$filter['sudblock_contract_id']));
+        }
         
-        if (!empty($filter['collection_contract_id']))
+        if (!empty($filter['collection_contract_id'])) {
             $collection_contract_id_filter = $this->db->placehold("AND collection_contract_id IN (?@)", array_map('intval', (array)$filter['collection_contract_id']));
+        }
         
-        if (!empty($filter['notification_date']))
+        if (!empty($filter['notification_date'])) {
             $notification_date_filter = $this->db->placehold("AND DATE(notification_date) = ?", $filter['notification_date']);
+        }
         
-        if (isset($filter['done']))
+        if (isset($filter['done'])) {
             $done_filter = $this->db->placehold("AND done = ?", (int)$filter['done']);
+        }
         
-        if (!empty($filter['sudblock_mode']))
+        if (!empty($filter['sudblock_mode'])) {
             $sudblock_mode_filter = $this->db->placehold("AND sudblock_contract_id > 0");
+        }
         
-        if (!empty($filter['collection_mode']))
+        if (!empty($filter['collection_mode'])) {
             $collection_mode_filter = $this->db->placehold("AND collection_contract_id > 0");
+        }
         
-        if(isset($filter['keyword']))
-		{
-			$keywords = explode(' ', $filter['keyword']);
-			foreach($keywords as $keyword)
-				$keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
-		}
+        if (isset($filter['keyword'])) {
+            $keywords = explode(' ', $filter['keyword']);
+            foreach ($keywords as $keyword) {
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
+            }
+        }
                 
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             SELECT COUNT(id) AS count
             FROM __notifications
             WHERE 1
@@ -209,13 +226,13 @@ class Notifications extends Core
         ");
         $this->db->query($query);
         $count = $this->db->result('count');
-	
+    
         return $count;
     }
     
     public function add_notification($notification)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             INSERT INTO __notifications SET ?%
         ", (array)$notification);
         $this->db->query($query);
@@ -226,7 +243,7 @@ class Notifications extends Core
     
     public function update_notification($id, $notification)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             UPDATE __notifications SET ?% WHERE id = ?
         ", (array)$notification, (int)$id);
         $this->db->query($query);
@@ -236,7 +253,7 @@ class Notifications extends Core
     
     public function delete_notification($id)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             DELETE FROM __notifications WHERE id = ?
         ", (int)$id);
         $this->db->query($query);

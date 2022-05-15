@@ -7,8 +7,7 @@ class Html2PdfController extends Controller
         $user_id = $this->request->get('user_id');
         $contract_id = $this->request->get('contract_id');
 
-        switch ($document_name = $this->request->get('document_name')):
-
+        switch ($document_name = $this->request->get('document_name')) :
             case 'polis_strahovaniya_preview':
                 $document_template = 'polis-strahovaniya-preview.tpl';
                 $this->polis_strahovaniya($user_id, $document_name, $document_template, $contract_id);
@@ -23,9 +22,7 @@ class Html2PdfController extends Controller
                 $document_template = 'polis-zakritie.tpl';
                 $this->close_insurance($user_id, $document_template, $contract_id);
                 break;
-
         endswitch;
-
     }
 
     private function polis_strahovaniya($user_id, $document_name, $document_template, $contract_id)
@@ -44,16 +41,17 @@ class Html2PdfController extends Controller
 
         $insurance_summ = 0;
 
-        if ($contract->amount <= 2000)
+        if ($contract->amount <= 2000) {
             $insurance_summ = 99;
-        elseif ($contract->amount <= 5000)
+        } elseif ($contract->amount <= 5000) {
             $insurance_summ = 450;
-        elseif ($contract->amount <= 7000)
+        } elseif ($contract->amount <= 7000) {
             $insurance_summ = 650;
-        elseif ($contract->amount <= 10000)
+        } elseif ($contract->amount <= 10000) {
             $insurance_summ = 850;
-        else
+        } else {
             $insurance_summ = 900;
+        }
 
         $this->design->assign('insurance_summ', $insurance_summ);
 
@@ -116,6 +114,5 @@ class Html2PdfController extends Controller
         $tpl = $this->design->fetch('pdf/' . $document_template);
 
         $this->pdf->create($tpl, 'Страховка при закрытии', $document_template);
-
     }
 }

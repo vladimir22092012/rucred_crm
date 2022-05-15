@@ -8,10 +8,10 @@ class Dadata extends Core
     
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
         
         $this->token = $this->settings->apikeys['dadata']['api_key'];
-    }    
+    }
     
     public function get_party($query, $count = 50)
     {
@@ -43,12 +43,11 @@ class Dadata extends Core
         $request->to_bound = new StdClass();
         $request->to_bound->value = 'settlement';
 
-        if (!empty($region_kladr_id))
-        {
+        if (!empty($region_kladr_id)) {
             $r = new StdClass();
             $r->kladr_id = $region_kladr_id;
             $request->locations = array($r);
-            $request->restrict_value = true;            
+            $request->restrict_value = true;
         }
         return $this->suggest("address", $request);
     }
@@ -64,12 +63,11 @@ class Dadata extends Core
         $request->to_bound = new StdClass();
         $request->to_bound->value = 'street';
 
-        if (!empty($city_kladr_id))
-        {
+        if (!empty($city_kladr_id)) {
             $r = new StdClass();
             $r->kladr_id = $city_kladr_id;
             $request->locations = array($r);
-            $request->restrict_value = true;            
+            $request->restrict_value = true;
         }
         return $this->suggest("address", $request);
     }
@@ -85,12 +83,11 @@ class Dadata extends Core
         $request->to_bound = new StdClass();
         $request->to_bound->value = 'house';
 
-        if (!empty($street_kladr_id))
-        {
+        if (!empty($street_kladr_id)) {
             $r = new StdClass();
             $r->kladr_id = $street_kladr_id;
             $request->locations = array($r);
-            $request->restrict_value = true;            
+            $request->restrict_value = true;
         }
         return $this->suggest("address", $request);
     }
@@ -99,12 +96,11 @@ class Dadata extends Core
     {
         $request = array("query"=>$query, "count"=>$count);
     
-        if (!empty($city_kladr_id))
-        {
+        if (!empty($city_kladr_id)) {
             $r = new StdClass();
             $r->kladr_id = $city_kladr_id;
             $request['locations'] = array($r);
-            $request['restrict_value'] = true;            
+            $request['restrict_value'] = true;
             
             return $this->suggest("address", $request);
         }
@@ -113,9 +109,8 @@ class Dadata extends Core
     public function suggest($type, $fields)
     {
         $result = false;
-        if ($ch = curl_init($this->url."$type"))
-        {
-             curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+        if ($ch = curl_init($this->url."$type")) {
+             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
              curl_setopt($ch, CURLOPT_HTTPHEADER, array(
                  'Content-Type: application/json',
                  'Accept: application/json',
@@ -132,5 +127,4 @@ class Dadata extends Core
         }
         return $result;
     }
-    
 }

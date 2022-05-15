@@ -11,10 +11,11 @@ class OfflineOrdersController extends Controller
         $filter['offline'] = 1;
         $this->design->assign('offline', $filter['offline']);
 
-        if (!($period = $this->request->get('period')))
+        if (!($period = $this->request->get('period'))) {
             $period = 'all';
+        }
 
-        switch ($period):
+        switch ($period) :
             case 'today':
                 $filter['date_from'] = date('Y-m-d');
                 break;
@@ -43,7 +44,6 @@ class OfflineOrdersController extends Controller
                 $filter['date_from'] = date('Y-m-d', strtotime($filter_daterange[0]));
                 $filter['date_to'] = date('Y-m-d', strtotime($filter_daterange[1]));
                 break;
-
         endswitch;
         $this->design->assign('period', $period);
 
@@ -134,28 +134,32 @@ class OfflineOrdersController extends Controller
         foreach ($this->orders->get_orders($filter) as $order) {
             $order->scorings = array();
             $order->penalties = array();
-            foreach ($this->scorings->get_scorings(array('user_id' => $order->user_id)) as $sc)
+            foreach ($this->scorings->get_scorings(array('user_id' => $order->user_id)) as $sc) {
                 $order->scorings[$sc->type] = $sc;
+            }
             if (empty($order->scorings) || !count($order->scorings)) {
                 $order->scorings_result = 'Не проводился';
             } else {
                 $order->scorings_result = 'Пройден';
                 foreach ($order->scorings as $scoring) {
-                    if (!$scoring->success)
+                    if (!$scoring->success) {
                         $order->scorings_result = 'Не пройден: ' . $scoring->type;
+                    }
                 }
             }
 
-            if (!empty($order->contract_id))
+            if (!empty($order->contract_id)) {
                 $order->contract = $this->contracts->get_contract((int)$order->contract_id);
+            }
 
             $orders[$order->order_id] = $order;
         }
 
         if ($penalties = $this->penalties->get_penalties(array('order_id' => array_keys($orders)))) {
             foreach ($penalties as $p) {
-                if (isset($orders[$p->order_id]))
+                if (isset($orders[$p->order_id])) {
                     $orders[$p->order_id]->penalties[] = $p;
+                }
             }
         }
 
@@ -169,8 +173,9 @@ class OfflineOrdersController extends Controller
         }
 
         $managers = array();
-        foreach ($this->managers->get_managers() as $m)
+        foreach ($this->managers->get_managers() as $m) {
             $managers[$m->id] = $m;
+        }
         $this->design->assign('managers', $managers);
 
         $scoring_types = $this->scorings->get_types();
@@ -182,18 +187,18 @@ class OfflineOrdersController extends Controller
 
         if ($this->request->get('drafts')) {
             foreach ($orders as $key => $order) {
-                if ($order->status != 12)
-                    unset ($orders[$key]);
+                if ($order->status != 12) {
+                    unset($orders[$key]);
+                }
             }
 
             $this->design->assign('orders', $orders);
             return $this->design->fetch('offline/drafts.tpl');
-        }
-
-        else{
+        } else {
             foreach ($orders as $key => $order) {
-                if ($order->status == 12)
-                    unset ($orders[$key]);
+                if ($order->status == 12) {
+                    unset($orders[$key]);
+                }
             }
 
             $this->design->assign('orders', $orders);
@@ -201,5 +206,4 @@ class OfflineOrdersController extends Controller
         }
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($orders);echo '</pre><hr />';
     }
-
 }

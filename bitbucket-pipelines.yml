@@ -1,0 +1,12 @@
+# Project deploy
+
+image: composer:2.0
+
+pipelines:
+  branches:
+    stage:
+      - step:
+          name: Deploy
+          deployment: production
+          script:
+            - chmod +x deployer.phar && ./deployer.phar deploy

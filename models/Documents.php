@@ -83,8 +83,7 @@ class Documents extends Core
     
     public function create_offline_documents($contract_id)
     {
-    	if ($contract = $this->contracts->get_contract((int)$contract_id))
-        {
+        if ($contract = $this->contracts->get_contract((int)$contract_id)) {
             $contract->order = $this->orders->get_order($contract->order_id);
             $contract->user = $this->users->get_user((int)$contract->user_id);
             
@@ -99,10 +98,10 @@ class Documents extends Core
                 'OFFLINE_ASP',
                 'OFFLINE_OBRABOTKA',
                 'OFFLINE_INFORM',
-                'OFFLINE_SMS',            
+                'OFFLINE_SMS',
             );
             
-            foreach ($types as $t)
+            foreach ($types as $t) {
                 $this->create_document(array(
                     'type' => $t,
                     'user_id' => $contract->user_id,
@@ -110,16 +109,19 @@ class Documents extends Core
                     'contract_id' => $contract->id,
                     'params' => $contract
                 ));
+            }
         }
     }
     
     
     public function get_sudblock_create_documents($block)
     {
-        if ($block == 'sud')
-        	return $this->sudblock_create_documents_sud;
-        if ($block == 'fssp')
-        	return $this->sudblock_create_documents_fssp;
+        if ($block == 'sud') {
+            return $this->sudblock_create_documents_sud;
+        }
+        if ($block == 'fssp') {
+            return $this->sudblock_create_documents_fssp;
+        }
     }
     
     
@@ -145,86 +147,96 @@ class Documents extends Core
     
     public function get_templates()
     {
-    	return $this->templates;
-    }    
+        return $this->templates;
+    }
     
     public function get_template($type)
     {
-    	return isset($this->templates[$type]) ? $this->templates[$type] : null;
-    }    
+        return isset($this->templates[$type]) ? $this->templates[$type] : null;
+    }
     
     public function get_contract_document($contract_id, $type)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             SELECT * 
             FROM __documents
             WHERE contract_id = ?
             AND type = ?
         ", (int)$contract_id, (string)$type);
         $this->db->query($query);
-        if ($result = $this->db->result())
+        if ($result = $this->db->result()) {
             $result->params = unserialize($result->params);
+        }
 
         return $result;
     }
 
     
-	public function get_document($id)
-	{
-		$query = $this->db->placehold("
+    public function get_document($id)
+    {
+        $query = $this->db->placehold("
             SELECT * 
             FROM __documents
             WHERE id = ?
         ", (int)$id);
         $this->db->query($query);
-        if ($result = $this->db->result())
+        if ($result = $this->db->result()) {
             $result->params = unserialize($result->params);
+        }
 
         return $result;
     }
     
-	public function get_documents($filter = array())
-	{
-		$id_filter = '';
-		$user_id_filter = '';
-		$order_id_filter = '';
-		$contract_id_filter = '';
-		$client_visible_filter = '';
-		$type_filter = '';
+    public function get_documents($filter = array())
+    {
+        $id_filter = '';
+        $user_id_filter = '';
+        $order_id_filter = '';
+        $contract_id_filter = '';
+        $client_visible_filter = '';
+        $type_filter = '';
         $keyword_filter = '';
         $limit = 1000;
-		$page = 1;
+        $page = 1;
         
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
+        }
         
-        if (!empty($filter['user_id']))
+        if (!empty($filter['user_id'])) {
             $user_id_filter = $this->db->placehold("AND user_id IN (?@)", array_map('intval', (array)$filter['user_id']));
+        }
         
-        if (!empty($filter['order_id']))
+        if (!empty($filter['order_id'])) {
             $order_id_filter = $this->db->placehold("AND order_id IN (?@)", array_map('intval', (array)$filter['order_id']));
+        }
         
-        if (!empty($filter['contract_id']))
+        if (!empty($filter['contract_id'])) {
             $contract_id_filter = $this->db->placehold("AND contract_id IN (?@)", array_map('intval', (array)$filter['contract_id']));
+        }
         
-        if (isset($filter['client_visible']))
+        if (isset($filter['client_visible'])) {
             $client_visible_filter = $this->db->placehold("AND client_visible = ?", (int)$filter['client_visible']);
+        }
         
-        if (isset($filter['type']))
+        if (isset($filter['type'])) {
             $type_filter = $this->db->placehold("AND type = ?", (string)$filter['type']);
+        }
         
-		if(isset($filter['keyword']))
-		{
-			$keywords = explode(' ', $filter['keyword']);
-			foreach($keywords as $keyword)
-				$keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
-		}
+        if (isset($filter['keyword'])) {
+            $keywords = explode(' ', $filter['keyword']);
+            foreach ($keywords as $keyword) {
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
+            }
+        }
         
-		if(isset($filter['limit']))
-			$limit = max(1, intval($filter['limit']));
+        if (isset($filter['limit'])) {
+            $limit = max(1, intval($filter['limit']));
+        }
 
-		if(isset($filter['page']))
-			$page = max(1, intval($filter['page']));
+        if (isset($filter['page'])) {
+            $page = max(1, intval($filter['page']));
+        }
             
         $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page-1)*$limit, $limit);
 
@@ -244,49 +256,52 @@ class Documents extends Core
             $sql_limit
         ");
         $this->db->query($query);
-        if ($results = $this->db->results())
-        {
-            foreach ($results as $result)
-            {
+        if ($results = $this->db->results()) {
+            foreach ($results as $result) {
                 $result->params = unserialize($result->params);
             }
         }
         
         return $results;
-	}
+    }
     
-	public function count_documents($filter = array())
-	{
+    public function count_documents($filter = array())
+    {
         $id_filter = '';
-		$user_id_filter = '';
-		$order_id_filter = '';
-		$contract_id_filter = '';
+        $user_id_filter = '';
+        $order_id_filter = '';
+        $contract_id_filter = '';
         $client_visible_filter = '';
         $keyword_filter = '';
         
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
-		
-        if (!empty($filter['user_id']))
+        }
+        
+        if (!empty($filter['user_id'])) {
             $user_id_filter = $this->db->placehold("AND user_id IN (?@)", array_map('intval', (array)$filter['user_id']));
+        }
         
-        if (!empty($filter['order_id']))
+        if (!empty($filter['order_id'])) {
             $order_id_filter = $this->db->placehold("AND order_id IN (?@)", array_map('intval', (array)$filter['order_id']));
+        }
         
-        if (!empty($filter['contract_id']))
+        if (!empty($filter['contract_id'])) {
             $contract_id_filter = $this->db->placehold("AND contract_id IN (?@)", array_map('intval', (array)$filter['contract_id']));
+        }
         
-        if (isset($filter['client_visible']))
+        if (isset($filter['client_visible'])) {
             $client_visible_filter = $this->db->placehold("AND client_visible = ?", (int)$filter['client_visible']);
+        }
         
-        if(isset($filter['keyword']))
-		{
-			$keywords = explode(' ', $filter['keyword']);
-			foreach($keywords as $keyword)
-				$keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
-		}
+        if (isset($filter['keyword'])) {
+            $keywords = explode(' ', $filter['keyword']);
+            foreach ($keywords as $keyword) {
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
+            }
+        }
                 
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             SELECT COUNT(id) AS count
             FROM __documents
             WHERE 1
@@ -299,7 +314,7 @@ class Documents extends Core
         ");
         $this->db->query($query);
         $count = $this->db->result('count');
-	
+    
         return $count;
     }
     
@@ -307,10 +322,11 @@ class Documents extends Core
     {
         $document = (array)$document;
         
-        if (isset($document['params']))
+        if (isset($document['params'])) {
             $document['params'] = serialize($document['params']);
+        }
         
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             INSERT INTO __documents SET ?%
         ", $document);
         $this->db->query($query);
@@ -324,10 +340,11 @@ class Documents extends Core
     {
         $document = (array)$document;
         
-        if (isset($document['params']))
+        if (isset($document['params'])) {
             $document['params'] = serialize($document['params']);
+        }
         
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             UPDATE __documents SET ?% WHERE id = ?
         ", $document, (int)$id);
         $this->db->query($query);
@@ -337,7 +354,7 @@ class Documents extends Core
     
     public function delete_document($id)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             DELETE FROM __documents WHERE id = ?
         ", (int)$id);
         $this->db->query($query);
@@ -403,8 +420,7 @@ class Documents extends Core
 
         $params['regaddress_full'] = $regaddress_full;
 
-        if (!empty($contract->insurance_id))
-        {
+        if (!empty($contract->insurance_id)) {
             $params['insurance'] = $this->insurances->get_insurance($contract->insurance_id);
         }
         
@@ -414,9 +430,7 @@ class Documents extends Core
             'order_id' => $contract->order_id,
             'contract_id' => $contract->id,
             'type' => $document_type,
-            'params' => $params,                
+            'params' => $params,
         ));
-
     }
-    
 }

@@ -8,8 +8,7 @@ class OfflineOrderController extends Controller
             $order_id = $this->request->post('order_id', 'integer');
             $action = $this->request->post('action', 'string');
 
-            switch ($action):
-
+            switch ($action) :
                 case 'change_manager':
                     $this->change_manager_action();
                     break;
@@ -190,14 +189,12 @@ class OfflineOrderController extends Controller
                 case 'edit_personal_number':
                     return $this->action_edit_personal_number();
                     break;
-
-
             endswitch;
-
         } else {
             $managers = array();
-            foreach ($this->managers->get_managers() as $m)
+            foreach ($this->managers->get_managers() as $m) {
                 $managers[$m->id] = $m;
+            }
 
             $scoring_types = $this->scorings->get_types();
 
@@ -206,7 +203,6 @@ class OfflineOrderController extends Controller
 
             if ($order_id = $this->request->get('id', 'integer')) {
                 if ($order = $this->orders->get_order($order_id)) {
-
                     // сохраняем историю займов из 1с
                     $client = $this->users->get_user($order->user_id);
 
@@ -223,16 +219,18 @@ class OfflineOrderController extends Controller
                     if ($order->status == 6) {
                         if ($p2p = $this->best2pay->get_contract_p2pcredit($order->contract_id)) {
                             $p2p->response = unserialize($p2p->response);
-                            if (!empty($p2p->response))
+                            if (!empty($p2p->response)) {
                                 $p2p->response_xml = simplexml_load_string($p2p->response);
+                            }
                             $this->design->assign('p2p', $p2p);
                         }
 
                         if ($client_orders = $this->orders->get_orders(array('user_id' => $order->user_id))) {
                             $have_newest_order = 0;
                             foreach ($client_orders as $co) {
-                                if ($co->order_id != $order->order_id && (strtotime($order->date) < strtotime($co->date)))
+                                if ($co->order_id != $order->order_id && (strtotime($order->date) < strtotime($co->date))) {
                                     $have_newest_order = $co->order_id;
+                                }
                             }
                             $this->design->assign('have_newest_order', $have_newest_order);
                         }
@@ -240,8 +238,9 @@ class OfflineOrderController extends Controller
 
                     $penalties = array();
                     foreach ($this->penalties->get_penalties(array('order_id' => $order_id)) as $p) {
-                        if (in_array($p->status, array(1, 2, 4)))
+                        if (in_array($p->status, array(1, 2, 4))) {
                             $penalties[$p->block] = $p;
+                        }
                     }
                     $this->design->assign('penalties', $penalties);
 
@@ -249,8 +248,9 @@ class OfflineOrderController extends Controller
 
                     $comments = $this->comments->get_comments(array('user_id' => $order->user_id));
                     foreach ($comments as $comment) {
-                        if (isset($managers[$comment->manager_id]))
+                        if (isset($managers[$comment->manager_id])) {
                             $comment->letter = mb_substr($managers[$comment->manager_id]->name, 0, 1);
+                        }
                     }
                     $this->design->assign('comments', $comments);
 
@@ -267,10 +267,13 @@ class OfflineOrderController extends Controller
 
 
                     if (!empty($order->contract_id)) {
-                        if ($contract_operations = $this->operations->get_operations(array('contract_id' => $order->contract_id)))
-                            foreach ($contract_operations as $contract_operation)
-                                if (!empty($contract_operation->transaction_id))
+                        if ($contract_operations = $this->operations->get_operations(array('contract_id' => $order->contract_id))) {
+                            foreach ($contract_operations as $contract_operation) {
+                                if (!empty($contract_operation->transaction_id)) {
                                     $contract_operation->transaction = $this->transactions->get_transaction($contract_operation->transaction_id);
+                                }
+                            }
+                        }
                         $this->design->assign('contract_operations', $contract_operations);
 
                         $contract = $this->contracts->get_contract((int)$order->contract_id);
@@ -294,8 +297,9 @@ class OfflineOrderController extends Controller
 
                             if ($scoring->type == 'scorista') {
                                 $scoring->body = json_decode($scoring->body);
-                                if (!empty($scoring->body->equifaxCH))
+                                if (!empty($scoring->body->equifaxCH)) {
                                     $scoring->body->equifaxCH = iconv('cp1251', 'utf8', base64_decode($scoring->body->equifaxCH));
+                                }
                             }
                             if ($scoring->type == 'fssp') {
                                 $scoring->body = @unserialize($scoring->body);
@@ -305,10 +309,12 @@ class OfflineOrderController extends Controller
                                     foreach ($scoring->body->result[0]->result as $result) {
                                         if (!empty($result->ip_end)) {
                                             $ip_end = array_map('trim', explode(',', $result->ip_end));
-                                            if (in_array(46, $ip_end))
+                                            if (in_array(46, $ip_end)) {
                                                 $scoring->found_46 = 1;
-                                            if (in_array(47, $ip_end))
+                                            }
+                                            if (in_array(47, $ip_end)) {
                                                 $scoring->found_47 = 1;
+                                            }
                                         }
                                     }
                                 }
@@ -322,8 +328,9 @@ class OfflineOrderController extends Controller
 
                             if ($scoring->status == 'new' || $scoring->status == 'process' || $scoring->status == 'repeat') {
                                 $need_update_scorings = 1;
-                                if (isset($scoring_types[$scoring->type]->type) && $scoring_types[$scoring->type]->type == 'first')
+                                if (isset($scoring_types[$scoring->type]->type) && $scoring_types[$scoring->type]->type == 'first') {
                                     $inactive_run_scorings = 1;
+                                }
                             }
                         }
                         /*
@@ -348,8 +355,9 @@ class OfflineOrderController extends Controller
                     $changelogs = $this->changelogs->get_changelogs(array('order_id' => $order_id));
                     foreach ($changelogs as $changelog) {
                         $changelog->user = $user;
-                        if (!empty($changelog->manager_id) && !empty($managers[$changelog->manager_id]))
+                        if (!empty($changelog->manager_id) && !empty($managers[$changelog->manager_id])) {
                             $changelog->manager = $managers[$changelog->manager_id];
+                        }
                     }
                     $changelog_types = $this->changelogs->get_types();
 
@@ -378,10 +386,12 @@ class OfflineOrderController extends Controller
 
 
                     $cards = array();
-                    foreach ($this->cards->get_cards(array('user_id' => $order->user_id)) as $card)
+                    foreach ($this->cards->get_cards(array('user_id' => $order->user_id)) as $card) {
                         $cards[$card->id] = $card;
-                    foreach ($cards as $card)
+                    }
+                    foreach ($cards as $card) {
                         $card->duplicates = $this->cards->find_duplicates($order->user_id, $card->pan, $card->expdate);
+                    }
 
                     $this->design->assign('cards', $cards);
 
@@ -430,8 +440,9 @@ class OfflineOrderController extends Controller
 
                         $orders = array();
                         foreach ($this->orders->get_orders(array('user_id' => $order->user_id)) as $o) {
-                            if (!empty($o->contract_id))
+                            if (!empty($o->contract_id)) {
                                 $o->contract = $this->contracts->get_contract($o->contract_id);
+                            }
 
                             $orders[] = $o;
                         }
@@ -452,14 +463,16 @@ class OfflineOrderController extends Controller
 
 
         $scoring_types = array();
-        foreach ($this->scorings->get_types(array('active' => true)) as $type)
+        foreach ($this->scorings->get_types(array('active' => true)) as $type) {
             $scoring_types[$type->name] = $type;
+        }
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scoring_types);echo '</pre><hr />';
         $this->design->assign('scoring_types', $scoring_types);
 
         $reject_reasons = array();
-        foreach ($this->reasons->get_reasons() as $r)
+        foreach ($this->reasons->get_reasons() as $r) {
             $reject_reasons[$r->id] = $r;
+        }
         $this->design->assign('reject_reasons', $reject_reasons);
 
         $order_statuses = $this->orders->get_statuses();
@@ -506,19 +519,21 @@ class OfflineOrderController extends Controller
             }
 
             $filter['user_id'] = $order->user_id;
-
         }
 
         $payment_schedule = (array)json_decode($order->payment_schedule);
 
-        uksort($payment_schedule,
+        uksort(
+            $payment_schedule,
             function ($a, $b) {
 
-                if ($a == $b)
+                if ($a == $b) {
                     return 0;
+                }
 
                 return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
-            });
+            }
+        );
 
         $loantype = $this->Loantypes->get_loantype($order->loan_type);
         $this->design->assign('loantype', $loantype);
@@ -550,8 +565,9 @@ class OfflineOrderController extends Controller
 
         foreach ($documents as $document) {
             foreach ($scans as $scan) {
-                if ($document->template == $scan->type)
+                if ($document->template == $scan->type) {
                     $document->scan = $scan;
+                }
             }
         }
 
@@ -603,11 +619,13 @@ class OfflineOrderController extends Controller
         $code = $this->request->post('code', 'integer');
         $phone = $this->request->post('phone');
 
-        if (!($contract = $this->contracts->get_contract($contract_id)))
+        if (!($contract = $this->contracts->get_contract($contract_id))) {
             return array('error' => 'Договор не найден');
+        }
 
-        if ($contract->status != 0)
+        if ($contract->status != 0) {
             return array('error' => 'Договор не находится в статусе Новый!');
+        }
 
         $db_code = $this->sms->get_code($phone);
         if ($contract->accept_code != $code) {
@@ -636,9 +654,7 @@ class OfflineOrderController extends Controller
             ));
 
             return array('success' => 1, 'status' => 4, 'manager' => $this->manager->name);
-
         }
-
     }
 
     private function change_manager_action()
@@ -646,11 +662,13 @@ class OfflineOrderController extends Controller
         $order_id = $this->request->post('order_id', 'integer');
         $manager_id = $this->request->post('manager_id', 'integer');
 
-        if (!($order = $this->orders->get_order((int)$order_id)))
+        if (!($order = $this->orders->get_order((int)$order_id))) {
             return array('error' => 'Неизвестный ордер');
+        }
 
-        if (!in_array($this->manager->role, array('admin', 'developer', 'big_user')))
+        if (!in_array($this->manager->role, array('admin', 'developer', 'big_user'))) {
             return array('error' => 'Не хватает прав для выполнения операции', 'manager_id' => $order->manager_id);
+        }
 
         if (!empty($order->id_1c)) {
             $check_block = $this->soap1c->check_block_order_1c($order->id_1c);
@@ -667,8 +685,9 @@ class OfflineOrderController extends Controller
         $update = array(
             'manager_id' => $manager_id,
         );
-        if (empty($manager_id))
+        if (empty($manager_id)) {
             $update['status'] = 1;
+        }
 
         $this->orders->update_order($order_id, $update);
 
@@ -683,7 +702,6 @@ class OfflineOrderController extends Controller
         ));
 
         return array('success' => 1, 'status' => 1, 'manager' => $this->manager->name);
-
     }
 
     /**
@@ -696,11 +714,13 @@ class OfflineOrderController extends Controller
     {
         $order_id = $this->request->post('order_id', 'integer');
 
-        if (!($order = $this->orders->get_order((int)$order_id)))
+        if (!($order = $this->orders->get_order((int)$order_id))) {
             return array('error' => 'Неизвестный ордер');
+        }
 
-        if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
+        if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer'))) {
             return array('error' => 'Ордер уже принят другим пользователем', 'manager_id' => $order->manager_id);
+        }
 
         $update = array(
             'status' => 1,
@@ -742,11 +762,13 @@ class OfflineOrderController extends Controller
     {
         $order_id = $this->request->post('order_id', 'integer');
 
-        if (!($order = $this->orders->get_order((int)$order_id)))
+        if (!($order = $this->orders->get_order((int)$order_id))) {
             return array('error' => 'Неизвестный ордер');
+        }
 
-        if ($order->user_id == 127551)
+        if ($order->user_id == 127551) {
             return array('error' => 'По данному клиенту запрещена выдача!');
+        }
 
         $loan = $this->Loantypes->get_loantype($order->loan_type);
 
@@ -760,11 +782,13 @@ class OfflineOrderController extends Controller
         $this->db->query($query);
         $count = $this->db->result('count');
 
-        if ($count < 9)
+        if ($count < 9) {
             return array('error' => 'Приложены не все сканы!');
+        }
 
-        if ($order->amount < $loan->min_amount && $order->amount > $loan->max_amount)
+        if ($order->amount < $loan->min_amount && $order->amount > $loan->max_amount) {
             return array('error' => 'Проверьте сумму займа!');
+        }
 
         $update = array(
             'status' => 2,
@@ -825,7 +849,6 @@ class OfflineOrderController extends Controller
 
 
         return array('success' => 1, 'status' => 2);
-
     }
 
     /**
@@ -999,17 +1022,21 @@ class OfflineOrderController extends Controller
     {
         $order_id = $this->request->post('order_id', 'integer');
 
-        if (!($order = $this->orders->get_order((int)$order_id)))
+        if (!($order = $this->orders->get_order((int)$order_id))) {
             return array('error' => 'Неизвестный ордер');
+        }
 
-        if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
+        if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer'))) {
             return array('error' => 'Не хватает прав для выполнения операции');
+        }
 
-        if ($order->amount > 15000)
+        if ($order->amount > 15000) {
             return array('error' => 'Сумма займа должна быть не более 15000 руб!');
+        }
 
-        if ($order->period != 14)
+        if ($order->period != 14) {
             return array('error' => 'Срок займа должен быть 14 дней!');
+        }
 
         $update = array(
             'status' => 2,
@@ -1064,7 +1091,6 @@ class OfflineOrderController extends Controller
                 $this->sms->send($order->phone_mobile, $msg);
         */
         return array('success' => 1, 'status' => 2);
-
     }
 
     private function reject_order_action()
@@ -1073,8 +1099,9 @@ class OfflineOrderController extends Controller
         $reason_id = $this->request->post('reason', 'integer');
         $status = $this->request->post('status', 'integer');
 
-        if (!($order = $this->orders->get_order((int)$order_id)))
+        if (!($order = $this->orders->get_order((int)$order_id))) {
             return array('error' => 'Неизвестный ордер');
+        }
 
         $reason = $this->reasons->get_reason($reason_id);
 
@@ -1091,8 +1118,9 @@ class OfflineOrderController extends Controller
             'reject_reason' => $order->reject_reason
         );
 
-        if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
+        if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer'))) {
             return array('error' => 'Не хватает прав для выполнения операции');
+        }
 
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($order);echo '</pre><hr />';
         $this->orders->update_order($order_id, $update);
@@ -1119,7 +1147,6 @@ class OfflineOrderController extends Controller
         // Снимаем за причину отказа
         if (empty($reject_operations)) {
             if (!empty($order->service_reason) && $status == 3) {
-
                 $service_summ = $this->settings->reject_reason_cost * 100;
 
                 $description = 'Услуга "Узнай причину отказа"';
@@ -1159,7 +1186,6 @@ class OfflineOrderController extends Controller
 
                     return true;
                     //echo __FILE__.' '.__LINE__.'<br /><pre>';echo(htmlspecialchars($recurring));echo $contract_id.'</pre><hr />';exit;
-
                 } else {
                     return false;
                 }
@@ -1178,8 +1204,9 @@ class OfflineOrderController extends Controller
     {
         $order_id = $this->request->post('order_id', 'integer');
 
-        if (!($order = $this->orders->get_order((int)$order_id)))
+        if (!($order = $this->orders->get_order((int)$order_id))) {
             return array('error' => 'Неизвестный ордер');
+        }
 
         $update = array(
             'status' => $status,
@@ -1189,15 +1216,17 @@ class OfflineOrderController extends Controller
         );
 
         if ($status == 1) {
-            if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
+            if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer'))) {
                 return array('error' => 'Ордер уже принят другим пользователем', 'manager_id' => $order->manager_id);
+            }
 
             $update['manager_id'] = $this->manager->id;
             $old_values['manager_id'] = '';
         }
 
-        if (!empty($order->manager_id) && $order->manager_id != $this->manager->id)
+        if (!empty($order->manager_id) && $order->manager_id != $this->manager->id) {
             return array('error' => 'Не хватает прав для выполнения операции');
+        }
 
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($order);echo '</pre><hr />';
         $this->orders->update_order($order_id, $update);
@@ -1235,8 +1264,9 @@ class OfflineOrderController extends Controller
 
         $card_error = array();
 
-        if (empty($card_id))
+        if (empty($card_id)) {
             $card_error[] = 'empty_card';
+        }
 
         if (empty($card_error)) {
             $update = array(
@@ -1245,14 +1275,18 @@ class OfflineOrderController extends Controller
 
             $old_order = $this->orders->get_order($order_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_order->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_order->$key != $update[$key]) {
                     $old_values[$key] = $old_order->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -1264,15 +1298,14 @@ class OfflineOrderController extends Controller
             ));
 
             $this->orders->update_order($order_id, $update);
-
         }
         $this->design->assign('card_error', $card_error);
 
         $cards = array();
-        foreach ($this->cards->get_cards(array('user_id' => $order->user_id)) as $card)
+        foreach ($this->cards->get_cards(array('user_id' => $order->user_id)) as $card) {
             $cards[$card->id] = $card;
+        }
         $this->design->assign('cards', $cards);
-
     }
 
     private function action_amount()
@@ -1295,10 +1328,12 @@ class OfflineOrderController extends Controller
 
         $amount_error = array();
 
-        if (empty($amount))
+        if (empty($amount)) {
             $amount_error[] = 'empty_amount';
-        if (empty($period))
+        }
+        if (empty($period)) {
             $amount_error[] = 'empty_period';
+        }
 
         if ($isset_order->status > 2 && !in_array($this->manager->role, array('admin', 'developer'))) {
             $amount_error[] = 'Невозможно изменить сумму в этом статусе заявки';
@@ -1316,14 +1351,18 @@ class OfflineOrderController extends Controller
 
             $old_order = $this->orders->get_order($order_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_order->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_order->$key != $update[$key]) {
                     $old_values[$key] = $old_order->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -1365,22 +1404,30 @@ class OfflineOrderController extends Controller
 
         $contactdata_error = array();
 
-        if (empty($order->email))
+        if (empty($order->email)) {
             $personal_error[] = 'empty_email';
-        if (empty($order->birth))
+        }
+        if (empty($order->birth)) {
             $personal_error[] = 'empty_birth';
-        if (empty($order->birth_place))
+        }
+        if (empty($order->birth_place)) {
             $personal_error[] = 'empty_birth_place';
-        if (empty($order->passport_serial))
+        }
+        if (empty($order->passport_serial)) {
             $personal_error[] = 'empty_passport_serial';
-        if (empty($order->passport_date))
+        }
+        if (empty($order->passport_date)) {
             $personal_error[] = 'empty_passport_date';
-        if (empty($order->subdivision_code))
+        }
+        if (empty($order->subdivision_code)) {
             $personal_error[] = 'empty_subdivision_code';
-        if (empty($order->passport_issued))
+        }
+        if (empty($order->passport_issued)) {
             $personal_error[] = 'empty_passport_issued';
-        if (empty($order->social))
+        }
+        if (empty($order->social)) {
             $personal_error[] = 'empty_socials';
+        }
 
 
         if (empty($contactdata_error)) {
@@ -1397,14 +1444,18 @@ class OfflineOrderController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -1422,20 +1473,27 @@ class OfflineOrderController extends Controller
             if (!empty($user_id)) {
                 $documents = $this->documents->get_documents(array('user_id' => $user_id));
                 foreach ($documents as $doc) {
-                    if (isset($doc->params['email']))
+                    if (isset($doc->params['email'])) {
                         $doc->params['email'] = $order->email;
-                    if (isset($doc->params['birth']))
+                    }
+                    if (isset($doc->params['birth'])) {
                         $doc->params['birth'] = $order->birth;
-                    if (isset($doc->params['birth_place']))
+                    }
+                    if (isset($doc->params['birth_place'])) {
                         $doc->params['birth_place'] = $order->birth_place;
-                    if (isset($doc->params['passport_serial']))
+                    }
+                    if (isset($doc->params['passport_serial'])) {
                         $doc->params['passport_serial'] = $order->passport_serial;
-                    if (isset($doc->params['passport_date']))
+                    }
+                    if (isset($doc->params['passport_date'])) {
                         $doc->params['passport_date'] = $order->passport_date;
-                    if (isset($doc->params['subdivision_code']))
+                    }
+                    if (isset($doc->params['subdivision_code'])) {
                         $doc->params['subdivision_code'] = $order->subdivision_code;
-                    if (isset($doc->params['passport_issued']))
+                    }
+                    if (isset($doc->params['passport_issued'])) {
                         $doc->params['passport_issued'] = $order->passport_issued;
+                    }
 
                     $this->documents->update_document($doc->id, array('params' => $doc->params));
                 }
@@ -1453,7 +1511,6 @@ class OfflineOrderController extends Controller
         $order->manager_id = $isset_order->manager_id;
 
         $this->design->assign('order', $order);
-
     }
 
     private function contacts_action()
@@ -1471,14 +1528,18 @@ class OfflineOrderController extends Controller
 
         $contacts_error = array();
 
-        if (empty($order->contact_person_name))
+        if (empty($order->contact_person_name)) {
             $contacts_error[] = 'empty_contact_person_name';
-        if (empty($order->contact_person_phone))
+        }
+        if (empty($order->contact_person_phone)) {
             $contacts_error[] = 'empty_contact_person_phone';
-        if (empty($order->contact_person2_name))
+        }
+        if (empty($order->contact_person2_name)) {
             $contacts_error[] = 'empty_contact_person2_name';
-        if (empty($order->contact_person2_phone))
+        }
+        if (empty($order->contact_person2_phone)) {
             $contacts_error[] = 'empty_contact_person2_phone';
+        }
 
         if (empty($contacts_error)) {
             $update = array(
@@ -1492,14 +1553,18 @@ class OfflineOrderController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -1540,14 +1605,18 @@ class OfflineOrderController extends Controller
 
         $fio_error = array();
 
-        if (empty($order->lastname))
+        if (empty($order->lastname)) {
             $contacts_error[] = 'empty_lastname';
-        if (empty($order->firstname))
+        }
+        if (empty($order->firstname)) {
             $contacts_error[] = 'empty_firstname';
-        if (empty($order->patronymic))
+        }
+        if (empty($order->patronymic)) {
             $contacts_error[] = 'empty_patronymic';
-        if (empty($order->phone_mobile))
+        }
+        if (empty($order->phone_mobile)) {
             $contacts_error[] = 'empty_phone_mobile';
+        }
 
         if (empty($fio_error)) {
             $update = array(
@@ -1559,14 +1628,18 @@ class OfflineOrderController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -1584,21 +1657,25 @@ class OfflineOrderController extends Controller
             if (!empty($user_id)) {
                 $documents = $this->documents->get_documents(array('user_id' => $user_id));
                 foreach ($documents as $doc) {
-                    if (isset($doc->params['lastname']))
+                    if (isset($doc->params['lastname'])) {
                         $doc->params['lastname'] = $order->lastname;
-                    if (isset($doc->params['firstname']))
+                    }
+                    if (isset($doc->params['firstname'])) {
                         $doc->params['firstname'] = $order->firstname;
-                    if (isset($doc->params['patronymic']))
+                    }
+                    if (isset($doc->params['patronymic'])) {
                         $doc->params['patronymic'] = $order->patronymic;
-                    if (isset($doc->params['fio']))
+                    }
+                    if (isset($doc->params['fio'])) {
                         $doc->params['fio'] = $order->lastname . ' ' . $order->firstname . ' ' . $order->patronymic;
-                    if (isset($doc->params['phone']))
+                    }
+                    if (isset($doc->params['phone'])) {
                         $doc->params['phone'] = $order->phone_mobile;
+                    }
 
                     $this->documents->update_document($doc->id, array('params' => $doc->params));
                 }
             }
-
         }
 
         $this->design->assign('fio_error', $fio_error);
@@ -1655,11 +1732,13 @@ class OfflineOrderController extends Controller
 
         $addresses_error = array();
 
-        if (empty($order->Regregion))
+        if (empty($order->Regregion)) {
             $addresses_error[] = 'empty_regregion';
+        }
 
-        if (empty($order->Faktregion))
+        if (empty($order->Faktregion)) {
             $addresses_error[] = 'empty_faktregion';
+        }
 
         if (empty($addresses_error)) {
             $update = array(
@@ -1681,14 +1760,18 @@ class OfflineOrderController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -1721,14 +1804,18 @@ class OfflineOrderController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -1741,7 +1828,6 @@ class OfflineOrderController extends Controller
             ));
 
             $this->users->update_user($user_id, $update);
-
         }
 
         $this->design->assign('addresses_error', $addresses_error);
@@ -1757,7 +1843,6 @@ class OfflineOrderController extends Controller
         $this->soap1c->update_fields($update, '', $isset_order->id_1c);
 
         $this->design->assign('order', $order);
-
     }
 
     private function work_action()
@@ -1779,22 +1864,30 @@ class OfflineOrderController extends Controller
 
         $work_error = array();
 
-        if (empty($order->workplace))
+        if (empty($order->workplace)) {
             $work_error[] = 'empty_workplace';
-        if (empty($order->profession))
+        }
+        if (empty($order->profession)) {
             $work_error[] = 'empty_profession';
-        if (empty($order->workphone))
+        }
+        if (empty($order->workphone)) {
             $work_error[] = 'empty_workphone';
-        if (empty($order->income))
+        }
+        if (empty($order->income)) {
             $work_error[] = 'empty_income';
-        if (empty($order->expenses))
+        }
+        if (empty($order->expenses)) {
             $work_error[] = 'empty_expenses';
-        if (empty($order->chief_name))
+        }
+        if (empty($order->chief_name)) {
             $work_error[] = 'empty_chief_name';
-        if (empty($order->chief_phone))
+        }
+        if (empty($order->chief_phone)) {
             $work_error[] = 'empty_chief_phone';
-        if (empty($order->chief_phone))
+        }
+        if (empty($order->chief_phone)) {
             $work_error[] = 'empty_chief_phone';
+        }
 
 
         if (empty($work_error)) {
@@ -1813,14 +1906,18 @@ class OfflineOrderController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -1833,7 +1930,6 @@ class OfflineOrderController extends Controller
             ));
 
             $this->users->update_user($user_id, $update);
-
         }
 
         $this->design->assign('work_error', $work_error);
@@ -1849,7 +1945,6 @@ class OfflineOrderController extends Controller
         $this->soap1c->update_fields($update, '', $isset_order->id_1c);
 
         $this->design->assign('order', $order);
-
     }
 
 
@@ -1868,18 +1963,24 @@ class OfflineOrderController extends Controller
 
         $personal_error = array();
 
-        if (empty($order->lastname))
+        if (empty($order->lastname)) {
             $personal_error[] = 'empty_lastname';
-        if (empty($order->firstname))
+        }
+        if (empty($order->firstname)) {
             $personal_error[] = 'empty_firstname';
-        if (empty($order->patronymic))
+        }
+        if (empty($order->patronymic)) {
             $personal_error[] = 'empty_patronymic';
-        if (empty($order->gender))
+        }
+        if (empty($order->gender)) {
             $personal_error[] = 'empty_gender';
-        if (empty($order->birth))
+        }
+        if (empty($order->birth)) {
             $personal_error[] = 'empty_birth';
-        if (empty($order->birth_place))
+        }
+        if (empty($order->birth_place)) {
             $personal_error[] = 'empty_birth_place';
+        }
 
         if (empty($personal_error)) {
             $update = array(
@@ -1893,14 +1994,18 @@ class OfflineOrderController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -1943,14 +2048,18 @@ class OfflineOrderController extends Controller
 
         $passport_error = array();
 
-        if (empty($order->passport_serial))
+        if (empty($order->passport_serial)) {
             $passport_error[] = 'empty_passport_serial';
-        if (empty($order->passport_date))
+        }
+        if (empty($order->passport_date)) {
             $passport_error[] = 'empty_passport_date';
-        if (empty($order->subdivision_code))
+        }
+        if (empty($order->subdivision_code)) {
             $passport_error[] = 'empty_subdivision_code';
-        if (empty($order->passport_issued))
+        }
+        if (empty($order->passport_issued)) {
             $passport_error[] = 'empty_passport_issued';
+        }
 
         if (empty($passport_error)) {
             $update = array(
@@ -1962,14 +2071,18 @@ class OfflineOrderController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -2019,14 +2132,18 @@ class OfflineOrderController extends Controller
 
         $regaddress_error = array();
 
-        if (empty($order->Regregion))
+        if (empty($order->Regregion)) {
             $regaddress_error[] = 'empty_regregion';
-        if (empty($order->Regcity))
+        }
+        if (empty($order->Regcity)) {
             $regaddress_error[] = 'empty_regcity';
-        if (empty($order->Regstreet))
+        }
+        if (empty($order->Regstreet)) {
             $regaddress_error[] = 'empty_regstreet';
-        if (empty($order->Reghousing))
+        }
+        if (empty($order->Reghousing)) {
             $regaddress_error[] = 'empty_reghousing';
+        }
 
         if (empty($regaddress_error)) {
             $update = array(
@@ -2045,14 +2162,18 @@ class OfflineOrderController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -2102,14 +2223,18 @@ class OfflineOrderController extends Controller
 
         $faktaddress_error = array();
 
-        if (empty($order->Faktregion))
+        if (empty($order->Faktregion)) {
             $faktaddress_error[] = 'empty_faktregion';
-        if (empty($order->Faktcity))
+        }
+        if (empty($order->Faktcity)) {
             $faktaddress_error[] = 'empty_faktcity';
-        if (empty($order->Faktstreet))
+        }
+        if (empty($order->Faktstreet)) {
             $faktaddress_error[] = 'empty_faktstreet';
-        if (empty($order->Fakthousing))
+        }
+        if (empty($order->Fakthousing)) {
             $faktaddress_error[] = 'empty_fakthousing';
+        }
 
         if (empty($faktaddress_error)) {
             $update = array(
@@ -2128,14 +2253,18 @@ class OfflineOrderController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -2181,10 +2310,12 @@ class OfflineOrderController extends Controller
 
         $workdata_error = array();
 
-        if (empty($order->work_scope))
+        if (empty($order->work_scope)) {
             $workaddress_error[] = 'empty_work_scope';
-        if (empty($order->income_base))
+        }
+        if (empty($order->income_base)) {
             $workaddress_error[] = 'empty_income_base';
+        }
 
         if (empty($workdata_error)) {
             $update = array(
@@ -2198,14 +2329,18 @@ class OfflineOrderController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -2251,14 +2386,18 @@ class OfflineOrderController extends Controller
 
         $workaddress_error = array();
 
-        if (empty($order->Workregion))
+        if (empty($order->Workregion)) {
             $workaddress_error[] = 'empty_workregion';
-        if (empty($order->Workcity))
+        }
+        if (empty($order->Workcity)) {
             $workaddress_error[] = 'empty_workcity';
-        if (empty($order->Workstreet))
+        }
+        if (empty($order->Workstreet)) {
             $workaddress_error[] = 'empty_workstreet';
-        if (empty($order->Workhousing))
+        }
+        if (empty($order->Workhousing)) {
             $workaddress_error[] = 'empty_workhousing';
+        }
 
         if (empty($workaddress_error)) {
             $update = array(
@@ -2272,14 +2411,18 @@ class OfflineOrderController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -2332,14 +2475,18 @@ class OfflineOrderController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -2380,8 +2527,9 @@ class OfflineOrderController extends Controller
             );
             $old_files = $this->users->get_file($file_id);
             $old_values = array();
-            foreach ($update as $key => $val)
+            foreach ($update as $key => $val) {
                 $old_values[$key] = $old_files->$key;
+            }
             if ($old_values['status'] != $update['status']) {
                 $this->changelogs->add_changelog(array(
                     'manager_id' => $this->manager->id,
@@ -2402,18 +2550,18 @@ class OfflineOrderController extends Controller
             } else {
                 $have_reject = 0;
                 if ($files = $this->users->get_files(array('user_id' => $user_id))) {
-                    foreach ($have_reject as $item)
-                        if ($item->status == 3)
+                    foreach ($have_reject as $item) {
+                        if ($item->status == 3) {
                             $have_reject = 1;
+                        }
+                    }
                 }
-                if (empty($have_reject))
+                if (empty($have_reject)) {
                     $this->users->update_user($user_id, array('stage_files' => 1));
-                else
+                } else {
                     $this->users->update_user($user_id, array('stage_files' => 0));
-
+                }
             }
-
-
         }
 
         $order = new StdClass();
@@ -2445,9 +2593,11 @@ class OfflineOrderController extends Controller
         }
         if (!empty($need_send)) {
             $send_resp = $this->soap1c->send_order_images($order->order_id, $need_send);
-            if ($send_resp == 'OK')
-                foreach ($need_send as $need_send_file)
+            if ($send_resp == 'OK') {
+                foreach ($need_send as $need_send_file) {
                     $this->users->update_file($need_send_file->id, array('sent_1c' => 1, 'sent_date' => date('Y-m-d H:i:s')));
+                }
+            }
         }
 
         $this->design->assign('files', $files);
@@ -2474,14 +2624,18 @@ class OfflineOrderController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -2521,8 +2675,6 @@ class OfflineOrderController extends Controller
         if (empty($text)) {
             $this->json_output(array('error' => 'Напишите комментарий!'));
         } else {
-
-
             $comment = array(
                 'manager_id' => $this->manager->id,
                 'user_id' => $user_id,
@@ -2598,7 +2750,6 @@ class OfflineOrderController extends Controller
             } else {
                 $this->json_output(array('error' => 'Заявка не найдена!'));
             }
-
         }
     }
 
@@ -2606,8 +2757,9 @@ class OfflineOrderController extends Controller
     {
         $contract_id = $this->request->post('contract_id', 'integer');
 
-        if (!in_array('repay_button', $this->manager->permissions))
+        if (!in_array('repay_button', $this->manager->permissions)) {
             $this->json_output(array('error' => 'Не хватает прав!'));
+        }
 
         if ($contract = $this->contracts->get_contract($contract_id)) {
             if ($order = $this->orders->get_order($contract->order_id)) {
@@ -2635,7 +2787,6 @@ class OfflineOrderController extends Controller
                         'manager_name' => $this->manager->name,
                     ));
                 }
-
             } else {
                 $this->json_output(array('error' => 'Заявка не найдена!'));
             }
@@ -2792,8 +2943,7 @@ class OfflineOrderController extends Controller
 
         $type = 'document';
 
-        switch ($status):
-
+        switch ($status) :
             case 2:
                 $type = 'Паспорт: разворот';
                 break;
@@ -2805,7 +2955,6 @@ class OfflineOrderController extends Controller
             case 4:
                 $type = 'Селфи с паспортом';
                 break;
-
         endswitch;
 
         $query = $this->db->placehold("
@@ -2843,7 +2992,6 @@ class OfflineOrderController extends Controller
             echo 'error';
             exit;
         } else {
-
             $query = $this->db->placehold("
             SELECT uid
             FROM s_orders
@@ -2917,7 +3065,6 @@ class OfflineOrderController extends Controller
                 $body_pay = $sum_pay - $loan_percents_pay;
                 $paydate->add(new DateInterval('P1M'));
                 $paydate = $this->check_pay_date($paydate);
-
             } else {
                 $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
                 $loan_percents_pay = $sum_pay;
@@ -2934,7 +3081,6 @@ class OfflineOrderController extends Controller
                 ];
             $paydate->add(new DateInterval('P1M'));
         } else {
-
             $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
             $first_pay = new DateTime(date('Y-m-10', strtotime($start_date . '+1 month')));
             $count_days_this_month = date('t', strtotime($issuance_date->format('Y-m-d')));
@@ -2945,16 +3091,13 @@ class OfflineOrderController extends Controller
                 $percents_pay = $sum_pay;
             }
             if (date_diff($first_pay, $issuance_date)->days >= 20 && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
-
                 $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($first_pay, $issuance_date)->days);
 
                 $sum_pay = $annoouitet_pay - $minus_percents;
                 $percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
                 $body_pay = $sum_pay - $percents_pay;
-
             }
             if (date_diff($first_pay, $issuance_date)->days >= $count_days_this_month) {
-
                 $sum_pay = $annoouitet_pay;
                 $percents_pay = $rest_sum * $percent_per_month;
                 $body_pay = $sum_pay - $percents_pay;
@@ -2979,7 +3122,6 @@ class OfflineOrderController extends Controller
             $daterange = new DatePeriod($paydate, $interval, $end_date);
 
             foreach ($daterange as $date) {
-
                 $date = $this->check_pay_date($date);
 
                 $loan_percents_pay = $rest_sum * $percent_per_month;
@@ -3023,7 +3165,6 @@ class OfflineOrderController extends Controller
         array_pop($payments);
 
         foreach ($dates as $date) {
-
             $date = new DateTime(date('Y-m-d H:i:s', strtotime($date)));
 
             $new_dates[] = mktime(
@@ -3056,7 +3197,6 @@ class OfflineOrderController extends Controller
     {
 
         for ($i = 0; $i <= 15; $i++) {
-
             $check_date = $this->WeekendCalendar->check_date($date->format('Y-m-d'));
 
             if ($check_date == null) {
@@ -3069,11 +3209,11 @@ class OfflineOrderController extends Controller
         return $date;
     }
 
-    private function action_delete_order(){
+    private function action_delete_order()
+    {
 
         $order_id = $this->request->post('order_id');
 
         $this->orders->update_order($order_id, ['status' => 16]);
     }
-
 }

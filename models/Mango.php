@@ -26,7 +26,8 @@ class Mango extends Core
     }
     
 
-    public function call_boostra($phone, $mango_number, $params = array()) {
+    public function call_boostra($phone, $mango_number, $params = array())
+    {
         $url = 'https://app.mango-office.ru/vpbx/commands/callback';
 
         $mangocall_id = $this->add_call(array(
@@ -39,12 +40,12 @@ class Mango extends Core
         $data = array(
             "command_id" => "ID_" . $mangocall_id,
             "from" => array(
-                "extension" => $mango_number, // внутренний номер, за счет которого производится звонок. (например 101)            
+                "extension" => $mango_number, // внутренний номер, за счет которого производится звонок. (например 101)
             //"number" => "user1@vpbx400215406.mangosip.ru" // <- кто звонит (можно SIP)
-            //"number" => "74953748405" // <- (можно номер)            
+            //"number" => "74953748405" // <- (можно номер)
             ),
             "to_number" => $phone, // <- кому звонит
-            "line_number" => $this->line_number // <- какой АОН 
+            "line_number" => $this->line_number // <- какой АОН
         );
         $json = json_encode($data);
         $sign = hash('sha256', $this->api_key . $json . $this->api_salt);
@@ -58,7 +59,8 @@ class Mango extends Core
         return $response;
     }
 
-    public function get_history($phone) {
+    public function get_history($phone)
+    {
         $now = time() - 3600;
         $from = $now - 86400 * 30;
 
@@ -86,13 +88,14 @@ class Mango extends Core
             'sign' => $sign_result,
             'json' => $response
         );
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($post_data_result, $response);echo '</pre><hr />';        
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($post_data_result, $response);echo '</pre><hr />';
         $history_data = $this->send('https://app.mango-office.ru/vpbx/stats/result', $post_data_result);
 
         return $history_data;
     }
 
-    public function get_record_link($record_id) {
+    public function get_record_link($record_id)
+    {
         $data = array(
             "recording_id" => $record_id, // <- идентификатор записи (можно взять из уведомления о записи или из статистики вызовов)
             "action" => "download" // <- скачать ("play" - проиграть)
@@ -106,14 +109,15 @@ class Mango extends Core
         );
 
         $response = $this->send('https://app.mango-office.ru/vpbx/queries/recording/post/', $postdata, 1);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($response);echo '</pre><hr />';        
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($response);echo '</pre><hr />';
         $part_link = trim(substr($response, strripos($response, 'location') + 9));
         $expl = explode("\n", $part_link);
         $link = array_shift($expl);
-        return trim($link); // вывести ссылку на mp3 
+        return trim($link); // вывести ссылку на mp3
     }
 
-    private function send($url, $postdata, $record = 0) {
+    private function send($url, $postdata, $record = 0)
+    {
         $post = http_build_query($postdata);
         $ch = curl_init($url);
 
@@ -137,13 +141,13 @@ class Mango extends Core
     public function call($phone, $mango_number, $yuk = false)
     {
         $data = array(
-            "command_id" => "ID" . rand(10000000,99999999),
+            "command_id" => "ID" . rand(10000000, 99999999),
             "from" => array(
             "extension" => $mango_number, // внутренний номер, за счет которого производится звонок. (например 101)
             
             ) ,
             "to_number" => $phone, // <- кому звонит
-            "line_number" => empty($yuk) ? $this->line_number : $this->yuk_line_number // <- какой АОН 
+            "line_number" => empty($yuk) ? $this->line_number : $this->yuk_line_number // <- какой АОН
         );
 
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($this->api_key, $this->api_salt);echo '</pre><hr />';
@@ -163,14 +167,15 @@ class Mango extends Core
         $response = curl_exec($ch);
         curl_close($ch);
         
-        return $response; 
+        return $response;
     }
 
 
 
 
 
-    public function get_call_id($entry_id) {
+    public function get_call_id($entry_id)
+    {
         $query = $this->db->placehold("
             SELECT id
             FROM __mangocalls
@@ -181,7 +186,8 @@ class Mango extends Core
         return $this->db->result('id');
     }
 
-    public function get_call($id) {
+    public function get_call($id)
+    {
         $query = $this->db->placehold("
             SELECT * 
             FROM __mangocalls
@@ -193,7 +199,8 @@ class Mango extends Core
         return $result;
     }
 
-    public function get_calls($filter = array()) {
+    public function get_calls($filter = array())
+    {
         $id_filter = '';
         $phone_filter = '';
         $manager_id_filter = '';
@@ -201,25 +208,30 @@ class Mango extends Core
         $limit = 1000;
         $page = 1;
 
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array) $filter['id']));
+        }
 
-        if (!empty($filter['manager_id']))
+        if (!empty($filter['manager_id'])) {
             $manager_id_filter = $this->db->placehold("AND manager_id IN (?@)", array_map('intval', (array) $filter['manager_id']));
+        }
         
-        if (!empty($filter['user_id']))
+        if (!empty($filter['user_id'])) {
             $user_id_filter = $this->db->placehold("AND user_id IN (?@)", array_map('intval', $filter['user_id']));
+        }
 
         if (!empty($filter['phone'])) {
             $phone = str_replace(array('-', ' ', '(', ')', '+'), '', $filter['phone']);
             $phone_filter = $this->db->placehold("AND (from_number = ? OR to_number = ?)", $phone, $phone);
         }
 
-        if (isset($filter['limit']))
+        if (isset($filter['limit'])) {
             $limit = max(1, intval($filter['limit']));
+        }
 
-        if (isset($filter['page']))
+        if (isset($filter['page'])) {
             $page = max(1, intval($filter['page']));
+        }
 
         $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page - 1) * $limit, $limit);
 
@@ -241,19 +253,23 @@ class Mango extends Core
         return $results;
     }
 
-    public function count_calls($filter = array()) {
+    public function count_calls($filter = array())
+    {
         $id_filter = '';
         $phone_filter = '';
         $manager_id_filter = '';
 
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array) $filter['id']));
+        }
 
-        if (!empty($filter['manager_id']))
+        if (!empty($filter['manager_id'])) {
             $manager_id_filter = $this->db->placehold("AND manager_id IN (?@)", array_map('intval', (array) $filter['manager_id']));
+        }
 
-        if (!empty($filter['user_id']))
+        if (!empty($filter['user_id'])) {
             $user_id_filter = $this->db->placehold("AND user_id IN (?@)", array_map('intval', (array) $filter['user_id']));
+        }
 
         if (!empty($filter['phone'])) {
             $phone = str_replace(array('-', ' ', '(', ')', '+'), '', $filter['phone']);
@@ -275,11 +291,13 @@ class Mango extends Core
         return $count;
     }
 
-    public function add_call($call) {
+    public function add_call($call)
+    {
         $call = (array) $call;
 
-        if (empty($call['created']))
+        if (empty($call['created'])) {
             $call['created'] = date('Y-m-d H:i:s');
+        }
 
         $query = $this->db->placehold("
             INSERT INTO __mangocalls SET ?%
@@ -289,12 +307,12 @@ class Mango extends Core
         return $id;
     }
 
-    public function update_call($id, $call) {
+    public function update_call($id, $call)
+    {
         $query = $this->db->placehold("
             UPDATE __mangocalls SET ?% WHERE id = ?
         ", (array) $call, (int) $id);
         $this->db->query($query);
         return $id;
     }
-
 }

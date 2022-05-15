@@ -4,7 +4,7 @@ class GroupsController extends Controller
 {
     public function fetch()
     {
-        switch ($this->request->post('action', 'string')):
+        switch ($this->request->post('action', 'string')) :
             case 'add_group':
                 $this->action_add_group();
                 break;
@@ -16,7 +16,6 @@ class GroupsController extends Controller
             case 'delete_group':
                 $this->action_delete_group();
                 break;
-
         endswitch;
 
         $groups = $this->Groups->get_groups();
@@ -40,7 +39,7 @@ class GroupsController extends Controller
         if ($last_number == false) {
             $last_number = '00';
         }
-        if($last_number &&  $last_number > 10) {
+        if ($last_number &&  $last_number > 10) {
             $last_number += 1;
         }
 
@@ -89,13 +88,10 @@ class GroupsController extends Controller
 
         $this->GroupLoanTypes->delete_group($group_id);
 
-        if(count($branches) > 1)
-        {
+        if (count($branches) > 1) {
             echo 'Ошибка. Количество филиалов более 1';
             exit;
-        }
-
-        else{
+        } else {
             $this->Groups->delete_group($group_id);
             $this->Companies->delete_companies($group_id);
             $this->Branches->delete_branches(['group_id' => $group_id]);

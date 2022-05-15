@@ -3,9 +3,8 @@
 class SettingsCommunicationsController extends Controller
 {
     public function fetch()
-    {        
-        if ($this->request->method('post'))
-        {            
+    {
+        if ($this->request->method('post')) {
             $this->settings->sms_limit_communications = $this->request->post('sms_limit_communications');
             $this->settings->call_limit_communications = $this->request->post('call_limit_communications');
 

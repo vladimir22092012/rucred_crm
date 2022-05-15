@@ -4,7 +4,8 @@ namespace App\Services;
 
 use SpreadsheetReader;
 
-class FileParserService {
+class FileParserService
+{
     public function parse($file)
     {
         try {
@@ -14,8 +15,7 @@ class FileParserService {
         }
         $reader->ChangeSheet(0);
         $key = false;
-        foreach ($reader as $row)
-        {
+        foreach ($reader as $row) {
             $key = array_search('Сотрудник', $row, true);
             if (is_int($key)) {
                 break;
@@ -25,8 +25,7 @@ class FileParserService {
             return null;
         }
         $workers = [];
-        foreach ($reader as $row)
-        {
+        foreach ($reader as $row) {
             $workers[] = $row[$key];
         }
         return $workers;

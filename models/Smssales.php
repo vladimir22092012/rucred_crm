@@ -2,7 +2,8 @@
 
 class Smssales extends Core
 {
-    public function get_queue_for_sending_sms($limit = 9){
+    public function get_queue_for_sending_sms($limit = 9)
+    {
         $query = $this->db->placehold("
             SELECT * FROM __sms_sales WHERE number_of < 2 AND created_at > '2022-01-18 00:00:00' AND updated_at < NOW() - INTERVAL 9 MINUTE LIMIT ?
         ", (int)$limit);
@@ -12,7 +13,8 @@ class Smssales extends Core
         return $result;
     }
 
-    public function send_smssales($order){
+    public function send_smssales($order)
+    {
         $firstname = $order->firstname;
         $amount = $order->amount;
         

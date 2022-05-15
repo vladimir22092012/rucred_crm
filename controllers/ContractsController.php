@@ -6,7 +6,6 @@ class ContractsController extends Controller
     {
         
         
-    	return $this->design->fetch('contracts.tpl');
+        return $this->design->fetch('contracts.tpl');
     }
-    
 }

@@ -10,7 +10,7 @@ class Zvonobot extends Core
     
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
     
         $this->apiKey = $this->settings->apikeys['zvonobot']['apiKey'];
         $this->outgoingPhone = $this->settings->apikeys['zvonobot']['outgoingPhone'];
@@ -21,16 +21,17 @@ class Zvonobot extends Core
     
     public function get_outgoing_phone($yuk)
     {
-    	return empty($yuk) ? $this->outgoingPhone : $this->yuk_outgoingPhone;
+        return empty($yuk) ? $this->outgoingPhone : $this->yuk_outgoingPhone;
     }
     
     
     public function create_record($name, $text, $yuk = 0)
     {
-        if (empty($yuk))
+        if (empty($yuk)) {
             $apiKey = $this->apiKey;
-        else
+        } else {
             $apiKey = $this->yuk_apiKey;
+        }
         
         if ($curl = curl_init()) {
             $json = '{
@@ -56,8 +57,9 @@ class Zvonobot extends Core
     
     public function call($phone, $record_id, $yuk = 0)
     {
-        if (empty($record_id))
+        if (empty($record_id)) {
             return false;
+        }
         
         if ($curl = curl_init()) {
             $json = '{
@@ -111,77 +113,80 @@ class Zvonobot extends Core
     }
 
 
-	public function get_zvonobot($id)
-	{
-		$query = $this->db->placehold("
+    public function get_zvonobot($id)
+    {
+        $query = $this->db->placehold("
             SELECT * 
             FROM __zvonobots
             WHERE id = ?
         ", (int)$id);
         $this->db->query($query);
         $result = $this->db->result();
-	
+    
         return $result;
     }
     
-	public function get_zvonobots($filter = array())
-	{
-		$id_filter = '';
-		$contract_id_filter = '';
+    public function get_zvonobots($filter = array())
+    {
+        $id_filter = '';
+        $contract_id_filter = '';
         $status_filter = '';
         $create_date_filter = '';
         $keyword_filter = '';
         $limit = 1000;
-		$page = 1;
+        $page = 1;
         $sort = 'z.id ASC';
         
-        if (!empty($filter['sort']))
-        {
-            switch ($filter['sort']):
-                
+        if (!empty($filter['sort'])) {
+            switch ($filter['sort']) :
                 case 'date_desc':
                     $sort = 'z.create_date DESC';
-                break;
+                    break;
                 
                 case 'date_asc':
                     $sort = 'z.create_date ASC';
-                break;
+                    break;
                 
                 case '':
                     $sort = '';
-                break;
+                    break;
                 
                 case '':
                     $sort = '';
-                break;
-                
+                    break;
             endswitch;
         }
         
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND z.id IN (?@)", array_map('intval', (array)$filter['id']));
+        }
         
-        if (!empty($filter['contract_id']))
+        if (!empty($filter['contract_id'])) {
             $contract_id_filter = $this->db->placehold("AND z.contract_id IN (?@)", array_map('intval', (array)$filter['contract_id']));
+        }
         
-        if (!empty($filter['status']))
+        if (!empty($filter['status'])) {
             $status_filter = $this->db->placehold("AND z.status IN (?@)", array_map('strval', (array)$filter['status']));
+        }
         
-		if (!empty($filter['create_date']))
+        if (!empty($filter['create_date'])) {
             $create_date_filter = $this->db->placehold("AND DATE(z.create_date) = ?", $filter['create_date']);
+        }
         
-        if(isset($filter['keyword']))
-		{
-			$keywords = explode(' ', $filter['keyword']);
-			foreach($keywords as $keyword)
-				$keyword_filter .= $this->db->placehold('AND (z.name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
-		}
+        if (isset($filter['keyword'])) {
+            $keywords = explode(' ', $filter['keyword']);
+            foreach ($keywords as $keyword) {
+                $keyword_filter .= $this->db->placehold('AND (z.name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
+            }
+        }
         
-		if(isset($filter['limit']))
-			$limit = max(1, intval($filter['limit']));
+        if (isset($filter['limit'])) {
+            $limit = max(1, intval($filter['limit']));
+        }
 
-		if(isset($filter['page']))
-			$page = max(1, intval($filter['page']));
+        if (isset($filter['page'])) {
+            $page = max(1, intval($filter['page']));
+        }
             
         $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page-1)*$limit, $limit);
 
@@ -201,32 +206,35 @@ class Zvonobot extends Core
         $results = $this->db->results();
         
         return $results;
-	}
+    }
     
-	public function count_zvonobots($filter = array())
-	{
+    public function count_zvonobots($filter = array())
+    {
         $id_filter = '';
         $status_filter = '';
         $contract_id_filter = '';
         $keyword_filter = '';
         
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
-		
-        if (!empty($filter['contract_id']))
+        }
+        
+        if (!empty($filter['contract_id'])) {
             $contract_id_filter = $this->db->placehold("AND contract_id IN (?@)", array_map('intval', (array)$filter['contract_id']));
+        }
         
-        if (!empty($filter['status']))
+        if (!empty($filter['status'])) {
             $status_filter = $this->db->placehold("AND status IN (?@)", array_map('strval', (array)$filter['status']));
+        }
         
-        if(isset($filter['keyword']))
-		{
-			$keywords = explode(' ', $filter['keyword']);
-			foreach($keywords as $keyword)
-				$keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
-		}
+        if (isset($filter['keyword'])) {
+            $keywords = explode(' ', $filter['keyword']);
+            foreach ($keywords as $keyword) {
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
+            }
+        }
                 
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             SELECT COUNT(id) AS count
             FROM __zvonobots
             WHERE 1
@@ -237,13 +245,13 @@ class Zvonobot extends Core
         ");
         $this->db->query($query);
         $count = $this->db->result('count');
-	
+    
         return $count;
     }
     
     public function add_zvonobot($zvonobot)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             INSERT INTO __zvonobots SET ?%
         ", (array)$zvonobot);
         $this->db->query($query);
@@ -254,7 +262,7 @@ class Zvonobot extends Core
     
     public function update_zvonobot($id, $zvonobot)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             UPDATE __zvonobots SET ?% WHERE id = ?
         ", (array)$zvonobot, (int)$id);
         $this->db->query($query);
@@ -264,7 +272,7 @@ class Zvonobot extends Core
     
     public function delete_zvonobot($id)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             DELETE FROM __zvonobots WHERE id = ?
         ", (int)$id);
         $this->db->query($query);

@@ -9,19 +9,19 @@ class Soap1c extends Core
     
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
         
         $this->log_dir = $this->config->root_dir.$this->log_dir;
     }
     
     public function SentToTrialDebt($number)
     {
-    	$request = new StdClass();
-		$request->Number = $number; // date('Ymd', strtotime($date_from));
+        $request = new StdClass();
+        $request->Number = $number; // date('Ymd', strtotime($date_from));
 
-		$response = $this->send('WebCRM', 'SentToTrialDebt', $request);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($response);echo '</pre><hr />';        
-		return empty($response->return) ? array() : json_decode($response->return);
+        $response = $this->send('WebCRM', 'SentToTrialDebt', $request);
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($response);echo '</pre><hr />';
+        return empty($response->return) ? array() : json_decode($response->return);
     }
 
 
@@ -33,12 +33,12 @@ class Soap1c extends Core
      */
     public function get_contract_balance($number)
     {
-    	$request = new StdClass();
-		$request->Number = $number;
+        $request = new StdClass();
+        $request->Number = $number;
 
-		$response = $this->send('WebCRM', 'GetDebts', $request);
+        $response = $this->send('WebCRM', 'GetDebts', $request);
         
-		return empty($response->return) ? array() : json_decode($response->return);
+        return empty($response->return) ? array() : json_decode($response->return);
     }
 
 
@@ -53,13 +53,12 @@ class Soap1c extends Core
         
         $result = $this->send('WebCRM', 'SentToTrial', $request);
 
-		return $result;
-        
+        return $result;
     }
     
     /**
      * Soap1c::get_premier_contracts()
-     * 
+     *
      * @param mixed $date_from
      * @param mixed $date_to
      * @return void
@@ -68,12 +67,11 @@ class Soap1c extends Core
     {
         $request = new StdClass();
         $request->НачПериода = date('Ymd000000', strtotime($date_from));
-    	$request->КонПериода = date('Ymd000000', strtotime($date_to));
+        $request->КонПериода = date('Ymd000000', strtotime($date_to));
         
         $result = $this->send('WebCRM', 'CessionPremier', $request);
 
-		return empty($result->return) ? array() : json_decode($result->return);
-    	
+        return empty($result->return) ? array() : json_decode($result->return);
     }
     
     
@@ -81,11 +79,11 @@ class Soap1c extends Core
     {
         $request = new StdClass();
         $request->number = $contract_number;
-    	$request->facsimile = $faximile;
+        $request->facsimile = $faximile;
         
         $result = $this->send('WebCRM', 'GetCessionByNumber', $request, 1, 'cession.txt');
 
-		return $result;
+        return $result;
     }
         
     public function get_pp($contract_number)
@@ -95,14 +93,14 @@ class Soap1c extends Core
         
         $result = $this->send('WebCRM', 'GettingPP', $request, 1, 'cession.txt');
 
-		return $result;
+        return $result;
     }
 
     
     /**
      * Soap1c::send_cessions()
      * Отправляет договора которые переведены на цессию
-     * 
+     *
      * @param mixed $numbers
      * @return
      */
@@ -110,10 +108,12 @@ class Soap1c extends Core
     {
         $request = new StdClass();
         $request->TextJson = json_encode($numbers);
-    	
+        
         $result = $this->send('WebCRM', 'Cess', $request);
-echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
-		return $result->return;
+        echo __FILE__.' '.__LINE__.'<br /><pre>';
+        var_dump($result);
+        echo '</pre><hr />';
+        return $result->return;
     }
     
     /**
@@ -126,17 +126,18 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
     {
         $request = new StdClass();
         $request->Сотрудник = $manager_name;
-    	
+        
         $result = $this->send('WebCRM', 'VerificationManager', $request);
 
-		return $result->return;
+        return $result->return;
     }
     
     
     public function send_collector($contract_number, $collector_id)
     {
-    	if (!($collector = $this->managers->get_manager($collector_id)))
+        if (!($collector = $this->managers->get_manager($collector_id))) {
             return false;
+        }
             
         $request = new StdClass();
         $request->НомерЗайма = $contract_number;
@@ -144,9 +145,8 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
 
         
         $result = $this->send('WebCRM', 'ChangeResponsible', $request);
-//  echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';      
-		return empty($result->return) ? array() : $result->return;
-
+//  echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
+        return empty($result->return) ? array() : $result->return;
     }
 
     public function send_fssp($order_1c_id, $body)
@@ -157,9 +157,8 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
 
         
         $result = $this->send('WebCRM', 'FSSP', $request);
-//  echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';      
-		return empty($result->return) ? array() : $result->return;
-    	
+//  echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
+        return empty($result->return) ? array() : $result->return;
     }
     
     
@@ -167,7 +166,8 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
     {
         $clear_passport = trim(str_replace(array(' ', '-', '_'), '', $passport));
         $passport_series = substr($clear_passport, 0, 4);
-        $passport_number = substr($clear_passport, 4, 6);;
+        $passport_number = substr($clear_passport, 4, 6);
+        ;
         
         $request = new StdClass();
         $request->НомерЗаявки = $order_1c_id;
@@ -176,24 +176,23 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
         $request->Действителен = $check;
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($passport, $request);echo '</pre><hr />';
         $result = $this->send('WebCRM', 'FMS', $request);
-//  echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';      
-		return empty($result->return) ? array() : $result->return;
-    	
+//  echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
+        return empty($result->return) ? array() : $result->return;
     }
     
     
     /**
      * Soap1c::send_order()
      * ОТправляет заявку в 1с
-     * 
+     *
      * @param object $order
      * @return
      */
     public function send_order($order)
     {
         $order_passport_serial = str_replace(array(' ', '-'), '', $order->passport_serial);
-		$passport_number = (string)substr($order_passport_serial, 4, 6);
-        $passport_serial = (string)substr($order_passport_serial, 0, 4);        
+        $passport_number = (string)substr($order_passport_serial, 4, 6);
+        $passport_serial = (string)substr($order_passport_serial, 0, 4);
         
         $request = (object)array(
             'partner' => 'NalPlus',
@@ -273,16 +272,15 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
             'okato' => '',
             'oktmo' => '',
         );
-		$response = $this->send('Teleport', 'ObmenFull', $request, 1, '39.txt');
+        $response = $this->send('Teleport', 'ObmenFull', $request, 1, '39.txt');
         
-		return $response->return;
-        
+        return $response->return;
     }
     
     /**
      * Soap1c::get_payments1c()
      * Возвращает оплаты зафиксированные в 1с за указанный период
-     * 
+     *
      * @param string $from Y-m-d
      * @param string $to  Y-m-d
      * @return array
@@ -298,13 +296,13 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
 
         $result = $this->send('WebCRM', 'PaymentIn1c', $request);
         
-		return empty($result->return) ? array() : json_decode($result->return);
+        return empty($result->return) ? array() : json_decode($result->return);
     }
     
     /**
      * Soap1c::update_fields()
      * Обновляет в 1с данные по клиенту
-     *      
+     *
      * @param mixed $order_id_1c
      * @param mixed $fields
      * @param string $uid
@@ -312,7 +310,7 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
      */
     public function update_fields($fields, $uid = '', $order_id_1c = '')
     {
-    	$z = new StdClass();
+        $z = new StdClass();
         
         $z->НомерЗаявки = empty($order_id_1c) ? '' : $order_id_1c;
         $z->Uid = empty($uid) ? '' : $uid;
@@ -321,125 +319,158 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
         
         
         // место регистрации
-        if (isset($fields['Regcity']))
+        if (isset($fields['Regcity'])) {
             $update->АдресРегистрацииГород = $fields['Regcity'];
-        if (isset($fields['Reghousing']))
+        }
+        if (isset($fields['Reghousing'])) {
             $update->АдресРегистрацииДом = $fields['Reghousing'];
-        if (isset($fields['Regindex']))
+        }
+        if (isset($fields['Regindex'])) {
             $update->АдресРегистрацииИндекс = $fields['Regindex'];
-        if (isset($fields['Regroom']))
+        }
+        if (isset($fields['Regroom'])) {
             $update->АдресРегистрацииКвартира = $fields['Regroom'];
-        if (isset($fields['Regregion']))
+        }
+        if (isset($fields['Regregion'])) {
             $update->АдресРегистрацииРегион = $fields['Regregion'];
-        if (isset($fields['Regstreet']))
+        }
+        if (isset($fields['Regstreet'])) {
             $update->АдресРегистрацииУлица = $fields['Regstreet'];
-        if (isset($fields['Regdistrict']))
+        }
+        if (isset($fields['Regdistrict'])) {
             $update->АдресРегистрацииРайон = $fields['Regdistrict'];
-        if (isset($fields['Reglocality']))
-            $update->АдресРегистрацииНасПункт = $fields['Reglocality'];        
+        }
+        if (isset($fields['Reglocality'])) {
+            $update->АдресРегистрацииНасПункт = $fields['Reglocality'];
+        }
         
-        if (isset($fields['okato']))
-            $update->okato = $fields['okato'];                
-        if (isset($fields['oktmo']))
-            $update->oktmo = $fields['oktmo'];        
+        if (isset($fields['okato'])) {
+            $update->okato = $fields['okato'];
+        }
+        if (isset($fields['oktmo'])) {
+            $update->oktmo = $fields['oktmo'];
+        }
         
         // место фактического проживания
-        if (isset($fields['Faktcity']))
+        if (isset($fields['Faktcity'])) {
             $update->АдресФактическогоПроживанияГород = $fields['Faktcity'];
-        if (isset($fields['Fakthousing']))
+        }
+        if (isset($fields['Fakthousing'])) {
             $update->АдресФактическогоПроживанияДом = $fields['Fakthousing'];
-        if (isset($fields['Faktindex']))
+        }
+        if (isset($fields['Faktindex'])) {
             $update->АдресФактическогоПроживанияИндекс = $fields['Faktindex'];
-        if (isset($fields['Faktroom']))
+        }
+        if (isset($fields['Faktroom'])) {
             $update->АдресФактическогоПроживанияКвартира = $fields['Faktroom'];
-        if (isset($fields['Faktregion']))
+        }
+        if (isset($fields['Faktregion'])) {
             $update->АдресФактическогоПроживанияРегион = $fields['Faktregion'];
-        if (isset($fields['Faktstreet']))
+        }
+        if (isset($fields['Faktstreet'])) {
             $update->АдресФактическогоПроживанияУлица = $fields['Faktstreet'];
-        if (isset($fields['Faktdistrict']))
+        }
+        if (isset($fields['Faktdistrict'])) {
             $update->АдресФактическогоПроживанияРайон = $fields['Faktdistrict'];
-        if (isset($fields['Faktlocality']))
-            $update->АдресФактическогоПроживанияНасПункт = $fields['Faktlocality'];        
+        }
+        if (isset($fields['Faktlocality'])) {
+            $update->АдресФактическогоПроживанияНасПункт = $fields['Faktlocality'];
+        }
 
-        if (isset($fields['phone_mobile']))
-            $update->АдресФактическогоПроживанияМобильныйТелефон = $fields['phone_mobile'];        
+        if (isset($fields['phone_mobile'])) {
+            $update->АдресФактическогоПроживанияМобильныйТелефон = $fields['phone_mobile'];
+        }
 
         // персональная информация
-        if (isset($fields['birth']))
+        if (isset($fields['birth'])) {
             $update->ДатаРожденияПоПаспорту = date('Ymd000000', strtotime($fields['birth']));
-        if (isset($fields['birth_place']))
+        }
+        if (isset($fields['birth_place'])) {
             $update->МестоРожденияПоПаспорту = $fields['birth_place'];
-        if (isset($fields['gender']))
+        }
+        if (isset($fields['gender'])) {
             $update->Пол = ($fields['gender'] == 'male') ? 'Мужской' : 'Женский';
-        if (isset($fields['lastname']))
+        }
+        if (isset($fields['lastname'])) {
             $update->Фамилия = $fields['lastname'];
-        if (isset($fields['firstname']))
+        }
+        if (isset($fields['firstname'])) {
             $update->Имя = $fields['firstname'];
-        if (isset($fields['patronymic']))
+        }
+        if (isset($fields['patronymic'])) {
             $update->Отчество = $fields['patronymic'];
+        }
 
         
         // паспортные данные
-        if (isset($fields['passport_serial']))
-        {
+        if (isset($fields['passport_serial'])) {
             $cl = str_replace(array(' ', '-'), '', $fields['passport_serial']);
             $update->ПаспортСерия = substr($cl, 0, 4);
             $update->ПаспортНомер = substr($cl, 4, 6);
         }
-        if (isset($fields['subdivision_code']))
+        if (isset($fields['subdivision_code'])) {
             $update->ПаспортКодПодразделения = $fields['subdivision_code'];
-        if (isset($fields['passport_issued']))
+        }
+        if (isset($fields['passport_issued'])) {
             $update->ПаспортКемВыдан = $fields['passport_issued'];
-        if (isset($fields['passport_date']))
+        }
+        if (isset($fields['passport_date'])) {
             $update->ПаспортДатаВыдачи = date('Ymd000000', strtotime($fields['passport_date']));
+        }
             
             
         //  Данные о работе
-        if (isset($fields['workplace']))
+        if (isset($fields['workplace'])) {
             $update->ОрганизацияНазвание = $fields['workplace'];
-        if (isset($fields['profession']))
+        }
+        if (isset($fields['profession'])) {
             $update->ОрганизацияДолжность = $fields['profession'];
-        if (isset($fields['workaddress']))
+        }
+        if (isset($fields['workaddress'])) {
             $update->ОрганизацияАдрес = $fields['workaddress'];
-        if (isset($fields['workphone']))
+        }
+        if (isset($fields['workphone'])) {
             $update->ОрганизацияТелефон = $this->format_phone($fields['workphone']);
-        if (isset($fields['chief_name']))
+        }
+        if (isset($fields['chief_name'])) {
             $update->ОрганизацияФИОРуководителя = $fields['chief_name'];
-        if (isset($fields['workcomment']))
+        }
+        if (isset($fields['workcomment'])) {
             $update->ОрганизацияКомментарийКТелефону = $fields['workcomment'];
+        }
 
-        if (isset($fields['income_base']))
+        if (isset($fields['income_base'])) {
             $update->ОрганизацияЕжемесячныйДоход = $fields['income_base'];
-        if (isset($fields['expenses']))
+        }
+        if (isset($fields['expenses'])) {
             $update->ОбщаяСуммаРасходов = $fields['expenses'];
+        }
             
             
 
         // Контактные лица
-        if (isset($fields['contactpersons']))
-        {
+        if (isset($fields['contactpersons'])) {
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($fields['contactpersons']);echo '</pre><hr />';
             $update->КонтактныеЛица = ($fields['contactpersons']);
         }
                 
         $z->TextJson = json_encode($update);
         
-		$response = $this->send('WebCRM', 'GetChangingFields', $z);
+        $response = $this->send('WebCRM', 'GetChangingFields', $z);
         
-		return empty($response->return) ? array() : json_decode($response->return);    	
-    
+        return empty($response->return) ? array() : json_decode($response->return);
     }
     
 
     public function send_order_status($order_id_1c, $status)
     {
-    	$request = new StdClass();
-		$request->id = $order_id_1c;
-		$request->Status = $status;
+        $request = new StdClass();
+        $request->id = $order_id_1c;
+        $request->Status = $status;
 
-		$response = $this->send('WebCRM', 'StatusesApplication', $request);
+        $response = $this->send('WebCRM', 'StatusesApplication', $request);
         
-		return empty($response->return) ? array() : json_decode($response->return);    	
+        return empty($response->return) ? array() : json_decode($response->return);
     }
     
 
@@ -451,12 +482,12 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
      */
     public function get_client_credits($uid)
     {
-    	$request = new StdClass();
-		$request->UID = $uid;
+        $request = new StdClass();
+        $request->UID = $uid;
 
-		$response = $this->send('WebCRM', 'HistoryZaim', $request);
+        $response = $this->send('WebCRM', 'HistoryZaim', $request);
         
-		return empty($response->return) ? array() : json_decode($response->return);
+        return empty($response->return) ? array() : json_decode($response->return);
     }
     
     /**
@@ -468,16 +499,16 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
      */
     public function send_order_images($order_id, $images)
     {
-    	$request = new StdClass();
+        $request = new StdClass();
         $request->id = $order_id;
-        foreach ($images as $im)
+        foreach ($images as $im) {
             $im->TypeFile = 'Foto';
+        }
         $request->Files = json_encode($images);
 
-		$response = $this->send('WebCRM', 'RequestFiles', $request);
+        $response = $this->send('WebCRM', 'RequestFiles', $request);
         
-		return empty($response->return) ? array() : $response->return;   	
-        
+        return empty($response->return) ? array() : $response->return;
     }
 
     /**
@@ -489,62 +520,62 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
      */
     public function send_order_files($order_id, $documents)
     {
-    	$request = new StdClass();
+        $request = new StdClass();
         $request->id = $order_id;
-        foreach ($documents as $doc)
+        foreach ($documents as $doc) {
             $doc->TypeFile = 'Document';
+        }
         $request->Files = json_encode($documents);
 
-		$response = $this->send('WebCRM', 'RequestFiles', $request);
+        $response = $this->send('WebCRM', 'RequestFiles', $request);
         
-		return empty($response->return) ? array() : $response->return;   	
-        
+        return empty($response->return) ? array() : $response->return;
     }
 
     /**
      * Soap1c::send_rejection()
      * Отправляет в 1с успешную опреацию по доп услуге Причина отказа
      * Должен содержать обьект transaction
-     * 
+     *
      * @param object $operation
      * @return string
      */
     public function send_reject_reason($operation)
     {
-    	$request = new StdClass();
+        $request = new StdClass();
         $request->aid = $operation->order_id;
         $request->OrderID = $operation->transaction->register_id;
         $request->OperationID = $operation->transaction->operation;
         $request->RejectionDate = date('YmdHis', strtotime($operation->transaction->created)); // формат ггггММддччммсс
         $request->Amount = (float)$operation->amount;
 
-		$response = $this->send('WebCRM', 'RejectionSum', $request, 1, '39.txt');
+        $response = $this->send('WebCRM', 'RejectionSum', $request, 1, '39.txt');
 
-		return empty($response->return) ? NULL : $response->return;    	
+        return empty($response->return) ? null : $response->return;
     }
     
     
     /**
      * Soap1c::get_movements()
      * Возвращает движения по кредиту по номеру договора
-     * 
+     *
      * @param string $number
      * @return void
      */
     public function get_movements($number)
     {
-    	$request = new StdClass();
+        $request = new StdClass();
         $request->Number = $number;
 
-		$response = $this->send('WebCRM', 'Movements', $request);
+        $response = $this->send('WebCRM', 'Movements', $request);
         
-		return empty($response->return) ? array() : json_decode($response->return);
+        return empty($response->return) ? array() : json_decode($response->return);
     }
     
     /**
      * Soap1c::GetCheckBlockZayavka()
      * Проверяет заблокирована ли заявка
-     * 
+     *
      * @param string $order_id_1c
      * @return
      */
@@ -555,13 +586,13 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
         
         $result = $this->send('WebCRM', 'GetCheckBlockZayavka', $request);
         
-		return $result->return;
+        return $result->return;
     }
     
     /**
      * Soap1c::block_order_1c()
      * Блокирует или разблокирует заявку в 1с
-     * 
+     *
      * @param string $order_id_1c
      * @param integer $status (0 - разблокировать заявяку, 1 - заблокировать заявку)
      * @return
@@ -574,18 +605,19 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
 
         $result = $this->send('WebCRM', 'GetBlockZayavka', $request);
         
-		return $result->return;
+        return $result->return;
     }
 
     public function get_comments($user_uid)
     {
-        if (empty($user_uid))
+        if (empty($user_uid)) {
             return false;
+        }
         $request = new StdClass();
         $request->UID = $user_uid;
 
         $result = $this->send('WebCRM', 'Comments1С', $request, 0);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';        
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
         return isset($result->return) ? json_decode($result->return) : $result;
     }
 
@@ -594,19 +626,19 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
      * отправляет комментарии в 1с, только по выданным кредитам
      * должен содержать обьект contract
      * должен содержать обьект contactperson если комеентарий к конт лицу
-     * 
+     *
      * @param mixed $comments
      * @return
      */
     public function send_comments($comments)
     {
         $managers = array();
-        foreach ($this->managers->get_managers() as $m)
+        foreach ($this->managers->get_managers() as $m) {
             $managers[$m->id] = $m;
+        }
         
-    	$items = array();
-        foreach ($comments as $comment)
-        {
+        $items = array();
+        foreach ($comments as $comment) {
             $item = new StdClass();
             
             $item->НомерЗайма = $comment->contract->number;//обязательно в номере ТИРЕ. длина номера 11 символов!!!
@@ -614,8 +646,7 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
             $item->Комментарий = $comment->text;
             $item->Сотрудник = $managers[$comment->manager_id]->name_1c;
             
-            if (!empty($comment->contactperson))
-            {
+            if (!empty($comment->contactperson)) {
                 $expl = array_map('trim', explode(' ', $comment->contactperson->name));
                 $contactperson_lastname = (string)array_shift($expl);
                 $contactperson_firstname = (string)array_shift($expl);
@@ -629,13 +660,12 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
             $items[] = $item;
         }
         
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($comments, $items);echo '</pre><hr />';            
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($comments, $items);echo '</pre><hr />';
         $request = new StdClass();
         $request->TextJson = json_encode($items);
         $result = $this->send('WebCRM', 'Comments', $request);
         
         return $result;
-
     }
     
     
@@ -643,10 +673,8 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
     {
         $percents = array();
         $charges = array();
-        foreach ($operations as $operation)
-        {
-            if ($operation->type == 'PERCENTS')
-            {
+        foreach ($operations as $operation) {
+            if ($operation->type == 'PERCENTS') {
                 $item = new StdClass();
                 
                 $item->НомерЗайма = $operation->contract->number;
@@ -658,23 +686,15 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
                 $item->СуммаПени = 0;
 
                 $percents[] = $item;
-            }
-            else
-            {
-                if (isset($charges[$operation->contract_id]))
-                {
-                    if ($operation->type == 'PENI')
-                    {
+            } else {
+                if (isset($charges[$operation->contract_id])) {
+                    if ($operation->type == 'PENI') {
                         $charges[$operation->contract_id]->СуммаПени = (float)$operation->amount;
                     }
-                    if ($operation->type == 'CHARGE')
-                    {
+                    if ($operation->type == 'CHARGE') {
                         $charges[$operation->contract_id]->СуммаОтветственности = (float)$operation->amount;
                     }
-                    
-                }
-                else
-                {
+                } else {
                     $item = new StdClass();
                     
                     $item->НомерЗайма = $operation->contract->number;
@@ -683,13 +703,11 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
                     $item->ВидОплаты = 'Просрочка';
                     $item->ОстатокОД = (float)$operation->loan_body_summ;
                     $item->СуммаПроцент = 0;
-                    if ($operation->type == 'PENI')
-                    {
+                    if ($operation->type == 'PENI') {
                         $item->СуммаПени = (float)$operation->amount;
                         $item->СуммаОтветственности = 0;
                     }
-                    if ($operation->type == 'CHARGE')
-                    {
+                    if ($operation->type == 'CHARGE') {
                         $item->СуммаПени = 0;
                         $item->СуммаОтветственности = (float)$operation->amount;
                     }
@@ -699,26 +717,25 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
             }
         }
         
-        if (!empty($charges))
-        {
+        if (!empty($charges)) {
             $request = new StdClass();
             $request->TextJson = json_encode(array_values($charges));
 
             $result = $this->send('WebCRM', 'Calculation', $request, 1, 'exchange.txt');
 
-            if (!isset($result->return) || $result->return != 'OK')
+            if (!isset($result->return) || $result->return != 'OK') {
                 return false;
-
+            }
         }
         
-        if (!empty($percents))
-        {
+        if (!empty($percents)) {
             $request = new StdClass();
             $request->TextJson = json_encode($percents);
             $result = $this->send('WebCRM', 'Calculation', $request, 1, 'exchange.txt');
 
-            if (!isset($result->return) || $result->return != 'OK')
+            if (!isset($result->return) || $result->return != 'OK') {
                 return false;
+            }
         }
         
         return $result;
@@ -734,9 +751,8 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
      */
     public function send_payments($operations)
     {
-    	$items = array();
-        foreach ($operations as $operation)
-        {
+        $items = array();
+        foreach ($operations as $operation) {
             $item = new StdClass();
             
             $item->НомерЗайма = $operation->contract->number;//обязательно в номере ТИРЕ. длина номера 11 символов!!!
@@ -759,12 +775,13 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
             $item->Страховка->НомерСтраховки = empty($operation->transaction->insurance) ? '' : $operation->transaction->insurance->number;
             $item->Страховка->КредитнаяЗащита = empty($operation->transaction->insurance->protection) ? 0 : 1;
             
-            if ($operation->transaction->sector == '7036') // ЮК
+            if ($operation->transaction->sector == '7036') { // ЮК
                 $item->Organization = 'YuK';
-            elseif ($operation->transaction->sector == '7814') // премьер
+            } elseif ($operation->transaction->sector == '7814') { // премьер
                 $item->Organization = 'Premier';
-            else
+            } else {
                 $item->Organization = 'NalPlus';
+            }
                 
             $items[] = $item;
         }
@@ -780,9 +797,9 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
     
     /**
      * Soap1c::send_contracts()
-     * 
+     *
      * Метод отсылает в 1с данные по выданным кредитам
-     * 
+     *
      * @param array $contracts
      * обьект $contract входящий в массив должен содержать обьекты user, p2pcredit, order, insurance
      *  Пример получения:
@@ -795,12 +812,12 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
     public function send_contracts($contracts)
     {
         $managers = array();
-        foreach ($this->managers->get_managers() as $m)
+        foreach ($this->managers->get_managers() as $m) {
             $managers[$m->id] = $m;
+        }
         
         $items = array();
-        foreach ($contracts as $contract)
-        {
+        foreach ($contracts as $contract) {
             $item = new StdClass();
 
             $item->Организация = 'NalPlus';
@@ -811,22 +828,22 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
             $item->Дата = date('YmdHis', strtotime($contract->accept_date)); //формат ггггММддччммсс
             $item->ПроцентСтавка = $contract->base_percent;
             $item->МераОтветственности = $contract->charge_percent;
-            $item->УИД_Займ = $contract->uid; 
-            $item->УИД_Заявка = $contract->order->uid; 
+            $item->УИД_Займ = $contract->uid;
+            $item->УИД_Заявка = $contract->order->uid;
             $item->КодСМС = $contract->accept_code;
             $item->Менеджер = empty($contract->order->manager_id) ? '' : $managers[$contract->order->manager_id]->name_1c;
             
             $item->Payment = new StdClass();
-            $item->Payment->CardId = $contract->card_id; 
-            $item->Payment->Дата = date('YmdHis', strtotime($contract->p2pcredit->date)); 
-            $item->Payment->PaymentId = $contract->p2pcredit->operation_id; 
-            $item->Payment->OrderId = $contract->p2pcredit->register_id; 
+            $item->Payment->CardId = $contract->card_id;
+            $item->Payment->Дата = date('YmdHis', strtotime($contract->p2pcredit->date));
+            $item->Payment->PaymentId = $contract->p2pcredit->operation_id;
+            $item->Payment->OrderId = $contract->p2pcredit->register_id;
             
             $item->Страховка = new StdClass();
             $item->Страховка->Сумма = empty($contract->insurance) ? 0 : $contract->insurance->amount; //сумма страховки
             $item->Страховка->Номер = empty($contract->insurance) ? '' : $contract->insurance->number; //'200H3NZI16300047__'; по правилам от страховой компании
-            $item->Страховка->OrderID = empty($contract->insurance->transaction) ? '' : $contract->insurance->transaction->register_id; 
-            $item->Страховка->OperationID = empty($contract->insurance->transaction) ? '' : $contract->insurance->transaction->operation; 
+            $item->Страховка->OrderID = empty($contract->insurance->transaction) ? '' : $contract->insurance->transaction->register_id;
+            $item->Страховка->OperationID = empty($contract->insurance->transaction) ? '' : $contract->insurance->transaction->operation;
             $item->Страховка->КредитнаяЗащита =  empty($contract->insurance->protection) ? 0 : 1;
             
             $item->Клиент = new StdClass();
@@ -849,7 +866,8 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
             $item->Клиент->АдресФактическогоПроживанияРегион = trim($contract->user->Faktregion.' '.$contract->user->Faktregion_shorttype);
             $item->Клиент->АдресФактическогоПроживанияРайон = trim($contract->user->Faktdistrict.' '.$contract->user->Faktdistrict_shorttype);
             $item->Клиент->АдресФактическогоПроживанияГород = trim($contract->user->Faktcity.' '.$contract->user->Faktcity_shorttype);
-            $item->Клиент->АдресФактическогоПроживанияНасПункт = trim($contract->user->Faktlocality.' '.$contract->user->Faktlocality_shorttype);;
+            $item->Клиент->АдресФактическогоПроживанияНасПункт = trim($contract->user->Faktlocality.' '.$contract->user->Faktlocality_shorttype);
+            ;
             $item->Клиент->АдресФактическогоПроживанияУлица = trim($contract->user->Faktstreet.' '.$contract->user->Faktstreet_shorttype);
             $item->Клиент->АдресФактическогоПроживанияДом = $contract->user->Fakthousing.(empty($contract->user->Faktbuilding) ? '' : ' стр. '.$contract->user->Faktbuilding);
             $item->Клиент->АдресФактическогоПроживанияКвартира = $contract->user->Faktroom;
@@ -887,7 +905,7 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
             $contactperson = new StdClass();
             $contact_person_array = explode(' ', $contract->user->contact_person_name);
             $contactperson->Фамилия = isset($contact_person_array[0]) ? $contact_person_array[0] : '';
-            $contactperson->Имя =  isset($contact_person_array[1]) ? $contact_person_array[1] : ''; 
+            $contactperson->Имя =  isset($contact_person_array[1]) ? $contact_person_array[1] : '';
             $contactperson->Отчество =  isset($contact_person_array[2]) ? $contact_person_array[2] : '';
             $contactperson->ТелефонМобильный = $this->format_phone($contract->user->contact_person_phone);
             $contactperson->СтепеньРодства = $contract->user->contact_person_relation;
@@ -905,9 +923,11 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
             $item->Клиент->КонтактныеЛица[] = $contactperson2;
             
             
-            $items[] = $item; 
+            $items[] = $item;
         }
-echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump(($items));echo '</pre><hr />';
+        echo __FILE__.' '.__LINE__.'<br /><pre>';
+        var_dump(($items));
+        echo '</pre><hr />';
         $request = new StdClass();
         $request->ArrayContracts = json_encode($items);
         $result = $this->send('WebCRM', 'Request', $request, 1, 'exchange.txt');
@@ -919,17 +939,19 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump(($items));echo '</pre><hr />';
      * Soap1c::format_phone()
      * Форматирует номер телефона в формат принимаемый 1с
      * формат 8(ххх)ххх-хх-хх
-     * 
+     *
      * @param string $phone
      * @return string $format_phone
      */
     public function format_phone($phone)
     {
-        if (empty($phone))
+        if (empty($phone)) {
             return '';
+        }
         
-        if ($phone == 'не указан' || $phone == 'не указана')
+        if ($phone == 'не указан' || $phone == 'не указана') {
             return '';
+        }
         
         $replace_params = array('(', ')', ' ', '-', '+');
         $clear_phone = str_replace($replace_params, '', $phone);
@@ -942,7 +964,7 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump(($items));echo '</pre><hr />';
     
     /**
      * Soap1c::send()
-     * 
+     *
      * @param string $service
      * @param string $method
      * @param array $request
@@ -954,16 +976,17 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump(($items));echo '</pre><hr />';
         return false;
         
         try {
-			$service_url = "http://46.29.78.222:88/work/ws/".$service.".1cws?wsdl";
+            $service_url = "http://46.29.78.222:88/work/ws/".$service.".1cws?wsdl";
             $client = new SoapClient($service_url);
 
-			$response = $client->__soapCall($method, array($request));
-		} catch (Exception $fault) {
-			$response = $fault;
-		}
+            $response = $client->__soapCall($method, array($request));
+        } catch (Exception $fault) {
+            $response = $fault;
+        }
         
-        if (!empty($log))
+        if (!empty($log)) {
             $this->logging(__METHOD__, $service.' '.$method, (array)$request, (array)$response, $logfile);
+        }
         
             return $response;
     }
@@ -972,19 +995,21 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump(($items));echo '</pre><hr />';
     {
         $log_filename = $this->log_dir.$filename;
         
-        if (date('d', filemtime($log_filename)) != date('d'))
-        {
+        if (date('d', filemtime($log_filename)) != date('d')) {
             $archive_filename = $this->log_dir.'archive/'.date('ymd', filemtime($log_filename)).'.'.$filename;
             rename($log_filename, $archive_filename);
-            file_put_contents($log_filename, "\xEF\xBB\xBF");            
+            file_put_contents($log_filename, "\xEF\xBB\xBF");
         }
         
-        if (isset($request['TextJson']))        
+        if (isset($request['TextJson'])) {
             $request['TextJson'] = json_decode($request['TextJson']);
-        if (isset($request['ArrayContracts']))        
+        }
+        if (isset($request['ArrayContracts'])) {
             $request['ArrayContracts'] = json_decode($request['ArrayContracts']);
-        if (isset($request['ArrayOplata']))        
+        }
+        if (isset($request['ArrayOplata'])) {
             $request['ArrayOplata'] = json_decode($request['ArrayOplata']);
+        }
         
         $str = PHP_EOL.'==================================================================='.PHP_EOL;
         $str .= date('d.m.Y H:i:s').PHP_EOL;

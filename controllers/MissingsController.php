@@ -5,14 +5,13 @@ ini_set('max_execution_time', 40);
 class MissingsController extends Controller
 {
 
-    public function fetch() {
+    public function fetch()
+    {
         //if (!in_array('missings', $this->manager->permissions))
             //return $this->design->fetch('403.tpl');
 
-        if ($this->request->method('post'))
-        {
-            switch ($this->request->post('action', 'string')):
-
+        if ($this->request->method('post')) {
+            switch ($this->request->post('action', 'string')) :
                 case 'set_manager':
                     $this->set_manager_action();
                     break;
@@ -33,8 +32,7 @@ class MissingsController extends Controller
 
         $filter['missing'] = 300;
 
-        if (in_array($this->manager->role, array('contact_center')))
-        {
+        if (in_array($this->manager->role, array('contact_center'))) {
             $filter['missing_status'] = 0;
 //            $filter['missing_manager_id'] = $this->manager->id;
         }
@@ -72,7 +70,7 @@ class MissingsController extends Controller
         $calls = $this->mango->get_calls(array('user_id'=>$usersId));
         foreach ($clients as $client) {
             foreach ($calls as $call) {
-                if($client->id == $call->id){
+                if ($client->id == $call->id) {
                     $client->dump = $call;
                     $client->dump->callDate = date('d-m-Y H:i:s', $call->create_time);
                 }
@@ -80,39 +78,26 @@ class MissingsController extends Controller
         }
 
 
-        $clients = array_map(function($var) {
-            if (!empty($var->stage_card))
-            {
+        $clients = array_map(function ($var) {
+            if (!empty($var->stage_card)) {
                 $var->stages = 7;
                 $var->last_stage_date = $var->card_added_date;
-            }
-            elseif (!empty($var->stage_files))
-            {
+            } elseif (!empty($var->stage_files)) {
                 $var->stages = 6;
                 $var->last_stage_date = $var->files_added_date;
-            }
-            elseif (!empty($var->stage_work))
-            {
+            } elseif (!empty($var->stage_work)) {
                 $var->stages = 5;
                 $var->last_stage_date = $var->work_added_date;
-            }
-            elseif (!empty($var->stage_address))
-            {
+            } elseif (!empty($var->stage_address)) {
                 $var->stages = 4;
                 $var->last_stage_date = $var->address_data_added_date;
-            }
-            elseif (!empty($var->stage_passport))
-            {
+            } elseif (!empty($var->stage_passport)) {
                 $var->stages = 3;
                 $var->last_stage_date = $var->passport_date_added_date;
-            }
-            elseif (!empty($var->stage_personal))
-            {
+            } elseif (!empty($var->stage_personal)) {
                 $var->stages = 2;
                 $var->last_stage_date = $var->stage_personal_date;
-            }
-            else
-            {
+            } else {
                 $var->stages = 1;
                 $var->last_stage_date = $var->created;
             }
@@ -151,65 +136,44 @@ class MissingsController extends Controller
 
     public function set_manager_action()
     {
-        if ($user_id = $this->request->post('user_id', 'integer'))
-        {
-            if ($user = $this->users->get_user($user_id))
-            {
-                if (empty($user->missing_manager_id))
-                {
+        if ($user_id = $this->request->post('user_id', 'integer')) {
+            if ($user = $this->users->get_user($user_id)) {
+                if (empty($user->missing_manager_id)) {
                     $this->users->update_user($user_id, array(
                         'missing_manager_id' => $this->manager->id
                     ));
 
                     $this->json_output(array('success' => 1, 'manager_name' => $this->manager->name));
-                }
-                else
-                {
+                } else {
                     $this->json_output(array('error' => 'Заявка уже принята'));
                 }
-            }
-            else
-            {
+            } else {
                 $this->json_output(array('error' => 'UNDEFINED_USER'));
             }
-        }
-        else
-        {
+        } else {
             $this->json_output(array('error' => 'EMPTY_USER_ID'));
         }
-
     }
 
     public function close_missing_action()
     {
-        if ($user_id = $this->request->post('user_id', 'integer'))
-        {
-            if ($user = $this->users->get_user($user_id))
-            {
-                if (empty($user->missing_status))
-                {
+        if ($user_id = $this->request->post('user_id', 'integer')) {
+            if ($user = $this->users->get_user($user_id)) {
+                if (empty($user->missing_status)) {
                     $this->users->update_user($user_id, array(
                         'missing_status' => 1
                     ));
 
                     $this->json_output(array('success' => 1));
-                }
-                else
-                {
+                } else {
                     $this->json_output(array('error' => 'Заявка уже завершена'));
                 }
-            }
-            else
-            {
+            } else {
                 $this->json_output(array('error' => 'UNDEFINED_USER'));
             }
-        }
-        else
-        {
+        } else {
             $this->json_output(array('error' => 'EMPTY_USER_ID'));
         }
-
-
     }
 
     private function send_sms_action()
@@ -223,11 +187,9 @@ class MissingsController extends Controller
 
         $template = $this->sms->get_template($template_id);
 
-        if (!empty($order_id))
-        {
+        if (!empty($order_id)) {
             $order = $this->orders->get_order($order_id);
-            if (!empty($order->contract_id))
-            {
+            if (!empty($order->contract_id)) {
                 $code = $this->helpers->c2o_encode($order->contract_id);
                 $payment_link = $this->config->front_url.'/p/'.$code;
                 $template->template = str_replace('{$payment_link}', $payment_link, $template->template);
@@ -282,5 +244,4 @@ class MissingsController extends Controller
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';
         $this->json_output(array('success'=>true));
     }
-
 }

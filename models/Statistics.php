@@ -16,6 +16,8 @@ class Statistics extends Core
         $this->db->query($query);
         
         $result = $this->db->result();
-echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
+        echo __FILE__.' '.__LINE__.'<br /><pre>';
+        var_dump($result);
+        echo '</pre><hr />';
     }
 }

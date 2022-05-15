@@ -10,10 +10,9 @@ class Ajax extends Core
     
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
     
-        if (!empty($_SESSION['user_id']))
-        {
+        if (!empty($_SESSION['user_id'])) {
             $this->user = $this->users->get_user((int)$_SESSION['user_id']);
         }
     }
@@ -24,7 +23,7 @@ class Ajax extends Core
         header("Content-type: application/json; charset=UTF-8");
         header("Cache-Control: must-revalidate");
         header("Pragma: no-cache");
-        header("Expires: -1");		
+        header("Expires: -1");
         
         echo json_encode($this->response);
     }

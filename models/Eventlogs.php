@@ -2,7 +2,7 @@
 
 class Eventlogs extends Core
 {
-	private $events = array(
+    private $events = array(
         1 => 'Переход в карточку',
 
         10 => 'Заявка принята',
@@ -56,48 +56,52 @@ class Eventlogs extends Core
     
     public function get_events()
     {
-    	return $this->events;
+        return $this->events;
     }
     
     public function get_log($id)
-	{
-		$query = $this->db->placehold("
+    {
+        $query = $this->db->placehold("
             SELECT * 
             FROM __eventlogs
             WHERE id = ?
         ", (int)$id);
         $this->db->query($query);
         $result = $this->db->result();
-	
+    
         return $result;
     }
     
-	public function get_logs($filter = array())
-	{
-		$id_filter = '';
+    public function get_logs($filter = array())
+    {
+        $id_filter = '';
         $order_filter = '';
         $keyword_filter = '';
         $limit = 1000;
-		$page = 1;
+        $page = 1;
         
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
+        }
         
-        if (!empty($filter['order_id']))
+        if (!empty($filter['order_id'])) {
             $order_filter = $this->db->placehold("AND order_id = ?", (int)$filter['order_id']);
+        }
         
-		if(isset($filter['keyword']))
-		{
-			$keywords = explode(' ', $filter['keyword']);
-			foreach($keywords as $keyword)
-				$keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
-		}
+        if (isset($filter['keyword'])) {
+            $keywords = explode(' ', $filter['keyword']);
+            foreach ($keywords as $keyword) {
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
+            }
+        }
         
-		if(isset($filter['limit']))
-			$limit = max(1, intval($filter['limit']));
+        if (isset($filter['limit'])) {
+            $limit = max(1, intval($filter['limit']));
+        }
 
-		if(isset($filter['page']))
-			$page = max(1, intval($filter['page']));
+        if (isset($filter['page'])) {
+            $page = max(1, intval($filter['page']));
+        }
             
         $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page-1)*$limit, $limit);
 
@@ -115,28 +119,30 @@ class Eventlogs extends Core
         $results = $this->db->results();
         
         return $results;
-	}
+    }
     
-	public function count_logs($filter = array())
-	{
+    public function count_logs($filter = array())
+    {
         $id_filter = '';
         $order_filter = '';
         $keyword_filter = '';
         
-        if (!empty($filter['id']))
+        if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
-		
-        if (!empty($filter['order_id']))
-            $order_filter = $this->db->placehold("AND order_id = ?", (int)$filter['order_id']);
+        }
         
-        if(isset($filter['keyword']))
-		{
-			$keywords = explode(' ', $filter['keyword']);
-			foreach($keywords as $keyword)
-				$keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
-		}
+        if (!empty($filter['order_id'])) {
+            $order_filter = $this->db->placehold("AND order_id = ?", (int)$filter['order_id']);
+        }
+        
+        if (isset($filter['keyword'])) {
+            $keywords = explode(' ', $filter['keyword']);
+            foreach ($keywords as $keyword) {
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
+            }
+        }
                 
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             SELECT COUNT(id) AS count
             FROM __eventlogs
             WHERE 1
@@ -146,13 +152,13 @@ class Eventlogs extends Core
         ");
         $this->db->query($query);
         $count = $this->db->result('count');
-	
+    
         return $count;
     }
     
     public function add_log($eventlog)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             INSERT INTO __eventlogs SET ?%
         ", (array)$eventlog);
         $this->db->query($query);
@@ -163,7 +169,7 @@ class Eventlogs extends Core
     
     public function update_log($id, $eventlog)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             UPDATE __eventlogs SET ?% WHERE id = ?
         ", (array)$eventlog, (int)$id);
         $this->db->query($query);
@@ -173,7 +179,7 @@ class Eventlogs extends Core
     
     public function delete_log($id)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             DELETE FROM __eventlogs WHERE id = ?
         ", (int)$id);
         $this->db->query($query);

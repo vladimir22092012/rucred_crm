@@ -5,28 +5,20 @@ class SmsTemplatesController extends Controller
     public function fetch()
     {
 
-return false;
+        return false;
 
-        if ($this->request->method('post'))
-        {
-            switch ($this->request->post('action', 'string')):
-                
+        if ($this->request->method('post')) {
+            switch ($this->request->post('action', 'string')) :
                 case 'add':
-                    
                     $name = trim($this->request->post('name'));
                     $template = trim($this->request->post('template'));
                     $type = trim($this->request->post('type'));
                     
-                    if (empty($name))
-                    {
+                    if (empty($name)) {
                         $this->json_output(array('error' => 'Укажите название шаблона'));
-                    }
-                    elseif (empty($template))
-                    {
+                    } elseif (empty($template)) {
                         $this->json_output(array('error' => 'Укажите текст сообщения'));
-                    }
-                    else
-                    {
+                    } else {
                         $sms_template = array(
                             'name' => $name,
                             'template' => $template,
@@ -35,33 +27,27 @@ return false;
                         $id = $this->sms->add_template($sms_template);
                         
                         $this->json_output(array(
-                            'id' => $id, 
-                            'name' => $name, 
-                            'template' => $template, 
+                            'id' => $id,
+                            'name' => $name,
+                            'template' => $template,
                             'type' => $type,
                             'success' => 'Шаблон сообщения добавлен'
                         ));
                     }
                     
-                break;
+                    break;
                 
                 case 'update':
-                    
                     $id = $this->request->post('id', 'integer');
                     $name = trim($this->request->post('name'));
                     $template = trim($this->request->post('template'));
                     $type = trim($this->request->post('type'));
                     
-                    if (empty($name))
-                    {
+                    if (empty($name)) {
                         $this->json_output(array('error' => 'Укажите название шаблона'));
-                    }
-                    elseif (empty($template))
-                    {
+                    } elseif (empty($template)) {
                         $this->json_output(array('error' => 'Укажите текст сообщения'));
-                    }
-                    else
-                    {
+                    } else {
                         $sms_template = array(
                             'name' => $name,
                             'template' => $template,
@@ -70,33 +56,31 @@ return false;
                         $this->sms->update_template($id, $sms_template);
                         
                         $this->json_output(array(
-                            'id' => $id, 
-                            'name' => $name, 
-                            'template' => $template, 
+                            'id' => $id,
+                            'name' => $name,
+                            'template' => $template,
                             'type' => $type,
                             'success' => 'Шаблон обновлен'
-                        ));                        
+                        ));
                     }
                     
-                break;
+                    break;
                 
                 case 'delete':
-                    
                     $id = $this->request->post('id', 'integer');
                     
                     $this->sms->delete_template($id);
                     
                     $this->json_output(array(
-                        'id' => $id, 
+                        'id' => $id,
                         'success' => 'Шаблон удален'
                     ));
                     
-                break;
-                
+                    break;
             endswitch;
         }
         
-    	$sms_templates = $this->sms->get_templates();
+        $sms_templates = $this->sms->get_templates();
         $this->design->assign('sms_templates', $sms_templates);
         
         $template_types = $this->sms->get_template_types();
@@ -104,6 +88,4 @@ return false;
         
         return $this->design->fetch('sms_templates.tpl');
     }
-    
-    
 }

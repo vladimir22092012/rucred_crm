@@ -7,10 +7,9 @@ class StatisticsController extends Controller
     public function fetch()
     {
 
-return false;
+        return false;
 
-    	switch ($this->request->get('action', 'string')):
-
+        switch ($this->request->get('action', 'string')) :
             case 'main':
                 return $this->action_main();
             break;
@@ -53,9 +52,7 @@ return false;
 
             default:
                 return false;
-
         endswitch;
-
     }
 
     private function action_main()
@@ -88,17 +85,17 @@ return false;
     private function action_scorista_rejects()
     {
         $reasons = array();
-        foreach ($this->reasons->get_reasons() as $reason)
+        foreach ($this->reasons->get_reasons() as $reason) {
             $reasons[$reason->id] = $reason;
+        }
         $this->design->assign('reasons', $reasons);
 
 
-        if ($daterange = $this->request->get('daterange'))
-        {
+        if ($daterange = $this->request->get('daterange')) {
             list($from, $to) = explode('-', $daterange);
 
-        	$date_from = date('Y-m-d', strtotime($from));
-        	$date_to = date('Y-m-d', strtotime($to));
+            $date_from = date('Y-m-d', strtotime($from));
+            $date_to = date('Y-m-d', strtotime($to));
 
             $this->design->assign('date_from', $date_from);
             $this->design->assign('date_to', $date_to);
@@ -106,10 +103,8 @@ return false;
             $this->design->assign('to', $to);
 
             $query_reason = '';
-            if ($filter_reason = $this->request->get('reason_id'))
-            {
-                if ($filter_reason != 'all')
-                {
+            if ($filter_reason = $this->request->get('reason_id')) {
+                if ($filter_reason != 'all') {
                     $query_reason = $this->db->placehold("AND o.reason_id = ?", (int)$filter_reason);
                 }
 
@@ -141,44 +136,52 @@ return false;
             $this->db->query($query);
 
             $orders = array();
-            foreach ($this->db->results() as $o)
+            foreach ($this->db->results() as $o) {
                 $orders[$o->order_id] = $o;
+            }
 
-            if (!empty($orders))
-                if ($scorings = $this->scorings->get_scorings(array('order_id' => array_keys($orders), 'type' => 'scorista')))
-                    foreach ($scorings as $scoring)
+            if (!empty($orders)) {
+                if ($scorings = $this->scorings->get_scorings(array('order_id' => array_keys($orders), 'type' => 'scorista'))) {
+                    foreach ($scorings as $scoring) {
                         $orders[$scoring->order_id]->scoring = $scoring;
+                    }
+                }
+            }
 
 
-            switch ($this->request->get('scoring')):
-
+            switch ($this->request->get('scoring')) :
                 case '499-':
-                    foreach ($orders as $key => $order)
-                        if (empty($order->scoring->scorista_ball) || $order->scoring->scorista_ball > 499)
+                    foreach ($orders as $key => $order) {
+                        if (empty($order->scoring->scorista_ball) || $order->scoring->scorista_ball > 499) {
                             unset($orders[$key]);
-                break;
+                        }
+                    }
+                    break;
 
                 case '500-549':
-                    foreach ($orders as $key => $order)
-                        if (empty($order->scoring->scorista_ball) || $order->scoring->scorista_ball < 500 || $order->scoring->scorista_ball > 549)
+                    foreach ($orders as $key => $order) {
+                        if (empty($order->scoring->scorista_ball) || $order->scoring->scorista_ball < 500 || $order->scoring->scorista_ball > 549) {
                             unset($orders[$key]);
-                break;
+                        }
+                    }
+                    break;
 
                 case '550+':
-                    foreach ($orders as $key => $order)
-                        if (empty($order->scoring->scorista_ball) || $order->scoring->scorista_ball < 550)
+                    foreach ($orders as $key => $order) {
+                        if (empty($order->scoring->scorista_ball) || $order->scoring->scorista_ball < 550) {
                             unset($orders[$key]);
-                break;
-
+                        }
+                    }
+                    break;
             endswitch;
             $this->design->assign('filter_scoring', $this->request->get('scoring'));
 
 
-            if ($this->request->get('download') == 'excel')
-            {
+            if ($this->request->get('download') == 'excel') {
                 $managers = array();
-                foreach ($this->managers->get_managers() as $m)
+                foreach ($this->managers->get_managers() as $m) {
                     $managers[$m->id] = $m;
+                }
 
                 //фикс расхожения данных в документе и на сайте
                 $fix_managers = [];
@@ -218,8 +221,7 @@ return false;
                 $active_sheet->setCellValue('H1', 'Скориста');//---
 
                 $i = 2;
-                foreach ($orders as $contract)
-                {
+                foreach ($orders as $contract) {
                     $active_sheet->setCellValue('A'.$i, date('d.m.Y', strtotime($contract->date)));
                     $active_sheet->setCellValue('B'.$i, $contract->order_id);
                     $active_sheet->setCellValue('C'.$i, $contract->lastname.' '.$contract->firstname.' '.$contract->patronymic);
@@ -233,7 +235,7 @@ return false;
                     $i++;
                 }
 
-                $objWriter = PHPExcel_IOFactory::createWriter($excel,'Excel5');
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
 
                 $objWriter->save($this->config->root_dir.$filename);
 
@@ -251,12 +253,11 @@ return false;
 
     private function action_contracts()
     {
-        if ($daterange = $this->request->get('daterange'))
-        {
+        if ($daterange = $this->request->get('daterange')) {
             list($from, $to) = explode('-', $daterange);
 
-        	$date_from = date('Y-m-d', strtotime($from));
-        	$date_to = date('Y-m-d', strtotime($to));
+            $date_from = date('Y-m-d', strtotime($from));
+            $date_to = date('Y-m-d', strtotime($to));
 
             $this->design->assign('date_from', $date_from);
             $this->design->assign('date_to', $date_to);
@@ -302,79 +303,60 @@ return false;
             $this->db->query($query);
 
             $contracts = array();
-            foreach ($this->db->results() as $c)
-            {
+            foreach ($this->db->results() as $c) {
                 $c->collections = array();
                 $c->operations = array();
                 $c->total_paid = 0;
                 $contracts[$c->contract_id] = $c;
             }
 
-            if (!empty($contracts))
-            {
-                foreach ($this->operations->get_operations(array('contract_id'=>array_keys($contracts), 'type'=>'PAY')) as $op)
-                {
+            if (!empty($contracts)) {
+                foreach ($this->operations->get_operations(array('contract_id'=>array_keys($contracts), 'type'=>'PAY')) as $op) {
                     $contracts[$op->contract_id]->operations[] = $op;
                     $contracts[$op->contract_id]->total_paid += $op->amount;
                 }
 
-                foreach ($this->collections->get_collections(array('contract_id'=>array_keys($contracts))) as $col)
-                {
+                foreach ($this->collections->get_collections(array('contract_id'=>array_keys($contracts))) as $col) {
                     $contracts[$op->contract_id]->collections[] = $col;
                 }
             }
 
-            foreach ($contracts as $c)
-            {
+            foreach ($contracts as $c) {
                 $c->expiration = 0;
 
-                if ($c->status == 3)
-                {
-                    if (strtotime($c->close_date) > strtotime($c->return_date))
-                    {
+                if ($c->status == 3) {
+                    if (strtotime($c->close_date) > strtotime($c->return_date)) {
                         $datetime1 = date_create(date('Y-m-d 00:00:00', strtotime($c->close_date)));
                         $datetime2 = date_create(date('Y-m-d 00:00:00', strtotime($c->return_date)));
                         $interval = date_diff($datetime1, $datetime2);
     //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($c->close_date, $c->return_date, $interval);echo '</pre><hr />';
                         $c->expiration = $interval->days;
                     }
-                }
-                else
-                {
-                    if (strtotime(date('Y-m-d H:i:s')) > strtotime($c->return_date))
-                    {
+                } else {
+                    if (strtotime(date('Y-m-d H:i:s')) > strtotime($c->return_date)) {
                         $datetime1 = date_create(date('Y-m-d 00:00:00'));
                         $datetime2 = date_create(date('Y-m-d 00:00:00', strtotime($c->return_date)));
                         $interval = date_diff($datetime1, $datetime2);
     //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($c->close_date, $c->return_date, $interval);echo '</pre><hr />';
                         $c->expiration = $interval->days;
                     }
-
                 }
 
-                if (empty($c->client_status))
-                {
+                if (empty($c->client_status)) {
                     $client_contracts = $this->contracts->get_contracts(array(
                         'user_id' => $c->user_id,
                         'status' => 3,
                         'close_date_to' => $c->date
                     ));
-                    if (!empty($client_contracts))
-                    {
+                    if (!empty($client_contracts)) {
                         $this->orders->update_order($c->order_id, array('client_status' => 'crm'));
-                    }
-                    else
-                    {
+                    } else {
                         $loan_history = $this->soap1c->get_client_credits($c->uid);
-                        if (!empty($loan_history))
-                        {
+                        if (!empty($loan_history)) {
                             $have_close_loans = 0;
-                            foreach ($loan_history as $lh)
-                            {
-                                if (!empty($lh->ДатаЗакрытия))
-                                {
-                                    if (strtotime($lh->ДатаЗакрытия) < strtotime($c->date))
-                                    {
+                            foreach ($loan_history as $lh) {
+                                if (!empty($lh->ДатаЗакрытия)) {
+                                    if (strtotime($lh->ДатаЗакрытия) < strtotime($c->date)) {
                                         $have_close_loans = 1;
                                         $this->orders->update_order($c->order_id, array('client_status' => 'pk'));
                                     }
@@ -382,30 +364,23 @@ return false;
                             }
                         }
 
-                        if (empty($have_close_loans))
-                        {
+                        if (empty($have_close_loans)) {
                             $have_old_orders = 0;
                             $orders = $this->orders->get_orders(array('user_id' => $c->user_id, 'date_to' => $c->date));
-                            foreach ($orders as $order)
-                            {
-                                if ($order->order_id != $c->order_id)
-                                {
+                            foreach ($orders as $order) {
+                                if ($order->order_id != $c->order_id) {
                                     $have_old_orders = 1;
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump('$order', $order);echo '</pre><hr />';
                                 }
                             }
 
-                            if (empty($have_old_orders))
-                            {
+                            if (empty($have_old_orders)) {
                                 $this->orders->update_order($c->order_id, array('client_status' => 'nk'));
-                            }
-                            else
-                            {
+                            } else {
                                 $this->orders->update_order($c->order_id, array('client_status' => 'rep'));
                             }
                         }
                     }
-
                 }
             }
 
@@ -416,13 +391,12 @@ return false;
             $this->design->assign('collection_statuses', $collection_statuses);
 
             $managers = array();
-            foreach ($this->managers->get_managers() as $m)
+            foreach ($this->managers->get_managers() as $m) {
                 $managers[$m->id] = $m;
+            }
             $this->design->assign('list_managers', $managers);
 
-            if ($this->request->get('download') == 'excel')
-            {
-
+            if ($this->request->get('download') == 'excel') {
                 $filename = 'files/reports/contracts.xls';
                 require $this->config->root_dir.'PHPExcel/Classes/PHPExcel.php';
 
@@ -457,29 +431,27 @@ return false;
                 $active_sheet->setCellValue('I1', 'Статус');
 
                 $i = 2;
-                foreach ($contracts as $contract)
-                {
-                    if ($contract->client_status == 'pk')
+                foreach ($contracts as $contract) {
+                    if ($contract->client_status == 'pk') {
                         $client_status = 'ПК';
-                    elseif ($contract->client_status == 'nk')
+                    } elseif ($contract->client_status == 'nk') {
                         $client_status = 'НК';
-                    elseif ($contract->client_status == 'crm')
+                    } elseif ($contract->client_status == 'crm') {
                         $client_status = 'ПК CRM';
-                    elseif ($contract->client_status == 'rep')
+                    } elseif ($contract->client_status == 'rep') {
                         $client_status = 'Повтор';
-                    else
+                    } else {
                         $client_status = '';
-
-                    if (!empty($contract->collection_status))
-                    {
-                        if (empty($contract->sold))
-                            $status = 'МКК ';
-                        else
-                            $status = 'ЮК ';
-                        $status .= $collection_statuses[$contract->collection_status];
                     }
-                    else
-                    {
+
+                    if (!empty($contract->collection_status)) {
+                        if (empty($contract->sold)) {
+                            $status = 'МКК ';
+                        } else {
+                            $status = 'ЮК ';
+                        }
+                        $status .= $collection_statuses[$contract->collection_status];
+                    } else {
                         $status = $statuses[$contract->status];
                     }
 
@@ -496,7 +468,7 @@ return false;
                     $i++;
                 }
 
-                $objWriter = PHPExcel_IOFactory::createWriter($excel,'Excel5');
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
 
                 $objWriter->save($this->config->root_dir.$filename);
 
@@ -512,82 +484,75 @@ return false;
 
     private function action_payments()
     {
-        if ($operation_id = $this->request->get('operation_id', 'integer'))
-        {
-            if ($operation = $this->operations->get_operation($operation_id))
-            {
+        if ($operation_id = $this->request->get('operation_id', 'integer')) {
+            if ($operation = $this->operations->get_operation($operation_id)) {
                 $operation->contract = $this->contracts->get_contract($operation->contract_id);
                 $operation->transaction = $this->transactions->get_transaction($operation->transaction_id);
-                if ($operation->transaction->insurance_id)
+                if ($operation->transaction->insurance_id) {
                     $operation->transaction->insurance = $this->insurances->get_insurance($operation->transaction->insurance_id);
+                }
 
-                if ($operation->type == 'REJECT_REASON')
-                {
+                if ($operation->type == 'REJECT_REASON') {
                     $result = $this->soap1c->send_reject_reason($operation);
-                    if (!((isset($result->return) && $result->return == 'OK') || $result == 'OK'))
-                    {
+                    if (!((isset($result->return) && $result->return == 'OK') || $result == 'OK')) {
                         $order = $this->orders->get_order($operation->order_id);
                         $this->soap1c->send_order($order);
                         $result = $this->soap1c->send_reject_reason($operation);
                     }
-                }
-                else
-                {
+                } else {
                     $result = $this->soap1c->send_payments(array($operation));
                 }
 
-                if ((isset($result->return) && $result->return == 'OK') || $result == 'OK')
-                {
+                if ((isset($result->return) && $result->return == 'OK') || $result == 'OK') {
                     $this->operations->update_operation($operation->id, array(
                         'sent_date' => date('Y-m-d H:i:s'),
                         'sent_status' => 2
                     ));
                     $this->json_output(array('success' => 'Операция отправлена'));
-                }
-                else
-                {
+                } else {
                     $this->json_output(array('error' => 'Ошибка при отправке'));
                 }
-
-            }
-            else
-            {
+            } else {
                 $this->json_output(array('error' => 'Операция не найдена'));
             }
-        }
-        elseif ($daterange = $this->request->get('daterange'))
-        {
+        } elseif ($daterange = $this->request->get('daterange')) {
             $search_filter = '';
 
             list($from, $to) = explode('-', $daterange);
 
-        	$date_from = date('Y-m-d', strtotime($from));
-        	$date_to = date('Y-m-d', strtotime($to));
+            $date_from = date('Y-m-d', strtotime($from));
+            $date_to = date('Y-m-d', strtotime($to));
 
             $this->design->assign('date_from', $date_from);
             $this->design->assign('date_to', $date_to);
             $this->design->assign('from', $from);
             $this->design->assign('to', $to);
 
-            if ($search = $this->request->get('search'))
-            {
-                if (!empty($search['created']))
+            if ($search = $this->request->get('search')) {
+                if (!empty($search['created'])) {
                     $search_filter .= $this->db->placehold(' AND DATE(t.created) = ?', date('Y-m-d', strtotime($search['created'])));
-                if (!empty($search['number']))
+                }
+                if (!empty($search['number'])) {
                     $search_filter .= $this->db->placehold(' AND c.number LIKE "%'.$this->db->escape($search['number']).'%"');
-                if (!empty($search['fio']))
+                }
+                if (!empty($search['fio'])) {
                     $search_filter .= $this->db->placehold(' AND (u.lastname LIKE "%'.$this->db->escape($search['fio']).'%" OR u.firstname LIKE "%'.$this->db->escape($search['fio']).'%" OR u.patronymic LIKE "%'.$this->db->escape($search['fio']).'%")');
-                if (!empty($search['amount']))
+                }
+                if (!empty($search['amount'])) {
                     $search_filter .= $this->db->placehold(' AND t.amount = ?', $search['amount'] * 100);
-                if (!empty($search['card']))
+                }
+                if (!empty($search['card'])) {
                     $search_filter .= $this->db->placehold(' AND t.callback_response LIKE "%'.$this->db->escape($search['card']).'%"');
-                if (!empty($search['register_id']))
+                }
+                if (!empty($search['register_id'])) {
                     $search_filter .= $this->db->placehold(' AND t.register_id LIKE "%'.$this->db->escape($search['register_id']).'%"');
-                if (!empty($search['operation']))
+                }
+                if (!empty($search['operation'])) {
                     $search_filter .= $this->db->placehold(' AND t.operation LIKE "%'.$this->db->escape($search['operation']).'%"');
-                if (!empty($search['description']))
+                }
+                if (!empty($search['description'])) {
                     $search_filter .= $this->db->placehold(' AND t.description LIKE "%'.$this->db->escape($search['description']).'%"');
-
+                }
             }
 
             $query = $this->db->placehold("
@@ -634,10 +599,8 @@ return false;
             $this->db->query($query);
 
             $operations = array();
-            foreach ($this->db->results() as $op)
-            {
-                if ($xml = simplexml_load_string($op->callback_response))
-                {
+            foreach ($this->db->results() as $op) {
+                if ($xml = simplexml_load_string($op->callback_response)) {
                     $op->pan = (string)$xml->pan;
                     $operations[$op->id] = $op;
                 }
@@ -652,11 +615,11 @@ return false;
 
 
 
-            if ($this->request->get('download') == 'excel')
-            {
+            if ($this->request->get('download') == 'excel') {
                 $managers = array();
-                foreach ($this->managers->get_managers() as $m)
+                foreach ($this->managers->get_managers() as $m) {
                     $managers[$m->id] = $m;
+                }
 
                 $filename = 'files/reports/payments.xls';
                 require $this->config->root_dir.'PHPExcel/Classes/PHPExcel.php';
@@ -692,9 +655,7 @@ return false;
                 $active_sheet->setCellValue('I1', 'Страховка');
 
                 $i = 2;
-                foreach ($operations as $contract)
-                {
-
+                foreach ($operations as $contract) {
                     $active_sheet->setCellValue('A'.$i, date('d.m.Y', strtotime($contract->created)));
                     $active_sheet->setCellValue('B'.$i, $contract->contract_number.' '.($contract->sector == '7036' ? 'ЮК' : 'МКК'));
                     $active_sheet->setCellValue('C'.$i, $contract->lastname.' '.$contract->firstname.' '.$contract->patronymic.' '.$contract->birth);
@@ -708,7 +669,7 @@ return false;
                     $i++;
                 }
 
-                $objWriter = PHPExcel_IOFactory::createWriter($excel,'Excel5');
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
 
                 $objWriter->save($this->config->root_dir.$filename);
 
@@ -726,12 +687,11 @@ return false;
 
     private function action_eventlogs()
     {
-        if ($daterange = $this->request->get('daterange'))
-        {
+        if ($daterange = $this->request->get('daterange')) {
             list($from, $to) = explode('-', $daterange);
 
-        	$date_from = date('Y-m-d', strtotime($from));
-        	$date_to = date('Y-m-d', strtotime($to));
+            $date_from = date('Y-m-d', strtotime($from));
+            $date_to = date('Y-m-d', strtotime($to));
 
             $this->design->assign('date_from', $date_from);
             $this->design->assign('date_to', $date_to);
@@ -740,10 +700,10 @@ return false;
 
 
             $query_manager_id = '';
-            if ($filter_manager_id = $this->request->get('manager_id'))
-            {
-                if ($filter_manager_id != 'all')
+            if ($filter_manager_id = $this->request->get('manager_id')) {
+                if ($filter_manager_id != 'all') {
                     $query_manager_id = $this->db->placehold("AND o.manager_id = ?", (int)$filter_manager_id);
+                }
 
                 $this->design->assign('filter_manager_id', $filter_manager_id);
             }
@@ -771,13 +731,12 @@ return false;
             $this->db->query($query);
 
             $orders = array();
-            foreach ($this->db->results() as $o)
+            foreach ($this->db->results() as $o) {
                 $orders[$o->order_id] = $o;
+            }
 
-            if (!empty($orders))
-            {
-                foreach ($orders as $o)
-                {
+            if (!empty($orders)) {
+                foreach ($orders as $o) {
                     $o->eventlogs = $this->eventlogs->get_logs(array('order_id'=>$o->order_id));
                 }
             }
@@ -789,11 +748,11 @@ return false;
             $this->design->assign('reasons', $reasons);
 
 
-            if ($this->request->get('download') == 'excel')
-            {
+            if ($this->request->get('download') == 'excel') {
                 $managers = array();
-                foreach ($this->managers->get_managers() as $m)
+                foreach ($this->managers->get_managers() as $m) {
                     $managers[$m->id] = $m;
+                }
 
                 $order_statuses = $this->orders->get_statuses();
 
@@ -831,35 +790,35 @@ return false;
                     'alignment' => array (
                         'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
                         'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
-                        'wrap'       	=> true,
+                        'wrap'          => true,
                     )
                 );
                 $active_sheet->getStyle('A1:C1')->applyFromArray($style_bold);
 
                 $i = 2;
                 $rc = 1;
-                foreach ($orders as $order)
-                {
+                foreach ($orders as $order) {
                     $start_i = $i;
 
                     $a_indexes = 'A'.$i.':A'.($i+count($order->eventlogs) - 1);
-                    if (count($order->eventlogs) > 2)
+                    if (count($order->eventlogs) > 2) {
                         $active_sheet->mergeCells($a_indexes);
+                    }
                     $active_sheet->getStyle($a_indexes)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                     $active_sheet->getStyle($a_indexes)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
                     $active_sheet->setCellValue('A'.$i, $rc);
 
                     $b_indexes = 'B'.($i+3).':B'.($i+count($order->eventlogs)-1);
-                    if (count($order->eventlogs) > 2)
+                    if (count($order->eventlogs) > 2) {
                         $active_sheet->mergeCells($b_indexes);
+                    }
                     $active_sheet->getStyle($b_indexes)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
                     $active_sheet->getStyle($b_indexes)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
                     $active_sheet->setCellValue('B'.$i, $order->order_id);
                     $active_sheet->setCellValue('B'.($i+1), 'Статус: '.$order_statuses[$order->status]);
                     $active_sheet->setCellValue('B'.($i+2), 'Менеджер: '.$managers[$order->manager_id]->name);
 
-                    foreach ($order->eventlogs as $ev)
-                    {
+                    foreach ($order->eventlogs as $ev) {
                         $active_sheet->setCellValue('C'.$i, date('d.m.Y', strtotime($ev->created)));
                         $active_sheet->setCellValue('D'.$i, date('H:i:s', strtotime($ev->created)));
                         $active_sheet->setCellValue('E'.$i, $events[$ev->event_id]);
@@ -910,7 +869,7 @@ return false;
 //                    $active_sheet->getStyle()->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
                 }
 
-                $objWriter = PHPExcel_IOFactory::createWriter($excel,'Excel5');
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
 
                 $objWriter->save($this->config->root_dir.$filename);
 
@@ -928,12 +887,11 @@ return false;
 
     private function action_penalties()
     {
-        if ($daterange = $this->request->get('daterange'))
-        {
+        if ($daterange = $this->request->get('daterange')) {
             list($from, $to) = explode('-', $daterange);
 
-        	$date_from = date('Y-m-d', strtotime($from));
-        	$date_to = date('Y-m-d', strtotime($to));
+            $date_from = date('Y-m-d', strtotime($from));
+            $date_to = date('Y-m-d', strtotime($to));
 
             $this->design->assign('date_from', $date_from);
             $this->design->assign('date_to', $date_to);
@@ -946,53 +904,51 @@ return false;
             $filter['date_to'] = $date_to;
             $filter['status'] = array(2,3,4);
 
-            if ($this->manager->role == 'user' || $this->manager->role == 'big_user')
-            {
+            if ($this->manager->role == 'user' || $this->manager->role == 'big_user') {
                 $filter['manager_id'] = $this->manager->id;
-            }
-            elseif ($filter_manager_id = $this->request->get('manager_id'))
-            {
-                if ($filter_manager_id != 'all')
+            } elseif ($filter_manager_id = $this->request->get('manager_id')) {
+                if ($filter_manager_id != 'all') {
                     $filter['manager_id'] = $filter_manager_id;
+                }
 
                 $this->design->assign('filter_manager_id', $filter_manager_id);
             }
 
             $orders = array();
-            if ($penalties = $this->penalties->get_penalties($filter))
-            {
+            if ($penalties = $this->penalties->get_penalties($filter)) {
                 $order_ids = array();
-                foreach ($penalties as $penalty)
+                foreach ($penalties as $penalty) {
                     $order_ids[] = $penalty->order_id;
+                }
 
-                foreach ($this->orders->get_orders(array('id' => $order_ids)) as $order)
-                {
+                foreach ($this->orders->get_orders(array('id' => $order_ids)) as $order) {
                     $order->penalties = array();
                     $orders[$order->order_id] = $order;
                 }
 
-                foreach ($penalties as $penalty)
-                {
-                    if (isset($orders[$penalty->order_id]))
+                foreach ($penalties as $penalty) {
+                    if (isset($orders[$penalty->order_id])) {
                         $orders[$penalty->order_id]->penalties[] = $penalty;
+                    }
                 }
 
                 $total_summ = 0;
                 $total_count = 0;
-                foreach ($orders as $order)
-                {
+                foreach ($orders as $order) {
                     $total_count++;
                     $order->penalty_summ = 0;
-                    foreach ($order->penalties as $p)
-                    {
-                        if ($order->status == 7)
+                    foreach ($order->penalties as $p) {
+                        if ($order->status == 7) {
                             $p->cost = 0;
+                        }
 
-                        if ($p->status == 2 || $p->status == 3)
+                        if ($p->status == 2 || $p->status == 3) {
                             $p->cost = 0;
+                        }
 
-                        if ($order->penalty_summ < $p->cost)
+                        if ($order->penalty_summ < $p->cost) {
                             $order->penalty_summ = $p->cost;
+                        }
                     }
                     $order->penalty_summ = min($order->penalty_summ, 500);
                     $total_summ += $order->penalty_summ;
@@ -1005,17 +961,19 @@ return false;
             $this->design->assign('orders', $orders);
 
             $penalty_types = array();
-            foreach ($this->penalties->get_types() as $t)
+            foreach ($this->penalties->get_types() as $t) {
                 $penalty_types[$t->id] = $t;
+            }
             $this->design->assign('penalty_types', $penalty_types);
 
             $penalty_statuses = $this->penalties->get_statuses();
             $this->design->assign('penalty_statuses', $penalty_statuses);
 
             $managers = array();
-            foreach ($this->managers->get_managers() as $m)
+            foreach ($this->managers->get_managers() as $m) {
                 $managers[$m->id] = $m;
-            uasort($managers, function($a, $b){
+            }
+            uasort($managers, function ($a, $b) {
                 return strcasecmp($a->name_1c, $b->name_1c);
             });
             $this->design->assign('managers', $managers);
@@ -1023,8 +981,9 @@ return false;
 
         if ($this->request->get('download') == 'excel') {
             $managers = array();
-            foreach ($this->managers->get_managers() as $m)
+            foreach ($this->managers->get_managers() as $m) {
                 $managers[$m->id] = $m;
+            }
 
             $filename = 'files/reports/penalties.xls';
             require $this->config->root_dir . 'PHPExcel/Classes/PHPExcel.php';
@@ -1062,8 +1021,7 @@ return false;
 
             $order_status = ['Новая', 'Принята', 'Одобрена', 'Отказ', 'Подписан', 'Выдан', 'Не удалось выдать', 'Погашен', 'Отказ клиента'];
 
-            foreach ($orders as $order)
-            {
+            foreach ($orders as $order) {
                 $order_fio = "$order->lastname, $order->firstname, $order->patronymic";
 
                 $active_sheet->setCellValue('A'.$orders_i, date('d.m.Y h:i:s', strtotime($order->date)));
@@ -1072,8 +1030,7 @@ return false;
                 $active_sheet->setCellValue('D'.$orders_i, $order_status[$order->status]);
                 $active_sheet->setCellValue('E'.$orders_i, "$order->penalty_summ Р");
 
-                foreach ($order->penalties as $penalty)
-                {
+                foreach ($order->penalties as $penalty) {
                     $active_sheet->setCellValue('F'.$penalties_i, $penalty->created);
                     $active_sheet->setCellValue('G'.$penalties_i, $managers[$penalty->manager_id]->name);
                     $active_sheet->setCellValue('H'.$penalties_i, $penalty->comment);
@@ -1086,16 +1043,14 @@ return false;
                 $orders_i++;
             }
 
-            $objWriter = PHPExcel_IOFactory::createWriter($excel,'Excel5');
+            $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
 
             $objWriter->save($this->config->root_dir.$filename);
 
             header('Location:'.$this->config->root_url.'/'.$filename);
             exit;
-
         }
 
         return $this->design->fetch('statistics/penalties.tpl');
     }
-
 }

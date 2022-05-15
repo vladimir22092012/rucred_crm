@@ -4,17 +4,16 @@ class CompaniesController extends Controller
 {
     public function fetch()
     {
-        switch ($this->request->post('action', 'string')):
+        switch ($this->request->post('action', 'string')) :
             case 'add_company':
                 $this->action_add_company();
                 break;
-
         endswitch;
 
         if ($this->request->get('sort', 'string')) {
             $filter['sort'] = $this->request->get('sort', 'string');
             $this->design->assign('sort', $filter['sort']);
-        }else{
+        } else {
             $filter = null;
         }
 
@@ -50,7 +49,7 @@ class CompaniesController extends Controller
         if ($last_number == false) {
             $last_number = '01';
         }
-        if($last_number &&  $last_number > 10) {
+        if ($last_number &&  $last_number > 10) {
             $last_number += 1;
         }
 

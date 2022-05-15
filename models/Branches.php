@@ -44,8 +44,9 @@ class Branches extends Core
     {
         $company_id = '';
 
-        if($filter['company_id'])
+        if ($filter['company_id']) {
             $company_id = $this->db->placehold("AND company_id = ?", (int)$filter['company_id']);
+        }
 
         $query = $this->db->placehold("
         SELECT * 
@@ -103,7 +104,8 @@ class Branches extends Core
         return $id;
     }
 
-    public function delete_branche($id){
+    public function delete_branche($id)
+    {
 
         $query = $this->db->placehold("
         DELETE FROM s_branches
@@ -113,16 +115,19 @@ class Branches extends Core
         $this->db->query($query);
     }
 
-    public function delete_branches($array_id){
+    public function delete_branches($array_id)
+    {
 
         $group_id = '';
         $company_id = '';
 
-        if(isset($array_id['group_id']))
+        if (isset($array_id['group_id'])) {
             $group_id = $this->db->placehold("AND group_id = ?", (int)$array_id['group_id']);
+        }
 
-        if(isset($array_id['company_id']))
+        if (isset($array_id['company_id'])) {
             $company_id = $this->db->placehold("AND company_id = ?", (int)$array_id['company_id']);
+        }
 
         $query = $this->db->placehold("
         DELETE FROM s_branches
