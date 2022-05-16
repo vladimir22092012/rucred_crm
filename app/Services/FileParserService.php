@@ -14,20 +14,5 @@ class FileParserService
             return null;
         }
         $reader->ChangeSheet(0);
-        $key = false;
-        foreach ($reader as $row) {
-            $key = array_search('Сотрудник', $row, true);
-            if (is_int($key)) {
-                break;
-            }
-        }
-        if ($key === false) {
-            return null;
-        }
-        $workers = [];
-        foreach ($reader as $row) {
-            $workers[] = $row[$key];
-        }
-        return $workers;
     }
 }

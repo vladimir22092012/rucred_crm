@@ -278,19 +278,35 @@ class CompanyController extends Controller
         $output_file_name = uniqid('', true) . '-' . time() . '.' . $input_file_ext;
         $output_file = ROOT . '/files/' . $output_file_name;
 
-        var_dump($output_file);
-
         move_uploaded_file($input_file_tmp, $output_file);
 
         $parser = new FileParserService;
-        $workers = $parser->parse($output_file);
+        $content = $parser->parse($output_file);
+
+        $key = false;
+        foreach ($content as $row) {
+            $key = array_search('Сотрудник', $row, true);
+            if (is_int($key)) {
+                break;
+            }
+        }
+
+        if ($key === false) {
+            return null;
+        }
+
+        $workers = [];
+
+        foreach ($content as $row) {
+            $workers[] = $row[$key];
+        }
 
         if (!$workers) {
             echo json_encode(['error' => 'Список сотрудников в файле не найден']);
             exit;
         }
 
-        $company_check_id = $this->CompanyChecks->add_company_check($company_id, json_encode(['workers' => $workers], JSON_THROW_ON_ERROR));
+        $company_check_id = $this->CompanyChecks->add_company_check($company_id, json_encode(['workers' => $workers], JSON_THROW_ON_ERROR), 'extra');
 
         echo json_encode(['success' => 1, 'company_check_id' => $company_check_id, 'workers' => $workers]);
         exit;

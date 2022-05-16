@@ -62,6 +62,22 @@
                     }
                 });
             });
+
+            $('.show_attestations').hide();
+            $('.show_payments').hide();
+            $('.show_extras').hide();
+
+            $('.select_document_type').on('change', function (e) {
+                e.preventDefault();
+
+                const selected_option = $('.select_document_type option:selected').val();
+
+                $('div[class^="show_"]').hide();
+
+                $('.show_' + selected_option).show();
+
+                console.log(selected_option);
+            });
         })
     </script>
 {/capture}
@@ -266,24 +282,57 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Списки сотрудников</h4>
-                        <p class="card-text">В этот раздел можно импортировать списки сотрудников компании для проверки
+                        <h4 class="card-title">Проверки сотрудников</h4>
+                        <p class="card-text">В этот раздел можно импортировать проверочные списки сотрудников компании для проверки
                             при одобрении заявки на кредит</p>
                         <div>
+                            <label>Выберите тип документа: </label>
+                            <select class="select_document_type mb-4" aria-label="Выберите тип документа">
+                                <option selected>Выберите тип документа</option>
+                                <option value="attestations">Аттестации</option>
+                                <option value="payments">Выплаты</option>
+                                <option value="extras">Дополнительно</option>
+                            </select>
+                            <div class="show_attestations">
+                                <h3>Поля для документов об аттестации</h3>
+                                <div>
+                                    <table class="table">
+                                        <tr>
+                                            <th>ФИО</th>
+                                            <th>Дата действия</th>
+                                            <th>Кем выдано</th>
+                                            <th>Категория</th>
+                                            <th>Дата рождения</th>
+                                        </tr>
+                                        <tr>
+                                            <td><input class="form-control" type="number" name="fullname_id"></td>
+                                            <td><input class="form-control" type="number" name="legaldate_id"></td>
+                                            <td><input class="form-control" type="number" name="owner_id"></td>
+                                            <td><input class="form-control" type="number" name="category_id"></td>
+                                            <td><input class="form-control" type="number" name="birthday_id"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="show_payments">payments</div>
+                            <div class="show_extras">extras</div>
                             <form class="dropzone import_workers_list_form" id="file-employers-upload">
                                 <input type="hidden" name="action" value="import_workers_list">
                                 <input type="hidden" name="company_id" value="{$company->com_id}">
+                                <div class="dz-message" data-dz-message><span>Загрузите файл формата Excel</span></div>
                             </form>
                         </div>
                         <div>
                             <table class="table">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Created</th>
+                                    <th>Идентификатор</th>
+                                    <th>Тип</th>
+                                    <th>Дата</th>
                                 </tr>
                                 {foreach $company_checks as $company_check}
                                     <tr>
                                         <td>{$company_check->id}</td>
+                                        <td>{$company_check->type}</td>
                                         <td>{$company_check->created}</td>
                                     </tr>
                                 {/foreach}
