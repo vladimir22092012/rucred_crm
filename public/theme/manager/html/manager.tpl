@@ -57,7 +57,7 @@
 
                     let user_id = $(this).attr('data-user');
                     let phone = $('input[class="form-control phone"]').val();
-                    let code = $('input[class="form-control code"]').val();
+                    let phone_code = $('input[class="form-control phone_code"]').val();
 
                     $.ajax({
                         method: 'POST',
@@ -65,7 +65,7 @@
                             action: 'edit_phone_with_code',
                             user_id: user_id,
                             phone: phone,
-                            code: code,
+                            code: phone_code,
                         },
                         success: function (response) {
                             console.log(JSON.parse(response));
@@ -200,35 +200,6 @@
                             }
                         })
                     }
-                });
-
-                $('.accept_edit_with_code').click(function (e) {
-                    e.preventDefault();
-
-                    let user_id = $(this).attr('data-user');
-                    let phone = $('input[class="form-control phone"]').val();
-                    let code = $('input[class="form-control code"]').val();
-
-                    $.ajax({
-                        method: 'POST',
-                        data: {
-                            action: 'edit_phone_with_code',
-                            user_id: user_id,
-                            phone: phone,
-                            code: code,
-                        },
-                        success: function (response) {
-                            console.log(JSON.parse(response));
-                            if (JSON.parse(response).error === 1) {
-                                Swal.fire({
-                                    title: 'Неверный код',
-                                    confirmButtonText: 'ОК'
-                                });
-                            } else {
-                                location.reload();
-                            }
-                        }
-                    })
                 });
             });
 
@@ -775,10 +746,10 @@
                                                         <div class="col-4">
                                                             <div class="input-group show_phone_code"
                                                                  style="display: none">
-                                                                <input type="text" class="form-control code"
+                                                                <input type="text" class="form-control phone_code"
                                                                        placeholder="Введите код из смс">
                                                                 <div class="input-group-append">
-                                                                    <button class="btn btn-primary accept_edit_email_with_code"
+                                                                    <button class="btn btn-primary accept_edit_with_code"
                                                                             type="button" data-user="{$user->id}">
                                                                         Подтвердить
                                                                     </button>

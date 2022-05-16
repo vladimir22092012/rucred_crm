@@ -8,9 +8,7 @@ class Config
 
     public function __construct()
     {
-        define('ROOT', rtrim(dirname(__DIR__), '\\/'));
-
-        $ini = parse_ini_file(dirname(dirname(__FILE__)).'/'.$this->config_file);
+        $ini = parse_ini_file(dirname(__FILE__, 2) .'/'.$this->config_file);
         foreach ($ini as $var => $value) {
             $this->vars[$var] = $value;
         }
@@ -19,7 +17,7 @@ class Config
         $absolutepath=getenv("SCRIPT_FILENAME");
         $_SERVER['DOCUMENT_ROOT']=substr($absolutepath, 0, strpos($absolutepath, $localpath));
 
-        $script_dir1 = realpath(dirname(dirname(__FILE__)));
+        $script_dir1 = realpath(dirname(__FILE__, 2));
         $script_dir2 = realpath($_SERVER['DOCUMENT_ROOT']);
         $subdir = trim(substr($script_dir1, strlen($script_dir2)), "/\\");
 
