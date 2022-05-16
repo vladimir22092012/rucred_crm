@@ -276,7 +276,10 @@ class CompanyController extends Controller
         $input_file_tmp = empty($input_file['tmp_name']) ? null : $input_file['tmp_name'];
         $input_file_ext = strtolower(pathinfo($input_file['name'], PATHINFO_EXTENSION));
         $output_file_name = uniqid('', true) . '-' . time() . '.' . $input_file_ext;
-        $output_file = ROOT. '/files/' . $output_file_name;
+        $output_file = ROOT . '/files/' . $output_file_name;
+
+        var_dump($output_file);
+
         move_uploaded_file($input_file_tmp, $output_file);
 
         $parser = new FileParserService;

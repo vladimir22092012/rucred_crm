@@ -4,6 +4,8 @@ session_start();
 
 $start_time = microtime(true);
 
+define('ROOT', rtrim(dirname(__DIR__), '\\/'));
+
 require __DIR__ . '/../vendor/autoload.php';
 
 try {
