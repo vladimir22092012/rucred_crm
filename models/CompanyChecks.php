@@ -2,19 +2,19 @@
 
 class CompanyChecks extends Core
 {
-    public function add_company_check($company_id, $data)
+    public function add_company_check($company_id, $data, $type)
     {
         $this->db->query('
         INSERT INTO s_company_checks
-        SET company_id = ?, data = ?
-        ', $company_id, $data);
+        SET company_id = ?, data = ?, type = ?
+        ', $company_id, $data, $type);
         return $this->db->insert_id();
     }
 
     public function get_five_company_checks($company_id)
     {
         $this->db->query("
-        SELECT id, data, created
+        SELECT id, data, type, created
         FROM s_company_checks
         WHERE company_id = ?
         ORDER BY created DESC
@@ -26,7 +26,7 @@ class CompanyChecks extends Core
     public function get_last_company_check($company_id)
     {
         $this->db->query("
-        SELECT id, data, created
+        SELECT id, data, type, created
         FROM s_company_checks
         WHERE company_id = ?
         ORDER BY created DESC
