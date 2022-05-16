@@ -311,6 +311,16 @@
                     </ul>
                 </li>
             {/if}
+                    <li {if in_array($module, ['TicketsController'])}class="active"{/if}>
+                        <a class="has-arrow" href="#" aria-expanded="false"><i class="mdi mdi-chart-bubble"></i><span
+                                    class="hide-menu">Коммуникации</span></a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
+                                        href="tickets?in=true">Входящие</a></li>
+                            <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
+                                        href="tickets?out=true">Исходящие</a></li>
+                        </ul>
+                    </li>
                     {*
             {if in_array('pages', $manager->permissions)}
                 <li {if in_array($module, ['PageController', 'PagesController'])}class="active"{/if}>
