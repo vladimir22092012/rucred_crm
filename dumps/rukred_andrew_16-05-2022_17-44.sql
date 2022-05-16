@@ -393,10 +393,11 @@ INSERT INTO `s_companies` (`id`, `group_id`, `number`, `name`, `eio_position`, `
 
 -- Дамп структуры для таблица rucred.s_company_checks
 CREATE TABLE IF NOT EXISTS `s_company_checks` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `company_id` int(11) DEFAULT NULL,
-  `data` json DEFAULT NULL,
-  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `company_id` int(11) DEFAULT NULL,
+    `data` json DEFAULT NULL,
+    `type` varchar(50) DEFAULT NULL,
+    `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
