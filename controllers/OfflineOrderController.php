@@ -2909,6 +2909,8 @@ class OfflineOrderController extends Controller
         $percent_per_month = (($order['percent'] / 100) * 365) / 12;
         $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
 
+        $body_pay = 0;
+
         if (date('d', strtotime($start_date)) < 10) {
             if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < 3) {
                 $plus_loan_percents = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
