@@ -395,8 +395,7 @@ class NeworderController extends Controller
                 $payments[0] = -$amount;
 
                 foreach ($payment_schedule as $date => $pay) {
-                    if($date != 'result')
-                    {
+                    if ($date != 'result') {
                         $payments[] = $pay['pay_sum'];
                         $dates[] = date('d.m.Y', strtotime($date));
                         $payment_schedule['result']['all_sum_pay'] += $pay['pay_sum'];
@@ -433,7 +432,7 @@ class NeworderController extends Controller
 
                 $loan_type_number = ($loan_type < 10) ? '0' . $loan_type : $loan_type;
 
-                if(isset($user['personal_number'])){
+                if (isset($user['personal_number'])) {
                     $personal_number = $user['personal_number'];
                     $last_number = $this->orders->last_order_number($user_id);
 
@@ -537,15 +536,19 @@ class NeworderController extends Controller
         $loan = $this->Loantypes->get_loantype($loan_id);
 
         $start_date = date('Y-m-d', strtotime($start_date));
+        $first_pay = new DateTime(date('Y-m-10', strtotime($start_date)));
         $end_date = date('Y-m-10', strtotime($start_date . '+' . $loan->max_period . 'month'));
 
         $start_date = new DateTime($start_date);
         $end_date = new DateTime($end_date);
 
+        if ($start_date > $first_pay) {
+            $first_pay->add(new DateInterval('P1M'));
+        }
+
         if (date_diff($start_date, $end_date)->days < 20) {
             $end_date->add(new DateInterval('P1M'));
         }
-
 
         for ($i = 0; $i <= 15; $i++) {
 
