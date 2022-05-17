@@ -13,7 +13,6 @@ class TicketsController extends Controller
                 case 'get_companies':
                     $this->action_get_companies();
                     break;
-
             endswitch;
         }
 
@@ -82,7 +81,6 @@ class TicketsController extends Controller
             $files = array_map('files', $_FILES['docs']['name'], $_FILES['docs']['type'], $_FILES['docs']['tmp_name'], $_FILES['docs']['error'], $_FILES['docs']['size']);
 
             foreach ($files as $file) {
-
                 $new_filename = md5(microtime() . rand()) . '.' . $file['name'];
 
                 move_uploaded_file($file['tmp_name'], $this->config->root_dir . $this->config->user_files_dir . $new_filename);

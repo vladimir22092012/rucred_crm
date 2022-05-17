@@ -13,7 +13,6 @@ class TicketController extends Controller
                 case 'close_ticket':
                     $this->action_close_ticket();
                     break;
-
             endswitch;
         }
 
@@ -31,10 +30,11 @@ class TicketController extends Controller
 
         $result = $this->Tickets->update_ticket($ticket_id, ['status' => 1]);
 
-        if($result === true)
+        if ($result === true) {
             echo 'success';
-        else
+        } else {
             echo 'error';
+        }
 
         exit;
     }
@@ -45,10 +45,11 @@ class TicketController extends Controller
 
         $result = $this->Tickets->update_ticket($ticket_id, ['status' => 3]);
 
-        if($result === true)
+        if ($result === true) {
             echo 'success';
-        else
+        } else {
             echo 'error';
+        }
 
         exit;
     }
