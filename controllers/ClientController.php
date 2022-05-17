@@ -8,8 +8,7 @@ class ClientController extends Controller
             $id = $this->request->post('id', 'integer');
             $action = $this->request->post('action', 'string');
 
-            switch ($action):
-
+            switch ($action) :
                 case 'contactdata':
                     $this->contactdata_action();
                     break;
@@ -61,15 +60,15 @@ class ClientController extends Controller
                 case 'edit_personal_number':
                     return $this->action_edit_personal_number();
                     break;
-
             endswitch;
-
         } else {
-            if (!($id = $this->request->get('id', 'integer')))
+            if (!($id = $this->request->get('id', 'integer'))) {
                 return false;
+            }
 
-            if (!($client = $this->users->get_user($id)))
+            if (!($client = $this->users->get_user($id))) {
                 return false;
+            }
 
             // сохраняем историю займов из 1с
             $credits_history = $this->soap1c->get_client_credits($client->UID);
@@ -91,8 +90,9 @@ class ClientController extends Controller
             $this->design->assign('documents', $documents);
 
             $managers = array();
-            foreach ($this->managers->get_managers() as $m)
+            foreach ($this->managers->get_managers() as $m) {
                 $managers[$m->id] = $m;
+            }
             $this->design->assign('managers', $managers);
 
             $files = $this->users->get_files(array('user_id' => $id));
@@ -100,8 +100,9 @@ class ClientController extends Controller
 
             $comments = $this->comments->get_comments(array('user_id' => $client->id));
             foreach ($comments as $comment) {
-                if (!empty($comment->manager_id))
+                if (!empty($comment->manager_id)) {
                     $comment->letter = mb_substr($managers[$comment->manager_id]->name, 0, 1);
+                }
             }
             $this->design->assign('comments', $comments);
 
@@ -150,10 +151,12 @@ class ClientController extends Controller
 
             $scorings = array();
             foreach ($this->scorings->get_scorings(array('user_id' => $client->id)) as $scoring) {
-                if ($scoring->type == 'juicescore')
+                if ($scoring->type == 'juicescore') {
                     $scoring->body = unserialize($scoring->body);
-                if ($scoring->type == 'scorista')
+                }
+                if ($scoring->type == 'scorista') {
                     $scoring->body = json_decode($scoring->body);
+                }
 
                 $scorings[$scoring->type] = $scoring;
             }
@@ -170,18 +173,22 @@ class ClientController extends Controller
             $changelogs = $this->changelogs->get_changelogs(array('user_id' => $client->id));
             foreach ($changelogs as $changelog) {
                 $changelog->user = $client;
-                if (!empty($changelog->manager_id) && !empty($managers[$changelog->manager_id]))
+                if (!empty($changelog->manager_id) && !empty($managers[$changelog->manager_id])) {
                     $changelog->manager = $managers[$changelog->manager_id];
+                }
             }
             $changelog_types = $this->changelogs->get_types();
 
             $this->design->assign('changelog_types', $changelog_types);
             $this->design->assign('changelogs', $changelogs);
 
-            if ($client->orders = $this->orders->get_orders(array('user_id' => $client->id)))
-                foreach ($client->orders as $o)
-                    if ($o->contract_id)
+            if ($client->orders = $this->orders->get_orders(array('user_id' => $client->id))) {
+                foreach ($client->orders as $o) {
+                    if ($o->contract_id) {
                         $o->contract = $this->contracts->get_contract($o->contract_id);
+                    }
+                }
+            }
 
             $this->design->assign('client', $client);
 
@@ -193,8 +200,9 @@ class ClientController extends Controller
         }
 
         $scoring_types = array();
-        foreach ($this->scorings->get_types(array('active' => true)) as $type)
+        foreach ($this->scorings->get_types(array('active' => true)) as $type) {
             $scoring_types[$type->name] = $type;
+        }
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scoring_types);echo '</pre><hr />';
         $this->design->assign('scoring_types', $scoring_types);
 
@@ -223,14 +231,18 @@ class ClientController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -270,22 +282,30 @@ class ClientController extends Controller
 
         $contactdata_error = array();
 
-        if (empty($client->email))
+        if (empty($client->email)) {
             $personal_error[] = 'empty_email';
-        if (empty($client->birth))
+        }
+        if (empty($client->birth)) {
             $personal_error[] = 'empty_birth';
-        if (empty($client->birth_place))
+        }
+        if (empty($client->birth_place)) {
             $personal_error[] = 'empty_birth_place';
-        if (empty($client->passport_serial))
+        }
+        if (empty($client->passport_serial)) {
             $personal_error[] = 'empty_passport_serial';
-        if (empty($client->passport_date))
+        }
+        if (empty($client->passport_date)) {
             $personal_error[] = 'empty_passport_date';
-        if (empty($client->subdivision_code))
+        }
+        if (empty($client->subdivision_code)) {
             $personal_error[] = 'empty_subdivision_code';
-        if (empty($client->passport_issued))
+        }
+        if (empty($client->passport_issued)) {
             $personal_error[] = 'empty_passport_issued';
-        if (empty($client->social))
+        }
+        if (empty($client->social)) {
             $personal_error[] = 'empty_socials';
+        }
 
 
         if (empty($contactdata_error)) {
@@ -302,14 +322,18 @@ class ClientController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -328,7 +352,6 @@ class ClientController extends Controller
 
         $client->id = $user_id;
         $this->design->assign('client', $client);
-
     }
 
 
@@ -346,18 +369,24 @@ class ClientController extends Controller
 
         $personal_error = array();
 
-        if (empty($client->lastname))
+        if (empty($client->lastname)) {
             $personal_error[] = 'empty_lastname';
-        if (empty($client->firstname))
+        }
+        if (empty($client->firstname)) {
             $personal_error[] = 'empty_firstname';
-        if (empty($client->patronymic))
+        }
+        if (empty($client->patronymic)) {
             $personal_error[] = 'empty_patronymic';
-        if (empty($client->gender))
+        }
+        if (empty($client->gender)) {
             $personal_error[] = 'empty_gender';
-        if (empty($client->birth))
+        }
+        if (empty($client->birth)) {
             $personal_error[] = 'empty_birth';
-        if (empty($client->birth_place))
+        }
+        if (empty($client->birth_place)) {
             $personal_error[] = 'empty_birth_place';
+        }
 
         if (empty($personal_error)) {
             $update = array(
@@ -371,14 +400,18 @@ class ClientController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -410,14 +443,18 @@ class ClientController extends Controller
 
         $passport_error = array();
 
-        if (empty($client->passport_serial))
+        if (empty($client->passport_serial)) {
             $passport_error[] = 'empty_passport_serial';
-        if (empty($client->passport_date))
+        }
+        if (empty($client->passport_date)) {
             $passport_error[] = 'empty_passport_date';
-        if (empty($client->subdivision_code))
+        }
+        if (empty($client->subdivision_code)) {
             $passport_error[] = 'empty_subdivision_code';
-        if (empty($client->passport_issued))
+        }
+        if (empty($client->passport_issued)) {
             $passport_error[] = 'empty_passport_issued';
+        }
 
         if (empty($passport_error)) {
             $update = array(
@@ -429,14 +466,18 @@ class ClientController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -470,14 +511,18 @@ class ClientController extends Controller
 
         $regaddress_error = array();
 
-        if (empty($client->Regregion))
+        if (empty($client->Regregion)) {
             $regaddress_error[] = 'empty_regregion';
-        if (empty($client->Regcity))
+        }
+        if (empty($client->Regcity)) {
             $regaddress_error[] = 'empty_regcity';
-        if (empty($client->Regstreet))
+        }
+        if (empty($client->Regstreet)) {
             $regaddress_error[] = 'empty_regstreet';
-        if (empty($client->Reghousing))
+        }
+        if (empty($client->Reghousing)) {
             $regaddress_error[] = 'empty_reghousing';
+        }
 
         if (empty($regaddress_error)) {
             $update = array(
@@ -491,14 +536,18 @@ class ClientController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -532,14 +581,18 @@ class ClientController extends Controller
 
         $faktaddress_error = array();
 
-        if (empty($client->Faktregion))
+        if (empty($client->Faktregion)) {
             $faktaddress_error[] = 'empty_faktregion';
-        if (empty($client->Faktcity))
+        }
+        if (empty($client->Faktcity)) {
             $faktaddress_error[] = 'empty_faktcity';
-        if (empty($client->Faktstreet))
+        }
+        if (empty($client->Faktstreet)) {
             $faktaddress_error[] = 'empty_faktstreet';
-        if (empty($client->Fakthousing))
+        }
+        if (empty($client->Fakthousing)) {
             $faktaddress_error[] = 'empty_fakthousing';
+        }
 
         if (empty($faktaddress_error)) {
             $update = array(
@@ -553,14 +606,18 @@ class ClientController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -594,18 +651,24 @@ class ClientController extends Controller
 
         $contacts_error = array();
 
-        if (empty($client->contact_person_name))
+        if (empty($client->contact_person_name)) {
             $contacts_error[] = 'empty_contact_person_name';
-        if (empty($client->contact_person_phone))
+        }
+        if (empty($client->contact_person_phone)) {
             $contacts_error[] = 'empty_contact_person_phone';
-        if (empty($client->contact_person_relation))
+        }
+        if (empty($client->contact_person_relation)) {
             $contacts_error[] = 'empty_contact_person_relation';
-        if (empty($client->contact_person2_name))
+        }
+        if (empty($client->contact_person2_name)) {
             $contacts_error[] = 'empty_contact_person2_name';
-        if (empty($client->contact_person2_phone))
+        }
+        if (empty($client->contact_person2_phone)) {
             $contacts_error[] = 'empty_contact_person2_phone';
-        if (empty($client->contact_person2_relation))
+        }
+        if (empty($client->contact_person2_relation)) {
             $contacts_error[] = 'empty_contact_person2_relation';
+        }
 
         if (empty($contacts_error)) {
             $update = array(
@@ -619,14 +682,18 @@ class ClientController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -664,22 +731,30 @@ class ClientController extends Controller
 
         $work_error = array();
 
-        if (empty($client->workplace))
+        if (empty($client->workplace)) {
             $work_error[] = 'empty_workplace';
-        if (empty($client->profession))
+        }
+        if (empty($client->profession)) {
             $work_error[] = 'empty_profession';
-        if (empty($client->workphone))
+        }
+        if (empty($client->workphone)) {
             $work_error[] = 'empty_workphone';
-        if (empty($client->income))
+        }
+        if (empty($client->income)) {
             $work_error[] = 'empty_income';
-        if (empty($client->expenses))
+        }
+        if (empty($client->expenses)) {
             $work_error[] = 'empty_expenses';
-        if (empty($client->chief_name))
+        }
+        if (empty($client->chief_name)) {
             $work_error[] = 'empty_chief_name';
-        if (empty($client->chief_phone))
+        }
+        if (empty($client->chief_phone)) {
             $work_error[] = 'empty_chief_phone';
-        if (empty($client->chief_phone))
+        }
+        if (empty($client->chief_phone)) {
             $work_error[] = 'empty_chief_phone';
+        }
 
         if (empty($work_error)) {
             $update = array(
@@ -697,14 +772,18 @@ class ClientController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -739,14 +818,18 @@ class ClientController extends Controller
 
         $workaddress_error = array();
 
-        if (empty($client->Workregion))
+        if (empty($client->Workregion)) {
             $workaddress_error[] = 'empty_workregion';
-        if (empty($client->Workcity))
+        }
+        if (empty($client->Workcity)) {
             $workaddress_error[] = 'empty_workcity';
-        if (empty($client->Workstreet))
+        }
+        if (empty($client->Workstreet)) {
             $workaddress_error[] = 'empty_workstreet';
-        if (empty($client->Workhousing))
+        }
+        if (empty($client->Workhousing)) {
             $workaddress_error[] = 'empty_workhousing';
+        }
 
         if (empty($workaddress_error)) {
             $update = array(
@@ -760,14 +843,18 @@ class ClientController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -809,14 +896,18 @@ class ClientController extends Controller
 
             $old_user = $this->users->get_user($user_id);
             $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
+            foreach ($update as $key => $val) {
+                if ($old_user->$key != $update[$key]) {
                     $old_values[$key] = $old_user->$key;
+                }
+            }
 
             $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
+            foreach ($update as $k => $u) {
+                if (isset($old_values[$k])) {
                     $log_update[$k] = $u;
+                }
+            }
 
             $this->changelogs->add_changelog(array(
                 'manager_id' => $this->manager->id,
@@ -849,8 +940,9 @@ class ClientController extends Controller
             );
             $old_files = $this->users->get_file($file_id);
             $old_values = array();
-            foreach ($update as $key => $val)
+            foreach ($update as $key => $val) {
                 $old_values[$key] = $old_files->$key;
+            }
             if ($old_values['status'] != $update['status']) {
                 $this->changelogs->add_changelog(array(
                     'manager_id' => $this->manager->id,
@@ -887,14 +979,18 @@ class ClientController extends Controller
 
         $old_user = $this->users->get_user($user_id);
         $old_values = array();
-        foreach ($update as $key => $val)
-            if ($old_user->$key != $update[$key])
+        foreach ($update as $key => $val) {
+            if ($old_user->$key != $update[$key]) {
                 $old_values[$key] = $old_user->$key;
+            }
+        }
 
         $log_update = array();
-        foreach ($update as $k => $u)
-            if (isset($old_values[$k]))
+        foreach ($update as $k => $u) {
+            if (isset($old_values[$k])) {
                 $log_update[$k] = $u;
+            }
+        }
 
         $this->changelogs->add_changelog(array(
             'manager_id' => $this->manager->id,
@@ -926,7 +1022,6 @@ class ClientController extends Controller
             echo 'error';
             exit;
         } else {
-
             $query = $this->db->placehold("
             SELECT id, uid
             FROM s_orders
@@ -936,8 +1031,7 @@ class ClientController extends Controller
             $this->db->query($query);
             $orders = $this->db->results();
 
-            foreach ($orders as $order)
-            {
+            foreach ($orders as $order) {
                 $uid = explode(' ', $order->uid);
                 $uid[3] = (string)$number;
                 $uid = implode(' ', $uid);
