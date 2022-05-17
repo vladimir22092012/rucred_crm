@@ -77,6 +77,7 @@ class Orders extends Core
                 o.probably_start_date,
                 o.group_id,
                 o.company_id,
+                o.branche_id,
                 o.payment_schedule,
                 o.delivery_id,
                 o.psk,

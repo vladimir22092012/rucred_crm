@@ -69,9 +69,13 @@
                 setTimeout(function () {
                     $('select[name="company"] option[value="' + order['company_id'] + '"]').prop('selected', true);
                     $('select[name="company"] option[value="' + order['company_id'] + '"]').change();
+                }, 500);
+
+                setTimeout(function () {
+                    $('select[name="branch"] option[value="' + order['branche_id'] + '"]').prop('selected', true);
                     $('#' + order['company_id'] +'').trigger('click');
                     $('.to_form_loan').trigger('click');
-                }, 500);
+                }, 900);
             }
         })
     </script>

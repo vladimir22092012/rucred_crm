@@ -266,6 +266,7 @@ class NeworderController extends Controller
                     'probably_start_date' => date('Y-m-d H:i:s', strtotime($this->request->post('start_date'))),
                     'probably_return_sum' => (int)preg_replace("/[^,.0-9]/", '', $this->request->post('probably_return_sum')),
                     'group_id' => (int)$this->request->post('group'),
+                    'branche_id' => (int)$this->request->post('branch'),
                     'company_id' => (int)$this->request->post('company'),
                     'settlement_id' => (int)$settlement_std->id
                 );
