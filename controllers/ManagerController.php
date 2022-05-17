@@ -88,10 +88,11 @@ class ManagerController extends Controller
 
                 $this->design->assign('errors', $errors);
 
-                if (empty($errors))
+                if (!$errors)
                 {
                     if (empty($user_id))
                     {
+                        var_dump($user);
                         $user->id = $this->managers->add_manager($user);
                         $this->design->assign('message_success', 'added');
                     }
