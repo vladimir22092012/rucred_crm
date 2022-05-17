@@ -222,7 +222,7 @@
                                     {if !empty($companies)}
                                         {foreach $companies as $company}
                                             <tr class="companies" id="{$company->gr_number}"
-                                                onclick="location.href='company/{$company->id}'"
+                                                onclick="location.href='company/{$company->com_id}'"
                                                 onmouseover="this.style.backgroundColor='#AEA8F5';"
                                                 onmouseout="this.style.backgroundColor='white';">
                                                 <td>{$company->gr_number}, {$company->gr_name}</td>

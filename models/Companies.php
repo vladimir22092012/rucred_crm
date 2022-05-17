@@ -210,7 +210,7 @@ class Companies extends Core
         com.name as com_name,
         com.eio_position,
         com.eio_fio,
-        com.id,
+        com.id AS com_id,
         com.inn,
         com.ogrn,
         com.kpp,
