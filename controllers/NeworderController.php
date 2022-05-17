@@ -546,7 +546,7 @@ class NeworderController extends Controller
             $first_pay->add(new DateInterval('P1M'));
         }
 
-        if (date_diff($start_date, $end_date)->days < 20) {
+        if (date_diff($first_pay, $start_date)->days < 20) {
             $end_date->add(new DateInterval('P1M'));
         }
 
