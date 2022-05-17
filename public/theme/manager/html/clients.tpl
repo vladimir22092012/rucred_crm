@@ -49,8 +49,8 @@
                                 <table class="jsgrid-table table table-striped table-hover">
                                     <tr class="jsgrid-header-row">
                                         <th style="width: 60px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'id_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'id_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'id_asc'}<a href="{url page=null sort='id_desc'}">ID</a>
-                                            {else}<a href="{url page=null sort='id_asc'}">ID</a>{/if}
+                                            {if $sort == 'id_asc'}<a href="{url page=null sort='id_desc'}">Номер клиента</a>
+                                            {else}<a href="{url page=null sort='id_asc'}">Номер клиента</a>{/if}
                                         </th>
                                         <th style="width: 80px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'date_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'date_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'date_asc'}<a href="{url page=null sort='date_desc'}">Дата</a>
@@ -98,16 +98,15 @@
                                 </table>
                             </div>
                             <div class="jsgrid-grid-body">
-                                <table class="jsgrid-table table table-striped table-hover ">
+                                <table class="jsgrid-table table table-striped table-hover" style="text-align: center">
                                     <tbody>
                                     {foreach $clients as $client}
                                         <tr class="jsgrid-row ">
-                                            <td style="width: 60px;" class="jsgrid-cell jsgrid-align-right">
-                                                <a href="client/{$client->id}">{$client->id}</a>
+                                            <td style="width: 60px;" class="jsgrid-cell">
+                                                <a href="client/{$client->id}">{$client->personal_number}</a>
                                             </td>
                                             <td style="width: 80px;" class="jsgrid-cell">
                                                 <span>{$client->created|date}</span>
-                                                {$client->created|time}
                                             </td>
                                             <td style="width: 120px;" class="jsgrid-cell">
                                                 {$client->lastname|escape}
