@@ -537,9 +537,12 @@ class NeworderController extends Controller
             $first_pay->add(new DateInterval('P1M'));
         }
 
-        if (date_diff($first_pay, $start_date)->days < 20) {
+        $first_pay = $this->check_pay_date($first_pay);
+
+        if (date_diff($first_pay, $start_date)->days < 20 && $first_pay->format('m') != $start_date->format('m')) {
             $end_date->add(new DateInterval('P1M'));
         }
+
 
         for ($i = 0; $i <= 15; $i++) {
             $check_date = $this->WeekendCalendar->check_date($end_date->format('Y-m-d'));

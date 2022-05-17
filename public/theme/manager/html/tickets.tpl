@@ -58,7 +58,7 @@
                         processData: false,
                         contentType: false,
                         success: function (resp) {
-
+                            location.reload();
                         }
                     })
                 })

@@ -82,7 +82,7 @@
 
                     if (value && value.length > 0) {
                         $('td:nth-child(' + index + ')').each(function () {
-                            let find_value = $(this).text();
+                            let find_value = $(this).text().toLowerCase();
                             if (find_value.includes(value) === false) {
                                 $(this).closest('tr').hide();
                             }
