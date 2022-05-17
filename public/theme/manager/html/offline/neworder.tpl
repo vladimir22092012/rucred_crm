@@ -69,13 +69,13 @@
                 setTimeout(function () {
                     $('select[name="company"] option[value="' + order['company_id'] + '"]').prop('selected', true);
                     $('select[name="company"] option[value="' + order['company_id'] + '"]').change();
-                }, 500);
+                }, 3500);
 
                 setTimeout(function () {
-                    $('select[name="branch"] option[value="' + order['branche_id'] + '"]').prop('selected', true);
-                    $('#' + order['company_id'] +'').trigger('click');
+                    $('#' + order['loan_type'] +'').trigger('click');
                     $('.to_form_loan').trigger('click');
-                }, 900);
+                    $('select[name="branch"] option[value="' + order['branche_id'] + '"]').prop('selected', true);
+                }, 4900);
             }
         })
     </script>
@@ -239,7 +239,7 @@
                                             <label style="font-size: 12px">Желаемая дата выдачи займа:</label>
                                             <input type="text" style="width: 130px" id="start_date"
                                                    name="start_date"
-                                                   class="form-control daterange" value="{$order->date|date}">
+                                                   class="form-control daterange" value="{$order->probably_start_date|date}">
                                         </div>
                                         <div id="calendar">
                                             <label style="font-size: 12px">Возврат до:</label>
@@ -543,8 +543,17 @@
                                         <br>
                                         <hr style="width: 100%; size: 5px">
                                         <br>
-                                        <h4>Аттестация</h4><br>
-                                        <table class="jsgrid-table table table-striped">
+                                        <div style="width: 100%; display: flex">
+                                        <h4>
+                                            Аттестация
+                                        </h4>
+                                            <div style="margin-left: 50px">
+                                                <input class="form-check-input" id="no_attestation" type="checkbox" name="no_attestation"
+                                                       value="1" {if $order->attestation == null}checked{/if}>
+                                                <label for="no_attestation">Нет аттестации</label>
+                                            </div>
+                                        </div>
+                                        <table class="jsgrid-table table table-striped attestation_table" {if empty($order->attestation)} style="display: none" {/if}>
                                             <thead>
                                             <tr>
                                                 <th>Дата окончания</th>
@@ -555,7 +564,7 @@
                                             </tr>
                                             </thead>
                                             <tbody id="attestation_table">
-                                            {if !empty($order->attestation)}
+                                            {if !empty($order->attestation) && $order->attestation != null}
                                                 {foreach json_decode($order->attestation) as $attestation}
                                                     <tr>
                                                         <td><input class="form-control daterange"

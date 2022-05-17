@@ -565,4 +565,8 @@ $(function () {
         $(this).mask("+7(999)999-9999");
     });
 
+    $('#no_attestation').on('click', function () {
+        $('.attestation_table').toggle();
+    })
+
 });

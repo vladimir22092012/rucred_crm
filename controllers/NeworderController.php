@@ -67,6 +67,9 @@ class NeworderController extends Controller
 
             $attestations = json_encode(array_replace_recursive($attestation_date, $attestation_comment));
 
+            if ($this->request->post('no_attestation') == 1)
+                $attestations = null;
+
             $user['attestation'] = $attestations;
 
             $credits_story = json_encode(array_replace_recursive($credits_bank_name, $credits_rest_sum, $credits_month_pay, $credits_return_date, $credits_percents, $credits_delay));
