@@ -409,6 +409,10 @@ class NeworderController extends Controller
                     }
                 }
 
+                echo '<pre>';
+                var_dump($payment_schedule);
+                exit;
+
                 foreach ($dates as $date) {
 
                     $date = new DateTime(date('Y-m-d H:i:s', strtotime($date)));
@@ -549,9 +553,12 @@ class NeworderController extends Controller
             $first_pay->add(new DateInterval('P1M'));
         }
 
-        if (date_diff($first_pay, $start_date)->days < 20) {
+        $first_pay = $this->check_pay_date($first_pay);
+
+        if (date_diff($first_pay, $start_date)->days < 20 && $first_pay->format('m') != $start_date->format('m')) {
             $end_date->add(new DateInterval('P1M'));
         }
+
 
         for ($i = 0; $i <= 15; $i++) {
 
