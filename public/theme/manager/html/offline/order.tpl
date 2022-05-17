@@ -224,7 +224,7 @@
                     method: 'POST',
                     data: form,
                     success: function (resp) {
-
+                        location.reload();
                     }
                 });
             });
