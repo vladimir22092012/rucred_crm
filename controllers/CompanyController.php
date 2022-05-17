@@ -59,6 +59,10 @@ class CompanyController extends Controller
                 $this->action_import_workers_list();
                 break;
 
+            case 'import_workers_list_attestations':
+                $this->action_import_workers_list_attestations();
+                break;
+
             case 'add_document':
                 $this->action_add_document();
                 break;
@@ -289,6 +293,61 @@ class CompanyController extends Controller
             if (is_int($key)) {
                 break;
             }
+        }
+
+        if ($key === false) {
+            return null;
+        }
+
+        $workers = [];
+
+        foreach ($content as $row) {
+            $workers[] = $row[$key];
+        }
+
+        if (!$workers) {
+            echo json_encode(['error' => 'Список сотрудников в файле не найден']);
+            exit;
+        }
+
+        $company_check_id = $this->CompanyChecks->add_company_check($company_id, json_encode(['workers' => $workers], JSON_THROW_ON_ERROR), 'extra');
+
+        echo json_encode(['success' => 1, 'company_check_id' => $company_check_id, 'workers' => $workers]);
+        exit;
+    }
+
+    private function action_import_workers_list_attestations()
+    {
+        $company_id = $this->request->post('company_id');
+
+        $fullname_id = $this->request->post('fullname_id');
+        $legaldate_id = $this->request->post('legaldate_id');
+        $owner_id = $this->request->post('owner_id');
+        $category_id = $this->request->post('category_id');
+        $birthday_id = $this->request->post('birthday_id');
+
+        $input_file  = $_FILES['file']['size'] ? $_FILES['file'] : null;
+        if (!$input_file) {
+            echo json_encode(['error' => 1]);
+            exit;
+        }
+        $input_file_tmp = empty($input_file['tmp_name']) ? null : $input_file['tmp_name'];
+        $input_file_ext = strtolower(pathinfo($input_file['name'], PATHINFO_EXTENSION));
+        $output_file_name = uniqid('', true) . '-' . time() . '.' . $input_file_ext;
+        $output_file = ROOT . '/files/' . $output_file_name;
+
+        move_uploaded_file($input_file_tmp, $output_file);
+
+        $parser = new FileParserService;
+        $content = $parser->parse($output_file);
+
+        $key = false;
+        foreach ($content as $row) {
+            print_r($row);
+//            $key = array_search('Сотрудник', $row, true);
+//            if (is_int($key)) {
+//                break;
+//            }
         }
 
         if ($key === false) {

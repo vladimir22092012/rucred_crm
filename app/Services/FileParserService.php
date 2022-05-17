@@ -14,5 +14,6 @@ class FileParserService
             return null;
         }
         $reader->ChangeSheet(0);
+        return $reader;
     }
 }

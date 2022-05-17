@@ -88,7 +88,6 @@ class ManagerController extends Controller
 
                 $this->design->assign('errors', $errors);
 
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($_POST, $errors);echo '</pre><hr />';
                 if (empty($errors))
                 {
                     if (empty($user_id))
@@ -168,10 +167,10 @@ class ManagerController extends Controller
 
         $groups = $this->Groups->get_groups();
 
-        if($user->group_id != 0 ){
-            $companies = $this->Companies->get_companies(['group_id' => $user->group_id ]);
-            $this->design->assign('companies', $companies);
-        }
+//        if($user->group_id != 0 ){
+//            $companies = $this->Companies->get_companies(['group_id' => $user->group_id ]);
+//            $this->design->assign('companies', $companies);
+//        }
 
         $this->design->assign('groups', $groups);
 

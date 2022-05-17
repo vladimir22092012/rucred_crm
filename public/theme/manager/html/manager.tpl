@@ -455,7 +455,7 @@
 
                                     {if isset($user->id)}<input type="hidden" name="id" value="{$user->id}"/>{/if}
 
-                                    {if isset($errors)}
+                                    {if isset($errors) && count($errors)}
                                         <div class="col-md-12">
                                             <ul class="alert alert-danger">
                                                 {if in_array('empty_role', (array)$errors)}
