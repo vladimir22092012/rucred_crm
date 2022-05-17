@@ -409,10 +409,6 @@ class NeworderController extends Controller
                     }
                 }
 
-                echo '<pre>';
-                var_dump($payment_schedule);
-                exit;
-
                 foreach ($dates as $date) {
 
                     $date = new DateTime(date('Y-m-d H:i:s', strtotime($date)));
