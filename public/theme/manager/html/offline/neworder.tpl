@@ -147,6 +147,30 @@
                 }, 900);
             }
 
+            $('.create_new_order').click(function (e) {
+                e.preventDefault();
+
+                console.log(document.querySelector('#forms'));
+
+                let entries = Object.fromEntries(new FormData(document.querySelector('#forms')).entries());
+
+                entries['action'] = 'create_new_order';
+
+                $.ajax({
+                    method: 'POST',
+                    data: entries,
+                    success: function (response) {
+                        if (response.error === 1) {
+                            Swal.fire({
+                                title: response.reason,
+                                confirmButtonText: 'ОК'
+                            });
+                        } else {
+                            console.log('create_new_order completed');
+                        }
+                    }
+                })
+            });
         })
     </script>
 {/capture}
@@ -956,7 +980,7 @@
                                         <br>
                                         <div style="display: flex; width: 500px;" id="buttons_append">
                                             <input style="display: none" type="submit" name="create_new_order"
-                                                   class="btn btn-success buttons_append"
+                                                   class="btn btn-success buttons_append create_new_order"
                                                    value="Создать заявку">
                                             <input type="submit" name="draft" style="margin-left: 100px; display: none;"
                                                    class="btn btn-primary buttons_append"
