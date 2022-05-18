@@ -2802,6 +2802,7 @@ class OfflineOrderController extends Controller
         $comission_pay = $this->request->post('comission_pay');
         $rest_pay = $this->request->post('rest_pay');
         $order_id = $this->request->post('order_id');
+        $order = $this->orders->get_order($order_id);
 
         $results['result'] = $this->request->post('result');
 
@@ -2826,7 +2827,47 @@ class OfflineOrderController extends Controller
 
         $payment_schedule = array_merge($payment_schedule, $results);
 
-        $this->orders->update_order($order_id, ['payment_schedule' => json_encode($payment_schedule)]);
+        $dates[0] = date('d.m.Y', strtotime($order->probably_start_date));
+        $payments[0] = -$order->amount;
+
+        foreach ($payment_schedule as $date => $pay) {
+            if ($date != 'result') {
+                $payments[] = (float)$pay['pay_sum'];
+                $dates[] = date('d.m.Y', strtotime($date));
+                $payment_schedule['result']['all_sum_pay'] += (float)$pay['pay_sum'];
+                $payment_schedule['result']['all_loan_percents_pay'] += (float)$pay['loan_percents_pay'];
+                $payment_schedule['result']['all_loan_body_pay'] += (float)$pay['loan_body_pay'];
+                $payment_schedule['result']['all_comission_pay'] += (float)$pay['comission_pay'];
+                $payment_schedule['result']['all_rest_pay_sum'] = 0.00;
+            }
+        }
+
+        foreach ($dates as $date) {
+
+            $date = new DateTime(date('Y-m-d H:i:s', strtotime($date)));
+
+            $new_dates[] = mktime(
+                $date->format('H'),
+                $date->format('i'),
+                $date->format('s'),
+                $date->format('m'),
+                $date->format('d'),
+                $date->format('Y')
+            );
+        }
+
+        $xirr = round($this->Financial->XIRR($payments, $new_dates) * 100, 3);
+        $xirr /= 100;
+
+        $psk = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
+
+        $update_order =
+            [
+                'psk' => $psk,
+                'payment_schedule' => $payment_schedule
+            ];
+
+        $this->orders->update_order($order_id, $update_order);
     }
 
     private function action_change_photo_status()
@@ -3064,9 +3105,6 @@ class OfflineOrderController extends Controller
                 $payment_schedule['result']['all_rest_pay_sum'] = 0.00;
             }
         }
-
-        array_pop($dates);
-        array_pop($payments);
 
         foreach ($dates as $date) {
 
