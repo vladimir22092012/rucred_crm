@@ -37,14 +37,11 @@
             $('.accept_edit').click(function (e) {
                 e.preventDefault();
 
-                let user_id = $(this).attr('data-user');
                 let phone = $('input[class="form-control phone_num"]').val();
-
                 $.ajax({
                     method: 'POST',
                     data: {
                         action: 'edit_phone',
-                        user_id: user_id,
                         phone: phone,
                     },
                     success: function (response) {
