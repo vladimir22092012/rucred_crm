@@ -457,9 +457,12 @@
 
                                     {if isset($errors) && count($errors)}
                                         <div class="col-md-12">
-                                            <ul class="alert alert-danger">
+                                            <ul class="alert alert-danger" style="list-style-type: none">
                                                 {if in_array('empty_role', (array)$errors)}
                                                     <li>Выберите роль пользователя!</li>
+                                                {/if}
+                                                {if in_array('login_exists', (array)$errors)}
+                                                    <li>Такой логин уже существует!</li>
                                                 {/if}
                                                 {if in_array('empty_name', (array)$errors)}
                                                     <li>Укажите имя пользователя!</li>

@@ -1344,17 +1344,14 @@
                                                 <span class="text-white">График платежей</span>
                                                 {if $manager->role != 'employer'}
                                                     <input style="margin-left: 30px; display: none" type="button"
-                                                           class="btn btn-primary reset_shedule"
-                                                           value="Переформировать график">
+                                                           class="btn btn-success reset_shedule"
+                                                           value="Сохранить график">
                                                     <input style="margin-left: 30px; display: none" type="button"
                                                            class="btn btn-danger cancel"
                                                            value="Отменить">
                                                     <input style="margin-left: 30px" type="button"
-                                                           class="btn btn-warning edit_schedule"
+                                                           class="btn btn-warning restructuring"
                                                            value="Редактировать">
-                                                    <input style="margin-left: 30px" type="button"
-                                                           class="btn btn-danger restructuring"
-                                                           value="Реструктуризация">
                                                 {/if}
                                             </h6>
 
@@ -1547,9 +1544,9 @@
                                                             иностранным публичным должностным лицом:</label>
                                                         <div class="col-md-2">
                                                             <p class="form-control-static">
-                                                                {if $order->foreign_flag == 0}
+                                                                {if $order->foreign_flag == 1}
                                                                     Не является
-                                                                {elseif $order->foreign_flag == 1}
+                                                                {elseif $order->foreign_flag == 2}
                                                                     Является
                                                                 {/if}
                                                             </p>
@@ -1563,16 +1560,16 @@
                                                             лица:</label>
                                                         <div class="col-md-2">
                                                             <p class="form-control-static">
-                                                                {if $order->foreign_husb_wife == 0}
+                                                                {if $order->foreign_husb_wife == 1}
                                                                     Не является
-                                                                {elseif $order->foreign_husb_wife == 1}
+                                                                {elseif $order->foreign_husb_wife == 2}
                                                                     Является
                                                                 {/if}
                                                             </p>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {if $order->foreign_husb_wife == 1}
+                                                {if $order->foreign_husb_wife == 2}
                                                     <div class="col-md-12">
                                                         <div class="form-group  mb-2 row">
                                                             <label class="control-label col-md-8">ФИО
@@ -1592,9 +1589,9 @@
                                                             лица:</label>
                                                         <div class="col-md-2">
                                                             <p class="form-control-static">
-                                                                {if $order->foreign_relative == 0}
+                                                                {if $order->foreign_relative == 1}
                                                                     Не является
-                                                                {elseif $order->foreign_relative == 1}
+                                                                {elseif $order->foreign_relative == 2}
                                                                     Является
                                                                 {/if}
                                                             </p>

@@ -50,7 +50,7 @@ class Managers extends Core
         if (isset($filter['keyword'])) {
             $keywords = explode(' ', $filter['keyword']);
             foreach ($keywords as $keyword) {
-                $keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%' . $this->db->escape(trim($keyword)) . '%" )');
             }
         }
 
@@ -62,7 +62,7 @@ class Managers extends Core
             $page = max(1, intval($filter['page']));
         }
 
-        $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page-1)*$limit, $limit);
+        $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page - 1) * $limit, $limit);
 
         $query = $this->db->placehold("
             SELECT *
@@ -115,7 +115,7 @@ class Managers extends Core
         if (isset($filter['keyword'])) {
             $keywords = explode(' ', $filter['keyword']);
             foreach ($keywords as $keyword) {
-                $keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%' . $this->db->escape(trim($keyword)) . '%" )');
             }
         }
 
@@ -196,7 +196,7 @@ class Managers extends Core
         $roles = $this->get_roles();
 
         if (!isset($roles[$role])) {
-            throw new Exception('Неизвестная роль пользователя: '.$role);
+            throw new Exception('Неизвестная роль пользователя: ' . $role);
         }
 
         $list_permissions = array(
@@ -210,7 +210,7 @@ class Managers extends Core
             'clients' => array('developer', 'admin', 'boss', 'quality_control_plus', 'user', 'big_user', 'contact_center', 'cs_pc'),
             'settings' => array('developer', 'admin', 'boss', 'quality_control_plus'),
             'changelogs' => array('developer', 'admin', 'boss', 'quality_control_plus'),
-            'handbooks' => array('developer', 'admin','boss', 'quality_control_plus'),
+            'handbooks' => array('developer', 'admin', 'boss', 'quality_control_plus'),
             'pages' => array('developer', 'admin', 'boss', 'quality_control_plus'),
             'analitics' => array('developer', 'admin', 'boss', 'quality_control_plus'),
             'admins' => array('developer', 'admin'),
@@ -278,6 +278,18 @@ class Managers extends Core
 
     private function hash_password($password)
     {
-        return md5(sha1($this->salt.$password).$this->salt);
+        return md5(sha1($this->salt . $password) . $this->salt);
+    }
+
+    public function check_same_login($login)
+    {
+        $query = $this->db->placehold("
+            SELECT id
+            FROM __managers
+            WHERE login = ?
+        ", $login);
+        $this->db->query($query);
+
+        return $this->db->results();
     }
 }

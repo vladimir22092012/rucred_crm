@@ -53,6 +53,8 @@ class ManagerController extends Controller
                 $user->login = $this->request->post('login');
                 $user->mango_number = $this->request->post('mango_number');
 
+                $same_login = $this->Managers->check_same_login($user->login);
+
                 $user->group_id = ($this->request->post('groups')) ? (int)$this->request->post('groups') : 0;
                 $user->company_id = ($this->request->post('companies')) ? (int)$this->request->post('companies') : 0;
 
@@ -73,6 +75,9 @@ class ManagerController extends Controller
 
                 if (empty($user->role)) {
                     $errors[] = 'empty_role';
+                }
+                if (!empty($same_login)) {
+                    $errors[] = 'login_exists';
                 }
                 if (empty($user->name)) {
                     $errors[] = 'empty_name';
@@ -156,7 +161,7 @@ class ManagerController extends Controller
 
         $groups = $this->Groups->get_groups();
 
-        if($user->group_id != 0 ){
+        if(isset($user) && $user->group_id != 0 ){
             $companies = $this->Companies->get_companies(['group_id' => $user->group_id ]);
             $this->design->assign('companies', $companies);
         }
