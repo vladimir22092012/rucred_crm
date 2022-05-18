@@ -1,14 +1,14 @@
 <?php
 
+use App\Services\MailService;
+
 class ManagerController extends Controller
 {
     public function fetch()
     {
-    	if ($this->request->method('post'))
-        {
-            if($this->request->post('action', 'string'))
-            {
-                switch ($this->request->post('action', 'string')):
+        if ($this->request->method('post')) {
+            if ($this->request->post('action', 'string')) {
+                switch ($this->request->post('action', 'string')) :
                     case 'activate_email':
                         $this->action_activate_email();
                         break;
@@ -40,10 +40,8 @@ class ManagerController extends Controller
                     case 'block_manager':
                         $this->action_block_manager();
                         break;
-
                 endswitch;
-            }
-            else{
+            } else {
                 $user = new StdClass();
                 $user_id = $this->request->post('id', 'integer');
 
@@ -63,52 +61,49 @@ class ManagerController extends Controller
 
                 $team_id = (array)$this->request->post('team_id');
 
-                if (!empty($team_id))
-                {
+                if (!empty($team_id)) {
                     $user->team_id = implode(',', $team_id);
                 }
 
-                if ($this->request->post('password'))
+                if ($this->request->post('password')) {
                     $user->password = $this->request->post('password');
+                }
 
                 $errors = array();
 
-                if (empty($user->role))
+                if (empty($user->role)) {
                     $errors[] = 'empty_role';
-                if (empty($user->name))
+                }
+                if (empty($user->name)) {
                     $errors[] = 'empty_name';
-                if (empty($user->login))
+                }
+                if (empty($user->login)) {
                     $errors[] = 'empty_login';
+                }
 
-                if (empty($user_id) && empty($user->password))
+                if (empty($user_id) && empty($user->password)) {
                     $errors[] = 'empty_password';
+                }
 
 //            if (!($this->soap1c->check_manager_name($user->name_1c)))
 //                $errors[] = 'name_1c_not_found';
 
                 $this->design->assign('errors', $errors);
 
-                if (!$errors)
-                {
-                    if (empty($user_id))
-                    {
+                if (!$errors) {
+                    if (empty($user_id)) {
                         var_dump($user);
                         $user->id = $this->managers->add_manager($user);
                         $this->design->assign('message_success', 'added');
-                    }
-                    else
-                    {
+                    } else {
                         $user->id = $this->managers->update_manager($user_id, $user);
                         $this->design->assign('message_success', 'updated');
                     }
                     $user = $this->managers->get_manager($user->id);
                 }
             }
-        }
-        else
-        {
-            if ($this->request->get('action') == 'blocked')
-            {
+        } else {
+            if ($this->request->get('action') == 'blocked') {
                 $manager_id = $this->request->get('manager_id', 'integer');
                 $block = $this->request->get('block', 'integer');
 
@@ -129,21 +124,15 @@ class ManagerController extends Controller
 */
             }
 
-            if ($id = $this->request->get('id', 'integer'))
-            {
+            if ($id = $this->request->get('id', 'integer')) {
                 $user = $this->managers->get_manager($id);
             }
-
         }
 
-        if (!empty($user))
-        {
-
+        if (!empty($user)) {
             $meta_title = 'Профиль '.$user->name;
             $this->design->assign('user', $user);
-        }
-        else
-        {
+        } else {
             $meta_title = 'Создать новый профиль';
         }
 
@@ -155,8 +144,7 @@ class ManagerController extends Controller
 
         $collection_manager_statuses = array();
         $managers = array();
-        foreach ($this->managers->get_managers() as $m)
-        {
+        foreach ($this->managers->get_managers() as $m) {
             $managers[$m->id] = $m;
             $collection_manager_statuses[] = $m->collection_status_id;
         }
@@ -187,7 +175,8 @@ class ManagerController extends Controller
         exit;
     }
 
-    private function action_get_companies(){
+    private function action_get_companies()
+    {
 
         $group_id = $this->request->post('group_id');
         $companies = $this->Companies->get_companies(['group_id' => $group_id]);
@@ -209,6 +198,16 @@ class ManagerController extends Controller
         INSERT INTO s_email_messages
         SET user_id = ?, email = ?, code = ?, created = ?
         ', $user_id, $email, $code, date('Y-m-d H:i:s'));
+
+        $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+        $mailResponse = $mailService->send(
+            'rucred@ucase.live',
+            $email,
+            'RuCred | Ваш проверочный код для смены почты',
+            'Введите этот код в поле для проверки почты: ' . $code,
+            '<h1>Введите этот код в поле для проверки почты:</h1>' . "<h2>$code</h2>"
+        );
+        var_dump($mailResponse);
 
         echo json_encode(['success' => 1]);
         exit;
@@ -305,5 +304,4 @@ class ManagerController extends Controller
 
         $this->managers->update_manager($manager_id, ['blocked' => $flag]);
     }
-
 }

@@ -7,14 +7,12 @@ class NeworderController extends Controller
     public function fetch()
     {
         if ($this->request->method('post')) {
-
             $amount = preg_replace("/[^,.0-9]/", '', $this->request->post('amount'));
             $start_date = $this->request->post('start_date');
             $start_date = date('Y-m-d', strtotime($start_date));
             $start_date = new DateTime($start_date);
 
             if ($this->request->post('end_date')) {
-
                 $end_date = date('Y-m-d', strtotime($this->request->post('end_date')));
                 $end_date = new DateTime(date('Y-m-d', strtotime($end_date)));
                 $period = date_diff($start_date, $end_date)->days;
@@ -67,8 +65,9 @@ class NeworderController extends Controller
 
             $attestations = json_encode(array_replace_recursive($attestation_date, $attestation_comment));
 
-            if ($this->request->post('no_attestation') == 1)
+            if ($this->request->post('no_attestation') == 1) {
                 $attestations = null;
+            }
 
             $user['attestation'] = $attestations;
 
@@ -81,13 +80,14 @@ class NeworderController extends Controller
             $profunion = $this->request->post('profunion');
 
             if ($profunion == 0) {
-                if ($this->request->post('want_profunion') == 1)
+                if ($this->request->post('want_profunion') == 1) {
                     $user['profunion'] = 2;
-
-                else
+                } else {
                     $user['profunion'] = 0;
-            } else
+                }
+            } else {
                 $user['profunion'] = 1;
+            }
 
             $user['workplace'] = $this->request->post('company_input');
 
@@ -218,7 +218,6 @@ class NeworderController extends Controller
 
 
             if (empty($user['user_id'])) {
-
                 $user['stage_personal'] = 1;
                 $user['stage_passport'] = 1;
                 $user['stage_address'] = 1;
@@ -232,7 +231,6 @@ class NeworderController extends Controller
                 $user['personal_number'] = $last_personal_number + 1;
 
                 if ($user['user_id'] = $this->users->add_user($user)) {
-
                 } else {
                     $this->design->assign('error', 'Не удалось создать клиента');
                 }
@@ -241,7 +239,6 @@ class NeworderController extends Controller
             $loan_type = $this->request->post('loan_type_to_submit');
 
             if (!empty($user['user_id'])) {
-
                 $user_id = $user['user_id'];
                 unset($user['user_id']);
 
@@ -250,8 +247,9 @@ class NeworderController extends Controller
                 $settlements = $this->OrganisationSettlements->get_settlements();
 
                 foreach ($settlements as $key => $settlement) {
-                    if ($settlement->std != 1)
+                    if ($settlement->std != 1) {
                         $settlement_std = $settlement;
+                    }
                 }
 
                 $order = array(
@@ -280,15 +278,16 @@ class NeworderController extends Controller
                 $record = array();
 
                 foreach ($loan_type_groups as $loantype_group) {
-                    if ($loantype_group['id'] == $order['group_id'])
+                    if ($loantype_group['id'] == $order['group_id']) {
                         $record = $loantype_group;
+                    }
                 }
 
-                if ($profunion == 0)
+                if ($profunion == 0) {
                     $order['percent'] = (float)$record['standart_percents'];
-
-                else
+                } else {
                     $order['percent'] = (float)$record['preferential_percents'];
+                }
 
                 $rest_sum = $order['amount'];
                 $start_date = date('Y-m-d', strtotime($order['probably_start_date']));
@@ -307,7 +306,6 @@ class NeworderController extends Controller
                         $body_pay = $sum_pay - $loan_percents_pay;
                         $paydate->add(new DateInterval('P1M'));
                         $paydate = $this->check_pay_date($paydate);
-
                     } else {
                         $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
                         $loan_percents_pay = $sum_pay;
@@ -324,7 +322,6 @@ class NeworderController extends Controller
                         ];
                     $paydate->add(new DateInterval('P1M'));
                 } else {
-
                     $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
                     $first_pay = new DateTime(date('Y-m-10', strtotime($start_date . '+1 month')));
                     $count_days_this_month = date('t', strtotime($issuance_date->format('Y-m-d')));
@@ -335,16 +332,13 @@ class NeworderController extends Controller
                         $percents_pay = $sum_pay;
                     }
                     if (date_diff($first_pay, $issuance_date)->days >= 20 && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
-
                         $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($first_pay, $issuance_date)->days);
 
                         $sum_pay = $annoouitet_pay - $minus_percents;
                         $percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
                         $body_pay = $sum_pay - $percents_pay;
-
                     }
                     if (date_diff($first_pay, $issuance_date)->days >= $count_days_this_month) {
-
                         $sum_pay = $annoouitet_pay;
                         $percents_pay = $rest_sum * $percent_per_month;
                         $body_pay = $sum_pay - $percents_pay;
@@ -369,7 +363,6 @@ class NeworderController extends Controller
                     $daterange = new DatePeriod($paydate, $interval, $end_date);
 
                     foreach ($daterange as $date) {
-
                         $date = $this->check_pay_date($date);
 
                         $loan_percents_pay = $rest_sum * $percent_per_month;
@@ -410,7 +403,6 @@ class NeworderController extends Controller
                 }
 
                 foreach ($dates as $date) {
-
                     $date = new DateTime(date('Y-m-d H:i:s', strtotime($date)));
 
                     $new_dates[] = mktime(
@@ -493,12 +485,10 @@ class NeworderController extends Controller
         }
 
         if ($this->request->get('start_date')) {
-
             $this->check_date();
         }
 
         if ($this->request->get('action') == 'get_companies') {
-
             $group_id = $this->request->get('group_id');
 
             $companies = $this->Companies->get_companies(['group_id' => $group_id, 'blocked' => 0]);
@@ -506,23 +496,21 @@ class NeworderController extends Controller
 
             echo json_encode(['companies' => $companies, 'loantypes' => $loantypes]);
             exit;
-
         }
 
         if ($this->request->get('action') == 'get_branches') {
-
             $company_id = $this->request->get('company_id');
 
             $branches = $this->Branches->get_branches(['company_id' => $company_id]);
 
             echo json_encode($branches);
             exit;
-
         }
 
         $loantypes = array();
-        foreach ($this->loantypes->get_loantypes() as $lt)
+        foreach ($this->loantypes->get_loantypes() as $lt) {
             $loantypes[$lt->id] = $lt;
+        }
         $this->design->assign('loantypes', $loantypes);
 
         $groups = $this->Groups->get_groups();
@@ -557,7 +545,6 @@ class NeworderController extends Controller
 
 
         for ($i = 0; $i <= 15; $i++) {
-
             $check_date = $this->WeekendCalendar->check_date($end_date->format('Y-m-d'));
 
             if ($check_date == null) {
@@ -575,7 +562,6 @@ class NeworderController extends Controller
     {
 
         for ($i = 0; $i <= 15; $i++) {
-
             $check_date = $this->WeekendCalendar->check_date($date->format('Y-m-d'));
 
             if ($check_date == null) {

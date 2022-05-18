@@ -5,11 +5,13 @@ class ManagersController extends Controller
     public function fetch()
     {
 
-        if (in_array($this->manager->role, ['underwriter', 'employer']))
+        if (in_array($this->manager->role, ['underwriter', 'employer'])) {
             header('Location: /offline_orders');
+        }
 
-        if (!in_array('managers', $this->manager->permissions))
+        if (!in_array('managers', $this->manager->permissions)) {
             return $this->design->fetch('403.tpl');
+        }
 
         $managers = $this->managers->get_managers();
 
@@ -29,8 +31,8 @@ class ManagersController extends Controller
         $companies = $this->Companies->get_companies();
 
         foreach ($companies as $company) {
-            foreach ($managers as $key => $manager){
-                if($company->id == $manager->company_id){
+            foreach ($managers as $key => $manager) {
+                if ($company->id == $manager->company_id) {
                     $manager->company_name = $company->name;
                 }
             }
@@ -43,5 +45,4 @@ class ManagersController extends Controller
 
         return $this->design->fetch('managers.tpl');
     }
-
 }
