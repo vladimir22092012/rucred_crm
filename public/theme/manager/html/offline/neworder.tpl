@@ -167,6 +167,7 @@
                             });
                         } else {
                             console.log('create_new_order completed');
+                            window.location.replace(response.redirect);
                         }
                     }
                 })

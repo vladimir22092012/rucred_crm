@@ -542,7 +542,12 @@ class NeworderController extends Controller
                     exit;
                 }
             } else {
-                $order_id = $this->orders->add_order($order);
+                try {
+                    $order_id = $this->orders->add_order($order);
+                    response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
+                } catch (Exception $exception) {
+                    response_json(['error' => 1, 'reason' => 'Создать заявку не удалось']);
+                }
             }
         }
         $this->design->assign('order', (object)$user);
