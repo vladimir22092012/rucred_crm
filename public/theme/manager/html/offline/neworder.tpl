@@ -31,9 +31,7 @@
     <script>
         $(function () {
 
-            $('.show_phone').hide();
             $('.show_phone_code').hide();
-            $('.phone_edit_form').show();
 
             $('.accept_edit').click(function (e) {
                 e.preventDefault();
@@ -48,14 +46,13 @@
                         user_id: user_id,
                         phone: phone,
                     },
-                    success: function (resp) {
-                        if (resp == 'error') {
+                    success: function (response) {
+                        if (JSON.parse(response).error === 1) {
                             Swal.fire({
-                                title: 'Такой номер уже зарегистрирован',
+                                title: 'Введите телефон',
                                 confirmButtonText: 'ОК'
                             });
-                        }
-                        else {
+                        } else {
                             $('.show_phone_code').show();
                         }
                     }
@@ -65,15 +62,13 @@
             $('.accept_edit_with_code').click(function (e) {
                 e.preventDefault();
 
-                let user_id = $(this).attr('data-user');
-                let phone = $('input[class="form-control phone"]').val();
+                let phone = $('input[class="form-control phone_num"]').val();
                 let phone_code = $('input[class="form-control phone_code"]').val();
 
                 $.ajax({
                     method: 'POST',
                     data: {
                         action: 'edit_phone_with_code',
-                        user_id: user_id,
                         phone: phone,
                         code: phone_code,
                     },
@@ -85,7 +80,8 @@
                                 confirmButtonText: 'ОК'
                             });
                         } else {
-                            location.reload();
+                            $('.show_phone_code').hide();
+                            $('.phone_confirmed').val('true');
                         }
                     }
                 })
@@ -390,7 +386,7 @@
                                                                        type="text"
                                                                        name="phone"
                                                                        placeholder="+7(900)000-00-00" value="{$order->phone_mobile}"/>
-                                                                <input type="hidden" name="phone_confirmed" value="false"/>
+                                                                <input type="hidden" name="phone_confirmed" class="phone_confirmed" value="false"/>
                                                             </div>
                                                             <div class="col">
                                                                 <input type="button"
