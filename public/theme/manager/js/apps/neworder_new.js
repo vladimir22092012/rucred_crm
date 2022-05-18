@@ -522,12 +522,12 @@ $(function () {
 
         let html =
             $('<tr>' +
-            '<td><input class="form-control daterange" name="date[][date]" type="text" value=""></td>' +
-            '<td><input class="form-control" name="comment[][comment]" type="text" value=""></td>' +
-            '<td><div type="button" class="btn btn-outline-danger remove_from_attestation_table">-</div></td>' +
-            '</tr>');
+                '<td><input class="form-control daterange" name="date[][date]" type="text" value=""></td>' +
+                '<td><input class="form-control" name="comment[][comment]" type="text" value=""></td>' +
+                '<td><div type="button" class="btn btn-outline-danger remove_from_attestation_table">-</div></td>' +
+                '</tr>');
 
-        $('.remove_from_attestation_table', html).on('click', function() {
+        $('.remove_from_attestation_table', html).on('click', function () {
             $(this).closest('tr').remove();
         });
 
@@ -544,7 +544,7 @@ $(function () {
         });
     });
 
-    $('.remove_from_attestation_table').on('click', function() {
+    $('.remove_from_attestation_table').on('click', function () {
         $(this).closest('tr').remove();
     });
 
@@ -567,6 +567,67 @@ $(function () {
 
     $('#no_attestation').on('click', function () {
         $('.attestation_table').toggle();
-    })
+    });
+
+    $('.check_users').on('click', function (e) {
+        e.preventDefault();
+
+        let lastname = $('input[name="lastname"]').val();
+        let firstname = $('input[name="firstname"]').val();
+        let patronymic = $('input[name="patronymic"]').val();
+        let birth = $('input[name="birth"]').val();
+
+        $.ajax({
+            dataType: 'JSON',
+            data: {
+                action: 'check_same_users',
+                lastname: lastname,
+                firstname: firstname,
+                patronymic: patronymic,
+                birth: birth
+            },
+            success: function (users) {
+
+                $('#users_same').empty();
+                $('#users_same').fadeIn();
+
+                if (users['empty']) {
+                    let html =
+                        '<label class="control-label" style="color: #880000">Совпадений не найдено</label>';
+
+                    $('#users_same').append(html);
+
+                    setTimeout(function () {
+                        $('#users_same').fadeOut();
+                        $('#users_same').empty();
+                    }, 2000);
+                } else {
+                    for (let user in users) {
+                        let html =
+                            $('<label class="control-label">' + users[user]['lastname'] + ' ' + users[user]['firstname'] + ' ' + users[user]['patronymic'] + '</label>' +
+                            '<input style="margin-left: 25px" type="button" class="btn btn-outline-warning choose_user" data-user="' + users[user]['id'] + '" value="Выбрать">');
+
+                        $('#users_same').append(html);
+                    }
+                }
+
+                $('.choose_user').on('click', function () {
+                    $('input[name="user_id"]').attr('value', $(this).attr('data-user'));
+
+                    $('#users_same').empty();
+
+                    let html =
+                        '<label class="control-label" style="color: #00a300">Пользователь выбран</label>';
+
+                    $('#users_same').append(html);
+
+                    setTimeout(function () {
+                        $('#users_same').fadeOut();
+                        $('#users_same').empty();
+                    }, 2000);
+                });
+            }
+        });
+    });
 
 });

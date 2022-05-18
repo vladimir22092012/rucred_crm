@@ -25,17 +25,17 @@ class Users extends Core
         $id = $this->db->result('personal_number');
         return $id;
     }
-    
+
     public function get_looker_link($user_id)
     {
         $ip = $_SERVER['REMOTE_ADDR'];
         $date = date('Ymd');
         $salt = $this->settings->looker_salt;
-        
-        $sha1 = sha1(md5($ip.$date.$user_id.$salt).$salt);
-    
-        $link = $this->config->front_url.'/looker?id='.$user_id.'&hash='.$sha1;
-        
+
+        $sha1 = sha1(md5($ip . $date . $user_id . $salt) . $salt);
+
+        $link = $this->config->front_url . '/looker?id=' . $user_id . '&hash=' . $sha1;
+
         return $link;
     }
 
@@ -53,7 +53,7 @@ class Users extends Core
         if (!empty($credits_history)) {
             foreach ($credits_history as $credits_history_item) {
                 $loan_history_item = new StdClass();
-                
+
                 $loan_history_item->date = $credits_history_item->ДатаЗайма;
                 $loan_history_item->close_date = $credits_history_item->ДатаЗакрытия;
                 $loan_history_item->number = $credits_history_item->НомерЗайма;
@@ -62,32 +62,32 @@ class Users extends Core
                 $loan_history_item->loan_percents_summ = $credits_history_item->ОстатокПроцентов;
                 $loan_history_item->sold = $credits_history_item->Продан;
                 $loan_history_item->total_paid = $credits_history_item->ОплатаПроцентов;
-                
+
                 $loan_history[] = $loan_history_item;
 
                 if (!empty($loan_history_item->close_date)) {
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($loan_history_item);echo '</pre><hr />';
-/*
-                    if ($current_contract = $this->contracts->get_number_contract($loan_history_item->number))
-                    {
-                        if ($current_contract->type == 'onec' && empty($current_contract->sud))
-                        {
-                            $this->contracts->update_contract($current_contract->id, array(
-                                'status' => 3,
-                                'close_date' => date('Y-m-d H:i:s', strtotime($loan_history_item->close_date))
-                            ));
-                            $this->orders->update_order($current_contract->order_id, array(
-                                'status' => 7
-                            ));
-                        }
-                    }
-*/
+                    /*
+                                        if ($current_contract = $this->contracts->get_number_contract($loan_history_item->number))
+                                        {
+                                            if ($current_contract->type == 'onec' && empty($current_contract->sud))
+                                            {
+                                                $this->contracts->update_contract($current_contract->id, array(
+                                                    'status' => 3,
+                                                    'close_date' => date('Y-m-d H:i:s', strtotime($loan_history_item->close_date))
+                                                ));
+                                                $this->orders->update_order($current_contract->order_id, array(
+                                                    'status' => 7
+                                                ));
+                                            }
+                                        }
+                    */
                 }
             }
         }
         $this->users->update_user($user_id, array('loan_history' => json_encode($loan_history)));
     }
-    
+
     public function get_uid_user_id($uid)
     {
         $query = $this->db->placehold("
@@ -96,12 +96,12 @@ class Users extends Core
             WHERE uid = ?
         ", (string)$uid);
         $this->db->query($query);
-        
+
         $id = $this->db->result('id');
-        
+
         return $id;
     }
-    
+
     public function get_user($id)
     {
         $query = $this->db->placehold("
@@ -128,7 +128,7 @@ class Users extends Core
         $result = $this->db->result();
         return $result;
     }
-    
+
     public function get_users($filter = array())
     {
         $id_filter = '';
@@ -138,7 +138,7 @@ class Users extends Core
         $limit = 1000;
         $page = 1;
         $sort = 'id DESC';
-        
+
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
         }
@@ -154,26 +154,26 @@ class Users extends Core
                     OR stage_card = 0 
                 )
                 AND (
-                    (NOW() > created + INTERVAL ".intval($filter['missing'])." SECOND  AND stage_personal = 0)
-                    OR (NOW() > stage_personal_date + INTERVAL ".intval($filter['missing'])." SECOND AND stage_passport = 0)
-                    OR (NOW() > passport_date_added_date + INTERVAL ".intval($filter['missing'])." SECOND AND stage_address = 0)
-                    OR (NOW() > address_data_added_date + INTERVAL ".intval($filter['missing'])." SECOND AND stage_work = 0)
-                    OR (NOW() > work_added_date +  INTERVAL ".intval($filter['missing'])." SECOND AND stage_files = 0)
-                    OR (NOW() > files_added_date + INTERVAL ".intval($filter['missing'])." SECOND AND stage_card = 0)
+                    (NOW() > created + INTERVAL " . intval($filter['missing']) . " SECOND  AND stage_personal = 0)
+                    OR (NOW() > stage_personal_date + INTERVAL " . intval($filter['missing']) . " SECOND AND stage_passport = 0)
+                    OR (NOW() > passport_date_added_date + INTERVAL " . intval($filter['missing']) . " SECOND AND stage_address = 0)
+                    OR (NOW() > address_data_added_date + INTERVAL " . intval($filter['missing']) . " SECOND AND stage_work = 0)
+                    OR (NOW() > work_added_date +  INTERVAL " . intval($filter['missing']) . " SECOND AND stage_files = 0)
+                    OR (NOW() > files_added_date + INTERVAL " . intval($filter['missing']) . " SECOND AND stage_card = 0)
                 )
             ");
         }
-        
+
         if (isset($filter['keyword'])) {
             $keywords = explode(' ', $filter['keyword']);
             foreach ($keywords as $keyword) {
                 $keyword_filter .= $this->db->placehold('
                     AND (
-                        firstname LIKE "%'.$this->db->escape(trim($keyword)).'%" 
-                        OR lastname LIKE "%'.$this->db->escape(trim($keyword)).'%" 
-                        OR patronymic LIKE "%'.$this->db->escape(trim($keyword)).'%" 
-                        OR phone_mobile LIKE "%'.$this->db->escape(trim($keyword)).'%" 
-                        OR email LIKE "%'.$this->db->escape(trim($keyword)).'%" 
+                        firstname LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
+                        OR lastname LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
+                        OR patronymic LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
+                        OR phone_mobile LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
+                        OR email LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
                     )
                 ');
             }
@@ -192,63 +192,63 @@ class Users extends Core
                 $search_filter .= $this->db->placehold(' AND (');
                 foreach ($expls as $expl) {
                     $expl = $this->db->escape($expl);
-                    $fio_filter[] = $this->db->placehold("(lastname LIKE '%".$expl."%' OR firstname LIKE '%".$expl."%' OR patronymic LIKE '%".$expl."%')");
+                    $fio_filter[] = $this->db->placehold("(lastname LIKE '%" . $expl . "%' OR firstname LIKE '%" . $expl . "%' OR patronymic LIKE '%" . $expl . "%')");
                 }
                 $search_filter .= implode(' AND ', $fio_filter);
                 $search_filter .= $this->db->placehold(')');
             }
             if (!empty($filter['search']['phone'])) {
-                $search_filter .= $this->db->placehold(" AND phone_mobile LIKE '%".$this->db->escape(str_replace(array(' ', '-', '(', ')', '+'), '', $filter['search']['phone']))."%'");
+                $search_filter .= $this->db->placehold(" AND phone_mobile LIKE '%" . $this->db->escape(str_replace(array(' ', '-', '(', ')', '+'), '', $filter['search']['phone'])) . "%'");
             }
             if (!empty($filter['search']['email'])) {
-                $search_filter .= $this->db->placehold(" AND email LIKE '%".$this->db->escape($filter['search']['email'])."%'");
+                $search_filter .= $this->db->placehold(" AND email LIKE '%" . $this->db->escape($filter['search']['email']) . "%'");
             }
         }
-        
+
         if (!empty($filter['sort'])) {
             switch ($filter['sort']) :
                 case 'id_desc':
                     $sort = 'id DESC';
                     break;
-                
+
                 case 'id_asc':
                     $sort = 'id ASC';
                     break;
-                
+
                 case 'date_desc':
                     $sort = 'created DESC';
                     break;
-                
+
                 case 'date_asc':
                     $sort = 'created ASC';
                     break;
-                
+
                 case 'fio_desc':
                     $sort = 'lastname DESC, firstname DESC, patronymic DESC';
                     break;
-                
+
                 case 'fio_asc':
                     $sort = 'lastname ASC, firstname ASC, patronymic ASC';
                     break;
-                
+
                 case 'email_desc':
                     $sort = 'email DESC';
                     break;
-                
+
                 case 'email_asc':
                     $sort = 'email ASC';
                     break;
-                
+
                 case 'phone_desc':
                     $sort = 'phone_mobile DESC';
                     break;
-                
+
                 case 'phone_asc':
                     $sort = 'phone_mobile ASC';
                     break;
             endswitch;
         }
-        
+
         if (isset($filter['limit'])) {
             $limit = max(1, intval($filter['limit']));
         }
@@ -256,8 +256,8 @@ class Users extends Core
         if (isset($filter['page'])) {
             $page = max(1, intval($filter['page']));
         }
-            
-        $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page-1)*$limit, $limit);
+
+        $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page - 1) * $limit, $limit);
 
         $query = $this->db->placehold("
             SELECT * 
@@ -271,23 +271,23 @@ class Users extends Core
             $sql_limit
         ");
         $this->db->query($query);
-        
+
         if ($results = $this->db->results()) {
             foreach ($results as $result) {
                 $result->loan_history = empty($result->loan_history) ? array() : json_decode($result->loan_history);
             }
         }
-        
+
         return $results;
     }
-    
+
     public function count_users($filter = array())
     {
         $id_filter = '';
         $missing_filter = '';
         $keyword_filter = '';
         $search_filter = '';
-        
+
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
         }
@@ -303,12 +303,12 @@ class Users extends Core
                     OR stage_card = 0 
                 )
                 AND (
-                    (NOW() > created + INTERVAL ".intval($filter['missing'])." SECOND  AND stage_personal = 0)
-                    OR (NOW() > stage_personal_date + INTERVAL ".intval($filter['missing'])." SECOND AND stage_passport = 0)
-                    OR (NOW() > passport_date_added_date + INTERVAL ".intval($filter['missing'])." SECOND AND stage_address = 0)
-                    OR (NOW() > address_data_added_date + INTERVAL ".intval($filter['missing'])." SECOND AND stage_work = 0)
-                    OR (NOW() > work_added_date +  INTERVAL ".intval($filter['missing'])." SECOND AND stage_files = 0)
-                    OR (NOW() > files_added_date + INTERVAL ".intval($filter['missing'])." SECOND AND stage_card = 0)
+                    (NOW() > created + INTERVAL " . intval($filter['missing']) . " SECOND  AND stage_personal = 0)
+                    OR (NOW() > stage_personal_date + INTERVAL " . intval($filter['missing']) . " SECOND AND stage_passport = 0)
+                    OR (NOW() > passport_date_added_date + INTERVAL " . intval($filter['missing']) . " SECOND AND stage_address = 0)
+                    OR (NOW() > address_data_added_date + INTERVAL " . intval($filter['missing']) . " SECOND AND stage_work = 0)
+                    OR (NOW() > work_added_date +  INTERVAL " . intval($filter['missing']) . " SECOND AND stage_files = 0)
+                    OR (NOW() > files_added_date + INTERVAL " . intval($filter['missing']) . " SECOND AND stage_card = 0)
                 )
             ");
         }
@@ -318,16 +318,16 @@ class Users extends Core
             foreach ($keywords as $keyword) {
                 $keyword_filter .= $this->db->placehold('
                     AND (
-                        firstname LIKE "%'.$this->db->escape(trim($keyword)).'%" 
-                        OR lastname LIKE "%'.$this->db->escape(trim($keyword)).'%" 
-                        OR patronymic LIKE "%'.$this->db->escape(trim($keyword)).'%" 
-                        OR phone_mobile LIKE "%'.$this->db->escape(trim($keyword)).'%" 
-                        OR email LIKE "%'.$this->db->escape(trim($keyword)).'%" 
+                        firstname LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
+                        OR lastname LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
+                        OR patronymic LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
+                        OR phone_mobile LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
+                        OR email LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
                     )
                 ');
             }
         }
-                
+
         if (!empty($filter['search'])) {
             if (!empty($filter['search']['user_id'])) {
                 $search_filter .= $this->db->placehold(' AND id = ?', (int)$filter['search']['user_id']);
@@ -341,19 +341,19 @@ class Users extends Core
                 $search_filter .= $this->db->placehold(' AND (');
                 foreach ($expls as $expl) {
                     $expl = $this->db->escape($expl);
-                    $fio_filter[] = $this->db->placehold("(lastname LIKE '%".$expl."%' OR firstname LIKE '%".$expl."%' OR patronymic LIKE '%".$expl."%')");
+                    $fio_filter[] = $this->db->placehold("(lastname LIKE '%" . $expl . "%' OR firstname LIKE '%" . $expl . "%' OR patronymic LIKE '%" . $expl . "%')");
                 }
                 $search_filter .= implode(' AND ', $fio_filter);
                 $search_filter .= $this->db->placehold(')');
             }
             if (!empty($filter['search']['phone'])) {
-                $search_filter .= $this->db->placehold(" AND phone_mobile LIKE '%".$this->db->escape(str_replace(array(' ', '-', '(', ')', '+'), '', $filter['search']['phone']))."%'");
+                $search_filter .= $this->db->placehold(" AND phone_mobile LIKE '%" . $this->db->escape(str_replace(array(' ', '-', '(', ')', '+'), '', $filter['search']['phone'])) . "%'");
             }
             if (!empty($filter['search']['email'])) {
-                $search_filter .= $this->db->placehold(" AND email LIKE '%".$this->db->escape($filter['search']['email'])."%'");
+                $search_filter .= $this->db->placehold(" AND email LIKE '%" . $this->db->escape($filter['search']['email']) . "%'");
             };
         }
-        
+
         $query = $this->db->placehold("
             SELECT COUNT(id) AS count
             FROM __users
@@ -365,10 +365,10 @@ class Users extends Core
         ");
         $this->db->query($query);
         $count = $this->db->result('count');
-    
+
         return $count;
     }
-    
+
     public function add_user($user)
     {
         $query = $this->db->placehold("
@@ -378,7 +378,7 @@ class Users extends Core
         $id = $this->db->insert_id();
         return $id;
     }
-    
+
     public function update_user($id, $user)
     {
         $query = $this->db->placehold("
@@ -386,10 +386,10 @@ class Users extends Core
         ", (array)$user, (int)$id);
 
         $result = $this->db->query($query);
-        
+
         return $result;
     }
-    
+
     public function delete_user($id)
     {
         $query = $this->db->placehold("
@@ -397,7 +397,7 @@ class Users extends Core
         ", (int)$id);
         $this->db->query($query);
     }
-    
+
     public function get_file($id)
     {
         $query = $this->db->placehold("
@@ -407,33 +407,33 @@ class Users extends Core
         ", (int)$id);
         $this->db->query($query);
         $result = $this->db->result();
-    
+
         return $result;
     }
-    
+
     public function get_files($filter = array())
     {
         $id_filter = '';
         $user_id_filter = '';
         $status_filter = '';
         $sent_filter = '';
-        
+
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
         }
-        
+
         if (!empty($filter['user_id'])) {
             $user_id_filter = $this->db->placehold("AND user_id = ?", (int)$filter['user_id']);
         }
-            
+
         if (isset($filter['status'])) {
             $status_filter = $this->db->placehold("AND status = ?", (int)$filter['status']);
         }
-        
+
         if (isset($filter['sent'])) {
             $sent_filter = $this->db->placehold("AND sent_1c = ?", (int)$filter['sent']);
         }
-        
+
         $query = $this->db->placehold("
             SELECT * 
             FROM __files
@@ -446,10 +446,10 @@ class Users extends Core
         ");
         $this->db->query($query);
         $results = $this->db->results();
-        
+
         return $results;
     }
-    
+
     public function add_file($file)
     {
         $query = $this->db->placehold("
@@ -458,42 +458,42 @@ class Users extends Core
         ", (array)$file);
         $this->db->query($query);
         $id = $this->db->insert_id();
-        
+
         return $id;
     }
-    
+
     public function update_file($id, $file)
     {
         $query = $this->db->placehold("
             UPDATE __files SET ?% WHERE id = ?
         ", (array)$file, (int)$id);
         $this->db->query($query);
-        
+
         return $id;
     }
-    
+
     public function delete_file($id)
     {
         if ($file = $this->get_file($id)) {
-            if (file_exists($this->config->root_dir.$this->config->users_files_dir.$file->name)) {
-                unlink($this->config->root_dir.$this->config->users_files_dir.$file->name);
+            if (file_exists($this->config->root_dir . $this->config->users_files_dir . $file->name)) {
+                unlink($this->config->root_dir . $this->config->users_files_dir . $file->name);
             }
 
-            if (file_exists($this->config->root_dir.$this->config->original_images_dir.$file->name)) {
-                unlink($this->config->root_dir.$this->config->original_images_dir.$file->name);
+            if (file_exists($this->config->root_dir . $this->config->original_images_dir . $file->name)) {
+                unlink($this->config->root_dir . $this->config->original_images_dir . $file->name);
             }
-            
+
             // Удалить все ресайзы
             $filename = pathinfo($file->name, PATHINFO_FILENAME);
             $ext = pathinfo($file->name, PATHINFO_EXTENSION);
 
-            $rezised_images = glob($this->config->root_dir.$this->config->resized_images_dir.$filename.".*x*.".$ext);
+            $rezised_images = glob($this->config->root_dir . $this->config->resized_images_dir . $filename . ".*x*." . $ext);
             if (is_array($rezised_images)) {
-                foreach (glob($this->config->root_dir.$this->config->resized_images_dir.$filename.".*x*.".$ext) as $f) {
+                foreach (glob($this->config->root_dir . $this->config->resized_images_dir . $filename . ".*x*." . $ext) as $f) {
                     @unlink($f);
                 }
             }
-            
+
             $query = $this->db->placehold("
                 DELETE FROM __files WHERE id = ?
             ", (int)$id);
@@ -506,33 +506,33 @@ class Users extends Core
         $this->db->query("SELECT id FROM __files WHERE name = ?");
         return $this->db->result('id');
     }
-    
+
     public function get_phone_user($phone)
     {
         $query = $this->db->placehold("
             SELECT id FROM __users WHERE phone_mobile = ?
         ", (string)$phone);
         $this->db->query($query);
-        
+
         return $this->db->result('id');
     }
 
     public function find_clone($passport_serial, $lastname, $firstname, $patronymic, $birth)
     {
         $passport_serial = str_replace(array(' ', '-'), '', $passport_serial);
-        $passport_serial_prepare = substr($passport_serial, 0, 4).'-'.substr($passport_serial, 4, 6);
+        $passport_serial_prepare = substr($passport_serial, 0, 4) . '-' . substr($passport_serial, 4, 6);
         $this->db->query("
             SELECT id FROM __users WHERE passport_serial = ?
         ", $passport_serial_prepare);
         if ($id = $this->db->result('id')) {
             return $id;
         }
-        
+
         $this->db->query("
             SELECT id FROM __users 
-            WHERE lastname LIKE '%".$this->db->escape($lastname)."%'
-            AND firstname LIKE '%".$this->db->escape($firstname)."%'
-            AND patronymic LIKE '%".$this->db->escape($patronymic)."%'
+            WHERE lastname LIKE '%" . $this->db->escape($lastname) . "%'
+            AND firstname LIKE '%" . $this->db->escape($firstname) . "%'
+            AND patronymic LIKE '%" . $this->db->escape($patronymic) . "%'
             AND birth = ?
         ", $birth);
         if ($id = $this->db->result('id')) {
@@ -555,5 +555,28 @@ class Users extends Core
         $result = $this->db->result('id');
 
         return $result;
+    }
+
+    public function check_exist_users($user)
+    {
+        $patronymic = '';
+
+        if(isset($user['patronymic']))
+            $patronymic = $this->db->placehold("AND patronymic = ?", $user['patronymic']);
+
+        $query = $this->db->placehold("
+        SELECT *
+        FROM s_users
+        WHERE lastname = ?
+        AND firstname = ?
+        AND birth = ?
+        $patronymic
+        ", $user['lastname'], $user['firstname'], $user['birth']);
+
+        $this->db->query($query);
+
+        $results = $this->db->results();
+
+        return $results;
     }
 }

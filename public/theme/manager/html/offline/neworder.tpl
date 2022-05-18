@@ -2,11 +2,13 @@
 
 {capture name='page_scripts'}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
+    <script
+        src="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     <script src="theme/manager/assets/plugins/moment/moment.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
     <script src="theme/manager/assets/plugins/daterangepicker/daterangepicker.js"></script>
-    <script src="theme/{$settings->theme|escape}/assets/plugins/inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
+    <script
+        src="theme/{$settings->theme|escape}/assets/plugins/inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/neworder_new.js"></script>
@@ -72,11 +74,12 @@
                 }, 500);
 
                 setTimeout(function () {
-                    $('#' + order['loan_type'] +'').trigger('click');
+                    $('#' + order['loan_type'] + '').trigger('click');
                     $('.to_form_loan').trigger('click');
                     $('select[name="branch"] option[value="' + order['branche_id'] + '"]').prop('selected', true);
                 }, 900);
             }
+
         })
     </script>
 {/capture}
@@ -158,7 +161,8 @@
                 <div class="card card-outline-info">
                     <div class="card-header">
                         <h4 class="mb-0 text-white float-left">Заявка {$order->order_id}</h4>
-                        <small class="text-white float-right">{$offline_points[$manager->offline_point_id]->address}</small>
+                        <small
+                            class="text-white float-right">{$offline_points[$manager->offline_point_id]->address}</small>
                     </div>
                     <div class="card-body">
                         <div class="form-body">
@@ -239,7 +243,8 @@
                                             <label style="font-size: 12px">Желаемая дата выдачи займа:</label>
                                             <input type="text" style="width: 130px" id="start_date"
                                                    name="start_date"
-                                                   class="form-control daterange" value="{$order->probably_start_date|date}">
+                                                   class="form-control daterange"
+                                                   value="{$order->probably_start_date|date}">
                                         </div>
                                         <div id="calendar">
                                             <label style="font-size: 12px">Возврат до:</label>
@@ -285,24 +290,51 @@
                                                    name="patronymic"
                                                    placeholder="Отчество(если есть)" type="text"
                                                    value="{$order->patronymic}">
-                                            <br><br><br>
-                                            <h4>Менялись ли ваши фамилия, имя, отчество?</h4><br>
-                                            <div class="form-check" style="margin-left: 25px">
-                                                <input class="form-check-input" type="radio" name="change_fio"
-                                                       id="change_fio1" value="0" checked>
-                                                <label class="form-check-label" for="change_fio1">
-                                                    Нет
-                                                </label>
-                                            </div>
-                                            <div class="form-check" style="margin-left: 25px">
-                                                <input class="form-check-input" type="radio" name="change_fio"
-                                                       id="change_fio2" value="1">
-                                                <label class="form-check-label" for="change_fio2">
-                                                    Да(Укажите дополнительно)
-                                                </label>
-                                            </div>
                                         </div>
                                         <br><br>
+                                        <div style="width: 100%">
+                                            <label class="control-label">Место рождения</label>
+                                            <label class="control-label" style="margin-left: 240px">Дата
+                                                рождения</label><br>
+                                            <input class="form-control" style="width: 350px; margin-left: 25px"
+                                                   type="text" name="birth_place" value="{$order->birth_place}"
+                                            />
+                                            <input type="text" style="width: 180px; margin-left: 25px"
+                                                   name="birth"
+                                                   class="form-control daterange" value="{$order->birth|date}">
+                                            <div type="button" style="margin-left: 25px" class="btn btn-outline-info check_users">
+                                                Проверить совпадения
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div style="display: none" id="users_same">
+
+                                        </div>
+                                        <br>
+                                        <div style="width: 100%;">
+                                            <label class="control-label">Телефон</label><br>
+                                            <input class="form-control phone_num"
+                                                   style="width: 190px; margin-left: 25px"
+                                                   type="text"
+                                                   name="phone"
+                                                   placeholder="+7(900)000-00-00" value="{$order->phone_mobile}"/>
+                                        </div>
+                                        <br><br>
+                                        <h4>Менялись ли ваши фамилия, имя, отчество?</h4><br>
+                                        <div class="form-check" style="margin-left: 25px">
+                                            <input class="form-check-input" type="radio" name="change_fio"
+                                                   id="change_fio1" value="0" checked>
+                                            <label class="form-check-label" for="change_fio1">
+                                                Нет
+                                            </label>
+                                        </div>
+                                        <div class="form-check" style="margin-left: 25px">
+                                            <input class="form-check-input" type="radio" name="change_fio"
+                                                   id="change_fio2" value="1">
+                                            <label class="form-check-label" for="change_fio2">
+                                                Да(Укажите дополнительно)
+                                            </label>
+                                        </div><br>
                                         <div style="width: 100%; display:none" id="change_fio_toggle">
                                             <label class="control-label">Предыдущие ФИО</label>
                                             <label class="control-label" style="margin-left: 230px">Дата
@@ -314,27 +346,6 @@
                                                    name="fio_change_date"
                                                    class="form-control daterange fio_change_date"
                                                    value="{$order->fio_change_date|date}">
-                                        </div>
-                                        <br>
-                                        <div style="width: 100%">
-                                            <label class="control-label">Место рождения</label>
-                                            <label class="control-label" style="margin-left: 240px">Дата
-                                                рождения</label><br>
-                                            <input class="form-control" style="width: 350px; margin-left: 25px"
-                                                   type="text" name="birth_place" value="{$order->birth_place}"
-                                            />
-                                            <input type="text" style="width: 180px; margin-left: 25px"
-                                                   name="birth"
-                                                   class="form-control daterange" value="{$order->birth|date}">
-                                        </div>
-                                        <br>
-                                        <div style="width: 100%">
-                                            <label class="control-label">Телефон</label><br>
-                                            <input class="form-control phone_num"
-                                                   style="width: 190px; margin-left: 25px"
-                                                   type="text"
-                                                   name="phone"
-                                                   placeholder="+7(900)000-00-00" value="{$order->phone_mobile}"/>
                                         </div>
 
                                         <hr style="width: 100%; size: 5px">
@@ -544,16 +555,18 @@
                                         <hr style="width: 100%; size: 5px">
                                         <br>
                                         <div style="width: 100%; display: flex">
-                                        <h4>
-                                            Аттестация
-                                        </h4>
+                                            <h4>
+                                                Аттестация
+                                            </h4>
                                             <div style="margin-left: 50px">
-                                                <input class="form-check-input" id="no_attestation" type="checkbox" name="no_attestation"
+                                                <input class="form-check-input" id="no_attestation" type="checkbox"
+                                                       name="no_attestation"
                                                        value="1" {if $order->attestation == null}checked{/if}>
                                                 <label for="no_attestation">Нет аттестации</label>
                                             </div>
                                         </div>
-                                        <table class="jsgrid-table table table-striped attestation_table" {if empty($order->attestation)} style="display: none" {/if}>
+                                        <table
+                                            class="jsgrid-table table table-striped attestation_table" {if empty($order->attestation)} style="display: none" {/if}>
                                             <thead>
                                             <tr>
                                                 <th>Дата окончания</th>
@@ -709,21 +722,27 @@
                                                 {foreach json_decode($order->credits_story) as $credits_story}
                                                     <tr>
                                                         <td><input class="form-control"
-                                                                   name="credits_bank_name[][credits_bank_name]" type="text"
+                                                                   name="credits_bank_name[][credits_bank_name]"
+                                                                   type="text"
                                                                    value="{$credits_story->credits_bank_name}"></td>
                                                         <td><input class="form-control mask_number"
-                                                                   name="credits_rest_sum[][credits_rest_sum]" type="text"
+                                                                   name="credits_rest_sum[][credits_rest_sum]"
+                                                                   type="text"
                                                                    value="{$credits_story->credits_rest_sum}"></td>
                                                         <td><input class="form-control mask_number"
-                                                                   name="credits_month_pay[][credits_month_pay]" type="text"
+                                                                   name="credits_month_pay[][credits_month_pay]"
+                                                                   type="text"
                                                                    value="{$credits_story->credits_month_pay}"></td>
                                                         <td><input class="form-control validity_period"
-                                                                   name="credits_return_date[][credits_return_date]" type="text"
+                                                                   name="credits_return_date[][credits_return_date]"
+                                                                   type="text"
                                                                    value="{$credits_story->credits_return_date}"></td>
                                                         <td><input class="form-control"
-                                                                   name="credits_percents[][credits_percents]" type="text"
+                                                                   name="credits_percents[][credits_percents]"
+                                                                   type="text"
                                                                    value="{$credits_story->credits_percents}"></td>
-                                                        <td><select class="form-control" name="credits_delay[][credits_delay]">
+                                                        <td><select class="form-control"
+                                                                    name="credits_delay[][credits_delay]">
                                                                 <option value="Да">Да</option>
                                                                 <option value="Нет">Нет</option>
                                                             </select></td>
@@ -746,12 +765,14 @@
                                                                name="credits_month_pay[][credits_month_pay]" type="text"
                                                                value=""></td>
                                                     <td><input class="form-control validity_period"
-                                                               name="credits_return_date[][credits_return_date]" type="text"
+                                                               name="credits_return_date[][credits_return_date]"
+                                                               type="text"
                                                                value=""></td>
                                                     <td><input class="form-control"
                                                                name="credits_percents[][credits_percents]" type="text"
                                                                value=""></td>
-                                                    <td><select class="form-control" name="credits_delay[][credits_delay]">
+                                                    <td><select class="form-control"
+                                                                name="credits_delay[][credits_delay]">
                                                             <option value="Да">Да</option>
                                                             <option value="Нет">Нет</option>
                                                         </select></td>
@@ -793,8 +814,10 @@
                                                                    value="{$cards_story->cards_rest_sum}"></td>
                                                         <td><input class="form-control validity_period"
                                                                    name="cards_validity_period[][cards_validity_period]"
-                                                                   type="text" value="{$credits_story->cards_validity_period}"></td>
-                                                        <td><select class="form-control" name="cards_delay[][cards_delay]">
+                                                                   type="text"
+                                                                   value="{$credits_story->cards_validity_period}"></td>
+                                                        <td><select class="form-control"
+                                                                    name="cards_delay[][cards_delay]">
                                                                 <option value="Да">Да</option>
                                                                 <option value="Нет">Нет</option>
                                                             </select

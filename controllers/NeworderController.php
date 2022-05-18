@@ -507,6 +507,26 @@ class NeworderController extends Controller
             exit;
         }
 
+        if ($this->request->get('action') == 'check_same_users') {
+
+            $user['lastname'] = $this->request->get('lastname');
+            $user['firstname'] = $this->request->get('firstname');
+
+            if($this->request->get('patronymic'))
+                $user['patronymic'] = $this->request->get('patronymic');
+
+            $user['birth'] = date('d.m.Y', strtotime($this->request->get('birth')));
+
+            $users = $this->users->check_exist_users($user);
+
+            if(!empty($users))
+                echo json_encode($users);
+            else
+                echo json_encode(['empty' => 'Совпадений не найдено']);
+
+            exit;
+        }
+
         $loantypes = array();
         foreach ($this->loantypes->get_loantypes() as $lt) {
             $loantypes[$lt->id] = $lt;
