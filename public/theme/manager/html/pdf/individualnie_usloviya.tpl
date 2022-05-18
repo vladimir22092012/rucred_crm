@@ -1,6 +1,6 @@
 <table>
     <tr style="width: 100%">
-        <td style="width: 50%"><img src="{$config->root_url}/public/theme/manager/html/pdf/i/RKO.png" style="height: 80px">
+        <td style="width: 50%"><img src="{$config->root_url}/theme/manager/html/pdf/i/RKO.png" style="height: 80px">
         </td>
     </tr>
     <tr style="width: 100%">
@@ -32,7 +32,7 @@
 <table border="1">
     <tr style="width: 100%;">
         <td style="width: 28%;" height="140">
-            <img src="{$config->root_url}/public/theme/manager/html/pdf/i/qrcode.jpg" width="140">
+            <img src="{$config->root_url}/theme/manager/html/pdf/i/qrcode.jpg" width="140">
         </td>
         <td style="width: 36%" align="center">
             <div>Полная стоимость микрозайма в процентах годовых
@@ -442,7 +442,7 @@
             <td style="width: 70%" align="left">С содержанием Общих условий получения и обслуживания микрозайма
                 Заёмщик ознакомлен и
                 согласен:<br><br>Подпись Заёмщика: _____________________ <img
-                        src="{$config->root_url}/public/theme/manager/html/pdf/i/warning.png" style="height: 12px;"><br><br>Общие
+                        src="{$config->root_url}/theme/manager/html/pdf/i/warning.png" style="height: 12px;"><br><br>Общие
                 условия Договора в печатном
                 варианте выдаются Заимодавцем по требованию Заёмщика<br>
             </td>
