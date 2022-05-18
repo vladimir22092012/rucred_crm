@@ -1,7 +1,5 @@
 <?php
 
-use JetBrains\PhpStorm\NoReturn;
-
 function core_autoload($classname)
 {
     if (file_exists(__DIR__ .'/core/'.$classname.'.php'))
