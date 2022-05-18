@@ -559,6 +559,40 @@ class OfflineOrderController extends Controller
             }
         }
 
+        $groups = $this->Groups->get_groups();
+        $companies = $this->Companies->get_companies(['group_id' => $order->group_id]);
+
+        if (!empty($order->company_id)) {
+
+            $branches = $this->Branches->get_branches(['company_id' => $order->company_id]);
+            $this->design->assign('branches', $branches);
+
+            if(!empty($order->branche_id)){
+                foreach ($branches as $branch){
+                    if($order->branche_id == $branch->id)
+                        $branch_name = $branch->name;
+                }
+            }
+
+            if(!empty($order->company_id)){
+                foreach ($companies as $company){
+                    if($order->company_id == $company->id)
+                        $company_name = $company->name;
+                }
+            }
+        }
+
+        if(!isset($branch_name))
+            $branch_name = 'Отсутствует филиал';
+
+        if(!isset($company_name))
+            $company_name = 'Отсутствует компания';
+
+        $this->design->assign('groups', $groups);
+        $this->design->assign('companies', $companies);
+        $this->design->assign('branch_name', $branch_name);
+        $this->design->assign('company_name', $company_name);
+
         $this->design->assign('documents', $documents);
 
         $body = $this->design->fetch('offline/order.tpl');

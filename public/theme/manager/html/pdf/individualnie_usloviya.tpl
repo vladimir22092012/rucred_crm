@@ -442,7 +442,7 @@
             <td style="width: 70%" align="left">С содержанием Общих условий получения и обслуживания микрозайма
                 Заёмщик ознакомлен и
                 согласен:<br><br>Подпись Заёмщика: _____________________ <img
-                        src="{$config->root_url}/theme/manager/html/pdf/i/warning.png" style="height: 12px;"><br><br>Общие
+                    src="{$config->root_url}/theme/manager/html/pdf/i/warning.png" style="height: 12px;"><br><br>Общие
                 условия Договора в печатном
                 варианте выдаются Заимодавцем по требованию Заёмщика<br>
             </td>
