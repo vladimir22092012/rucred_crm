@@ -7,6 +7,18 @@ class NeworderController extends Controller
     public function fetch()
     {
         if ($this->request->method('post')) {
+
+            if ($this->request->post('action', 'string')) {
+                switch ($this->request->post('action', 'string')) :
+                    case 'edit_phone':
+                        $this->action_edit_phone();
+                        break;
+                    case 'edit_phone_with_code':
+                        $this->action_edit_phone_with_code();
+                        break;
+                endswitch;
+            }
+
             $amount = preg_replace("/[^,.0-9]/", '', $this->request->post('amount'));
             $start_date = $this->request->post('start_date');
             $start_date = date('Y-m-d', strtotime($start_date));
@@ -537,6 +549,49 @@ class NeworderController extends Controller
         $this->design->assign('groups', $groups);
 
         return $this->design->fetch('offline/neworder.tpl');
+    }
+
+    private function action_edit_phone()
+    {
+        $phone = $this->request->post('phone');
+        if (empty($phone)) {
+            echo json_encode(['error' => 1]);
+            exit;
+        }
+        $code = random_int(1000, 9999);
+        $response = $this->sms->send(
+            $phone,
+            $code
+        );
+        $this->db->query('
+        INSERT INTO s_sms_messages
+        SET phone = ?, code = ?, response = ?, ip = ?, created = ?
+        ', $phone, $code, $response['resp'], $_SERVER['REMOTE_ADDR'] ?? '', date('Y-m-d H:i:s'));
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_edit_phone_with_code()
+    {
+        $phone= $this->request->post('phone');
+        $code = $this->request->post('code');
+
+        $this->db->query("
+        SELECT code, created
+        FROM s_sms_messages
+        WHERE phone = ?
+        AND code = ?
+        ORDER BY created DESC
+        LIMIT 1
+        ", $phone, $code);
+        $results = $this->db->results();
+        if (empty($results)) {
+            echo json_encode(['error' => 1]);
+            exit;
+        }
+        //$result = $this->managers->update_manager($user_id, ['phone' => $phone]);
+        echo json_encode(['success' => 1]);
+        exit;
     }
 
     private function check_date()
