@@ -8,7 +8,7 @@ require 'contrib/npm.php';
 
 set('application', 'rucred-dev.ru');
 set('repository', 'git@bitbucket.org:rukred/rucred-crm.git');
-set('branch', 'main');
+set('branch', 'master');
 set('default_stage', 'stage');
 set('php_fpm_version', '8.0');
 set('ssh_arguments', ['-o UserKnownHostsFile=/dev/null', '-o StrictHostKeyChecking=no']);
