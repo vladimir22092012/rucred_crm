@@ -536,7 +536,7 @@
 <script src="theme/{$settings->theme|escape}/js/waves.js?v=1.01"></script>
 <!--Menu sidebar -->
 <script src="theme/{$settings->theme|escape}/js/sidebarmenu.js?v=1.01"></script>
-<!--stickey kit -->
+<!--sticky kit -->
 <script src="theme/{$settings->theme|escape}/assets/plugins/sticky-kit-master/dist/sticky-kit.min.js?v=1.01"></script>
 
 <script src="theme/{$settings->theme|escape}/assets/plugins/sweetalert2/dist/sweetalert2.all.min.js?v=1.01"></script>
