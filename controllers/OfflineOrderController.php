@@ -191,6 +191,10 @@ class OfflineOrderController extends Controller
                     return $this->action_edit_personal_number();
                     break;
 
+                case 'change_employer_info':
+                    return $this->action_change_employer_info();
+                    break;
+
 
             endswitch;
 
@@ -3071,11 +3075,30 @@ class OfflineOrderController extends Controller
         return $date;
     }
 
-    private function action_delete_order(){
+    private function action_delete_order()
+    {
 
         $order_id = $this->request->post('order_id');
 
         $this->orders->update_order($order_id, ['status' => 16]);
+    }
+
+    private function action_change_employer_info()
+    {
+        $order_id = $this->request->post('order_id');
+        $group_id = $this->request->post('group');
+        $company_id = $this->request->post('company');
+        $branch_id = $this->request->post('branch');
+
+        $order =
+            [
+                'group_id' => $group_id,
+                'company_id' => $company_id,
+                'branche_id' => $branch_id
+            ];
+
+        $this->orders->update_order($order_id, $order);
+        exit;
     }
 
 }
