@@ -9,21 +9,16 @@ class NeworderController extends Controller
         if ($this->request->method('post')) {
 
             if ($this->request->post('action', 'string')) {
-                switch ($this->request->post('action', 'string')) :
-                    case 'edit_phone':
-                        $this->action_edit_phone();
-                        break;
-                    case 'edit_phone_with_code':
-                        $this->action_edit_phone_with_code();
-                        break;
-                endswitch;
+                $methodName = 'action_' . $this->request->post('action', 'string');
+                if ( method_exists($this, $methodName) ) {
+                    $this->$methodName();
+                }
             }
 
             $phone_confirmed = $this->request->post('phone_confirmed');
 
             if ($phone_confirmed !== 'true') {
-                echo json_encode(['error' => 1, 'reason' => 'Телефон не подтверждён']);
-                exit;
+                response_json(['error' => 1, 'reason' => 'Телефон не подтверждён']);
             }
 
             $amount = preg_replace("/[^,.0-9]/", '', $this->request->post('amount'));
@@ -375,7 +370,7 @@ class NeworderController extends Controller
                     $paydate->add(new DateInterval('P1M'));
                 }
 
-                if ($rest_sum != 0) {
+                if ($rest_sum !== 0) {
                     $paydate->setDate($paydate->format('Y'), $paydate->format('m'), 10);
                     $interval = new DateInterval('P1M');
                     $end_date->setTime(0, 0, 1);
@@ -468,21 +463,19 @@ class NeworderController extends Controller
                     $order['uid'] = $uid;
                 }
 
-                if (!empty(intval($this->request->post('order_id')))) {
-                    $order_id = intval($this->request->post('order_id'));
+                if (!empty((int)$this->request->post('order_id'))) {
+                    $order_id = (int)$this->request->post('order_id');
                     $this->orders->update_order($order_id, $order);
 
                     if ($this->request->post('create_new_order')) {
                         header("Location: " . $this->config->root_url . '/offline_order/' . $order_id);
                         exit;
                     }
+                } else if ($order_id = $this->orders->add_order($order)) {
+                    header("Location: " . $this->config->root_url . '/offline_order/' . $order_id);
+                    exit;
                 } else {
-                    if ($order_id = $this->orders->add_order($order)) {
-                        header("Location: " . $this->config->root_url . '/offline_order/' . $order_id);
-                        exit;
-                    } else {
-                        $this->design->assign('error', 'Не удалось создать заявку');
-                    }
+                    $this->design->assign('error', 'Не удалось создать заявку');
                 }
             }
             $this->design->assign('order', (object)$user);
@@ -517,7 +510,7 @@ class NeworderController extends Controller
             exit;
         }
 
-        if ($this->request->get('action') == 'get_branches') {
+        if ($this->request->get('action') === 'get_branches') {
             $company_id = $this->request->get('company_id');
 
             $branches = $this->Branches->get_branches(['company_id' => $company_id]);
@@ -526,7 +519,7 @@ class NeworderController extends Controller
             exit;
         }
 
-        if ($this->request->get('action') == 'check_same_users') {
+        if ($this->request->get('action') === 'check_same_users') {
 
             $user['lastname'] = $this->request->get('lastname');
             $user['firstname'] = $this->request->get('firstname');
@@ -565,8 +558,7 @@ class NeworderController extends Controller
             echo json_encode(['error' => 1]);
             exit;
         }
-        $code = random_int(1000, 9999);
-        $response = $this->sms->send(
+        $code = random_int(1000, 9999);        $response = $this->sms->send(
             $phone,
             $code
         );
