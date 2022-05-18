@@ -629,21 +629,21 @@
         {if $date != 'result'}
             <tr>
                 <td align="center">{$date}</td>
-                <td align="left">{$payment['pay_sum']|number_format:2:',':' '}</td>
-                <td align="left">{$payment['loan_percents_pay']|number_format:2:',':' '}</td>
-                <td align="left">{$payment['loan_body_pay']|number_format:2:',':' '}</td>
-                <td align="left">{$payment['comission_pay']|number_format:2:',':' '}</td>
-                <td align="left">{$payment['rest_pay']|number_format:2:',':' '}</td>
+                <td align="left">{$payment['pay_sum']|floatval|number_format:2:',':' '}</td>
+                <td align="left">{$payment['loan_percents_pay']|floatval|number_format:2:',':' '}</td>
+                <td align="left">{$payment['loan_body_pay']|floatval|number_format:2:',':' '}</td>
+                <td align="left">{$payment['comission_pay']|floatval|number_format:2:',':' '}</td>
+                <td align="left">{$payment['rest_pay']|floatval|number_format:2:',':' '}</td>
             </tr>
         {/if}
     {/foreach}
     <tr>
         <td style="background-color: #b3b2ab">ИТОГО:</td>
-        <td style="background-color: #b3b2ab">{$payment_schedule['result']['all_sum_pay']|number_format:2:',':' '}</td>
-        <td style="background-color: #b3b2ab">{$payment_schedule['result']['all_loan_percents_pay']|number_format:2:',':' '}</td>
-        <td style="background-color: #b3b2ab">{$payment_schedule['result']['all_loan_body_pay']|number_format:2:',':' '}</td>
-        <td style="background-color: #b3b2ab">{$payment_schedule['result']['all_comission_pay']|number_format:2:',':' '}</td>
-        <td style="background-color: #b3b2ab">{$payment_schedule['result']['all_rest_pay_sum']|number_format:2:',':' '}</td>
+        <td style="background-color: #b3b2ab">{$payment_schedule['result']['all_sum_pay']|floatval|number_format:2:',':' '}</td>
+        <td style="background-color: #b3b2ab">{$payment_schedule['result']['all_loan_percents_pay']|floatval|number_format:2:',':' '}</td>
+        <td style="background-color: #b3b2ab">{$payment_schedule['result']['all_loan_body_pay']|floatval|number_format:2:',':' '}</td>
+        <td style="background-color: #b3b2ab">{$payment_schedule['result']['all_comission_pay']|floatval|number_format:2:',':' '}</td>
+        <td style="background-color: #b3b2ab">{$payment_schedule['result']['all_rest_pay_sum']|floatval|number_format:2:',':' '}</td>
     </tr>
     <tr>
         <td colspan="5">Полная стоимость микрозайма, % годовых:</td>
