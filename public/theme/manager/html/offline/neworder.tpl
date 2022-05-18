@@ -32,6 +32,7 @@
         $(function () {
 
             $('.show_phone_code').hide();
+            $('.show_phone_confirmed').hide();
 
             $('.accept_edit').click(function (e) {
                 e.preventDefault();
@@ -81,6 +82,7 @@
                             });
                         } else {
                             $('.show_phone_code').hide();
+                            $('.show_phone_confirmed').show();
                             $('.phone_confirmed').val('true');
                         }
                     }
@@ -379,7 +381,7 @@
                                             <div class="col-12">
                                                 <div class="phone_edit_form">
                                                     <div class="mb-3">
-                                                        <label class="control-label">Телефон</label>
+                                                        <label class="control-label">Телефон<span class="show_phone_confirmed"> (подтвержден)</span></label>
                                                         <div class="form-row">
                                                             <div class="col">
                                                                 <input class="form-control phone_num"

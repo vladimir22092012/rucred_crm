@@ -19,6 +19,13 @@ class NeworderController extends Controller
                 endswitch;
             }
 
+            $phone_confirmed = $this->request->post('phone_confirmed');
+
+            if ($phone_confirmed !== 'true') {
+                echo json_encode(['error' => 1, 'reason' => 'Телефон не подтверждён']);
+                exit;
+            }
+
             $amount = preg_replace("/[^,.0-9]/", '', $this->request->post('amount'));
             $start_date = $this->request->post('start_date');
             $start_date = date('Y-m-d', strtotime($start_date));
@@ -35,10 +42,10 @@ class NeworderController extends Controller
                 $period = date_diff($start_date, $end_date)->days;
             }
 
-            $percent = floatval($this->request->post('percent'));
-            $charge = floatval($this->request->post('charge'));
-            $insure = floatval($this->request->post('insure'));
-            $peni = floatval($this->request->post('peni'));
+            $percent = (float)$this->request->post('percent');
+            $charge = (float)$this->request->post('charge');
+            $insure = (float)$this->request->post('insure');
+            $peni = (float)$this->request->post('peni');
 
             $this->design->assign('percent', $percent);
             $this->design->assign('charge', $charge);
@@ -589,7 +596,6 @@ class NeworderController extends Controller
             echo json_encode(['error' => 1]);
             exit;
         }
-        //$result = $this->managers->update_manager($user_id, ['phone' => $phone]);
         echo json_encode(['success' => 1]);
         exit;
     }
