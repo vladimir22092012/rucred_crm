@@ -1,5 +1,7 @@
 <?php
 
+use App\Services\MailService;
+
 class ManagerController extends Controller
 {
     public function fetch()
@@ -196,6 +198,16 @@ class ManagerController extends Controller
         INSERT INTO s_email_messages
         SET user_id = ?, email = ?, code = ?, created = ?
         ', $user_id, $email, $code, date('Y-m-d H:i:s'));
+
+        $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+        $mailResponse = $mailService->send(
+            'rucred@ucase.live',
+            $email,
+            'RuCred | Ваш проверочный код для смены почты',
+            'Введите этот код в поле для проверки почты: ' . $code,
+            '<h1>Введите этот код в поле для проверки почты:</h1>' . "<h2>$code</h2>"
+        );
+        var_dump($mailResponse);
 
         echo json_encode(['success' => 1]);
         exit;
