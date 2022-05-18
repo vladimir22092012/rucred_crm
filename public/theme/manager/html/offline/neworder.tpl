@@ -30,6 +30,67 @@
 
     <script>
         $(function () {
+
+            $('.show_phone').hide();
+            $('.show_phone_code').hide();
+            $('.phone_edit_form').show();
+
+            $('.accept_edit').click(function (e) {
+                e.preventDefault();
+
+                let user_id = $(this).attr('data-user');
+                let phone = $('input[class="form-control phone_num"]').val();
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'edit_phone',
+                        user_id: user_id,
+                        phone: phone,
+                    },
+                    success: function (resp) {
+                        if (resp == 'error') {
+                            Swal.fire({
+                                title: 'Такой номер уже зарегистрирован',
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+                        else {
+                            $('.show_phone_code').show();
+                        }
+                    }
+                })
+            });
+
+            $('.accept_edit_with_code').click(function (e) {
+                e.preventDefault();
+
+                let user_id = $(this).attr('data-user');
+                let phone = $('input[class="form-control phone"]').val();
+                let phone_code = $('input[class="form-control phone_code"]').val();
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'edit_phone_with_code',
+                        user_id: user_id,
+                        phone: phone,
+                        code: phone_code,
+                    },
+                    success: function (response) {
+                        console.log(JSON.parse(response));
+                        if (JSON.parse(response).error === 1) {
+                            Swal.fire({
+                                title: 'Неверный код',
+                                confirmButtonText: 'ОК'
+                            });
+                        } else {
+                            location.reload();
+                        }
+                    }
+                })
+            });
+
             let order = {{json_encode($order)}};
             if (order) {
                 if (parseInt(order['profunion']) == 3) {
@@ -318,17 +379,45 @@
                                             </div>
                                         </div>
                                         <br>
-                                        <div style="display: none" id="users_same">
-
+                                        <div>
+                                            <div class="col-12">
+                                                <div class="phone_edit_form">
+                                                    <div class="mb-3">
+                                                        <label class="control-label">Телефон</label>
+                                                        <div class="form-row">
+                                                            <div class="col">
+                                                                <input class="form-control phone_num"
+                                                                       type="text"
+                                                                       name="phone"
+                                                                       placeholder="+7(900)000-00-00" value="{$order->phone_mobile}"/>
+                                                                <input type="hidden" name="phone_confirmed" value="false"/>
+                                                            </div>
+                                                            <div class="col">
+                                                                <input type="button"
+                                                                       data-user="{$user->id}"
+                                                                       class="btn btn-success accept_edit"
+                                                                       value="Сохранить">
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div class="input-group show_phone_code"
+                                                                     style="display: none">
+                                                                    <input type="text" class="form-control phone_code"
+                                                                           placeholder="Введите код из смс">
+                                                                    <div class="input-group-append">
+                                                                        <button class="btn btn-primary accept_edit_with_code"
+                                                                                type="button" data-user="{$user->id}">
+                                                                            Подтвердить
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
+                                        <div style="display: none" id="users_same"></div>
                                         <br>
-                                        <div style="width: 100%;">
-                                            <label class="control-label">Телефон</label><br>
-                                            <input class="form-control phone_num"
-                                                   style="width: 190px; margin-left: 25px"
-                                                   type="text"
-                                                   name="phone"
-                                                   placeholder="+7(900)000-00-00" value="{$order->phone_mobile}"/>
                                         </div>
                                         <br><br>
                                         <h4>Менялись ли ваши фамилия, имя, отчество?</h4><br>
