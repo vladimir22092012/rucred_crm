@@ -2,7 +2,7 @@
 
 {capture name='page_scripts'}
     <script
-        src="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
+            src="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     <script src="theme/{$settings->theme|escape}/assets/plugins/fancybox3/dist/jquery.fancybox.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/order.js?v=1.17"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/movements.app.js"></script>
@@ -489,7 +489,139 @@
                 $('.rest_sum').eq(period - 1).val(reason);
                 $('input[name="result[all_loan_body_pay]"]').val(new Intl.NumberFormat('ru-RU').format(last_od));
 
+
+                let pay_od = $(this).val();
+                pay_od = pay_od.replace(' ', '');
+                pay_od = pay_od.replace(' ', '');
+                pay_od = pay_od.replace(',', '.');
+
+                let percents_pay = $(this).closest('tr').find('.restructure_prc').val();
+
+                percents_pay = percents_pay.replace(' ', '');
+                percents_pay = percents_pay.replace(' ', '');
+                percents_pay = percents_pay.replace(',', '.');
+
+                let comission_pay = $(this).closest('tr').find('.restructure_cms').val();
+
+                if (comission_pay) {
+                    comission_pay = comission_pay.replace(' ', '');
+                    comission_pay = comission_pay.replace(' ', '');
+                    comission_pay = comission_pay.replace(',', '.');
+                }
+
+                let annouitet_sum = parseFloat(pay_od) + parseFloat(percents_pay) + parseFloat(comission_pay);
+
+                $(this).closest('tr').find('.restructure_pay_sum').val(new Intl.NumberFormat('ru-RU').format(annouitet_sum));
+
+                calculate_annouitet();
+
             });
+
+            $('.restructure_prc').on('change', function () {
+
+                let loan_prc = 0;
+
+                $('.restructure_prc').each(function () {
+                    let val = $(this).val();
+                    val = val.replace(' ', '');
+                    val = val.replace(' ', '');
+                    val = val.replace(',', '.');
+
+                    loan_prc = loan_prc + parseFloat(val);
+                });
+
+                let sum = loan_prc.toFixed(2);
+
+                $('input[name="result[all_loan_percents_pay]"]').val(new Intl.NumberFormat('ru-RU').format(sum));
+
+
+                let comission_pay = $(this).val();
+                comission_pay = comission_pay.replace(' ', '');
+                comission_pay = comission_pay.replace(' ', '');
+                comission_pay = comission_pay.replace(',', '.');
+
+                let pay_od = $(this).closest('tr').find('.restructure_od').val();
+
+                pay_od = pay_od.replace(' ', '');
+                pay_od = pay_od.replace(' ', '');
+                pay_od = pay_od.replace(',', '.');
+
+                let percents_pay = $(this).closest('tr').find('.restructure_prc').val();
+                percents_pay = percents_pay.replace(' ', '');
+                percents_pay = percents_pay.replace(' ', '');
+                percents_pay = percents_pay.replace(',', '.');
+
+                let annouitet_sum = parseFloat(pay_od) + parseFloat(percents_pay) + parseFloat(comission_pay);
+
+                $(this).closest('tr').find('.restructure_pay_sum').val(new Intl.NumberFormat('ru-RU').format(annouitet_sum));
+
+                calculate_annouitet();
+
+            });
+
+            $('.restructure_cms').on('change', function () {
+
+                let loan_cms = 0;
+
+                $('.restructure_cms').each(function () {
+                    let val = $(this).val();
+                    val = val.replace(' ', '');
+                    val = val.replace(' ', '');
+                    val = val.replace(',', '.');
+
+                    loan_cms = loan_cms + parseFloat(val);
+                });
+
+                let sum = loan_cms.toFixed(2);
+
+                $('input[name="result[all_comission_pay]"]').val(new Intl.NumberFormat('ru-RU').format(sum));
+
+
+                let percents_pay = $(this).val();
+                percents_pay = percents_pay.replace(' ', '');
+                percents_pay = percents_pay.replace(' ', '');
+                percents_pay = percents_pay.replace(',', '.');
+
+                let pay_od = $(this).closest('tr').find('.restructure_od').val();
+
+                pay_od = pay_od.replace(' ', '');
+                pay_od = pay_od.replace(' ', '');
+                pay_od = pay_od.replace(',', '.');
+
+                let comission_pay = $(this).closest('tr').find('.restructure_cms').val();
+
+                if (comission_pay) {
+                    comission_pay = comission_pay.replace(' ', '');
+                    comission_pay = comission_pay.replace(' ', '');
+                    comission_pay = comission_pay.replace(',', '.');
+                }
+
+                let annouitet_sum = parseFloat(pay_od) + parseFloat(percents_pay) + parseFloat(comission_pay);
+
+                $(this).closest('tr').find('.restructure_pay_sum').val(new Intl.NumberFormat('ru-RU').format(annouitet_sum));
+
+                calculate_annouitet();
+
+            });
+
+            function calculate_annouitet(){
+
+                let loan_pay_sum = 0;
+
+                $('.restructure_pay_sum').each(function () {
+                    let val = $(this).val();
+                    val = val.replace(' ', '');
+                    val = val.replace(' ', '');
+                    val = val.replace(',', '.');
+
+                    loan_pay_sum = loan_pay_sum + parseFloat(val);
+                });
+
+                let sum = loan_pay_sum.toFixed(2);
+
+                $('input[name="result[all_sum_pay]"]').val(new Intl.NumberFormat('ru-RU').format(sum));
+            }
+
 
             $('.delete_order').on('click', function (e) {
                 e.preventDefault();
@@ -726,7 +858,7 @@
                                                class="text-info js-edit-form edit-amount js-event-add-click"
                                                data-event="30" data-manager="{$manager->id}"
                                                data-order="{$order->order_id}" data-user="{$order->user_id}"><i
-                                                    class=" fas fa-edit"></i></a>
+                                                        class=" fas fa-edit"></i></a>
                                         </div>
 
                                         <div class="edit-block hide">
@@ -750,7 +882,7 @@
                                                 <button type="submit" class="btn btn-success js-event-add-click"
                                                         data-event="40" data-manager="{$manager->id}"
                                                         data-order="{$order->order_id}" data-user="{$order->user_id}"><i
-                                                        class="fa fa-check"></i> Сохранить
+                                                            class="fa fa-check"></i> Сохранить
                                                 </button>
                                                 <button type="button" class="btn btn-inverse js-cancel-edit">Отмена
                                                 </button>
@@ -787,7 +919,7 @@
                                                    class="text-info js-edit-form edit-amount js-event-add-click"
                                                    data-event="31" data-manager="{$manager->id}"
                                                    data-order="{$order->order_id}" data-user="{$order->user_id}"><i
-                                                        class=" fas fa-edit"></i></a>
+                                                            class=" fas fa-edit"></i></a>
                                                 </h4>
                                             {/if}
                                         </div>
@@ -834,9 +966,9 @@
                                     {if $order->status == 14 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
                                         <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
                                             <button
-                                                class="btn btn-success btn-block js-approve-order js-event-add-click"
-                                                data-event="12" data-user="{$order->user_id}"
-                                                data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                                    class="btn btn-success btn-block js-approve-order js-event-add-click"
+                                                    data-event="12" data-user="{$order->user_id}"
+                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
                                                 <i class="fas fa-check-circle"></i>
                                                 <span>Одобрить</span>
                                             </button>
@@ -940,9 +1072,9 @@
                                             {/if}
                                             {if in_array('close_contract', $manager->permissions)}
                                                 <button
-                                                    class="btn btn-danger btn-block js-open-close-form js-event-add-click"
-                                                    data-event="15" data-user="{$order->user_id}"
-                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                                        class="btn btn-danger btn-block js-open-close-form js-event-add-click"
+                                                        data-event="15" data-user="{$order->user_id}"
+                                                        data-order="{$order->order_id}" data-manager="{$manager->id}">
                                                     Закрыть договор
                                                 </button>
                                             {/if}
@@ -968,7 +1100,7 @@
                                             {if $have_newest_order}
                                                 <div class="text-center">
                                                     <a href="order/{$have_newest_order}"><strong
-                                                            class="text-danger text-center">У клиента есть новая
+                                                                class="text-danger text-center">У клиента есть новая
                                                             заявка</strong></a>
                                                 </div>
                                             {else}
@@ -1034,7 +1166,7 @@
                                         <span class="hidden-sm-up"><i class="ti-user"></i></span>
                                         <span class="hidden-xs-down">
                                             Комментарии {if $comments|count > 0}<span
-                                                class="label label-rounded label-primary">{$comments|count}</span>{/if}
+                                                    class="label label-rounded label-primary">{$comments|count}</span>{/if}
                                         </span>
                                     </a>
                                 </li>
@@ -1092,7 +1224,7 @@
                                                            data-event="32" data-manager="{$manager->id}"
                                                            data-order="{$order->order_id}"
                                                            data-user="{$order->user_id}"><i
-                                                                class=" fas fa-edit"></i></a></h4>
+                                                                    class=" fas fa-edit"></i></a></h4>
                                                         </span>
                                                 </h6>
 
@@ -1163,7 +1295,7 @@
                                                         <div class="col-md-12">
                                                             <div class="form-group row m-0">
                                                                 <label
-                                                                    class="control-label col-md 4">Telegram:</label><br>
+                                                                        class="control-label col-md 4">Telegram:</label><br>
                                                                 <div class="col-md-8">
                                                                     <p class="form-control-static">{$order->telegram_num}</p>
                                                                 </div>
@@ -1174,7 +1306,7 @@
                                                         <div class="col-md-12">
                                                             <div class="form-group row m-0">
                                                                 <label
-                                                                    class="control-label col-md 4">WhatsApp:</label><br>
+                                                                        class="control-label col-md 4">WhatsApp:</label><br>
                                                                 <div class="col-md-8">
                                                                     <p class="form-control-static">{$order->whatsapp_num}</p>
                                                                 </div>
@@ -1213,7 +1345,7 @@
 
                                                     <div class="col-md-6">
                                                         <div
-                                                            class="form-group mb-1 {if in_array('empty_email', (array)$contactdata_error)}has-danger{/if}">
+                                                                class="form-group mb-1 {if in_array('empty_email', (array)$contactdata_error)}has-danger{/if}">
                                                             <label class="control-label">Email</label>
                                                             <input type="text" name="email" value="{$order->email}"
                                                                    class="form-control" placeholder=""/>
@@ -1225,7 +1357,7 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div
-                                                            class="form-group mb-1 {if in_array('empty_birth', (array)$contactdata_error)}has-danger{/if}">
+                                                                class="form-group mb-1 {if in_array('empty_birth', (array)$contactdata_error)}has-danger{/if}">
                                                             <label class="control-label">Дата рождения</label>
                                                             <input type="text" name="birth" value="{$order->birth}"
                                                                    class="form-control" placeholder="" required="true"/>
@@ -1245,7 +1377,7 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div
-                                                            class="form-group mb-2 {if in_array('empty_birth_place', (array)$contactdata_error)}has-danger{/if}">
+                                                                class="form-group mb-2 {if in_array('empty_birth_place', (array)$contactdata_error)}has-danger{/if}">
                                                             <label class="control-label">Место рождения</label>
                                                             <input type="text" name="birth_place"
                                                                    value="{$order->birth_place|escape}"
@@ -1261,7 +1393,7 @@
 
                                                     <div class="col-md-4">
                                                         <div
-                                                            class="form-group mb-1 {if in_array('empty_passport_serial', (array)$contactdata_error)}has-danger{/if}">
+                                                                class="form-group mb-1 {if in_array('empty_passport_serial', (array)$contactdata_error)}has-danger{/if}">
                                                             <label class="control-label">Серия и номер паспорта</label>
                                                             <input type="text" class="form-control"
                                                                    name="passport_serial"
@@ -1276,7 +1408,7 @@
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div
-                                                            class="form-group mb-1 {if in_array('empty_passport_date', (array)$contactdata_error)}has-danger{/if}">
+                                                                class="form-group mb-1 {if in_array('empty_passport_date', (array)$contactdata_error)}has-danger{/if}">
                                                             <label class="control-label">Дата выдачи</label>
                                                             <input type="text" class="form-control" name="passport_date"
                                                                    value="{$order->passport_date}" placeholder=""
@@ -1290,7 +1422,7 @@
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div
-                                                            class="form-group mb-1 {if in_array('empty_subdivision_code', (array)$contactdata_error)}has-danger{/if}">
+                                                                class="form-group mb-1 {if in_array('empty_subdivision_code', (array)$contactdata_error)}has-danger{/if}">
                                                             <label class="control-label">Код подразделения</label>
                                                             <input type="text" class="form-control"
                                                                    name="subdivision_code"
@@ -1305,7 +1437,7 @@
                                                     </div>
                                                     <div class="col-md-12">
                                                         <div
-                                                            class="form-group {if in_array('empty_passport_issued', (array)$contactdata_error)}has-danger{/if}">
+                                                                class="form-group {if in_array('empty_passport_issued', (array)$contactdata_error)}has-danger{/if}">
                                                             <label class="control-label">Кем выдан</label>
                                                             <input type="text" class="form-control"
                                                                    name="passport_issued"
@@ -1327,7 +1459,7 @@
                                                                     data-event="42" data-manager="{$manager->id}"
                                                                     data-order="{$order->order_id}"
                                                                     data-user="{$order->user_id}"><i
-                                                                    class="fa fa-check"></i> Сохранить
+                                                                        class="fa fa-check"></i> Сохранить
                                                             </button>
                                                             <button type="button"
                                                                     class="btn btn-inverse js-cancel-edit">Отмена
@@ -1383,7 +1515,8 @@
                                                                                    class="form-control daterange"
                                                                                    name="date[][date]"
                                                                                    value="{$date}" readonly></td>
-                                                                        <td><input type="text" class="form-control"
+                                                                        <td><input type="text"
+                                                                                   class="form-control restructure_pay_sum"
                                                                                    name="pay_sum[][pay_sum]"
                                                                                    value="{$payment->pay_sum|floatval|number_format:2:',':' '}"
                                                                                    readonly>
@@ -1470,7 +1603,7 @@
                                                        data-event="35" data-manager="{$manager->id}"
                                                        data-order="{$order->order_id}"
                                                        data-user="{$order->user_id}"><i
-                                                            class=" fas fa-edit"></i></a>
+                                                                class=" fas fa-edit"></i></a>
                                                         </span>
                                             </h6>
 
@@ -1628,7 +1761,7 @@
                                                     <a href="javascript:void(0);"
                                                        class="text-white"
                                                        data-user="{$order->user_id}"><i
-                                                            class="fas fa-eraser"></i></a>
+                                                                class="fas fa-eraser"></i></a>
                                                         </span>
                                             </h6>
 
@@ -1743,8 +1876,8 @@
                                             {if !empty($documents)}
                                                 {foreach $documents as $document}
                                                     <div
-                                                        style="width: 100%!important; height: 50px; margin-left: 5px; display: flex; vertical-align: middle"
-                                                        id="{$document->id}">
+                                                            style="width: 100%!important; height: 50px; margin-left: 5px; display: flex; vertical-align: middle"
+                                                            id="{$document->id}">
                                                         <div class="form-group"
                                                              style="width: 10px!important; margin-left: 5px">
                                                             <label class="control-label">{$document->numeration}</label>
@@ -1756,16 +1889,16 @@
                                                         <div style="margin-left: 10px">
                                                             <a target="_blank"
                                                                href="{$config->root_url}/document?id={$document->id}&action=download_file"><input
-                                                                    type="button"
-                                                                    class="btn btn-outline-success download_doc"
-                                                                    value="Сохранить"></a>
+                                                                        type="button"
+                                                                        class="btn btn-outline-success download_doc"
+                                                                        value="Сохранить"></a>
                                                         </div>
                                                         <div style="margin-left: 10px">
                                                             <a target="_blank"
                                                                href="{$config->root_url}/document/{$document->id}"><input
-                                                                    type="button"
-                                                                    class="btn btn-outline-warning print_doc"
-                                                                    value="Распечатать"></a>
+                                                                        type="button"
+                                                                        class="btn btn-outline-warning print_doc"
+                                                                        value="Распечатать"></a>
                                                         </div>
                                                         <div class="btn-group"
                                                              style="margin-left: 10px; height: 35px">
@@ -1805,7 +1938,7 @@
                                                     <hr style="width: 100%; size: 2px">
                                                 {/foreach}
                                                 <div
-                                                    style="width: 100%!important; height: 30px; margin-left: 15px; display: flex; vertical-align: middle">
+                                                        style="width: 100%!important; height: 30px; margin-left: 15px; display: flex; vertical-align: middle">
                                                     <div class="form-group" style="width: 55%!important">
                                                         <label class="control-label">Справка 2-НФДЛ</label>
                                                     </div>
@@ -1813,9 +1946,9 @@
                                                         {if !empty($ndfl)}
                                                             <a download target="_blank"
                                                                href="{$config->back_url}/files/users/{$ndfl->name}"><input
-                                                                    type="button"
-                                                                    class="btn btn-outline-success"
-                                                                    value="Сохранить"></a>
+                                                                        type="button"
+                                                                        class="btn btn-outline-success"
+                                                                        value="Сохранить"></a>
                                                         {/if}
                                                     </div>
                                                     {if empty($ndfl)}
@@ -1849,7 +1982,7 @@
 
                                         {if $order->autoretry_result}
                                             <div
-                                                class="card mb-1 {if $order->autoretry_summ}card-success{else}card-danger{/if}">
+                                                    class="card mb-1 {if $order->autoretry_summ}card-success{else}card-danger{/if}">
                                                 <div class="box ">
                                                     <h6 class="card-title mb-0 text-white text-center">
                                                         Автоповтор</h6>
@@ -1872,7 +2005,7 @@
                                         {/if}
                                         {if $manager->role != 'employer'}
                                             <div
-                                                class="mb-3 border  {if $penalties['scorings'] && $penalties['scorings']->status!=3}card-outline-danger{/if}">
+                                                    class="mb-3 border  {if $penalties['scorings'] && $penalties['scorings']->status!=3}card-outline-danger{/if}">
                                                 <h6 class=" card-header">
                                                     <span class="text-white ">Скоринги</span>
                                                     <span class="float-right">
@@ -1887,12 +2020,12 @@
                                                         </span>
                                                 </h6>
                                                 <div
-                                                    class="message-box js-scorings-block {if $need_update_scorings}js-need-update{/if}"
-                                                    data-order="{$order->order_id}">
+                                                        class="message-box js-scorings-block {if $need_update_scorings}js-need-update{/if}"
+                                                        data-order="{$order->order_id}">
 
                                                     {foreach $scoring_types as $scoring_type}
                                                         <div
-                                                            class="pl-2 pr-2 {if $scorings[$scoring_type->name]->status == 'new'}bg-light-warning{elseif $scorings[$scoring_type->name]->success}bg-light-success{else}bg-light-danger{/if}">
+                                                                class="pl-2 pr-2 {if $scorings[$scoring_type->name]->status == 'new'}bg-light-warning{elseif $scorings[$scoring_type->name]->success}bg-light-success{else}bg-light-danger{/if}">
                                                             <div class="row {if !$scoring_type@last}border-bottom{/if}">
                                                                 <div class="col-12 col-sm-12 pt-2">
                                                                     <h6 class="float-left">
@@ -1900,11 +2033,11 @@
                                                                         {if $scoring_type->name == 'fssp'}
                                                                             {if $scorings[$scoring_type->name]->found_46}
                                                                                 <span
-                                                                                    class="label label-danger">46</span>
+                                                                                        class="label label-danger">46</span>
                                                                             {/if}
                                                                             {if $scorings[$scoring_type->name]->found_47}
                                                                                 <span
-                                                                                    class="label label-danger">47</span>
+                                                                                        class="label label-danger">47</span>
                                                                             {/if}
                                                                         {/if}
                                                                     </h6>
@@ -1913,17 +2046,17 @@
                                                                         <span class="label label-warning float-right">Ожидание</span>
                                                                     {elseif $scorings[$scoring_type->name]->status == 'process'}
                                                                         <span
-                                                                            class="label label-info label-sm float-right">Выполняется</span>
+                                                                                class="label label-info label-sm float-right">Выполняется</span>
                                                                     {elseif $scorings[$scoring_type->name]->status == 'error' || $scorings[$scoring_type->name]->status == 'stopped'}
                                                                         <span
-                                                                            class="label label-danger label-sm float-right">Ошибка</span>
+                                                                                class="label label-danger label-sm float-right">Ошибка</span>
                                                                     {elseif $scorings[$scoring_type->name]->status == 'completed'}
                                                                         {if $scorings[$scoring_type->name]->success}
                                                                             <span
-                                                                                class="label label-success label-sm float-right">Пройден</span>
+                                                                                    class="label label-success label-sm float-right">Пройден</span>
                                                                         {else}
                                                                             <span
-                                                                                class="label label-danger float-right">Не пройден</span>
+                                                                                    class="label label-danger float-right">Не пройден</span>
                                                                         {/if}
                                                                     {/if}
                                                                 </div>
@@ -1992,14 +2125,14 @@
                                                 <span>ИНН</span>
                                                 <span class="float-right">
                                                                 <a href="" class="text-white inn-edit"><i
-                                                                        class=" fas fa-edit"></i></a>
+                                                                            class=" fas fa-edit"></i></a>
                                                         </span>
                                             </h6>
                                             <div class="row view-block p-2 inn-front">
                                                 <div class="col-md-12">
                                                     <div class="form-group mb-0 row">
                                                         <label
-                                                            class="control-label col-md-8 col-7 inn-number">{$user->inn}</label>
+                                                                class="control-label col-md-8 col-7 inn-number">{$user->inn}</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -2025,14 +2158,14 @@
                                                 <span>СНИЛС</span>
                                                 <span class="float-right">
                                                                 <a href="" class="text-white snils-edit"><i
-                                                                        class=" fas fa-edit"></i></a>
+                                                                            class=" fas fa-edit"></i></a>
                                                         </span>
                                             </h6>
                                             <div class="row view-block p-2 snils-front">
                                                 <div class="col-md-12">
                                                     <div class="form-group mb-0 row">
                                                         <label
-                                                            class="control-label col-md-8 col-7 snils-number">{$user->snils}</label>
+                                                                class="control-label col-md-8 col-7 snils-number">{$user->snils}</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -2056,7 +2189,7 @@
                                             <h6 class="card-header text-white">
                                                 <span>Расчетный счет</span>
                                                 <span class="float-right"><a class="text-white cors-edit" href=""><i
-                                                            class=" fas fa-edit"></i></a></span>
+                                                                class=" fas fa-edit"></i></a></span>
                                             </h6>
                                             <div class="cors-front">
                                                 <div class="row view-block p-2">
@@ -2070,7 +2203,7 @@
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-0 row">
                                                             <label
-                                                                class="control-label col-md-12 fio-hold-front">{$user->fio_acc_holder}</label>
+                                                                    class="control-label col-md-12 fio-hold-front">{$user->fio_acc_holder}</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -2084,7 +2217,7 @@
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-0 row">
                                                             <label
-                                                                class="control-label col-md-12 acc-num-front">{$user->account_number}</label>
+                                                                    class="control-label col-md-12 acc-num-front">{$user->account_number}</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -2098,7 +2231,7 @@
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-0 row">
                                                             <label
-                                                                class="control-label col-md-12 bank-name-front">{$user->bank_name}</label>
+                                                                    class="control-label col-md-12 bank-name-front">{$user->bank_name}</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -2111,7 +2244,7 @@
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-0 row">
                                                             <label
-                                                                class="control-label col-md-12 bik-front">{$user->bik_bank}</label>
+                                                                    class="control-label col-md-12 bik-front">{$user->bik_bank}</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -2202,7 +2335,7 @@
                                                            data-order="{$order->order_id}"
                                                            data-user="{$order->user_id}">
                                                             <div class="ribbon ribbon-corner {$ribbon_class}"><i
-                                                                    class="{$ribbon_icon}"></i></div>
+                                                                        class="{$ribbon_icon}"></i></div>
                                                             <img src="{$config->back_url}/files/users/{$file->name}"
                                                                  alt="" class="img-responsive" style=""/>
                                                         </a>
@@ -2224,36 +2357,36 @@
                                                                          x-placement="bottom-start">
                                                                         <div class="p-1 dropdown-item">
                                                                             <button
-                                                                                class="btn btn-sm btn-block btn-outline-success js-image-accept js-event-add-click"
-                                                                                data-event="51"
-                                                                                data-manager="{$manager->id}"
-                                                                                data-order="{$order->order_id}"
-                                                                                data-user="{$order->user_id}"
-                                                                                data-id="{$file->id}" type="button">
+                                                                                    class="btn btn-sm btn-block btn-outline-success js-image-accept js-event-add-click"
+                                                                                    data-event="51"
+                                                                                    data-manager="{$manager->id}"
+                                                                                    data-order="{$order->order_id}"
+                                                                                    data-user="{$order->user_id}"
+                                                                                    data-id="{$file->id}" type="button">
                                                                                 <i class="fas fa-check-circle"></i>
                                                                                 <span>Принять</span>
                                                                             </button>
                                                                         </div>
                                                                         <div class="p-1 dropdown-item">
                                                                             <button
-                                                                                class="btn btn-sm btn-block btn-outline-danger js-image-reject js-event-add-click"
-                                                                                data-event="52"
-                                                                                data-manager="{$manager->id}"
-                                                                                data-order="{$order->order_id}"
-                                                                                data-user="{$order->user_id}"
-                                                                                data-id="{$file->id}" type="button">
+                                                                                    class="btn btn-sm btn-block btn-outline-danger js-image-reject js-event-add-click"
+                                                                                    data-event="52"
+                                                                                    data-manager="{$manager->id}"
+                                                                                    data-order="{$order->order_id}"
+                                                                                    data-user="{$order->user_id}"
+                                                                                    data-id="{$file->id}" type="button">
                                                                                 <i class="fas fa-times-circle"></i>
                                                                                 <span>Отклонить</span>
                                                                             </button>
                                                                         </div>
                                                                         <div class="p-1 pt-3 dropdown-item">
                                                                             <button
-                                                                                class="btn btn-sm btn-block btn-danger js-image-remove js-event-add-click"
-                                                                                data-event="53"
-                                                                                data-manager="{$manager->id}"
-                                                                                data-order="{$order->order_id}"
-                                                                                data-user="{$order->user_id}"
-                                                                                data-id="{$file->id}" type="button">
+                                                                                    class="btn btn-sm btn-block btn-danger js-image-remove js-event-add-click"
+                                                                                    data-event="53"
+                                                                                    data-manager="{$manager->id}"
+                                                                                    data-order="{$order->order_id}"
+                                                                                    data-user="{$order->user_id}"
+                                                                                    data-id="{$file->id}" type="button">
                                                                                 <i class="fas fa-trash"></i>
                                                                                 <span>Удалить</span>
                                                                             </button>
@@ -2307,7 +2440,7 @@
                                         <div class="col-md-12">
                                             <div class="form-actions">
                                                 <button type="submit" class="btn btn-success"><i
-                                                        class="fa fa-check"></i> Сохранить
+                                                            class="fa fa-check"></i> Сохранить
                                                 </button>
                                                 <button type="button" class="btn btn-inverse js-cancel-edit">
                                                     Отмена
@@ -2366,7 +2499,7 @@
                                                                 <h6>{$managers[$comment->manager_id]->name|escape}</h6>
                                                                 {if $comment->official}
                                                                     <span
-                                                                        class="label label-success">Оффициальный</span>
+                                                                            class="label label-success">Оффициальный</span>
                                                                 {/if}
                                                                 {if $comment->organization=='mkk'}
                                                                     <span class="label label-info">МКК</span>
@@ -2379,7 +2512,7 @@
                                                                 {$comment->text|nl2br}
                                                             </span>
                                                             <span
-                                                                class="time">{$comment->created|date} {$comment->created|time}</span>
+                                                                    class="time">{$comment->created|date} {$comment->created|time}</span>
                                                         </div>
 
                                                     </a>
@@ -2668,10 +2801,10 @@
                                                                     <td class="text-right">
                                                                         {if $loan_history_item->loan_percents_summ > 0 || $loan_history_item->loan_body_summ > 0}
                                                                             <span
-                                                                                class="label label-success">Активный</span>
+                                                                                    class="label label-success">Активный</span>
                                                                         {else}
                                                                             <span
-                                                                                class="label label-danger">Закрыт</span>
+                                                                                    class="label label-danger">Закрыт</span>
                                                                         {/if}
                                                                     </td>
                                                                     <td class="text-center">{$loan_history_item->amount}</td>
@@ -2760,7 +2893,7 @@
                                             {foreach $reject_reasons as $reject_reason}
                                                 {if $reject_reason->type == 'mko'}
                                                     <option
-                                                        value="{$reject_reason->id|escape}">{$reject_reason->admin_name|escape}</option>
+                                                            value="{$reject_reason->id|escape}">{$reject_reason->admin_name|escape}</option>
                                                 {/if}
                                             {/foreach}
                                         </select>
@@ -2787,7 +2920,7 @@
                                             {foreach $reject_reasons as $reject_reason}
                                                 {if $reject_reason->type == 'client'}
                                                     <option
-                                                        value="{$reject_reason->id|escape}">{$reject_reason->admin_name|escape}</option>
+                                                            value="{$reject_reason->id|escape}">{$reject_reason->admin_name|escape}</option>
                                                 {/if}
                                             {/foreach}
                                         </select>
