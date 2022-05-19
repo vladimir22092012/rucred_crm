@@ -248,7 +248,7 @@
                                     {foreach $orders as $order}
                                         <tr class="jsgrid-row js-order-row {if $manager->role == 'quality_control' && $order->quality_workout}workout-row{/if}">
                                             <td style="width: 70px;" class="jsgrid-cell jsgrid-align-right">
-                                                <a href="neworder/draft/{$order->order_id}">{$order->order_id}</a>
+                                                <a href="offline_order/{$order->order_id}">{$order->group_number} {$order->company_number} {$order->personal_number}</a>
                                                 {if $order->contract}<div><small>{$order->contract->number}</small></div>{/if}
                                                 <small>
                                                     {if $order->status == 0}<span class="label label-warning">Новая</span>
@@ -283,18 +283,24 @@
                                                 </a>
                                                 <br />
                                                 {if $order->client_status}
-                                                    {if $order->client_status == 'pk'}<span class="label label-success" title="Клиент уже имеет погашенные займы">ПК</span>
-                                                    {elseif $order->client_status == 'crm'}<span class="label label-primary" title="Клиент уже имеет погашенные займы в CRM">ПК CRM</span>
-                                                    {elseif $order->client_status == 'rep'}<span class="label label-warning" title="Клиент уже подавал ранее заявки">Повтор</span>
-                                                    {elseif $order->client_status == 'nk'}<span class="label label-info" title="Новый клиент">Новая</span>
+                                                    {if $order->client_status == 'pk'}
+                                                        <span class="label label-success"
+                                                              title="Клиент уже имеет погашенные займы">ПК</span>
+                                                    {elseif  in_array($order->client_status, ['crm', 'rep'])}
+                                                        <span class="label label-primary"
+                                                              title="Клиент уже имеет погашенные займы в CRM">ПК CRM</span>
+                                                    {elseif $order->client_status == 'nk'}
+                                                        <span class="label label-info" title="Новый клиент">Новая</span>
                                                     {/if}
                                                 {else}
                                                     {if $order->have_crm_closed}
-                                                        <span class="label label-primary" title="Клиент уже имеет погашенные займы в CRM">ПК CRM</span>
+                                                        <span class="label label-primary"
+                                                              title="Клиент уже имеет погашенные займы в CRM">ПК CRM</span>
                                                     {elseif $order->first_loan}
                                                         <span class="label label-info" title="Новый клиент">Новая</span>
                                                     {else}
-                                                        <span class="label label-warning" title="Клиент уже подавал ранее заявки">Повтор</span>
+                                                        <span class="label label-primary"
+                                                              title="Клиент уже имеет погашенные займы в CRM">ПК CRM</span>
                                                     {/if}
                                                 {/if}
                                                 {if $order->autoretry}

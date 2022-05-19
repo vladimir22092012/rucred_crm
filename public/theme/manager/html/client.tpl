@@ -1579,7 +1579,7 @@
                                             <tr>
                                                 <td class="text-info">
                                                     <a target="_blank"
-                                                       href="http://51.250.26.168/document/{$document->id}">
+                                                       href="{$config->root_url}/document?id={$document->id}&action=download_file">
                                                         <i class="fas fa-file-pdf fa-lg"></i>&nbsp;
                                                         {$document->name|escape}
                                                     </a>
@@ -1679,11 +1679,10 @@
                                                                 <th class="text-right">Статус</th>
                                                             </tr>
                                                             {foreach $client->orders as $order}
-                                                                {if $order->contract->type != 'onec'}
                                                                     <tr>
                                                                         <td>{$order->date|date} {$order->date|time}</td>
                                                                         <td>
-                                                                            <a href="order/{$order->order_id}"
+                                                                            <a href="offline_order/{$order->order_id}"
                                                                                target="_blank">{$order->order_id}</a>
                                                                         </td>
                                                                         <td>{$order->contract->number}</td>
@@ -1696,7 +1695,6 @@
                                                                                 <small>{$order->contract->close_date|date} {$order->contract->close_date|time}</small>{/if}
                                                                         </td>
                                                                     </tr>
-                                                                {/if}
                                                             {/foreach}
                                                         </table>
                                                     </div>
