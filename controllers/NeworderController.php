@@ -7,7 +7,6 @@ class NeworderController extends Controller
     public function fetch()
     {
         if ($this->request->method('post')) {
-
             if ($this->request->post('action', 'string')) {
                 $methodName = 'action_' . $this->request->post('action', 'string');
                 if ( method_exists($this, $methodName) ) {
@@ -191,6 +190,7 @@ class NeworderController extends Controller
 
 
         $user['phone_mobile'] = trim((string)$this->request->post('phone'));
+        $user['phone_mobile_confirmed'] = (int)$this->request->post('phone_confirmed');
 
         if ($this->request->post('viber_same') === 1) {
             $user['viber_num'] = $user['phone_mobile'];

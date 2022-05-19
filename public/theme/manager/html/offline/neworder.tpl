@@ -71,10 +71,9 @@
                         code: phone_code,
                     },
                     success: function (response) {
-                        console.log(JSON.parse(response));
-                        if (JSON.parse(response).error === 1) {
+                        if (response.error === 1) {
                             Swal.fire({
-                                title: 'Неверный код',
+                                title: response.reason,
                                 confirmButtonText: 'ОК'
                             });
                         } else {
@@ -153,7 +152,6 @@
                 console.log(document.querySelector('#forms'));
 
                 let entries = Object.fromEntries(new FormData(document.querySelector('#forms')).entries());
-
                 entries['action'] = 'create_new_order';
 
                 $.ajax({
@@ -167,6 +165,7 @@
                             });
                         } else {
                             console.log('create_new_order completed');
+                            console.log(response.redirect);
                             window.location.replace(response.redirect);
                         }
                     }
