@@ -195,10 +195,7 @@ class ManagerController extends Controller
         $email = $this->request->post('email');
         $user_id= $this->request->post('user_id');
         $code = random_int(1000, 9999);
-//        $response = $this->emails->send(
-//            $email,
-//            $code
-//        );
+
         $result = $this->db->query('
         INSERT INTO s_email_messages
         SET user_id = ?, email = ?, code = ?, created = ?

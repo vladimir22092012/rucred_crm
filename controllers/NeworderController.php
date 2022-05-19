@@ -592,6 +592,45 @@ class NeworderController extends Controller
         exit;
     }
 
+    private function action_edit_email()
+    {
+        $email = $this->request->post('email');
+        if (empty($email)) {
+            echo json_encode(['error' => 1, 'reason' => 'Не введён email']);
+            exit;
+        }
+        $code = random_int(1000, 9999);
+
+        $result = $this->db->query('
+        INSERT INTO s_email_messages
+        SET email = ?, code = ?, created = ?
+        ', $email, $code, date('Y-m-d H:i:s'));
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_edit_email_with_code()
+    {
+        $email = $this->request->post('email');
+        $code = $this->request->post('code');
+
+        $this->db->query("
+        SELECT code, created
+        FROM s_email_messages
+        WHERE email = ?
+        AND code = ?
+        ORDER BY created DESC
+        LIMIT 1
+        ", $email, $code);
+        $results = $this->db->results();
+        if (empty($results)) {
+            echo json_encode(['error' => 1]);
+            exit;
+        }
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
     private function check_date()
     {
         $start_date = $this->request->get('start_date');

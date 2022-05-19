@@ -90,12 +90,12 @@
             $('.accept_email_edit').click(function (e) {
                 e.preventDefault();
 
-                let phone = $('input[class="form-control email"]').val();
+                let email = $('input[class="form-control email"]').val();
                 $.ajax({
                     method: 'POST',
                     data: {
                         action: 'edit_email',
-                        phone: phone,
+                        email: email,
                     },
                     success: function (response) {
                         if (JSON.parse(response).error === 1) {
@@ -642,14 +642,14 @@
                                                     <label class="control-label">Электронная почта<span class="show_email_confirmed"> (подтверждена)</span></label>
                                                     <div class="form-row">
                                                         <div class="col">
-                                                            <input class="form-control"
+                                                            <input class="form-control email"
                                                                    type="text" name="email" placeholder="ivanov@mail.ru(необязательно)"
                                                                    value="{$order->email}"/>
                                                             <input type="hidden" name="email_confirmed" class="email_confirmed" value="false"/>
                                                         </div>
                                                         <div class="col">
                                                             <input type="button"
-                                                                   class="btn btn-success accept_edit"
+                                                                   class="btn btn-success accept_email_edit"
                                                                    value="Подтвердить">
                                                         </div>
                                                         <div class="col-4">
