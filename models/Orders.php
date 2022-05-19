@@ -24,7 +24,7 @@ class Orders extends Core
     public function get_order($id)
     {
         $query = $this->db->placehold("
-            SELECT 
+            SELECT
                 o.id AS order_id,
                 o.uid,
                 o.contract_id,
@@ -87,7 +87,9 @@ class Orders extends Core
                 u.service_insurance,
                 u.service_reason,
                 u.phone_mobile,
+                u.phone_mobile_confirmed,
                 u.email,
+                u.email_confirmed,
                 u.lastname,
                 u.firstname,
                 u.patronymic,
@@ -439,7 +441,7 @@ class Orders extends Core
         }
 
         $query = $this->db->placehold("
-            SELECT 
+            SELECT
                 o.id AS order_id,
                 o.uid,
                 o.contract_id,
@@ -492,7 +494,9 @@ class Orders extends Core
                 u.service_insurance,
                 u.service_reason,
                 u.phone_mobile,
+                u.phone_mobile_confirmed,
                 u.email,
+                u.email_confirmed,
                 u.lastname,
                 u.firstname,
                 u.patronymic,
@@ -574,7 +578,7 @@ class Orders extends Core
                 $current_filter
                 $autoretry_filter
                 $client_filter
-            ORDER BY $workout_sort $sort 
+            ORDER BY $workout_sort $sort
             $sql_limit
         ");
         $this->db->query($query);
