@@ -209,7 +209,6 @@ class ManagerController extends Controller
             'Введите этот код в поле для проверки почты: ' . $code,
             '<h1>Введите этот код в поле для проверки почты:</h1>' . "<h2>$code</h2>"
         );
-        var_dump($mailResponse);
 
         echo json_encode(['success' => 1]);
         exit;
