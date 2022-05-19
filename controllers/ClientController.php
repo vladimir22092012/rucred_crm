@@ -60,6 +60,19 @@ class ClientController extends Controller
                 case 'edit_personal_number':
                     return $this->action_edit_personal_number();
                     break;
+
+                case 'change_employer_info':
+                    return $this->action_change_employer_info();
+                    break;
+
+                case 'get_companies':
+                    return $this->action_get_companies();
+                    break;
+
+                case 'get_branches':
+                    return $this->action_get_branches();
+                    break;
+
             endswitch;
         } else {
             if (!($id = $this->request->get('id', 'integer'))) {
@@ -233,6 +246,9 @@ class ClientController extends Controller
                 }
             }
         }
+
+        if (!isset($group_name))
+            $group_name = 'Отсутствует группа';
 
         if (!isset($branch_name))
             $branch_name = 'Отсутствует филиал';
@@ -1082,5 +1098,43 @@ class ClientController extends Controller
             $this->users->update_user($user_id, ['personal_number' => $number]);
             exit;
         }
+    }
+
+    private function action_change_employer_info()
+    {
+        $user_id = $this->request->post('user_id');
+        $group_id = $this->request->post('group');
+        $company_id = $this->request->post('company');
+        $branch_id = $this->request->post('branch');
+
+        $user =
+            [
+                'group_id' => $group_id,
+                'company_id' => $company_id,
+                'branche_id' => $branch_id
+            ];
+
+        $this->users->update_user($user_id, $user);
+        exit;
+    }
+
+    private function action_get_companies()
+    {
+        $group_id = $this->request->post('group_id');
+
+        $companies = $this->Companies->get_companies(['group_id' => $group_id, 'blocked' => 0]);
+
+        echo json_encode(['companies' => $companies]);
+        exit;
+    }
+
+    private function action_get_branches()
+    {
+        $company_id = $this->request->post('company_id');
+
+        $branches = $this->Branches->get_branches(['company_id' => $company_id]);
+
+        echo json_encode(['branches' => $branches]);
+        exit;
     }
 }

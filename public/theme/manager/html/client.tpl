@@ -95,7 +95,89 @@
                         }
                     });
                 });
-            })
+            });
+
+            $('.fa-eraser').on('click', function (e) {
+                e.preventDefault();
+
+                $('.employer_show, #employer_edit').toggle();
+
+                $('.cancel_employer').on('click', function () {
+                    $('#employer_edit').hide();
+                    $('.employer_show').show();
+                });
+            });
+
+            $('.accept_employer').on('click', function (e) {
+                e.preventDefault();
+
+                let group_id = $('#group_select').val();
+                let company_id = $('#company_select').val();
+                let branch_id = $('#branch_select').val();
+                let user_id = $(this).attr('data-user');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'change_employer_info',
+                        user_id: user_id,
+                        group: group_id,
+                        company: company_id,
+                        branch: branch_id
+                    },
+                    success: function () {
+                        location.reload();
+                    }
+                })
+            });
+
+            $('#group_select').on('change', function () {
+                let group_id = $(this).val();
+
+                $('#company_select').empty();
+                $('#company_select').append('<option value="none">Выберите из списка</option>');
+                $('#branch_select').empty();
+                $('#branch_select').append('<option value="none">Выберите из списка</option>');
+
+                if (group_id != 'none') {
+                    $.ajax({
+                        method: 'POST',
+                        dataType: 'JSON',
+                        data: {
+                            action: 'get_companies',
+                            group_id: group_id
+                        },
+                        success: function (resp) {
+                            for (let key in resp['companies']) {
+                                $('#company_select').append('<option value="' + resp['companies'][key]['id'] + '">' + resp['companies'][key]['name'] + '</option>')
+                            }
+                        }
+                    });
+                }
+            });
+
+            $('#company_select').on('change', function () {
+                let company_id = $(this).val();
+
+                $('#branch_select').empty();
+                $('#branch_select').append('<option value="none">Выберите из списка</option>');
+
+                if (company_id != 'none') {
+                    $.ajax({
+                        method: 'POST',
+                        dataType: 'JSON',
+                        data: {
+                            action: 'get_branches',
+                            company_id: company_id
+                        },
+                        success: function (resp) {
+                            for (let key in resp['branches']) {
+                                $('#branch_select').append('<option value="' + resp['branches'][key]['id'] + '">' + resp['branches'][key]['name'] + '</option>')
+                            }
+                        }
+                    });
+                }
+            });
         })
     </script>
 {/capture}
@@ -1106,7 +1188,7 @@
                                                             <br>
                                                             <div style="display: flex; justify-content: space-between">
                                                                 <div type="button"
-                                                                     data-order="{$order->order_id}"
+                                                                     data-user="{$client->id}"
                                                                      class="btn btn-success accept_employer">
                                                                     Сохранить
                                                                 </div>
