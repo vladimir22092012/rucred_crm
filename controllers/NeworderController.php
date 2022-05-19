@@ -1,4 +1,7 @@
 <?php
+
+use App\Services\MailService;
+
 error_reporting(-1);
 ini_set('display_errors', 'On');
 
@@ -605,6 +608,16 @@ class NeworderController extends Controller
         INSERT INTO s_email_messages
         SET email = ?, code = ?, created = ?
         ', $email, $code, date('Y-m-d H:i:s'));
+
+        $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+        $mailResponse = $mailService->send(
+            'rucred@ucase.live',
+            $email,
+            'RuCred | Ваш проверочный код для смены почты',
+            'Введите этот код в поле для проверки почты: ' . $code,
+            '<h1>Введите этот код в поле для проверки почты:</h1>' . "<h2>$code</h2>"
+        );
+
         echo json_encode(['success' => 1]);
         exit;
     }

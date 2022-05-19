@@ -78,6 +78,7 @@
                         } else {
                             $('.show_phone_code').hide();
                             $('.show_phone_confirmed').show();
+                            $('.accept_phone_edit').hide();
                             $('.phone_confirmed').val('true');
                         }
                     }
@@ -132,6 +133,7 @@
                         } else {
                             $('.show_email_code').hide();
                             $('.show_email_confirmed').show();
+                            $('.accept_email_edit').hide();
                             $('.email_confirmed').val('true');
                         }
                     }
