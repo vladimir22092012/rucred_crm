@@ -20,6 +20,9 @@ class NeworderController extends Controller
             $order_id = $this->request->get('order_id');
 
             $order = $this->orders->get_order($order_id);
+
+            var_dump($order);
+
             $fio_spouse = explode(' ', $order->fio_spouse);
 
             $passport_serial = explode(' ', $order->passport_serial);
@@ -87,12 +90,6 @@ class NeworderController extends Controller
 
     private function action_create_new_order()
     {
-//        $phone_confirmed = $this->request->post('phone_confirmed');
-//
-//        if ($phone_confirmed !== 'true') {
-//            response_json(['error' => 1, 'reason' => 'Телефон не подтверждён']);
-//        }
-
         $amount = preg_replace("/[^,.0-9]/", '', $this->request->post('amount'));
         $start_date = new DateTime(date('Y-m-d', strtotime($this->request->post('start_date'))));
 
@@ -197,19 +194,19 @@ class NeworderController extends Controller
 
         $user['phone_mobile'] = trim((string)$this->request->post('phone'));
 
-        if ($this->request->post('viber_same') == 1) {
+        if ($this->request->post('viber_same') === 1) {
             $user['viber_num'] = $user['phone_mobile'];
         } else {
             $user['viber_num'] = trim($this->request->post('viber'));
         }
 
-        if ($this->request->post('whatsapp_same') == 1) {
+        if ($this->request->post('whatsapp_same') === 1) {
             $user['viber_num'] = $user['phone_mobile'];
         } else {
             $user['viber_num'] = trim($this->request->post('whatsapp'));
         }
 
-        if ($this->request->post('telegram_same') == 1) {
+        if ($this->request->post('telegram_same') === 1) {
             $user['viber_num'] = $user['phone_mobile'];
         } else {
             $user['viber_num'] = trim($this->request->post('telegram'));
@@ -261,7 +258,7 @@ class NeworderController extends Controller
         $user['Regroom'] = (!empty($Regadress->data->flat)) ? $Regadress->data->flat : '';
         $user['loan_history'] = '[]';
 
-        if ($this->request->post('actual_address') == 1) {
+        if ($this->request->post('actual_address') === 1) {
             $user['Faktadressfull'] = $user['Regadressfull'];
             $user['Faktindex'] = $user['Regindex'];
             $user['Faktregion'] = $user['Regregion'];
@@ -560,7 +557,8 @@ class NeworderController extends Controller
             echo json_encode(['error' => 1]);
             exit;
         }
-        $code = random_int(1000, 9999);        $response = $this->sms->send(
+        $code = random_int(1000, 9999);
+        $response = $this->sms->send(
             $phone,
             $code
         );
