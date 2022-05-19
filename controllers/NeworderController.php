@@ -21,8 +21,6 @@ class NeworderController extends Controller
 
             $order = $this->orders->get_order($order_id);
 
-            var_dump($order);
-
             $fio_spouse = explode(' ', $order->fio_spouse);
 
             $passport_serial = explode(' ', $order->passport_serial);

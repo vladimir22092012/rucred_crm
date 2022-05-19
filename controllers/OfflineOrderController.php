@@ -205,7 +205,6 @@ class OfflineOrderController extends Controller
 
             $scoring_types = $this->scorings->get_types();
 
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scoring_types);echo '</pre><hr />';
             $this->design->assign('scoring_types', $scoring_types);
 
             if ($order_id = $this->request->get('id', 'integer')) {
@@ -289,7 +288,6 @@ class OfflineOrderController extends Controller
                         foreach ($result_scorings as $scoring) {
                             if ($scoring->type == 'juicescore') {
                                 $scoring->body = unserialize($scoring->body);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scoring->body);echo '</pre><hr />';
                             }
 
                             if ($scoring->type == 'efrsb') {
@@ -440,8 +438,6 @@ class OfflineOrderController extends Controller
                             $orders[] = $o;
                         }
                         $this->design->assign('orders', $orders);
-
-                        //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($comments_1c_response);echo '</pre><hr />';
                     }
 
                     if (in_array('looker_link', $this->manager->permissions)) {
@@ -458,7 +454,6 @@ class OfflineOrderController extends Controller
         $scoring_types = array();
         foreach ($this->scorings->get_types(array('active' => true)) as $type)
             $scoring_types[$type->name] = $type;
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scoring_types);echo '</pre><hr />';
         $this->design->assign('scoring_types', $scoring_types);
 
         $reject_reasons = array();
