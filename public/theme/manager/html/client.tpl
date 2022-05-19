@@ -1016,282 +1016,105 @@
 
 
                                             <!-- Данные о работе -->
-                                            <form action="{url}" class="border js-order-item-form mb-3"
-                                                  id="work_data_form">
+                                            <form action="{url}"
+                                                  class="border js-order-item-form mb-3">
 
                                                 <input type="hidden" name="action" value="work"/>
-                                                <input type="hidden" name="user_id" value="{$client->id}"/>
+                                                <input type="hidden" name="order_id" value="{$order->order_id}"/>
+                                                <input type="hidden" name="user_id" value="{$client->user_id}"/>
 
-                                                <h5 class="card-header">
-                                                    <span class="text-white">Данные о работе</span>
+                                                <h6 class="card-header">
+                                                    <span class="text-white">Информация о работодателе</span>
+                                                    <span class="float-right">
                                                     <a href="javascript:void(0);"
-                                                       class="text-white float-right js-edit-form"><i
-                                                                class=" fas fa-edit"></i></a></h3>
-                                                </h5>
+                                                       class="text-white"
+                                                       data-user="{$client->id}"><i
+                                                                class="fas fa-eraser"></i></a>
+                                                        </span>
+                                                </h6>
 
-                                                <div class="row m-0 pt-2 view-block {if $work_error}hide{/if}">
-                                                    {if $client->workplace || $client->workphone}
-                                                        <div class="col-md-12">
-                                                            <div class="form-group mb-0  row">
-                                                                <label class="control-label col-md-4">Название
-                                                                    организации:</label>
-                                                                <div class="col-md-8">
-                                                                    <p class="form-control-static">
-                                                                        <span class="clearfix">
-                                                                            <span class="float-left">
-                                                                                {$client->workplace|escape}
-                                                                            </span>
-                                                                            <span class="float-right">
-                                                                                {$client->workphone|escape}
-                                                                                <button class="js-mango-call mango-call"
-                                                                                        data-phone="{$client->workphone|escape}"
-                                                                                        title="Выполнить звонок">
-                                                                                    <i class="fas fa-mobile-alt"></i>
-                                                                                </button>
-                                                                            </span>
-                                                                        </span>
-                                                                    </p>
+                                                <div class="row m-0 pt-2 view-block">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group  mb-0 row employer_show">
+                                                            <label class="control-label col-md-3">Группа:</label>
+                                                            <div class="col-md-6">
+                                                                <p>{$group_name}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group  mb-0 row employer_show">
+                                                            <label class="control-label col-md-3">Компания:</label>
+                                                            <div class="col-md-6">
+                                                                <p>{$company_name}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group  mb-0 row employer_show">
+                                                            <label class="control-label col-md-3">Филиал:</label>
+                                                            <div class="col-md-6">
+                                                                <p>{$branch_name}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div id="employer_edit" style="display: none">
+                                                            <div class="form-group  mb-0 row">
+                                                                <label class="control-label col-md-3">Группа:</label>
+                                                                <div class="col-md-6">
+                                                                    <select class="form-control" id="group_select"
+                                                                            name="group"
+                                                                            {if $manager->role =='employer'}disabled{/if}>
+                                                                        <option value="none" selected>Отсутствует
+                                                                            группа
+                                                                        </option>
+                                                                        {foreach $groups as $group}
+                                                                            <option value="{$group->id}"
+                                                                                    {if $client->group_id == $group->id}selected{/if}>{$group->name}</option>
+                                                                        {/foreach}
+                                                                    </select>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    {/if}
-                                                    {if $client->workaddress}
-                                                        <div class="col-md-12">
-                                                            <div class="form-group mb-0 row">
-                                                                <label class="control-label col-md-4">Адрес:</label>
-                                                                <div class="col-md-8">
-                                                                    <p class="form-control-static">
-                                                                        {$client->workaddress|escape}
-                                                                    </p>
+                                                            <br>
+                                                            <div class="form-group  mb-0 row">
+                                                                <label class="control-label col-md-3">Компания:</label>
+                                                                <div class="col-md-6">
+                                                                    <select class="form-control" id="company_select"
+                                                                            name="company"
+                                                                            {if $manager->role =='employer'}disabled{/if}>
+                                                                        <option value="none" selected>Отсутствует
+                                                                            компания
+                                                                        </option>
+                                                                        {foreach $companies as $company}
+                                                                            <option value="{$company->id}"
+                                                                                    {if $client->company_id != null && $client->company_id == $company->id}selected{/if}>{$company->name}</option>
+                                                                        {/foreach}
+                                                                    </select>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    {/if}
-                                                    {if $client->profession}
-                                                        <div class="col-md-12">
-                                                            <div class="form-group mb-0 row">
-                                                                <label class="control-label col-md-4">Должность:</label>
-                                                                <div class="col-md-8">
-                                                                    <p class="form-control-static">
-                                                                        {$client->profession|escape}
-                                                                    </p>
+                                                            <br>
+                                                            <div class="form-group  mb-0 row">
+                                                                <label class="control-label col-md-3">Филиал:</label>
+                                                                <div class="col-md-6">
+                                                                    <select class="form-control" id="branch_select"
+                                                                            name="branch">
+                                                                        <option value="none" selected>Отсутствует
+                                                                            филиал
+                                                                        </option>
+                                                                        {foreach $branches as $branch}
+                                                                            <option value="{$branch->id}"
+                                                                                    {if $client->branche_id != null && $client->branche_id == $branch->id}selected{/if}>{$branch->name}</option>
+                                                                        {/foreach}
+                                                                    </select>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    {/if}
-                                                    <div class="col-md-12">
-                                                        <div class="form-group  mb-0 row">
-                                                            <label class="control-label col-md-4">Руководитель:</label>
-                                                            <div class="col-md-8">
-                                                                <p class="form-control-static">
-                                                                    {$client->chief_name|escape}
-                                                                    , {$client->chief_position|escape}
-                                                                    <br/>
-                                                                    {$client->chief_phone|escape}
-                                                                    <button class="js-mango-call mango-call"
-                                                                            data-phone="{$client->chief_phone|escape}"
-                                                                            title="Выполнить звонок">
-                                                                        <i class="fas fa-mobile-alt"></i>
-                                                                    </button>
-                                                                </p>
+                                                            <br>
+                                                            <div style="display: flex; justify-content: space-between">
+                                                                <div type="button"
+                                                                     data-order="{$order->order_id}"
+                                                                     class="btn btn-success accept_employer">
+                                                                    Сохранить
+                                                                </div>
+                                                                <div type="button" class="btn btn-dark cancel_employer">
+                                                                    Отменить
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group  mb-0 row">
-                                                            <label class="control-label col-md-4">Доход:</label>
-                                                            <div class="col-md-8">
-                                                                <p class="form-control-static">
-                                                                    {$client->income|escape}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group  mb-0 row">
-                                                            <label class="control-label col-md-4">Расход:</label>
-                                                            <div class="col-md-8">
-                                                                <p class="form-control-static">
-                                                                    {$client->expenses|escape}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group  mb-0 row">
-                                                            <label class="control-label col-md-4">Комментарий к
-                                                                работе:</label>
-                                                            <div class="col-md-8">
-                                                                <p class="form-control-static">
-                                                                    {$client->workcomment|escape}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row m-0 pt-2 edit-block js-dadata-address {if !$work_error}hide{/if}">
-                                                    {if $work_error}
-                                                        <div class="col-md-12">
-                                                            <ul class="alert alert-danger">
-
-                                                                {if in_array('empty_workplace', (array)$work_error)}
-                                                                    <li>Укажите название организации!</li>
-                                                                {/if}
-                                                                {if in_array('empty_profession', (array)$work_error)}
-                                                                    <li>Укажите должность!</li>
-                                                                {/if}
-                                                                {if in_array('empty_workphone', (array)$work_error)}
-                                                                    <li>Укажите рабочий телефон!</li>
-                                                                {/if}
-                                                                {if in_array('empty_income', (array)$work_error)}
-                                                                    <li>Укажите доход!</li>
-                                                                {/if}
-                                                                {if in_array('empty_expenses', (array)$work_error)}
-                                                                    <li>Укажите расход!</li>
-                                                                {/if}
-                                                                {if in_array('empty_chief_name', (array)$work_error)}
-                                                                    <li>Укажите ФИО начальника!</li>
-                                                                {/if}
-                                                                {if in_array('empty_chief_position', (array)$work_error)}
-                                                                    <li>Укажите Должность начальника!</li>
-                                                                {/if}
-                                                                {if in_array('empty_chief_phone', (array)$work_error)}
-                                                                    <li>Укажите Телефон начальника!</li>
-                                                                {/if}
-
-                                                            </ul>
-                                                        </div>
-                                                    {/if}
-                                                    <div class="col-md-6">
-                                                        <div class="form-group mb-0 {if in_array('empty_workplace', (array)$work_error)}has-danger{/if}">
-                                                            <label class="control-label">Название организации</label>
-                                                            <input type="text" class="form-control" name="workplace"
-                                                                   value="{$client->workplace|escape}" placeholder=""
-                                                                   required="true"/>
-                                                            {if in_array('empty_workplace', (array)$work_error)}
-                                                                <small class="form-control-feedback">Укажите название
-                                                                    организации!
-                                                                </small>
-                                                            {/if}
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group mb-0 {if in_array('empty_profession', (array)$work_error)}has-danger{/if}">
-                                                            <label class="control-label">Должность</label>
-                                                            <input type="text" class="form-control" name="profession"
-                                                                   value="{$client->profession|escape}" placeholder=""
-                                                                   required="true"/>
-                                                            {if in_array('empty_profession', (array)$work_error)}
-                                                                <small class="form-control-feedback">Укажите
-                                                                    должность!
-                                                                </small>
-                                                            {/if}
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group mb-0">
-                                                            <label class="control-label">Адрес организации</label>
-                                                            <input type="text" class="form-control" name="workaddress"
-                                                                   value="{$client->workaddress|escape}" placeholder=""
-                                                                   required="true"/>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group mb-0 {if in_array('empty_workphone', (array)$work_error)}has-danger{/if}">
-                                                            <label class="control-label">Pабочий телефон</label>
-                                                            <input type="text" class="form-control" name="workphone"
-                                                                   value="{$client->workphone|escape}" placeholder=""
-                                                                   required="true"/>
-                                                            {if in_array('empty_workphone', (array)$work_error)}
-                                                                <small class="form-control-feedback">Укажите рабочий
-                                                                    телефон!
-                                                                </small>
-                                                            {/if}
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group mb-0 {if in_array('empty_income', (array)$work_error)}has-danger{/if}">
-                                                            <label class="control-label">Доход</label>
-                                                            <input type="text" class="form-control" name="income"
-                                                                   value="{$client->income|escape}" placeholder=""
-                                                                   required="true"/>
-                                                            {if in_array('empty_income', (array)$work_error)}
-                                                                <small class="form-control-feedback">Укажите доход!
-                                                                </small>
-                                                            {/if}
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group mb-0 {if in_array('empty_expenses', (array)$work_error)}has-danger{/if}">
-                                                            <label class="control-label">Расход</label>
-                                                            <input type="text" class="form-control" name="expenses"
-                                                                   value="{$client->expenses|escape}" placeholder=""
-                                                                   required="true"/>
-                                                            {if in_array('empty_expenses', (array)$work_error)}
-                                                                <small class="form-control-feedback">Укажите расход!
-                                                                </small>
-                                                            {/if}
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-4">
-                                                        <div class="form-group mb-0 {if in_array('empty_chief_name', (array)$work_error)}has-danger{/if}">
-                                                            <label class="control-label">ФИО начальника</label>
-                                                            <input type="text" class="form-control" name="chief_name"
-                                                                   value="{$client->chief_name|escape}" placeholder=""
-                                                                   required="true"/>
-                                                            {if in_array('empty_chief_name', (array)$work_error)}
-                                                                <small class="form-control-feedback">Укажите ФИО
-                                                                    начальника!
-                                                                </small>
-                                                            {/if}
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group mb-0 {if in_array('empty_chief_position', (array)$work_error)}has-danger{/if}">
-                                                            <label class="control-label">Должность начальника</label>
-                                                            <input type="text" class="form-control"
-                                                                   name="chief_position"
-                                                                   value="{$client->chief_position|escape}"
-                                                                   placeholder="" required="true"/>
-                                                            {if in_array('empty_chief_position', (array)$work_error)}
-                                                                <small class="form-control-feedback">Укажите Должность
-                                                                    начальника!
-                                                                </small>
-                                                            {/if}
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group mb-0 {if in_array('empty_chief_phone', (array)$work_error)}has-danger{/if}">
-                                                            <label class="control-label">Телефон начальника</label>
-                                                            <input type="text" class="form-control" name="chief_phone"
-                                                                   value="{$client->chief_phone|escape}" placeholder=""
-                                                                   required="true"/>
-                                                            {if in_array('empty_chief_phone', (array)$work_error)}
-                                                                <small class="form-control-feedback">Укажите Телефон
-                                                                    начальника!
-                                                                </small>
-                                                            {/if}
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group mb-0 ">
-                                                            <label class="control-label">Комментарий к работе</label>
-                                                            <input type="text" class="form-control" name="workcomment"
-                                                                   value="{$client->workcomment|escape}"
-                                                                   placeholder=""/>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-12 pb-2 mt-2">
-                                                        <div class="form-actions">
-                                                            <button type="submit" class="btn btn-success"><i
-                                                                        class="fa fa-check"></i> Сохранить
-                                                            </button>
-                                                            <button type="button"
-                                                                    class="btn btn-inverse js-cancel-edit">Отмена
-                                                            </button>
+                                                            <br>
                                                         </div>
                                                     </div>
                                                 </div>

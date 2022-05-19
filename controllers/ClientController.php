@@ -206,6 +206,46 @@ class ClientController extends Controller
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scoring_types);echo '</pre><hr />';
         $this->design->assign('scoring_types', $scoring_types);
 
+        $groups = $this->Groups->get_groups();
+        $companies = $this->Companies->get_companies(['group_id' => $client->group_id]);
+
+        foreach ($groups as $group) {
+            if ($client->group_id == $group->id)
+                $group_name = $group->name;
+        }
+
+        if (!empty($client->company_id)) {
+
+            $branches = $this->Branches->get_branches(['company_id' => $client->company_id]);
+            $this->design->assign('branches', $branches);
+
+            if (!empty($client->branche_id)) {
+                foreach ($branches as $branch) {
+                    if ($client->branche_id == $branch->id)
+                        $branch_name = $branch->name;
+                }
+            }
+
+            if (!empty($client->company_id)) {
+                foreach ($companies as $company) {
+                    if ($client->company_id == $company->id)
+                        $company_name = $company->name;
+                }
+            }
+        }
+
+        if (!isset($branch_name))
+            $branch_name = 'Отсутствует филиал';
+
+        if (!isset($company_name))
+            $company_name = 'Отсутствует компания';
+
+        $this->design->assign('groups', $groups);
+        $this->design->assign('companies', $companies);
+        $this->design->assign('branch_name', $branch_name);
+        $this->design->assign('company_name', $company_name);
+        $this->design->assign('group_name', $group_name);
+
 
         return $this->design->fetch('client.tpl');
     }

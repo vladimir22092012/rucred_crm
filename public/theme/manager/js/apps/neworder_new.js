@@ -183,14 +183,12 @@ $(function () {
         $('#profunion_toggle').hide();
         $('.in_profunion').show();
         $('.out_profunion').hide();
-        $('.want_profunion').removeAttr('required');
     });
 
     $('#profunion2').on('click', function () {
         $('#profunion_toggle').show();
         $('.in_profunion').hide();
         $('.out_profunion').show();
-        $('.want_profunion').attr('required', true);
     });
 
     $('.want_profunion').on('click', function (e) {

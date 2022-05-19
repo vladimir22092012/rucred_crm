@@ -294,6 +294,8 @@ class NeworderController extends Controller
         }
 
         $user['company_id'] = (int)$this->request->post('company', 'integer');
+        $user['group_id'] = (int)$this->request->post('group', 'integer');
+        $user['branche_id'] = (int)$this->request->post('branch', 'integer');
 
 
         if (empty($user['user_id'])) {
