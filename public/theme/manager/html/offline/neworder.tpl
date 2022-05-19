@@ -84,6 +84,60 @@
                 })
             });
 
+            $('.show_email_code').hide();
+            $('.show_email_confirmed').hide();
+
+            $('.accept_email_edit').click(function (e) {
+                e.preventDefault();
+
+                let phone = $('input[class="form-control email"]').val();
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'edit_email',
+                        phone: phone,
+                    },
+                    success: function (response) {
+                        if (JSON.parse(response).error === 1) {
+                            Swal.fire({
+                                title: 'Введите email',
+                                confirmButtonText: 'ОК'
+                            });
+                        } else {
+                            $('.show_email_code').show();
+                        }
+                    }
+                })
+            });
+
+            $('.accept_edit_email_with_code').click(function (e) {
+                e.preventDefault();
+
+                let email = $('input[class="form-control email"]').val();
+                let email_code = $('input[class="form-control email_code"]').val();
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'edit_email_with_code',
+                        email: email,
+                        code: email_code,
+                    },
+                    success: function (response) {
+                        if (response.error === 1) {
+                            Swal.fire({
+                                title: response.reason,
+                                confirmButtonText: 'ОК'
+                            });
+                        } else {
+                            $('.show_email_code').hide();
+                            $('.show_email_confirmed').show();
+                            $('.email_confirmed').val('true');
+                        }
+                    }
+                })
+            });
+
             let order = {{json_encode($order)}};
             if (order) {
                 if (parseInt(order['profunion']) == 3) {
@@ -581,13 +635,40 @@
                                     <br>
                                     <hr style="width: 100%; size: 5px">
                                     <h4>Контактные данные</h4><br>
-                                    <div style="width: 100%">
-                                        <label class="control-label">Электронная почта*</label><br>
-                                        <input class="form-control" style="width: 350px; margin-left: 25px"
-                                               type="text" name="email" placeholder="ivanov@mail.ru(необязательно)"
-                                               value="{$order->email}"/>
-                                        <input type="button" style="margin-left: 25px" class="btn btn-success"
-                                               value="Отправить">
+                                    <div>
+                                        <div class="col-12">
+                                            <div class="phone_edit_form">
+                                                <div class="mb-3">
+                                                    <label class="control-label">Электронная почта<span class="show_email_confirmed"> (подтверждена)</span></label>
+                                                    <div class="form-row">
+                                                        <div class="col">
+                                                            <input class="form-control"
+                                                                   type="text" name="email" placeholder="ivanov@mail.ru(необязательно)"
+                                                                   value="{$order->email}"/>
+                                                            <input type="hidden" name="email_confirmed" class="email_confirmed" value="false"/>
+                                                        </div>
+                                                        <div class="col">
+                                                            <input type="button"
+                                                                   class="btn btn-success accept_edit"
+                                                                   value="Подтвердить">
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <div class="input-group show_email_code"
+                                                                 style="display: none">
+                                                                <input type="text" class="form-control email_code"
+                                                                       placeholder="Введите код из письма">
+                                                                <div class="input-group-append">
+                                                                    <button class="btn btn-primary accept_edit_email_with_code"
+                                                                            type="button" data-user="{$user->id}">
+                                                                        Подтвердить
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <br>
                                     <h4>Мессенджер для связи</h4><br>
