@@ -184,6 +184,25 @@ class OfflineOrdersController extends Controller
         $sms_templates = $this->sms->get_templates(array('type' => 'order'));
         $this->design->assign('sms_templates', $sms_templates);
 
+        $companies = $this->Companies->get_companies();
+        $groups = $this->Groups->get_groups();
+
+        foreach ($orders as $order) {
+            foreach ($companies as $company) {
+                if ($order->company_id == $company->id){
+                    $order->company_name = $company->name;
+                    $order->company_number = $company->number;
+                }
+            }
+        }
+
+        foreach ($orders as $order) {
+            foreach ($groups as $group) {
+                if ($order->group_id == $group->id)
+                    $order->group_number = $group->number;
+            }
+        }
+
 
         if ($this->request->get('drafts')) {
             foreach ($orders as $key => $order) {

@@ -464,7 +464,7 @@
                                                                        type="text"
                                                                        name="phone"
                                                                        placeholder="+7(900)000-00-00"
-                                                                       value="{$order->phone_mobile}"/>
+                                                                       value="{$order->phone_mobile}" autocomplete="off"/>
                                                                 <input type="hidden" name="phone_confirmed"
                                                                        class="phone_confirmed" value="false"/>
                                                             </div>
@@ -629,7 +629,7 @@
                                             <input class="form-control phone_num phone_spouse"
                                                    style="width: 200px; margin-left: 25px"
                                                    type="text" name="phone_spouse"
-                                                   value="{$order->phone_spouse}"/>
+                                                   value="{$order->phone_spouse}" autocomplete="off"/>
                                         </div>
                                     </div>
                                     <br>
@@ -644,7 +644,7 @@
                                                         <div class="col">
                                                             <input class="form-control email"
                                                                    type="text" name="email" placeholder="ivanov@mail.ru(необязательно)"
-                                                                   value="{$order->email}"/>
+                                                                   value="{$order->email}" autocomplete="off"/>
                                                             <input type="hidden" name="email_confirmed" class="email_confirmed" value="false"/>
                                                         </div>
                                                         <div class="col">
@@ -678,7 +678,7 @@
                                              height="30">
                                         <input class="form-control phone_num"
                                                style="width: 450px; margin-left: 25px"
-                                               type="text" name="viber" value="{$order->viber_num}">
+                                               type="text" name="viber" value="{$order->viber_num}" autocomplete="off">
                                         <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
                                                name="viber_same">
                                         <label>Совпадает с номером мобильного</label><br><br>
@@ -687,7 +687,7 @@
                                              height="30">
                                         <input class="form-control phone_num"
                                                style="width: 450px; margin-left: 25px"
-                                               type="text" name="whatsapp" value="{$order->whatsapp_num}">
+                                               type="text" name="whatsapp" value="{$order->whatsapp_num}" autocomplete="off">
                                         <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
                                                name="whatsapp_same">
                                         <label>Совпадает с номером мобильного</label><br><br>
@@ -696,7 +696,7 @@
                                              height="30">
                                         <input class="form-control phone_num"
                                                style="width: 450px; margin-left: 25px"
-                                               type="text" name="telegram" value="{$order->telegram_num}">
+                                               type="text" name="telegram" value="{$order->telegram_num}" autocomplete="off">
                                         <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
                                                name="telegram_same">
                                         <label>Совпадает с номером мобильного</label><br><br>

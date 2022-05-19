@@ -720,7 +720,7 @@
                                             <label class="col-md-5">Телефон</label>
                                             <div class="col-md-12">
                                                 <input type="text" name="phone" value="{$user->phone|default: ""}"
-                                                       class="form-control form-control-line">
+                                                       class="form-control form-control-line" autocomplete="off">
                                             </div>
                                         </div>
                                     {else}

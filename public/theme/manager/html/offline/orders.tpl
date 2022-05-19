@@ -190,13 +190,13 @@
 
                         <div id="basicgrid" class="jsgrid" style="position: relative; width: 100%;">
                             <div class="jsgrid-grid-header jsgrid-header-scrollbar">
-                                <table class="jsgrid-table table table-striped table-hover">
+                                <table class="jsgrid-table table table-striped table-hover" style="text-align: center">
                                     <tr class="jsgrid-header-row">
                                         <th style="width: 70px;"
                                             class="jsgrid-header-cell jsgrid-align-right jsgrid-header-sortable {if $sort == 'order_id_desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'order_id_asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
                                             {if $sort == 'order_id_asc'}<a href="{url page=null sort='order_id_desc'}">
-                                                    ID</a>
-                                            {else}<a href="{url page=null sort='order_id_asc'}">ID</a>{/if}
+                                                    Номер заявки</a>
+                                            {else}<a href="{url page=null sort='order_id_asc'}">Номер заявки</a>{/if}
                                         </th>
                                         <th style="width: 70px;"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'date_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'date_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
@@ -220,6 +220,11 @@
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'fio_asc'}<a href="{url page=null sort='fio_desc'}">ФИО</a>
                                             {else}<a href="{url page=null sort='fio_asc'}">ФИО</a>{/if}
+                                        </th>
+                                        <th style="width: 150px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'company_id_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'company_id_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'company_id_asc'}<a href="{url page=null sort='company_id_desc'}">Работодатель</a>
+                                            {else}<a href="{url page=null sort='fio_asc'}">Работодатель</a>{/if}
                                         </th>
                                         <th style="width: 70px;"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'birth_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'birth_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
@@ -285,6 +290,10 @@
                                             <input type="text" name="fio" value="{$search['fio']}"
                                                    class="form-control input-sm">
                                         </td>
+                                        <td style="width: 150px;" class="jsgrid-cell">
+                                            <input type="text" name="fio" value="{$search['company']}"
+                                                   class="form-control input-sm">
+                                        </td>
                                         <td style="width: 70px;" class="jsgrid-cell">
                                             <input type="text" name="birth" value="{$search['birth']}"
                                                    class="form-control input-sm">
@@ -323,7 +332,7 @@
                                     {foreach $orders as $order}
                                         <tr class="jsgrid-row js-order-row {if $manager->role == 'quality_control' && $order->quality_workout}workout-row{/if}">
                                             <td style="width: 70px;" class="jsgrid-cell jsgrid-align-right">
-                                                <a href="offline_order/{$order->order_id}">{$order->order_id}</a>
+                                                <a href="offline_order/{$order->order_id}">{$order->group_number} {$order->company_number} {$order->personal_number}</a>
                                                 {if $order->contract}
                                                     <div>
                                                     <small>{$order->contract->number}</small></div>{/if}
@@ -405,6 +414,9 @@
                                                     <span class="label label-danger"
                                                           title="">АвтоАнтиРазгон {if $order->antirazgon == 1}0-2{elseif $order->antirazgon == 2}3-5{elseif $order->antirazgon == 3}6-10{/if}</span>
                                                 {/if}
+                                            </td>
+                                            <td style="width: 150px;" class="jsgrid-cell">
+                                                {$order->company_name|escape}
                                             </td>
                                             <td style="width: 70px;" class="jsgrid-cell">
                                                 {$order->birth|date}
