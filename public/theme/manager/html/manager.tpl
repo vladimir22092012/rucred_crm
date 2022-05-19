@@ -399,22 +399,24 @@
                                 {$user->last_visit|date} {$user->last_visit|time}
                             {/if}
                         </h6><br>
-                        <h6>
-                            Заблокирован
-                        </h6>
-                        <div class="clearfix">
-                            <div class="float-left">
-                                <div class="onoffswitch">
-                                    <input type="checkbox" name="block_manager" id="block_manager"
-                                           class="onoffswitch-checkbox block_manager" data-manager="{$user->id}"
-                                            {if $user->blocked == 1} checked="true" value="1" {else} value="0"{/if}>
-                                    <label class="onoffswitch-label" for="block_manager">
-                                        <span class="onoffswitch-inner"></span>
-                                        <span class="onoffswitch-switch"></span>
-                                    </label>
+                        {if in_array($manager->role, ['admin', 'developer']) && !isset($lk)}
+                            <h6>
+                                Заблокирован
+                            </h6>
+                            <div class="clearfix">
+                                <div class="float-left">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" name="block_manager" id="block_manager"
+                                               class="onoffswitch-checkbox block_manager" data-manager="{$user->id}"
+                                                {if $user->blocked == 1} checked="true" value="1" {else} value="0"{/if}>
+                                        <label class="onoffswitch-label" for="block_manager">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        {/if}
                     </div>
 
                     {if isset($user->id)}

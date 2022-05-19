@@ -261,10 +261,6 @@
                 })
             });
 
-            $('.js-edit-form').on('click', function () {
-                $('.reset_shedule').show();
-            });
-
             $('.send_money').on('click', function (e) {
                 e.preventDefault();
 
@@ -1268,8 +1264,15 @@
                                                         <div class="form-group row m-0">
                                                             <label class="control-label col-md-4">Паспорт:</label>
                                                             <div class="col-md-8">
-                                                                <p class="form-control-static">{$order->passport_serial} {$order->subdivision_code}
-                                                                    , от {$order->passport_date}</p>
+                                                                <p class="form-control-static">{$order->passport_serial} от {$order->passport_date}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label class="control-label col-md-4">Код подразделения:</label>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$order->subdivision_code}</p>
                                                             </div>
                                                         </div>
                                                     </div>

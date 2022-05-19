@@ -223,7 +223,8 @@
                                         </th>
                                         <th style="width: 150px;"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'company_id_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'company_id_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'company_id_asc'}<a href="{url page=null sort='company_id_desc'}">Работодатель</a>
+                                            {if $sort == 'company_id_asc'}<a
+                                                href="{url page=null sort='company_id_desc'}">Работодатель</a>
                                             {else}<a href="{url page=null sort='fio_asc'}">Работодатель</a>{/if}
                                         </th>
                                         <th style="width: 70px;"
@@ -387,12 +388,9 @@
                                                     {if $order->client_status == 'pk'}
                                                         <span class="label label-success"
                                                               title="Клиент уже имеет погашенные займы">ПК</span>
-                                                    {elseif $order->client_status == 'crm'}
+                                                    {elseif  in_array($order->client_status, ['crm', 'rep'])}
                                                         <span class="label label-primary"
                                                               title="Клиент уже имеет погашенные займы в CRM">ПК CRM</span>
-                                                    {elseif $order->client_status == 'rep'}
-                                                        <span class="label label-warning"
-                                                              title="Клиент уже подавал ранее заявки">Повтор</span>
                                                     {elseif $order->client_status == 'nk'}
                                                         <span class="label label-info" title="Новый клиент">Новая</span>
                                                     {/if}
@@ -403,8 +401,8 @@
                                                     {elseif $order->first_loan}
                                                         <span class="label label-info" title="Новый клиент">Новая</span>
                                                     {else}
-                                                        <span class="label label-warning"
-                                                              title="Клиент уже подавал ранее заявки">Повтор</span>
+                                                        <span class="label label-primary"
+                                                              title="Клиент уже имеет погашенные займы в CRM">ПК CRM</span>
                                                     {/if}
                                                 {/if}
                                                 {if $order->autoretry}

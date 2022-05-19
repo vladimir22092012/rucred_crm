@@ -168,6 +168,11 @@ class ManagerController extends Controller
 
         $this->design->assign('groups', $groups);
 
+        if($this->request->get('main')){
+            $lk = true;
+            $this->design->assign('lk', $lk);
+        }
+
         return $this->design->fetch('manager.tpl');
     }
 

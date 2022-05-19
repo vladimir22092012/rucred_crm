@@ -226,6 +226,12 @@
                     }
                 })
             });
+
+            $('input[name="viber_same"], input[name="telegram_same"], input[name="whatsapp_same"]').on('click', function () {
+                let attr = $(this).attr('name');
+
+                $('.'+attr+'').toggle();
+            });
         })
     </script>
 {/capture}
@@ -678,7 +684,7 @@
                                         <img class="icon_messag"
                                              src="https://img.icons8.com/ios-glyphs/344/viber.png" width="30"
                                              height="30">
-                                        <input class="form-control phone_num"
+                                        <input class="form-control phone_num viber_same"
                                                style="width: 450px; margin-left: 25px"
                                                type="text" name="viber" value="{$order->viber_num}" autocomplete="off">
                                         <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
@@ -687,7 +693,7 @@
                                         <img class="icon_messag"
                                              src="https://img.icons8.com/office/344/whatsapp--v1.png" width="30"
                                              height="30">
-                                        <input class="form-control phone_num"
+                                        <input class="form-control phone_num whatsapp_same"
                                                style="width: 450px; margin-left: 25px"
                                                type="text" name="whatsapp" value="{$order->whatsapp_num}" autocomplete="off">
                                         <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
@@ -696,7 +702,7 @@
                                         <img class="icon_messag"
                                              src="https://img.icons8.com/color/344/telegram-app--v1.png" width="30"
                                              height="30">
-                                        <input class="form-control phone_num"
+                                        <input class="form-control phone_num telegram_same"
                                                style="width: 450px; margin-left: 25px"
                                                type="text" name="telegram" value="{$order->telegram_num}" autocomplete="off">
                                         <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"

@@ -580,7 +580,7 @@
 <div>
     <h3><strong>3. ИНФОРМАЦИЯ О ПОЛНОЙ СТОИМОСТИ МИКРОЗАЙМА, РАССЧИТАННОЙ НА ОСНОВАНИИ ПРИМЕРНОГО ГРАФИКА ПЛАТЕЖЕЙ ПО
             МИКРОЗАЙМУ</strong></h3><br>
-    <table border="1" style="width: 100%; font-size: 9px" cellpadding="5">
+    <table border="1" style="width: 100%; font-size: 9px" cellpadding="4">
         <tr style="width: 100%;">
             <td style="width: 30%; background-color: #b3b2ab">3.1. Основные параметры микрозайма
             </td>
@@ -629,7 +629,7 @@
     </table>
 </div>
 <h3><strong>4. ПРИМЕРНЫЙ ГРАФИК ПЛАТЕЖЕЙ</strong></h3><br>
-<table border="1" style="width: 100%; font-size: 9px">
+<table border="1" style="width: 100%; font-size: 8px" cellpadding="4">
 
     <tr style="width: 100%;">
         <td rowspan="3" style="background-color: #b3b2ab">Дата платежа</td>
@@ -649,11 +649,11 @@
         {if $date != 'result'}
             <tr>
                 <td align="center">{$date}</td>
-                <td align="left">{$payment['pay_sum']|floatval|number_format:2:',':' '}</td>
-                <td align="left">{$payment['loan_percents_pay']|floatval|number_format:2:',':' '}</td>
-                <td align="left">{$payment['loan_body_pay']|floatval|number_format:2:',':' '}</td>
-                <td align="left">{$payment['comission_pay']|floatval|number_format:2:',':' '}</td>
-                <td align="left">{$payment['rest_pay']|floatval|number_format:2:',':' '}</td>
+                <td align="center">{$payment['pay_sum']|floatval|number_format:2:',':' '}</td>
+                <td align="center">{$payment['loan_percents_pay']|floatval|number_format:2:',':' '}</td>
+                <td align="center">{$payment['loan_body_pay']|floatval|number_format:2:',':' '}</td>
+                <td align="center">{$payment['comission_pay']|floatval|number_format:2:',':' '}</td>
+                <td align="center">{$payment['rest_pay']|floatval|number_format:2:',':' '}</td>
             </tr>
         {/if}
     {/foreach}
@@ -671,7 +671,6 @@
     </tr>
 </table>
 <div>
-    <br><br><br><br><br><br><br><br>
 </div>
 <footer>
     <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
