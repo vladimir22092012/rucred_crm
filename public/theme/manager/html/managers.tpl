@@ -90,16 +90,16 @@
                                             <input type="text" name="name" value="{$search['name']}" class="form-control input-sm">
                                         </td>
                                         <td style="width: 120px;" class="jsgrid-cell jsgrid-align-right">
-                                            <input type="text" name="fio" value="{$search['company_name']}" class="form-control input-sm">
+                                            <input type="text" name="company" value="{$search['company']}" class="form-control input-sm">
                                         </td>
                                         <td style="width: 80px;" class="jsgrid-cell jsgrid-align-right">
-                                            <input type="text" name="birth" value="{$search['birth']}" class="form-control input-sm">
+                                            <input type="text" name="last_ip" value="{$search['last_ip']}" class="form-control input-sm">
                                         </td>
                                         <td style="width: 100px;" class="jsgrid-cell">
-                                            <input type="text" name="email" value="{$search['email']}" class="form-control input-sm">
+                                            <input type="text" name="last_visit" value="{$search['last_visit']}" class="form-control input-sm">
                                         </td>
                                         <td style="width: 100px;" class="jsgrid-cell">
-                                            <input type="text" name="phone" value="{$search['phone']}" class="form-control input-sm">
+                                            <input type="text" name="role" value="{$search['role']}" class="form-control input-sm">
                                         </td>
                                     </tr>
                                 </table>

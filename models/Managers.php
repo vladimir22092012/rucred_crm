@@ -110,12 +110,21 @@ class Managers extends Core
             if (!empty($filter['search']['name'])) {
                 $search_filter .= $this->db->placehold(" AND name LIKE '%" . $this->db->escape($filter['search']['name']) . "%'");
             }
+            if (!empty($filter['search']['last_ip'])) {
+                $search_filter .= $this->db->placehold(" AND last_ip LIKE '%" . $this->db->escape($filter['search']['last_ip']) . "%'");
+            }
+            if (!empty($filter['search']['last_visit'])) {
+                $search_filter .= $this->db->placehold(" AND last_visit LIKE '%" . $this->db->escape($filter['search']['last_visit']) . "%'");
+            }
             if (!empty($filter['search']['phone'])) {
                 $search_filter .= $this->db->placehold(" AND phone_mobile LIKE '%" . $this->db->escape(str_replace(array(' ', '-', '(', ')', '+'), '', $filter['search']['phone'])) . "%'");
             }
             if (!empty($filter['search']['email'])) {
                 $search_filter .= $this->db->placehold(" AND email LIKE '%" . $this->db->escape($filter['search']['email']) . "%'");
-            };
+            }
+            if (!empty($filter['search']['role'])) {
+                $search_filter .= $this->db->placehold(" AND role LIKE '%" . $this->db->escape($filter['search']['role']) . "%'");
+            }
         }
 
         if (isset($filter['limit'])) {
