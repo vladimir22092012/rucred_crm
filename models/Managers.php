@@ -66,6 +66,30 @@ class Managers extends Core
                     $sort = 'id ASC';
                     break;
 
+                case 'last_visit_desc':
+                    $sort = 'last_visit DESC';
+                    break;
+
+                case 'last_visit_asc':
+                    $sort = 'last_visit ASC';
+                    break;
+
+                case 'last_ip_desc':
+                    $sort = 'last_ip DESC';
+                    break;
+
+                case 'last_ip_asc':
+                    $sort = 'last_ip ASC';
+                    break;
+
+                case 'role_desc':
+                    $sort = 'field(role, "admin","underwriter","middle","employer","boss","developer")';
+                    break;
+
+                case 'role_asc':
+                    $sort = 'field(role, "developer","boss","employer","middle","underwriter","admin")';
+                    break;
+
                 case 'date_desc':
                     $sort = 'created DESC';
                     break;
