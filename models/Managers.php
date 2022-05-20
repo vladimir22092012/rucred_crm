@@ -138,7 +138,7 @@ class Managers extends Core
                 $search_filter .= $this->db->placehold(" AND last_ip LIKE '%" . $this->db->escape($filter['search']['last_ip']) . "%'");
             }
             if (!empty($filter['search']['last_visit'])) {
-                $search_filter .= $this->db->placehold(" AND last_visit LIKE '%" . $this->db->escape($filter['search']['last_visit']) . "%'");
+                $search_filter .= $this->db->placehold(' AND DATE(last_visit) = ?', date('Y-m-d', strtotime($filter['search']['last_visit'])));
             }
             if (!empty($filter['search']['phone'])) {
                 $search_filter .= $this->db->placehold(" AND phone_mobile LIKE '%" . $this->db->escape(str_replace(array(' ', '-', '(', ')', '+'), '', $filter['search']['phone'])) . "%'");
@@ -148,6 +148,9 @@ class Managers extends Core
             }
             if (!empty($filter['search']['role'])) {
                 $search_filter .= $this->db->placehold(" AND role LIKE '%" . $this->db->escape($filter['search']['role']) . "%'");
+            }
+            if (!empty($filter['search']['company'])) {
+                $search_filter .= $this->db->placehold(" AND company LIKE '%" . $this->db->escape($filter['search']['company']) . "%'");
             }
         }
 
