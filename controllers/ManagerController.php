@@ -43,8 +43,8 @@ class ManagerController extends Controller
                 endswitch;
             } else {
                 $user = new StdClass();
-                $user_id = $this->request->post('id', 'integer');
 
+                $user_id = $this->request->post('id', 'integer');
                 $user->role = $this->request->post('role');
                 $user->name = $this->request->post('name');
                 $user->name_1c = $this->request->post('name_1c');
@@ -53,7 +53,7 @@ class ManagerController extends Controller
                 $user->login = $this->request->post('login');
                 $user->mango_number = $this->request->post('mango_number');
 
-                $same_login = $this->Managers->check_same_login($user->login);
+                $same_login = $this->Managers->check_same_login($user_id, $user->login);
 
                 $user->group_id = ($this->request->post('groups')) ? (int)$this->request->post('groups') : 0;
                 $user->company_id = ($this->request->post('companies')) ? (int)$this->request->post('companies') : 0;

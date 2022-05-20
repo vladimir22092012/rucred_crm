@@ -394,12 +394,19 @@ class Managers extends Core
         return md5(sha1($this->salt . $password) . $this->salt);
     }
 
-    public function check_same_login($login)
+    public function check_same_login($login, $user_id = 0)
     {
+        $user_id_filter = '';
+
+
+        if($user_id)
+            $user_id_filter = $this->db->placehold('AND id != ?', $user_id);
+
         $query = $this->db->placehold("
             SELECT id
             FROM __managers
             WHERE login = ?
+            $user_id_filter
         ", $login);
         $this->db->query($query);
 
