@@ -16,8 +16,6 @@ class BlacklistController extends Controller
     public function fetch()
     {
 
-        return false;
-
         $this->design->assign('import_files_dir', $this->import_files_dir);
         if (!is_writable($this->import_files_dir)) {
             $this->design->assign('message_error', 'no_permission');

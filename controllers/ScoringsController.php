@@ -5,8 +5,6 @@ class ScoringsController extends Controller
     public function fetch()
     {
 
-        return false;
-
         if ($this->request->method('post')) {
             $scoring_settings = $this->request->post('settings');
             

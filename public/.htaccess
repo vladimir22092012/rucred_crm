@@ -92,6 +92,8 @@ RewriteRule ^wages/?$                   index.php?module=WagesController  [L,QSA
 RewriteRule ^penalty_types/?$           index.php?module=PenaltyTypesController  [L,QSA]
 RewriteRule ^penalties/?$               index.php?module=PenaltiesController  [L,QSA]
 
+RewriteRule ^registr/?$                 index.php?module=RegistrController  [L,QSA]
+
 RewriteRule ^statistics/?$              index.php?module=StatisticsController&action=main  [L,QSA]
 RewriteRule ^statistics/([^/]*)/?$      index.php?module=StatisticsController&action=$1  [L,QSA]
 RewriteRule ^dashboard/?$               index.php?module=DashboardController  [L,QSA]
