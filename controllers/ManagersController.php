@@ -4,6 +4,15 @@ class ManagersController extends Controller
 {
     public function fetch()
     {
+        $items_per_page = 10;
+
+        $filter = array();
+
+        if (!($sort = $this->request->get('sort', 'string'))) {
+            $sort = 'id_desc';
+        }
+        $filter['sort'] = $sort;
+        $this->design->assign('sort', $sort);
 
         if (in_array($this->manager->role, ['underwriter', 'employer'])) {
             header('Location: /offline_orders');
@@ -13,7 +22,7 @@ class ManagersController extends Controller
             return $this->design->fetch('403.tpl');
         }
 
-        $managers = $this->managers->get_managers();
+        $managers = $this->managers->get_managers($filter);
 
         if ($this->manager->role == 'team_collector') {
             $team_id = (array)$this->manager->team_id;
