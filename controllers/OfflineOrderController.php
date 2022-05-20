@@ -1,6 +1,6 @@
 <?php
 error_reporting(-1);
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'On');
 class OfflineOrderController extends Controller
 {
     public function fetch()
@@ -2981,14 +2981,13 @@ class OfflineOrderController extends Controller
 
         $rest_sum = $order['amount'];
         $start_date = date('Y-m-d', strtotime($order['probably_start_date']));
-        $end_date = new DateTime(date('Y-m-10', strtotime($order['probably_return_date'])));
+        $end_date = $this->check_date($start_date, $order['loan_type']);
+        $end_date = new DateTime(date('Y-m-d', strtotime($end_date)));
         $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
         $paydate = new DateTime(date('Y-m-10', strtotime($start_date)));
 
         $percent_per_month = (($order['percent'] / 100) * 365) / 12;
         $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
-
-        $body_pay = 0;
 
         if (date('d', strtotime($start_date)) < 10) {
             if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < 3) {
@@ -2998,7 +2997,6 @@ class OfflineOrderController extends Controller
                 $body_pay = $sum_pay - $loan_percents_pay;
                 $paydate->add(new DateInterval('P1M'));
                 $paydate = $this->check_pay_date($paydate);
-
             } else {
                 $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
                 $loan_percents_pay = $sum_pay;
@@ -3015,7 +3013,6 @@ class OfflineOrderController extends Controller
                 ];
             $paydate->add(new DateInterval('P1M'));
         } else {
-
             $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
             $first_pay = new DateTime(date('Y-m-10', strtotime($start_date . '+1 month')));
             $count_days_this_month = date('t', strtotime($issuance_date->format('Y-m-d')));
@@ -3024,18 +3021,16 @@ class OfflineOrderController extends Controller
             if (date_diff($first_pay, $issuance_date)->days < 20) {
                 $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($first_pay, $issuance_date)->days;
                 $percents_pay = $sum_pay;
+                $body_pay = 0.00;
             }
             if (date_diff($first_pay, $issuance_date)->days >= 20 && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
-
                 $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($first_pay, $issuance_date)->days);
 
                 $sum_pay = $annoouitet_pay - $minus_percents;
                 $percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
                 $body_pay = $sum_pay - $percents_pay;
-
             }
             if (date_diff($first_pay, $issuance_date)->days >= $count_days_this_month) {
-
                 $sum_pay = $annoouitet_pay;
                 $percents_pay = $rest_sum * $percent_per_month;
                 $body_pay = $sum_pay - $percents_pay;
@@ -3053,14 +3048,13 @@ class OfflineOrderController extends Controller
             $paydate->add(new DateInterval('P1M'));
         }
 
-        if ($rest_sum != 0) {
+        if ($rest_sum !== 0) {
             $paydate->setDate($paydate->format('Y'), $paydate->format('m'), 10);
             $interval = new DateInterval('P1M');
-            $end_date->setTime(0, 0, 1);
+            $end_date->setTime(24, 0, 1);
             $daterange = new DatePeriod($paydate, $interval, $end_date);
 
             foreach ($daterange as $date) {
-
                 $date = $this->check_pay_date($date);
 
                 $loan_percents_pay = $rest_sum * $percent_per_month;
@@ -3101,7 +3095,6 @@ class OfflineOrderController extends Controller
         }
 
         foreach ($dates as $date) {
-
             $date = new DateTime(date('Y-m-d H:i:s', strtotime($date)));
 
             $new_dates[] = mktime(
@@ -3171,6 +3164,41 @@ class OfflineOrderController extends Controller
 
         $this->orders->update_order($order_id, $order);
         exit;
+    }
+
+    private function check_date($start_date, $loan_id)
+    {
+        $loan = $this->Loantypes->get_loantype($loan_id);
+
+        $start_date = date('Y-m-d', strtotime($start_date));
+        $first_pay = new DateTime(date('Y-m-10', strtotime($start_date)));
+        $end_date = date('Y-m-10', strtotime($start_date . '+' . $loan->max_period . 'month'));
+
+        $start_date = new DateTime($start_date);
+        $end_date = new DateTime($end_date);
+
+        if ($start_date > $first_pay) {
+            $first_pay->add(new DateInterval('P1M'));
+        }
+
+        $first_pay = $this->check_pay_date($first_pay);
+
+        if (date_diff($first_pay, $start_date)->days < 20 && $first_pay->format('m') != $start_date->format('m')) {
+            $end_date->add(new DateInterval('P1M'));
+        }
+
+
+        for ($i = 0; $i <= 15; $i++) {
+            $check_date = $this->WeekendCalendar->check_date($end_date->format('Y-m-d'));
+
+            if ($check_date == null) {
+                break;
+            } else {
+                $end_date->sub(new DateInterval('P1D'));
+            }
+        }
+
+       return $end_date->format('d.m.Y');
     }
 
 }
