@@ -154,12 +154,12 @@ class Managers extends Core
                 $search_filter .= $this->db->placehold(" AND role LIKE '%" . $this->db->escape($filter['search']['role']) . "%'");
             }
             if (!empty($filter['search']['company'])) {
-                $search_filter .= $this->db->placehold(" AND company LIKE '%" . $this->db->escape($filter['search']['company']) . "%'");
+                $search_filter .= $this->db->placehold(" AND s_companies.name LIKE '%" . $this->db->escape($filter['search']['company']) . "%'");
             }
         }
 
         if (isset($filter['limit'])) {
-            $limit = max(1, intval($filter['limit']));
+            $limit = max(1, (int)$filter['limit']);
         }
 
         if (isset($filter['page'])) {
@@ -168,9 +168,11 @@ class Managers extends Core
 
         $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page - 1) * $limit, $limit);
 
+
         $query = $this->db->placehold("
-            SELECT *
+            SELECT __managers.*, __companies.name AS company_name
             FROM __managers
+            INNER JOIN __companies ON __managers.company_id = __companies.id
             WHERE 1
                 $id_filter
                 $search_filter
