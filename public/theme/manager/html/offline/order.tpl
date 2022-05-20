@@ -225,7 +225,6 @@
                     method: 'POST',
                     data: form,
                     success: function (resp) {
-
                     }
                 });
             });
@@ -531,10 +530,10 @@
                 $('input[name="result[all_loan_percents_pay]"]').val(new Intl.NumberFormat('ru-RU').format(sum));
 
 
-                let comission_pay = $(this).val();
-                comission_pay = comission_pay.replace(' ', '');
-                comission_pay = comission_pay.replace(' ', '');
-                comission_pay = comission_pay.replace(',', '.');
+                let percents_pay = $(this).val();
+                percents_pay = percents_pay.replace(' ', '');
+                percents_pay = percents_pay.replace(' ', '');
+                percents_pay = percents_pay.replace(',', '.');
 
                 let pay_od = $(this).closest('tr').find('.restructure_od').val();
 
@@ -542,10 +541,10 @@
                 pay_od = pay_od.replace(' ', '');
                 pay_od = pay_od.replace(',', '.');
 
-                let percents_pay = $(this).closest('tr').find('.restructure_prc').val();
-                percents_pay = percents_pay.replace(' ', '');
-                percents_pay = percents_pay.replace(' ', '');
-                percents_pay = percents_pay.replace(',', '.');
+                let comission_pay = $(this).closest('tr').find('.restructure_cms').val();
+                comission_pay = comission_pay.replace(' ', '');
+                comission_pay = comission_pay.replace(' ', '');
+                comission_pay = comission_pay.replace(',', '.');
 
                 let annouitet_sum = parseFloat(pay_od) + parseFloat(percents_pay) + parseFloat(comission_pay);
 
@@ -573,10 +572,10 @@
                 $('input[name="result[all_comission_pay]"]').val(new Intl.NumberFormat('ru-RU').format(sum));
 
 
-                let percents_pay = $(this).val();
-                percents_pay = percents_pay.replace(' ', '');
-                percents_pay = percents_pay.replace(' ', '');
-                percents_pay = percents_pay.replace(',', '.');
+                let comission_pay = $(this).val();
+                comission_pay = comission_pay.replace(' ', '');
+                comission_pay = comission_pay.replace(' ', '');
+                comission_pay = comission_pay.replace(',', '.');
 
                 let pay_od = $(this).closest('tr').find('.restructure_od').val();
 
@@ -584,12 +583,12 @@
                 pay_od = pay_od.replace(' ', '');
                 pay_od = pay_od.replace(',', '.');
 
-                let comission_pay = $(this).closest('tr').find('.restructure_cms').val();
+                let percents_pay = $(this).closest('tr').find('.restructure_prc').val();
 
-                if (comission_pay) {
-                    comission_pay = comission_pay.replace(' ', '');
-                    comission_pay = comission_pay.replace(' ', '');
-                    comission_pay = comission_pay.replace(',', '.');
+                if (percents_pay) {
+                    percents_pay = percents_pay.replace(' ', '');
+                    percents_pay = percents_pay.replace(' ', '');
+                    percents_pay = percents_pay.replace(',', '.');
                 }
 
                 let annouitet_sum = parseFloat(pay_od) + parseFloat(percents_pay) + parseFloat(comission_pay);
@@ -735,11 +734,11 @@
     <div class="container-fluid">
         <div class="row page-titles">
             <div class="col-md-6 col-8 align-self-center">
-                <h4 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i> Заявка №{$order->order_id}</h4>
+                <h4 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i> Заявка № {$order->group_number} {$order->company_number} {$order->personal_number}</h4>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
                     <li class="breadcrumb-item"><a href="offline_orders">Заявки</a></li>
-                    <li class="breadcrumb-item active">Заявка №{$order->order_id}</li>
+                    <li class="breadcrumb-item active">Заявка № {$order->group_number} {$order->company_number} {$order->personal_number}</li>
                 </ol>
             </div>
             <div class="col-md-6 col-4 align-self-center">

@@ -1,5 +1,6 @@
 <?php
-
+error_reporting(-1);
+ini_set('display_errors', 'Off');
 class OfflineOrderController extends Controller
 {
     public function fetch()
@@ -247,7 +248,49 @@ class OfflineOrderController extends Controller
                             $penalties[$p->block] = $p;
                     }
                     $this->design->assign('penalties', $penalties);
+                    $groups = $this->Groups->get_groups();
+                    $companies = $this->Companies->get_companies(['group_id' => $order->group_id]);
 
+                    foreach ($groups as $group) {
+                        if ($order->group_id == $group->id) {
+                            $group_name = $group->name;
+                            $order->group_number = $group->number;
+                        }
+                    }
+
+                    if (!empty($order->company_id)) {
+
+                        $branches = $this->Branches->get_branches(['company_id' => $order->company_id]);
+                        $this->design->assign('branches', $branches);
+
+                        if (!empty($order->branche_id)) {
+                            foreach ($branches as $branch) {
+                                if ($order->branche_id == $branch->id)
+                                    $branch_name = $branch->name;
+                            }
+                        }
+
+                        if (!empty($order->company_id)) {
+                            foreach ($companies as $company) {
+                                if ($order->company_id == $company->id) {
+                                    $company_name = $company->name;
+                                    $order->company_number = $company->number;
+                                }
+                            }
+                        }
+                    }
+
+                    if (!isset($branch_name))
+                        $branch_name = 'Отсутствует филиал';
+
+                    if (!isset($company_name))
+                        $company_name = 'Отсутствует компания';
+
+                    $this->design->assign('groups', $groups);
+                    $this->design->assign('companies', $companies);
+                    $this->design->assign('branch_name', $branch_name);
+                    $this->design->assign('company_name', $company_name);
+                    $this->design->assign('group_name', $group_name);
                     $this->design->assign('order', $order);
 
                     $comments = $this->comments->get_comments(array('user_id' => $order->user_id));
@@ -554,47 +597,10 @@ class OfflineOrderController extends Controller
             }
         }
 
-        $groups = $this->Groups->get_groups();
-        $companies = $this->Companies->get_companies(['group_id' => $order->group_id]);
-
-        foreach ($groups as $group) {
-            if ($order->group_id == $group->id)
-                $group_name = $group->name;
-        }
-
-        if (!empty($order->company_id)) {
-
-            $branches = $this->Branches->get_branches(['company_id' => $order->company_id]);
-            $this->design->assign('branches', $branches);
-
-            if (!empty($order->branche_id)) {
-                foreach ($branches as $branch) {
-                    if ($order->branche_id == $branch->id)
-                        $branch_name = $branch->name;
-                }
-            }
-
-            if (!empty($order->company_id)) {
-                foreach ($companies as $company) {
-                    if ($order->company_id == $company->id)
-                        $company_name = $company->name;
-                }
-            }
-        }
-
-        if (!isset($branch_name))
-            $branch_name = 'Отсутствует филиал';
-
-        if (!isset($company_name))
-            $company_name = 'Отсутствует компания';
-
-        $this->design->assign('groups', $groups);
-        $this->design->assign('companies', $companies);
-        $this->design->assign('branch_name', $branch_name);
-        $this->design->assign('company_name', $company_name);
-        $this->design->assign('group_name', $group_name);
-
         $this->design->assign('documents', $documents);
+
+        $companies = $this->Companies->get_companies();
+        $groups = $this->Groups->get_groups();
 
         $body = $this->design->fetch('offline/order.tpl');
 
@@ -2820,22 +2826,15 @@ class OfflineOrderController extends Controller
             $results[$key]['all_rest_pay_sum'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_rest_pay_sum']);
         }
 
-        $payment_schedule = array_merge($payment_schedule, $results);
-
         $dates[0] = date('d.m.Y', strtotime($order->probably_start_date));
         $payments[0] = -$order->amount;
 
         foreach ($payment_schedule as $date => $pay) {
-            if ($date != 'result') {
-                $payments[] = (float)$pay['pay_sum'];
-                $dates[] = date('d.m.Y', strtotime($date));
-                $payment_schedule['result']['all_sum_pay'] += (float)$pay['pay_sum'];
-                $payment_schedule['result']['all_loan_percents_pay'] += (float)$pay['loan_percents_pay'];
-                $payment_schedule['result']['all_loan_body_pay'] += (float)$pay['loan_body_pay'];
-                $payment_schedule['result']['all_comission_pay'] += (float)$pay['comission_pay'];
-                $payment_schedule['result']['all_rest_pay_sum'] = 0.00;
-            }
+            $payments[] = (float)$pay['pay_sum'];
+            $dates[] = date('d.m.Y', strtotime($date));
         }
+
+        $payment_schedule = array_merge($payment_schedule, $results);
 
         foreach ($dates as $date) {
 
@@ -2859,7 +2858,7 @@ class OfflineOrderController extends Controller
         $update_order =
             [
                 'psk' => $psk,
-                'payment_schedule' => $payment_schedule
+                'payment_schedule' => json_encode($payment_schedule)
             ];
 
         $this->orders->update_order($order_id, $update_order);
