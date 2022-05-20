@@ -227,6 +227,10 @@ class Orders extends Core
         $page = 1;
         $workout_sort = '';
         $sort = 'order_id DESC';
+        $employer_filter = '';
+
+        if(isset($filter['employer']))
+            $employer_filter = $this->db->placehold("AND o.company_id = ?", (int)$filter['employer']);
 
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND o.id IN (?@)", array_map('intval', (array)$filter['id']));
@@ -581,6 +585,7 @@ class Orders extends Core
                 $current_filter
                 $autoretry_filter
                 $client_filter
+                $employer_filter
             ORDER BY $workout_sort $sort
             $sql_limit
         ");
@@ -611,6 +616,10 @@ class Orders extends Core
         $autoretry_filter = '';
         $client_filter = '';
         $keyword_filter = '';
+        $employer_filter = '';
+
+        if(isset($filter['employer']))
+            $employer_filter = $this->db->placehold("AND o.company_id = ?", (int)$filter['employer']);
 
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
@@ -741,6 +750,7 @@ class Orders extends Core
                 $autoretry_filter
                 $keyword_filter
                 $client_filter
+                $employer_filter
         ");
         $this->db->query($query);
         $count = $this->db->result('count');

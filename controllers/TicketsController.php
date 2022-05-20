@@ -30,6 +30,12 @@ class TicketsController extends Controller
             $in_out = 'out';
         }
 
+        if ($this->request->get('archive')) {
+            $archive = true;
+            $this->design->assign('archive', $archive);
+            $in_out = 'archive';
+        }
+
         $tickets = $this->Tickets->get_tickets($manager_role, $manager_id, $in_out);
         $this->design->assign('tickets', $tickets);
 

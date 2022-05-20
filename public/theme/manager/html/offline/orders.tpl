@@ -136,13 +136,13 @@
                                     <a href="{if $filter_status=='new'}{url status=null page=null}{else}{url status='new' page=null}{/if}"
                                        class="btn btn-xs {if $filter_status=='new'}btn-warning{else}btn-outline-warning{/if}">Новая</a>
 
-                                    <a href="{if $filter_status==13}{url status=null page=null}{else}{url status=1 page=null}{/if}"
+                                    <a href="{if $filter_status==13}{url status=null page=null}{else}{url status=13 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==13}btn-info{else}btn-outline-info{/if}">Р.Принята</a>
 
-                                    <a href="{if $filter_status==14}{url status=null page=null}{else}{url status=2 page=null}{/if}"
+                                    <a href="{if $filter_status==14}{url status=null page=null}{else}{url status=14 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==14}btn-success{else}btn-outline-success{/if}">Р.Подтверждена</a>
 
-                                    <a href="{if $filter_status==15}{url status=null page=null}{else}{url status=3 page=null}{/if}"
+                                    <a href="{if $filter_status==15}{url status=null page=null}{else}{url status=15 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==15}btn-danger{else}btn-outline-danger{/if}">Р.Отклонена</a>
                                     {if $filter_status}
                                         <input type="hidden" value="{$filter_status}" id="filter_status"/>
@@ -170,6 +170,14 @@
                                     <a href="{if $filter_status==8}{url status=null page=null}{else}{url status=8 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==8}btn-danger{else}btn-outline-danger{/if}">Отказ
                                         клиента</a>
+                                    <a href="{if $filter_status==13}{url status=null page=null}{else}{url status=13 page=null}{/if}"
+                                       class="btn btn-xs {if $filter_status==13}btn-info{else}btn-outline-info{/if}">Р.Принята</a>
+
+                                    <a href="{if $filter_status==14}{url status=null page=null}{else}{url status=14 page=null}{/if}"
+                                       class="btn btn-xs {if $filter_status==14}btn-success{else}btn-outline-success{/if}">Р.Подтверждена</a>
+
+                                    <a href="{if $filter_status==15}{url status=null page=null}{else}{url status=15 page=null}{/if}"
+                                       class="btn btn-xs {if $filter_status==15}btn-danger{else}btn-outline-danger{/if}">Р.Отклонена</a>
                                     {if $filter_status}
                                         <input type="hidden" value="{$filter_status}" id="filter_status"/>
                                     {/if}

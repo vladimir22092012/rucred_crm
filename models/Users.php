@@ -138,6 +138,7 @@ class Users extends Core
         $limit = 1000;
         $page = 1;
         $sort = 'id DESC';
+        $employer_filter = '';
 
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
@@ -257,6 +258,9 @@ class Users extends Core
             $page = max(1, intval($filter['page']));
         }
 
+        if(isset($filter['employer']))
+            $employer_filter = $this->db->placehold("AND company_id = ?", (int)$filter['employer']);
+
         $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page - 1) * $limit, $limit);
 
         $query = $this->db->placehold("
@@ -267,6 +271,7 @@ class Users extends Core
                 $search_filter
                 $missing_filter
                 $keyword_filter
+                $employer_filter
             ORDER BY $sort
             $sql_limit
         ");
@@ -287,6 +292,7 @@ class Users extends Core
         $missing_filter = '';
         $keyword_filter = '';
         $search_filter = '';
+        $employer_filter = '';
 
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('interval', (array)$filter['id']));
@@ -354,6 +360,9 @@ class Users extends Core
             };
         }
 
+        if(isset($filter['employer']))
+            $employer_filter = $this->db->placehold("AND company_id = ?", (int)$filter['employer']);
+
         $query = $this->db->placehold("
             SELECT COUNT(id) AS count
             FROM __users
@@ -362,6 +371,7 @@ class Users extends Core
                 $missing_filter
                 $search_filter
                 $keyword_filter
+                $employer_filter
         ");
         $this->db->query($query);
         $count = $this->db->result('count');

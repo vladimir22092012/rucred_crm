@@ -10,15 +10,18 @@ class CompaniesController extends Controller
                 break;
         endswitch;
 
+        $filter = array();
+
         if ($this->request->get('sort', 'string')) {
             $filter['sort'] = $this->request->get('sort', 'string');
             $this->design->assign('sort', $filter['sort']);
-        } else {
-            $filter = null;
         }
 
+        if($this->manager->role == 'employer')
+            $filter['employer'] = $this->manager->company_id;
+
         $companies = $this->Companies->get_companies_groups($filter);
-        $groups = $this->Groups->get_groups();
+        $groups = $this->Groups->get_groups($filter);
 
         $this->design->assign('companies', $companies);
         $this->design->assign('groups', $groups);

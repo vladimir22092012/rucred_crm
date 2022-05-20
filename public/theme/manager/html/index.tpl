@@ -221,13 +221,11 @@
                                             class="hide-menu">Заявки</span></a>
                             </li>
                         {/if}
-                        {if !in_array($manager->role, ['employer'])}
                             <li {if in_array($module, ['ClientController', 'ClientsController'])}class="active"{/if}>
                                 <a class="" href="clients/" aria-expanded="false"><i
                                             class="mdi mdi-chart-bubble"></i><span
                                             class="hide-menu">Клиенты</span></a>
                             </li>
-                        {/if}
                         {*
                         <li {if in_array($module, ['MissingController'])}class="active"{/if}>
                             <a class="" href="missing/" aria-expanded="false"><i class="mdi mdi-sleep"></i><span
@@ -253,12 +251,16 @@
                         {/if}
                         {if in_array('managers', $manager->permissions)}
                             <li class="nav-small-cap">Управление</li>
+                            <li {if in_array($module, ['RegistrController'])}class="active"{/if}>
+                                <a class="" href="registr/" aria-expanded="false"><i
+                                            class="mdi mdi-book-open-page-variant"></i><span class="hide-menu">Реестр сделок</span></a>
+                            </li>
                             <li {if in_array($module, ['ManagerController', 'ManagersController'])}class="active"{/if}>
                                 <a class="" href="managers/" aria-expanded="false"><i
                                             class="mdi mdi-account-multiple-outline"></i><span class="hide-menu">Пользователи</span></a>
                             </li>
                         {/if}
-                        {if in_array('changelogs', $manager->permissions)}
+                        {if in_array('managers', $manager->permissions)}
                             <li {if in_array($module, ['ChangelogsController'])}class="active"{/if}>
                                 <a class="" href="changelogs/" aria-expanded="false"><i
                                             class="mdi mdi-book-open-page-variant"></i><span
@@ -289,7 +291,7 @@
                                 </ul>
                             </li>
                         {/if}
-                        {if in_array('handbooks', $manager->permissions) || in_array('sms_templates', $manager->permissions) || in_array('tags', $manager->permissions) || in_array('communications', $manager->permissions)}
+                        {if in_array('managers', $manager->permissions)}
                             <li {if in_array($module, ['HandbooksController', 'ReasonsController', 'SmsTemplatesController', 'SettingsCommunicationsController', 'TicketStatusesController', 'TicketReasonsController'])}class="active"{/if}>
                                 <a class="has-arrow" href="#" aria-expanded="false"><i
                                             class="mdi mdi-database"></i><span
@@ -323,6 +325,8 @@
                                             href="tickets?in=true">Входящие</a></li>
                                 <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
                                             href="tickets?out=true">Исходящие</a></li>
+                                <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
+                                            href="tickets?archive=true">Архив</a></li>
                             </ul>
                         </li>
                         {*
@@ -371,9 +375,6 @@
                                             {/if}
 
                                             {/if}
-
-
-
                                             {if in_array('my_contracts', $manager->permissions) || in_array('collection_report', $manager->permissions) || in_array('zvonobot', $manager->permissions)}
                                             <li class="nav-small-cap">Коллекшин</li>
 

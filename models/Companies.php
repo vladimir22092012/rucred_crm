@@ -119,6 +119,11 @@ class Companies extends Core
     {
         $sort = 'gr.id asc';
 
+        $employer_filter = '';
+
+        if(isset($filter['employer']))
+            $employer_filter = $this->db->placehold("AND com.id = ?", (int)$filter['employer']);
+
         if (!empty($filter['sort'])) {
             switch ($filter['sort']) :
                 case 'group_asc':
@@ -220,6 +225,8 @@ class Companies extends Core
         gr.id
         FROM s_companies as com
         JOIN s_groups as gr on com.group_id = gr.id
+        WHERE 1
+        $employer_filter
         ORDER BY $sort
         ");
 

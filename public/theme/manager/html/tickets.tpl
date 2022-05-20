@@ -100,10 +100,10 @@
         <div class="row page-titles">
             <div class="col-md-6 col-8 align-self-center">
                 <h3 class="text-themecolor mb-0 mt-0"><i
-                            class="mdi mdi-animation"></i>{if $in}Входящие{/if}{if $out}Исходящие{/if}</h3>
+                            class="mdi mdi-animation"></i>{if $in}Входящие{/if}{if $out}Исходящие{/if}{if $archive}Архив{/if}</h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
-                    <li class="breadcrumb-item active">{if $in}Входящие{/if}{if $out}Исходящие{/if}</li>
+                    <li class="breadcrumb-item active">{if $in}Входящие{/if}{if $out}Исходящие{/if}{if $archive}Архив{/if}</li>
                 </ol>
             </div>
             <div class="col-md-6 col-4 align-self-center">

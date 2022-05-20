@@ -106,29 +106,8 @@ class OfflineOrdersController extends Controller
         $filter['page'] = $current_page;
         $filter['limit'] = $items_per_page;
 
-
-        /*
-                $orders = array();
-                foreach ($this->orders->get_orders($filter) as $order)
-                {
-                    $order->scorings = $this->scorings->get_scorings(array('user_id'=>$order->user_id));
-                    if (empty($order->scorings) || !count($order->scorings))
-                    {
-                        $order->scorings_result = 'Не проводился';
-                    }
-                    else
-                    {
-                        $order->scorings_result = 'Пройден';
-                        foreach ($order->scorings as $scoring)
-                        {
-                            if (!$scoring->success)
-                                $order->scorings_result = 'Не пройден: '.$scoring->type;
-                        }
-                    }
-
-                    $orders[$order->order_id] = $order;
-                }
-        */
+        if($this->manager->role == 'employer')
+            $filter['employer'] = $this->manager->company_id;
 
         $orders = array();
         foreach ($this->orders->get_orders($filter) as $order) {

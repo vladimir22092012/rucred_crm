@@ -18,7 +18,12 @@ class GroupsController extends Controller
                 break;
         endswitch;
 
-        $groups = $this->Groups->get_groups();
+        $filter = array();
+
+        if($this->manager->role == 'employer')
+            $filter['employer'] = $this->manager->group_id;
+
+        $groups = $this->Groups->get_groups($filter);
 
         $this->design->assign('groups', $groups);
 

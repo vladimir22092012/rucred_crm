@@ -32,6 +32,10 @@ class Managers extends Core
         $limit = 1000;
         $page = 1;
         $sort = 'id DESC';
+        $employer_filter = '';
+
+        if(isset($filter['employer']))
+            $employer_filter = $this->db->placehold("AND company_id = ?", (int)$filter['employer']);
 
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
@@ -174,6 +178,7 @@ class Managers extends Core
                 $blocked_filter
                 $keyword_filter
                 $collection_status_filter
+                $employer_filter
             ORDER BY $sort
             $sql_limit
         ");
@@ -196,6 +201,10 @@ class Managers extends Core
         $blocked_filter = '';
         $collection_status_filter = '';
         $keyword_filter = '';
+        $employer_filter = '';
+
+        if(isset($filter['employer']))
+            $employer_filter = $this->db->placehold("AND company_id = ?", (int)$filter['employer']);
 
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
@@ -229,6 +238,7 @@ class Managers extends Core
                 $blocked_filter
                 $collection_status_filter
                 $keyword_filter
+                $employer_filter
         ");
         $this->db->query($query);
         $count = $this->db->result('count');
@@ -301,7 +311,7 @@ class Managers extends Core
         }
 
         $list_permissions = array(
-            'managers' => array('developer', 'admin', 'boss', 'chief_collector', 'team_collector', 'chief_exactor', 'chief_sudblock', 'city_manager'), // просмотр менеджеров
+            'managers' => array('developer', 'admin', 'boss', 'chief_collector', 'team_collector', 'chief_exactor', 'chief_sudblock', 'city_manager', 'employer'), // просмотр менеджеров
 //            'block_manager' => array('developer', 'admin', 'boss', 'quality_control_plus', 'chief_collector', 'city_manager'), // блокирование менеджеров
             'create_managers' => array('developer', 'admin', 'boss', 'quality_control_plus', 'chief_collector', 'chief_exactor', 'chief_sudblock', 'city_manager'), // создание и редактирование менеджеров
 //            'my_contracts' => array('developer', 'admin', 'boss', 'quality_control_plus', 'collector', 'chief_collector', 'team_collector'),

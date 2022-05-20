@@ -20,6 +20,9 @@ class ClientsController extends Controller
             $this->design->assign('search', array_filter($search));
         }
 
+        if($this->manager->role == 'employer')
+            $filter['employer'] = $this->manager->company_id;
+
         $current_page = $this->request->get('page', 'integer');
         $current_page = max(1, $current_page);
         $this->design->assign('current_page_num', $current_page);
