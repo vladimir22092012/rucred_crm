@@ -30,15 +30,15 @@ class ManagersController extends Controller
 
         if(!empty($managers)){
 
-            $companies = $this->Companies->get_companies();
-
-            foreach ($companies as $company) {
-                foreach ($managers as $key => $manager) {
-                    if ($company->id == $manager->company_id) {
-                        $manager->company_name = $company->name;
-                    }
-                }
-            }
+//            $companies = $this->Companies->get_companies();
+//
+//            foreach ($companies as $company) {
+//                foreach ($managers as $key => $manager) {
+//                    if ($company->id == $manager->company_id) {
+//                        $manager->company_name = $company->name;
+//                    }
+//                }
+//            }
 
             $current_page = $this->request->get('page', 'integer');
             $current_page = max(1, $current_page);
