@@ -99,7 +99,15 @@
                                             <input type="text" name="last_visit" value="{$search['last_visit']}" class="form-control input-sm">
                                         </td>
                                         <td style="width: 100px;" class="jsgrid-cell">
-                                            <input type="text" name="role" value="{$search['role']}" class="form-control input-sm">
+                                            <select class="form-control" name="role" id="role">
+                                                <option value="">Выберите роль</option>
+                                                <option value="admin">Администратор</option>
+                                                <option value="underwriter">Андеррайтер</option>
+                                                <option value="middle">Мидл</option>
+                                                <option value="employer">Работодатель</option>
+                                                <option value="boss">Босс</option>
+                                                <option value="developer">Разработчик</option>
+                                            </select>
                                         </td>
                                     </tr>
                                 </table>
