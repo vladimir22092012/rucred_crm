@@ -66,6 +66,30 @@ class Managers extends Core
                     $sort = 'id ASC';
                     break;
 
+                case 'last_visit_desc':
+                    $sort = 'last_visit DESC';
+                    break;
+
+                case 'last_visit_asc':
+                    $sort = 'last_visit ASC';
+                    break;
+
+                case 'last_ip_desc':
+                    $sort = 'last_ip DESC';
+                    break;
+
+                case 'last_ip_asc':
+                    $sort = 'last_ip ASC';
+                    break;
+
+                case 'role_desc':
+                    $sort = 'field(role, "admin","underwriter","middle","employer","boss","developer")';
+                    break;
+
+                case 'role_asc':
+                    $sort = 'field(role, "developer","boss","employer","middle","underwriter","admin")';
+                    break;
+
                 case 'date_desc':
                     $sort = 'created DESC';
                     break;
@@ -110,12 +134,21 @@ class Managers extends Core
             if (!empty($filter['search']['name'])) {
                 $search_filter .= $this->db->placehold(" AND name LIKE '%" . $this->db->escape($filter['search']['name']) . "%'");
             }
+            if (!empty($filter['search']['last_ip'])) {
+                $search_filter .= $this->db->placehold(" AND last_ip LIKE '%" . $this->db->escape($filter['search']['last_ip']) . "%'");
+            }
+            if (!empty($filter['search']['last_visit'])) {
+                $search_filter .= $this->db->placehold(" AND last_visit LIKE '%" . $this->db->escape($filter['search']['last_visit']) . "%'");
+            }
             if (!empty($filter['search']['phone'])) {
                 $search_filter .= $this->db->placehold(" AND phone_mobile LIKE '%" . $this->db->escape(str_replace(array(' ', '-', '(', ')', '+'), '', $filter['search']['phone'])) . "%'");
             }
             if (!empty($filter['search']['email'])) {
                 $search_filter .= $this->db->placehold(" AND email LIKE '%" . $this->db->escape($filter['search']['email']) . "%'");
-            };
+            }
+            if (!empty($filter['search']['role'])) {
+                $search_filter .= $this->db->placehold(" AND role LIKE '%" . $this->db->escape($filter['search']['role']) . "%'");
+            }
         }
 
         if (isset($filter['limit'])) {

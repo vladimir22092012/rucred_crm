@@ -63,21 +63,21 @@
                                             {if $sort == 'name_asc'}<a href="{url page=null sort='name_desc'}">Пользователь</a>
                                             {else}<a href="{url page=null sort='name_asc'}">Пользователь</a>{/if}
                                         </th>
-                                        <th style="width: 120px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'company_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                        <th style="width: 120px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'company_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'company_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'company_asc'}<a href="{url page=null sort='company_desc'}">Компания</a>
                                             {else}<a href="{url page=null sort='company_asc'}">Компания</a>{/if}
                                         </th>
-                                        <th style="width: 80px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'birth_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'birth_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'birth_asc'}<a href="{url page=null sort='birth_desc'}">IP адрес</a>
-                                            {else}<a href="{url page=null sort='birth_asc'}">IP адрес</a>{/if}
+                                        <th style="width: 80px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'last_ip_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'last_ip_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'last_ip_asc'}<a href="{url page=null sort='last_ip_desc'}">IP адрес</a>
+                                            {else}<a href="{url page=null sort='last_ip_asc'}">IP адрес</a>{/if}
                                         </th>
-                                        <th style="width: 100px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'email_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'email_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'email_asc'}<a href="{url page=null sort='email_desc'}">Активность</a>
-                                            {else}<a href="{url page=null sort='email_asc'}">Активность</a>{/if}
+                                        <th style="width: 100px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'last_visit_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'last_visit_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'last_visit_asc'}<a href="{url page=null sort='last_visit_desc'}">Активность</a>
+                                            {else}<a href="{url page=null sort='last_visit_asc'}">Активность</a>{/if}
                                         </th>
                                         <th style="width: 100px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'role_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'role_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'role_asc'}<a href="{url page=null sort='role_desc'}">Роль</a>
-                                            {else}<a href="{url page=null sort='phone_asc'}">Роль</a>{/if}
+                                            {else}<a href="{url page=null sort='role_asc'}">Роль</a>{/if}
                                         </th>
                                     </tr>
 
@@ -90,16 +90,24 @@
                                             <input type="text" name="name" value="{$search['name']}" class="form-control input-sm">
                                         </td>
                                         <td style="width: 120px;" class="jsgrid-cell jsgrid-align-right">
-                                            <input type="text" name="fio" value="{$search['company_name']}" class="form-control input-sm">
+                                            <input type="text" name="company" value="{$search['company']}" class="form-control input-sm">
                                         </td>
                                         <td style="width: 80px;" class="jsgrid-cell jsgrid-align-right">
-                                            <input type="text" name="birth" value="{$search['birth']}" class="form-control input-sm">
+                                            <input type="text" name="last_ip" value="{$search['last_ip']}" class="form-control input-sm">
                                         </td>
                                         <td style="width: 100px;" class="jsgrid-cell">
-                                            <input type="text" name="email" value="{$search['email']}" class="form-control input-sm">
+                                            <input type="text" name="last_visit" value="{$search['last_visit']}" class="form-control input-sm">
                                         </td>
                                         <td style="width: 100px;" class="jsgrid-cell">
-                                            <input type="text" name="phone" value="{$search['phone']}" class="form-control input-sm">
+                                            <select class="form-control" name="role" id="role">
+                                                <option value="">Выберите роль</option>
+                                                <option value="admin">Администратор</option>
+                                                <option value="underwriter">Андеррайтер</option>
+                                                <option value="middle">Мидл</option>
+                                                <option value="employer">Работодатель</option>
+                                                <option value="boss">Босс</option>
+                                                <option value="developer">Разработчик</option>
+                                            </select>
                                         </td>
                                     </tr>
                                 </table>

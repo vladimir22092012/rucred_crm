@@ -23,7 +23,7 @@ function ManagersApp()
     };
 
     var _init_filter = function(){
-//        $(document).on('blur', '.jsgrid-filter-row input', app.filter);
+        $(document).on('blur', '.jsgrid-filter-row input', app.filter);
         $(document).on('keyup', '.jsgrid-filter-row input', app.filter);
         $(document).on('change', '.jsgrid-filter-row select', app.filter);
     };
@@ -48,11 +48,8 @@ function ManagersApp()
             beforeSend: function(){
             },
             success: function(resp){
-
                 $('#basicgrid .jsgrid-grid-body').html($(resp).find('#basicgrid .jsgrid-grid-body').html());
                 $('#basicgrid .jsgrid-pager-container').html($(resp).find('#basicgrid .jsgrid-pager-container').html());
-
-
             }
         })
 
