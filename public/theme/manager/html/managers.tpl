@@ -110,7 +110,7 @@
                                     {foreach $managers as $manager}
                                         <tr class="jsgrid-row ">
                                             <td style="width: 60px;" class="jsgrid-cell">
-                                                {$manager->id}
+                                                <a href="/manager/{$manager->id}">{$manager->id}</a>
                                             </td>
                                             <td style="width: 80px;" class="jsgrid-cell">
                                                 <span>{$manager->name}</span>
