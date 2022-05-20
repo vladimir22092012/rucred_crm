@@ -14,6 +14,11 @@ class ManagersController extends Controller
         $filter['sort'] = $sort;
         $this->design->assign('sort', $sort);
 
+        if ($search = $this->request->get('search')) {
+            $filter['search'] = array_filter($search);
+            $this->design->assign('search', array_filter($search));
+        }
+
         if (in_array($this->manager->role, ['underwriter', 'employer'])) {
             header('Location: /offline_orders');
         }
@@ -46,6 +51,19 @@ class ManagersController extends Controller
                 }
             }
         }
+
+        $current_page = $this->request->get('page', 'integer');
+        $current_page = max(1, $current_page);
+        $this->design->assign('current_page_num', $current_page);
+
+        $clients_count = $this->users->count_users($filter);
+
+        $pages_num = ceil($clients_count/$items_per_page);
+        $this->design->assign('total_pages_num', $pages_num);
+        $this->design->assign('total_orders_count', $clients_count);
+
+        $filter['page'] = $current_page;
+        $filter['limit'] = $items_per_page;
 
         $this->design->assign('managers', $managers);
 

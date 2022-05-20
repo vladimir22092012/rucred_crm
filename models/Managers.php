@@ -28,6 +28,7 @@ class Managers extends Core
         $blocked_filter = '';
         $collection_status_filter = '';
         $keyword_filter = '';
+        $search_filter = '';
         $limit = 1000;
         $page = 1;
         $sort = 'id DESC';
@@ -73,12 +74,12 @@ class Managers extends Core
                     $sort = 'created ASC';
                     break;
 
-                case 'fio_desc':
-                    $sort = 'lastname DESC, firstname DESC, patronymic DESC';
+                case 'name_desc':
+                    $sort = 'name DESC';
                     break;
 
-                case 'fio_asc':
-                    $sort = 'lastname ASC, firstname ASC, patronymic ASC';
+                case 'name_asc':
+                    $sort = 'name ASC';
                     break;
 
                 case 'email_desc':
@@ -99,6 +100,24 @@ class Managers extends Core
             endswitch;
         }
 
+        if (!empty($filter['search'])) {
+            if (!empty($filter['search']['user_id'])) {
+                $search_filter .= $this->db->placehold(' AND id = ?', (int)$filter['search']['user_id']);
+            }
+            if (!empty($filter['search']['created'])) {
+                $search_filter .= $this->db->placehold(' AND DATE(created) = ?', date('Y-m-d', strtotime($filter['search']['created'])));
+            }
+            if (!empty($filter['search']['name'])) {
+                $search_filter .= $this->db->placehold(" AND name LIKE '%" . $this->db->escape($filter['search']['name']) . "%'");
+            }
+            if (!empty($filter['search']['phone'])) {
+                $search_filter .= $this->db->placehold(" AND phone_mobile LIKE '%" . $this->db->escape(str_replace(array(' ', '-', '(', ')', '+'), '', $filter['search']['phone'])) . "%'");
+            }
+            if (!empty($filter['search']['email'])) {
+                $search_filter .= $this->db->placehold(" AND email LIKE '%" . $this->db->escape($filter['search']['email']) . "%'");
+            };
+        }
+
         if (isset($filter['limit'])) {
             $limit = max(1, intval($filter['limit']));
         }
@@ -114,6 +133,7 @@ class Managers extends Core
             FROM __managers
             WHERE 1
                 $id_filter
+                $search_filter
                 $role_filter
                 $blocked_filter
                 $keyword_filter

@@ -1,10 +1,7 @@
 {$meta_title="Пользователи" scope=parent}
 
 {capture name='page_scripts'}
-
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/managers.js"></script>
-
-
 {/capture}
 
 {capture name='page_styles'}
@@ -87,7 +84,7 @@
                                     <tr class="jsgrid-filter-row" id="search_form">
                                         <td style="width: 60px;" class="jsgrid-cell jsgrid-align-right">
                                             <input type="hidden" name="sort" value="{$sort}" />
-                                            <input type="text" name="id" value="{$search['id']}" class="form-control input-sm">
+                                            <input type="text" name="user_id" value="{$search['user_id']}" class="form-control input-sm">
                                         </td>
                                         <td style="width: 80px;" class="jsgrid-cell jsgrid-align-right">
                                             <input type="text" name="name" value="{$search['name']}" class="form-control input-sm">
