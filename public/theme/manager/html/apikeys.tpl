@@ -42,8 +42,6 @@
 
             <div class="card">
                 <div class="card-body">
-
-                    {*}
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -93,8 +91,6 @@
                         </div>
 
                     </div>
-                    {*}
-                    {*}
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -135,8 +131,6 @@
                         </div>
 
                     </div>
-                    {*}
-                    {*}
                     <hr class="mt-3 mb-4" />
 
                     <div class="row">
@@ -170,9 +164,6 @@
                         </div>
 
                     </div>
-                    {*}
-                    <hr class="mt-3 mb-4" />
-                    {*}
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -215,7 +206,6 @@
                     </div>
 
                     <hr class="mt-3 mb-4" />
-                    {*}
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -242,7 +232,6 @@
                     </div>
 
                     <hr class="mt-3 mb-4" />
-                    {*}
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -269,7 +258,6 @@
                     </div>
 
                     <hr class="mt-3 mb-4" />
-                    {*}
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -288,7 +276,6 @@
                     </div>
 
                     <hr class="mt-3 mb-4" />
-                    {*}
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -305,109 +292,7 @@
                             </div>
                         </div>
                     </div>
-
                     <hr class="mt-3 mb-4" />
-
-                    <div class="row">
-                        <div class="col-12">
-                            <h3 class="box-title">
-                                Scorista
-                                <a href="//scorista.ru" target="_blank"> <small> scorista.ru</small></a>
-                            </h3>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label class=" col-form-label">Имя пользователя</label>
-                                <div class="">
-                                    <input type="text" class="form-control" name="apikeys[scorista][username]" value="{$apikeys['scorista']['username']}" placeholder="">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label class=" col-form-label">Токен</label>
-                                <div class="">
-                                    <input type="text" class="form-control" name="apikeys[scorista][token]" value="{$apikeys['scorista']['token']}" placeholder="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr class="mt-3 mb-4" />
-
-                    <div class="row">
-                        <div class="col-12">
-                            <h3 class="box-title">
-                                Juicescore
-                                <a href="//juicyscore.com" target="_blank"> <small> juicyscore.com</small></a>
-                            </h3>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label class=" col-form-label">API ключ</label>
-                                <div class="">
-                                    <input type="text" class="form-control" name="apikeys[juicescore][api_key]" value="{$apikeys['juicescore']['api_key']}" placeholder="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {*}
-{*}
-                    <hr class="mt-3 mb-4" />
-
-                    <div class="row">
-                        <div class="col-12">
-                            <h3 class="box-title">
-                                Unicom
-                                <a href="//unicom24.ru" target="_blank"> <small> unicom24.ru</small></a>
-                            </h3>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label class=" col-form-label">Логин</label>
-                                <div class="">
-                                    <input type="text" class="form-control" name="apikeys[unicom][login]" value="{$apikeys['unicom']['login']}" placeholder="">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label class=" col-form-label">Пароль</label>
-                                <div class="">
-                                    <input type="text" class="form-control" name="apikeys[unicom][password]" value="{$apikeys['unicom']['password']}" placeholder="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr class="mt-3 mb-4" />
-
-                    <div class="row">
-                        <div class="col-12">
-                            <h3 class="box-title">
-                                МБКИ
-                                <a href="//croinform.ru" target="_blank"> <small> croinform.ru</small></a>
-                            </h3>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label class=" col-form-label">Логин</label>
-                                <div class="">
-                                    <input type="text" class="form-control" name="apikeys[mbki][login]" value="{$apikeys['mbki']['login']}" placeholder="">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label class=" col-form-label">Пароль</label>
-                                <div class="">
-                                    <input type="text" class="form-control" name="apikeys[mbki][password]" value="{$apikeys['mbki']['password']}" placeholder="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-{*}
-
                 </div>
             </div>
 
