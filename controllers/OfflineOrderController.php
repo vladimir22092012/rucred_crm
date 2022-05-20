@@ -3084,12 +3084,12 @@ class OfflineOrderController extends Controller
 
         foreach ($payment_schedule as $date => $pay) {
             if ($date != 'result') {
-                $payments[] = $pay['pay_sum'];
+                $payments[] = (float)$pay['pay_sum'];
                 $dates[] = date('d.m.Y', strtotime($date));
-                $payment_schedule['result']['all_sum_pay'] += $pay['pay_sum'];
-                $payment_schedule['result']['all_loan_percents_pay'] += $pay['loan_percents_pay'];
-                $payment_schedule['result']['all_loan_body_pay'] += $pay['loan_body_pay'];
-                $payment_schedule['result']['all_comission_pay'] += $pay['comission_pay'];
+                $payment_schedule['result']['all_sum_pay'] += (float)$pay['pay_sum'];
+                $payment_schedule['result']['all_loan_percents_pay'] += (float)$pay['loan_percents_pay'];
+                $payment_schedule['result']['all_loan_body_pay'] += (float)$pay['loan_body_pay'];
+                $payment_schedule['result']['all_comission_pay'] += (float)$pay['comission_pay'];
                 $payment_schedule['result']['all_rest_pay_sum'] = 0.00;
             }
         }
