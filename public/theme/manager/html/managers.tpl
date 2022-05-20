@@ -96,7 +96,7 @@
                                             <input type="text" name="last_ip" value="{$search['last_ip']}" class="form-control input-sm">
                                         </td>
                                         <td style="width: 100px;" class="jsgrid-cell">
-                                            <input type="text" name="last_visit" value="{$search['last_visit']}" class="form-control input-sm">
+
                                         </td>
                                         <td style="width: 100px;" class="jsgrid-cell">
                                             <select class="form-control" name="role" id="role">
