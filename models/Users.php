@@ -105,7 +105,7 @@ class Users extends Core
     public function get_user($id)
     {
         $query = $this->db->placehold("
-            SELECT * 
+            SELECT *
             FROM __users
             WHERE id = ?
         ", (int)$id);
@@ -120,7 +120,7 @@ class Users extends Core
     public function get_user_by_phone($phone)
     {
         $query = $this->db->placehold("
-            SELECT id, phone_mobile, password 
+            SELECT id, phone_mobile, password
             FROM __users
             WHERE phone_mobile = ?
         ", (int)$phone);
@@ -146,12 +146,12 @@ class Users extends Core
         if (!empty($filter['missing'])) {
             $missing_filter = $this->db->placehold("
                 AND (
-                    stage_personal = 0 
-                    OR stage_passport = 0 
-                    OR stage_address = 0 
-                    OR stage_work = 0 
-                    OR stage_files = 0 
-                    OR stage_card = 0 
+                    stage_personal = 0
+                    OR stage_passport = 0
+                    OR stage_address = 0
+                    OR stage_work = 0
+                    OR stage_files = 0
+                    OR stage_card = 0
                 )
                 AND (
                     (NOW() > created + INTERVAL " . intval($filter['missing']) . " SECOND  AND stage_personal = 0)
@@ -169,11 +169,11 @@ class Users extends Core
             foreach ($keywords as $keyword) {
                 $keyword_filter .= $this->db->placehold('
                     AND (
-                        firstname LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
-                        OR lastname LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
-                        OR patronymic LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
-                        OR phone_mobile LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
-                        OR email LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
+                        firstname LIKE "%' . $this->db->escape(trim($keyword)) . '%"
+                        OR lastname LIKE "%' . $this->db->escape(trim($keyword)) . '%"
+                        OR patronymic LIKE "%' . $this->db->escape(trim($keyword)) . '%"
+                        OR phone_mobile LIKE "%' . $this->db->escape(trim($keyword)) . '%"
+                        OR email LIKE "%' . $this->db->escape(trim($keyword)) . '%"
                     )
                 ');
             }
@@ -260,7 +260,7 @@ class Users extends Core
         $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page - 1) * $limit, $limit);
 
         $query = $this->db->placehold("
-            SELECT * 
+            SELECT *
             FROM __users
             WHERE 1
                 $id_filter
@@ -289,18 +289,18 @@ class Users extends Core
         $search_filter = '';
 
         if (!empty($filter['id'])) {
-            $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
+            $id_filter = $this->db->placehold("AND id IN (?@)", array_map('interval', (array)$filter['id']));
         }
 
         if (!empty($filter['missing'])) {
             $missing_filter = $this->db->placehold("
                 AND (
-                    stage_personal = 0 
-                    OR stage_passport = 0 
-                    OR stage_address = 0 
-                    OR stage_work = 0 
-                    OR stage_files = 0 
-                    OR stage_card = 0 
+                    stage_personal = 0
+                    OR stage_passport = 0
+                    OR stage_address = 0
+                    OR stage_work = 0
+                    OR stage_files = 0
+                    OR stage_card = 0
                 )
                 AND (
                     (NOW() > created + INTERVAL " . intval($filter['missing']) . " SECOND  AND stage_personal = 0)
@@ -318,11 +318,11 @@ class Users extends Core
             foreach ($keywords as $keyword) {
                 $keyword_filter .= $this->db->placehold('
                     AND (
-                        firstname LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
-                        OR lastname LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
-                        OR patronymic LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
-                        OR phone_mobile LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
-                        OR email LIKE "%' . $this->db->escape(trim($keyword)) . '%" 
+                        firstname LIKE "%' . $this->db->escape(trim($keyword)) . '%"
+                        OR lastname LIKE "%' . $this->db->escape(trim($keyword)) . '%"
+                        OR patronymic LIKE "%' . $this->db->escape(trim($keyword)) . '%"
+                        OR phone_mobile LIKE "%' . $this->db->escape(trim($keyword)) . '%"
+                        OR email LIKE "%' . $this->db->escape(trim($keyword)) . '%"
                     )
                 ');
             }
@@ -401,7 +401,7 @@ class Users extends Core
     public function get_file($id)
     {
         $query = $this->db->placehold("
-            SELECT * 
+            SELECT *
             FROM __files
             WHERE id = ?
         ", (int)$id);
@@ -435,14 +435,14 @@ class Users extends Core
         }
 
         $query = $this->db->placehold("
-            SELECT * 
+            SELECT *
             FROM __files
             WHERE 1
                 $id_filter
                 $user_id_filter
                 $status_filter
                 $sent_filter
-            ORDER BY id ASC 
+            ORDER BY id ASC
         ");
         $this->db->query($query);
         $results = $this->db->results();
@@ -453,7 +453,7 @@ class Users extends Core
     public function add_file($file)
     {
         $query = $this->db->placehold("
-            INSERT INTO __files 
+            INSERT INTO __files
             SET ?%, created = NOW()
         ", (array)$file);
         $this->db->query($query);
@@ -529,7 +529,7 @@ class Users extends Core
         }
 
         $this->db->query("
-            SELECT id FROM __users 
+            SELECT id FROM __users
             WHERE lastname LIKE '%" . $this->db->escape($lastname) . "%'
             AND firstname LIKE '%" . $this->db->escape($firstname) . "%'
             AND patronymic LIKE '%" . $this->db->escape($patronymic) . "%'
@@ -547,7 +547,7 @@ class Users extends Core
         $query = $this->db->placehold("
         SELECT id
         FROM s_users
-        WHERE personal_number = ? 
+        WHERE personal_number = ?
         ", (int)$number);
 
         $this->db->query($query);

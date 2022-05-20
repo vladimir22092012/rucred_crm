@@ -1,10 +1,7 @@
 {$meta_title="Пользователи" scope=parent}
 
 {capture name='page_scripts'}
-
-    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/mamagers.js"></script>
-
-
+    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/managers.js"></script>
 {/capture}
 
 {capture name='page_styles'}

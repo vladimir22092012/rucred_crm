@@ -28,8 +28,10 @@ class Managers extends Core
         $blocked_filter = '';
         $collection_status_filter = '';
         $keyword_filter = '';
+        $search_filter = '';
         $limit = 1000;
         $page = 1;
+        $sort = 'id DESC';
 
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
@@ -54,12 +56,74 @@ class Managers extends Core
             }
         }
 
+        if (!empty($filter['sort'])) {
+            switch ($filter['sort']) :
+                case 'id_desc':
+                    $sort = 'id DESC';
+                    break;
+
+                case 'id_asc':
+                    $sort = 'id ASC';
+                    break;
+
+                case 'date_desc':
+                    $sort = 'created DESC';
+                    break;
+
+                case 'date_asc':
+                    $sort = 'created ASC';
+                    break;
+
+                case 'name_desc':
+                    $sort = 'name DESC';
+                    break;
+
+                case 'name_asc':
+                    $sort = 'name ASC';
+                    break;
+
+                case 'email_desc':
+                    $sort = 'email DESC';
+                    break;
+
+                case 'email_asc':
+                    $sort = 'email ASC';
+                    break;
+
+                case 'phone_desc':
+                    $sort = 'phone_mobile DESC';
+                    break;
+
+                case 'phone_asc':
+                    $sort = 'phone_mobile ASC';
+                    break;
+            endswitch;
+        }
+
+        if (!empty($filter['search'])) {
+            if (!empty($filter['search']['user_id'])) {
+                $search_filter .= $this->db->placehold(' AND id = ?', (int)$filter['search']['user_id']);
+            }
+            if (!empty($filter['search']['created'])) {
+                $search_filter .= $this->db->placehold(' AND DATE(created) = ?', date('Y-m-d', strtotime($filter['search']['created'])));
+            }
+            if (!empty($filter['search']['name'])) {
+                $search_filter .= $this->db->placehold(" AND name LIKE '%" . $this->db->escape($filter['search']['name']) . "%'");
+            }
+            if (!empty($filter['search']['phone'])) {
+                $search_filter .= $this->db->placehold(" AND phone_mobile LIKE '%" . $this->db->escape(str_replace(array(' ', '-', '(', ')', '+'), '', $filter['search']['phone'])) . "%'");
+            }
+            if (!empty($filter['search']['email'])) {
+                $search_filter .= $this->db->placehold(" AND email LIKE '%" . $this->db->escape($filter['search']['email']) . "%'");
+            };
+        }
+
         if (isset($filter['limit'])) {
             $limit = max(1, intval($filter['limit']));
         }
 
         if (isset($filter['page'])) {
-            $page = max(1, intval($filter['page']));
+            $page = max(1, (int)$filter['page']);
         }
 
         $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page - 1) * $limit, $limit);
@@ -69,11 +133,12 @@ class Managers extends Core
             FROM __managers
             WHERE 1
                 $id_filter
+                $search_filter
                 $role_filter
                 $blocked_filter
                 $keyword_filter
                 $collection_status_filter
-            ORDER BY id ASC
+            ORDER BY $sort
             $sql_limit
         ");
         $this->db->query($query);
