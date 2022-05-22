@@ -172,7 +172,7 @@ class Managers extends Core
         $query = $this->db->placehold("
             SELECT __managers.*, __companies.name AS company_name
             FROM __managers
-            INNER JOIN __companies ON __managers.company_id = __companies.id
+            LEFT JOIN __companies ON __managers.company_id = __companies.id
             WHERE 1
                 $id_filter
                 $search_filter
