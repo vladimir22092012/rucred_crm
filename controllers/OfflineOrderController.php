@@ -2797,6 +2797,10 @@ class OfflineOrderController extends Controller
 
     private function action_edit_schedule()
     {
+
+        $restruct = $this->request->post('restruct');
+        $add_period = $this->request->post('add_period');
+
         $date = $this->request->post('date');
         $pay_sum = $this->request->post('pay_sum');
         $loan_percents_pay = $this->request->post('loan_percents_pay');

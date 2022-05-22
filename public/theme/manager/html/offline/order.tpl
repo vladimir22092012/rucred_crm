@@ -216,24 +216,11 @@
                 })
             });
 
-            $('.reset_shedule').on('click', function (e) {
-                e.preventDefault();
-
-                let form = $('#payment_schedule').serialize();
-
-                $.ajax({
-                    method: 'POST',
-                    data: form,
-                    success: function (resp) {
-                    }
-                });
-            });
-
             $('.edit_schedule').on('click', function (e) {
                 e.preventDefault();
 
                 $(this).hide();
-                $('.restructuring').hide();
+                $('.restructuring, .restructuring').hide();
                 $('.reset_shedule').show();
                 $('.cancel').show();
                 $('input[name="date[][date]"]').attr('readonly', false);
@@ -243,8 +230,13 @@
                 })
             });
 
-            $('.restructuring').on('click', function (e) {
+            $('.reform, .restructuring').on('click', function (e) {
                 e.preventDefault();
+
+                let restruct = 0;
+
+                if ($(this).hasClass('restructuring'))
+                    restruct = 1;
 
                 $(this).hide();
                 $('.edit_schedule').hide();
@@ -257,7 +249,13 @@
 
                 $('.cancel').on('click', function () {
                     location.reload();
-                })
+                });
+
+                $('.reset_shedule').on('click', function (e) {
+                    e.preventDefault();
+
+                    reform_schedule(restruct);
+                });
             });
 
             $('.send_money').on('click', function (e) {
@@ -599,25 +597,6 @@
 
             });
 
-            function calculate_annouitet(){
-
-                let loan_pay_sum = 0;
-
-                $('.restructure_pay_sum').each(function () {
-                    let val = $(this).val();
-                    val = val.replace(' ', '');
-                    val = val.replace(' ', '');
-                    val = val.replace(',', '.');
-
-                    loan_pay_sum = loan_pay_sum + parseFloat(val);
-                });
-
-                let sum = loan_pay_sum.toFixed(2);
-
-                $('input[name="result[all_sum_pay]"]').val(new Intl.NumberFormat('ru-RU').format(sum));
-            }
-
-
             $('.delete_order').on('click', function (e) {
                 e.preventDefault();
                 let order_id = $(this).attr('data-order');
@@ -668,6 +647,53 @@
                 })
             });
         });
+    </script>
+    <script>
+        function calculate_annouitet() {
+
+            let loan_pay_sum = 0;
+
+            $('.restructure_pay_sum').each(function () {
+                let val = $(this).val();
+                val = val.replace(' ', '');
+                val = val.replace(' ', '');
+                val = val.replace(',', '.');
+
+                loan_pay_sum = loan_pay_sum + parseFloat(val);
+            });
+
+            let sum = loan_pay_sum.toFixed(2);
+
+            $('input[name="result[all_sum_pay]"]').val(new Intl.NumberFormat('ru-RU').format(sum));
+        }
+
+        function reform_schedule(restruct) {
+
+            let form = $('#payment_schedule').serialize() + '&restruct=' + restruct;
+
+            if (restruct == 1) {
+                Swal.fire({
+                    title: 'Пожалуйста выберите вариант реструктуризации',
+                    showDenyButton: true,
+                    showCancelButton: false,
+                    confirmButtonText: 'С доп платежом',
+                    denyButtonText: 'Без доп платежа',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form += '&add_period=1';
+                    } else if (result.isDenied) {
+                        form += '&add_period=0';
+                    }
+                    $.ajax({
+                        method: 'POST',
+                        data: form,
+                        success: function (resp) {
+
+                        }
+                    });
+                });
+            }
+        }
     </script>
 {/capture}
 
@@ -734,11 +760,13 @@
     <div class="container-fluid">
         <div class="row page-titles">
             <div class="col-md-6 col-8 align-self-center">
-                <h4 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i> Заявка № {$order->group_number} {$order->company_number} {$order->personal_number}</h4>
+                <h4 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i> Заявка
+                    № {$order->group_number} {$order->company_number} {$order->personal_number}</h4>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
                     <li class="breadcrumb-item"><a href="offline_orders">Заявки</a></li>
-                    <li class="breadcrumb-item active">Заявка № {$order->group_number} {$order->company_number} {$order->personal_number}</li>
+                    <li class="breadcrumb-item active">Заявка
+                        № {$order->group_number} {$order->company_number} {$order->personal_number}</li>
                 </ol>
             </div>
             <div class="col-md-6 col-4 align-self-center">
@@ -1263,13 +1291,15 @@
                                                         <div class="form-group row m-0">
                                                             <label class="control-label col-md-4">Паспорт:</label>
                                                             <div class="col-md-8">
-                                                                <p class="form-control-static">{$order->passport_serial} от {$order->passport_date}</p>
+                                                                <p class="form-control-static">{$order->passport_serial}
+                                                                    от {$order->passport_date}</p>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12">
                                                         <div class="form-group row m-0">
-                                                            <label class="control-label col-md-4">Код подразделения:</label>
+                                                            <label class="control-label col-md-4">Код
+                                                                подразделения:</label>
                                                             <div class="col-md-8">
                                                                 <p class="form-control-static">{$order->subdivision_code}</p>
                                                             </div>
@@ -1483,9 +1513,15 @@
                                                     <input style="margin-left: 30px; display: none" type="button"
                                                            class="btn btn-danger cancel"
                                                            value="Отменить">
-                                                    <input style="margin-left: 30px" type="button"
-                                                           class="btn btn-warning restructuring"
-                                                           value="Редактировать">
+                                                    {if $order->status == 5}
+                                                        <input style="margin-left: 30px" type="button"
+                                                               class="btn btn-danger restructuring"
+                                                               value="Реструктуризация">
+                                                    {else}
+                                                        <input style="margin-left: 30px" type="button"
+                                                               class="btn btn-warning reform"
+                                                               value="Редактировать">
+                                                    {/if}
                                                 {/if}
                                             </h6>
 
