@@ -379,7 +379,19 @@ class NeworderController extends Controller
             $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
             $annoouitet_pay = round($annoouitet_pay, '2');
 
-            if (date('d', strtotime($start_date)) < 10) {
+            if(!$user['branche_id']){
+                $branches = $this->Branches->get_branches(['group_id' => $user['group_id']]);
+
+                foreach ($branches as $branch){
+                    if($branch == '00')
+                        $first_pay_day = $branch->payday;
+                }
+            }else{
+                $branch = $this->Branches->get_branch($user['branche_id']);
+                $first_pay_day = $branch->payday;
+            }
+
+            if (date('d', strtotime($start_date)) < $first_pay_day) {
                 if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < 3) {
                     $plus_loan_percents = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
                     $sum_pay = $annoouitet_pay + $plus_loan_percents;
@@ -438,7 +450,7 @@ class NeworderController extends Controller
             }
 
             if ($rest_sum !== 0) {
-                $paydate->setDate($paydate->format('Y'), $paydate->format('m'), 10);
+                $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
                 $interval = new DateInterval('P1M');
                 $lastdate = clone $end_date;
                 $end_date->setTime(0, 0, 1);

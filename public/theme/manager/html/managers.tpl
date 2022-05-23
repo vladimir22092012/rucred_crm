@@ -121,7 +121,8 @@
                                                 <a href="/manager/{$manager->id}">{$manager->id}</a>
                                             </td>
                                             <td style="width: 80px;" class="jsgrid-cell">
-                                                <a href="/manager/{$manager->id}">{$manager->name}</a>
+                                                <a href="/manager/{$manager->id}">{$manager->name}</a><br>
+                                                {if $manager->blocked}<span class="label label-danger">Заблокирован</span>{/if}
                                             </td>
                                             <td style="width: 120px;" class="jsgrid-cell">
                                                 {$manager->company_name}

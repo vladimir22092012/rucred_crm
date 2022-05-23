@@ -232,6 +232,9 @@ class Orders extends Core
         if(isset($filter['employer']))
             $employer_filter = $this->db->placehold("AND o.company_id = ?", (int)$filter['employer']);
 
+        if(isset($filter['employer']))
+            $manager_id_filter = $this->db->placehold("AND o.manager_id = ?", (int)$filter['manager_id']);
+
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND o.id IN (?@)", array_map('intval', (array)$filter['id']));
         }
@@ -586,6 +589,7 @@ class Orders extends Core
                 $autoretry_filter
                 $client_filter
                 $employer_filter
+                $manager_id_filter
             ORDER BY $workout_sort $sort
             $sql_limit
         ");

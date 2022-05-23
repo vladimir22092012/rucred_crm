@@ -306,27 +306,46 @@
 
             $.ajax({
                 method: 'POST',
-                data:{
+                data: {
                     action: 'block_manager',
                     value: value,
                     manager_id: manager_id
                 }
             });
-        })
+        });
 
-        /*$('.check_email').on('click', function (e) {
-            e.preventDefault();
+        $('.delete_manager').on('click', function () {
+            let manager_id = $(this).attr('data-manager');
 
-            let email = $('input').prev().val();
+            Swal.fire({
+                title: 'Удалить пользователя',
+                showCancelButton: true,
+                confirmButtonText: 'Да',
+                cancelButtonText: 'Нет',
+            }).then((result) => {
+                console.log(result);
 
-            $.ajax({
-               method: 'POST',
-               data: {
-                   action: 'activate_email',
-                   email: email
-               }
+                if (result.value === true) {
+                    $.ajax({
+                        method: 'POST',
+                        data: {
+                            action: 'delete_manager',
+                            manager_id: manager_id,
+                        },
+                        success: function (resp) {
+                            if(resp !== 'success'){
+                                Swal.fire({
+                                    title: resp,
+                                    confirmButtonText: 'Ок'
+                                });
+                            }else{
+                                location.replace('/managers')
+                            }
+                        }
+                    });
+                }
             });
-        }); */
+        });
     </script>
 {/capture}
 
@@ -803,7 +822,11 @@
                                     {if in_array($manager->role, ['admin', 'developer'])}
                                         <div class="form-group">
                                             <div class="col-sm-12">
-                                                <button class="btn btn-success" type="submit">Сохранить</button>
+                                                <button class="btn btn-outline-success" type="submit">Сохранить</button>
+                                                <div data-manager="{$manager->id}"
+                                                     class="btn btn-outline-danger float-right delete_manager"
+                                                     type="button">Удалить
+                                                </div>
                                             </div>
                                         </div>
                                     {/if}
