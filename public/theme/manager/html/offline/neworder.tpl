@@ -219,9 +219,7 @@
                                 confirmButtonText: 'ОК'
                             });
                         } else {
-                            console.log('create_new_order completed');
-                            console.log(response.redirect);
-                            window.location.replace(response.redirect);
+
                         }
                     }
                 })
