@@ -302,12 +302,7 @@ class NeworderController extends Controller
 
 
         if (empty($user['user_id'])) {
-            $user['stage_personal'] = 1;
-            $user['stage_passport'] = 1;
-            $user['stage_address'] = 1;
-            $user['stage_work'] = 1;
-            $user['stage_files'] = 1;
-            $user['stage_card'] = 1;
+            $user['stage_registration'] = '7';
             unset($user['user_id']);
 
             $last_personal_number = $this->users->last_personal_number();
