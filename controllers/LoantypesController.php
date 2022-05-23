@@ -15,13 +15,6 @@ class LoantypesController extends Controller
         
         $loantypes = $this->loantypes->get_loantypes();
         $this->design->assign('loantypes', $loantypes);
-        
-        $organizations = array();
-        foreach ($this->offline->get_organizations() as $org) {
-            $organizations[$org->id] = $org;
-        }
-        $this->design->assign('organizations', $organizations);
-        
 
         return $this->design->fetch('offline/loantypes.tpl');
     }

@@ -276,8 +276,10 @@
                         {/if}
                         {if in_array('managers', $manager->permissions)}
                             <li class="nav-small-cap">Управление</li>
-                            <li {if in_array($module, ['GroupsController'])}class="active"{/if}><a
-                                        href="groups"><i class="mdi mdi-group"></i>Группы</a></li>
+                            {if $manager->role != 'employer'}
+                                <li {if in_array($module, ['GroupsController'])}class="active"{/if}><a
+                                            href="groups"><i class="mdi mdi-group"></i>Группы</a></li>
+                            {/if}
                             <li {if in_array($module, ['CompaniesController'])}class="active"{/if}><a
                                         href="companies"><i class="mdi mdi-compass"></i>Компании</a></li>
                             <li {if in_array($module, ['LoantypesController','LoantypeController'])}class="active"{/if}>

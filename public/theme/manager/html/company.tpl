@@ -117,26 +117,29 @@
                                         <th>Позиция</th>
                                         <th>Код</th>
                                         <th colspan="2">Описание</th>
-                                        <th>
-                                            <span>Блокировка</span>
-                                            <div class="onoffswitch">
-                                                <input type="checkbox" name="blocked_flag"
-                                                       data-company-id="{$company->com_id}"
-                                                       class="onoffswitch-checkbox action-block-company"
-                                                       id="on_off_flag_{$company->com_id}"
-                                                        {if $company->blocked} checked="true" value="1" {else} value="0"{/if}>
-                                                <label class="onoffswitch-label" for="on_off_flag_{$company->com_id}">
-                                                    <span class="onoffswitch-inner"></span>
-                                                    <span class="onoffswitch-switch"></span>
-                                                </label>
-                                            </div>
-                                        </th>
-                                        <th><input type="button"
-                                                   class="btn btn-outline-info action-edit-company button-fixed"
-                                                   value="Редактировать компанию"></th>
-                                        <th><input type="button" data-company-id="{$company->com_id}"
-                                                   class="btn btn-outline-danger action-delete-company button-fixed"
-                                                   value="Удалить компанию"></th>
+                                        {if $manager->role != 'employer'}
+                                            <th>
+                                                <span>Блокировка</span>
+                                                <div class="onoffswitch">
+                                                    <input type="checkbox" name="blocked_flag"
+                                                           data-company-id="{$company->com_id}"
+                                                           class="onoffswitch-checkbox action-block-company"
+                                                           id="on_off_flag_{$company->com_id}"
+                                                            {if $company->blocked} checked="true" value="1" {else} value="0"{/if}>
+                                                    <label class="onoffswitch-label"
+                                                           for="on_off_flag_{$company->com_id}">
+                                                        <span class="onoffswitch-inner"></span>
+                                                        <span class="onoffswitch-switch"></span>
+                                                    </label>
+                                                </div>
+                                            </th>
+                                            <th><input type="button"
+                                                       class="btn btn-outline-info action-edit-company button-fixed"
+                                                       value="Редактировать компанию"></th>
+                                            <th><input type="button" data-company-id="{$company->com_id}"
+                                                       class="btn btn-outline-danger action-delete-company button-fixed"
+                                                       value="Удалить компанию"></th>
+                                        {/if}
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -181,8 +184,11 @@
                                         <td>Комментарий</td>
                                         <td>Скан</td>
                                         <td></td>
-                                        <td><input type="button" class="btn btn-outline-success add_document"
-                                                   value="Добавить документ"></td>
+                                        <td>{if $manager->role != 'employer'}
+                                                <input type="button" class="btn btn-outline-success add_document"
+                                                       value="Добавить документ">
+                                            {/if}
+                                        </td>
                                     </tr>
                                     {if !empty($docs)}
                                         {foreach $docs as $doc}
@@ -191,8 +197,9 @@
                                                 <td>{$doc->name}</td>
                                                 <td>{$doc->description}</td>
                                                 <td><a download target="_blank"
-                                                       href="{$config->back_url}/files/users/{$doc->filename}"><input type="button" class="btn btn-outline-success"
-                                                                                                                   value="Скачать"></a></td>
+                                                       href="{$config->back_url}/files/users/{$doc->filename}"><input
+                                                                type="button" class="btn btn-outline-success"
+                                                                value="Скачать"></a></td>
                                                 <td></td>
                                                 <td></td>
                                             </tr>
@@ -209,8 +216,10 @@
                                             <td>Номер корреспондентского счета</td>
                                             <td>БИК</td>
                                             <td align="center">По умолчанию</td>
-                                            <td><input type="button" class="btn btn-outline-success add_settlement"
-                                                       value="Добавить счет"></td>
+                                            <td>{if $manager->role != 'employer'}
+                                                    <input type="button" class="btn btn-outline-success add_settlement"
+                                                           value="Добавить счет">
+                                                {/if}</td>
                                         </tr>
                                         {foreach $settlements as $settlement}
                                             <tr>
@@ -225,12 +234,14 @@
                                                            {if $settlement->std == 1}checked{/if}>
                                                 </td>
                                                 <td>
+                                                    {if $manager->role != 'employer'}
                                                     <input type="button" data-settlement="{$settlement->id}"
                                                            class="btn btn-outline-warning update_settlement"
                                                            value="Ред">
                                                     <input type="button" data-settlement="{$settlement->id}"
                                                            class="btn btn-outline-danger delete_settlement"
                                                            value="Удалить">
+                                                    {/if}
                                                 </td>
                                             </tr>
                                         {/foreach}
@@ -245,9 +256,11 @@
                                         <td>Дата выплаты</td>
                                         <td>Контактная информация:</td>
                                         <td colspan="2">
+                                            {if $manager->role != 'employer'}
                                             <button class="btn hidden-sm-down btn-outline-success add-company-modal">
                                                 <i class="mdi mdi-plus-circle"></i> Добавить филиал
                                             </button>
+                                            {/if}
                                         </td>
                                     </tr>
                                     <tr>
@@ -263,6 +276,7 @@
                                             <td>{$branch->name}</td>
                                             <td>{$branch->payday}</td>
                                             <td>{$branch->fio} {$branch->phone}</td>
+                                            {if $manager->role != 'employer'}
                                             <td>
                                                 {if $branch->number != '00'}
                                                     <input type="button" data-branch-id="{$branch->id}"
@@ -274,6 +288,7 @@
                                                        class="btn btn-outline-warning edit_branch"
                                                        value="Редактировать">
                                             </td>
+                                            {/if}
                                         </tr>
                                     {/foreach}
                                     </tbody>
@@ -285,7 +300,8 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Проверки сотрудников</h4>
-                        <p class="card-text">В этот раздел можно импортировать проверочные списки сотрудников компании для проверки
+                        <p class="card-text">В этот раздел можно импортировать проверочные списки сотрудников компании
+                            для проверки
                             при одобрении заявки на кредит</p>
                         <div>
                             <form class="dropzone import_workers_list_form" id="file-employers-upload">
@@ -319,7 +335,8 @@
                                 </div>
                                 <div class="show_payments">payments</div>
                                 <div class="show_extras">extras</div>
-                                <input type="hidden" class="import_workers_list" name="action" value="import_workers_list">
+                                <input type="hidden" class="import_workers_list" name="action"
+                                       value="import_workers_list">
                                 <input type="hidden" name="company_id" value="{$company->com_id}">
                                 <div class="dz-message" data-dz-message><span>Загрузите файл формата Excel</span></div>
                             </form>

@@ -98,6 +98,9 @@ class LoantypeController extends Controller
             $this->design->assign('loantype', $loantype);
         }
 
+        $manager_role = $this->manager->role;
+        $this->design->assign('manager_role', $manager_role);
+
 
         return $this->design->fetch('offline/loantype.tpl');
     }

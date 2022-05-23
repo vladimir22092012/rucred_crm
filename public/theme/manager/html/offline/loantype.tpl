@@ -222,7 +222,7 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="name"
-                                                       value="{$loantype->name|escape}" required=""/>
+                                                       value="{$loantype->name|escape}" required="" {if $manager->role == 'employer'}disabled{/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -232,7 +232,7 @@
                                                 <label class="control-label">Доступность</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <select name="online_flag" id="online_flag" class="form-control">
+                                                <select name="online_flag" id="online_flag" class="form-control" {if $manager->role == 'employer'}disabled{/if}>
                                                     <option value="1" {if $loantype->online_flag == 1}selected{/if}>Онлайн</option>
                                                     <option value="2" {if $loantype->online_flag == 2}selected{/if}>Оффлайн</option>
                                                     <option value="3" {if $loantype->online_flag == 3}selected{/if}>Везде</option>
@@ -240,6 +240,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    {if $manager->role != 'employer'}
                                     <div class="form-group">
                                         <table class="table display table-striped dataTable">
                                             <thead>
@@ -287,6 +288,7 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                    {/if}
                                 </div>
                             </div>
                         </div>
@@ -302,7 +304,7 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="percent"
-                                                       {if $loantype}value="{$loantype->percent|number_format:3:',':' '}" {/if}/>
+                                                       {if $loantype}value="{$loantype->percent|number_format:3:',':' '}" {/if} {if $manager->role == 'employer'}disabled{/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -313,7 +315,7 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="profunion"
-                                                       {if $loantype}value="{$loantype->profunion|number_format:3:',':' '}" {/if}/>
+                                                       {if $loantype}value="{$loantype->profunion|number_format:3:',':' '}" {/if} {if $manager->role == 'employer'}disabled{/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -324,7 +326,7 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="min_amount"
-                                                       value="{$loantype->min_amount|number_format:0:',':' '}"/>
+                                                       value="{$loantype->min_amount|number_format:0:',':' '}" {if $manager->role == 'employer'}disabled{/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -335,7 +337,7 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="max_amount"
-                                                       value="{$loantype->max_amount|number_format:0:',':' '}"/>
+                                                       value="{$loantype->max_amount|number_format:0:',':' '}" {if $manager->role == 'employer'}disabled{/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -346,7 +348,7 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="max_period"
-                                                       value="{$loantype->max_period}"/>
+                                                       value="{$loantype->max_period}" {if $manager->role == 'employer'}disabled{/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -357,7 +359,7 @@
                                                     Заёмщиком микрозайма</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <select class="form-control" name="reason_flag">
+                                                <select class="form-control" name="reason_flag" {if $manager->role == 'employer'}disabled{/if}>
                                                     <option value="1" {if $loantype->reason_flag == 0} selected{/if}>На
                                                         неотложные нужды
                                                     </option>
@@ -371,12 +373,14 @@
                                 </div>
                             </div>
                         </div>
+                        {if $manager->role != 'employer'}
                         <div class="col-12">
                             <hr class="m-2"/>
                             <div class="text-right">
                                 <button type="submit" class="btn btn-success btn-lg">Сохранить</button>
                             </div>
                         </div>
+                        {/if}
                     </div>
                 </form>
             </div>

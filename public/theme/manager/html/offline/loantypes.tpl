@@ -99,6 +99,7 @@
                     <li class="breadcrumb-item active">Продукты</li>
                 </ol>
             </div>
+            {if $manager->role != 'employer'}
             <div class="col-md-6 col-4 align-self-center">
                 <div class="text-right">
                     <a href="loantype" class="btn btn-success btn-large">
@@ -106,7 +107,8 @@
                         <span>Добавить новый</span>
                     </a>
                 </div>
-            </div>        
+            </div>
+            {/if}
         </div>
         <!-- ============================================================== -->
         <!-- End Bread crumb and right sidebar toggle -->
@@ -146,7 +148,6 @@
                                         <th style="width: 70px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             Количество выплат
                                         </th>
-                                        <th style="width: 50px;" class="jsgrid-header-cell "></th>
                                     </tr>
                                 </table>
                             </div>
@@ -163,10 +164,10 @@
                                                 </a>
                                             </td>
                                             <td style="width: 60px;" class="jsgrid-cell jsgrid-align-center">
-                                                {$loantype->percent|number_format:2:',':' '}
+                                                {$loantype->percent|number_format:3:',':' '}
                                             </td>
                                             <td style="width: 60px;" class="jsgrid-cell jsgrid-align-center">
-                                                {$loantype->profunion|number_format:2:',':' '}
+                                                {$loantype->profunion|number_format:3:',':' '}
                                             </td>
                                             <td style="width: 70px;" class="jsgrid-cell jsgrid-align-center">
                                                 {$loantype->min_amount|number_format:0:',':' '}
@@ -176,12 +177,6 @@
                                             </td>
                                             <td style="width: 70px;" class="jsgrid-cell jsgrid-align-center">
                                                 {$loantype->max_period}
-                                            </td>
-                                            <td style="width: 50px;" class="jsgrid-cell jsgrid-align-right">
-                                                <div class="js-visible-view">
-                                                    <a href="" class="text-info" title="Редактировать"><i class=" fas fa-edit"></i></a>
-                                                    <a href="#" class="text-danger js-delete-item" title="Удалить"><i class="far fa-trash-alt"></i></a>
-                                                </div>
                                             </td>
                                         </tr>
                                     {/foreach}
