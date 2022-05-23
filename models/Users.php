@@ -385,6 +385,10 @@ class Users extends Core
             INSERT INTO __users SET ?%
         ", (array)$user);
         $this->db->query($query);
+
+        echo '<pre>';
+        var_dump($query);
+
         $id = $this->db->insert_id();
         return $id;
     }

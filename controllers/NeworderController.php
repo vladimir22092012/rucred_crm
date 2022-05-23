@@ -314,6 +314,8 @@ class NeworderController extends Controller
 
             $user['personal_number'] = $last_personal_number + 1;
 
+            var_dump($this->users->add_user($user));
+
             if ($user['user_id'] = $this->users->add_user($user)) {
             } else {
                 $this->design->assign('error', 'Не удалось создать клиента');
@@ -554,13 +556,16 @@ class NeworderController extends Controller
                 }
             } else {
                 try {
-                    $order_id = $this->orders->add_order($order);
+                    var_dump($this->orders->add_order($order));
+                    //$order_id = $this->orders->add_order($order);
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                 } catch (Exception $exception) {
                     response_json(['error' => 1, 'reason' => 'Создать заявку не удалось']);
                 }
             }
+            exit;
         }
+
         $this->design->assign('order', (object)$user);
     }
 
