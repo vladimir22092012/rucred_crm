@@ -218,12 +218,6 @@
                                                     Сумма, руб</a>
                                             {else}<a href="{url page=null sort='amount_asc'}">Сумма, руб</a>{/if}
                                         </th>
-                                        <th style="width: 60px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'period_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'period_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'period_asc'}<a href="{url page=null sort='period_desc'}">
-                                                    Срок</a>
-                                            {else}<a href="{url page=null sort='period_asc'}">Срок</a>{/if}
-                                        </th>
                                         <th style="width: 150px;"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'fio_asc'}<a href="{url page=null sort='fio_desc'}">ФИО</a>
@@ -235,22 +229,11 @@
                                                 href="{url page=null sort='company_id_desc'}">Работодатель</a>
                                             {else}<a href="{url page=null sort='fio_asc'}">Работодатель</a>{/if}
                                         </th>
-                                        <th style="width: 70px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'birth_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'birth_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'birth_asc'}<a href="{url page=null sort='birth_desc'}">Д/Р</a>
-                                            {else}<a href="{url page=null sort='birth_asc'}">Д/Р</a>{/if}
-                                        </th>
                                         <th style="width: 80px;"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'phone_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'phone_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'phone_asc'}<a href="{url page=null sort='phone_desc'}">
                                                     Телефон</a>
                                             {else}<a href="{url page=null sort='phone_asc'}">Телефон</a>{/if}
-                                        </th>
-                                        <th style="width: 100px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'region_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'region_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'region_asc'}<a href="{url page=null sort='region_desc'}">
-                                                    Регион</a>
-                                            {else}<a href="{url page=null sort='region_asc'}">Регион</a>{/if}
                                         </th>
                                         <th style="width: 60px;"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'status_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'status_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
@@ -258,23 +241,6 @@
                                                     Менеджер</a>
                                             {else}<a href="{url page=null sort='manager_asc'}">Менеджер</a>{/if}
                                         </th>
-                                        {if $manager->role == 'quality_control'}
-                                            <th style="width: 80px;"
-                                                class="jsgrid-header-cell {if $sort == 'penalty_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'penalty_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                                {if $sort == 'penalty_asc'}<a
-                                                    href="{url page=null sort='penalty_desc'}">Дата решения</a>
-                                                {else}<a href="{url page=null sort='penalty_asc'}">Дата решения</a>{/if}
-                                            </th>
-                                        {else}
-                                            <th style="width: 100px;"
-                                                class="jsgrid-header-cell {if $sort == 'scoring_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'scoring_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                                {if $sort == 'scoring_asc'}
-                                                    <a href="javascript:void(0);">Скоринг</a>
-                                                {else}
-                                                    <a href="javascript:void(0);">Скоринг</a>
-                                                {/if}
-                                            </th>
-                                        {/if}
                                     </tr>
                                     <tr class="jsgrid-filter-row" id="search_form">
 
@@ -291,10 +257,6 @@
                                             <input type="text" name="amount" value="{$search['amount']}"
                                                    class="form-control input-sm">
                                         </td>
-                                        <td style="width: 60px;" class="jsgrid-cell">
-                                            <input type="text" name="period" value="{$search['period']}"
-                                                   class="form-control input-sm">
-                                        </td>
                                         <td style="width: 150px;" class="jsgrid-cell">
                                             <input type="text" name="fio" value="{$search['fio']}"
                                                    class="form-control input-sm">
@@ -303,16 +265,8 @@
                                             <input type="text" name="fio" value="{$search['company']}"
                                                    class="form-control input-sm">
                                         </td>
-                                        <td style="width: 70px;" class="jsgrid-cell">
-                                            <input type="text" name="birth" value="{$search['birth']}"
-                                                   class="form-control input-sm">
-                                        </td>
                                         <td style="width: 80px;" class="jsgrid-cell">
                                             <input type="text" name="phone" value="{$search['phone']}"
-                                                   class="form-control input-sm">
-                                        </td>
-                                        <td style="width: 100px;" class="jsgrid-cell">
-                                            <input type="text" name="region" value="{$search['region']}"
                                                    class="form-control input-sm">
                                         </td>
                                         <td style="width: 60px;" class="jsgrid-cell">
@@ -325,22 +279,15 @@
                                                 {/foreach}
                                             </select>
                                         </td>
-                                        {if $manager->role == 'quality_control'}
-                                            <td style="width: 80px;" class="jsgrid-cell">
-                                            </td>
-                                        {else}
-                                            <td style="width: 100px;" class="jsgrid-cell">
-                                            </td>
-                                        {/if}
                                     </tr>
                                 </table>
                             </div>
                             <div class="jsgrid-grid-body">
-                                <table class="jsgrid-table table table-striped table-hover">
+                                <table class="jsgrid-table table table-striped table-hover" style="text-align: center">
                                     <tbody>
                                     {foreach $orders as $order}
                                         <tr class="jsgrid-row js-order-row {if $manager->role == 'quality_control' && $order->quality_workout}workout-row{/if}">
-                                            <td style="width: 70px;" class="jsgrid-cell jsgrid-align-right">
+                                            <td style="width: 70px;" class="jsgrid-cell">
                                                 <a href="offline_order/{$order->order_id}">{$order->group_number} {$order->company_number} {$order->personal_number}</a>
                                                 {if $order->contract}
                                                     <div>
@@ -379,11 +326,6 @@
                                             </td>
                                             <td style="width: 70px;" class="jsgrid-cell">
                                                 {$order->amount|number_format:0:',':' '}
-                                            </td>
-                                            <td style="width: 60px;" class="jsgrid-cell">
-                                                {if $order->period}
-                                                    {$order->period} {$order->period|plural:'день':'дней':'дня'}
-                                                {/if}
                                             </td>
                                             <td style="width: 150px;" class="jsgrid-cell">
                                                 <a href="client/{$order->user_id}">
@@ -424,9 +366,6 @@
                                             <td style="width: 150px;" class="jsgrid-cell">
                                                 {$order->company_name|escape}
                                             </td>
-                                            <td style="width: 70px;" class="jsgrid-cell">
-                                                {$order->birth|date}
-                                            </td>
                                             <td style="width: 80px;" class="jsgrid-cell">
                                                 {$order->phone_mobile}
                                                 <button class="js-mango-call mango-call"
@@ -438,42 +377,10 @@
                                                     <i class=" far fa-share-square"></i>
                                                 </button>
                                             </td>
-                                            <td style="width: 100px;" class="jsgrid-cell">
-                                                {$order->Regregion}
-                                            </td>
                                             <td style="width: 60px;" class="jsgrid-cell">
                                                 {$managers[$order->manager_id]->name|escape}
 
                                             </td>
-                                            {if $manager->role == 'quality_control'}
-                                                <td style="width: 80px;" class="jsgrid-cell">
-                                                    {if $order->penalty_date}
-                                                        {$order->penalty_date|date}
-                                                        {$order->penalty_date|time}
-                                                    {/if}
-
-                                                    <div class="custom-checkbox mt-1 custom-control">
-                                                        <input id="workout_{$order->order_id}" type="checkbox"
-                                                               class="custom-control-input js-workout-input"
-                                                               value="{$order->order_id}" name="workout"
-                                                               {if $order->quality_workout}checked="true"{/if} />
-                                                        <label for="workout_{$order->order_id}"
-                                                               class="custom-control-label">
-                                                            <small>Проверен</small>
-                                                        </label>
-                                                    </div>
-                                                </td>
-                                            {else}
-                                                <td style="width: 100px;padding:0" class="jsgrid-cell">
-                                                    <div style="max-height:128px;padding:5px 0 5px 5px;;overflow-y:auto;overflow-x:hidden">
-                                                        {foreach $order->scorings as $sc}
-                                                            <span {if $sc->string_result}data-toggle="tooltip"
-                                                                  title="{$sc->string_result|escape} {if $sc->type == 'scorista'}{$sc->scorista_ball}{/if}"{/if}
-                                                                  class="label label-sm {if in_array($sc->status, ['new','process'])}label-warning{elseif $sc->success}label-success{elseif in_array($sc->status,['repeat', 'new', 'process', 'import', 'wait'])}label-warning{else}label-danger{/if}">{$scoring_types[$sc->type]->short_title|escape}</span>
-                                                        {/foreach}
-                                                    </div>
-                                                </td>
-                                            {/if}
                                         </tr>
                                     {/foreach}
                                     </tbody>
