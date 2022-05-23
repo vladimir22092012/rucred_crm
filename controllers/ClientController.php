@@ -1107,6 +1107,9 @@ class ClientController extends Controller
         $company_id = $this->request->post('company');
         $branch_id = $this->request->post('branch');
 
+        if($branch_id == 'none')
+            $branch_id = 0;
+
         $user =
             [
                 'group_id' => $group_id,

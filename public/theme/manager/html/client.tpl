@@ -250,10 +250,9 @@
                                                 <small>Дата регистрации:
                                                     {$client->created|date}</small>
                                                 <br>
-                                                <small>Номер
-                                                    клиента:
-                                                </small>
+                                                <small>Номер клиента:</small>
                                                 <small class="show_personal_number">{$client->personal_number}</small>
+                                                {if $manager->role != 'employer'}
                                                 <a data-user="{$client->id}"
                                                    class="text-info edit_personal_number"><i
                                                             class=" fas fa-edit"></i></a>
@@ -267,6 +266,7 @@
                                                 <input type="button" style="display: none"
                                                        class="btn btn-danger number_edit_form cancel_edit"
                                                        value="Отмена">
+                                                {/if}
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="custom-control custom-checkbox mr-sm-2 mb-3">
