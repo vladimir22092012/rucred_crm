@@ -325,6 +325,7 @@ class ManagerController extends Controller
             exit;
         }else{
             echo 'success';
+            $this->managers->delete_manager($manager_id);
             exit;
         }
     }
