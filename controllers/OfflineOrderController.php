@@ -197,6 +197,10 @@ class OfflineOrderController extends Controller
                     return $this->action_change_employer_info();
                     break;
 
+                case 'restruct_term':
+                    return $this->action_restruct_term();
+                    break;
+
 
             endswitch;
 
@@ -2798,9 +2802,6 @@ class OfflineOrderController extends Controller
     private function action_edit_schedule()
     {
 
-        $restruct = $this->request->post('restruct');
-        $add_period = $this->request->post('add_period');
-
         $date = $this->request->post('date');
         $pay_sum = $this->request->post('pay_sum');
         $loan_percents_pay = $this->request->post('loan_percents_pay');
@@ -2987,14 +2988,14 @@ class OfflineOrderController extends Controller
         $user = $this->users->get_user($order['user_id']);
         $user = (array)$user;
 
-        if(empty($user['branche_id'])){
+        if (empty($user['branche_id'])) {
             $branches = $this->Branches->get_branches(['group_id' => $user['group_id']]);
 
-            foreach ($branches as $branch){
-                if($branch->number == '00')
+            foreach ($branches as $branch) {
+                if ($branch->number == '00')
                     $first_pay_day = $branch->payday;
             }
-        }else{
+        } else {
             $branch = $this->Branches->get_branch($user['branche_id']);
             $first_pay_day = $branch->payday;
 
@@ -3006,7 +3007,7 @@ class OfflineOrderController extends Controller
         $end_date = $this->check_date($start_date, $order['loan_type']);
         $end_date = new DateTime(date('Y-m-d', strtotime($end_date)));
         $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
-        $paydate = new DateTime(date('Y-m-'."$first_pay_day", strtotime($start_date)));
+        $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date)));
 
         $percent_per_month = (($order['percent'] / 100) * 365) / 12;
         $percent_per_month = round($percent_per_month, 7);
@@ -3082,11 +3083,11 @@ class OfflineOrderController extends Controller
             foreach ($daterange as $date) {
                 $date = $this->check_pay_date($date);
 
-                if($date == $lastdate){
+                if ($date == $lastdate) {
                     $loan_body_pay = $rest_sum;
                     $loan_percents_pay = $annoouitet_pay - $loan_body_pay;
                     $rest_sum = 0.00;
-                }else{
+                } else {
                     $loan_percents_pay = round($rest_sum * $percent_per_month, 2);
                     $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
                     $rest_sum = round($rest_sum - $loan_body_pay, 2);
@@ -3232,6 +3233,11 @@ class OfflineOrderController extends Controller
         }
 
         return $end_date->format('d.m.Y');
+    }
+
+    private function action_restruct_term()
+    {
+
     }
 
 }

@@ -260,6 +260,8 @@
                     e.preventDefault();
 
                     reform_schedule(restruct);
+
+                    location.reload();
                 });
             });
 
@@ -665,7 +667,18 @@
             });
 
             $('#new_term').on('change', function () {
+                let order_id = $(this).attr('data-order');
 
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'restruct_term',
+                        order_id: order_id
+                    },
+                    success: function () {
+
+                    }
+                })
             });
         });
     </script>
@@ -708,10 +721,18 @@
                     $.ajax({
                         method: 'POST',
                         data: form,
-                        success: function (resp) {
-
+                        success: function () {
+                            location.reload();
                         }
                     });
+                });
+            }else{
+                $.ajax({
+                    method: 'POST',
+                    data: form,
+                    success: function () {
+                        location.reload();
+                    }
                 });
             }
         }
