@@ -88,8 +88,10 @@ class NeworderController extends Controller
         return $this->design->fetch('offline/neworder.tpl');
     }
 
+
     private function action_create_new_order()
     {
+
         $amount = preg_replace("/[^,.0-9]/", '', $this->request->post('amount'));
         $start_date = new DateTime(date('Y-m-d', strtotime($this->request->post('start_date'))));
 
@@ -114,6 +116,8 @@ class NeworderController extends Controller
         $this->design->assign('peni', $peni);
         $this->design->assign('amount', $amount);
         $this->design->assign('period', $period);
+
+        $draft = ($this->request->post('draft')) ? 1 : 0;
 
         $user = array();
 
@@ -337,7 +341,7 @@ class NeworderController extends Controller
                 'period' => $period,
                 'date' => date('Y-m-d H:i:s'),
                 'manager_id' => $this->manager->id,
-                'status' => ($this->request->post('draft')) ? 12 : 1,
+                'status' => ($draft == 1) ? 12 : 1,
                 'offline' => 1,
                 'charge' => $charge,
                 'insure' => $insure,
@@ -560,12 +564,22 @@ class NeworderController extends Controller
                     exit;
                 }
             } else {
-                try {
-                    $order_id = $this->orders->add_order($order);
-                    response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
-                } catch (Exception $exception) {
-                    response_json(['error' => 1, 'reason' => 'Создать заявку не удалось']);
+                if($draft == 1){
+                    try {
+                        $order_id = $this->orders->add_order($order);
+                        response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/neworder/draft/' . $order_id]);
+                    } catch (Exception $exception) {
+                        response_json(['error' => 1, 'reason' => 'Создать заявку не удалось']);
+                    }
+                }else{
+                    try {
+                        $order_id = $this->orders->add_order($order);
+                        response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
+                    } catch (Exception $exception) {
+                        response_json(['error' => 1, 'reason' => 'Создать заявку не удалось']);
+                    }
                 }
+
             }
         }
 

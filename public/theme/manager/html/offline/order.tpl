@@ -37,7 +37,6 @@
                         confirmButtonText: 'Согласен',
                         cancelButtonText: 'Не согласен',
                     }).then((result) => {
-                        /* Read more about isConfirmed, isDenied below */
                         if (result.isConfirmed) {
                             $.ajax({
                                 method: 'post',
@@ -46,10 +45,11 @@
                                     order_id: order_id
                                 },
                                 success: function () {
-                                    location.reload();
                                 }
                             });
                         }
+
+                        location.reload();
                     });
                 }
                 else {
@@ -60,9 +60,11 @@
                             order_id: order_id
                         },
                         success: function () {
-                            location.reload();
+
                         }
                     });
+
+                    location.reload();
                 }
             });
 
@@ -242,10 +244,15 @@
                 $('.edit_schedule').hide();
                 $('.reset_shedule').show();
                 $('.cancel').show();
-                $('input[name="date[][date]"]').attr('readonly', false);
-                $('input[name="loan_percents_pay[][loan_percents_pay]"]').attr('readonly', false);
-                $('input[name="loan_body_pay[][loan_body_pay]"]').attr('readonly', false);
-                $('input[name="comission_pay[][comission_pay]"]').attr('readonly', false);
+                $('select[name="new_term"]').show();
+                $('.new_term_label').show();
+
+                if ($(this).hasClass('reform')) {
+                    $('input[name="date[][date]"]').attr('readonly', false);
+                    $('input[name="loan_percents_pay[][loan_percents_pay]"]').attr('readonly', false);
+                    $('input[name="loan_body_pay[][loan_body_pay]"]').attr('readonly', false);
+                    $('input[name="comission_pay[][comission_pay]"]').attr('readonly', false);
+                }
 
                 $('.cancel').on('click', function () {
                     location.reload();
@@ -255,6 +262,8 @@
                     e.preventDefault();
 
                     reform_schedule(restruct);
+
+                    location.reload();
                 });
             });
 
@@ -657,7 +666,22 @@
                 $('.probably_start_date').text(start_date);
                 $('.loantype_name').text(tarif);
                 $('.loan_amount').text(new Intl.NumberFormat('ru-RU').format(amount));
-            })
+            });
+
+            $('#new_term').on('change', function () {
+                let order_id = $(this).attr('data-order');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'restruct_term',
+                        order_id: order_id
+                    },
+                    success: function () {
+
+                    }
+                })
+            });
         });
     </script>
     <script>
@@ -699,10 +723,18 @@
                     $.ajax({
                         method: 'POST',
                         data: form,
-                        success: function (resp) {
-
+                        success: function () {
+                            location.reload();
                         }
                     });
+                });
+            }else{
+                $.ajax({
+                    method: 'POST',
+                    data: form,
+                    success: function () {
+                        location.reload();
+                    }
                 });
             }
         }
@@ -1529,14 +1561,24 @@
                                                         <input style="margin-left: 30px" type="button"
                                                                class="btn btn-danger restructuring"
                                                                value="Реструктуризация">
+                                                        <label style="display: none; margin-left: 20px" for="new_term"
+                                                               class="text-white new_term_label">Новый срок, мес</label>
+                                                        <select class="form-control" data-order="{$order->order_id}" name="new_term" id="new_term"
+                                                                style="display: none; width: 100px; margin-left: 20px">
+                                                            {for $i = 1 to count($payment_schedule)-1}
+                                                                <option value="{$i}">{$i}</option>
+                                                            {/for}
+                                                        </select>
                                                     {else}
                                                         <input style="margin-left: 30px" type="button"
                                                                class="btn btn-warning reform"
                                                                value="Редактировать">
                                                     {/if}
-                                                    <input style="margin-left: 30px; display: none" type="button"
-                                                           class="btn btn-primary accept_changes"
-                                                           value="Переформатировать график">
+                                                    {if $order->status != 5}
+                                                        <input style="margin-left: 30px; display: none" type="button"
+                                                               class="btn btn-primary accept_changes"
+                                                               value="Переформатировать график">
+                                                    {/if}
                                                 {/if}
                                             </h6>
 

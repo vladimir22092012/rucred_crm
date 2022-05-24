@@ -57,7 +57,7 @@ class ManagerController extends Controller
                 $user->login = $this->request->post('login');
                 $user->mango_number = $this->request->post('mango_number');
 
-                $same_login = $this->Managers->check_same_login($user_id, $user->login);
+                $same_login = $this->Managers->check_same_login($user->login, $user_id);
 
                 $user->group_id = ($this->request->post('groups')) ? (int)$this->request->post('groups') : 0;
                 $user->company_id = ($this->request->post('companies')) ? (int)$this->request->post('companies') : 0;
@@ -101,7 +101,6 @@ class ManagerController extends Controller
 
                 if (!$errors) {
                     if (empty($user_id)) {
-                        var_dump($user);
                         $user->id = $this->managers->add_manager($user);
                         $this->design->assign('message_success', 'added');
                     } else {
@@ -326,6 +325,7 @@ class ManagerController extends Controller
             exit;
         }else{
             echo 'success';
+            $this->managers->delete_manager($manager_id);
             exit;
         }
     }

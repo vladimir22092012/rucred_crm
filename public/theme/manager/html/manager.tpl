@@ -315,6 +315,7 @@
         });
 
         $('.delete_manager').on('click', function () {
+
             let manager_id = $(this).attr('data-manager');
 
             Swal.fire({
@@ -323,8 +324,6 @@
                 confirmButtonText: 'Да',
                 cancelButtonText: 'Нет',
             }).then((result) => {
-                console.log(result);
-
                 if (result.value === true) {
                     $.ajax({
                         method: 'POST',
@@ -823,7 +822,7 @@
                                         <div class="form-group">
                                             <div class="col-sm-12">
                                                 <button class="btn btn-outline-success" type="submit">Сохранить</button>
-                                                <div data-manager="{$manager->id}"
+                                                <div data-manager="{$user->id}"
                                                      class="btn btn-outline-danger float-right delete_manager"
                                                      type="button">Удалить
                                                 </div>
