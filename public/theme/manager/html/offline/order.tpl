@@ -242,10 +242,15 @@
                 $('.edit_schedule').hide();
                 $('.reset_shedule').show();
                 $('.cancel').show();
-                $('input[name="date[][date]"]').attr('readonly', false);
-                $('input[name="loan_percents_pay[][loan_percents_pay]"]').attr('readonly', false);
-                $('input[name="loan_body_pay[][loan_body_pay]"]').attr('readonly', false);
-                $('input[name="comission_pay[][comission_pay]"]').attr('readonly', false);
+                $('select[name="new_term"]').show();
+                $('.new_term_label').show();
+
+                if ($(this).hasClass('reform')) {
+                    $('input[name="date[][date]"]').attr('readonly', false);
+                    $('input[name="loan_percents_pay[][loan_percents_pay]"]').attr('readonly', false);
+                    $('input[name="loan_body_pay[][loan_body_pay]"]').attr('readonly', false);
+                    $('input[name="comission_pay[][comission_pay]"]').attr('readonly', false);
+                }
 
                 $('.cancel').on('click', function () {
                     location.reload();
@@ -1529,14 +1534,24 @@
                                                         <input style="margin-left: 30px" type="button"
                                                                class="btn btn-danger restructuring"
                                                                value="Реструктуризация">
+                                                        <label style="display: none; margin-left: 20px" for="new_term"
+                                                               class="text-white new_term_label">Новый срок, мес</label>
+                                                        <select class="form-control" name="new_term" id="new_term"
+                                                                style="display: none; width: 100px; margin-left: 20px">
+                                                            {for $i = 1 to count($payment_schedule)-1}
+                                                                <option value="{$i}">{$i}</option>
+                                                            {/for}
+                                                        </select>
                                                     {else}
                                                         <input style="margin-left: 30px" type="button"
                                                                class="btn btn-warning reform"
                                                                value="Редактировать">
                                                     {/if}
-                                                    <input style="margin-left: 30px; display: none" type="button"
-                                                           class="btn btn-primary accept_changes"
-                                                           value="Переформатировать график">
+                                                    {if $order->status != 5}
+                                                        <input style="margin-left: 30px; display: none" type="button"
+                                                               class="btn btn-primary accept_changes"
+                                                               value="Переформатировать график">
+                                                    {/if}
                                                 {/if}
                                             </h6>
 

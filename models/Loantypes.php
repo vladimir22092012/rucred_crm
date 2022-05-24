@@ -104,7 +104,7 @@ class Loantypes extends Core
             UPDATE __loantypes SET ?% WHERE id = ?
         ", (array)$loantype, (int)$id);
         $this->db->query($query);
-        
+
         return $id;
     }
     

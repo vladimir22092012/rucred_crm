@@ -10,12 +10,15 @@ class LoantypeController extends Controller
             $loantype = new StdClass();
 
             $loantype->name = $this->request->post('name');
+
             $loantype->percent = $this->request->post('percent');
             $loantype->percent = str_replace(',', '.', $loantype->percent);
             $loantype->profunion = $this->request->post('profunion');
             $loantype->profunion = str_replace(',', '.', $loantype->profunion);
             $loantype->min_amount = $this->request->post('min_amount');
-            $loantype->max_amount = $this->request->post('max_amount', 'integer');
+            $loantype->max_amount = $this->request->post('max_amount');
+            $loantype->min_amount = str_replace(' ', '', $loantype->min_amount);
+            $loantype->max_amount = str_replace(' ', '', $loantype->max_amount);
             $loantype->max_period = $this->request->post('max_period', 'integer');
             $loantype->online_flag = $this->request->post('online_flag', 'integer');
 
@@ -90,14 +93,15 @@ class LoantypeController extends Controller
             $loantype = $this->loantypes->get_loantype($id);
 
             $groups = $this->GroupLoanTypes->get_loantype_groups($id);
-            $this->design->assign('groups', $groups);
 
             foreach ($groups as $group){
-                if($this->manager->group_id == $group->id){
+                if($this->manager->group_id == $group['id']){
                     $loantype->percent == $group->standart_percents;
                     $loantype->profunion == $group->standart_percents;
                 }
             }
+
+            $this->design->assign('groups', $groups);
         }
 
 
