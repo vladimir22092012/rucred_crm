@@ -14,6 +14,100 @@ class Soap1c extends Core
         $this->log_dir = $this->config->root_dir.$this->log_dir;
     }
     
+
+    /**
+     * Soap1c::send_loan()
+     *
+     * Метод отсылает в 1с данные по заявке
+     *
+     * @param integer $order_id
+     * @return string - в случае успеха должно вернуться ОК
+     */
+    public function send_loan($order_id)
+    {
+        if ($order = $this->orders->get_order($order_id))
+        {
+            $company = $this->companies->get_company($order->company_id);
+            
+            $passport_serial = str_replace([' ', '-'], '', $order->passport_serial);
+            $passport_series = substr($passport_serial, 0, 4);
+            $passport_number = substr($passport_serial, 4, 6);
+
+            $item = new StdClass();
+
+            $item->ID = $order->order_id;
+            $item->Дата = date('YmdHis', strtotime($order->date));
+            $item->Срок = $order->period;
+            $item->Периодичность = 'День';
+            $item->ПроцентнаяСтавка = $order->percent;
+            $item->ПСК = $order->psk;
+            $item->ИдентификаторФормыВыдачи = 'Безналичная';
+            $item->ИдентификаторФормыОплаты = 'ТретьеЛицо';
+            $item->Сумма = $order->amount;
+            $item->Порог = '1.5';
+            $item->ИННОрганизации = isset($company) ? $company->inn : '';
+            $item->СпособПодачиЗаявления = 'Прямой';
+            
+            $payment_schedules = array();            
+            if ($order_payment_schedule = json_decode($order->payment_schedule))
+            {
+                foreach ($order_payment_schedule as $key_date => $payment_schedule)
+                {
+                    if ($key_date != 'result')
+                    {
+                        $payment_schedule_item = new StdClass();
+                        
+                        $payment_schedule_item->Дата = date('YmdHis', strtotime($key_date));
+                        $payment_schedule_item->СуммаОД = $payment_schedule->loan_body_pay;
+                        $payment_schedule_item->СуммаПроцентов = $payment_schedule->loan_percents_pay;
+                        
+                        $payment_schedules[] = $payment_schedule_item;
+                    }
+                }
+                $item->ГрафикПлатежей = $payment_schedules;
+            }
+            
+            $client = new StdClass();
+            $client->id = $order->user_id;
+            $client->ФИО = $order->lastname.' '.$order->firstname.' '.$order->patronymic;
+            $client->Фамилия = $order->lastname;
+            $client->Имя = $order->firstname;
+            $client->Отчество = $order->patronymic;
+            $client->ДатаРождения = date('Ymd000000', strtotime($order->birth));
+            $client->МестоРождения = $order->birth_place;
+            $client->АдресРегистрации = $order->Regadressfull;
+            $client->АдресПроживания = $order->Faktadressfull;
+            $client->Телефон = $this->format_phone($order->phone_mobile);
+            $client->ОКАТО = $order->okato;
+            $client->ОКТМО = $order->oktmo;
+            
+            $passport = new StdClass();
+            $passport->Серия = $passport_series;
+            $passport->Номер = $passport_number;
+            $passport->КемВыдан = $order->passport_issued;
+            $passport->КодПодразделения = $order->subdivision_code;
+            $passport->ДатаВыдачи = $order->passport_date;
+            $client->Паспорт = $passport;
+            
+            $item->Клиент = $client;
+        
+            $request = new StdClass();
+            $request->TextJSON = json_encode($item);
+            $result = $this->send('CRM_WebService', 'Loans', $request, 1, 'exchange.txt');
+    
+            return $result;
+        
+        }
+        
+    }
+    
+
+
+
+
+
+
+
     public function SentToTrialDebt($number)
     {
         $request = new StdClass();
