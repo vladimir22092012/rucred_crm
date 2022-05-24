@@ -45,11 +45,11 @@ class Branches extends Core
         $company_id = '';
         $group_id = '';
 
-        if ($filter['company_id']) {
+        if (isset($filter['company_id'])) {
             $company_id = $this->db->placehold("AND company_id = ?", (int)$filter['company_id']);
         }
-        if ($filter['group_id']) {
-            $group_id = $this->db->placehold("AND company_id = ?", (int)$filter['company_id']);
+        if (isset($filter['group_id'])) {
+            $group_id = $this->db->placehold("AND group_id = ?", (int)$filter['group_id']);
         }
 
         $query = $this->db->placehold("
