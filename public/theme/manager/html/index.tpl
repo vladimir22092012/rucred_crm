@@ -216,6 +216,14 @@
                 {if isset($manager)}
                     <ul id="sidebarnav">
                         {if !in_array($manager->role, ['underwriter', 'employer'])}
+                            <li {if in_array($module, ['TicketsController'])}class="active"{/if}>
+                            <li class="nav-small-cap">Коммуникации</li>
+                                    <li {if in_array($module, ['TicketsController'])}class="active"{/if}>
+                                        <a href="tickets?in=true"><i class="mdi mdi-email-open"></i><span>Полученные запросы</span></a></li>
+                                    <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
+                                                href="tickets?out=true"><i class="mdi mdi-email-variant"></i><span>Направление запросы</span></a></li>
+                                    <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
+                                                href="tickets?archive=true"><i class="mdi mdi-mailbox"></i><span>Архив</span></a></li>
                             <li class="nav-small-cap">Онлайн заявки</li>
                             <li {if in_array($module, ['OrderController', 'OrdersController'])}class="active"{/if}>
                                 <a class="" href="orders/" aria-expanded="false"><i class="mdi mdi-animation"></i><span
@@ -227,11 +235,12 @@
                                         class="mdi mdi-chart-bubble"></i><span
                                         class="hide-menu">Клиенты</span></a>
                         </li>
-
+                        {if $manager->role != 'employer'}
                         <li {if in_array($module, ['MissingController'])}class="active"{/if}>
                             <a class="" href="missing/" aria-expanded="false"><i class="mdi mdi-sleep"></i><span
                                         class="hide-menu">Отвалы</span></a>
                         </li>
+                        {/if}
                         {if in_array('offline_settings', $manager->permissions) || in_array('offline', $manager->permissions)}
                             <li class="nav-small-cap">Оффлайн заявки</li>
                             {if in_array('offline', $manager->permissions)}
@@ -302,19 +311,6 @@
                             <li {if in_array($module, ['ApikeysController'])}class="active"{/if}><a
                                         href="apikeys/"><i class="mdi mdi-apple-finder"></i>Ключи для API</a></li>
                         {/if}
-                        <li {if in_array($module, ['TicketsController'])}class="active"{/if}>
-                            <a class="has-arrow" href="#" aria-expanded="false"><i
-                                        class="mdi mdi-chart-bubble"></i><span
-                                        class="hide-menu">Коммуникации</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
-                                            href="tickets?in=true">Полученные запросы </a></li>
-                                <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
-                                            href="tickets?out=true">Направление запросы </a></li>
-                                <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
-                                            href="tickets?archive=true">Архив</a></li>
-                            </ul>
-                        </li>
                     </ul>
                 {/if}
             </nav>

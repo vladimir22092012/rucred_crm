@@ -40,6 +40,10 @@ class ManagerController extends Controller
                     case 'block_manager':
                         $this->action_block_manager();
                         break;
+
+                    case 'delete_manager':
+                        $this->action_delete_manager();
+                        break;
                 endswitch;
             } else {
                 $user = new StdClass();
@@ -114,19 +118,19 @@ class ManagerController extends Controller
 
                 $this->managers->update_manager($manager_id, array('blocked' => $block));
 
-/*
-                if ($contracts = $this->contracts->get_contracts(array('collection_manager_id'=>$manager_id)))
-                {
-                    foreach ($contracts as $c)
-                    {
-                        $this->contracts->update_contract($c->id, array('collection_manager_id'=>0, 'collection_workout'=>0));
-                        $this->users->update_user($contract->user_id, array('contact_status' => 0));
-                    }
-//                    $this->contracts->distribute_contracts();
-                }
+                /*
+                                if ($contracts = $this->contracts->get_contracts(array('collection_manager_id'=>$manager_id)))
+                                {
+                                    foreach ($contracts as $c)
+                                    {
+                                        $this->contracts->update_contract($c->id, array('collection_manager_id'=>0, 'collection_workout'=>0));
+                                        $this->users->update_user($contract->user_id, array('contact_status' => 0));
+                                    }
+                //                    $this->contracts->distribute_contracts();
+                                }
 
-                exit;
-*/
+                                exit;
+                */
             }
 
             if ($id = $this->request->get('id', 'integer')) {
@@ -135,7 +139,7 @@ class ManagerController extends Controller
         }
 
         if (!empty($user)) {
-            $meta_title = 'Профиль '.$user->name;
+            $meta_title = 'Профиль ' . $user->name;
             $this->design->assign('user', $user);
         } else {
             $meta_title = 'Создать новый профиль';
@@ -161,14 +165,14 @@ class ManagerController extends Controller
 
         $groups = $this->Groups->get_groups();
 
-        if(isset($user) && $user->group_id != 0 ){
-            $companies = $this->Companies->get_companies(['group_id' => $user->group_id ]);
+        if (isset($user) && $user->group_id != 0) {
+            $companies = $this->Companies->get_companies(['group_id' => $user->group_id]);
             $this->design->assign('companies', $companies);
         }
 
         $this->design->assign('groups', $groups);
 
-        if($this->request->get('main')){
+        if ($this->request->get('main')) {
             $lk = true;
             $this->design->assign('lk', $lk);
         }
@@ -198,7 +202,7 @@ class ManagerController extends Controller
     private function action_edit_email()
     {
         $email = $this->request->post('email');
-        $user_id= $this->request->post('user_id');
+        $user_id = $this->request->post('user_id');
         $code = random_int(1000, 9999);
 
         $result = $this->db->query('
@@ -221,7 +225,7 @@ class ManagerController extends Controller
 
     private function action_edit_email_with_code()
     {
-        $user_id= $this->request->post('user_id');
+        $user_id = $this->request->post('user_id');
         $email = $this->request->post('email');
         $code = $this->request->post('code');
 
@@ -246,8 +250,8 @@ class ManagerController extends Controller
 
     private function action_edit_phone()
     {
-        $phone= $this->request->post('phone');
-        $user_id= $this->request->post('user_id');
+        $phone = $this->request->post('phone');
+        $user_id = $this->request->post('user_id');
         $code = random_int(1000, 9999);
         $response = $this->sms->send(
             $phone,
@@ -263,9 +267,9 @@ class ManagerController extends Controller
 
     private function action_edit_phone_with_code()
     {
-        $phone= $this->request->post('phone');
+        $phone = $this->request->post('phone');
         $code = $this->request->post('code');
-        $user_id= $this->request->post('user_id');
+        $user_id = $this->request->post('user_id');
 
         $this->db->query("
         SELECT code, created
@@ -288,7 +292,7 @@ class ManagerController extends Controller
 
     private function action_edit_password()
     {
-        $user_id= $this->request->post('user_id');
+        $user_id = $this->request->post('user_id');
         $old_password = $this->request->post('old_password');
         $new_password = $this->request->post('new_password');
 
@@ -309,5 +313,20 @@ class ManagerController extends Controller
         $manager_id = $this->request->post('manager_id');
 
         $this->managers->update_manager($manager_id, ['blocked' => $flag]);
+    }
+
+    private function action_delete_manager()
+    {
+        $manager_id = $this->request->post('manager_id');
+
+        $orders = $this->orders->get_orders(['manager_id' => $manager_id]);
+
+        if(!empty($orders)){
+            echo 'У пользователя есть сделки!';
+            exit;
+        }else{
+            echo 'success';
+            exit;
+        }
     }
 }

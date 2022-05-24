@@ -103,7 +103,34 @@
                                     {foreach $clients as $client}
                                         <tr class="jsgrid-row ">
                                             <td style="width: 60px;" class="jsgrid-cell">
-                                                <a href="client/{$client->id}">{$client->personal_number}</a>
+                                                <a href="client/{$client->id}">{$client->personal_number}</a><br>
+                                                <small>
+                                                    {if $client->last_order_status == 0}
+                                                        <span class="label label-warning">Новая</span>
+                                                    {elseif $client->last_order_status == 1}
+                                                        <span class="label label-info">Принята</span>
+                                                    {elseif $client->last_order_status == 2}
+                                                        <span class="label label-success">Одобрена</span>
+                                                    {elseif $client->last_order_status == 3}
+                                                        <span class="label label-danger">Отказ</span>
+                                                    {elseif $client->last_order_status == 4}
+                                                        <span class="label label-inverse">Подписан</span>
+                                                    {elseif $client->last_order_status == 5}
+                                                        <span class="label label-primary">Выдан</span>
+                                                    {elseif $client->last_order_status == 6}
+                                                        <span class="label label-danger">Не удалось выдать</span>
+                                                    {elseif $client->last_order_status == 7}
+                                                        <span class="label label-inverse">Погашен</span>
+                                                    {elseif $client->last_order_status == 8}
+                                                        <span class="label label-danger">Отказ клиента</span>
+                                                    {elseif $client->last_order_status == 9}
+                                                        <span class="label label-primary">Выдан</span>
+                                                    {elseif $client->last_order_status == 14}
+                                                        <span class="label label-success">Р.Подтверждена</span>
+                                                    {elseif $client->last_order_status == 15}
+                                                        <span class="label label-danger">Р.Отклонена</span>
+                                                    {/if}
+                                                </small>
                                             </td>
                                             <td style="width: 80px;" class="jsgrid-cell">
                                                 <span>{$client->created|date}</span>

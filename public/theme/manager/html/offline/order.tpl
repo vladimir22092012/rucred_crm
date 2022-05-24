@@ -646,6 +646,18 @@
                     }
                 })
             });
+
+            $('.show_reformat_button').on('click', function () {
+                let start_date = $('#probably_start_date').val();
+                let tarif = $('select[name="loan_tarif"] option:selected').text();
+                let amount = $('input[name="amount"]').val();
+
+                $('.accept_changes').show();
+
+                $('.probably_start_date').text(start_date);
+                $('.loantype_name').text(tarif);
+                $('.loan_amount').text(new Intl.NumberFormat('ru-RU').format(amount));
+            })
         });
     </script>
     <script>
@@ -926,16 +938,16 @@
                                         <div class="row view-block ">
                                             <div class="col-4 text-center">
                                                 <h6>Сумма</h6>
-                                                <h4 class="text-primary">{$order->amount|number_format:0:',':' '}
+                                                <h4 class="text-primary loan_amount">{$order->amount|number_format:0:',':' '}
                                                     руб</h4>
                                             </div>
                                             <div class="col-4 text-center">
                                                 <h6>Тарифный план</h6>
-                                                <h4 class="text-primary">{$loantype->name}</h4>
+                                                <h4 class="text-primary loantype_name">{$loantype->name}</h4>
                                             </div>
                                             <div class="col-4 text-center">
                                                 <h6>Дата выдачи</h6>
-                                                <h4 class="text-primary">{$order->probably_start_date|date}</h4>
+                                                <h4 class="text-primary probably_start_date">{$order->probably_start_date|date}</h4>
                                             </div>
                                             {if $order->status != 9}
                                                 <a href="javascript:void(0);"
@@ -971,7 +983,7 @@
                                                        value="{$order->probably_start_date|date}">
                                             </div>
                                             <div class="col-4">
-                                                <div class="btn btn-success accept_changes"
+                                                <div class="btn btn-success js-cancel-edit show_reformat_button"
                                                      data-manager="{$manager->id}"
                                                      data-order="{$order->order_id}"
                                                      data-user="{$order->user_id}">
@@ -1522,6 +1534,9 @@
                                                                class="btn btn-warning reform"
                                                                value="Редактировать">
                                                     {/if}
+                                                    <input style="margin-left: 30px; display: none" type="button"
+                                                           class="btn btn-primary accept_changes"
+                                                           value="Переформатировать график">
                                                 {/if}
                                             </h6>
 

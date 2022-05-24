@@ -219,9 +219,7 @@
                                 confirmButtonText: 'ОК'
                             });
                         } else {
-                            console.log('create_new_order completed');
-                            console.log(response.redirect);
-                            window.location.replace(response.redirect);
+
                         }
                     }
                 })
@@ -454,13 +452,9 @@
                                             <input type="text" style="width: 180px; margin-left: 25px"
                                                    name="birth"
                                                    class="form-control daterange" value="{$order->birth|date}">
-                                            <div type="button" style="margin-left: 25px"
-                                                 class="btn btn-outline-info check_users">
-                                                Проверить совпадения
-                                            </div>
                                         </div>
                                         <br>
-                                        <div>
+                                        <div style="margin-left: 10px">
                                             <div class="col-12">
                                                 <div class="phone_edit_form">
                                                     <div class="mb-3">
@@ -499,11 +493,13 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div><br>
+                                        <div type="button" style="margin-left: 25px"
+                                             class="btn btn-outline-info check_users">
+                                            Проверить совпадения
+                                        </div><br><br>
                                         <div style="display: none" id="users_same"></div>
-                                        <br>
-                                    </div>
-                                    <br><br>
+                                        <br><br>
                                     <h4>Менялись ли ваши фамилия, имя, отчество?</h4><br>
                                     <div class="form-check" style="margin-left: 25px">
                                         <input class="form-check-input" type="radio" name="change_fio"

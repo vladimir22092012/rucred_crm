@@ -20,7 +20,7 @@ class ClientsController extends Controller
             $this->design->assign('search', array_filter($search));
         }
 
-        if($this->manager->role == 'employer')
+        if ($this->manager->role == 'employer')
             $filter['employer'] = $this->manager->company_id;
 
         $current_page = $this->request->get('page', 'integer');
@@ -29,7 +29,7 @@ class ClientsController extends Controller
 
         $clients_count = $this->users->count_users($filter);
 
-        $pages_num = ceil($clients_count/$items_per_page);
+        $pages_num = ceil($clients_count / $items_per_page);
         $this->design->assign('total_pages_num', $pages_num);
         $this->design->assign('total_orders_count', $clients_count);
 
@@ -38,6 +38,21 @@ class ClientsController extends Controller
 
 
         $clients = $this->users->get_users($filter);
+
+        $users_id = array();
+
+        foreach ($clients as $client) {
+            $users_id[] = $client->id;
+        }
+
+        $orders = $this->orders->get_orders(['user_id' => $users_id]);
+
+        foreach ($clients as $client) {
+            foreach ($orders as $order) {
+                if($client->id == $order->user_id)
+                    $client->last_order_status = $order->status;
+            }
+        }
 
         $this->design->assign('clients', $clients);
 

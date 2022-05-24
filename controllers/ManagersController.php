@@ -4,7 +4,7 @@ class ManagersController extends Controller
 {
     public function fetch()
     {
-        $items_per_page = 10;
+        $items_per_page = 50;
 
         $filter = array();
 
@@ -44,7 +44,7 @@ class ManagersController extends Controller
             $current_page = max(1, $current_page);
             $this->design->assign('current_page_num', $current_page);
 
-            $clients_count = $this->managers->count_managers($filter);
+            $clients_count = count($managers);
 
             $pages_num = ceil($clients_count/$items_per_page);
             $this->design->assign('total_pages_num', $pages_num);
