@@ -662,7 +662,11 @@
                 $('.probably_start_date').text(start_date);
                 $('.loantype_name').text(tarif);
                 $('.loan_amount').text(new Intl.NumberFormat('ru-RU').format(amount));
-            })
+            });
+
+            $('#new_term').on('change', function () {
+
+            });
         });
     </script>
     <script>
@@ -1536,7 +1540,7 @@
                                                                value="Реструктуризация">
                                                         <label style="display: none; margin-left: 20px" for="new_term"
                                                                class="text-white new_term_label">Новый срок, мес</label>
-                                                        <select class="form-control" name="new_term" id="new_term"
+                                                        <select class="form-control" data-order="{$order->order_id}" name="new_term" id="new_term"
                                                                 style="display: none; width: 100px; margin-left: 20px">
                                                             {for $i = 1 to count($payment_schedule)-1}
                                                                 <option value="{$i}">{$i}</option>
