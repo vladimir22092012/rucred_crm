@@ -18,3 +18,4 @@ Thumbs.db
 !/files/.htaccess
 /cron/log.txt
 /sql/local.sql
+/public/test.php

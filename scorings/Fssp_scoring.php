@@ -34,7 +34,7 @@ class Fssp_scoring extends Core
                 {
                     $update = array(
                         'status' => 'error',
-                        'string_result' => 'в заявке не достаточно данных для проведения скоринга'
+                        'string_result' => 'в заявке не достаточно данных для проведения скоринга '.$order->lastname.' '.$order->firstname.' '.$order->patronymic.' '.$order->Regregion.' '.$order->birth
                     );
                 }
                 else

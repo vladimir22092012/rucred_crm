@@ -31,7 +31,8 @@ class Request extends Core
         }
         
         if ($type == 'string') {
-            return strval(preg_replace('/[^\p{L}\p{Nd}\d\s_\-\.\%\s]/ui', '', $val));
+            return strval($val);
+//            return strval(preg_replace('/[^\p{L}\p{Nd}\d\s_\-\.\%\s]/ui', '', $val));
         }
             
         if ($type == 'integer') {
