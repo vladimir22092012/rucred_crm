@@ -201,13 +201,15 @@
                 }, 900);
             }
 
-            $('.create_new_order').click(function (e) {
+            $('.create_new_order, .create_new_draft').click(function (e) {
                 e.preventDefault();
-
-                console.log(document.querySelector('#forms'));
 
                 let entries = Object.fromEntries(new FormData(document.querySelector('#forms')).entries());
                 entries['action'] = 'create_new_order';
+
+                if($(this).hasClass('create_new_draft')){
+                    entries['draft'] = 1;
+                }
 
                 $.ajax({
                     method: 'POST',
@@ -219,8 +221,6 @@
                                 confirmButtonText: 'ОК'
                             });
                         } else {
-                            console.log('create_new_order completed');
-                            console.log(response.redirect);
                             window.location.replace(response.redirect);
                         }
                     }
@@ -1097,8 +1097,8 @@
                                             <input style="display: none" type="submit" name="create_new_order"
                                                    class="btn btn-success buttons_append create_new_order"
                                                    value="Создать заявку">
-                                            <input type="submit" name="draft" style="margin-left: 100px; display: none;"
-                                                   class="btn btn-primary buttons_append"
+                                            <input type="button" name="draft" style="margin-left: 100px; display: none;"
+                                                   class="btn btn-primary buttons_append create_new_draft"
                                                    value="Сохранить черновик">
                                         </div>
                                         <br><br>
