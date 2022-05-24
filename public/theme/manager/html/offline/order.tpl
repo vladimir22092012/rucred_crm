@@ -4,7 +4,7 @@
     <script
             src="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     <script src="theme/{$settings->theme|escape}/assets/plugins/fancybox3/dist/jquery.fancybox.js"></script>
-    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/order.js?v=1.17"></script>
+    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/offline_order.js?v=1.17"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/movements.app.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery.maskedinput@1.4.1/src/jquery.maskedinput.min.js"
@@ -2112,6 +2112,11 @@
                                                                                class="js-get-fssp-info float-right"
                                                                                data-scoring="{$scorings[$scoring_type->name]->id}">Подробнее</a>
                                                                         {/if}
+                                                                        {if $scoring_type->name == 'okb'}
+                                                                            <a href="javascript:void(0);"
+                                                                               class="js-get-okb-info float-right"
+                                                                               data-scoring="{$scorings[$scoring_type->name]->id}">Подробнее</a>
+                                                                        {/if}
                                                                         {if $scoring_type->name == 'efrsb' && $scorings[$scoring_type->name]->body}
                                                                             {foreach $scorings[$scoring_type->name]->body as $efrsb_link}
                                                                                 <a href="{$efrsb_link}"
@@ -3072,17 +3077,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
-                <table class="table">
-                    <tr>
-                        <th>Номер, дата</th>
-                        <th>Документ</th>
-                        <th>Производство</th>
-                        <th>Департамент</th>
-                        <th>Закрыт</th>
-                    </tr>
-                    <tbody class="js-fssp-info-result">
-
-                    </tbody>
+                <table class="table table-hover table-border js-fssp-info-result">
                 </table>
             </div>
         </div>

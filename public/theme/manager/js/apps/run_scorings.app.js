@@ -14,7 +14,7 @@
             var type = $(this).data('type');
             
             $.ajax({
-                url: 'ajax/run_scorings.php',
+                url: 'ajax/scorings',
                 data: {
                     'order_id': order_id,
                     'type': type,
@@ -45,7 +45,7 @@
     
     var update_scoring_block = function(_order_id){
         $.ajax({
-            url: 'order/'+_order_id+'?open_scorings=1',
+            url: 'offline_order/'+_order_id+'?open_scorings=1',
             success: function(resp){
                 $('.js-scorings-block').html($(resp).find('.js-scorings-block').html());
 console.log($(resp).find('.js-scorings-block').hasClass('js-need-update'))
