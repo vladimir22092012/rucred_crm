@@ -90,6 +90,7 @@ class NeworderController extends Controller
 
     private function action_create_new_order()
     {
+
         $amount = preg_replace("/[^,.0-9]/", '', $this->request->post('amount'));
         $start_date = new DateTime(date('Y-m-d', strtotime($this->request->post('start_date'))));
 
