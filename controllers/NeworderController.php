@@ -368,28 +368,28 @@ class NeworderController extends Controller
                 $order['percent'] = (float)$record['preferential_percents'];
             }
 
-            $rest_sum = $order['amount'];
-            $start_date = date('Y-m-d', strtotime($order['probably_start_date']));
-            $end_date = new DateTime(date('Y-m-10', strtotime($order['probably_return_date'])));
-            $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
-            $paydate = new DateTime(date('Y-m-10', strtotime($start_date)));
-
-            $percent_per_month = (($order['percent'] / 100) * 365) / 12;
-            $percent_per_month = round($percent_per_month, 7);
-            $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
-            $annoouitet_pay = round($annoouitet_pay, '2');
-
-            if(!$user['branche_id']){
+            if(empty($user['branche_id'])){
                 $branches = $this->Branches->get_branches(['group_id' => $user['group_id']]);
 
                 foreach ($branches as $branch){
-                    if($branch == '00')
+                    if($branch->number == '00')
                         $first_pay_day = $branch->payday;
                 }
             }else{
                 $branch = $this->Branches->get_branch($user['branche_id']);
                 $first_pay_day = $branch->payday;
             }
+
+            $rest_sum = $order['amount'];
+            $start_date = date('Y-m-d', strtotime($order['probably_start_date']));
+            $end_date = new DateTime(date('Y-m-10', strtotime($order['probably_return_date'])));
+            $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
+            $paydate = new DateTime(date('Y-m-'."$first_pay_day", strtotime($start_date)));
+
+            $percent_per_month = (($order['percent'] / 100) * 365) / 12;
+            $percent_per_month = round($percent_per_month, 7);
+            $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
+            $annoouitet_pay = round($annoouitet_pay, '2');
 
             if (date('d', strtotime($start_date)) < $first_pay_day) {
                 if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < 3) {
