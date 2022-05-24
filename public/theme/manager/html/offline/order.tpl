@@ -37,7 +37,6 @@
                         confirmButtonText: 'Согласен',
                         cancelButtonText: 'Не согласен',
                     }).then((result) => {
-                        /* Read more about isConfirmed, isDenied below */
                         if (result.isConfirmed) {
                             $.ajax({
                                 method: 'post',
@@ -46,10 +45,11 @@
                                     order_id: order_id
                                 },
                                 success: function () {
-                                    location.reload();
                                 }
                             });
                         }
+
+                        location.reload();
                     });
                 }
                 else {
@@ -60,9 +60,11 @@
                             order_id: order_id
                         },
                         success: function () {
-                            location.reload();
+
                         }
                     });
+
+                    location.reload();
                 }
             });
 
