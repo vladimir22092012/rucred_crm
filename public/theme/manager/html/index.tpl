@@ -215,7 +215,6 @@
             <nav class="sidebar-nav">
                 {if isset($manager)}
                     <ul id="sidebarnav">
-                        {if !in_array($manager->role, ['underwriter', 'employer'])}
                             <li {if in_array($module, ['TicketsController'])}class="active"{/if}>
                             <li class="nav-small-cap">Коммуникации</li>
                                     <li {if in_array($module, ['TicketsController'])}class="active"{/if}>
@@ -229,7 +228,6 @@
                                 <a class="" href="orders/" aria-expanded="false"><i class="mdi mdi-animation"></i><span
                                             class="hide-menu">Заявки</span></a>
                             </li>
-                        {/if}
                         <li {if in_array($module, ['ClientController', 'ClientsController'])}class="active"{/if}>
                             <a class="" href="clients/" aria-expanded="false"><i
                                         class="mdi mdi-chart-bubble"></i><span

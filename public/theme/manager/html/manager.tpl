@@ -701,6 +701,8 @@
                                                                                      class="text-info edit_email"><i
                                                             class="fas fa-edit"></i></a></h5>
                                             <div class="show_email">{$user->email|default: "Email не введён"}</div>
+                                            <h5 class="form-control-static">Компания</h5>
+                                            <div class="show_email">{$user->company_name|default: "Отсутствует компания"}</div>
                                             <div class="email_edit_form" style="display: none">
                                                 <div class="mb-3">
                                                     <div class="form-row">

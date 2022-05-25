@@ -169,6 +169,11 @@ class ManagerController extends Controller
             $this->design->assign('companies', $companies);
         }
 
+        if(!empty($user->company_id)){
+            $company = $this->Companies->get_company($user->company_id);
+            $user->company_name = $company->name;
+        }
+
         $this->design->assign('groups', $groups);
 
         if ($this->request->get('main')) {

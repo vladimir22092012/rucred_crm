@@ -3307,36 +3307,33 @@ class OfflineOrderController extends Controller
 
         $i = 0;
         $od_sum = 0;
-        $new_loan = 0;
+        $new_loan = $order->amount;
         $percent_pay = 0.00;
         $body_pay = 0.00;
         $comission_pay = 0.00;
 
         foreach ($payment_schedule as $date => $schedule) {
+
             $date = date('d.m.Y', strtotime($date));
-            $last_date = $date;
-
             if ($pay_date == $date) {
-
-                $new_loan -= $od_sum;
                 $rest_sum = $schedule['pay_sum'];
 
-                if ($pay_amount < $schedule['pay_sum'] && $pay_amount != 0) {
+                if ($pay_amount < $schedule['pay_sum']) {
                     if ($pay_amount >= $schedule['loan_percents_pay']) {
                         $percent_pay = $schedule['loan_percents_pay'];
                         $rest_sum -= $pay_amount;
 
                         if ($rest_sum > 0) {
-                            $body_pay = $schedule['loan_body_pay'] - $rest_sum;
+                            $body_pay = $rest_sum;
                             $new_loan -= $rest_sum;
-                        } else {
-                            $new_loan += $schedule['loan_body_pay'];
                         }
 
                     } else {
-                        $percent_pay = $pay_amount - $schedule['loan_percents_pay'];
+                        $percent_pay = $schedule['loan_percents_pay'] - $pay_amount;
+                        $plus_percents = round($pay_amount, 2);
                     }
                 }
+
                 if ($pay_amount > $schedule['pay_sum']) {
                     $body_pay = $pay_amount;
                     $percent_pay = $schedule['loan_percents_pay'];
@@ -3353,8 +3350,6 @@ class OfflineOrderController extends Controller
                     $new_loan = $od_sum;
                 }
 
-                $new_loan = $order->amount - $new_loan;
-
                 $new_shedule[$date] =
                     [
                         'pay_sum' => $pay_amount,
@@ -3368,7 +3363,7 @@ class OfflineOrderController extends Controller
             }
 
             $new_shedule[$date] = $schedule;
-            $od_sum += $schedule['loan_body_pay'];
+            $new_loan -= round($schedule['loan_body_pay'], 2);
 
             $i++;
         }
@@ -3389,7 +3384,7 @@ class OfflineOrderController extends Controller
 
         }
 
-        $start_date = date('Y-m-' . $first_pay_day, strtotime($last_date . '+1 month'));
+        $start_date = date('Y-m-' . $first_pay_day, strtotime($date . '+1 month'));
         $end_date = date('Y-m-' . $first_pay_day, strtotime($start_date . "+$new_term month"));
         $start_date = new DateTime($start_date);
         $end_date = new DateTime($end_date);
@@ -3405,6 +3400,11 @@ class OfflineOrderController extends Controller
         $rest_sum = $new_loan;
 
         foreach ($daterange as $date) {
+            $percent_per_month = (($order->percent / 100) * 365) / 12;
+            $percent_per_month = round($percent_per_month, 7);
+            $annoouitet_pay = $new_loan * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$new_term)));
+            $annoouitet_pay = round($annoouitet_pay, '2');
+
             $date = $this->check_pay_date($date);
 
             if ($date == $lastdate) {
@@ -3412,9 +3412,18 @@ class OfflineOrderController extends Controller
                 $loan_percents_pay = $annoouitet_pay - $loan_body_pay;
                 $rest_sum = 0.00;
             } else {
-                $loan_percents_pay = round($rest_sum * $percent_per_month, 2);
-                $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
-                $rest_sum = round($rest_sum - $loan_body_pay, 2);
+                if(isset($plus_percents)){
+                    $loan_percents_pay = round($rest_sum * $percent_per_month, 2);
+                    $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
+                    $loan_percents_pay += $plus_percents;
+                    $annoouitet_pay += $plus_percents;
+                    $rest_sum = round($rest_sum - $loan_body_pay + $plus_percents, 2);
+                    unset($plus_percents);
+                }else{
+                    $loan_percents_pay = round($rest_sum * $percent_per_month, 2);
+                    $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
+                    $rest_sum = round($rest_sum - $loan_body_pay, 2);
+                }
             }
 
             $new_shedule[$date->format('d.m.Y')] =
