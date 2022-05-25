@@ -263,10 +263,6 @@
                 });
             });
 
-            $('.restructuring').on('click', function () {
-                $('#modal_restruct').modal();
-            });
-
             $('.send_money').on('click', function (e) {
                 e.preventDefault();
 
@@ -656,6 +652,10 @@
                 })
             });
 
+            $('.restructuring').on('click', function () {
+                $('#modal_restruct').modal();
+            });
+
             $('.show_reformat_button').on('click', function () {
                 let start_date = $('#probably_start_date').val();
                 let tarif = $('select[name="loan_tarif"] option:selected').text();
@@ -688,22 +688,48 @@
                 })
             });
 
-            $('.do_restruct').on('click', function (e) {
+            $('.do_restruct, .accept_restruct').on('click', function (e) {
                 e.preventDefault();
 
-                let form = $('#restruct_form').serialize();
+                let preview = 0;
 
-                $.ajax({
-                   method: 'POST',
-                   data: form,
-                   success: function () {
-                       location.reload();
-                   }
-                });
+                if($(this).hasClass('do_restruct'))
+                    preview = 1;
+
+                do_restruct(preview);
+
+                if($(this).hasClass('accept_restruct'))
+                    location.reload();
             });
         });
     </script>
     <script>
+        function do_restruct(preview) {
+
+            let form = $('#restruct_form').serialize();
+
+            if(preview == 1)
+                form += '&preview=1';
+
+            $.ajax({
+                method: 'POST',
+                dataType: 'JSON',
+                data: form,
+                success: function (html) {
+                    if(preview == 1){
+                        $('.restructuring').hide();
+                        $('.accept_restruct').show();
+                        $('.cancel_restruct').show();
+                        $('tbody').html(html['schedule']);
+                        $('#psk').html(html['psk']);
+                        $('#modal_restruct').modal('hide');
+                    }
+                    else{
+                        location.reload()
+                    }
+                }
+            });
+        }
         function calculate_annouitet() {
 
             let loan_pay_sum = 0;
@@ -1580,6 +1606,12 @@
                                                         <input style="margin-left: 30px" type="button"
                                                                class="btn btn-danger restructuring"
                                                                value="Реструктуризация">
+                                                        <input style="margin-left: 30px; display: none" type="button"
+                                                               class="btn btn-success accept_restruct"
+                                                               value="Сохранить">
+                                                        <input style="margin-left: 30px; display: none" type="button"
+                                                               class="btn btn-danger cancel_restruct"
+                                                               value="Отменить">
                                                     {else}
                                                         <input style="margin-left: 30px" type="button"
                                                                class="btn btn-warning reform"
@@ -1610,9 +1642,9 @@
                                                             <th>Др. платежи</th>
                                                         </tr>
                                                         </thead>
-                                                        <tbody>
                                                         <input type="hidden" name="action" value="edit_schedule">
                                                         <input type="hidden" name="order_id" value="{$order->order_id}">
+                                                        <tbody>
                                                         {if !empty($payment_schedule)}
                                                             {foreach $payment_schedule as $date => $payment}
                                                                 {if $date != 'result'}
@@ -1685,7 +1717,7 @@
                                                         <br>
                                                         <label>Полная стоимость микрозайма, %
                                                             годовых:</label>
-                                                        <span>{$order->psk}%</span>
+                                                        <span id="psk">{$order->psk}%</span>
                                                     </div>
                                             </form>
                                         </div>
@@ -1873,12 +1905,6 @@
 
                                             <div class="row m-0 pt-2 view-block">
                                                 <div class="col-md-12">
-                                                    <div class="form-group  mb-0 row employer_show">
-                                                        <label class="control-label col-md-3">Группа:</label>
-                                                        <div class="col-md-6">
-                                                            <p>{$group_name}</p>
-                                                        </div>
-                                                    </div>
                                                     <div class="form-group  mb-0 row employer_show">
                                                         <label class="control-label col-md-3">Компания:</label>
                                                         <div class="col-md-6">

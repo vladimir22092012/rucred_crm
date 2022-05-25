@@ -914,12 +914,6 @@
                                                 <div class="row m-0 pt-2 view-block">
                                                     <div class="col-md-12">
                                                         <div class="form-group  mb-0 row employer_show">
-                                                            <label class="control-label col-md-3">Группа:</label>
-                                                            <div class="col-md-6">
-                                                                <p>{$group_name}</p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group  mb-0 row employer_show">
                                                             <label class="control-label col-md-3">Компания:</label>
                                                             <div class="col-md-6">
                                                                 <p>{$company_name}</p>

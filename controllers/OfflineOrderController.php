@@ -202,7 +202,7 @@ class OfflineOrderController extends Controller
                     break;
 
                 case 'do_restruct':
-                    $this->action_do_restruct();
+                    return $this->action_do_restruct();
                     break;
 
 
@@ -3043,7 +3043,7 @@ class OfflineOrderController extends Controller
             $paydate->add(new DateInterval('P1M'));
         } else {
             $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
-            $first_pay = new DateTime(date('Y-m-'.$first_pay_day, strtotime($start_date . '+1 month')));
+            $first_pay = new DateTime(date('Y-m-' . $first_pay_day, strtotime($start_date . '+1 month')));
             $count_days_this_month = date('t', strtotime($issuance_date->format('Y-m-d')));
             $paydate = $this->check_pay_date($first_pay);
 
@@ -3440,10 +3440,10 @@ class OfflineOrderController extends Controller
 
         foreach ($new_shedule as $date => $pay) {
             if ($date != 'result') {
-                $new_shedule['result']['all_sum_pay'] += round($pay['pay_sum'], '2');
-                $new_shedule['result']['all_loan_percents_pay'] += round($pay['loan_percents_pay'], '2');
-                $new_shedule['result']['all_loan_body_pay'] += round($pay['loan_body_pay'], 2);
-                $new_shedule['result']['all_comission_pay'] += round($pay['comission_pay'], '2');
+                $new_shedule['result']['all_sum_pay'] += round((float)$pay['pay_sum'], 2);
+                $new_shedule['result']['all_loan_percents_pay'] += round((float)$pay['loan_percents_pay'], 2);
+                $new_shedule['result']['all_loan_body_pay'] += round((float)$pay['loan_body_pay'], 2);
+                $new_shedule['result']['all_comission_pay'] += round((float)$pay['comission_pay'], 2);
                 $new_shedule['result']['all_rest_pay_sum'] = 0.00;
             }
         }
@@ -3478,15 +3478,63 @@ class OfflineOrderController extends Controller
         $xirr /= 100;
 
         $psk = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
-        $payment_schedule = json_encode($new_shedule);
 
-        $update_order =
-            [
-                'psk' => $psk,
-                'payment_schedule' => $payment_schedule
-            ];
+        if ($this->request->post('preview') == 1) {
 
-        $this->orders->update_order($order_id, $update_order);
+            $payment_schedule_html = '';
+
+
+            foreach ($new_shedule as $date => $payment) {
+                if ($date != 'result') {
+
+                    $paysum = number_format($payment['pay_sum'], 2, ',', ' ');
+                    $body_sum = number_format($payment['loan_body_pay'], 2, ',', ' ');
+                    $percent_sum = number_format($payment['loan_percents_pay'], 2, ',', ' ');
+                    $comission_sum = number_format((float)$payment['comission_pay'], 2, ',', ' ');
+                    $rest_sum = number_format($payment['rest_pay'], 2, ',', ' ');
+
+                    $payment_schedule_html .= "<tr>";
+                    $payment_schedule_html .= "<td><input type='text' class='form-control daterange' name='date[][date]' value=".$date." disabled></td>";
+                    $payment_schedule_html .= "<td><input type='text' class='form-control restructure_pay' name='pay_sum[][pay_sum]' value='$paysum' disabled></td>";
+                    $payment_schedule_html .= "<td><input type='text' class='form-control restructure_od' name='loan_body_pay[][loan_body_pay]' value='$body_sum' disabled></td>";
+                    $payment_schedule_html .= "<td><input type='text' class='form-control restructure_prc' name='loan_percents_pay[][loan_percents_pay]' value='$percent_sum' disabled></td>";
+                    $payment_schedule_html .= "<td><input type='text' class='form-control restructure_cms' name='comission_pay[][comission_pay]' value='$comission_sum' disabled></td>";
+                    $payment_schedule_html .= "<td><input type='text' class='form-control rest_sum' name='rest_pay[][rest_pay]' value='$rest_sum' disabled></td>";
+                    $payment_schedule_html .= "</tr>";
+                }
+            }
+
+            $paysum = number_format($new_shedule['result']['all_sum_pay'], 2, ',', ' ');
+            $body_sum = number_format($new_shedule['result']['all_loan_body_pay'], 2, ',', ' ');
+            $percent_sum = number_format($new_shedule['result']['all_loan_percents_pay'], 2, ',', ' ');
+            $comission_sum = number_format((float)$new_shedule['result']['all_comission_pay'], 2, ',', ' ');
+            $rest_sum = number_format($new_shedule['result']['all_rest_pay_sum'], 2, ',', ' ');
+
+            $payment_schedule_html .= "<tr>";
+            $payment_schedule_html .= "<td><input type='text' class='form-control daterange' value='ИТОГО' disabled></td>";
+            $payment_schedule_html .= "<td><input type='text' class='form-control' value='$paysum' disabled></td>";
+            $payment_schedule_html .= "<td><input type='text' class='form-control' value='$body_sum' disabled></td>";
+            $payment_schedule_html .= "<td><input type='text' class='form-control' value='$percent_sum' disabled></td>";
+            $payment_schedule_html .= "<td><input type='text' class='form-control' value='$comission_sum' disabled></td>";
+            $payment_schedule_html .= "<td><input type='text' class='form-control' value='$rest_sum' disabled></td>";
+            $payment_schedule_html .= "</tr>";
+
+            echo json_encode(['schedule' => $payment_schedule_html, 'psk' => $psk]);
+            exit;
+
+        }else{
+
+            $payment_schedule = json_encode($new_shedule);
+
+            $update_order =
+                [
+                    'psk' => $psk,
+                    'payment_schedule' => $payment_schedule
+                ];
+
+            $this->orders->update_order($order_id, $update_order);
+            exit;
+        }
 
     }
 
