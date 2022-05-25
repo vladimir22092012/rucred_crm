@@ -3043,7 +3043,7 @@ class OfflineOrderController extends Controller
             $paydate->add(new DateInterval('P1M'));
         } else {
             $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
-            $first_pay = new DateTime(date('Y-m-10', strtotime($start_date . '+1 month')));
+            $first_pay = new DateTime(date('Y-m-'.$first_pay_day, strtotime($start_date . '+1 month')));
             $count_days_this_month = date('t', strtotime($issuance_date->format('Y-m-d')));
             $paydate = $this->check_pay_date($first_pay);
 
