@@ -72,6 +72,7 @@ class AjaxScoringsController extends Controller
                         case 'nbki':
                         case 'employer':
                         case 'okb':
+                        case 'rfmlist':
                             
                             $add_scoring = array(
                                 'user_id' => $order->user_id,

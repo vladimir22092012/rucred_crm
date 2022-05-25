@@ -109,7 +109,7 @@ RewriteRule ^mango_callback/(.*)?$      callback/mango.php?m=$1  [L,QSA]
 RewriteRule ^api/(.+)$                  IndexApi.php?q=$1 [L,QSA]
 
 RewriteRule ^ajax/scorings/?$           index.php?module=AjaxScoringsController [L,QSA]
-
+RewriteRule ^rfmlist/?$                 index.php?module=RfmlistController  [L,QSA]
 
 # Статические страницы
 RewriteCond %{REQUEST_FILENAME} !-f

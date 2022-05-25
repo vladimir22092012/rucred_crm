@@ -21,13 +21,16 @@ class Okb_scoring extends Core
         {
             if ($order = $this->orders->get_order((int)$scoring->order_id))
             {
+                if (!empty($order->company_id))
+                    $company = $this->companies->get_company($order->company_id);
+                
                 $data = array(
                     'firstname' => $order->firstname,
                     'patronymic' => $order->patronymic,
                     'lastname' => $order->lastname,
                     'gender' => $order->gender,
                     'birth' => $order->birth,
-                    'companyName' => 'rucred',
+                    'companyName' => empty($company) ? 'не указана' : $company->name,
                     'passport_serial' => str_replace([' ','-'], '', $order->passport_serial),
                     'passport_date' => $order->passport_date,
                 );
