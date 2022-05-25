@@ -697,6 +697,10 @@
                 if ($(this).hasClass('accept_restruct'))
                     location.reload();
             });
+
+            $('.cancel_restruct').on('click', function () {
+                location.reload();
+            })
         });
     </script>
     <script>
