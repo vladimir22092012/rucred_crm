@@ -3417,7 +3417,7 @@ class OfflineOrderController extends Controller
                     $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
                     $loan_percents_pay += $plus_percents;
                     $annoouitet_pay += $plus_percents;
-                    $rest_sum = round($rest_sum - $loan_body_pay + $plus_percents, 2);
+                    $rest_sum = round($rest_sum - $loan_body_pay, 2);
                     unset($plus_percents);
                 }else{
                     $loan_percents_pay = round($rest_sum * $percent_per_month, 2);
