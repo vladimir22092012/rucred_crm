@@ -1,6 +1,4 @@
 <?php
-header('Access-Control-Allow-Origin: https://nalic.eva-p.ru');
-
 session_start();
 
 chdir('..');

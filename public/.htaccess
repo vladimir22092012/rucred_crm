@@ -101,6 +101,8 @@ RewriteRule ^dashboard/?$               index.php?module=DashboardController  [L
 RewriteRule ^sms_templates/?$           index.php?module=SmsTemplatesController  [L,QSA]
 RewriteRule ^collector_tags/?$          index.php?module=CollectorTagsController  [L,QSA]
 
+RewriteRule ^upload_files/?$            index.php?module=UploadFilesController  [L,QSA]
+
 RewriteRule ^pages/?$                   index.php?module=PagesController  [L,QSA]
 RewriteRule ^page/?$                    index.php?module=PageController  [L,QSA]
 RewriteRule ^page/([^/]*)/?$            index.php?module=PageController&id=$1  [L,QSA]

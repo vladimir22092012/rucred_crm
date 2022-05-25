@@ -32,7 +32,7 @@
         form_data.append('notreplace', '1');
 
         $.ajax({
-            url: '/ajax/upload.php',
+            url: '/upload_file',
             data: form_data,
             type: 'POST',
             dataType: 'json',

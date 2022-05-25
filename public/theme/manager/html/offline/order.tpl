@@ -69,10 +69,6 @@
             });
 
             $('.new_scan').on('change', function (e) {
-
-                console.log($(this));
-
-
                 let form_data = new FormData();
 
                 form_data.append('file', e.target.files[0]);
@@ -85,13 +81,13 @@
                 form_data.append('is_it_scans', 'yes');
 
                 $.ajax({
-                    url: '/ajax/upload.php',
+                    url: '/upload_files',
                     data: form_data,
                     type: 'POST',
                     processData: false,
                     contentType: false,
-                    success: function (resp) {
-                        location.reload();
+                    success: function () {
+                        window.location.reload();
                     }
                 });
             });
@@ -693,12 +689,12 @@
 
                 let preview = 0;
 
-                if($(this).hasClass('do_restruct'))
+                if ($(this).hasClass('do_restruct'))
                     preview = 1;
 
                 do_restruct(preview);
 
-                if($(this).hasClass('accept_restruct'))
+                if ($(this).hasClass('accept_restruct'))
                     location.reload();
             });
         });
@@ -708,7 +704,7 @@
 
             let form = $('#restruct_form').serialize();
 
-            if(preview == 1)
+            if (preview == 1)
                 form += '&preview=1';
 
             $.ajax({
@@ -716,7 +712,7 @@
                 dataType: 'JSON',
                 data: form,
                 success: function (html) {
-                    if(preview == 1){
+                    if (preview == 1) {
                         $('.restructuring').hide();
                         $('.accept_restruct').show();
                         $('.cancel_restruct').show();
@@ -724,12 +720,13 @@
                         $('#psk').html(html['psk']);
                         $('#modal_restruct').modal('hide');
                     }
-                    else{
+                    else {
                         location.reload()
                     }
                 }
             });
         }
+
         function calculate_annouitet() {
 
             let loan_pay_sum = 0;
