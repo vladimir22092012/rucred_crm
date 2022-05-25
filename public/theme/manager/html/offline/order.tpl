@@ -232,19 +232,15 @@
                 })
             });
 
-            $('.reform, .restructuring').on('click', function (e) {
+            $('.reform').on('click', function (e) {
                 e.preventDefault();
 
                 let restruct = 0;
-
-                if ($(this).hasClass('restructuring'))
-                    restruct = 1;
 
                 $(this).hide();
                 $('.edit_schedule').hide();
                 $('.reset_shedule').show();
                 $('.cancel').show();
-                $('select[name="new_term"]').show();
                 $('.new_term_label').show();
 
                 if ($(this).hasClass('reform')) {
@@ -265,6 +261,10 @@
 
                     location.reload();
                 });
+            });
+
+            $('.restructuring').on('click', function () {
+                $('#modal_restruct').modal();
             });
 
             $('.send_money').on('click', function (e) {
@@ -670,17 +670,36 @@
 
             $('#new_term').on('change', function () {
                 let order_id = $(this).attr('data-order');
+                let pay_date = $('input[name="pay_date"]').val();
+                let new_term = $('select[name="new_term"]').val();
 
                 $.ajax({
                     method: 'POST',
                     data: {
                         action: 'restruct_term',
-                        order_id: order_id
+                        order_id: order_id,
+                        pay_date: pay_date,
+                        new_term: new_term
                     },
-                    success: function () {
-
+                    success: function (resp) {
+                        $('#new_term_digit').show();
+                        $('#new_term_digit').text(resp);
                     }
                 })
+            });
+
+            $('.do_restruct').on('click', function (e) {
+                e.preventDefault();
+
+                let form = $('#restruct_form').serialize();
+
+                $.ajax({
+                   method: 'POST',
+                   data: form,
+                   success: function () {
+                       location.reload();
+                   }
+                });
             });
         });
     </script>
@@ -728,7 +747,7 @@
                         }
                     });
                 });
-            }else{
+            } else {
                 $.ajax({
                     method: 'POST',
                     data: form,
@@ -1561,14 +1580,6 @@
                                                         <input style="margin-left: 30px" type="button"
                                                                class="btn btn-danger restructuring"
                                                                value="Реструктуризация">
-                                                        <label style="display: none; margin-left: 20px" for="new_term"
-                                                               class="text-white new_term_label">Новый срок, мес</label>
-                                                        <select class="form-control" data-order="{$order->order_id}" name="new_term" id="new_term"
-                                                                style="display: none; width: 100px; margin-left: 20px">
-                                                            {for $i = 1 to count($payment_schedule)-1}
-                                                                <option value="{$i}">{$i}</option>
-                                                            {/for}
-                                                        </select>
                                                     {else}
                                                         <input style="margin-left: 30px" type="button"
                                                                class="btn btn-warning reform"
@@ -3247,6 +3258,45 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal_restruct" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Добавить компанию</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+
+                <div class="alert" style="display:none"></div>
+                <form id="restruct_form">
+                    <input type="hidden" name="action" value="do_restruct">
+                    <input type="hidden" name="order_id" value="{$order->order_id}">
+                    <div class="form-group">
+                        <label>Дата поступившего платежа</label>
+                        <input type="text" class="form-control daterange" name="pay_date">
+                        <label>Поступивший платеж, руб</label>
+                        <input type="text" class="form-control" name="pay_amount">
+                        <label>Новый срок, мес</label>
+                        <select class="form-control" data-order="{$order->order_id}" name="new_term"
+                                id="new_term">
+                            {for $i = 1 to count($payment_schedule)-2}
+                                <option value="{$i}">{$i}</option>
+                            {/for}
+                        </select><br>
+                        <label id="new_term_digit" style="display: none; color: #880000">Новый срок, мес</label>
+                    </div>
+                    <div>
+                        <input type="button" class="btn btn-danger cancel" data-dismiss="modal" value="Отмена">
+                        <input type="button" class="btn btn-success float-right do_restruct" value="Сохранить">
+                    </div>
+                </form>
             </div>
         </div>
     </div>

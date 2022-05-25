@@ -1,6 +1,6 @@
 <?php
 error_reporting(-1);
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'On');
 
 class OfflineOrderController extends Controller
 {
@@ -199,6 +199,10 @@ class OfflineOrderController extends Controller
 
                 case 'restruct_term':
                     return $this->action_restruct_term();
+                    break;
+
+                case 'do_restruct':
+                    $this->action_do_restruct();
                     break;
 
 
@@ -3237,6 +3241,249 @@ class OfflineOrderController extends Controller
 
     private function action_restruct_term()
     {
+        $order_id = $this->request->post('order_id');
+        $new_term = $this->request->post('new_term');
+        $pay_date = date('Y-m-d', strtotime($this->request->post('pay_date')));
+        $order = $this->orders->get_order($order_id);
+
+        $payment_schedule = json_decode($order->payment_schedule, true);
+        array_shift($payment_schedule);
+
+        uksort($payment_schedule,
+            function ($a, $b) {
+
+                if ($a == $b)
+                    return 0;
+
+                return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+            });
+
+        $i = 1;
+
+        foreach ($payment_schedule as $date => $schedule) {
+            $date = date('Y-m-d', strtotime($date));
+
+            if ($pay_date == $date) {
+                break;
+            }
+            $i++;
+        }
+
+        $term_diff = ($i + $new_term) - count($payment_schedule);
+
+        if ($term_diff < 0) {
+            mb_internal_encoding("UTF-8");
+            $term_diff = mb_substr($term_diff, 1);
+            $term_diff = 'Минус ' . $term_diff . ' мес. к старому графику';
+        } else
+            $term_diff = 'Плюс ' . $term_diff . ' мес. к старому графику';
+
+
+        echo $term_diff;
+        exit;
+    }
+
+    private function action_do_restruct()
+    {
+        $order_id = $this->request->post('order_id');
+        $new_term = $this->request->post('new_term');
+        $pay_amount = $this->request->post('pay_amount');
+        $pay_date = date('d.m.Y', strtotime($this->request->post('pay_date')));
+        $order = $this->orders->get_order($order_id);
+
+        $payment_schedule = json_decode($order->payment_schedule, true);
+        array_shift($payment_schedule);
+
+        uksort($payment_schedule,
+            function ($a, $b) {
+
+                if ($a == $b)
+                    return 0;
+
+                return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+            });
+
+        $new_shedule = array();
+
+        $i = 0;
+        $od_sum = 0;
+        $new_loan = 0;
+        $percent_pay = 0.00;
+        $body_pay = 0.00;
+        $comission_pay = 0.00;
+
+        foreach ($payment_schedule as $date => $schedule) {
+            $date = date('d.m.Y', strtotime($date));
+            $last_date = $date;
+
+            if ($pay_date == $date) {
+
+                $new_loan -= $od_sum;
+                $rest_sum = $schedule['pay_sum'];
+
+                if ($pay_amount < $schedule['pay_sum'] && $pay_amount != 0) {
+                    if ($pay_amount >= $schedule['loan_percents_pay']) {
+                        $percent_pay = $schedule['loan_percents_pay'];
+                        $rest_sum -= $pay_amount;
+
+                        if ($rest_sum > 0) {
+                            $body_pay = $schedule['loan_body_pay'] - $rest_sum;
+                            $new_loan -= $rest_sum;
+                        } else {
+                            $new_loan += $schedule['loan_body_pay'];
+                        }
+
+                    } else {
+                        $percent_pay = $pay_amount - $schedule['loan_percents_pay'];
+                    }
+                }
+                if ($pay_amount > $schedule['pay_sum']) {
+                    $body_pay = $pay_amount;
+                    $percent_pay = $schedule['loan_percents_pay'];
+                    $pay_amount -= $schedule['pay_sum'];
+                    $new_loan -= $pay_amount;
+                }
+                if ($pay_amount == 0) {
+                    $new_loan += $pay_amount;
+                }
+                if ($pay_amount == $schedule['pay_sum']) {
+                    $pay_amount = $schedule['pay_sum'];
+                    $body_pay = $schedule['loan_body_pay'];
+                    $percent_pay = $schedule['loan_percents_pay'];
+                    $new_loan = $od_sum;
+                }
+
+                $new_loan = $order->amount - $new_loan;
+
+                $new_shedule[$date] =
+                    [
+                        'pay_sum' => $pay_amount,
+                        'loan_body_pay' => $body_pay,
+                        'loan_percents_pay' => $percent_pay,
+                        'comission_pay' => $comission_pay,
+                        'rest_pay' => $new_loan - $body_pay
+                    ];
+
+                break;
+            }
+
+            $new_shedule[$date] = $schedule;
+            $od_sum += $schedule['loan_body_pay'];
+
+            $i++;
+        }
+
+        $user = (array)$this->users->get_user($order->user_id);
+
+        if (empty($user['branche_id'])) {
+            $branches = $this->Branches->get_branches(['group_id' => $user['group_id']]);
+
+            foreach ($branches as $branch) {
+                if ($branch->number == '00')
+                    $first_pay_day = $branch->payday;
+            }
+        } else {
+            $branch = $this->Branches->get_branch($user['branche_id']);
+            $first_pay_day = $branch->payday;
+
+
+        }
+
+        $start_date = date('Y-m-' . $first_pay_day, strtotime($last_date . '+1 month'));
+        $end_date = date('Y-m-' . $first_pay_day, strtotime($start_date . "+$new_term month"));
+        $start_date = new DateTime($start_date);
+        $end_date = new DateTime($end_date);
+
+        $percent_per_month = (($order->percent / 100) * 365) / 12;
+        $percent_per_month = round($percent_per_month, 7);
+        $annoouitet_pay = $new_loan * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$new_term)));
+        $annoouitet_pay = round($annoouitet_pay, '2');
+
+        $interval = new DateInterval('P1M');
+        $lastdate = clone $end_date;
+        $daterange = new DatePeriod($start_date, $interval, $end_date);
+        $rest_sum = $new_loan;
+
+        foreach ($daterange as $date) {
+            $date = $this->check_pay_date($date);
+
+            if ($date == $lastdate) {
+                $loan_body_pay = $rest_sum;
+                $loan_percents_pay = $annoouitet_pay - $loan_body_pay;
+                $rest_sum = 0.00;
+            } else {
+                $loan_percents_pay = round($rest_sum * $percent_per_month, 2);
+                $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
+                $rest_sum = round($rest_sum - $loan_body_pay, 2);
+            }
+
+            $new_shedule[$date->format('d.m.Y')] =
+                [
+                    'pay_sum' => $annoouitet_pay,
+                    'loan_percents_pay' => $loan_percents_pay,
+                    'loan_body_pay' => $loan_body_pay,
+                    'comission_pay' => 0.00,
+                    'rest_pay' => $rest_sum
+                ];
+        }
+
+
+        $new_shedule['result'] =
+            [
+                'all_sum_pay' => 0.00,
+                'all_loan_percents_pay' => 0.00,
+                'all_loan_body_pay' => 0.00,
+                'all_comission_pay' => 0.00,
+                'all_rest_pay_sum' => 0.00
+            ];
+
+
+        foreach ($new_shedule as $date => $pay) {
+            if ($date != 'result') {
+                $new_shedule['result']['all_sum_pay'] += round($pay['pay_sum'], '2');
+                $new_shedule['result']['all_loan_percents_pay'] += round($pay['loan_percents_pay'], '2');
+                $new_shedule['result']['all_loan_body_pay'] += round($pay['loan_body_pay'], 2);
+                $new_shedule['result']['all_comission_pay'] += round($pay['comission_pay'], '2');
+                $new_shedule['result']['all_rest_pay_sum'] = 0.00;
+            }
+        }
+
+        $dates[0] = date('d.m.Y', strtotime($order->probably_start_date));
+        $payments[0] = -$new_shedule['result']['all_loan_body_pay'];
+
+        foreach ($new_shedule as $date => $pay) {
+            if ($date != 'result') {
+                $payments[] = round($pay['pay_sum'], '2');
+                $dates[] = date('d.m.Y', strtotime($date));
+            }
+        }
+
+        foreach ($dates as $date) {
+            $date = new DateTime(date('Y-m-d H:i:s', strtotime($date)));
+
+            $new_dates[] = mktime(
+                $date->format('H'),
+                $date->format('i'),
+                $date->format('s'),
+                $date->format('m'),
+                $date->format('d'),
+                $date->format('Y')
+            );
+        }
+
+        $xirr = round($this->Financial->XIRR($payments, $new_dates) * 100, 3);
+        $xirr /= 100;
+
+        $psk = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
+        $payment_schedule = json_encode($new_shedule);
+
+        $update_order =
+            [
+                'psk' => $psk,
+                'payment_schedule' => $payment_schedule
+            ];
+
+        $this->orders->update_order($order_id, $update_order);
 
     }
 
