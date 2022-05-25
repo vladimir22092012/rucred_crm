@@ -3450,11 +3450,14 @@ class OfflineOrderController extends Controller
 
         $dates[0] = date('d.m.Y', strtotime($order->probably_start_date));
         $payments[0] = -$new_shedule['result']['all_loan_body_pay'];
+        $rest_sum = $new_shedule['result']['all_loan_body_pay'];
 
         foreach ($new_shedule as $date => $pay) {
             if ($date != 'result') {
                 $payments[] = round($pay['pay_sum'], '2');
                 $dates[] = date('d.m.Y', strtotime($date));
+                $rest_sum -= round($pay['loan_body_pay'], 2);
+                $new_shedule[$date]['rest_pay'] = $rest_sum;
             }
         }
 
