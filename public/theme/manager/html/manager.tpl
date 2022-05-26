@@ -52,37 +52,19 @@
                     })
                 });
 
-                $('.accept_edit_with_code').on('click', 'keypress', function (e) {
+                $(document).keypress(function (e) {
+                    if (e.which == 13) {
+                        let selector = $('.accept_edit_with_code');
+                        edit_with_sms(selector);
+                    }
+                });
+
+                $('.accept_edit_with_code').on('click', function (e) {
                     e.preventDefault();
 
-                    let key = e.which;
+                    let selector = $(this);
+                    edit_with_sms(selector);
 
-                    if(key == 13 || $(this).hasClass('accept_edit_with_code')){
-                        let user_id = $(this).attr('data-user');
-                        let phone = $('input[class="form-control phone"]').val();
-                        let phone_code = $('input[class="form-control phone_code"]').val();
-
-                        $.ajax({
-                            method: 'POST',
-                            data: {
-                                action: 'edit_phone_with_code',
-                                user_id: user_id,
-                                phone: phone,
-                                code: phone_code,
-                            },
-                            success: function (response) {
-                                console.log(JSON.parse(response));
-                                if (JSON.parse(response).error === 1) {
-                                    Swal.fire({
-                                        title: 'Неверный код',
-                                        confirmButtonText: 'ОК'
-                                    });
-                                } else {
-                                    location.reload();
-                                }
-                            }
-                        })
-                    }
                 });
             });
 
@@ -132,30 +114,6 @@
                 $('.accept_edit_email_with_code').click(function (e) {
                     e.preventDefault();
 
-                    let user_id = $(this).attr('data-user');
-                    let email = $('input[class="form-control email"]').val();
-                    let code = $('input[class="form-control code"]').val();
-
-                    $.ajax({
-                        method: 'POST',
-                        data: {
-                            action: 'edit_email_with_code',
-                            user_id: user_id,
-                            email: email,
-                            code: code,
-                        },
-                        success: function (response) {
-                            console.log(JSON.parse(response));
-                            if (JSON.parse(response).error === 1) {
-                                Swal.fire({
-                                    title: 'Неверный код',
-                                    confirmButtonText: 'ОК'
-                                });
-                            } else {
-                                location.reload();
-                            }
-                        }
-                    })
                 });
             });
 
@@ -336,12 +294,12 @@
                             manager_id: manager_id,
                         },
                         success: function (resp) {
-                            if(resp !== 'success'){
+                            if (resp !== 'success') {
                                 Swal.fire({
                                     title: resp,
                                     confirmButtonText: 'Ок'
                                 });
-                            }else{
+                            } else {
                                 location.replace('/managers')
                             }
                         }
@@ -349,6 +307,35 @@
                 }
             });
         });
+    </script>
+    <script>
+        function edit_with_sms(selector) {
+
+            let user_id = selector.attr('data-user');
+            let email = $('input[class="form-control email"]').val();
+            let code = $('input[class="form-control code"]').val();
+
+            $.ajax({
+                method: 'POST',
+                data: {
+                    action: 'edit_email_with_code',
+                    user_id: user_id,
+                    email: email,
+                    code: code,
+                },
+                success: function (response) {
+                    console.log(JSON.parse(response));
+                    if (JSON.parse(response).error === 1) {
+                        Swal.fire({
+                            title: 'Неверный код',
+                            confirmButtonText: 'ОК'
+                        });
+                    } else {
+                        location.reload();
+                    }
+                }
+            })
+        }
     </script>
 {/capture}
 
