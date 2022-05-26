@@ -3359,6 +3359,7 @@ class OfflineOrderController extends Controller
                         'rest_pay' => $new_loan - $body_pay
                     ];
 
+                $last_date = $date;
                 break;
             }
 
@@ -3384,18 +3385,16 @@ class OfflineOrderController extends Controller
 
         }
 
-        $start_date = date('Y-m-' . $first_pay_day, strtotime($date . '+1 month'));
+        $start_date = date('Y-m-' . $first_pay_day, strtotime($last_date . '+1 month'));
         $end_date = date('Y-m-' . $first_pay_day, strtotime($start_date . "+$new_term month"));
         $start_date = new DateTime($start_date);
         $end_date = new DateTime($end_date);
-
-        $percent_per_month = (($order->percent / 100) * 365) / 12;
-        $percent_per_month = round($percent_per_month, 7);
-        $annoouitet_pay = $new_loan * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$new_term)));
-        $annoouitet_pay = round($annoouitet_pay, '2');
+        $end_date = $this->check_pay_date($end_date);
+        $last_date = clone $end_date;
+        $last_date->sub(new DateInterval('P1M'));
+        $last_date = $this->check_pay_date($last_date);
 
         $interval = new DateInterval('P1M');
-        $lastdate = clone $end_date;
         $daterange = new DatePeriod($start_date, $interval, $end_date);
         $rest_sum = $new_loan;
 
@@ -3407,7 +3406,7 @@ class OfflineOrderController extends Controller
 
             $date = $this->check_pay_date($date);
 
-            if ($date == $lastdate) {
+            if ($last_date->format('m') == $date->format('m')) {
                 $loan_body_pay = $rest_sum;
                 $loan_percents_pay = $annoouitet_pay - $loan_body_pay;
                 $rest_sum = 0.00;
@@ -3435,7 +3434,6 @@ class OfflineOrderController extends Controller
                     'rest_pay' => $rest_sum
                 ];
         }
-
 
         $new_shedule['result'] =
             [
