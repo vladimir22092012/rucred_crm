@@ -352,7 +352,7 @@
                     action: 'edit_phone_with_code',
                     user_id: user_id,
                     phone: phone,
-                    code: phone_code,
+                    phone_code: phone_code,
                 },
                 success: function (response) {
                     console.log(JSON.parse(response));
