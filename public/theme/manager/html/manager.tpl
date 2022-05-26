@@ -55,7 +55,10 @@
                 $(document).keypress(function (e) {
                     if (e.which == 13) {
                         let selector = $('.accept_edit_with_code');
-                        edit_with_sms(selector);
+                        let email = $('input[class="form-control email"]').val();
+                        let code = $('input[class="form-control code"]').val();
+
+                        edit_with_sms(selector,email,code);
                     }
                 });
 
@@ -63,7 +66,10 @@
                     e.preventDefault();
 
                     let selector = $(this);
-                    edit_with_sms(selector);
+                    let email = $('input[class="form-control email"]').val();
+                    let code = $('input[class="form-control code"]').val();
+
+                    edit_with_sms(selector,email,code);
 
                 });
             });
