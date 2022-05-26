@@ -14,8 +14,6 @@ Thumbs.db
 /compiled
 /configuration/config.php
 /simpla/.passwd
-/files
-!/files/.htaccess
 /cron/log.txt
 /sql/local.sql
 /public/test.php
