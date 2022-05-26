@@ -57,7 +57,7 @@
 
                     let key = e.which;
 
-                    if(key == 13 || $(this).hasClass(accept_edit_with_code)){
+                    if(key == 13 || $(this).hasClass('accept_edit_with_code')){
                         let user_id = $(this).attr('data-user');
                         let phone = $('input[class="form-control phone"]').val();
                         let phone_code = $('input[class="form-control phone_code"]').val();
