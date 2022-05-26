@@ -284,12 +284,14 @@ class ManagerController extends Controller
         ORDER BY created DESC
         LIMIT 1
         ", $phone, $code, $user_id);
+
         $results = $this->db->results();
         if (empty($results)) {
             echo json_encode(['error' => 1]);
             exit;
         }
-        $result = $this->managers->update_manager($user_id, ['phone' => $phone]);
+
+        $this->managers->update_manager($user_id, ['phone' => $phone]);
         echo json_encode(['success' => 1]);
         exit;
     }
