@@ -47,7 +47,7 @@
 
                 $.ajax({
                     method: 'POST',
-                    data:{
+                    data: {
                         action: 'change_on_off_flag',
                         value: value,
                         record_id: record_id
@@ -218,11 +218,29 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-5 ">
+                                                <label class="control-label">Тип продукта</label>
+                                            </div>
+                                            <div class="col-7 ">
+                                                <select class="form-control"
+                                                        {if $manager->role == 'employer'}disabled{/if}>
+                                                    <option value="pdl" {if $loantype->type == 'pdl'}selected{/if}>PDL
+                                                    </option>
+                                                    <option value="annouitet"
+                                                            {if $loantype->type == 'annouitet'}selected{/if}>Аннуитет
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-5 ">
                                                 <label class="control-label">Наименование</label>
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="name"
-                                                       value="{$loantype->name|escape}" required="" {if $manager->role == 'employer'}disabled{/if}/>
+                                                       value="{$loantype->name|escape}" required=""
+                                                       {if $manager->role == 'employer'}disabled{/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -232,62 +250,70 @@
                                                 <label class="control-label">Доступность</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <select name="online_flag" id="online_flag" class="form-control" {if $manager->role == 'employer'}disabled{/if}>
-                                                    <option value="1" {if $loantype->online_flag == 1}selected{/if}>Онлайн</option>
-                                                    <option value="2" {if $loantype->online_flag == 2}selected{/if}>Оффлайн</option>
-                                                    <option value="3" {if $loantype->online_flag == 3}selected{/if}>Везде</option>
+                                                <select name="online_flag" id="online_flag" class="form-control"
+                                                        {if $manager->role == 'employer'}disabled{/if}>
+                                                    <option value="1" {if $loantype->online_flag == 1}selected{/if}>
+                                                        Онлайн
+                                                    </option>
+                                                    <option value="2" {if $loantype->online_flag == 2}selected{/if}>
+                                                        Оффлайн
+                                                    </option>
+                                                    <option value="3" {if $loantype->online_flag == 3}selected{/if}>
+                                                        Везде
+                                                    </option>
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
                                     {if $manager->role != 'employer'}
-                                    <div class="form-group">
-                                        <table class="table display table-striped dataTable">
-                                            <thead>
-                                            <tr>
-                                                <th align="center">Группа</th>
-                                                <th align="center">Процентная ставка</th>
-                                                <th align="center">Льготная ставка</th>
-                                                <th align="center">Вкл/Выкл</th>
-                                                <th></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {if !empty($groups)}
-                                                {foreach $groups as $group}
-                                                    <tr>
-                                                        <td valign="middle">{$group['name']}</td>
-                                                        <td valign="middle">{$group['standart_percents']|number_format:3:',':' '}</td>
-                                                        <td valign="middle">{$group['preferential_percents']|number_format:3:',':' '}</td>
-                                                        <td valign="middle">
-                                                            <div class="clearfix">
-                                                                <div class="float-left">
-                                                                    <div class="onoffswitch">
-                                                                        <input type="checkbox" name="on_off_flag"
-                                                                               data-record="{$group['record_id']}" class="onoffswitch-checkbox on_off_flag"
-                                                                               id="on_off_flag_{$group['id']}"
-                                                                               {if $group['on_off_flag'] == 1} checked="true" value="1" {else} value="0"{/if}>
-                                                                        <label class="onoffswitch-label"
-                                                                               for="on_off_flag_{$group['id']}">
-                                                                            <span class="onoffswitch-inner"></span>
-                                                                            <span class="onoffswitch-switch"></span>
-                                                                        </label>
+                                        <div class="form-group">
+                                            <table class="table display table-striped dataTable">
+                                                <thead>
+                                                <tr>
+                                                    <th align="center">Группа</th>
+                                                    <th align="center">Процентная ставка</th>
+                                                    <th align="center">Льготная ставка</th>
+                                                    <th align="center">Вкл/Выкл</th>
+                                                    <th></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {if !empty($groups)}
+                                                    {foreach $groups as $group}
+                                                        <tr>
+                                                            <td valign="middle">{$group['name']}</td>
+                                                            <td valign="middle">{$group['standart_percents']|number_format:3:',':' '}</td>
+                                                            <td valign="middle">{$group['preferential_percents']|number_format:3:',':' '}</td>
+                                                            <td valign="middle">
+                                                                <div class="clearfix">
+                                                                    <div class="float-left">
+                                                                        <div class="onoffswitch">
+                                                                            <input type="checkbox" name="on_off_flag"
+                                                                                   data-record="{$group['record_id']}"
+                                                                                   class="onoffswitch-checkbox on_off_flag"
+                                                                                   id="on_off_flag_{$group['id']}"
+                                                                                    {if $group['on_off_flag'] == 1} checked="true" value="1" {else} value="0"{/if}>
+                                                                            <label class="onoffswitch-label"
+                                                                                   for="on_off_flag_{$group['id']}">
+                                                                                <span class="onoffswitch-inner"></span>
+                                                                                <span class="onoffswitch-switch"></span>
+                                                                            </label>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                        </td>
-                                                        <td><input type="button"
-                                                                   data-group="{$group['id']}"
-                                                                   data-standart-percents="{$group['standart_percents']}"
-                                                                   data-preferential-percents="{$group['preferential_percents']}"
-                                                                   class="btn btn-outline-warning edit-company-tarif"
-                                                                   value="Редактировать"></td>
-                                                    </tr>
-                                                {/foreach}
-                                            {/if}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                            </td>
+                                                            <td><input type="button"
+                                                                       data-group="{$group['id']}"
+                                                                       data-standart-percents="{$group['standart_percents']}"
+                                                                       data-preferential-percents="{$group['preferential_percents']}"
+                                                                       class="btn btn-outline-warning edit-company-tarif"
+                                                                       value="Редактировать"></td>
+                                                        </tr>
+                                                    {/foreach}
+                                                {/if}
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     {/if}
                                 </div>
                             </div>
@@ -326,7 +352,8 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="min_amount"
-                                                       value="{$loantype->min_amount|number_format:0:',':' '}" {if $manager->role == 'employer'}disabled{/if}/>
+                                                       value="{$loantype->min_amount|number_format:0:',':' '}"
+                                                       {if $manager->role == 'employer'}disabled{/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -337,7 +364,8 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="max_amount"
-                                                       value="{$loantype->max_amount|number_format:0:',':' '}" {if $manager->role == 'employer'}disabled{/if}/>
+                                                       value="{$loantype->max_amount|number_format:0:',':' '}"
+                                                       {if $manager->role == 'employer'}disabled{/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -348,7 +376,8 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="max_period"
-                                                       value="{$loantype->max_period}" {if $manager->role == 'employer'}disabled{/if}/>
+                                                       value="{$loantype->max_period}"
+                                                       {if $manager->role == 'employer'}disabled{/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -359,7 +388,8 @@
                                                     Заёмщиком микрозайма</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <select class="form-control" name="reason_flag" {if $manager->role == 'employer'}disabled{/if}>
+                                                <select class="form-control" name="reason_flag"
+                                                        {if $manager->role == 'employer'}disabled{/if}>
                                                     <option value="1" {if $loantype->reason_flag == 0} selected{/if}>На
                                                         неотложные нужды
                                                     </option>
@@ -374,12 +404,12 @@
                             </div>
                         </div>
                         {if $manager->role != 'employer'}
-                        <div class="col-12">
-                            <hr class="m-2"/>
-                            <div class="text-right">
-                                <button type="submit" class="btn btn-success btn-lg">Сохранить</button>
+                            <div class="col-12">
+                                <hr class="m-2"/>
+                                <div class="text-right">
+                                    <button type="submit" class="btn btn-success btn-lg">Сохранить</button>
+                                </div>
                             </div>
-                        </div>
                         {/if}
                     </div>
                 </form>
