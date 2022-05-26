@@ -386,7 +386,7 @@ class NeworderController extends Controller
 
             $rest_sum = $order['amount'];
             $start_date = date('Y-m-d', strtotime($order['probably_start_date']));
-            $end_date = new DateTime(date('Y-m-10', strtotime($order['probably_return_date'])));
+            $end_date = new DateTime(date('Y-m-'.$first_pay_day, strtotime($order['probably_return_date'])));
             $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
             $paydate = new DateTime(date('Y-m-'."$first_pay_day", strtotime($start_date)));
 
@@ -420,7 +420,7 @@ class NeworderController extends Controller
                 $paydate->add(new DateInterval('P1M'));
             } else {
                 $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
-                $first_pay = new DateTime(date('Y-m-10', strtotime($start_date . '+1 month')));
+                $first_pay = new DateTime(date('Y-m-'.$first_pay_day, strtotime($start_date . '+1 month')));
                 $count_days_this_month = date('t', strtotime($issuance_date->format('Y-m-d')));
                 $paydate = $this->check_pay_date($first_pay);
 
@@ -463,7 +463,7 @@ class NeworderController extends Controller
                 foreach ($daterange as $date) {
                     $date = $this->check_pay_date($date);
 
-                    if($date == $lastdate){
+                    if($date->format('m') == $lastdate->format('m')){
                         $loan_body_pay = $rest_sum;
                         $loan_percents_pay = $annoouitet_pay - $loan_body_pay;
                         $rest_sum = 0.00;
@@ -681,12 +681,25 @@ class NeworderController extends Controller
     {
         $start_date = $this->request->get('start_date');
         $loan_id = $this->request->get('loan_id');
+        $company_id = $this->request->get('company_id');
+
+        if (empty($user['branche_id'])) {
+            $branches = $this->Branches->get_branches(['company_id' => $company_id]);
+
+            foreach ($branches as $branch) {
+                if ($branch->number == '00')
+                    $first_pay_day = $branch->payday;
+            }
+        } else {
+            $branch = $this->Branches->get_branch($user['branche_id']);
+            $first_pay_day = $branch->payday;
+        }
 
         $loan = $this->Loantypes->get_loantype($loan_id);
 
         $start_date = date('Y-m-d', strtotime($start_date));
-        $first_pay = new DateTime(date('Y-m-10', strtotime($start_date)));
-        $end_date = date('Y-m-10', strtotime($start_date . '+' . $loan->max_period . 'month'));
+        $first_pay = new DateTime(date('Y-m-'.$first_pay_day, strtotime($start_date)));
+        $end_date = date('Y-m-'.$first_pay_day, strtotime($start_date . '+' . $loan->max_period . 'month'));
 
         $start_date = new DateTime($start_date);
         $end_date = new DateTime($end_date);

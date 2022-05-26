@@ -3083,11 +3083,12 @@ class OfflineOrderController extends Controller
             $lastdate = clone $end_date;
             $end_date->setTime(24, 0, 1);
             $daterange = new DatePeriod($paydate, $interval, $end_date);
+            $end_date->sub(new DateInterval('P1M'))->format('m');
 
             foreach ($daterange as $date) {
                 $date = $this->check_pay_date($date);
 
-                if ($date == $lastdate) {
+                if ($date->format('m') == $end_date->format('m')) {
                     $loan_body_pay = $rest_sum;
                     $loan_percents_pay = $annoouitet_pay - $loan_body_pay;
                     $rest_sum = 0.00;
@@ -3381,8 +3382,6 @@ class OfflineOrderController extends Controller
         } else {
             $branch = $this->Branches->get_branch($user['branche_id']);
             $first_pay_day = $branch->payday;
-
-
         }
 
         $start_date = date('Y-m-' . $first_pay_day, strtotime($last_date . '+1 month'));

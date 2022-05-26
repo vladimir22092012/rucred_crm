@@ -75,12 +75,14 @@ $(function () {
     $('#start_date').on('change', function () {
         let start_date = $(this).val();
         let loan_id = $('.to_form_loan').attr('data-loan');
+        let company_id = $('select[class="form-control groups"]').val();
 
         $.ajax({
             dataType: 'JSON',
             data: {
                 start_date: start_date,
-                loan_id: loan_id
+                loan_id: loan_id,
+                company_id: company_id
             },
             success: function (suc) {
                 $('#end_date').val(suc['date'])
