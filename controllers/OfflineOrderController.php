@@ -3335,10 +3335,10 @@ class OfflineOrderController extends Controller
                 }
 
                 if ($pay_amount > $schedule['pay_sum']) {
-                    $body_pay = $pay_amount;
                     $percent_pay = $schedule['loan_percents_pay'];
-                    $pay_amount -= $schedule['pay_sum'];
-                    $new_loan -= $pay_amount;
+                    $rest_sum -= $schedule['loan_percents_pay'];
+                    $body_pay = $rest_sum;
+                    $new_loan = $new_loan - ($pay_amount - $schedule['loan_body_pay']);
                 }
                 if ($pay_amount == 0) {
                     $new_loan += $pay_amount;
@@ -3347,7 +3347,7 @@ class OfflineOrderController extends Controller
                     $pay_amount = $schedule['pay_sum'];
                     $body_pay = $schedule['loan_body_pay'];
                     $percent_pay = $schedule['loan_percents_pay'];
-                    $new_loan = $od_sum;
+                    $new_loan -= $schedule['loan_body_pay'];
                 }
 
                 $new_shedule[$date] =
