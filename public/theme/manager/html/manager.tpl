@@ -52,14 +52,24 @@
                     })
                 });
 
+                $(document).keypress(function (e) {
+                    if (e.which == 13) {
+                        let selector = $('.accept_edit_with_code');
+                        let phone = $('input[class="form-control phone"]').val();
+                        let phone_code = $('input[class="form-control phone_code"]').val();
+
+                        edit_with_sms(selector, phone, phone_code);
+                    }
+                });
+
                 $('.accept_edit_with_code').on('click', function (e) {
                     e.preventDefault();
 
                     let selector = $(this);
-                    let email = $('input[class="form-control email"]').val();
-                    let code = $('input[class="form-control phone_code"]').val();
+                    let phone = $('input[class="form-control phone"]').val();
+                    let phone_code = $('input[class="form-control phone_code"]').val();
 
-                    edit_with_sms(selector,email,code);
+                    edit_with_sms(selector, phone, phone_code);
 
                 });
             });
@@ -110,6 +120,30 @@
                 $('.accept_edit_email_with_code').click(function (e) {
                     e.preventDefault();
 
+                    let user_id = $(this).attr('data-user');
+                    let email = $('input[class="form-control email"]').val();
+                    let code = $('input[class="form-control code"]').val();
+
+                    $.ajax({
+                        method: 'POST',
+                        data: {
+                            action: 'edit_email_with_code',
+                            user_id: user_id,
+                            email: email,
+                            code: code,
+                        },
+                        success: function (response) {
+                            console.log(JSON.parse(response));
+                            if (JSON.parse(response).error === 1) {
+                                Swal.fire({
+                                    title: 'Неверный код',
+                                    confirmButtonText: 'ОК'
+                                });
+                            } else {
+                                location.reload();
+                            }
+                        }
+                    });
                 });
             });
 
@@ -207,7 +241,8 @@
                     }
                 })
             });
-        });
+        })
+        ;
 
         $('.js-filter-status').click(function (e) {
             e.preventDefault();
@@ -305,17 +340,19 @@
         });
     </script>
     <script>
-        function edit_with_sms(selector, email, code) {
+        function edit_with_sms(selector, phone, phone_code) {
 
             let user_id = selector.attr('data-user');
+
+            console.log(code);
 
             $.ajax({
                 method: 'POST',
                 data: {
-                    action: 'edit_email_with_code',
+                    action: 'edit_phone_with_code',
                     user_id: user_id,
-                    email: email,
-                    code: code,
+                    phone: phone,
+                    code: phone_code,
                 },
                 success: function (response) {
                     console.log(JSON.parse(response));
@@ -328,7 +365,7 @@
                         location.reload();
                     }
                 }
-            })
+            });
         }
     </script>
 {/capture}
