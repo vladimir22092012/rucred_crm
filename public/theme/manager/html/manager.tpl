@@ -52,22 +52,12 @@
                     })
                 });
 
-                $(document).keypress(function (e) {
-                    if (e.which == 13) {
-                        let selector = $('.accept_edit_with_code');
-                        let email = $('input[class="form-control email"]').val();
-                        let code = $('input[class="form-control code"]').val();
-
-                        edit_with_sms(selector,email,code);
-                    }
-                });
-
                 $('.accept_edit_with_code').on('click', function (e) {
                     e.preventDefault();
 
                     let selector = $(this);
                     let email = $('input[class="form-control email"]').val();
-                    let code = $('input[class="form-control code"]').val();
+                    let code = $('input[class="form-control phone_code"]').val();
 
                     edit_with_sms(selector,email,code);
 
