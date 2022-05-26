@@ -315,11 +315,9 @@
         });
     </script>
     <script>
-        function edit_with_sms(selector) {
+        function edit_with_sms(selector, email, code) {
 
             let user_id = selector.attr('data-user');
-            let email = $('input[class="form-control email"]').val();
-            let code = $('input[class="form-control code"]').val();
 
             $.ajax({
                 method: 'POST',
