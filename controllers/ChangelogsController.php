@@ -5,8 +5,6 @@ class ChangelogsController extends Controller
     public function fetch()
     {
 
-        return false;
-
         $items_per_page = 40;
 
         $filter = array();

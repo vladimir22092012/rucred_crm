@@ -3329,8 +3329,8 @@ class OfflineOrderController extends Controller
                         }
 
                     } else {
-                        $percent_pay = $schedule['loan_percents_pay'] - $pay_amount;
-                        $plus_percents = round($pay_amount, 2);
+                        $percent_pay = $pay_amount;
+                        $plus_percents = round($schedule['loan_percents_pay'] - $pay_amount, 2);
                     }
                 }
 
