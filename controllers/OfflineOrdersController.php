@@ -106,8 +106,12 @@ class OfflineOrdersController extends Controller
         $filter['page'] = $current_page;
         $filter['limit'] = $items_per_page;
 
-        if($this->manager->role == 'employer')
-            $filter['employer'] = $this->manager->company_id;
+        if($this->manager->role == 'employer'){
+            $managers_company = $this->ManagersEmployers->get_records($this->manager->id);
+            foreach ($managers_company as $id => $name){
+                $filter['employer'][] = $id;
+            }
+        }
 
         $orders = array();
         foreach ($this->orders->get_orders($filter) as $order) {

@@ -5,7 +5,7 @@
     </tr>
 </table>
 <div></div>
-<h3 align="left"><strong>СОГЛАСИЕ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ</strong></h3>
+<h3 align="left"><strong>СОГЛАСИЕ РАБОТОДАТЕЛЮ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ И ПЕРЕДАЧУ РУКРЕДУ</strong></h3>
 <div></div>
 <div align="justify">Настоящим я, <strong>{$lastname|upper} {$firstname|upper} {$patronymic|upper} {$birth}</strong>
     года рождения, место

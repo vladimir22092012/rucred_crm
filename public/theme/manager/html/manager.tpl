@@ -693,17 +693,19 @@
                                         </div>
                                         <div class="form-group company_block"
                                              {if $user->company_id == 0 && $user->group_id == 0}style="display:none"{/if}>
-                                            <label class="col-md-12">Компания</label>
+                                            <label class="col-md-12">Компании</label><br><br>
                                             <div class="col-md-12">
-                                                <select class="form-control companies" name="companies">
-                                                    <option value="none" selected>Выберите из списка</option>
-                                                    {if !empty($companies)}
-                                                        {foreach $companies as $company}
-                                                            <option value="{$company->id}"
-                                                                    {if $user->company_id == $company->id}selected{/if}>{$company->name}</option>
-                                                        {/foreach}
-                                                    {/if}
-                                                </select>
+                                                {if !empty($companies)}
+                                                    {foreach $companies as $company}
+                                                        <div class="form-group">
+                                                            <input type="checkbox" class="custom-checkbox"
+                                                                   name="companies[][company_id]"
+                                                                   value="{$company->id}"
+                                                                   {if isset($managers_company[$company->id])}checked{/if}>
+                                                            <label>{$company->name}</label>
+                                                        </div>
+                                                    {/foreach}
+                                                {/if}
                                             </div>
                                         </div>
                                     {/if}
@@ -721,8 +723,15 @@
                                                                                      class="text-info edit_email"><i
                                                             class="fas fa-edit"></i></a></h5>
                                             <div class="show_email">{$user->email|default: "Email не введён"}</div>
-                                            <h5 class="form-control-static">Компания</h5>
-                                            <div class="show_email">{$user->company_name|default: "Отсутствует компания"}</div>
+                                            <h5 class="form-control-static">Компании</h5>
+                                            {if isset($managers_company)}
+                                                {foreach $managers_company as $id => $name}
+                                                    <div class="show_email">{$name}</div>
+                                                {/foreach}
+                                            {else}
+                                                <div class="show_email">Отсутствует компания</div>
+                                            {/if}
+                                            <br>
                                             <div class="email_edit_form" style="display: none">
                                                 <div class="mb-3">
                                                     <div class="form-row">

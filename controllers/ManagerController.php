@@ -60,9 +60,7 @@ class ManagerController extends Controller
                 $same_login = $this->Managers->check_same_login($user->login, $user_id);
 
                 $user->group_id = ($this->request->post('groups')) ? (int)$this->request->post('groups') : 0;
-                $user->company_id = ($this->request->post('companies')) ? (int)$this->request->post('companies') : 0;
-
-
+                $companies = $this->request->post('companies');
                 $user->collection_status_id = $this->request->post('collection_status_id', 'integer');
 
                 $team_id = (array)$this->request->post('team_id');
@@ -102,9 +100,26 @@ class ManagerController extends Controller
                 if (!$errors) {
                     if (empty($user_id)) {
                         $user->id = $this->managers->add_manager($user);
+                        foreach ($companies as $company) {
+                            $record =
+                                [
+                                    'manager_id' => $user_id,
+                                    'company_id' => $company['company_id']
+                                ];
+                            $this->ManagersEmployers->add_record($record);
+                        }
                         $this->design->assign('message_success', 'added');
                     } else {
                         $user->id = $this->managers->update_manager($user_id, $user);
+                        $this->ManagersEmployers->delete_records($user_id);
+                        foreach ($companies as $company) {
+                            $record =
+                                [
+                                    'manager_id' => $user_id,
+                                    'company_id' => $company['company_id']
+                                ];
+                            $this->ManagersEmployers->add_record($record);
+                        }
                         $this->design->assign('message_success', 'updated');
                     }
                     $user = $this->managers->get_manager($user->id);
@@ -169,10 +184,13 @@ class ManagerController extends Controller
             $this->design->assign('companies', $companies);
         }
 
-        if(!empty($user->company_id)){
+        if (!empty($user->company_id)) {
             $company = $this->Companies->get_company($user->company_id);
             $user->company_name = $company->name;
         }
+
+        $managers_company = $this->ManagersEmployers->get_records($user->id);
+        $this->design->assign('managers_company', $managers_company);
 
         $this->design->assign('groups', $groups);
 
@@ -327,10 +345,10 @@ class ManagerController extends Controller
 
         $orders = $this->orders->get_orders(['manager_id' => $manager_id]);
 
-        if(!empty($orders)){
+        if (!empty($orders)) {
             echo 'У пользователя есть сделки!';
             exit;
-        }else{
+        } else {
             echo 'success';
             $this->managers->delete_manager($manager_id);
             exit;

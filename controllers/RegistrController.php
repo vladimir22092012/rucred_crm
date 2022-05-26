@@ -29,6 +29,13 @@ class RegistrController extends Controller
         $current_page = max(1, $current_page);
         $this->design->assign('current_page_num', $current_page);
 
+        if($this->manager->role == 'employer'){
+            $managers_company = $this->ManagersEmployers->get_records($this->manager->id);
+            foreach ($managers_company as $id => $name){
+                $filter['employer'][] = $id;
+            }
+        }
+
         $orders_count = $this->orders->count_orders($filter);
 
         $pages_num = ceil($orders_count/$items_per_page);
