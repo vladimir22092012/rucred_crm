@@ -360,7 +360,7 @@
                             confirmButtonText: 'ОК'
                         });
                     } else {
-                        location.reload();
+                        window.location.reload();
                     }
                 }
             });
