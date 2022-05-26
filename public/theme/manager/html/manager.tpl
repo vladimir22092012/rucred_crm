@@ -52,33 +52,37 @@
                     })
                 });
 
-                $('.accept_edit_with_code').click(function (e) {
+                $('.accept_edit_with_code').on('click', 'keypress', function (e) {
                     e.preventDefault();
 
-                    let user_id = $(this).attr('data-user');
-                    let phone = $('input[class="form-control phone"]').val();
-                    let phone_code = $('input[class="form-control phone_code"]').val();
+                    let key = e.which;
 
-                    $.ajax({
-                        method: 'POST',
-                        data: {
-                            action: 'edit_phone_with_code',
-                            user_id: user_id,
-                            phone: phone,
-                            code: phone_code,
-                        },
-                        success: function (response) {
-                            console.log(JSON.parse(response));
-                            if (JSON.parse(response).error === 1) {
-                                Swal.fire({
-                                    title: 'Неверный код',
-                                    confirmButtonText: 'ОК'
-                                });
-                            } else {
-                                location.reload();
+                    if(key == 13 || $(this).hasClass(accept_edit_with_code)){
+                        let user_id = $(this).attr('data-user');
+                        let phone = $('input[class="form-control phone"]').val();
+                        let phone_code = $('input[class="form-control phone_code"]').val();
+
+                        $.ajax({
+                            method: 'POST',
+                            data: {
+                                action: 'edit_phone_with_code',
+                                user_id: user_id,
+                                phone: phone,
+                                code: phone_code,
+                            },
+                            success: function (response) {
+                                console.log(JSON.parse(response));
+                                if (JSON.parse(response).error === 1) {
+                                    Swal.fire({
+                                        title: 'Неверный код',
+                                        confirmButtonText: 'ОК'
+                                    });
+                                } else {
+                                    location.reload();
+                                }
                             }
-                        }
-                    })
+                        })
+                    }
                 });
             });
 
