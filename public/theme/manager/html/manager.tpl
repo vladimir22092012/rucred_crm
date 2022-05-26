@@ -344,8 +344,6 @@
 
             let user_id = selector.attr('data-user');
 
-            console.log(code);
-
             $.ajax({
                 method: 'POST',
                 data: {
