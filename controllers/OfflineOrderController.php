@@ -205,6 +205,10 @@ class OfflineOrderController extends Controller
                     return $this->action_do_restruct();
                     break;
 
+                case 'send_asp_code':
+                    return $this->action_send_asp_code();
+                    break;
+
 
             endswitch;
 
@@ -812,9 +816,11 @@ class OfflineOrderController extends Controller
         ", (int)$order->user_id, (int)$order->order_id);
 
         $this->db->query($query);
-        $count = $this->db->result('count');
+        $count_scans = $this->db->result('count');
 
-        if ($count < 9)
+        $users_docs = $this->Documents->get_documents(['user_id' => $order->user_id]);
+
+        if ($count_scans < count($users_docs))
             return array('error' => 'Приложены не все сканы!');
 
         if ($order->amount < $loan->min_amount && $order->amount > $loan->max_amount)
@@ -3541,6 +3547,25 @@ class OfflineOrderController extends Controller
             $this->orders->update_order($order_id, $update_order);
             exit;
         }
+
+    }
+
+    private function action_send_asp_code(){
+
+        $phone = $this->request->post('phone');
+        $user_id = $this->request->post('user');
+
+        $code = random_int(1000, 9999);
+        $response = $this->sms->send(
+            $phone,
+            $code
+        );
+        $this->db->query('
+        INSERT INTO s_sms_messages
+        SET phone = ?, code = ?, response = ?, ip = ?, user_id = ?, created = ?
+        ', $phone, $code, $response['resp'], $_SERVER['REMOTE_ADDR'] ?? '', $user_id, date('Y-m-d H:i:s'));
+        echo json_encode(['success' => 1]);
+        exit;
 
     }
 

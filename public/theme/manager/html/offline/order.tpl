@@ -700,10 +700,37 @@
 
             $('.cancel_restruct').on('click', function () {
                 location.reload();
+            });
+
+            $('.send_asp_code').on('click', function (e) {
+                e.preventDefault();
+
+                let phone = $(this).attr('data-phone');
+                let user = $(this).attr('data-user');
+
+                send_asp(phone, user);
+
+                $('#asp_notification').fadeIn();
+
+                setTimeout(function () {
+                    $('#asp_notification').fadeOut();
+                }, 3000);
             })
         });
     </script>
     <script>
+
+        function send_asp(phone, user) {
+
+            $.ajax({
+                method: 'POST',
+                data: {
+                    action: 'send_asp_code',
+                    phone: phone,
+                    user: user
+                }
+            })
+        }
         function do_restruct(preview) {
 
             let form = $('#restruct_form').serialize();
@@ -1076,49 +1103,14 @@
                                     </form>
                                 </div>
                                 <div class="col-12 col-md-6 col-lg-3">
-                                    {if $order->status == 14 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
-                                        <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
-                                            <button
-                                                    class="btn btn-success btn-block js-approve-order js-event-add-click"
-                                                    data-event="12" data-user="{$order->user_id}"
-                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
-                                                <i class="fas fa-check-circle"></i>
-                                                <span>Одобрить</span>
-                                            </button>
-                                            <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
-                                                    data-event="13" data-user="{$order->user_id}"
-                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
-                                                <i class="fas fa-times-circle"></i>
-                                                <span>Отказать</span>
-                                            </button>
-                                        </div>
-                                    {/if}
-                                    {if $order->status == 1}
-                                        {if in_array($manager->role, ['developer', 'admin', 'middle', 'employer'])}
-                                            <div>
-                                                <button class="btn btn-success btn-block accept-order"
-                                                        data-order="{$order->order_id}" data-manager="{$manager->id}">
-                                                    <i class="fas fa-check-circle"></i>
-                                                    <span>Принять</span>
-                                                </button>
-                                                <button class="btn btn-danger btn-block reject-order"
-                                                        data-user="{$order->user_id}"
-                                                        data-order="{$order->order_id}" data-manager="{$manager->id}">
-                                                    <i class="fas fa-times-circle"></i>
-                                                    <span>Отклонить</span>
-                                                </button>
-                                            </div>
-                                        {else}
-                                            <div class="card card-primary">
+                                    <div class="js-order-status">
+                                        {if $order->status == 2}
+                                            <div class="card card-success mb-1">
                                                 <div class="box text-center">
-                                                    <h4 class="text-white">У работодателя</h4>
-                                                    <h6>Договор {$contract->number}</h6>
+                                                    <h3 class="text-white mb-0">Одобрена</h3>
                                                 </div>
                                             </div>
                                         {/if}
-                                    {/if}
-
-                                    <div class="js-order-status">
                                         {if $order->status == 14 && in_array($manager->role, ['developer', 'admin', 'middle', 'employer'])}
                                             <div class="card card-success mb-1">
                                                 <div class="box text-center">
@@ -1257,6 +1249,69 @@
                                             <h4 class="text-danger mb-0">АСП: {$contract->accept_code}</h4>
                                         {/if}
                                     </div>
+                                    {if $order->status == 1}
+                                        {if in_array($manager->role, ['developer', 'admin', 'middle', 'employer'])}
+                                            <div>
+                                                <button class="btn btn-success btn-block accept-order"
+                                                        data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Принять</span>
+                                                </button>
+                                                <button class="btn btn-danger btn-block reject-order"
+                                                        data-user="{$order->user_id}"
+                                                        data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                                    <i class="fas fa-times-circle"></i>
+                                                    <span>Отклонить</span>
+                                                </button>
+                                            </div>
+                                        {else}
+                                            <div class="card card-primary">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">У работодателя</h4>
+                                                    <h6>Договор {$contract->number}</h6>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                    {/if}
+                                    {if $order->status == 14 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
+                                        <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
+                                            <button
+                                                    class="btn btn-success btn-block js-approve-order js-event-add-click"
+                                                    data-event="12" data-user="{$order->user_id}"
+                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                                <i class="fas fa-check-circle"></i>
+                                                <span>Одобрить</span>
+                                            </button>
+                                            <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
+                                                    data-event="13" data-user="{$order->user_id}"
+                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                                <i class="fas fa-times-circle"></i>
+                                                <span>Отказать</span>
+                                            </button>
+                                            <form class=" pt-1 js-confirm-contract">
+                                                <div class="input-group">
+                                                    <input type="hidden" name="contract_id" class="js-contract-id"
+                                                           value="{$order->contract_id}"/>
+                                                    <input type="hidden" name="phone" class="js-contract-phone"
+                                                           value="{$order->phone_mobile|escape}"/>
+                                                    <input type="text" class="form-control js-contract-code"
+                                                           placeholder="SMS код"
+                                                           value="{if $is_developer}{$contract->accept_code}{/if}"/>
+                                                    <div class="input-group-append">
+                                                        <div type="button" data-user="{$order->user_id}" data-phone="{$order->phone_mobile}" class="btn btn-primary send_asp_code">
+                                                            Отправить смс
+                                                        </div>
+                                                        <button class="btn btn-info js-event-add-click" type="submit"
+                                                                data-event="14" data-user="{$order->user_id}"
+                                                                data-order="{$order->order_id}"
+                                                                data-manager="{$manager->id}">Подтвердить
+                                                        </button>
+                                                    </div>
+                                                    <small id="asp_notification" style="display: none; color: #7ec699">Смс-код отправлен</small>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    {/if}
                                 </div>
                             </div>
                         </div>
