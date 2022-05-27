@@ -2167,6 +2167,7 @@
                                                     </div>
                                                     <hr style="width: 100%; size: 2px">
                                                 {/foreach}
+                                                {*
                                                 <div
                                                         style="width: 100%!important; height: 30px; margin-left: 15px; display: flex; vertical-align: middle">
                                                     <div class="form-group" style="width: 55%!important">
@@ -2205,6 +2206,7 @@
                                                     {/if}
                                                 </div>
                                                 <hr style="width: 100%; size: 2px">
+                                                *}
                                             {/if}
                                         </form>
                                     </div>
