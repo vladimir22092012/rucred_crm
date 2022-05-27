@@ -88,6 +88,7 @@ class UploadFilesController extends Controller
             }
         }
 
+        echo json_encode(['success' => 1, 'message' => 'Файл загружен успешно'], JSON_THROW_ON_ERROR);
         exit;
     }
 
