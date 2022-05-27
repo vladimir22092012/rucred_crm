@@ -22,6 +22,12 @@ task('deploy', [
     'deploy:prepare',
     'deploy:vendors',
     'deploy:publish',
+    'files:link',
 ]);
+
+task('files:link', function () {
+    cd('{{release_or_current_path}}');
+    run('ln -s /home/ploi/rucred-dev.ru/current/files /home/ploi/rucred-dev.ru/current/public/files');
+});
 
 after('deploy:failed', 'deploy:unlock');
