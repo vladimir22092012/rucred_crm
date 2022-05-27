@@ -273,19 +273,18 @@
             $('.companies').append('<option value="none">Выберите из списка</option>');
 
             let group_id = $(this).val();
+            let user_id = $(this).attr('data-user');
 
             if (group_id != 'none') {
                 $.ajax({
                     method: 'POST',
-                    dataType: 'JSON',
                     data: {
                         action: 'get_companies',
-                        group_id: group_id
+                        group_id: group_id,
+                        user_id: user_id
                     },
                     success: function (companies) {
-                        for (let company in companies) {
-                            $('.companies').append('<option value="' + companies[company]['id'] + '">' + companies[company]['name'] + '</option>')
-                        }
+                        $('.companies_form').html(companies)
                     }
                 });
             } else {
@@ -680,7 +679,8 @@
                                         <div class="form-group">
                                             <label class="col-md-12">Группа</label>
                                             <div class="col-md-12">
-                                                <select class="form-control groups" name="groups">
+                                                <select class="form-control groups" name="groups"
+                                                        data-user="{$user->id}">
                                                     <option value="none" selected>Выберите из списка</option>
                                                     {if !empty($groups)}
                                                         {foreach $groups as $group}
@@ -694,7 +694,7 @@
                                         <div class="form-group company_block"
                                              {if $user->company_id == 0 && $user->group_id == 0}style="display:none"{/if}>
                                             <label class="col-md-12">Компании</label><br><br>
-                                            <div class="col-md-12">
+                                            <div class="col-md-12 companies_form">
                                                 {if !empty($companies)}
                                                     {foreach $companies as $company}
                                                         <div class="form-group">
@@ -726,10 +726,10 @@
                                             <h5 class="form-control-static">Компании</h5>
                                             {if isset($managers_company)}
                                                 {foreach $managers_company as $id => $name}
-                                                    <div class="show_email">{$name}</div>
+                                                    <div>{$name}</div>
                                                 {/foreach}
                                             {else}
-                                                <div class="show_email">Отсутствует компания</div>
+                                                <div>Отсутствует компания</div>
                                             {/if}
                                             <br>
                                             <div class="email_edit_form" style="display: none">

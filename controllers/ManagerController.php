@@ -215,9 +215,22 @@ class ManagerController extends Controller
     {
 
         $group_id = $this->request->post('group_id');
+        $user_id = $this->request->post('user_id');
         $companies = $this->Companies->get_companies(['group_id' => $group_id]);
+        $managers_company = $this->ManagersEmployers->get_records($user_id);
+        $html = '';
 
-        echo json_encode($companies);
+        foreach ($companies as $company){
+            $html .=  '<div class="form-group">';
+            $html .=  '<input type="checkbox" class="custom-checkbox"';
+            $html .=  'name="companies[][company_id]"';
+            $html .=  "value='$company->id'";
+            $html .=  (isset($managers_company[$company->id])) ? 'checked> ' : '> ';
+            $html .=  '<label>'.$company->name.'</label>';
+            $html .=  '</div>';
+
+        }
+        echo $html;
         exit;
     }
 
