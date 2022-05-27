@@ -78,3 +78,23 @@
         <td style="width: 40%">_______________/____________</td>
     </tr>
 </table>
+<div>
+    <br>
+</div>
+<table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+    <tr>
+        <td>Подписано простой электронной подписью</td>
+    </tr>
+    <tr>
+        <td>{$firstname} {$patronymic} {$lastname}</td>
+    </tr>
+    <tr>
+        <td>Дата: {$confirm_date}(МСК)</td>
+    </tr>
+    <tr>
+        <td>Телефон: {$phone_mobile}</td>
+    </tr>
+    <tr>
+        <td>Код подтверждения: {$sms}</td>
+    </tr>
+</table>

@@ -74,8 +74,8 @@ class UploadFilesController extends Controller
                         'order_id' => (int)$this->request->post('order_id')
                     ));
                 } else {
-                    $file_id = $this->response->id = $this->users->add_file(array(
-                        'user_id' => $this->user->id,
+                    $file_id = $this->users->add_file(array(
+                        'user_id' => $user_id,
                         'name' => $new_filename,
                         'type' => $type,
                         'status' => 0

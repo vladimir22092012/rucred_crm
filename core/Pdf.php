@@ -20,6 +20,7 @@ class Pdf extends Core
         $this->tcpdf->SetKeywords('');
         $this->tcpdf->SetMargins(20, 6, 10, 0);
         $this->tcpdf->setFooterMargin(0);
+        $this->tcpdf->SetAutoPageBreak(TRUE, 0);
         
         // set font
         $this->tcpdf->SetFont('dejavusans', '', 9);

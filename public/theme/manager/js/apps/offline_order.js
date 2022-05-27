@@ -32,7 +32,7 @@
         form_data.append('notreplace', '1');
 
         $.ajax({
-            url: '/ajax/upload.php',
+            url: '/upload_files',
             data: form_data,
             type: 'POST',
             dataType: 'json',
@@ -894,7 +894,7 @@ console.log(resp);
             var _id = $(this).data('id');
             var _user_id = $(this).data('user');
             $.ajax({
-                url: '/ajax/upload.php',
+                url: '/upload_files',
                 data: {
                     action: 'remove',
                     id: _id,

@@ -54,11 +54,31 @@
     11.12.2019 N 5351-У «О требованиях к кредитным организациям, которым может быть поручено проведение
     идентификации или упрощённой идентификации, а также к микрофинансовым организациям, которые могут
     поручать кредитным организациям проведение идентификации или упрощённой идентификации».
-</div><br>
+</div>
 <table style="width: 100%;" border="1" cellpadding="8">
     <tr style="width: 100%">
         <td style="width: 25%; height: 30px" align="center"><span style="color: #b3b2ab">ПОДПИСЬ</span></td>
         <td style="width: 50%" align="center"><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></td>
         <td style="width: 25%" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span></td>
+    </tr>
+</table>
+<div>
+    <br>
+</div>
+<table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+    <tr>
+        <td>Подписано простой электронной подписью</td>
+    </tr>
+    <tr>
+        <td>{$firstname} {$patronymic} {$lastname}</td>
+    </tr>
+    <tr>
+        <td>Дата: {$confirm_date}(МСК)</td>
+    </tr>
+    <tr>
+        <td>Телефон: {$phone_mobile}</td>
+    </tr>
+    <tr>
+        <td>Код подтверждения: {$sms}</td>
     </tr>
 </table>

@@ -443,7 +443,7 @@
             <td style="width: 70%" align="left">С содержанием Общих условий получения и обслуживания микрозайма
                 Заёмщик ознакомлен и
                 согласен:<br><br>Подпись Заёмщика: _____________________ <img
-                    src="{$config->root_url}/theme/manager/html/pdf/i/warning.png" style="height: 12px;"><br><br>Общие
+                        src="{$config->root_url}/theme/manager/html/pdf/i/warning.png" style="height: 12px;"><br><br>Общие
                 условия Договора в печатном
                 варианте выдаются Заимодавцем по требованию Заёмщика<br>
             </td>
@@ -836,4 +836,24 @@
         </td>
     </tr>
     <br>
+</table>
+<div>
+    <br>
+</div>
+<table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+    <tr>
+        <td>Подписано простой электронной подписью</td>
+    </tr>
+    <tr>
+        <td>{$firstname} {$patronymic} {$lastname}</td>
+    </tr>
+    <tr>
+        <td>Дата: {$confirm_date}(МСК)</td>
+    </tr>
+    <tr>
+        <td>Телефон: {$phone_mobile}</td>
+    </tr>
+    <tr>
+        <td>Код подтверждения: {$sms}</td>
+    </tr>
 </table>

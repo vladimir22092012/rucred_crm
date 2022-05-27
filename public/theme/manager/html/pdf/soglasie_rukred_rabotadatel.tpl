@@ -57,7 +57,7 @@
         обработки его персональных данных (оператор прекратит обработку таких персональных данных в течение 3 (Трёх)
         рабочих
         дней, о чем будет направлено письменное уведомление субъекту персональных данных в течение 10 (Десяти) рабочих
-        дней.<br>
+        дней.
     </div>
 </div>
 <table style="width: 100%;" border="1" cellpadding="5">
@@ -65,5 +65,25 @@
         <td style="width: 25%; height: 30px" align="center"><span style="color: #b3b2ab">ПОДПИСЬ</span></td>
         <td style="width: 50%" align="center"><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></td>
         <td style="width: 25%" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span></td>
+    </tr>
+</table>
+<div>
+
+</div>
+<table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+    <tr>
+        <td>Подписано простой электронной подписью</td>
+    </tr>
+    <tr>
+        <td>{$firstname} {$patronymic} {$lastname}</td>
+    </tr>
+    <tr>
+        <td>Дата: {$confirm_date}(МСК)</td>
+    </tr>
+    <tr>
+        <td>Телефон: {$phone_mobile}</td>
+    </tr>
+    <tr>
+        <td>Код подтверждения: {$sms}</td>
     </tr>
 </table>

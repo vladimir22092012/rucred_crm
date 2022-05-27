@@ -20,8 +20,7 @@
     СНИЛС:
     <strong>{$snils}</strong>, телефон: <strong>{$phone_mobile}</strong>, адрес электронной почты:
     <strong>{$email|upper}</strong>
-</div>
-<div style="font-size: 9px" align="justify">являющийся субъектом персональных данных в соответствии со статьями 9, 10
+</div><div style="font-size: 9px" align="justify">являющийся субъектом персональных данных в соответствии со статьями 9, 10
     Федерального закона от 27 июля 2006 года № 152-ФЗ «О персональных данных» настоящим подтверждаю, что даю своё
     согласие Обществу с ограниченной ответственностью Микрокредитная компания «Русское кредитное общество» (ИНН
     9725055162) на предоставление <strong>{$company->name}</strong> (ИНН <strong>{$company->inn}</strong>) следующих моих персональных
@@ -60,8 +59,28 @@
 </div>
 <table style="width: 100%;" border="1" cellpadding="8">
     <tr style="width: 100%">
-        <td style="width: 25%; height: 30px" align="center"><span style="color: #b3b2ab">ПОДПИСЬ</span></td>
+        <td style="width: 25%" align="center"><span style="color: #b3b2ab">ПОДПИСЬ</span></td>
         <td style="width: 50%" align="center"><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></td>
         <td style="width: 25%" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span></td>
+    </tr>
+</table>
+<div>
+
+</div>
+<table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+    <tr>
+        <td>Подписано простой электронной подписью</td>
+    </tr>
+    <tr>
+        <td>{$firstname} {$patronymic} {$lastname}</td>
+    </tr>
+    <tr>
+        <td>Дата: {$confirm_date}(МСК)</td>
+    </tr>
+    <tr>
+        <td>Телефон: {$phone_mobile}</td>
+    </tr>
+    <tr>
+        <td>Код подтверждения: {$sms}</td>
     </tr>
 </table>

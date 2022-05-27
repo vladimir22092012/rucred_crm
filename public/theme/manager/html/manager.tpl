@@ -594,7 +594,7 @@
                                             <div class="col-md-12">
                                                 <input type="text" name="name"
                                                        value="{if isset($user)}{$user->name|escape}{/if}"
-                                                       class="form-control form-control-line" required="true"/>
+                                                       class="form-control form-control-line" autocomplete="off" required="true"/>
                                                 {if in_array('empty_name', (array)$errors)}
                                                     <small class="form-control-feedback">Укажите имя!</small>
                                                 {/if}
@@ -613,7 +613,7 @@
                                             <div class="col-md-12">
                                                 <input type="text" id="login" name="login"
                                                        value="{if isset($user)}{$user->login|escape}{/if}"
-                                                       class="form-control form-control-line" required="true"/>
+                                                       class="form-control form-control-line" autocomplete="off" required="true"/>
                                                 {if in_array('empty_login', (array)$errors)}
                                                     <small class="form-control-feedback">Укажите логин!</small>
                                                 {/if}
@@ -625,7 +625,7 @@
                                             <label class="col-md-12">{if isset($user->id)}Новый пароль{else}Пароль{/if}</label>
                                             <div class="col-md-12">
                                                 <input type="password" name="password" value=""
-                                                       class="form-control form-control-line"
+                                                       class="form-control form-control-line" autocomplete="off"
                                                        {if !isset($user->id)}required="true"{/if} />
                                                 {if in_array('empty_password', (array)$errors)}
                                                     <small class="form-control-feedback">Укажите пароль!</small>
@@ -737,7 +737,7 @@
                                                     <div class="form-row">
                                                         <div class="col">
                                                             <input type="text" class="form-control email"
-                                                                   value="{$user->email|default: ""}">
+                                                                   value="{$user->email|default: ""}" autocomplete="off">
                                                         </div>
                                                         <div class="col">
                                                             <input type="button"

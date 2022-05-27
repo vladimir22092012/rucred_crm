@@ -3597,7 +3597,7 @@ class OfflineOrderController extends Controller
             echo json_encode(['error' => 1]);
             exit;
         }else{
-            $this->orders->update_order($order_id, ['status' => 4, 'sms' => $code]);
+            $this->orders->update_order($order_id, ['status' => 4, 'sms' => $code, 'confirm_date' => date('Y-m-d H:i:s')]);
             echo json_encode(['success' => 1]);
             exit;
         }

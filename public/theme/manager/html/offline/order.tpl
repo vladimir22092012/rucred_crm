@@ -357,7 +357,7 @@
                 form_data.append('name', e.target.files[0]['name']);
 
                 $.ajax({
-                    url: '/ajax/upload.php',
+                    url: '/upload_files',
                     data: form_data,
                     type: 'POST',
                     processData: false,
