@@ -731,6 +731,32 @@
                 }
             })
         }
+
+        function confirm_asp(user, phone, code, order) {
+
+            $.ajax({
+                method: 'POST',
+                data: {
+                    action: 'confirm_asp',
+                    user: user,
+                    phone: phone,
+                    code: code,
+                    order: order
+                },
+                success: function (response) {
+                    console.log(JSON.parse(response));
+                    if (JSON.parse(response).error === 1) {
+                        Swal.fire({
+                            title: 'Неверный код',
+                            confirmButtonText: 'ОК'
+                        });
+                    } else {
+                        window.location.reload();
+                    }
+                }
+            });
+        }
+
         function do_restruct(preview) {
 
             let form = $('#restruct_form').serialize();
@@ -1298,16 +1324,20 @@
                                                            placeholder="SMS код"
                                                            value="{if $is_developer}{$contract->accept_code}{/if}"/>
                                                     <div class="input-group-append">
-                                                        <div type="button" data-user="{$order->user_id}" data-phone="{$order->phone_mobile}" class="btn btn-primary send_asp_code">
+                                                        <div type="button" data-user="{$order->user_id}"
+                                                             data-phone="{$order->phone_mobile}"
+                                                             class="btn btn-primary send_asp_code">
                                                             Отправить смс
                                                         </div>
-                                                        <button class="btn btn-info js-event-add-click" type="submit"
-                                                                data-event="14" data-user="{$order->user_id}"
-                                                                data-order="{$order->order_id}"
-                                                                data-manager="{$manager->id}">Подтвердить
-                                                        </button>
+                                                        <div class="btn btn-info " type="button"
+                                                             data-user="{$order->user_id}"
+                                                             data-order="{$order->order_id}"
+                                                             data-manager="{$manager->id}">Подтвердить
+                                                        </div>
                                                     </div>
-                                                    <small id="asp_notification" style="display: none; color: #7ec699">Смс-код отправлен</small>
+                                                    <small id="asp_notification" style="display: none; color: #7ec699">
+                                                        Смс-код отправлен
+                                                    </small>
                                                 </div>
                                             </form>
                                         </div>

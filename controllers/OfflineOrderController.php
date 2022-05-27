@@ -209,6 +209,10 @@ class OfflineOrderController extends Controller
                     return $this->action_send_asp_code();
                     break;
 
+                case 'confirm_asp':
+                    return $this->action_confirm_asp();
+                    break;
+
 
             endswitch;
 
@@ -3416,14 +3420,14 @@ class OfflineOrderController extends Controller
                 $loan_percents_pay = $annoouitet_pay - $loan_body_pay;
                 $rest_sum = 0.00;
             } else {
-                if(isset($plus_percents)){
+                if (isset($plus_percents)) {
                     $loan_percents_pay = round($rest_sum * $percent_per_month, 2);
                     $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
                     $loan_percents_pay += $plus_percents;
                     $annoouitet_pay += $plus_percents;
                     $rest_sum = round($rest_sum - $loan_body_pay, 2);
                     unset($plus_percents);
-                }else{
+                } else {
                     $loan_percents_pay = round($rest_sum * $percent_per_month, 2);
                     $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
                     $rest_sum = round($rest_sum - $loan_body_pay, 2);
@@ -3506,7 +3510,7 @@ class OfflineOrderController extends Controller
                     $rest_sum = number_format($payment['rest_pay'], 2, ',', ' ');
 
                     $payment_schedule_html .= "<tr>";
-                    $payment_schedule_html .= "<td><input type='text' class='form-control daterange' name='date[][date]' value=".$date." disabled></td>";
+                    $payment_schedule_html .= "<td><input type='text' class='form-control daterange' name='date[][date]' value=" . $date . " disabled></td>";
                     $payment_schedule_html .= "<td><input type='text' class='form-control restructure_pay' name='pay_sum[][pay_sum]' value='$paysum' disabled></td>";
                     $payment_schedule_html .= "<td><input type='text' class='form-control restructure_od' name='loan_body_pay[][loan_body_pay]' value='$body_sum' disabled></td>";
                     $payment_schedule_html .= "<td><input type='text' class='form-control restructure_prc' name='loan_percents_pay[][loan_percents_pay]' value='$percent_sum' disabled></td>";
@@ -3534,7 +3538,7 @@ class OfflineOrderController extends Controller
             echo json_encode(['schedule' => $payment_schedule_html, 'psk' => $psk]);
             exit;
 
-        }else{
+        } else {
 
             $payment_schedule = json_encode($new_shedule);
 
@@ -3550,7 +3554,8 @@ class OfflineOrderController extends Controller
 
     }
 
-    private function action_send_asp_code(){
+    private function action_send_asp_code()
+    {
 
         $phone = $this->request->post('phone');
         $user_id = $this->request->post('user');
@@ -3567,6 +3572,35 @@ class OfflineOrderController extends Controller
         echo json_encode(['success' => 1]);
         exit;
 
+    }
+
+    private function action_confirm_asp()
+    {
+        $phone = $this->request->post('phone');
+        $code = $this->request->post('code');
+        $user_id = $this->request->post('user');
+        $order_id = $this->request->post('order');
+
+        $this->db->query("
+        SELECT code, created
+        FROM s_sms_messages
+        WHERE phone = ?
+        AND code = ?
+        AND user_id = ?
+        ORDER BY created DESC
+        LIMIT 1
+        ", $phone, $code, $user_id);
+
+        $results = $this->db->results();
+
+        if (empty($results)) {
+            echo json_encode(['error' => 1]);
+            exit;
+        }else{
+            $this->orders->update_order($order_id, ['status' => 4, 'sms' => $code]);
+            echo json_encode(['success' => 1]);
+            exit;
+        }
     }
 
 }
