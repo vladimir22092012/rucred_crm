@@ -715,7 +715,19 @@
                 setTimeout(function () {
                     $('#asp_notification').fadeOut();
                 }, 3000);
-            })
+            });
+
+            $('.confirm_asp').on('click', function (e) {
+                e.preventDefault();
+
+                let phone = $(this).attr('data-phone');
+                let user = $(this).attr('data-user');
+                let order = $(this).attr('data-order');
+                let code = $('input[class="form-control code_asp"]').val();
+
+                confirm_asp(user, phone, code, order);
+
+            });
         });
     </script>
     <script>
@@ -1320,7 +1332,7 @@
                                                            value="{$order->contract_id}"/>
                                                     <input type="hidden" name="phone" class="js-contract-phone"
                                                            value="{$order->phone_mobile|escape}"/>
-                                                    <input type="text" class="form-control js-contract-code"
+                                                    <input type="text" class="form-control code_asp"
                                                            placeholder="SMS код"
                                                            value="{if $is_developer}{$contract->accept_code}{/if}"/>
                                                     <div class="input-group-append">
@@ -1329,10 +1341,10 @@
                                                              class="btn btn-primary send_asp_code">
                                                             Отправить смс
                                                         </div>
-                                                        <div class="btn btn-info " type="button"
+                                                        <div class="btn btn-info confirm_asp" type="button"
                                                              data-user="{$order->user_id}"
                                                              data-order="{$order->order_id}"
-                                                             data-manager="{$manager->id}">Подтвердить
+                                                             data-phone="{$order->phone_mobile}">Подтвердить
                                                         </div>
                                                     </div>
                                                     <small id="asp_notification" style="display: none; color: #7ec699">
