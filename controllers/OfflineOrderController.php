@@ -831,7 +831,7 @@ class OfflineOrderController extends Controller
             return array('error' => 'Проверьте сумму займа!');
 
         $update = array(
-            'status' => 2,
+            'status' => 4,
             'manager_id' => $this->manager->id,
             'approve_date' => date('Y-m-d H:i:s'),
         );
