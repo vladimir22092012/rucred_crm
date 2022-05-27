@@ -12,7 +12,7 @@ set('branch', 'master');
 set('default_stage', 'stage');
 set('php_fpm_version', '8.0');
 set('ssh_arguments', ['-o UserKnownHostsFile=/dev/null', '-o StrictHostKeyChecking=no']);
-set('shared_dirs', ['configuration']);
+set('shared_dirs', ['configuration', 'files']);
 
 host('51.250.98.13')
     ->set('remote_user', 'ploi')
