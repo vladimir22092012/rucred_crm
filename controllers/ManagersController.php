@@ -28,6 +28,11 @@ class ManagersController extends Controller
 
         $managers = $this->managers->get_managers($filter);
 
+
+        foreach ($managers as $key => $manager){
+            $managers[$key]->companies = $this->ManagersEmployers->get_records($manager->id);
+        }
+
         if(!empty($managers)){
 
 //            $companies = $this->Companies->get_companies();

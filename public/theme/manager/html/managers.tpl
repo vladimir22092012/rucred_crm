@@ -53,7 +53,7 @@
                         <h4 class="card-title">Список пользователей</h4>
                         <div id="basicgrid" class="jsgrid" style="position: relative; width: 100%;">
                             <div class="jsgrid-grid-header jsgrid-header-scrollbar">
-                                <table class="jsgrid-table table table-striped table-hover">
+                                <table class="jsgrid-table table table-striped table-hover " style="text-align: center">
                                     <tr class="jsgrid-header-row">
                                         <th style="width: 60px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'id_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'id_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'id_asc'}<a href="{url page=null sort='id_desc'}">#</a>
@@ -125,7 +125,11 @@
                                                 {if $manager->blocked}<span class="label label-danger">Заблокирован</span>{/if}
                                             </td>
                                             <td style="width: 120px;" class="jsgrid-cell">
-                                                {$manager->company_name}
+                                                {foreach $manager->companies as $companies}
+                                                    {foreach $companies as $key => $company}
+                                                        {$company}<br>
+                                                    {/foreach}
+                                                {/foreach}
                                             </td>
                                             <td style="width: 80px;" class="jsgrid-cell">
                                                 {$manager->last_ip}
