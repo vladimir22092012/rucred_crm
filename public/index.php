@@ -8,6 +8,21 @@ define('ROOT', rtrim(dirname(__DIR__), '\\/'));
 
 require __DIR__ . '/../vendor/autoload.php';
 
+$routes = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
+
+if (!empty($routes[0])) {
+    $route = strstr($routes[0], '?', true);
+    $controllerName =  str_replace('_', '', ucwords($route ?: $routes[0], '_')) . 'Controller';
+    $controllerFile = ROOT . '/controllers/' . $controllerName . '.php';
+    if (file_exists($controllerFile)) {
+        $_GET['module'] = $controllerName;
+    }
+    if (!empty($routes[1])) {
+        $route = strstr($routes[1], '?', true);
+        $_GET['id'] = $route ?: $routes[1];
+    }
+}
+
 try {
     $view = new IndexController();
 
