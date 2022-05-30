@@ -27,6 +27,7 @@ task('deploy', [
 
 task('files:link', function () {
     cd('{{release_or_current_path}}');
+    run('ln -s /home/ploi/share/files /home/ploi/rucred-dev.ru/current/files');
     run('ln -s /home/ploi/rucred-dev.ru/current/files /home/ploi/rucred-dev.ru/current/public/files');
 });
 
