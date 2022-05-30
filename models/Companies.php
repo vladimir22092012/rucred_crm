@@ -39,6 +39,7 @@ class Companies extends Core
     {
         $group_id = '';
         $blocked = '';
+        $company_name = '';
 
         if (isset($filter['group_id'])) {
             $group_id = $this->db->placehold("AND group_id = ?", (int)$filter['group_id']);
@@ -48,12 +49,17 @@ class Companies extends Core
             $blocked = $this->db->placehold("AND blocked = ?", (int)$filter['blocked']);
         }
 
+        if(isset($filter['company_name'])){
+            $company_name = "AND `name` LIKE '%".$filter['company_name']."%'";
+        }
+
         $query = $this->db->placehold("
         SELECT * 
         FROM s_companies
         WHERE 1
         $group_id
         $blocked
+        $company_name
         ");
 
         $this->db->query($query);

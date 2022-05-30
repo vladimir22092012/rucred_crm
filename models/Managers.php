@@ -153,9 +153,6 @@ class Managers extends Core
             if (!empty($filter['search']['role'])) {
                 $search_filter .= $this->db->placehold(" AND role LIKE '%" . $this->db->escape($filter['search']['role']) . "%'");
             }
-            if (!empty($filter['search']['company'])) {
-                $search_filter .= $this->db->placehold(" AND s_companies.name LIKE '%" . $this->db->escape($filter['search']['company']) . "%'");
-            }
         }
 
         if (isset($filter['limit'])) {
@@ -170,9 +167,8 @@ class Managers extends Core
 
 
         $query = $this->db->placehold("
-            SELECT __managers.*, __companies.name AS company_name
-            FROM __managers
-            LEFT JOIN __companies ON __managers.company_id = __companies.id
+            SELECT *
+            FROM s_managers
             WHERE 1
                 $id_filter
                 $search_filter

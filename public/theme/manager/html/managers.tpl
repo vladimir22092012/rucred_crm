@@ -90,7 +90,7 @@
                                             <input type="text" name="name" value="{$search['name']}" class="form-control input-sm">
                                         </td>
                                         <td style="width: 120px;" class="jsgrid-cell jsgrid-align-right">
-                                            <input type="text" name="company" value="{$search['company']}" class="form-control input-sm">
+                                            <input type="text" name="company_name" value="{$search['company_name']}" class="form-control input-sm">
                                         </td>
                                         <td style="width: 80px;" class="jsgrid-cell jsgrid-align-right">
                                             <input type="text" name="last_ip" value="{$search['last_ip']}" class="form-control input-sm">

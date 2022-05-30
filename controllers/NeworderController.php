@@ -124,13 +124,31 @@ class NeworderController extends Controller
         $user['user_id'] = intval($this->request->post('user_id'));
 
         $user['firstname'] = trim($this->request->post('firstname'));
+
+        if(empty($user['firstname'])){
+            response_json(['error' => 1, 'reason' => 'Отсутствует имя']);
+            exit;
+        }
+
+
         $user['lastname'] = trim($this->request->post('lastname'));
+
+        if(empty($user['firstname'])){
+            response_json(['error' => 1, 'reason' => 'Отсутствует фамилия']);
+            exit;
+        }
+
         $user['patronymic'] = trim($this->request->post('patronymic'));
 
         $user['fio_acc_holder'] = trim($this->request->post('fio_acc_holder'));
         $user['account_number'] = trim($this->request->post('account_number'));
         $user['bank_name'] = trim($this->request->post('bank_name'));
         $user['bik_bank'] = trim($this->request->post('bik_bank'));
+
+        if(empty($user['fio_acc_holder']) || empty($user['account_number']) || empty($user['bank_name']) || empty($user['bik_bank'])){
+            response_json(['error' => 1, 'reason' => 'Заполните корректно реквизиты']);
+            exit;
+        }
 
         $cards_bank_name = $this->request->post('cards_bank_name');
         $cards_limit = $this->request->post('cards_limit');
@@ -197,6 +215,12 @@ class NeworderController extends Controller
 
 
         $user['phone_mobile'] = trim((string)$this->request->post('phone'));
+
+        if(empty($user['phone_mobile'])){
+            response_json(['error' => 1, 'reason' => 'Отсутствует номер телефона']);
+            exit;
+        }
+
         $user['phone_mobile_confirmed'] = (int)$this->request->post('phone_confirmed');
 
         if ($this->request->post('viber_same') === 1) {
@@ -223,6 +247,16 @@ class NeworderController extends Controller
         $user['birth'] = trim((string)$this->request->post('birth'));
         $user['birth_place'] = trim((string)$this->request->post('birth_place'));
 
+        if(empty($user['birth_place'])){
+            response_json(['error' => 1, 'reason' => 'Отсутствует место рождения']);
+            exit;
+        }
+
+        if(empty($user['email'])){
+            response_json(['error' => 1, 'reason' => 'Отсутствует электронная почта']);
+            exit;
+        }
+
         $user['push_not'] = (int)$this->request->post('push_not');
         $user['sms_not'] = (int)$this->request->post('sms_not');
         $user['email_not'] = (int)$this->request->post('email_not');
@@ -237,11 +271,37 @@ class NeworderController extends Controller
         $user['snils'] = (string)$this->request->post('snils');
         $user['inn'] = (string)$this->request->post('inn');
 
+        if(empty($user['snils'])){
+            response_json(['error' => 1, 'reason' => 'Отсутствует снилс']);
+            exit;
+        }
+
+        if(empty($user['inn'])){
+            response_json(['error' => 1, 'reason' => 'Отсутствует инн']);
+            exit;
+        }
+
         $user['passport_date'] = (string)$this->request->post('passport_date');
         $user['passport_issued'] = (string)$this->request->post('passport_issued');
         $user['subdivision_code'] = (string)$this->request->post('subdivision_code');
+
+        if(empty($user['passport_serial']) || empty($user['passport_date']) || empty($user['passport_issued']) || empty($user['subdivision_code'])){
+            response_json(['error' => 1, 'reason' => 'Заполните паспортные данные']);
+            exit;
+        }
+
         $user['income'] = preg_replace("/[^,.0-9]/", '', $this->request->post('income_medium'));
         $user['expenses'] = preg_replace("/[^,.0-9]/", '', $this->request->post('outcome_medium'));
+
+        if(empty($user['income'])){
+            response_json(['error' => 1, 'reason' => 'Отсутствует среднемесячный доход']);
+            exit;
+        }
+
+        if(empty($user['expenses'])){
+            response_json(['error' => 1, 'reason' => 'Отсутствует среднемесячный расход']);
+            exit;
+        }
 
         $Regadress = json_decode($this->request->post('Regadress'));
 
@@ -262,6 +322,11 @@ class NeworderController extends Controller
         $user['Regbuilding'] = (!empty($Regadress->data->block)) ? $Regadress->data->block : '';
         $user['Regroom'] = (!empty($Regadress->data->flat)) ? $Regadress->data->flat : '';
         $user['loan_history'] = '[]';
+
+        if(empty($user['Regadressfull'])){
+            response_json(['error' => 1, 'reason' => 'Отсутствует адрес регистрации']);
+            exit;
+        }
 
         if ($this->request->post('actual_address') === 1) {
             $user['Faktadressfull'] = $user['Regadressfull'];
@@ -284,6 +349,11 @@ class NeworderController extends Controller
 
             $user['Faktadressfull'] = $this->request->post('Faktadressfull');
 
+            if(empty($user['Faktadressfull'])){
+                response_json(['error' => 1, 'reason' => 'Отсутствует фактический адрес проживания']);
+                exit;
+            }
+
             $user['Faktindex'] = (!empty($Faktaddress->data->postal_code)) ? $Faktaddress->data->postal_code : '';
             $user['Faktregion'] = (!empty($Faktaddress->data->region)) ? $Faktaddress->data->region : '';
             $user['Faktregion_shorttype'] = (!empty($Faktaddress->data->region_type)) ? $Faktaddress->data->region_type : '';
@@ -303,6 +373,16 @@ class NeworderController extends Controller
         $user['company_id'] = (int)$this->request->post('company', 'integer');
         $user['group_id'] = (int)$this->request->post('group', 'integer');
         $user['branche_id'] = (int)$this->request->post('branch', 'integer');
+
+        if(empty($user['company_id'])){
+            response_json(['error' => 1, 'reason' => 'Отсутствует компания']);
+            exit;
+        }
+
+        if(empty($user['group_id'])){
+            response_json(['error' => 1, 'reason' => 'Отсутствует группа']);
+            exit;
+        }
 
 
         if (empty($user['user_id'])) {
@@ -376,8 +456,10 @@ class NeworderController extends Controller
                 $branches = $this->Branches->get_branches(['group_id' => $user['group_id']]);
 
                 foreach ($branches as $branch){
-                    if($branch->number == '00')
+                    if($branch->number == '00'){
                         $first_pay_day = $branch->payday;
+                        $user['branche_id'] = $branch->id;
+                    }
                 }
             }else{
                 $branch = $this->Branches->get_branch($user['branche_id']);

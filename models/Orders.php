@@ -229,7 +229,7 @@ class Orders extends Core
         $employer_filter = '';
 
         if(isset($filter['employer']))
-            $employer_filter = $this->db->placehold("AND o.company_id = ?", (int)$filter['employer']);
+            $employer_filter = $this->db->placehold("AND o.company_id IN (?@)", $filter['employer']);
 
         if(isset($filter['manager_id']))
             $manager_id_filter = $this->db->placehold("AND o.manager_id = ?", (int)$filter['manager_id']);

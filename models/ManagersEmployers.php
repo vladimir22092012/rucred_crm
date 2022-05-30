@@ -33,11 +33,24 @@ class ManagersEmployers extends Core
 
         $managers_company = array();
 
-        foreach ($records as $record){
+        foreach ($records as $record) {
             $company = $this->Companies->get_company($record->company_id);
             $managers_company[$company->id] = $company->name;
         }
 
         return $managers_company;
+    }
+
+    public function get_managers_id($company_id)
+    {
+        $query = $this->db->placehold("
+            SELECT manager_id
+            FROM s_managers_employers 
+            WHERE company_id = ?
+        ", (int)$company_id);
+
+        $this->db->query($query);
+        $result = $this->db->results();
+        return $result;
     }
 }

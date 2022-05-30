@@ -763,7 +763,24 @@
                             confirmButtonText: 'ОК'
                         });
                     } else {
-                        window.location.reload();
+                        $('.code_asp').hide();
+                        $('.send_asp_code').hide();
+                        $('.confirm_asp').hide();
+                        $('.asp_success').show();
+
+                        setTimeout(function () {
+                            $('#asp_success').fadeOut();
+                        }, 3000);
+
+                        setTimeout(function () {
+                            let html = '<div class="card card-text mb-1" style="width: 100%!important;">' +
+                                '<div class="box text-center">' +
+                                '<h4>Код ПЭП: '+code+'</h4>' +
+                                '</div>' +
+                                '</div>';
+
+                            $('.asp_success').after(html).fadeIn();
+                        }, 5000);
                     }
                 }
             });
@@ -1332,24 +1349,36 @@
                                                            value="{$order->contract_id}"/>
                                                     <input type="hidden" name="phone" class="js-contract-phone"
                                                            value="{$order->phone_mobile|escape}"/>
-                                                    <input type="text" class="form-control code_asp"
-                                                           placeholder="SMS код"
-                                                           value="{if $is_developer}{$contract->accept_code}{/if}"/>
-                                                    <div class="input-group-append">
-                                                        <div type="button" data-user="{$order->user_id}"
-                                                             data-phone="{$order->phone_mobile}"
-                                                             class="btn btn-primary send_asp_code">
-                                                            Отправить смс
+                                                    {if empty({$order->sms})}
+                                                        <input type="text" class="form-control code_asp"
+                                                               placeholder="SMS код"
+                                                               value="{if $is_developer}{$contract->accept_code}{/if}"/>
+                                                        <div class="input-group-append">
+                                                            <div type="button" data-user="{$order->user_id}"
+                                                                 data-phone="{$order->phone_mobile}"
+                                                                 class="btn btn-primary send_asp_code">
+                                                                Отправить смс
+                                                            </div>
+                                                            <div class="btn btn-info confirm_asp" type="button"
+                                                                 data-user="{$order->user_id}"
+                                                                 data-order="{$order->order_id}"
+                                                                 data-phone="{$order->phone_mobile}">Подтвердить
+                                                            </div>
                                                         </div>
-                                                        <div class="btn btn-info confirm_asp" type="button"
-                                                             data-user="{$order->user_id}"
-                                                             data-order="{$order->order_id}"
-                                                             data-phone="{$order->phone_mobile}">Подтвердить
-                                                        </div>
-                                                    </div>
+                                                    {/if}
                                                     <small id="asp_notification" style="display: none; color: #7ec699">
                                                         Смс-код отправлен
                                                     </small>
+                                                    <small id="asp_success" style="display: none; color: #009d07">
+                                                        Успешно!
+                                                    </small>
+                                                    {if !empty({$order->sms})}
+                                                        <div class="card card-text mb-1" style="width: 100%!important;">
+                                                            <div class="box text-center">
+                                                                <h4>Код ПЭП: {$order->sms}</h4>
+                                                            </div>
+                                                        </div>
+                                                    {/if}
                                                 </div>
                                             </form>
                                         </div>
@@ -2105,6 +2134,11 @@
                                             {/if}
                                             {if !empty($documents)}
                                                 {foreach $documents as $document}
+                                                    {if $manager->role == 'employer'}
+                                                        {if !in_array($document->numeration, ['1.1', '2.2', '3.1'])}
+                                                            {continue}
+                                                        {/if}
+                                                    {/if}
                                                     <div
                                                             style="width: 100%!important; height: 50px; margin-left: 5px; display: flex; vertical-align: middle"
                                                             id="{$document->id}">

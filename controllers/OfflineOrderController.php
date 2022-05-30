@@ -2919,15 +2919,15 @@ class OfflineOrderController extends Controller
     private function action_accept_by_employer()
     {
         $order_id = (int)$this->request->post('order_id');
-
         $this->orders->update_order($order_id, ['status' => 14]);
+        exit;
     }
 
     private function action_reject_by_employer()
     {
         $order_id = (int)$this->request->post('order_id');
-
         $this->orders->update_order($order_id, ['status' => 15]);
+        exit;
     }
 
     private function action_edit_personal_number()
@@ -3597,7 +3597,18 @@ class OfflineOrderController extends Controller
             echo json_encode(['error' => 1]);
             exit;
         }else{
-            $this->orders->update_order($order_id, ['status' => 4, 'sms' => $code, 'confirm_date' => date('Y-m-d H:i:s')]);
+            $this->orders->update_order($order_id, ['sms' => $code]);
+
+            $asp_log =
+                [
+                    'user_id' => $user_id,
+                    'order_id' => $order_id,
+                    'code' => $code,
+                    'created' => date('Y-m-d H:i:s')
+                ];
+
+            $this->AspCodes->add_code($asp_log);
+
             echo json_encode(['success' => 1]);
             exit;
         }

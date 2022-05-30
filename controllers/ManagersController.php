@@ -19,21 +19,33 @@ class ManagersController extends Controller
             $this->design->assign('search', array_filter($search));
         }
 
+        if (isset($search['company_name'])) {
+            $companies = $this->Companies->get_companies($search);
+
+            foreach ($companies as $company) {
+                $managers_id = $this->ManagersEmployers->get_managers_id($company->id);
+            }
+
+            foreach ($managers_id as $key => $id){
+                $filter['id'][] = $id->manager_id;
+            }
+        }
+
         if (!in_array('managers', $this->manager->permissions)) {
             return $this->design->fetch('403.tpl');
         }
 
-        if($this->manager->role == 'employer')
+        if ($this->manager->role == 'employer')
             $filter['employer'] = $this->manager->company_id;
 
         $managers = $this->managers->get_managers($filter);
 
 
-        foreach ($managers as $key => $manager){
+        foreach ($managers as $key => $manager) {
             $managers[$key]->companies = $this->ManagersEmployers->get_records($manager->id);
         }
 
-        if(!empty($managers)){
+        if (!empty($managers)) {
 
 //            $companies = $this->Companies->get_companies();
 //
@@ -51,7 +63,7 @@ class ManagersController extends Controller
 
             $clients_count = count($managers);
 
-            $pages_num = ceil($clients_count/$items_per_page);
+            $pages_num = ceil($clients_count / $items_per_page);
             $this->design->assign('total_pages_num', $pages_num);
             $this->design->assign('total_orders_count', $clients_count);
 

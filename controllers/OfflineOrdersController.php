@@ -4,7 +4,7 @@ class OfflineOrdersController extends Controller
 {
     public function fetch()
     {
-        $items_per_page = 20;
+        $items_per_page = 100;
 
         $filter = array();
 
