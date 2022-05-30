@@ -766,7 +766,7 @@
                         $('.code_asp').hide();
                         $('.send_asp_code').hide();
                         $('.confirm_asp').hide();
-                        $('.asp_success').show();
+                        $('#asp_success').show();
 
                         setTimeout(function () {
                             $('#asp_success').fadeOut();
@@ -779,7 +779,7 @@
                                 '</div>' +
                                 '</div>';
 
-                            $('.asp_success').after(html).fadeIn();
+                            $('#asp_success').after(html).fadeIn();
                         }, 5000);
                     }
                 }
