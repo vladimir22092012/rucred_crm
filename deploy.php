@@ -12,7 +12,7 @@ set('branch', 'master');
 set('default_stage', 'stage');
 set('php_fpm_version', '8.0');
 set('ssh_arguments', ['-o UserKnownHostsFile=/dev/null', '-o StrictHostKeyChecking=no']);
-set('shared_dirs', ['configuration', 'files']);
+set('shared_dirs', ['configuration']);
 
 host('51.250.98.13')
     ->set('remote_user', 'ploi')
@@ -26,9 +26,9 @@ task('deploy', [
 ]);
 
 task('files:link', function () {
-    cd('{{release_or_current_path}}');
-    run('ln -s /home/ploi/share/files /home/ploi/rucred-dev.ru/current/files');
-    run('ln -s /home/ploi/rucred-dev.ru/current/files /home/ploi/rucred-dev.ru/current/public/files');
+    run('cd {{release_or_current_path}} && rm -rf files');
+    run('cd {{release_or_current_path}} && ln -sf /home/ploi/share/files files');
+    run('cd {{release_or_current_path}} && ln -sf /home/ploi/share/files public/files');
 });
 
 after('deploy:failed', 'deploy:unlock');
