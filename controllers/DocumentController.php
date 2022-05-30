@@ -99,12 +99,21 @@ class DocumentController extends Controller
 
         $percents_per_year = $this->num2str($percents_per_year);
         $this->design->assign('percents_per_year', $percents_per_year);
+        $psk_rub = $payment_schedule['result']['all_loan_percents_pay'] + $payment_schedule['result']['all_comission_pay'];
+        $psk_rub = number_format($psk_rub, 2, ',', ' ');
 
-        $amount_to_string = $document->params->amount;
-        $amount_to_string = $this->num2str($amount_to_string);
+        $amount_to_string = explode(',', $psk_rub);
+        $amount_to_string_1 = str_replace(' ', '', $amount_to_string[0]);
 
+        $amount_to_string_1 = $this->num2str($amount_to_string_1);
+        $this->design->assign('amount_to_string_1', $amount_to_string_1);
 
-        $this->design->assign('amount_to_string', $amount_to_string);
+        if (isset($amount_to_string[1])) {
+            $amount_to_string_2 = $this->num2str($amount_to_string[1]);
+            $this->design->assign('amount_to_string_2', $amount_to_string_2);
+        }
+
+        $this->design->assign('psk_rub', $psk_rub);
 
         $passport_serial_full = explode(' ', $document->params->passport_serial);
         $passport_serial = $passport_serial_full[0];
@@ -166,7 +175,7 @@ class DocumentController extends Controller
                 $download = $fio . " - Заявление работодателю $employer  на перечисление по микрозайму " . "($date)";
             }
 
-            if(isset($download))
+            if (isset($download))
                 $download = $this->translit($download);
 
 
@@ -179,21 +188,21 @@ class DocumentController extends Controller
     private function translit($value)
     {
         $converter = array(
-            'а' => 'a',    'б' => 'b',    'в' => 'v',    'г' => 'g',    'д' => 'd',
-            'е' => 'e',    'ё' => 'e',    'ж' => 'zh',   'з' => 'z',    'и' => 'i',
-            'й' => 'y',    'к' => 'k',    'л' => 'l',    'м' => 'm',    'н' => 'n',
-            'о' => 'o',    'п' => 'p',    'р' => 'r',    'с' => 's',    'т' => 't',
-            'у' => 'u',    'ф' => 'f',    'х' => 'h',    'ц' => 'c',    'ч' => 'ch',
-            'ш' => 'sh',   'щ' => 'sch',  'ь' => '',     'ы' => 'y',    'ъ' => '',
-            'э' => 'e',    'ю' => 'yu',   'я' => 'ya',
+            'а' => 'a', 'б' => 'b', 'в' => 'v', 'г' => 'g', 'д' => 'd',
+            'е' => 'e', 'ё' => 'e', 'ж' => 'zh', 'з' => 'z', 'и' => 'i',
+            'й' => 'y', 'к' => 'k', 'л' => 'l', 'м' => 'm', 'н' => 'n',
+            'о' => 'o', 'п' => 'p', 'р' => 'r', 'с' => 's', 'т' => 't',
+            'у' => 'u', 'ф' => 'f', 'х' => 'h', 'ц' => 'c', 'ч' => 'ch',
+            'ш' => 'sh', 'щ' => 'sch', 'ь' => '', 'ы' => 'y', 'ъ' => '',
+            'э' => 'e', 'ю' => 'yu', 'я' => 'ya',
 
-            'А' => 'A',    'Б' => 'B',    'В' => 'V',    'Г' => 'G',    'Д' => 'D',
-            'Е' => 'E',    'Ё' => 'E',    'Ж' => 'Zh',   'З' => 'Z',    'И' => 'I',
-            'Й' => 'Y',    'К' => 'K',    'Л' => 'L',    'М' => 'M',    'Н' => 'N',
-            'О' => 'O',    'П' => 'P',    'Р' => 'R',    'С' => 'S',    'Т' => 'T',
-            'У' => 'U',    'Ф' => 'F',    'Х' => 'H',    'Ц' => 'C',    'Ч' => 'Ch',
-            'Ш' => 'Sh',   'Щ' => 'Sch',  'Ь' => '',     'Ы' => 'Y',    'Ъ' => '',
-            'Э' => 'E',    'Ю' => 'Yu',   'Я' => 'Ya',
+            'А' => 'A', 'Б' => 'B', 'В' => 'V', 'Г' => 'G', 'Д' => 'D',
+            'Е' => 'E', 'Ё' => 'E', 'Ж' => 'Zh', 'З' => 'Z', 'И' => 'I',
+            'Й' => 'Y', 'К' => 'K', 'Л' => 'L', 'М' => 'M', 'Н' => 'N',
+            'О' => 'O', 'П' => 'P', 'Р' => 'R', 'С' => 'S', 'Т' => 'T',
+            'У' => 'U', 'Ф' => 'F', 'Х' => 'H', 'Ц' => 'C', 'Ч' => 'Ch',
+            'Ш' => 'Sh', 'Щ' => 'Sch', 'Ь' => '', 'Ы' => 'Y', 'Ъ' => '',
+            'Э' => 'E', 'Ю' => 'Yu', 'Я' => 'Ya',
         );
 
         $value = strtr($value, $converter);

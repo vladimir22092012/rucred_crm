@@ -728,6 +728,12 @@
                 confirm_asp(user, phone, code, order);
 
             });
+
+            let order = {{json_encode($order)}};
+
+            if($.inArray(order['status'], ['4','5','6','7','8'])){
+                $('.fa-edit').remove();
+            }
         });
     </script>
     <script>
@@ -2022,12 +2028,14 @@
 
                                             <h6 class="card-header">
                                                 <span class="text-white">Информация о работодателе</span>
+                                                {if !in_array($order->status, ['4','5','6','7','8'])}
                                                 <span class="float-right">
                                                     <a href="javascript:void(0);"
                                                        class="text-white"
-                                                       data-user="{$order->user_id}"><i
-                                                                class="fas fa-eraser"></i></a>
+                                                       data-user="{$order->user_id}">
+                                                        <i class="fas fa-eraser"></i></a>
                                                         </span>
+                                                {/if}
                                             </h6>
 
                                             <div class="row m-0 pt-2 view-block">
@@ -2120,7 +2128,7 @@
                                             <input type="hidden" name="order_id" value="{$order->order_id}"/>
                                             <input type="hidden" name="user_id" value="{$order->user_id}"/>
 
-                                            {if $order->status != 9}
+                                            {if !in_array($order->status, ['4','5','6','7','8'])}
                                                 <h6 class="card-header">
                                                     <span class="text-white">Документы</span>
                                                     {if $manager->role != 'employer'}
@@ -2176,7 +2184,7 @@
                                                                            value="Скан">
                                                                 </a>
                                                             {/if}
-                                                            {if $order->status != 9}
+                                                            {if !in_array($order->status, ['4','5','6','7','8'])}
                                                                 {if $manager->role != 'employer'}
                                                                     <button type="button"
                                                                             class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
@@ -2734,7 +2742,7 @@
                                             </div>
                                         {/if}
                                     </form>
-                                    {if $manager->role != 'employer'}
+                                    {if $manager->role != 'employer' && !in_array($order->status, ['4','5','6','7','8'])}
                                         <div type="button" class="btn btn-outline-danger delete_order"
                                              data-order="{$order->order_id}" style="height: 38px">
                                             Удалить заявку

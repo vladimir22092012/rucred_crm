@@ -44,8 +44,8 @@
         </td>
         <td style="width: 36%;" align="center">
             <div>Полная стоимость микрозайма в валюте микрозайма
-                <strong>{$amount|number_format:0:',':' '} ({$amount_to_string|upper})</strong> рублей
-                <strong>00</strong>
+                <strong>{$psk_rub} ({$amount_to_string_1|upper})</strong> рублей
+                <strong>{$amount_to_string_2|upper}</strong>
                 копеек
             </div>
         </td>
@@ -106,7 +106,7 @@
 </footer>
 {/if}
 {if isset($sms)}
-    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+    <table style="color: #880000; page-break-after: always; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
         <tr>
             <td>Подписано простой электронной подписью</td>
         </tr>
@@ -209,7 +209,7 @@
 </footer>
 {/if}
 {if isset($sms)}
-    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+    <table style="color: #880000; page-break-after: always; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
         <tr>
             <td>Подписано простой электронной подписью</td>
         </tr>
@@ -320,7 +320,7 @@
 </footer>
 {/if}
 {if isset($sms)}
-    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+    <table style="color: #880000; page-break-after: always; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
         <tr>
             <td>Подписано простой электронной подписью</td>
         </tr>
@@ -425,7 +425,7 @@
 </footer>
 {/if}
 {if isset($sms)}
-    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+    <table style="color: #880000; page-break-after: always; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
         <tr>
             <td>Подписано простой электронной подписью</td>
         </tr>
@@ -516,7 +516,7 @@
 </footer>
 {/if}
 {if isset($sms)}
-    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+    <table style="color: #880000; page-break-after: always; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
         <tr>
             <td>Подписано простой электронной подписью</td>
         </tr>
@@ -621,7 +621,7 @@
 </footer>
 {/if}
 {if isset($sms)}
-    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+    <table style="color: #880000; page-break-after: always; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
         <tr>
             <td>Подписано простой электронной подписью</td>
         </tr>
@@ -705,7 +705,7 @@
 </footer>
 {/if}
 {if isset($sms)}
-    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%; page-break-after: always;" cellpadding="2">
         <tr>
             <td>Подписано простой электронной подписью</td>
         </tr>
@@ -740,10 +740,9 @@
                     ({$percents_per_day_str_part_one|upper} {if $percents_per_day_str_part_two|upper} ЦЕЛЫХ И {$percents_per_day_str_part_two|upper} СОТЫХ ПРОЦЕНТА{/if}
                     )</strong><br>(04) Полная
                 стоимость микрозайма в валюте
-                микрозайма: <br><strong>{$payment_schedule['result']['all_sum_pay']|number_format:2:',':' '}</strong>
+                микрозайма: <br><strong>{$psk_rub}</strong>
                 (<strong>{$all_pay_sum_string_part_one|upper})</strong>
-                {$first_part_all_sum_pay|plural:'рубль':'рублей':'рубля'}
-                <strong>{if $all_pay_sum_string_part_two}{$all_pay_sum_string_part_two}{else}00{/if}</strong>
+                <strong>{if $amount_to_string_2}{$amount_to_string_2}{else}00{/if}</strong>
                 копеек<br>(05)
                 Полная стоимость микрозайма в процентах
                 годовых: <strong>{$percents}%
@@ -839,7 +838,7 @@
 </footer>
 {/if}
 {if isset($sms)}
-    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+    <table style="color: #880000; page-break-after: always; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
         <tr>
             <td>Подписано простой электронной подписью</td>
         </tr>
@@ -966,7 +965,7 @@
 </footer>
 {/if}
 {if isset($sms)}
-    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+    <table style="color: #880000; page-break-after: always; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
         <tr>
             <td>Подписано простой электронной подписью</td>
         </tr>
