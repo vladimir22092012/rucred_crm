@@ -779,8 +779,8 @@
                                 '</div>' +
                                 '</div>';
 
-                            $('#asp_success').after(html).fadeIn();
-                        }, 5000);
+                            $('.js-reject-order').after(html).fadeIn();
+                        }, 4000);
                     }
                 }
             });
