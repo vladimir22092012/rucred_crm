@@ -50,6 +50,7 @@
     <div>
 
     </div>
+    {if !isset($sms)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -68,6 +69,26 @@
             </tr>
         </table>
     </footer>
+    {/if}
+    {if isset($sms)}
+        <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+            <tr>
+                <td>Подписано простой электронной подписью</td>
+            </tr>
+            <tr>
+                <td>{$firstname} {$patronymic} {$lastname}</td>
+            </tr>
+            <tr>
+                <td>Дата: {$confirm_date}(МСК)</td>
+            </tr>
+            <tr>
+                <td>Телефон: {$phone_mobile}</td>
+            </tr>
+            <tr>
+                <td>Код подтверждения: {$sms}</td>
+            </tr>
+        </table>
+    {/if}
     • вид, серия, номер документа, удостоверяющего личность, дата выдачи, наименование органа, выдавшего его;<br>•
     реквизиты паспорта гражданина Российской Федерации, удостоверяющего личность гражданина Российской Федерации за
     пределами территории Российской Федерации (серия, номер, когда и кем выдан);<br>• реквизиты страхового свидетельства
@@ -116,6 +137,7 @@
 <div>
 
 </div>
+{if !isset($sms)}
 <footer>
     <table style="width: 100%;font-size: 8px" border="1">
         <tr style="width: 100%">
@@ -134,9 +156,11 @@
         </tr>
     </table>
 </footer>
+{/if}
 <div>
 
 </div>
+{if isset($sms)}
 <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
     <tr>
         <td>Подписано простой электронной подписью</td>
@@ -154,3 +178,4 @@
         <td>Код подтверждения: {$sms}</td>
     </tr>
 </table>
+{/if}

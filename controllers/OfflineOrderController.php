@@ -824,8 +824,11 @@ class OfflineOrderController extends Controller
 
         $users_docs = $this->Documents->get_documents(['user_id' => $order->user_id]);
 
-        if ($count_scans < count($users_docs))
-            return array('error' => 'Приложены не все сканы!');
+        if(empty($users_docs))
+            return array('error' => 'Не сформированы документы!');
+
+        if ($count_scans < count($users_docs) && empty($order->sms))
+            return array('error' => 'Для одобрения заявки нужны все сканы либо пэп!');
 
         if ($order->amount < $loan->min_amount && $order->amount > $loan->max_amount)
             return array('error' => 'Проверьте сумму займа!');

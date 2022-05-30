@@ -55,6 +55,7 @@
     идентификации или упрощённой идентификации, а также к микрофинансовым организациям, которые могут
     поручать кредитным организациям проведение идентификации или упрощённой идентификации».
 </div>
+{if !isset($sms)}
 <table style="width: 100%;" border="1" cellpadding="8">
     <tr style="width: 100%">
         <td style="width: 25%; height: 30px" align="center"><span style="color: #b3b2ab">ПОДПИСЬ</span></td>
@@ -62,9 +63,11 @@
         <td style="width: 25%" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span></td>
     </tr>
 </table>
+{/if}
 <div>
     <br>
 </div>
+{if isset($sms)}
 <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
     <tr>
         <td>Подписано простой электронной подписью</td>
@@ -82,3 +85,4 @@
         <td>Код подтверждения: {$sms}</td>
     </tr>
 </table>
+{/if}

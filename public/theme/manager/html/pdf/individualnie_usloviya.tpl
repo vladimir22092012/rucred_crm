@@ -38,7 +38,8 @@
         <td style="width: 36%" align="center">
             <div>Полная стоимость микрозайма в процентах годовых
                 <strong>{$percents}%<br>
-                    ({$percents_per_year|upper} {if $second_part_percents|upper} ЦЕЛЫХ И {$second_part_percents|upper} ТЫСЯЧНЫХ ПРОЦЕНТОВ{/if})</strong> годовых
+                    ({$percents_per_year|upper} {if $second_part_percents|upper} ЦЕЛЫХ И {$second_part_percents|upper} ТЫСЯЧНЫХ ПРОЦЕНТОВ{/if}
+                    )</strong> годовых
             </div>
         </td>
         <td style="width: 36%;" align="center">
@@ -84,6 +85,7 @@
     Заимодавцем Заёмщику на сайте http://www.рукред.рф/ до подписания настоящего Договора микрозайма и заключает
     настоящий Договор микрозайма (далее – «Договор») на следующих Индивидуальных условиях.<br>
 </div>
+{if !isset($sms)}
 <footer>
     <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
         <tr style="width: 100%">
@@ -102,6 +104,26 @@
         </tr>
     </table>
 </footer>
+{/if}
+{if isset($sms)}
+    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+        <tr>
+            <td>Подписано простой электронной подписью</td>
+        </tr>
+        <tr>
+            <td>{$firstname} {$patronymic} {$lastname}</td>
+        </tr>
+        <tr>
+            <td>Дата: {$confirm_date}(МСК)</td>
+        </tr>
+        <tr>
+            <td>Телефон: {$phone_mobile}</td>
+        </tr>
+        <tr>
+            <td>Код подтверждения: {$sms}</td>
+        </tr>
+    </table>
+{/if}
 <br><br><br>
 <h3><strong>1. ИНФОРМАЦИЯ О ЗАИМОДАВЦЕ</strong></h3><br>
 <table border="1" style="width: 100%; font-size: 9px" cellpadding="5">
@@ -166,6 +188,7 @@
 <div>
     <br><br><br><br><br><br><br><br><br>
 </div>
+{if !isset($sms)}
 <footer>
     <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
         <tr style="width: 100%">
@@ -184,6 +207,26 @@
         </tr>
     </table>
 </footer>
+{/if}
+{if isset($sms)}
+    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+        <tr>
+            <td>Подписано простой электронной подписью</td>
+        </tr>
+        <tr>
+            <td>{$firstname} {$patronymic} {$lastname}</td>
+        </tr>
+        <tr>
+            <td>Дата: {$confirm_date}(МСК)</td>
+        </tr>
+        <tr>
+            <td>Телефон: {$phone_mobile}</td>
+        </tr>
+        <tr>
+            <td>Код подтверждения: {$sms}</td>
+        </tr>
+    </table>
+{/if}
 <div>
     <h3><strong>2. ИНДИВИДУАЛЬНЫЕ УСЛОВИЯ ДОГОВОРА МИКРОЗАЙМА</strong></h3><br>
     <table border="1" style="width: 100%; font-size: 9px" cellpadding="5">
@@ -256,6 +299,7 @@
 <div>
 
 </div>
+{if !isset($sms)}
 <footer>
     <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
         <tr style="width: 100%">
@@ -274,6 +318,26 @@
         </tr>
     </table>
 </footer>
+{/if}
+{if isset($sms)}
+    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+        <tr>
+            <td>Подписано простой электронной подписью</td>
+        </tr>
+        <tr>
+            <td>{$firstname} {$patronymic} {$lastname}</td>
+        </tr>
+        <tr>
+            <td>Дата: {$confirm_date}(МСК)</td>
+        </tr>
+        <tr>
+            <td>Телефон: {$phone_mobile}</td>
+        </tr>
+        <tr>
+            <td>Код подтверждения: {$sms}</td>
+        </tr>
+    </table>
+{/if}
 <div>
     <h3><strong>2. ИНДИВИДУАЛЬНЫЕ УСЛОВИЯ ДОГОВОРА МИКРОЗАЙМА</strong></h3><br>
     <table border="1" style="width: 100%; font-size: 9px" cellpadding="5">
@@ -340,6 +404,7 @@
 <div>
     <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 </div>
+{if !isset($sms)}
 <footer>
     <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
         <tr style="width: 100%">
@@ -358,6 +423,26 @@
         </tr>
     </table>
 </footer>
+{/if}
+{if isset($sms)}
+    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+        <tr>
+            <td>Подписано простой электронной подписью</td>
+        </tr>
+        <tr>
+            <td>{$firstname} {$patronymic} {$lastname}</td>
+        </tr>
+        <tr>
+            <td>Дата: {$confirm_date}(МСК)</td>
+        </tr>
+        <tr>
+            <td>Телефон: {$phone_mobile}</td>
+        </tr>
+        <tr>
+            <td>Код подтверждения: {$sms}</td>
+        </tr>
+    </table>
+{/if}
 <div>
     <h3><strong>2. ИНДИВИДУАЛЬНЫЕ УСЛОВИЯ ДОГОВОРА МИКРОЗАЙМА</strong></h3><br>
     <table border="1" style="width: 100%; font-size: 9px" cellpadding="5">
@@ -410,6 +495,7 @@
 <div>
     <br><br><br><br><br>
 </div>
+{if !isset($sms)}
 <footer>
     <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
         <tr style="width: 100%">
@@ -428,6 +514,26 @@
         </tr>
     </table>
 </footer>
+{/if}
+{if isset($sms)}
+    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+        <tr>
+            <td>Подписано простой электронной подписью</td>
+        </tr>
+        <tr>
+            <td>{$firstname} {$patronymic} {$lastname}</td>
+        </tr>
+        <tr>
+            <td>Дата: {$confirm_date}(МСК)</td>
+        </tr>
+        <tr>
+            <td>Телефон: {$phone_mobile}</td>
+        </tr>
+        <tr>
+            <td>Код подтверждения: {$sms}</td>
+        </tr>
+    </table>
+{/if}
 <div>
     <h3><strong>2. ИНДИВИДУАЛЬНЫЕ УСЛОВИЯ ДОГОВОРА МИКРОЗАЙМА</strong></h3><br>
     <table border="1" style="width: 100%; font-size: 9px" cellpadding="5">
@@ -494,6 +600,7 @@
 <div>
     <br><br><br><br><br><br><br><br><br>
 </div>
+{if !isset($sms)}
 <footer>
     <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
         <tr style="width: 100%">
@@ -512,6 +619,26 @@
         </tr>
     </table>
 </footer>
+{/if}
+{if isset($sms)}
+    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+        <tr>
+            <td>Подписано простой электронной подписью</td>
+        </tr>
+        <tr>
+            <td>{$firstname} {$patronymic} {$lastname}</td>
+        </tr>
+        <tr>
+            <td>Дата: {$confirm_date}(МСК)</td>
+        </tr>
+        <tr>
+            <td>Телефон: {$phone_mobile}</td>
+        </tr>
+        <tr>
+            <td>Код подтверждения: {$sms}</td>
+        </tr>
+    </table>
+{/if}
 <div>
     <h3><strong>2. ИНДИВИДУАЛЬНЫЕ УСЛОВИЯ ДОГОВОРА МИКРОЗАЙМА</strong></h3><br>
     <table border="1" style="width: 100%; font-size: 9px" cellpadding="5">
@@ -557,6 +684,7 @@
 <div>
     <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 </div>
+{if !isset($sms)}
 <footer>
     <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
         <tr style="width: 100%">
@@ -575,6 +703,26 @@
         </tr>
     </table>
 </footer>
+{/if}
+{if isset($sms)}
+    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+        <tr>
+            <td>Подписано простой электронной подписью</td>
+        </tr>
+        <tr>
+            <td>{$firstname} {$patronymic} {$lastname}</td>
+        </tr>
+        <tr>
+            <td>Дата: {$confirm_date}(МСК)</td>
+        </tr>
+        <tr>
+            <td>Телефон: {$phone_mobile}</td>
+        </tr>
+        <tr>
+            <td>Код подтверждения: {$sms}</td>
+        </tr>
+    </table>
+{/if}
 <div>
     <h3><strong>3. ИНФОРМАЦИЯ О ПОЛНОЙ СТОИМОСТИ МИКРОЗАЙМА, РАССЧИТАННОЙ НА ОСНОВАНИИ ПРИМЕРНОГО ГРАФИКА ПЛАТЕЖЕЙ ПО
             МИКРОЗАЙМУ</strong></h3><br>
@@ -670,6 +818,7 @@
 </table>
 <div>
 </div>
+{if !isset($sms)}
 <footer>
     <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
         <tr style="width: 100%">
@@ -688,6 +837,26 @@
         </tr>
     </table>
 </footer>
+{/if}
+{if isset($sms)}
+    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+        <tr>
+            <td>Подписано простой электронной подписью</td>
+        </tr>
+        <tr>
+            <td>{$firstname} {$patronymic} {$lastname}</td>
+        </tr>
+        <tr>
+            <td>Дата: {$confirm_date}(МСК)</td>
+        </tr>
+        <tr>
+            <td>Телефон: {$phone_mobile}</td>
+        </tr>
+        <tr>
+            <td>Код подтверждения: {$sms}</td>
+        </tr>
+    </table>
+{/if}
 <h3><strong>5. ЗАВЕРЕНИЯ ЗАЁМЩИКА</strong></h3><br>
 <hr style="width: 100%; size: 5px">
 <div>
@@ -776,6 +945,7 @@
     </tr>
 </table>
 <div></div>
+{if !isset($sms)}
 <footer>
     <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
         <tr style="width: 100%">
@@ -794,6 +964,26 @@
         </tr>
     </table>
 </footer>
+{/if}
+{if isset($sms)}
+    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+        <tr>
+            <td>Подписано простой электронной подписью</td>
+        </tr>
+        <tr>
+            <td>{$firstname} {$patronymic} {$lastname}</td>
+        </tr>
+        <tr>
+            <td>Дата: {$confirm_date}(МСК)</td>
+        </tr>
+        <tr>
+            <td>Телефон: {$phone_mobile}</td>
+        </tr>
+        <tr>
+            <td>Код подтверждения: {$sms}</td>
+        </tr>
+    </table>
+{/if}
 <table>
     <tr>
         <td style="width: 45%">ИНН 9725055162</td>
@@ -829,29 +1019,35 @@
     <tr>
         <td style="width: 45%">__________________/<strong>А.В.Лоскутов</strong>/</td>
         <td style="width: 10%"></td>
-        <td style="width: 45%">
-            __________________/<strong>{$firstname|mb_substr:0:1}.{$patronymic|mb_substr:0:1}.{$lastname}/</strong>
-        </td>
+        {if !isset($sms)}
+            <td style="width: 45%">
+                __________________/<strong>{$firstname|mb_substr:0:1}.{$patronymic|mb_substr:0:1}.{$lastname}/</strong>
+            </td>
+        {else}
+            <td style="width: 45%"></td>
+        {/if}
     </tr>
     <br>
 </table>
 <div>
     <br>
 </div>
-<table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
-    <tr>
-        <td>Подписано простой электронной подписью</td>
-    </tr>
-    <tr>
-        <td>{$firstname} {$patronymic} {$lastname}</td>
-    </tr>
-    <tr>
-        <td>Дата: {$confirm_date}(МСК)</td>
-    </tr>
-    <tr>
-        <td>Телефон: {$phone_mobile}</td>
-    </tr>
-    <tr>
-        <td>Код подтверждения: {$sms}</td>
-    </tr>
-</table>
+{if isset($sms)}
+    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+        <tr>
+            <td>Подписано простой электронной подписью</td>
+        </tr>
+        <tr>
+            <td>{$firstname} {$patronymic} {$lastname}</td>
+        </tr>
+        <tr>
+            <td>Дата: {$confirm_date}(МСК)</td>
+        </tr>
+        <tr>
+            <td>Телефон: {$phone_mobile}</td>
+        </tr>
+        <tr>
+            <td>Код подтверждения: {$sms}</td>
+        </tr>
+    </table>
+{/if}

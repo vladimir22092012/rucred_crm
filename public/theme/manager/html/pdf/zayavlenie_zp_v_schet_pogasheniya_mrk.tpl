@@ -71,6 +71,7 @@
 <div>Приложение:<br>Копия Графика платежей от <strong>{$date|date}</strong> года<br>
 </div>
 <div><br><br></div>
+{if !isset($sms)}
 <table>
     <tr style="width: 100%">
         <td style="width: 30%"><strong>{$date|date} года</strong></td>
@@ -78,9 +79,11 @@
         <td style="width: 40%">_______________/____________</td>
     </tr>
 </table>
+{/if}
 <div>
     <br>
 </div>
+{if isset($sms)}
 <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
     <tr>
         <td>Подписано простой электронной подписью</td>
@@ -98,3 +101,4 @@
         <td>Код подтверждения: {$sms}</td>
     </tr>
 </table>
+{/if}
