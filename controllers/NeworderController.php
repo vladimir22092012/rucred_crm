@@ -328,7 +328,7 @@ class NeworderController extends Controller
             exit;
         }
 
-        if ($this->request->post('actual_address') === 1) {
+        if ($this->request->post('actual_address') == 1) {
             $user['Faktadressfull'] = $user['Regadressfull'];
             $user['Faktindex'] = $user['Regindex'];
             $user['Faktregion'] = $user['Regregion'];
@@ -479,9 +479,9 @@ class NeworderController extends Controller
 
             if (date('d', strtotime($start_date)) < $first_pay_day) {
                 if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < 3) {
-                    $plus_loan_percents = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
+                    $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days, 0, PHP_ROUND_HALF_DOWN);
                     $sum_pay = $annoouitet_pay + $plus_loan_percents;
-                    $loan_percents_pay = ($rest_sum * $percent_per_month) + $plus_loan_percents;
+                    $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents,2,PHP_ROUND_HALF_DOWN);
                     $body_pay = $sum_pay - $loan_percents_pay;
                     $paydate->add(new DateInterval('P1M'));
                     $paydate = $this->check_pay_date($paydate);

@@ -3033,9 +3033,9 @@ class OfflineOrderController extends Controller
 
         if (date('d', strtotime($start_date)) < $first_pay_day) {
             if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < 3) {
-                $plus_loan_percents = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
+                $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days, 0, PHP_ROUND_HALF_DOWN);
                 $sum_pay = $annoouitet_pay + $plus_loan_percents;
-                $loan_percents_pay = ($rest_sum * $percent_per_month) + $plus_loan_percents;
+                $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents,2,PHP_ROUND_HALF_DOWN);
                 $body_pay = $sum_pay - $loan_percents_pay;
                 $paydate->add(new DateInterval('P1M'));
                 $paydate = $this->check_pay_date($paydate);
@@ -3096,7 +3096,6 @@ class OfflineOrderController extends Controller
             $lastdate = clone $end_date;
             $end_date->setTime(24, 0, 1);
             $daterange = new DatePeriod($paydate, $interval, $end_date);
-            $end_date->sub(new DateInterval('P1M'))->format('m');
 
             foreach ($daterange as $date) {
                 $date = $this->check_pay_date($date);
