@@ -510,13 +510,10 @@ console.log(resp);
                                     text: resp.error,
                                     type: 'error',
                                 });
-
-                                location.reload();
                             }
                             else
                             {
                                 app.update_page();
-
                             }
                         },
                     })
