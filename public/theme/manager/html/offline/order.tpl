@@ -1334,7 +1334,7 @@
                                             </div>
                                         {/if}
                                     {/if}
-                                    {if $order->status == 14 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
+                                    {if $order->status == 14 && in_array($manager->role, ['developer', 'admin', 'underwriter', 'middle'])}
                                         <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
                                             <button
                                                     class="btn btn-success btn-block js-approve-order js-event-add-click"

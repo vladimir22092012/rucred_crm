@@ -1106,6 +1106,7 @@
                                                class="loan_type_to_submit" value="{$order->loan_type}">
                                         <input style="display: none" name="order_id" value="{$order->order_id}">
                                         <input style="display: none" name="user_id" value="{$order->user_id}">
+                                        <input style="display: none" name="check_same_users" value="0">
                                     </div>
                                 </form>
                             </div>

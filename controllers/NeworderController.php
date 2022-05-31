@@ -130,6 +130,13 @@ class NeworderController extends Controller
             exit;
         }
 
+        $check_same_users = $this->request->post('check_same_users');
+
+        if(empty($check_same_users)){
+            response_json(['error' => 1, 'reason' => 'Произведите проверку на совпадения']);
+            exit;
+        }
+
 
         $user['lastname'] = trim($this->request->post('lastname'));
 

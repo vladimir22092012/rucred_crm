@@ -628,6 +628,7 @@ $(function () {
                 });
             }
         });
+        $('input[name="check_same_users"]').val('1');
     });
 
 });
