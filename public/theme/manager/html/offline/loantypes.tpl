@@ -49,7 +49,38 @@
                 });
             });
 
+            $('.searchable:not(select)').on('change', function (e) {
+                e.preventDefault();
 
+                $('table tbody tr').show();
+
+                $('.searchable:not(select)').each(function () {
+                    let value = $(this).val();
+                    let index = $(this).parent().index() + 1;
+
+                    if (value && value.length > 0) {
+                        $('td:nth-child(' + index + ')').each(function () {
+                            let find_value = $(this).text().toLowerCase();
+                            if (find_value.includes(value) === false) {
+                                $(this).closest('tr').hide();
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('.search_type').on('change', function () {
+                let value = $(this).val();
+
+                if (value != 'none') {
+                    $('tr[class="jsgrid-row js-item loantypes"]').show();
+                    $('tr[class="jsgrid-row js-item loantypes"]').not('#' + value + '').hide();
+                }
+                else {
+                    $('tr[class="jsgrid-row js-item loantypes"]').show();
+                }
+
+            });
         })
     </script>
 {/capture}
@@ -138,36 +169,51 @@
 
                         <div id="basicgrid" class="jsgrid" style="position: relative; width: 100%;">
                             <div class="jsgrid-grid-header jsgrid-header-scrollbar">
-                                <table class="jsgrid-table table table-striped table-hover">
+                                <table class="jsgrid-table table table-striped table-hover" style="text-align: center">
                                     <tr class="jsgrid-header-row bg-grey">
                                         <th style="width: 60px;"
-                                            class="jsgrid-header-cell jsgrid-align-left jsgrid-header-sortable {if $sort == 'order_id_desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'order_id_asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
+                                            class="jsgrid-header-cell jsgrid-align-left jsgrid-header-sortable {if $sort == 'name_desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'name_asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
                                             Наименование
                                         </th>
                                         <th style="width: 60px;"
-                                            class="jsgrid-header-cell jsgrid-align-left jsgrid-header-sortable {if $sort == 'order_id_desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'order_id_asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
+                                            class="jsgrid-header-cell jsgrid-align-left jsgrid-header-sortable {if $sort == 'type_desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'type_asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
                                             Тип
                                         </th>
                                         <th style="width: 60px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'std_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'std_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             Процентная ставка
                                         </th>
                                         <th style="width: 60px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'free_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'free_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             Льготная ставка
                                         </th>
                                         <th style="width: 60px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'min_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'min_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             Мин. сумма
                                         </th>
                                         <th style="width: 70px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'max_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'max_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             Макс.&nbsp;сумма
                                         </th>
                                         <th style="width: 70px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'period_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'period_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             Количество выплат
                                         </th>
+                                    </tr>
+                                    <tr>
+                                        <th class=""><input type="text" class="form-control searchable"></th>
+                                        <th class="">
+                                            <select class="form-control search_type">
+                                                <option value="none">Выберите тип</option>
+                                                <option value="pdl">Payroll PDL</option>
+                                                <option value="annouitet">Payroll Installment</option>
+                                            </select>
+                                        </th>
+                                        <th class=""><input type="text" class="form-control searchable"></th>
+                                        <th class=""><input type="text" class="form-control searchable"></th>
+                                        <th class=""><input type="text" class="form-control searchable"></th>
+                                        <th class=""><input type="text" class="form-control searchable"></th>
+                                        <th class=""><input type="text" class="form-control searchable"></th>
                                     </tr>
                                 </table>
                             </div>
@@ -175,7 +221,7 @@
                                 <table class="jsgrid-table table table-striped table-hover">
                                     <tbody>
                                     {foreach $loantypes as $loantype}
-                                        <tr class="jsgrid-row js-item">
+                                        <tr class="jsgrid-row js-item loantypes" id="{$loantype->type}">
                                             <td style="width: 60px;" class="jsgrid-cell jsgrid-align-left">
                                                 <input type="hidden" class="js-item-id" value="{$loantype->id}"/>
                                                 <input type="hidden" class="js-item-name" value="{$loantype->name}"/>
@@ -185,9 +231,9 @@
                                             </td>
                                             <td style="width: 60px;" class="jsgrid-cell jsgrid-align-center">
                                                 {if $loantype->type == 'annouitet'}
-                                                    Аннуитет
+                                                    Payroll Installment
                                                 {else}
-                                                    {$loantype->type|escape}
+                                                    Payroll PDL
                                                 {/if}
                                             </td>
                                             <td style="width: 60px;" class="jsgrid-cell jsgrid-align-center">

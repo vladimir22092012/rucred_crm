@@ -223,10 +223,10 @@
                                             <div class="col-7 ">
                                                 <select class="form-control"
                                                         {if $manager->role == 'employer'}disabled{/if}>
-                                                    <option value="pdl" {if $loantype->type == 'pdl'}selected{/if}>PDL
+                                                    <option value="pdl" {if $loantype->type == 'pdl'}selected{/if}>Payroll PDL
                                                     </option>
                                                     <option value="annouitet"
-                                                            {if $loantype->type == 'annouitet'}selected{/if}>Аннуитет
+                                                            {if $loantype->type == 'annouitet'}selected{/if}>Payroll Installment
                                                     </option>
                                                 </select>
                                             </div>
