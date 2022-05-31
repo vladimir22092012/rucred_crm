@@ -337,6 +337,39 @@
                 }
             });
         });
+
+        $('.edit_login').on('click', function (e) {
+
+            e.preventDefault();
+
+            $('.show_login').hide();
+            $('.login_edit_form').show();
+
+            $('.cancel_login').on('click', function () {
+                $('.show_login').show();
+                $('.login_edit_form').hide();
+            });
+
+            $('.save_login').on('click', function () {
+
+                let login = $('.new_login').val();
+                let manager_id = $(this).attr('data-user');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'edit_login',
+                        login: login,
+                        manager_id: manager_id
+                    },
+                    success: function () {
+                        $('.show_login').show();
+                        $('.login_edit_form').hide();
+                        $('.show_login').text(login);
+                    }
+                });
+            });
+        });
     </script>
     <script>
         function edit_with_sms(selector, phone, phone_code) {
@@ -588,13 +621,14 @@
                                             </div>
                                         {/if}
                                     </div>
-                                    {if in_array('admins', $manager->permissions)}
+                                    {if in_array($manager->role, ['admin', 'developer'])}
                                         <div class="form-group {if in_array('empty_name', (array)$errors)}has-danger{/if}">
                                             <label class="col-md-12">Пользователь</label>
                                             <div class="col-md-12">
                                                 <input type="text" name="name"
                                                        value="{if isset($user)}{$user->name|escape}{/if}"
-                                                       class="form-control form-control-line" autocomplete="off" required="true"/>
+                                                       class="form-control form-control-line" autocomplete="off"
+                                                       required="true"/>
                                                 {if in_array('empty_name', (array)$errors)}
                                                     <small class="form-control-feedback">Укажите имя!</small>
                                                 {/if}
@@ -613,12 +647,39 @@
                                             <div class="col-md-12">
                                                 <input type="text" id="login" name="login"
                                                        value="{if isset($user)}{$user->login|escape}{/if}"
-                                                       class="form-control form-control-line" autocomplete="off" required="true"/>
+                                                       class="form-control form-control-line" autocomplete="off"
+                                                       required="true"/>
                                                 {if in_array('empty_login', (array)$errors)}
                                                     <small class="form-control-feedback">Укажите логин!</small>
                                                 {/if}
                                             </div>
                                         </div>
+                                    {else}
+                                        <div class="col-12">
+                                            <h5 class="form-control-static">Логин
+                                                <a href="#" data-user="{$client->id}" class="text-info ">
+                                                    <i class="fas fa-edit edit_login"></i>
+                                                </a>
+                                            </h5>
+                                            <div class="show_login">{$user->login}</div>
+                                        </div>
+                                        <div class="login_edit_form" style="display: none">
+                                            <div class="col-12">
+                                                <label>Новый логин</label>
+                                                <div>
+                                                    <input name="new_login" value="" class="form-control new_login">
+                                                </div>
+                                            </div><br>
+                                            <div class="col-12">
+                                                <input type="button"
+                                                       data-user="{$user->id}"
+                                                       class="btn btn-success save_login"
+                                                       value="Сохранить">
+                                                <input type="button"
+                                                       class="btn btn-danger cancel_login"
+                                                       value="Отмена">
+                                            </div>
+                                        </div><br>
                                     {/if}
                                     {if in_array($manager->role, ['admin', 'developer'])}
                                         <div class="form-group {if in_array('empty_password', (array)$errors)}has-danger{/if}">
@@ -637,7 +698,7 @@
                                             <h5 class="form-control-static">Пароль <a href="#" data-user="{$client->id}"
                                                                                       class="text-info edit_password"><i
                                                             class="fas fa-edit"></i></a></h5>
-                                            <div class="show_password">*********</div>
+                                            <div class="show_password">*********</div><br>
                                             <div class="password_edit_form" style="display: none">
                                                 <div class="mb-3">
                                                     <label>Старый пароль</label>
@@ -719,10 +780,12 @@
                                         </div>
                                     {else}
                                         <div class="col-12">
-                                            <h5 class="form-control-static">Email <a href="#" data-user="{$client->id}"
-                                                                                     class="text-info edit_email"><i
-                                                            class="fas fa-edit"></i></a></h5>
-                                            <div class="show_email">{$user->email|default: "Email не введён"}</div>
+                                            <h5 class="form-control-static">Email
+                                                <a href="#" data-user="{$client->id}" class="text-info edit_email">
+                                                    {*<i class="fas fa-edit"></i>*}
+                                                </a>
+                                            </h5>
+                                            <div class="show_email">{$user->email|default: "Email не введён"}</div><br>
                                             <h5 class="form-control-static">Компании</h5>
                                             {if isset($managers_company)}
                                                 {foreach $managers_company as $id => $name}
@@ -737,7 +800,8 @@
                                                     <div class="form-row">
                                                         <div class="col">
                                                             <input type="text" class="form-control email"
-                                                                   value="{$user->email|default: ""}" autocomplete="off">
+                                                                   value="{$user->email|default: ""}"
+                                                                   autocomplete="off">
                                                         </div>
                                                         <div class="col">
                                                             <input type="button"

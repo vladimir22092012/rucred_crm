@@ -44,6 +44,10 @@ class ManagerController extends Controller
                     case 'delete_manager':
                         $this->action_delete_manager();
                         break;
+
+                    case 'edit_login':
+                        $this->action_edit_login();
+                        break;
                 endswitch;
             } else {
                 $user = new StdClass();
@@ -220,14 +224,14 @@ class ManagerController extends Controller
         $managers_company = $this->ManagersEmployers->get_records($user_id);
         $html = '';
 
-        foreach ($companies as $company){
-            $html .=  '<div class="form-group">';
-            $html .=  '<input type="checkbox" class="custom-checkbox"';
-            $html .=  'name="companies[][company_id]"';
-            $html .=  "value='$company->id'";
-            $html .=  (isset($managers_company[$company->id])) ? 'checked> ' : '> ';
-            $html .=  '<label>'.$company->name.'</label>';
-            $html .=  '</div>';
+        foreach ($companies as $company) {
+            $html .= '<div class="form-group">';
+            $html .= '<input type="checkbox" class="custom-checkbox"';
+            $html .= 'name="companies[][company_id]"';
+            $html .= "value='$company->id'";
+            $html .= (isset($managers_company[$company->id])) ? 'checked> ' : '> ';
+            $html .= '<label>' . $company->name . '</label>';
+            $html .= '</div>';
 
         }
         echo $html;
@@ -366,5 +370,13 @@ class ManagerController extends Controller
             $this->managers->delete_manager($manager_id);
             exit;
         }
+    }
+
+    private function action_edit_login()
+    {
+        $manager_id = $this->request->post('manager_id');
+        $login = $this->request->post('login');
+
+        $this->managers->update_manager($manager_id, ['login' => $login]);
     }
 }
