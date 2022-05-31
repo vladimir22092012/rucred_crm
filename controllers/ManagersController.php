@@ -74,6 +74,9 @@ class ManagersController extends Controller
 
             $roles = $this->managers->get_roles();
             $this->design->assign('roles', $roles);
+
+            $manager_role = $this->manager->role;
+            $this->design->assign('manager_role', $manager_role);
         }
 
         return $this->design->fetch('managers.tpl');

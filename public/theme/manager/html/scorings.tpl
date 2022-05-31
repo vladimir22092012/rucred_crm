@@ -112,12 +112,14 @@
         <div class="card-header grid-stack-item-content">
             <div class="row">
                 <div class="col-8 col-md-9 col-lg-10 text-left">
+                    {if !in_array($manager->role, ['employer', 'underwriter'])}
                     <div class="move-zone">
                         <span class="mdi mdi-arrow-all"></span>
                     </div>
+                    {/if}
                     <h4 class="mb-0 text-white ">
                         <a href="#{$scoring_name}_content" data-toggle="collapse" class="text-white collapsed">
-                            <i class="fas fa-minus-circle"></i>
+                            {if !in_array($manager->role, ['employer', 'underwriter'])} <i class="fas fa-minus-circle"></i>{/if}
                             <span>
                                 {if $scoring_name == 'local_time'}Локальное время
                                 {elseif $scoring_name == 'location'}Местоположение
@@ -134,18 +136,19 @@
                 </div>
                 <div class="col-4 col-md-3 col-lg-2 text-right ">
                     <div class="onoffswitch">
-                        <input type="checkbox" name="settings[{$scoring_name}][active]" class="onoffswitch-checkbox" value="1" id="{$scoring_name}_active" {if $scoring_params['active']}checked="true"{/if} />
+                        <input type="checkbox" name="settings[{$scoring_name}][active]" class="onoffswitch-checkbox" value="1" id="{$scoring_name}_active" {if $scoring_params['active']}checked="true"{/if}
+                                {if in_array($manager->role, ['employer', 'underwriter'])}disabled{/if}/>
                         <label class="onoffswitch-label" for="{$scoring_name}_active">
                             <span class="onoffswitch-inner"></span>
                             <span class="onoffswitch-switch"></span>
                         </label>
-                    </div>        
+                    </div>
                 </div>
             </div>
         </div>
         <div id="{$scoring_name}_content" class="card-body collapse scoring-content">
             <div class="row">
-                
+
                 {if $scoring_name == 'local_time'}
                 <div class="col-md-6">
                     <div class="form-group ">
@@ -153,7 +156,7 @@
                         <input type="text" name="settings[local_time][max_diff]" value="{$scoring_settings['local_time']['max_diff']}" class="form-control" placeholder="" />
                     </div>
                 </div>
-                
+
                 {elseif $scoring_name == 'location'}
                 <div class="col-md-6">
                     <div class="form-group ">

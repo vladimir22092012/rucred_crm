@@ -111,12 +111,12 @@
                     <li class="breadcrumb-item active"><a href="/companies">Компании</a></li>
                 </ol>
             </div>
-            {if $manager->role != 'employer'}
-            <div class="col-md-6 col-4 align-self-center">
-                <button class="btn float-right hidden-sm-down btn-success add-company-modal">
-                    Добавить
-                </button>
-            </div>
+            {if !in_array($manager->role, ['employer', 'underwriter'])}
+                <div class="col-md-6 col-4 align-self-center">
+                    <button class="btn float-right hidden-sm-down btn-success add-company-modal">
+                        Добавить
+                    </button>
+                </div>
             {/if}
             {if !empty($error)}
                 <div class="alert alert-danger">{$error}</div>

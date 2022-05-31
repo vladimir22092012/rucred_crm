@@ -70,7 +70,7 @@
                     },
                     success: function (resp) {
 
-                        if (resp.length>0) {
+                        if (resp.length > 0) {
                             Swal.fire({
                                 title: resp,
                                 showCancelButton: false,
@@ -103,11 +103,13 @@
                     <li class="breadcrumb-item active">Группы</li>
                 </ol>
             </div>
-            <div class="col-md-6 col-4 align-self-center">
-                <button class="btn float-right hidden-sm-down btn-success add-company-modal">
-                    <i class="mdi mdi-plus-circle"></i> Добавить
-                </button>
-            </div>
+            {if !in_array($manager->role,['employer', 'underwriter'])}
+                <div class="col-md-6 col-4 align-self-center">
+                    <button class="btn float-right hidden-sm-down btn-success add-company-modal">
+                        <i class="mdi mdi-plus-circle"></i> Добавить
+                    </button>
+                </div>
+            {/if}
         </div>
 
         <div class="row">
@@ -132,7 +134,7 @@
                                         {foreach $groups as $group}
                                             <tr>
                                                 <td class="group_name_front">
-                                                    <input type="button" class="btn btn-outline-info to_edit"
+                                                    <input type="button" class="btn btn-outline-info {if !in_array($manager->role,['employer', 'underwriter'])}to_edit{/if}"
                                                            value="{$group->name}"></td>
                                                 <td class="group_name_edit" style="display: none">
                                                     <input type="text" class="form-control group_name"
@@ -144,9 +146,14 @@
                                                            value="Отменить">
                                                 </td>
                                                 <td>{$group->number}</td>
-                                                <td>{if $group->number != '00'}<input type="button" data-group="{$group->id}"
-                                                           class="btn btn-outline-danger delete_group"
-                                                           value="Удалить"></td>{/if}
+                                                <td>{if !in_array($manager->role,['employer', 'underwriter'])}
+                                                        {if $group->number != '00'}<input type="button"
+                                                                                          data-group="{$group->id}"
+                                                                                          class="btn btn-outline-danger delete_group"
+                                                                                          value="Удалить">
+                                                        {/if}
+                                                    {/if}
+                                                </td>
                                             </tr>
                                         {/foreach}
                                     {/if}
