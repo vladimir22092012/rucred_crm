@@ -62,7 +62,7 @@ class Changelogs extends Core
         }
         
         if (!empty($filter['order_id'])) {
-            $order_filter = $this->db->placehold("AND cl.order_id = ?", (int)$filter['order_id']);
+            $order_filter = $this->db->placehold("AND cl.order_id  IN (?@)", (array)$filter['order_id']);
         }
         
         if (!empty($filter['user_id'])) {

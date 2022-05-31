@@ -60,6 +60,10 @@ class ManagerController extends Controller
                 $user->phone = $this->request->post('phone');
                 $user->login = $this->request->post('login');
                 $user->mango_number = $this->request->post('mango_number');
+                $user->telegram_note = $this->request->post('telegram_note');
+                $user->sms_note = $this->request->post('sms_note');
+                $user->viber_note = $this->request->post('viber_note');
+                $user->whatsapp_note = $this->request->post('whatsapp_note');
 
                 $same_login = $this->Managers->check_same_login($user->login, $user_id);
 

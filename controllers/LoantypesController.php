@@ -12,8 +12,19 @@ class LoantypesController extends Controller
                     break;
             endswitch;
         }
-        
-        $loantypes = $this->loantypes->get_loantypes();
+
+        $loantypes = array();
+
+        if ($this->manager->role == 'employer') {
+            $loantype_groups = $this->GroupLoanTypes->get_loantypes_on($this->manager->group_id);
+
+            foreach ($loantype_groups as $loantype){
+                $loantypes[] = $this->loantypes->get_loantype($loantype['id']);
+            }
+        }else{
+            $loantypes = $this->loantypes->get_loantypes();
+        }
+
         $this->design->assign('loantypes', $loantypes);
 
         return $this->design->fetch('offline/loantypes.tpl');

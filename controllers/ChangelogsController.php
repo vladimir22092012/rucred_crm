@@ -5,7 +5,7 @@ class ChangelogsController extends Controller
     public function fetch()
     {
 
-        $items_per_page = 40;
+        $items_per_page = 100;
 
         $filter = array();
 
@@ -46,6 +46,19 @@ class ChangelogsController extends Controller
         $current_page = $this->request->get('page', 'integer');
         $current_page = max(1, $current_page);
         $this->design->assign('current_page_num', $current_page);
+
+        if($this->manager->role == 'employer'){
+            $managers_company = $this->ManagersEmployers->get_records($this->manager->id);
+            foreach ($managers_company as $id => $name){
+                $filter['employer'][] = $id;
+            }
+        }
+
+        $orders = $this->orders->get_orders($filter);
+
+        foreach ($orders as $order){
+            $filter['order_id'][] = $order->order_id;
+        }
 
         $changelogs_count = $this->changelogs->count_changelogs($filter);
         

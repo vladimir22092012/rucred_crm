@@ -17,8 +17,12 @@ class CompaniesController extends Controller
             $this->design->assign('sort', $filter['sort']);
         }
 
-        if($this->manager->role == 'employer')
-            $filter['employer'] = $this->manager->company_id;
+        if ($this->manager->role == 'employer') {
+            $managers_company = $this->ManagersEmployers->get_records($this->manager->id);
+            foreach ($managers_company as $id => $name) {
+                $filter['employer'][] = $id;
+            }
+        }
 
         $companies = $this->Companies->get_companies_groups($filter);
         $groups = $this->Groups->get_groups($filter);
@@ -52,7 +56,7 @@ class CompaniesController extends Controller
         if ($last_number == false) {
             $last_number = '01';
         }
-        if ($last_number &&  $last_number > 10) {
+        if ($last_number && $last_number > 10) {
             $last_number += 1;
         }
 

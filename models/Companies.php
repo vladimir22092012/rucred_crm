@@ -128,7 +128,7 @@ class Companies extends Core
         $employer_filter = '';
 
         if(isset($filter['employer']))
-            $employer_filter = $this->db->placehold("AND com.id = ?", (int)$filter['employer']);
+            $employer_filter = $this->db->placehold("AND com.id IN (?@)", (array)$filter['employer']);
 
         if (!empty($filter['sort'])) {
             switch ($filter['sort']) :

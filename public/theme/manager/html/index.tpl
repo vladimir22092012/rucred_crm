@@ -267,7 +267,7 @@
                                             class="mdi mdi-calendar"></i><span class="hide-menu">Сводные реестры</span></a>
                             </li>
                         {/if}
-                        {if in_array('managers', $manager->permissions)}
+                        {if in_array('managers', $manager->permissions) && $manager->role != 'employer'}
                             <li class="nav-small-cap">Администрирование</li>
                             <li {if in_array($module, ['ManagerController', 'ManagersController'])}class="active"{/if}>
                                 <a class="" href="managers/" aria-expanded="false"><i
@@ -296,7 +296,7 @@
                             <li {if in_array($module, ['BlacklistController'])}class="active"{/if}>
                                 <a href="/blacklist"><i class="mdi mdi-tooltip"></i>Whitelist</a></li>
                         {/if}
-                        {if in_array('managers', $manager->permissions)}
+                        {if in_array('managers', $manager->permissions) && $manager->role != 'employer'}
                             <li class="nav-small-cap">Настройки</li>
                             <li {if in_array($module, ['SettingsController'])}class="active"{/if}><a
                                         href="settings/"><i class="mdi mdi-settings"></i>Общие</a></li>

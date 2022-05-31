@@ -669,7 +669,8 @@
                                                 <div>
                                                     <input name="new_login" value="" class="form-control new_login">
                                                 </div>
-                                            </div><br>
+                                            </div>
+                                            <br>
                                             <div class="col-12">
                                                 <input type="button"
                                                        data-user="{$user->id}"
@@ -679,7 +680,8 @@
                                                        class="btn btn-danger cancel_login"
                                                        value="Отмена">
                                             </div>
-                                        </div><br>
+                                        </div>
+                                        <br>
                                     {/if}
                                     {if in_array($manager->role, ['admin', 'developer'])}
                                         <div class="form-group {if in_array('empty_password', (array)$errors)}has-danger{/if}">
@@ -698,7 +700,8 @@
                                             <h5 class="form-control-static">Пароль <a href="#" data-user="{$client->id}"
                                                                                       class="text-info edit_password"><i
                                                             class="fas fa-edit"></i></a></h5>
-                                            <div class="show_password">*********</div><br>
+                                            <div class="show_password">*********</div>
+                                            <br>
                                             <div class="password_edit_form" style="display: none">
                                                 <div class="mb-3">
                                                     <label>Старый пароль</label>
@@ -785,7 +788,8 @@
                                                     {*<i class="fas fa-edit"></i>*}
                                                 </a>
                                             </h5>
-                                            <div class="show_email">{$user->email|default: "Email не введён"}</div><br>
+                                            <div class="show_email">{$user->email|default: "Email не введён"}</div>
+                                            <br>
                                             <h5 class="form-control-static">Компании</h5>
                                             {if isset($managers_company)}
                                                 {foreach $managers_company as $id => $name}
@@ -878,41 +882,38 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <br>
                                     {/if}
-                                    {*
-                                                                        {if in_array($manager->role, ['chief_collector','admin','developer'])}
-
-                                                                        <div class="form-group">
-                                                                            <label class="col-md-12">Статусы договоров для коллекторов</label>
-                                                                            <div class="col-sm-12">
-                                                                                <select name="collection_status_id" class="form-control form-control-line" >
-                                                                                    <option value=""></option>
-                                                                                    {foreach $collection_statuses as $collection_status_id => $collection_status_name}
-                                                                                    <option value="{$collection_status_id}" {if $user->collection_status_id == $collection_status_id}selected="true"{/if}>{$collection_status_name|escape}</option>
-                                                                                    {/foreach}
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        {else}
-
-                                                                        <div class="form-group">
-                                                                            <label class="col-md-12">Статусы договоров для коллекторов</label>
-                                                                            <div class="col-sm-12">
-                                                                                <p>{$collection_statuses[$user->collection_status_id]}</p>
-                                                                                <input type="hidden" name="collection_status_id" value="{$user->collection_status_id}" />
-                                                                            </div>
-                                                                        </div>
-
-                                                                        {/if}
-
-                                                                        <div class="form-group">
-                                                                            <label class="col-md-12">Mango-office внутренний номер</label>
-                                                                            <div class="col-md-12">
-                                                                                <input type="text" name="mango_number" value="{$user->mango_number}" class="form-control form-control-line" />
-                                                                            </div>
-                                                                        </div>
-                                    *}
+                                    <div class="form-group">
+                                        <label class="col-md-5">Дополнительные каналы связи</label>
+                                        <div class="col-md-12">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="sms_note"
+                                                       value="1" {if $user->sms_note == 1}checked{/if}>
+                                                <label class="form-check-label">
+                                                    SMS-уведомления
+                                                </label></div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="viber_note"
+                                                       value="1" {if $user->viber_note == 1}checked{/if}>
+                                                <label class="form-check-label">
+                                                    Viber
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="telegram_note"
+                                                       value="1" {if $user->telegram_note == 1}checked{/if}>
+                                                <label class="form-check-label">
+                                                    Telegram
+                                                </label></div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="whatsapp_note"
+                                                       value="1" {if $user->whatsapp_note == 1}checked{/if}>
+                                                <label class="form-check-label">
+                                                    Whatsapp
+                                                </label></div>
+                                        </div>
+                                    </div>
                                     {if in_array($manager->role, ['admin', 'developer'])}
                                         <div class="form-group">
                                             <div class="col-sm-12">
@@ -924,73 +925,6 @@
                                             </div>
                                         </div>
                                     {/if}
-                                </div>
-                            </div>
-
-                            <div class="tab-pane" id="team" role="tabpanel">
-                                <div class="card-body">
-                                    <div class="form-group pl-3 pr-3">
-                                        <div class="clearfix pb-3">
-                                            <div class="float-left">
-                                                <h5>Команда коллектора</h5>
-                                            </div>
-                                            <div class="float-right">
-                                                {foreach $collection_statuses as $cs_id => $cs}
-                                                    {if in_array($cs_id, (array)$collection_manager_statuses)}
-                                                        <a data-status="{$cs_id}"
-                                                           class="js-filter-status btn btn-sm btn-outline-{if $cs_id==6}warning{elseif $cs_id==8}danger{elseif $cs_id==4}primary{/if}"
-                                                           href="javascript:void();">{$cs}</a>
-                                                    {/if}
-                                                {/foreach}
-                                            </div>
-                                        </div>
-
-                                        <table class="table">
-                                            {foreach $managers as $m}
-                                                {if $m->role == 'collector'}
-                                                    <tr class="js-status-item js-status-{$m->collection_status_id}">
-                                                        <td>
-                                                            <div class="custom-control custom-checkbox">
-                                                                <input {if !in_array($manager->role, ['chief_collector','admin','developer'])}disabled="true"{/if}
-                                                                       class="custom-control-input" type="checkbox"
-                                                                       name="team_id[]" id="team_id_{$m->id}"
-                                                                       value="{$m->id}" {if in_array($m->id, (array)$user->team_id)}checked="true"{/if} />
-                                                                <label class="custom-control-label"
-                                                                       for="team_id_{$m->id}"></label>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <a class="{if $m->blocked}text-danger{/if}" target="_blank"
-                                                               href="manager/{$m->id}">
-                                                                <strong>{$m->name|escape}</strong>
-                                                            </a>
-                                                            {if $m->blocked}<span class="label label-danger">Заблокирован</span>{/if}
-                                                        </td>
-                                                        <td>
-                                                            <label class="label {if $m->collection_status_id==6}label-warning{elseif $m->collection_status_id==8}label-danger{elseif $m->collection_status_id==4}label-primary{/if}">
-                                                                {$collection_statuses[$m->collection_status_id]}
-                                                            </label>
-                                                        </td>
-                                                        <td>
-                                                            {foreach $managers as $man}
-                                                                {if $man->role=='team_collector' && in_array($m->id, (array)$man->team_id)}
-                                                                    <small>{$man->name|escape}</small>
-                                                                    <br/>
-                                                                {/if}
-                                                            {/foreach}
-
-                                                        </td>
-                                                    </tr>
-                                                {/if}
-                                            {/foreach}
-                                        </table>
-
-                                        <div class="form-group">
-                                            <div class="col-sm-12">
-                                                <button class="btn btn-success" type="submit">Сохранить</button>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
