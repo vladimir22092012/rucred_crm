@@ -129,6 +129,18 @@ class Users extends Core
         return $result;
     }
 
+    public function get_user_by_lastname($lastname)
+    {
+        $query = $this->db->placehold("
+            SELECT lastname, firstname, patronymic, personal_number
+            FROM __users
+            WHERE lastname LIKE ?
+        ", $lastname.'%');
+        $this->db->query($query);
+        $result = $this->db->results();
+        return $result;
+    }
+
     public function get_users($filter = array())
     {
         $id_filter = '';
@@ -258,7 +270,7 @@ class Users extends Core
             $page = max(1, intval($filter['page']));
         }
 
-        if(isset($filter['employer']))
+        if (isset($filter['employer']))
             $employer_filter = $this->db->placehold("AND company_id = ?", (int)$filter['employer']);
 
         $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page - 1) * $limit, $limit);
@@ -360,7 +372,7 @@ class Users extends Core
             };
         }
 
-        if(isset($filter['employer']))
+        if (isset($filter['employer']))
             $employer_filter = $this->db->placehold("AND company_id = ?", (int)$filter['employer']);
 
         $query = $this->db->placehold("
@@ -571,7 +583,7 @@ class Users extends Core
     {
         $patronymic = '';
 
-        if(isset($user['patronymic']))
+        if (isset($user['patronymic']))
             $patronymic = $this->db->placehold("AND patronymic = ?", $user['patronymic']);
 
         $query = $this->db->placehold("

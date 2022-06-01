@@ -221,10 +221,10 @@
                             <a href="tickets?in=true"><i class="mdi mdi-email-open"></i><span>Полученные запросы</span></a>
                         </li>
                         <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
-                                    href="tickets?out=true"><i class="mdi mdi-email-variant"></i><span>Направление запросы</span></a>
+                                    href="tickets?out=true"><i class="mdi mdi-email-variant"></i><span>Направленные запросы</span></a>
                         </li>
                         <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
-                                    href="tickets?archive=true"><i class="mdi mdi-mailbox"></i><span>Архив</span></a>
+                                    href="tickets?archive=true"><i class="mdi mdi-mailbox"></i><span>Архив запросов</span></a>
                         </li>
                         <li class="nav-small-cap">Онлайн заявки</li>
                         <li {if in_array($module, ['OrderController', 'OrdersController'])}class="active"{/if}>
@@ -298,6 +298,8 @@
                                 <a href="/whitelist"><i class="mdi mdi-tooltip"></i>Blacklist</a></li>
                             <li {if in_array($module, ['BlacklistController'])}class="active"{/if}>
                                 <a href="/blacklist"><i class="mdi mdi-tooltip"></i>Whitelist</a></li>
+                            <li {if in_array($module, ['ThemesController'])}class="active"{/if}>
+                                <a href="/themes"><i class="mdi mdi-chart-arc"></i>Справочник тем КП</a></li>
                         {/if}
                         {if in_array('managers', $manager->permissions) && $manager->role != 'employer'}
                             <li class="nav-small-cap">Настройки</li>

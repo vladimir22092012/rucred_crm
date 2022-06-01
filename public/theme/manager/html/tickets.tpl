@@ -23,24 +23,22 @@
             $('#groups').on('change', function () {
 
                 let group_id = $(this).val();
-                $('#companies').empty();
-                $('#companies').append('<option value="none">Выберите компанию</option>');
 
                 if (group_id !== 'none') {
                     $.ajax({
                         method: 'POST',
-                        dataType: 'JSON',
                         data: {
                             action: 'get_companies',
                             group_id: group_id
                         },
                         success: function (companies) {
-                            for (let company in companies) {
-                                let company_html = $('<option value="' + companies[company]['id'] + '">' + companies[company]['name'] + '</option>');
-                                $('#companies').append(company_html);
-                            }
+                            $('#companies_checkbox').show();
+                            $('#companies_checkbox').html(companies);
                         }
                     })
+                } else {
+                    $('#companies_checkbox').empty();
+                    $('#companies_checkbox').hide();
                 }
             });
 
@@ -62,6 +60,24 @@
                         }
                     })
                 })
+            });
+
+            $('#lastname').autocomplete({
+                serviceUrl: '/tickets',
+                type: 'POST',
+                dataType: 'json',
+                params: {
+                    action: 'search_user',
+                },
+                paramName: 'lastname',
+                minChars: 3,
+                onSelect: function (suggestion) {
+                    let fio = suggestion.value.split(' ');
+                    $('label[for="lastname"]').after('<label for="lastname" class="control-label" style="width: 20%">ID '+fio[0]+'</label>');
+                    $('#lastname').val(fio[1]);
+                    $('#firstname').val(fio[2]);
+                    $('#patronymic').val(fio[3]);
+                }
             });
         })
     </script>
@@ -100,10 +116,11 @@
         <div class="row page-titles">
             <div class="col-md-6 col-8 align-self-center">
                 <h3 class="text-themecolor mb-0 mt-0"><i
-                            class="mdi mdi-animation"></i>{if $in}Входящие{/if}{if $out}Исходящие{/if}{if $archive}Архив{/if}</h3>
+                            class="mdi mdi-animation"></i>{if $in}Полученные запросы{/if}{if $out}Направленные запросы{/if}{if $archive}Архив запросов{/if}
+                </h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
-                    <li class="breadcrumb-item active">{if $in}Входящие{/if}{if $out}Исходящие{/if}{if $archive}Архив{/if}</li>
+                    <li class="breadcrumb-item active">{if $in}Полученные запросы{/if}{if $out}Направленные запросы{/if}{if $archive}Архив запросов{/if}</li>
                 </ol>
             </div>
             <div class="col-md-6 col-4 align-self-center">
@@ -306,21 +323,33 @@
                     <input type="hidden" name="manager_id" value="{$manager->id}">
                     <div class="form-group">
                         <label for="groups" class="control-label">Группа:</label>
-                        <select class="form-control" name="groups" id="groups">
-                            <option value="none">Выберите группу</option>
-                            {foreach $groups as $group}
-                                <option value="{$group->id}">{$group->name}</option>
-                            {/foreach}
+                        <select class="form-control" name="groups" id="groups"
+                                {if $manager->role == 'employer'}disabled{/if}>
+                            {if $manager->role == 'employer'}
+                                <option value="2">Инфраструктура</option>
+                            {else}
+                                <option value="none">Выберите группу</option>
+                                {foreach $groups as $group}
+                                    <option value="{$group->id}">{$group->name}</option>
+                                {/foreach}
+                            {/if}
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="companies" class="control-label">Компания:</label>
-                        <select class="form-control" name="companies" id="companies">
-                            <option value="none">Выберите компанию</option>
-                        </select>
+                        {if $manager->role == 'employer'}
+                            <label for="companies" class="control-label">Компания:</label>
+                            <select class="form-control" name="companies" id="companies"
+                                    {if $manager->role == 'employer'}disabled{/if}>
+                                <option value="2">ООО МКК "РУССКОЕ КРЕДИТНОЕ ОБЩЕСТВО"</option>
+                            </select>
+                        {else}
+                            <div class="form-group" id="companies_checkbox" style="display: none">
+
+                            </div>
+                        {/if}
                     </div>
                     <div class="form-group">
-                        <label for="lastname" class="control-label">Фамилия клиента</label>
+                        <label for="lastname" class="control-label" style="width: 80%">Фамилия клиента</label>
                         <input type="text" class="form-control" name="lastname" id="lastname" value=""/>
                     </div>
                     <div class="form-group">
@@ -330,10 +359,6 @@
                     <div class="form-group">
                         <label for="patronymic" class="control-label">Отчество клиента</label>
                         <input type="text" class="form-control" name="patronymic" id="patronymic" value=""/>
-                    </div>
-                    <div class="form-group">
-                        <label for="birth" class="control-label">Дата рождения клиента</label>
-                        <input type="text" class="form-control daterange" name="birth" id="birth" value=""/>
                     </div>
                     <div class="form-group">
                         <label for="head" class="control-label">Заголовок:</label>

@@ -13,36 +13,40 @@ class TicketsController extends Controller
                 case 'get_companies':
                     $this->action_get_companies();
                     break;
+
+                case 'search_user':
+                    return $this->action_search_user();
+                    break;
             endswitch;
+        }else{
+            $manager_role = $this->manager->role;
+            $manager_id = $this->manager->id;
+
+            if ($this->request->get('in')) {
+                $in = true;
+                $this->design->assign('in', $in);
+                $in_out = 'in';
+            }
+            if ($this->request->get('out')) {
+                $out = true;
+                $this->design->assign('out', $out);
+                $in_out = 'out';
+            }
+
+            if ($this->request->get('archive')) {
+                $archive = true;
+                $this->design->assign('archive', $archive);
+                $in_out = 'archive';
+            }
+
+            $tickets = $this->Tickets->get_tickets($manager_role, $manager_id, $in_out);
+            $this->design->assign('tickets', $tickets);
+
+            $groups = $this->Groups->get_groups();
+            $this->design->assign('groups', $groups);
+
+            return $this->design->fetch('tickets.tpl');
         }
-
-        $manager_role = $this->manager->role;
-        $manager_id = $this->manager->id;
-
-        if ($this->request->get('in')) {
-            $in = true;
-            $this->design->assign('in', $in);
-            $in_out = 'in';
-        }
-        if ($this->request->get('out')) {
-            $out = true;
-            $this->design->assign('out', $out);
-            $in_out = 'out';
-        }
-
-        if ($this->request->get('archive')) {
-            $archive = true;
-            $this->design->assign('archive', $archive);
-            $in_out = 'archive';
-        }
-
-        $tickets = $this->Tickets->get_tickets($manager_role, $manager_id, $in_out);
-        $this->design->assign('tickets', $tickets);
-
-        $groups = $this->Groups->get_groups();
-        $this->design->assign('groups', $groups);
-
-        return $this->design->fetch('tickets.tpl');
     }
 
     private function action_add_ticket()
@@ -107,7 +111,31 @@ class TicketsController extends Controller
         $group_id = (int)$this->request->post('group_id');
         $companies = $this->Companies->get_companies(['group_id' => $group_id]);
 
-        echo json_encode($companies);
+        $html = '<label class="control-label">Компании:</label>';
+
+        foreach ($companies as $company) {
+            $html .= '<div class="form-group">';
+            $html .= '<input type="checkbox" class="custom-checkbox"';
+            $html .= 'name="companies[][company_id]"';
+            $html .= "value='$company->id'>";
+            $html .= ' <label>' . $company->name . '</label>';
+            $html .= '</div>';
+
+        }
+        echo $html;
+        exit;
+    }
+
+    private function action_search_user()
+    {
+        $lastname = $this->request->post('lastname');
+        $users = $this->users->get_user_by_lastname($lastname);
+        $autocomplete = array();
+
+        foreach ($users as $user){
+            $autocomplete['suggestions'][] = "$user->personal_number $user->lastname $user->firstname $user->patronymic";
+        }
+        echo json_encode($autocomplete);
         exit;
     }
 }
