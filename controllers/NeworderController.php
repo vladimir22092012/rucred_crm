@@ -3,7 +3,7 @@
 use App\Services\MailService;
 
 error_reporting(-1);
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'On');
 
 class NeworderController extends Controller
 {
@@ -12,7 +12,7 @@ class NeworderController extends Controller
         if ($this->request->method('post')) {
             if ($this->request->post('action', 'string')) {
                 $methodName = 'action_' . $this->request->post('action', 'string');
-                if ( method_exists($this, $methodName) ) {
+                if (method_exists($this, $methodName)) {
                     $this->$methodName();
                 }
             }
@@ -62,14 +62,14 @@ class NeworderController extends Controller
             $user['lastname'] = $this->request->get('lastname');
             $user['firstname'] = $this->request->get('firstname');
 
-            if($this->request->get('patronymic'))
+            if ($this->request->get('patronymic'))
                 $user['patronymic'] = $this->request->get('patronymic');
 
             $user['birth'] = date('d.m.Y', strtotime($this->request->get('birth')));
 
             $users = $this->users->check_exist_users($user);
 
-            if(!empty($users))
+            if (!empty($users))
                 echo json_encode($users);
             else
                 echo json_encode(['empty' => 'Совпадений не найдено']);
@@ -125,14 +125,14 @@ class NeworderController extends Controller
 
         $user['firstname'] = trim($this->request->post('firstname'));
 
-        if(empty($user['firstname'])){
+        if (empty($user['firstname'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует имя']);
             exit;
         }
 
         $check_same_users = $this->request->post('check_same_users');
 
-        if(empty($check_same_users)){
+        if (empty($check_same_users)) {
             response_json(['error' => 1, 'reason' => 'Произведите проверку на совпадения']);
             exit;
         }
@@ -140,7 +140,7 @@ class NeworderController extends Controller
 
         $user['lastname'] = trim($this->request->post('lastname'));
 
-        if(empty($user['firstname'])){
+        if (empty($user['firstname'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует фамилия']);
             exit;
         }
@@ -152,7 +152,7 @@ class NeworderController extends Controller
         $user['bank_name'] = trim($this->request->post('bank_name'));
         $user['bik_bank'] = trim($this->request->post('bik_bank'));
 
-        if(empty($user['fio_acc_holder']) || empty($user['account_number']) || empty($user['bank_name']) || empty($user['bik_bank'])){
+        if (empty($user['fio_acc_holder']) || empty($user['account_number']) || empty($user['bank_name']) || empty($user['bik_bank'])) {
             response_json(['error' => 1, 'reason' => 'Заполните корректно реквизиты']);
             exit;
         }
@@ -223,7 +223,7 @@ class NeworderController extends Controller
 
         $user['phone_mobile'] = trim((string)$this->request->post('phone'));
 
-        if(empty($user['phone_mobile'])){
+        if (empty($user['phone_mobile'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует номер телефона']);
             exit;
         }
@@ -254,12 +254,12 @@ class NeworderController extends Controller
         $user['birth'] = trim((string)$this->request->post('birth'));
         $user['birth_place'] = trim((string)$this->request->post('birth_place'));
 
-        if(empty($user['birth_place'])){
+        if (empty($user['birth_place'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует место рождения']);
             exit;
         }
 
-        if(empty($user['email'])){
+        if (empty($user['email'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует электронная почта']);
             exit;
         }
@@ -278,12 +278,12 @@ class NeworderController extends Controller
         $user['snils'] = (string)$this->request->post('snils');
         $user['inn'] = (string)$this->request->post('inn');
 
-        if(empty($user['snils'])){
+        if (empty($user['snils'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует снилс']);
             exit;
         }
 
-        if(empty($user['inn'])){
+        if (empty($user['inn'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует инн']);
             exit;
         }
@@ -292,7 +292,7 @@ class NeworderController extends Controller
         $user['passport_issued'] = (string)$this->request->post('passport_issued');
         $user['subdivision_code'] = (string)$this->request->post('subdivision_code');
 
-        if(empty($user['passport_serial']) || empty($user['passport_date']) || empty($user['passport_issued']) || empty($user['subdivision_code'])){
+        if (empty($user['passport_serial']) || empty($user['passport_date']) || empty($user['passport_issued']) || empty($user['subdivision_code'])) {
             response_json(['error' => 1, 'reason' => 'Заполните паспортные данные']);
             exit;
         }
@@ -300,12 +300,12 @@ class NeworderController extends Controller
         $user['income'] = preg_replace("/[^,.0-9]/", '', $this->request->post('income_medium'));
         $user['expenses'] = preg_replace("/[^,.0-9]/", '', $this->request->post('outcome_medium'));
 
-        if(empty($user['income'])){
+        if (empty($user['income'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует среднемесячный доход']);
             exit;
         }
 
-        if(empty($user['expenses'])){
+        if (empty($user['expenses'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует среднемесячный расход']);
             exit;
         }
@@ -330,7 +330,7 @@ class NeworderController extends Controller
         $user['Regroom'] = (!empty($Regadress->data->flat)) ? $Regadress->data->flat : '';
         $user['loan_history'] = '[]';
 
-        if(empty($user['Regadressfull'])){
+        if (empty($user['Regadressfull'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует адрес регистрации']);
             exit;
         }
@@ -356,7 +356,7 @@ class NeworderController extends Controller
 
             $user['Faktadressfull'] = $this->request->post('Faktadressfull');
 
-            if(empty($user['Faktadressfull'])){
+            if (empty($user['Faktadressfull'])) {
                 response_json(['error' => 1, 'reason' => 'Отсутствует фактический адрес проживания']);
                 exit;
             }
@@ -381,12 +381,12 @@ class NeworderController extends Controller
         $user['group_id'] = (int)$this->request->post('group', 'integer');
         $user['branche_id'] = (int)$this->request->post('branch', 'integer');
 
-        if(empty($user['company_id'])){
+        if (empty($user['company_id'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует компания']);
             exit;
         }
 
-        if(empty($user['group_id'])){
+        if (empty($user['group_id'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует группа']);
             exit;
         }
@@ -459,25 +459,25 @@ class NeworderController extends Controller
                 $order['percent'] = (float)$record['preferential_percents'];
             }
 
-            if(empty($user['branche_id'])){
+            if (empty($user['branche_id'])) {
                 $branches = $this->Branches->get_branches(['group_id' => $user['group_id']]);
 
-                foreach ($branches as $branch){
-                    if($branch->number == '00'){
+                foreach ($branches as $branch) {
+                    if ($branch->number == '00') {
                         $first_pay_day = $branch->payday;
                         $user['branche_id'] = $branch->id;
                     }
                 }
-            }else{
+            } else {
                 $branch = $this->Branches->get_branch($user['branche_id']);
                 $first_pay_day = $branch->payday;
             }
 
             $rest_sum = $order['amount'];
             $start_date = date('Y-m-d', strtotime($order['probably_start_date']));
-            $end_date = new DateTime(date('Y-m-'.$first_pay_day, strtotime($order['probably_return_date'])));
+            $end_date = new DateTime(date('Y-m-' . $first_pay_day, strtotime($order['probably_return_date'])));
             $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
-            $paydate = new DateTime(date('Y-m-'."$first_pay_day", strtotime($start_date)));
+            $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date)));
 
             $percent_per_month = (($order['percent'] / 100) * 365) / 12;
             $percent_per_month = round($percent_per_month, 7);
@@ -488,7 +488,7 @@ class NeworderController extends Controller
                 if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < 3) {
                     $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days, 2);
                     $sum_pay = $annoouitet_pay + $plus_loan_percents;
-                    $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents,2,PHP_ROUND_HALF_DOWN);
+                    $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2, PHP_ROUND_HALF_DOWN);
                     $body_pay = $sum_pay - $loan_percents_pay;
                     $paydate->add(new DateInterval('P1M'));
                     $paydate = $this->check_pay_date($paydate);
@@ -509,7 +509,7 @@ class NeworderController extends Controller
                 $paydate->add(new DateInterval('P1M'));
             } else {
                 $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
-                $first_pay = new DateTime(date('Y-m-'.$first_pay_day, strtotime($start_date . '+1 month')));
+                $first_pay = new DateTime(date('Y-m-' . $first_pay_day, strtotime($start_date . '+1 month')));
                 $count_days_this_month = date('t', strtotime($issuance_date->format('Y-m-d')));
                 $paydate = $this->check_pay_date($first_pay);
 
@@ -552,11 +552,11 @@ class NeworderController extends Controller
                 foreach ($daterange as $date) {
                     $date = $this->check_pay_date($date);
 
-                    if($date->format('m') == $lastdate->format('m')){
+                    if ($date->format('m') == $lastdate->format('m')) {
                         $loan_body_pay = $rest_sum;
                         $loan_percents_pay = $annoouitet_pay - $loan_body_pay;
                         $rest_sum = 0.00;
-                    }else{
+                    } else {
                         $loan_percents_pay = round($rest_sum * $percent_per_month, 2);
                         $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
                         $rest_sum = round($rest_sum - $loan_body_pay, 2);
@@ -653,22 +653,53 @@ class NeworderController extends Controller
                     exit;
                 }
             } else {
-                if($draft == 1){
+                if ($draft == 1) {
                     try {
                         $order_id = $this->orders->add_order($order);
+
+                        $ticket =
+                            [
+                                'manager_id' => 0,
+                                'client_lastname' => $user['lastname'],
+                                'client_firstname' => $user['firstname'],
+                                'client_patronymic' => $user['patronymic'],
+                                'head' => 'Новая заявка',
+                                'text' => 'Ознакомьтесь с новой заявкой',
+                                'company_id' => $order['company_id'],
+                                'group_id' => $order['group_id'],
+                                'order_id' => $order_id,
+                                'status' => 0
+                            ];
+
+                        $this->Tickets->add_ticket($ticket);
                         response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/neworder/draft/' . $order_id]);
                     } catch (Exception $exception) {
                         response_json(['error' => 1, 'reason' => 'Создать заявку не удалось']);
                     }
-                }else{
+                } else {
                     try {
                         $order_id = $this->orders->add_order($order);
+
+                        $ticket =
+                            [
+                                'creator' => 0,
+                                'client_lastname' => $user['lastname'],
+                                'client_firstname' => $user['firstname'],
+                                'client_patronymic' => $user['patronymic'],
+                                'head' => 'Новая заявка',
+                                'text' => 'Ознакомьтесь с новой заявкой',
+                                'company_id' => $order['company_id'],
+                                'group_id' => $order['group_id'],
+                                'order_id' => $order_id,
+                                'status' => 0
+                            ];
+
+                        $this->Tickets->add_ticket($ticket);
                         response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                     } catch (Exception $exception) {
                         response_json(['error' => 1, 'reason' => 'Создать заявку не удалось']);
                     }
                 }
-
             }
         }
 
@@ -697,7 +728,7 @@ class NeworderController extends Controller
 
     private function action_edit_phone_with_code()
     {
-        $phone= $this->request->post('phone');
+        $phone = $this->request->post('phone');
         $code = $this->request->post('code');
 
         $this->db->query("
@@ -787,8 +818,8 @@ class NeworderController extends Controller
         $loan = $this->Loantypes->get_loantype($loan_id);
 
         $start_date = date('Y-m-d', strtotime($start_date));
-        $first_pay = new DateTime(date('Y-m-'.$first_pay_day, strtotime($start_date)));
-        $end_date = date('Y-m-'.$first_pay_day, strtotime($start_date . '+' . $loan->max_period . 'month'));
+        $first_pay = new DateTime(date('Y-m-' . $first_pay_day, strtotime($start_date)));
+        $end_date = date('Y-m-' . $first_pay_day, strtotime($start_date . '+' . $loan->max_period . 'month'));
 
         $start_date = new DateTime($start_date);
         $end_date = new DateTime($end_date);

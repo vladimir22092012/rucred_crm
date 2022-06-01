@@ -40,6 +40,15 @@ class TicketsController extends Controller
             }
 
             $tickets = $this->Tickets->get_tickets($manager_role, $manager_id, $in_out);
+
+            foreach ($tickets as $key => $ticket){
+                if($ticket->executor != 0){
+                    $manager = $this->managers->get_manager($ticket->executor);
+                    $ticket->executor = array();
+                    $ticket->executor['name'] = $manager->name;
+                    $ticket->executor['id'] = $manager->id;
+                }
+            }
             $this->design->assign('tickets', $tickets);
 
             $groups = $this->Groups->get_groups();
@@ -56,7 +65,6 @@ class TicketsController extends Controller
         $lastname = $this->request->post('lastname');
         $firstname = $this->request->post('firstname');
         $patronymic = $this->request->post('patronymic');
-        $birth = $this->request->post('birth');
         $text = $this->request->post('text');
         $head = $this->request->post('head');
         $manager_id = (int)$this->request->post('manager_id');
@@ -68,8 +76,7 @@ class TicketsController extends Controller
                 'client_lastname' => $lastname,
                 'client_firstname' => $firstname,
                 'client_patronymic' => $patronymic,
-                'client_birth' => date('Y-m-d', strtotime($birth)),
-                'manager_id' => $manager_id,
+                'creator' => $manager_id,
                 'text' => $text,
                 'head' => $head
             ];

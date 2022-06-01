@@ -73,7 +73,7 @@
                 minChars: 3,
                 onSelect: function (suggestion) {
                     let fio = suggestion.value.split(' ');
-                    $('label[for="lastname"]').after('<label for="lastname" class="control-label" style="width: 20%">ID '+fio[0]+'</label>');
+                    $('label[for="lastname"]').after('<label for="lastname" class="control-label" style="width: 20%">ID ' + fio[0] + '</label>');
                     $('#lastname').val(fio[1]);
                     $('#firstname').val(fio[2]);
                     $('#patronymic').val(fio[3]);
@@ -125,13 +125,14 @@
             </div>
             <div class="col-md-6 col-4 align-self-center">
                 <div class="row">
-
-                    <div class="col-6 text-right">
-                        <div type="button" class="btn btn-success add_ticket">
-                            <i class="fas fa-plus-circle"></i>
-                            Создать тикет
+                    {if !$archive}
+                        <div class="col-6 text-right">
+                            <div type="button" class="btn btn-success add_ticket">
+                                <i class="fas fa-plus-circle"></i>
+                                Создать тикет
+                            </div>
                         </div>
-                    </div>
+                    {/if}
                 </div>
             </div>
         </div>
@@ -147,29 +148,31 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Список тикетов</h4>
-                        <div class="clearfix">
-                            <div class="js-filter-status mb-2 float-left">
-                                <a href="{if $filter_status=='new'}{url status=null page=null}{else}{url status='new' page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status=='new'}btn-warning{else}btn-outline-warning{/if}">Новая</a>
+                        {if !$archive}
+                            <div class="clearfix">
+                                <div class="js-filter-status mb-2 float-left">
+                                    <a href="{if $filter_status=='new'}{url status=null page=null}{else}{url status='new' page=null}{/if}"
+                                       class="btn btn-xs {if $filter_status=='new'}btn-warning{else}btn-outline-warning{/if}">Новая</a>
 
-                                <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status==1}btn-info{else}btn-outline-info{/if}">Принята</a>
+                                    <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 page=null}{/if}"
+                                       class="btn btn-xs {if $filter_status==1}btn-info{else}btn-outline-info{/if}">Принята</a>
 
-                                <a href="{if $filter_status==2}{url status=null page=null}{else}{url status=2 page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status==2}btn-success{else}btn-outline-primary{/if}">На
-                                    проверку</a>
+                                    <a href="{if $filter_status==2}{url status=null page=null}{else}{url status=2 page=null}{/if}"
+                                       class="btn btn-xs {if $filter_status==2}btn-success{else}btn-outline-primary{/if}">На
+                                        проверку</a>
 
-                                <a href="{if $filter_status==3}{url status=null page=null}{else}{url status=3 page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status==3}btn-danger{else}btn-outline-success{/if}">Исполнено</a>
+                                    <a href="{if $filter_status==3}{url status=null page=null}{else}{url status=3 page=null}{/if}"
+                                       class="btn btn-xs {if $filter_status==3}btn-danger{else}btn-outline-success{/if}">Исполнено</a>
 
-                                <a href="{if $filter_status==4}{url status=null page=null}{else}{url status=4 page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status==4}btn-danger{else}btn-outline-danger{/if}">На
-                                    доработку</a>
-                                {if $filter_status}
-                                    <input type="hidden" value="{$filter_status}" id="filter_status"/>
-                                {/if}
+                                    <a href="{if $filter_status==4}{url status=null page=null}{else}{url status=4 page=null}{/if}"
+                                       class="btn btn-xs {if $filter_status==4}btn-danger{else}btn-outline-danger{/if}">На
+                                        доработку</a>
+                                    {if $filter_status}
+                                        <input type="hidden" value="{$filter_status}" id="filter_status"/>
+                                    {/if}
+                                </div>
                             </div>
-                        </div>
+                        {/if}
                         <div id="basicgrid" class="jsgrid" style="position: relative; width: 100%;">
                             <div class="jsgrid-grid-header jsgrid-header-scrollbar">
                                 <table class="jsgrid-table table table-striped table-hover">
@@ -191,6 +194,12 @@
                                             {if $sort == 'amount_asc'}<a href="{url page=null sort='amount_desc'}">
                                                     Постановщик</a>
                                             {else}<a href="{url page=null sort='amount_asc'}">Постановщик</a>{/if}
+                                        </th>
+                                        <th style="width: 70px; text-align: center"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'amount_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'amount_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'amount_asc'}<a href="{url page=null sort='amount_desc'}">
+                                                    Постановщик</a>
+                                            {else}<a href="{url page=null sort='amount_asc'}">Исполнитель</a>{/if}
                                         </th>
                                         <th style="width: 80px; text-align: center"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'period_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'period_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
@@ -224,6 +233,10 @@
                                             <input type="text" name="amount" value="{$search['maker']}"
                                                    class="form-control input-sm">
                                         </td>
+                                        <td style="width: 70px;" class="jsgrid-cell">
+                                            <input type="text" name="amount" value="{$search['maker']}"
+                                                   class="form-control input-sm">
+                                        </td>
                                         <td style="width: 60px;" class="jsgrid-cell">
                                             <input type="text" name="period" value="{$search['head']}"
                                                    class="form-control input-sm">
@@ -244,27 +257,40 @@
                                                 <tr class="jsgrid-row">
                                                     <td style="width: 40px;" class="jsgrid-cell">
                                                         <a href="/ticket/{$ticket->id}/">{$ticket->id}</a><br>
-                                                        {if $ticket->status == 0}
-                                                            <small class="label label-warning">Новый</small>
-                                                        {/if}
-                                                        {if $ticket->status == 1}
-                                                            <small class="label label-primary">Принят</small>
-                                                        {/if}
-                                                        {if $ticket->status == 2}
-                                                            <small class="label label-primary">На проверку</small>
-                                                        {/if}
-                                                        {if $ticket->status == 3}
-                                                            <small class="label label-success">Исполнено</small>
-                                                        {/if}
-                                                        {if $ticket->status == 4}
-                                                            <small class="label label-danger">На доработку</small>
+                                                        {if !$archive}
+                                                            {if in_array($ticket->status, [0,1])}
+                                                                <small class="label label-warning">Новый</small>
+                                                            {/if}
+                                                            {if $ticket->status == 2}
+                                                                <small class="label label-info">Принят</small>
+                                                            {/if}
+                                                            {if $ticket->status == 3}
+                                                                <small class="label label-primary">На проверку</small>
+                                                            {/if}
+                                                            {if $ticket->status == 4}
+                                                                <small class="label label-success">Исполнено</small>
+                                                            {/if}
+                                                            {if $ticket->status == 5}
+                                                                <small class="label label-danger">На доработку</small>
+                                                            {/if}
                                                         {/if}
                                                     </td>
                                                     <td style="width: 70px;" class="jsgrid-cell">
                                                         {$ticket->created|date}
                                                     </td>
                                                     <td style="width: 70px;" class="jsgrid-cell">
-                                                        <a href="/manager/{$ticket->manager_id}/">{$ticket->id}</a>
+                                                        {if $ticket->creator == 0}
+                                                            ООО МКК "РУССКОЕ КРЕДИТНОЕ ОБЩЕСТВО"
+                                                        {else}
+                                                            {$ticket->creator}
+                                                        {/if}
+                                                    </td>
+                                                    <td style="width: 70px;" class="jsgrid-cell">
+                                                        {if $ticket->executor == 0}
+                                                            Нет ответственного
+                                                        {else}
+                                                            <a href="/manager/{$ticket->executor['id']}/">{$ticket->executor['name']}</a>
+                                                        {/if}
                                                     </td>
                                                     <td style="width: 80px;" class="jsgrid-cell">
                                                         {$ticket->head|escape}

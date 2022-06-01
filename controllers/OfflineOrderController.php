@@ -2923,6 +2923,7 @@ class OfflineOrderController extends Controller
     {
         $order_id = (int)$this->request->post('order_id');
         $this->orders->update_order($order_id, ['status' => 14]);
+        $this->Tickets->close_neworder_ticket($order_id);
         exit;
     }
 

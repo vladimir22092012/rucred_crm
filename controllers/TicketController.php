@@ -27,8 +27,9 @@ class TicketController extends Controller
     private function action_accept_ticket()
     {
         $ticket_id = (int)$this->request->post('ticket_id');
+        $executor = $this->manager->id;
 
-        $result = $this->Tickets->update_ticket($ticket_id, ['status' => 1]);
+        $result = $this->Tickets->update_ticket($ticket_id, ['status' => 2, 'executor' => $executor]);
 
         if ($result === true) {
             echo 'success';
@@ -43,7 +44,7 @@ class TicketController extends Controller
     {
         $ticket_id = (int)$this->request->post('ticket_id');
 
-        $result = $this->Tickets->update_ticket($ticket_id, ['status' => 3]);
+        $result = $this->Tickets->update_ticket($ticket_id, ['status' => 6]);
 
         if ($result === true) {
             echo 'success';

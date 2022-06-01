@@ -98,29 +98,30 @@
                                             <form class="mb-3 border">
                                                 <h6 class="card-header card-success">
                                                     <span class="text-white" style="width: 20%">{$ticket->head}</span>
-                                                    {if $ticket->status == 0}
+                                                    <span class="text-white" style="width: 20%; margin-left: 50px">Номер заявки: <a href="/offline_order/{$ticket->order_id}">{$ticket->order_id}</a></span>
+                                                    {if in_array($ticket->status, [0,1])}
                                                         <small class="label label-warning"
-                                                               style="margin-left: 10px; width: 7%">Новый
-                                                        </small>
-                                                    {/if}
-                                                    {if $ticket->status == 1}
-                                                        <small class="label label-primary"
-                                                               style="margin-left: 10px; width: 7%">Принят
+                                                               style="margin-left: 50px; width: 7%">Новый
                                                         </small>
                                                     {/if}
                                                     {if $ticket->status == 2}
                                                         <small class="label label-primary"
-                                                               style="margin-left: 10px; width: 7%">На проверку
+                                                               style="margin-left: 50px; width: 7%">Принят
                                                         </small>
                                                     {/if}
                                                     {if $ticket->status == 3}
-                                                        <small class="label label-success"
-                                                               style="margin-left: 10px; width: 7%">Исполнено
+                                                        <small class="label label-primary"
+                                                               style="margin-left: 50px; width: 7%">На проверку
                                                         </small>
                                                     {/if}
                                                     {if $ticket->status == 4}
+                                                        <small class="label label-success"
+                                                               style="margin-left: 50px; width: 7%">Исполнено
+                                                        </small>
+                                                    {/if}
+                                                    {if $ticket->status == 5}
                                                         <small class="label label-danger"
-                                                               style="margin-left: 10px; width: 7%">На доработку
+                                                               style="margin-left: 50px; width: 7%">На доработку
                                                         </small>
                                                     {/if}
                                                     <span class="label label-text" style="width: 65%">
