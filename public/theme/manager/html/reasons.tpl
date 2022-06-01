@@ -39,10 +39,11 @@
                 </ol>
             </div>
             <div class="col-md-6 col-4 align-self-center">
+                {if !in_array($manager->role, ['employer', 'underwriter'])}
                 <button class="btn float-right hidden-sm-down btn-success js-open-add-modal">
                     <i class="mdi mdi-plus-circle"></i> Добавить
                 </button>
-                
+                {/if}
             </div>
         </div>
         
@@ -113,6 +114,7 @@
                                                 </div>
                                             </td>
                                             <td class="text-right">
+                                                {if !in_array($manager->role, ['employer', 'underwriter'])}
                                                 <div class="js-visible-view">
                                                     <a href="#" class="text-info js-edit-item" title="Редактировать"><i class=" fas fa-edit"></i></a>
                                                     <a href="#" class="text-danger js-delete-item" title="Удалить"><i class="far fa-trash-alt"></i></a>
@@ -121,6 +123,7 @@
                                                     <a href="#" class="text-success js-confirm-edit-item" title="Сохранить"><i class="fas fa-check-circle"></i></a>
                                                     <a href="#" class="text-danger js-cancel-edit-item" title="Отменить"><i class="fas fa-times-circle"></i></a>
                                                 </div>
+                                                {/if}
                                             </td>
                                         </tr>
                                         {/foreach}

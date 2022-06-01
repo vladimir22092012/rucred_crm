@@ -311,8 +311,10 @@
                                         href="reasons/"><i class="mdi mdi-react"></i>Причины отказа</a></li>
                             <li {if in_array($module, ['SmsTemplatesController'])}class="active"{/if}><a
                                         href="sms_templates"><i class="mdi mdi-sigma"></i>Шаблоны сообщений</a></li>
-                            <li {if in_array($module, ['ApikeysController'])}class="active"{/if}><a
-                                        href="apikeys/"><i class="mdi mdi-apple-finder"></i>Ключи для API</a></li>
+                            {if !in_array($manager->role, ['employer', 'underwriter'])}
+                                <li {if in_array($module, ['ApikeysController'])}class="active"{/if}><a
+                                            href="apikeys/"><i class="mdi mdi-apple-finder"></i>Ключи для API</a></li>
+                            {/if}
                         {/if}
                     </ul>
                 {/if}

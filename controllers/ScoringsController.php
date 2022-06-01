@@ -37,7 +37,9 @@ class ScoringsController extends Controller
         
         $scoring_types = $this->scorings->get_types();
         $this->design->assign('scoring_types', $scoring_types);
-        
+
+        $manager_role = $this->manager->role;
+        $this->design->assign('manager_role', $manager_role);
   
         return $this->design->fetch('scorings.tpl');
     }

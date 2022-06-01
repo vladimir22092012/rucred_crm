@@ -134,16 +134,18 @@
                         </a>
                     </h4>
                 </div>
+                {if !in_array($manager_role, ['employer', 'underwriter'])}
                 <div class="col-4 col-md-3 col-lg-2 text-right ">
                     <div class="onoffswitch">
                         <input type="checkbox" name="settings[{$scoring_name}][active]" class="onoffswitch-checkbox" value="1" id="{$scoring_name}_active" {if $scoring_params['active']}checked="true"{/if}
-                                {if in_array($manager->role, ['employer', 'underwriter'])}disabled{/if}/>
+                                disabled/>
                         <label class="onoffswitch-label" for="{$scoring_name}_active">
                             <span class="onoffswitch-inner"></span>
                             <span class="onoffswitch-switch"></span>
                         </label>
                     </div>
                 </div>
+                {/if}
             </div>
         </div>
         <div id="{$scoring_name}_content" class="card-body collapse scoring-content">
@@ -249,15 +251,15 @@
                 <ol class="dd-list">
                     {foreach $scoring_types as $type}
                     <li class="dd-item dd3-item" data-id="{$type->id}">
-                        <div class="dd-handle dd3-handle">
+                        {if !in_array($manager_role, ['employer', 'underwriter'])}<div class="dd-handle dd3-handle">
                             <input type="hidden" name="position[]" value="{$type->id}" />
                             <input type="hidden" name="settings[{$type->id}][id]" value="{$type->id}" />
-                        </div>
+                        </div>{/if}
                         <div class="dd3-content"> 
                             <div class="row">
                                 <div class="col-8 col-sm-9 col-md-10">
-                                    <a href="#content_{$type->id}" data-toggle="collapse" class="text-info collapsed">
-                                        <i class="fas fa-minus-circle"></i>
+                                    <a {if !in_array($manager_role, ['employer', 'underwriter'])} href="#content_{$type->id}" data-toggle="collapse" class="text-info collapsed"{/if}>
+                                        {if !in_array($manager_role, ['employer', 'underwriter'])}<i class="fas fa-minus-circle"></i>{/if}
                                         <span>
                                             {$type->title}
                                         </span>
@@ -271,7 +273,7 @@
                                 </div>
                                 <div class="col-4 col-sm-3 col-md-2">
                                     <div class="onoffswitch">
-                                        <input type="checkbox" name="settings[{$type->id}][active]" class="onoffswitch-checkbox" value="1" id="active_{$type->id}" {if $type->active}checked="true"{/if} />
+                                        <input {if in_array($manager_role, ['employer', 'underwriter'])}disabled{/if} type="checkbox" name="settings[{$type->id}][active]" class="onoffswitch-checkbox" value="1" id="active_{$type->id}" {if $type->active}checked="true"{/if} />
                                         <label class="onoffswitch-label" for="active_{$type->id}">
                                             <span class="onoffswitch-inner"></span>
                                             <span class="onoffswitch-switch"></span>
@@ -374,11 +376,13 @@
         <hr class="mb-3 mt-3" />
         
         <div class="row">
+            {if !in_array($manager_role, ['employer', 'underwriter'])}
             <div class="col-12 grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-width="12">
                 <div class="form-actions">
                     <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Сохранить</button>
                 </div>
             </div>
+            {/if}
         </form>
         <!-- Row -->
         <!-- ============================================================== -->
