@@ -731,9 +731,26 @@
 
             let order = {{json_encode($order)}};
 
-            if($.inArray(order['status'], ['4','5','6','7','8']) !== -1){
+            if ($.inArray(order['status'], ['4', '5', '6', '7', '8']) !== -1) {
                 $('.fa-edit').remove();
             }
+
+            $('.create_settlement').on('click', function (e) {
+                e.preventDefault();
+
+                let order_id = $(this).attr('data-order');
+
+                $.ajax({
+                    method: 'POST',
+                    data:{
+                        action: 'create_pay_rdr',
+                        order_id: order_id
+                    },
+                    success:function () {
+
+                    }
+                })
+            });
         });
     </script>
     <script>
@@ -747,7 +764,7 @@
                     phone: phone,
                     user: user
                 }
-            })
+            });
         }
 
         function confirm_asp(user, phone, code, order) {
@@ -781,7 +798,7 @@
                         setTimeout(function () {
                             let html = '<div class="card card-text mb-1" style="width: 100%!important;">' +
                                 '<div class="box text-center">' +
-                                '<h4>Код ПЭП: '+code+'</h4>' +
+                                '<h4>Код ПЭП: ' + code + '</h4>' +
                                 '</div>' +
                                 '</div>';
 
@@ -1186,15 +1203,28 @@
                                                     <h6>Договор {$contract->number}</h6>
                                                 </div>
                                             </div>
-                                            <form class=" pt-1 js-confirm-contract">
-                                                <div class="pt-1 pb-2">
-                                                    <button class="btn btn-info btn-lg btn-block send_money"
-                                                            data-order="{$order->order_id}">
-                                                        <i class="fas fa-hospital-symbol"></i>
-                                                        <span>Отправить деньги</span>
-                                                    </button>
-                                                </div>
-                                            </form>
+                                            {if $order->settlement_id == 2}
+                                                <form class=" pt-1 js-confirm-contract">
+                                                    <div class="pt-1 pb-2">
+                                                        <button class="btn btn-info btn-lg btn-block send_money"
+                                                                data-order="{$order->order_id}">
+                                                            <i class="fas fa-hospital-symbol"></i>
+                                                            <span>Отправить деньги</span>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            {/if}
+                                            {if $order->settlement_id == 3}
+                                                <form method="POST">
+                                                    <input type="hidden" name="action" value="create_pay_rdr">
+                                                    <input type="hidden" name="order_id" value="{$order->order_id}">
+                                                    <div class="pt-1 pb-2">
+                                                        <button type="submit" class="btn btn-info btn-lg btn-block">
+                                                            <span>Создать платежный документ</span>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            {/if}
                                         {/if}
                                         {if $order->status == 5}
                                             {if $contract->status == 4}
@@ -2029,7 +2059,7 @@
                                             <h6 class="card-header">
                                                 <span class="text-white">Информация о работодателе</span>
                                                 {if !in_array($order->status, ['4','5','6','7','8'])}
-                                                <span class="float-right">
+                                                    <span class="float-right">
                                                     <a href="javascript:void(0);"
                                                        class="text-white"
                                                        data-user="{$order->user_id}">
@@ -2530,7 +2560,8 @@
                                                 <div class="row view-block p-2">
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-0 row">
-                                                            <label class="control-label col-md-8 col-7">Перечислить из:</label>
+                                                            <label class="control-label col-md-8 col-7">Перечислить
+                                                                из:</label>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12">
@@ -2559,11 +2590,11 @@
                                                     <input class="form-control bank-name-edit"
                                                            style="width: 350px; margin-left: 25px"
                                                            type="text" name="bank_name"
-                                                           value="{$order->bank_name}"/><br>
+                                                           value="{$order->bank_name}"><br>
                                                     <label class="control-label">БИК банка</label><br>
                                                     <input class="form-control bik-edit"
                                                            style="width: 180px; margin-left: 25px"
-                                                           type="text" name="bik_bank" value="{$order->bik_bank}"/>
+                                                           type="text" name="bik_bank" value="{$order->bik_bank}">
                                                 </div>
                                                 <br>
                                                 <div>
