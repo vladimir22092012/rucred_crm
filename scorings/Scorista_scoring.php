@@ -197,6 +197,9 @@ object(stdClass)#19 (2) {
         {
             $user = $this->users->get_user((int)$order->user_id);
             
+            $user->regaddress = $this->addresses->get_address($user->regaddress_id);
+            $user->faktaddress = $this->addresses->get_address($user->faktaddress_id);
+            
             if (empty($user))
             {
                 return (object)array('error' => 'undefined_user');
@@ -225,29 +228,29 @@ object(stdClass)#19 (2) {
             
             /** Адрес регистрации */
             $addressRegistration = new StdClass();
-            $addressRegistration->postIndex = empty($user->Regindex) ? '000000' : $user->Regindex;
-            $addressRegistration->region = $user->Regregion;
-            $addressRegistration->city = empty($user->Regcity) ? $user->Reglocality : $user->Regcity;
-            $addressRegistration->street = $user->Regstreet;
-            $addressRegistration->house = $user->Reghousing;
-            if ($user->Regbuilding)
-                $addressRegistration->building = $user->Regbuilding;
-            if ($user->Regroom)
-                $addressRegistration->flat = $user->Regroom;
+            $addressRegistration->postIndex = empty($user->regaddress->zip) ? '000000' : $user->regaddress->zip;
+            $addressRegistration->region = $user->regaddress->region;
+            $addressRegistration->city = empty($user->regaddress->city) ? $user->regaddress->locality : $user->regaddress->city;
+            $addressRegistration->street = $user->regaddress->street;
+            $addressRegistration->house = $user->regaddress->house;
+            if ($user->regaddress->building)
+                $addressRegistration->building = $user->regaddress->building;
+            if ($user->room)
+                $addressRegistration->flat = $user->regaddress->room;
             
             $persona->addressRegistration = $addressRegistration;
             
             /** Фактический адрес проживания */
             $addressResidential = new StdClass();
-            $addressResidential->postIndex = empty($user->Faktindex) ? '000000' : $user->Faktindex;
-            $addressResidential->region = $user->Faktregion;
-            $addressResidential->city = empty($user->Faktcity) ? $user->Faktlocality : $user->Faktcity;
-            $addressResidential->street = $user->Faktstreet;
-            $addressResidential->house = $user->Fakthousing;
-            if ($user->Faktbuilding)
-                $addressResidential->building = $user->Faktbuilding;
-            if ($user->Faktroom)
-                $addressResidential->flat = $user->Faktroom;
+            $addressResidential->postIndex = empty($user->faktaddress->zip) ? '000000' : $user->faktaddress->zip;
+            $addressResidential->region = $user->faktaddress->region;
+            $addressResidential->city = empty($user->faktaddress->city) ? $user->faktaddress->locality : $user->faktaddress->city;
+            $addressResidential->street = $user->faktaddress->street;
+            $addressResidential->house = $user->faktaddress->house;
+            if ($user->faktaddress->building)
+                $addressResidential->building = $user->faktaddress->building;
+            if ($user->faktaddress->room)
+                $addressResidential->flat = $user->faktaddress->room;
             
             $persona->addressResidential = $addressResidential;
             

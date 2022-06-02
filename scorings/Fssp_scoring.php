@@ -39,9 +39,10 @@ class Fssp_scoring extends Core
                 }
                 else
                 {
-
+                    $regaddress = $this->addresses->get_address($order->regaddress_id);
+                    
                     $data = array(
-                        'region' => $this->get_code($order->Regregion),
+                        'region' => $this->get_code($regaddress->region),
                         'lastname' => $order->lastname,
                         'firstname' => $order->firstname,
                         'secondname' => $order->patronymic,

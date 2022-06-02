@@ -313,71 +313,62 @@ class NeworderController extends Controller
             exit;
         }
 
-        $Regadress = json_decode($this->request->post('Regadress'));
-
-        $user['Regadressfull'] = $this->request->post('Regadressfull');
-
-        $user['Regindex'] = (!empty($Regadress->data->postal_code)) ? $Regadress->data->postal_code : '';
-        $user['Regregion'] = (!empty($Regadress->data->region)) ? $Regadress->data->region : '';
-        $user['Regregion_shorttype'] = (!empty($Regadress->data->region_type)) ? $Regadress->data->region_type : '';
-        $user['Regcity'] = (!empty($Regadress->data->city)) ? $Regadress->data->city : '';
-        $user['Regcity_shorttype'] = (!empty($Regadress->data->city_type)) ? $Regadress->data->city_type : '';
-        $user['Regdistrict'] = (!empty($Regadress->data->city_district)) ? $Regadress->data->city_district : '';
-        $user['Regdistrict_shorttype'] = (!empty($Regadress->data->city_district_type)) ? $Regadress->data->city_district_type : '';
-        $user['Reglocality'] = (!empty($Regadress->data->settlement)) ? $Regadress->data->settlement : '';
-        $user['Reglocality_shorttype'] = (!empty($Regadress->data->settlement_type)) ? $Regadress->data->settlement_type : '';
-        $user['Regstreet'] = (!empty($Regadress->data->street)) ? $Regadress->data->street : '';
-        $user['Regstreet_shorttype'] = (!empty($Regadress->data->street_type)) ? $Regadress->data->street_type : '';
-        $user['Reghousing'] = (!empty($Regadress->data->house)) ? $Regadress->data->house : '';
-        $user['Regbuilding'] = (!empty($Regadress->data->block)) ? $Regadress->data->block : '';
-        $user['Regroom'] = (!empty($Regadress->data->flat)) ? $Regadress->data->flat : '';
         $user['loan_history'] = '[]';
 
-        if (empty($user['Regadressfull'])) {
+        $Regadress = json_decode($this->request->post('Regadress'));
+        
+        $regaddress = [];
+        $regaddress['adressfull'] = $this->request->post('Regadressfull');
+        $regaddress['zip'] = $Regadress->data->postal_code ?? '';
+        $regaddress['region'] = $Regadress->data->region ?? '';
+        $regaddress['region_type'] = $Regadress->data->region_type ?? '';
+        $regaddress['city'] = $Regadress->data->city ?? '';
+        $regaddress['city_type'] = $Regadress->data->city_type ?? '';
+        $regaddress['district'] = $Regadress->data->city_district ?? '';
+        $regaddress['district_type'] = $Regadress->data->city_district_type ?? '';
+        $regaddress['locality'] = $Regadress->data->settlement ?? '';
+        $regaddress['locality_type'] = $Regadress->data->settlement_type ?? '';
+        $regaddress['street'] = $Regadress->data->street ?? '';
+        $regaddress['street_type'] = $Regadress->data->street_type ?? '';
+        $regaddress['house'] = $Regadress->data->house ?? '';
+        $regaddress['building'] = $Regadress->data->block ?? '';
+        $regaddress['room'] = $Regadress->data->flat ?? '';
+        $regaddress['okato'] = $Regadress->data->okato ?? '';
+        $regaddress['oktmo'] = $Regadress->data->oktmo ?? '';
+
+        if (empty($regaddress['adressfull'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует адрес регистрации']);
             exit;
         }
 
         if ($this->request->post('actual_address') == 1) {
-            $user['Faktadressfull'] = $user['Regadressfull'];
-            $user['Faktindex'] = $user['Regindex'];
-            $user['Faktregion'] = $user['Regregion'];
-            $user['Faktregion_shorttype'] = $user['Regregion_shorttype'];
-            $user['Faktdistrict'] = $user['Regdistrict'];
-            $user['Faktdistrict_shorttype'] = $user['Regdistrict_shorttype'];
-            $user['Faktcity'] = $user['Regcity'];
-            $user['Faktcity_shorttype'] = $user['Regcity_shorttype'];
-            $user['Faktlocality'] = $user['Reglocality'];
-            $user['Faktlocality_shorttype'] = $user['Reglocality_shorttype'];
-            $user['Faktstreet'] = $user['Regstreet'];
-            $user['Faktstreet_shorttype'] = $user['Regstreet_shorttype'];
-            $user['Fakthousing'] = $user['Reghousing'];
-            $user['Faktbuilding'] = $user['Regbuilding'];
-            $user['Faktroom'] = $user['Regroom'];
+            $faktaddress = $regaddress;
         } else {
-            $Faktaddress = json_decode($this->request->post('Fakt_adress'));
+            $Fakt_adress = json_decode($this->request->post('Fakt_adress'));
 
-            $user['Faktadressfull'] = $this->request->post('Faktadressfull');
+            $faktaddress = [];
+            $faktaddress['adressfull'] = $this->request->post('Faktadressfull');
+            $faktaddress['zip'] = $Fakt_adress->data->postal_code ?? '';
+            $faktaddress['region'] = $Fakt_adress->data->region ?? '';
+            $faktaddress['region_type'] = $Fakt_adress->data->region_type ?? '';
+            $faktaddress['city'] = $Fakt_adress->data->city ?? '';
+            $faktaddress['city_type'] = $Fakt_adress->data->city_type ?? '';
+            $faktaddress['district'] = $Fakt_adress->data->city_district ?? '';
+            $faktaddress['district_type'] = $Fakt_adress->data->city_district_type ?? '';
+            $faktaddress['locality'] = $Fakt_adress->data->settlement ?? '';
+            $faktaddress['locality_type'] = $Fakt_adress->data->settlement_type ?? '';
+            $faktaddress['street'] = $Fakt_adress->data->street ?? '';
+            $faktaddress['street_type'] = $Fakt_adress->data->street_type ?? '';
+            $faktaddress['house'] = $Fakt_adress->data->house ?? '';
+            $faktaddress['building'] = $Fakt_adress->data->block ?? '';
+            $faktaddress['room'] = $Fakt_adress->data->flat ?? '';
+            $faktaddress['okato'] = $Fakt_adress->data->okato ?? '';
+            $faktaddress['oktmo'] = $Fakt_adress->data->oktmo ?? '';
 
-            if (empty($user['Faktadressfull'])) {
+            if (empty($faktaddress['adressfull'])) {
                 response_json(['error' => 1, 'reason' => 'Отсутствует фактический адрес проживания']);
                 exit;
             }
-
-            $user['Faktindex'] = (!empty($Faktaddress->data->postal_code)) ? $Faktaddress->data->postal_code : '';
-            $user['Faktregion'] = (!empty($Faktaddress->data->region)) ? $Faktaddress->data->region : '';
-            $user['Faktregion_shorttype'] = (!empty($Faktaddress->data->region_type)) ? $Faktaddress->data->region_type : '';
-            $user['Faktcity'] = (!empty($Faktaddress->data->city)) ? $Faktaddress->data->city : '';
-            $user['Faktcity_shorttype'] = (!empty($Faktaddress->data->city_type)) ? $Faktaddress->data->city_type : '';
-            $user['Faktdistrict'] = (!empty($Faktaddress->data->city_district)) ? $Faktaddress->data->city_district : '';
-            $user['Faktdistrict_shorttype'] = (!empty($Faktaddress->data->city_district_type)) ? $Faktaddress->data->city_district_type : '';
-            $user['Faktlocality'] = (!empty($Faktaddress->data->settlement)) ? $Faktaddress->data->settlement : '';
-            $user['Faktlocality_shorttype'] = (!empty($Faktaddress->data->settlement_type)) ? $Faktaddress->data->settlement_type : '';
-            $user['Faktstreet'] = (!empty($Faktaddress->data->street)) ? $Faktaddress->data->street : '';
-            $user['Faktstreet_shorttype'] = (!empty($Faktaddress->data->street_type)) ? $Faktaddress->data->street_type : '';
-            $user['Fakthousing'] = (!empty($Faktaddress->data->house)) ? $Faktaddress->data->house : '';
-            $user['Faktbuilding'] = (!empty($Faktaddress->data->block)) ? $Faktaddress->data->block : '';
-            $user['Faktroom'] = (!empty($Faktaddress->data->flat)) ? $Faktaddress->data->flat : '';
         }
 
         $user['company_id'] = (int)$this->request->post('company', 'integer');
@@ -404,6 +395,8 @@ class NeworderController extends Controller
             $user['personal_number'] = $last_personal_number + 1;
 
             if ($user['user_id'] = $this->users->add_user($user)) {
+                $user['regaddress_id'] = $this->addresses->add_address($regaddress);
+                $user['faktaddress_id'] = $this->addresses->add_address($faktaddress);
             } else {
                 $this->design->assign('error', 'Не удалось создать клиента');
             }

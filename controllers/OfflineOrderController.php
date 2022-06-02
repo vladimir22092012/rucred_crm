@@ -408,6 +408,8 @@ class OfflineOrderController extends Controller
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scorings, $scoring_types);echo '</pre><hr />';
 
                     $user = $this->users->get_user((int)$order->user_id);
+                    $user->regaddress = $this->addresses->get_address($user->regaddress_id);
+                    $user->faktaddress = $this->addresses->get_address($user->faktaddress_id);
 
                     $this->design->assign('user', $user);
 
