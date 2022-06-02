@@ -1002,7 +1002,24 @@ class OfflineOrderController extends Controller
             if ($best2pay_response_xml->state->__toString() !== 'APPROVED') {
                 return array('error' => 'Платёж не прошел');
             }
-            $this->orders->update_order($order_id, array('status' => 9));
+            $this->orders->update_order($order_id, array('status' => 5));
+
+            $ticket =
+                [
+                    'creator' => 0,
+                    'client_lastname' => $order->lastname,
+                    'client_firstname' => $order->firstname,
+                    'client_patronymic' => $order->patronymic,
+                    'head' => 'Займ выдан',
+                    'text' => 'Ознакомьтесь с документами по займу',
+                    'company_id' => $order['company_id'],
+                    'group_id' => $order['group_id'],
+                    'order_id' => $order_id,
+                    'status' => 0
+                ];
+
+            $this->Tickets->add_ticket($ticket);
+
             return array('success' => 1);
         } catch (Exception $e) {
             return array('error' => 1);
