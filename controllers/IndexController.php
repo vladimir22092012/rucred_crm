@@ -112,6 +112,88 @@ class IndexController extends Controller
             $this->design->assign('penalty_notifications', $penalty_notifications);
         }
 
+        if(isset($this->manager->role)){
+            if($this->manager->role == 'employer'){
+
+                $query = $this->db->placehold("
+            SELECT COUNT(*) as `count`
+            FROM s_tickets
+            WHERE group_id = ?
+            AND executor = 0
+            and status != 6
+            OR
+            executor = ?
+            AND note_flag = 0
+            and status != 6
+            ", $this->manager->group_id, $this->manager->id);
+
+                $this->db->query($query);
+                $count_in = $this->db->result('count');
+            }
+            if($this->manager->role == 'underwriter'){
+                $query = $this->db->placehold("
+            SELECT COUNT(*) as `count`
+            FROM s_tickets
+            WHERE group_id = 2
+            AND executor = 0
+            and status != 6
+            OR
+            executor = ?
+            AND note_flag = 0
+            and status != 6
+            ", $this->manager->id);
+
+                $this->db->query($query);
+                $count_in = $this->db->result('count');
+            }
+
+            if($this->manager->role == 'middle'){
+                $query = $this->db->placehold("
+            SELECT COUNT(*) as `count`
+            FROM s_tickets
+            WHERE group_id = 2
+            AND note_flag = 0
+            AND creator != ?
+            and status != 6
+            ", $this->manager->id);
+
+                $this->db->query($query);
+                $count_in = $this->db->result('count');
+            }
+            if(in_array($this->manager->role, ['admin', 'developer'])){
+                $query = $this->db->placehold("
+            SELECT COUNT(*) as `count`
+            FROM s_tickets
+            WHERE note_flag = 0
+            AND creator != ?
+            and status != 6
+            ", $this->manager->id);
+
+                $this->db->query($query);
+                $count_in = $this->db->result('count');
+            }
+
+            $query = $this->db->placehold("
+            SELECT COUNT(*) as `count`
+            FROM s_tickets
+            WHERE note_flag = 0
+            AND creator = ?
+            and status != 6
+            ", $this->manager->id);
+
+            $this->db->query($query);
+            $count_out = $this->db->result('count');
+
+            if(!isset($count_in))
+                $count_in = 0;
+
+            if(empty($count_out))
+                $count_out = 0;
+
+            $this->design->assign('count_in', $count_in);
+            $this->design->assign('count_out', $count_out);
+        }
+
         if (!empty($wrapper)) {
             return $this->body = $this->design->fetch($wrapper);
         } else {

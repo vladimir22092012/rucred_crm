@@ -37,6 +37,29 @@
     <script type="text/javascript">
         var _front_url = '{$config->front_url}';
     </script>
+    <style>
+        .badge1 {
+            position: relative;
+        }
+
+        .badge1[data-badge]:after {
+            content: attr(data-badge);
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: .6em;
+            font-weight: normal;
+            color: #ddded4;
+            background-color: #880000;
+            width: 25px;
+            height: 18px;
+            text-align: center;
+            line-height: 18px;
+            border-radius: 100%;
+            border: 1px;
+            box-shadow: 0 0 1px #333;
+        }
+    </style>
 </head>
 
 <body class="fix-header fix-sidebar card-no-border">
@@ -218,10 +241,10 @@
                         <li {if in_array($module, ['TicketsController'])}class="active"{/if}>
                         <li class="nav-small-cap">Коммуникации</li>
                         <li {if in_array($module, ['TicketsController'])}class="active"{/if}>
-                            <a href="tickets?in=true"><i class="mdi mdi-email-open"></i><span>Полученные запросы</span></a>
+                            <a href="tickets?in=true"><i class="mdi mdi-email-open badge1" data-badge="{$count_in}"></i><span>Полученные запросы</span></a>
                         </li>
                         <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
-                                    href="tickets?out=true"><i class="mdi mdi-email-variant"></i><span>Направленные запросы</span></a>
+                                    href="tickets?out=true"><i class="mdi mdi-email-variant badge1" data-badge="{$count_out}"></i><span>Направленные запросы</span></a>
                         </li>
                         <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
                                     href="tickets?archive=true"><i class="mdi mdi-mailbox"></i><span>Архив запросов</span></a>
