@@ -938,6 +938,18 @@
                                         </div>
                                         <br>
                                         <hr style="width: 100%; size: 5px">
+                                        <br>
+                                        <h4>Перечислить микрозайм с банковского счета:</h4><br>
+                                        <div style="width: 100%; display: flex">
+                                            <select class="form-control" name="settlement" style="width: 300px; margin-left: 25px">
+                                                {foreach $settlements as $settlement}
+                                                    <option value="{$settlement->id}" {if $settlement->std == 1}selected{/if}>{$settlement->name}</option>
+                                                {/foreach}
+                                            </select>
+                                        </div>
+                                        <br>
+                                        <hr style="width: 100%; size: 5px">
+                                        <br>
                                         <h4>Текущие банковские кредиты и займы:</h4>
                                         <table class="jsgrid-table table table-striped table-hover">
                                             <thead>

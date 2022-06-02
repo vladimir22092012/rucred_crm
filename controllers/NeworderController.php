@@ -85,6 +85,9 @@ class NeworderController extends Controller
         $groups = $this->Groups->get_groups();
         $this->design->assign('groups', $groups);
 
+        $settlements = $this->OrganisationSettlements->get_settlements();
+        $this->design->assign('settlements', $settlements);
+
         return $this->design->fetch('offline/neworder.tpl');
     }
 
@@ -439,7 +442,7 @@ class NeworderController extends Controller
                 'group_id' => (int)$this->request->post('group'),
                 'branche_id' => (int)$this->request->post('branch'),
                 'company_id' => (int)$this->request->post('company'),
-                'settlement_id' => (int)$settlement_std->id
+                'settlement_id' => (int)$this->request->post('settlement')
             );
 
             $loan_type_groups = $this->GroupLoanTypes->get_loantype_groups((int)$loan_type);

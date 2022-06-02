@@ -619,6 +619,9 @@ class OfflineOrderController extends Controller
         $companies = $this->Companies->get_companies();
         $groups = $this->Groups->get_groups();
 
+        $settlement = $this->OrganisationSettlements->get_settlement($order->settlement_id);
+        $this->design->assign('settlement', $settlement);
+
         $body = $this->design->fetch('offline/order.tpl');
 
         if ($this->request->get('ajax', 'integer')) {

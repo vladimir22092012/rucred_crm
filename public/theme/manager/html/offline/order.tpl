@@ -2527,6 +2527,19 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="row view-block p-2">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group mb-0 row">
+                                                            <label class="control-label col-md-8 col-7">Перечислить из:</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group mb-0 row">
+                                                            <label
+                                                                    class="control-label col-md-12 bik-front">{$settlement->name}</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="cors-editor" style="display: none;">
                                                 <div style="width: 100%">
