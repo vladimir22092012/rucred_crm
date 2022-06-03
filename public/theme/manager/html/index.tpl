@@ -46,11 +46,11 @@
             content: attr(data-badge);
             position: absolute;
             top: -10px;
-            right: -10px;
+            right: -170px;
             font-size: .6em;
             font-weight: normal;
             color: #ddded4;
-            background-color: #880000;
+            background-color: #ff0000;
             width: 25px;
             height: 18px;
             text-align: center;
@@ -241,10 +241,10 @@
                         <li {if in_array($module, ['TicketsController'])}class="active"{/if}>
                         <li class="nav-small-cap">Коммуникации</li>
                         <li {if in_array($module, ['TicketsController'])}class="active"{/if}>
-                            <a href="tickets?in=true"><i class="mdi mdi-email-open badge1" data-badge="{$count_in}"></i><span>Полученные запросы</span></a>
+                            <a href="tickets?in=true"><i class="mdi mdi-email-open badge1" data-badge="{$count_in}"></i><span>Входящие запросы</span></a>
                         </li>
                         <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
-                                    href="tickets?out=true"><i class="mdi mdi-email-variant badge1" data-badge="{$count_out}"></i><span>Направленные запросы</span></a>
+                                    href="tickets?out=true"><i class="mdi mdi-email-variant badge1" data-badge="{$count_out}"></i><span>Исходящие запросы</span></a>
                         </li>
                         <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
                                     href="tickets?archive=true"><i class="mdi mdi-mailbox"></i><span>Архив запросов</span></a>

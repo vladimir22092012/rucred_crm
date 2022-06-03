@@ -111,6 +111,8 @@ class TicketsController extends Controller
                 $this->TicketsDocs->add_doc($new_file);
             }
         }
+
+        exit;
     }
 
     private function action_get_companies()

@@ -1,6 +1,6 @@
 <?php
 error_reporting(-1);
-ini_set('display_errors', 'On');
+ini_set('display_errors', 'Off');
 
 class OfflineOrderController extends Controller
 {
@@ -3665,9 +3665,16 @@ class OfflineOrderController extends Controller
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['query' => $order->bik_bank]));
         $result = curl_exec($ch);
-        $result = json_decode($result);
-        $payment_city = $result->suggestions[0]->data->payment_city;
-        $correspondent_account = $result->suggestions[0]->data->correspondent_account;
+
+        if(!empty($result)){
+            $result = json_decode($result);
+            $payment_city = $result->suggestions[0]->data->payment_city;
+            $correspondent_account = $result->suggestions[0]->data->correspondent_account;
+        }else{
+            $result = ' ';
+            $payment_city = ' ';
+            $correspondent_account = ' ';
+        }
 
         $content = '1CClientBankExchange
 ВерсияФормата=1.03
