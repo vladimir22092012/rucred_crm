@@ -31,8 +31,13 @@ class TicketMessages extends Core
         foreach ($messages as $message) {
 
             $message->docs = $this->TicketsDocs->get_docs($message->id);
-            $manager = $this->managers->get_manager($message->manager_id);
-            $message->manager_name = $manager->name;
+
+            if($message->manager_id != 0){
+                $manager = $this->managers->get_manager($message->manager_id);
+                $message->manager_name = $manager->name;
+            }else{
+                $message->manager_name = 'System';
+            }
         }
 
         return $messages;

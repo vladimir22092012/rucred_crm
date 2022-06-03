@@ -667,7 +667,17 @@ class NeworderController extends Controller
                                 'status' => 0
                             ];
 
-                        $this->Tickets->add_ticket($ticket);
+                        $ticket_id = $this->Tickets->add_ticket($ticket);
+
+                        $message =
+                            [
+                                'message' => 'Ознакомьтесь с новой заявкой',
+                                'ticket_id' => $ticket_id,
+                                'manager_id' => 0,
+                            ];
+
+                        $this->TicketMessages->add_message($message);
+
                         response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/neworder/draft/' . $order_id]);
                     } catch (Exception $exception) {
                         response_json(['error' => 1, 'reason' => 'Создать заявку не удалось']);
@@ -690,7 +700,16 @@ class NeworderController extends Controller
                                 'status' => 0
                             ];
 
-                        $this->Tickets->add_ticket($ticket);
+                        $ticket_id = $this->Tickets->add_ticket($ticket);
+
+                        $message =
+                            [
+                                'message' => 'Ознакомьтесь с новой заявкой',
+                                'ticket_id' => $ticket_id,
+                                'manager_id' => 0,
+                            ];
+
+                        $this->TicketMessages->add_message($message);
 
                         response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                     } catch (Exception $exception) {
