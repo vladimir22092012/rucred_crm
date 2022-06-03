@@ -98,14 +98,13 @@ class TicketsController extends Controller
             $files = array_map('files', $_FILES['docs']['name'], $_FILES['docs']['type'], $_FILES['docs']['tmp_name'], $_FILES['docs']['error'], $_FILES['docs']['size']);
 
             foreach ($files as $file) {
-                $new_filename = md5(microtime() . rand()) . '.' . $file['name'];
 
-                move_uploaded_file($file['tmp_name'], $this->config->root_dir . $this->config->user_files_dir . $new_filename);
+                move_uploaded_file($file['tmp_name'], $this->config->root_dir . $this->config->user_files_dir . $file['name']);
 
                 $new_file =
                     [
                         'ticket_id' => (int)$ticket_id,
-                        'file_name' => $new_filename
+                        'file_name' => $file['name']
                     ];
 
                 $this->TicketsDocs->add_doc($new_file);

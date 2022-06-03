@@ -98,7 +98,8 @@
                                             <form class="mb-3 border">
                                                 <h6 class="card-header card-success">
                                                     <span class="text-white" style="width: 20%">{$ticket->head}</span>
-                                                    <span class="text-white" style="width: 20%; margin-left: 50px">Номер заявки: <a href="/offline_order/{$ticket->order_id}">{$ticket->order_id}</a></span>
+                                                    <span class="text-white" style="width: 20%; margin-left: 50px">Номер заявки: <a
+                                                                href="/offline_order/{$ticket->order_id}">{$ticket->order_id}</a></span>
                                                     {if in_array($ticket->status, [0,1])}
                                                         <small class="label label-warning"
                                                                style="margin-left: 50px; width: 7%">Новый
@@ -127,19 +128,6 @@
                                                     <span class="label label-text" style="width: 65%">
                                                         Дата тикета: {$ticket->created|date} {$ticket->created|time}
                                                     </span>
-                                                    {if $manager->company_id == $ticket->company_id && $ticket->status != 3}
-                                                        <button data-ticket="{$ticket->id}"
-                                                                class="btn btn-primary close_ticket">
-                                                            <span>Закрыть тикет</span>
-                                                        </button>
-                                                    {/if}
-                                                    {if $ticket->status == 0}
-                                                        <button data-ticket="{$ticket->id}"
-                                                                class="btn btn-success accept_ticket">
-                                                            <i class="fas fa-check-circle"></i>
-                                                            <span>Принять тикет</span>
-                                                        </button>
-                                                    {/if}
                                                 </h6>
                                                 <div class="row pt-2 view-block">
                                                     <div class="col-md-12">
@@ -160,8 +148,10 @@
                                                                     <div class="col-md-12">
                                                                         <p class="form-control-static"><i
                                                                                     class="fas fa-file-pdf fa-lg"></i>&nbsp;
-                                                                            &nbsp;<a
-                                                                                    href="{$config->back_url}/files/users/{$dock->file_name}">{$dock->name|escape}</a>
+                                                                            &nbsp;
+                                                                            <a href="{$config->back_url}/files/users/{$dock->file_name}">
+                                                                                {$dock->file_name|escape}
+                                                                            </a>{$dock->size}
                                                                         </p>
                                                                     </div>
                                                                     {if $dock@iteration != count($ticket->docs)}
@@ -173,9 +163,23 @@
                                                     </div>
                                                 {/if}
                                             </form>
-                                            <div type="button"
-                                                 class="btn btn-outline-primary float-right">
-                                                Ответить
+                                            <div style="display: flex; justify-content: flex-end">
+                                                {if $ticket->status == 0}
+                                                    <div data-ticket="{$ticket->id}"
+                                                         class="btn btn-outline-success accept_ticket">
+                                                        Принять тикет
+                                                    </div>
+                                                {/if}
+                                                <div style="margin-left: 5px" type="button"
+                                                     class="btn btn-outline-primary">
+                                                    Ответить
+                                                </div>
+                                                {if $manager->company_id == $ticket->company_id && $ticket->status != 3}
+                                                    <div style="margin-left: 5px" data-ticket="{$ticket->id}"
+                                                         class="btn btn-outline-primary close_ticket">
+                                                        Закрыть тикет
+                                                    </div>
+                                                {/if}
                                             </div>
                                         </div>
                                     </div>

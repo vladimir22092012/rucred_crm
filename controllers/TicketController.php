@@ -19,6 +19,13 @@ class TicketController extends Controller
         $ticket_id = (int)$this->request->get('id');
 
         $ticket = $this->Tickets->get_ticket($ticket_id);
+
+        foreach ($ticket->docs as $key => $files) {
+            $size = filesize(ROOT . "/files/users/" . $files->file_name);
+            $size = number_format($size / 1048576, 2) . ' MB';
+            $files->size = $size;
+        }
+
         $this->design->assign('ticket', $ticket);
 
         return $this->design->fetch('ticket.tpl');
