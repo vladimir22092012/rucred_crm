@@ -79,7 +79,7 @@
                 <h3 class="text-themecolor mb-0 mt-0">Тикет</h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
-                    <li class="breadcrumb-item">Коммуникации</li>
+                    <li class="breadcrumb-item"><a href="/tickets?in=true">Коммуникации</a></li>
                     <li class="breadcrumb-item active">Тикет № {$ticket->id}</li>
                 </ol>
             </div>
@@ -98,8 +98,10 @@
                                             <form class="mb-3 border">
                                                 <h6 class="card-header card-success">
                                                     <span class="text-white" style="width: 20%">{$ticket->head}</span>
-                                                    <span class="text-white" style="width: 20%; margin-left: 50px">Номер заявки: <a
-                                                                href="/offline_order/{$ticket->order_id}">{$ticket->order_id}</a></span>
+                                                    {if !empty($ticket->order_id)}
+                                                        <span class="text-white" style="width: 20%; margin-left: 50px">Номер заявки: <a
+                                                                    href="/offline_order/{$ticket->order_id}">{$ticket->order_id}</a></span>
+                                                    {/if}
                                                     {if in_array($ticket->status, [0,1])}
                                                         <small class="label label-warning"
                                                                style="margin-left: 50px; width: 7%">Новый
@@ -137,7 +139,7 @@
                                                     </div>
                                                 </div>
                                                 <hr style="width: 100%; size: 5px">
-                                                {if isset($ticket->docs)}
+                                                {if !empty($ticket->docs)}
                                                     <div class="row pt-2 view-block">
                                                         <div class="col-md-12">
                                                             <div class="form-group row m-0">
@@ -164,7 +166,7 @@
                                                 {/if}
                                             </form>
                                             <div style="display: flex; justify-content: flex-end">
-                                                {if $ticket->status == 0}
+                                                {if $ticket->status == 0 && $manager->id != $ticket->creator}
                                                     <div data-ticket="{$ticket->id}"
                                                          class="btn btn-outline-success accept_ticket">
                                                         Принять тикет

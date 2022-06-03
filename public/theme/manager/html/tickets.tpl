@@ -56,7 +56,7 @@
                         processData: false,
                         contentType: false,
                         success: function (resp) {
-
+                            location.reload();
                         }
                     })
                 })
@@ -350,7 +350,7 @@
                     <div class="form-group">
                         <label for="groups" class="control-label">Группа:</label>
                         <select class="form-control" name="groups" id="groups"
-                                {if $manager->role == 'employer'}disabled{/if}>
+                                {if $manager->role == 'employer'}readonly{/if}>
                             {if $manager->role == 'employer'}
                                 <option value="2">Инфраструктура</option>
                             {else}
@@ -365,7 +365,7 @@
                         {if $manager->role == 'employer'}
                             <label for="companies" class="control-label">Компания:</label>
                             <select class="form-control" name="companies" id="companies"
-                                    {if $manager->role == 'employer'}disabled{/if}>
+                                    {if $manager->role == 'employer'}readonly{/if}>
                                 <option value="2">ООО МКК "РУССКОЕ КРЕДИТНОЕ ОБЩЕСТВО"</option>
                             </select>
                         {else}

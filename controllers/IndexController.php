@@ -119,7 +119,7 @@ class IndexController extends Controller
             SELECT COUNT(*) as `count`
             FROM s_tickets
             WHERE group_id = ?
-            AND executor = 0
+            AND (executor = 0 OR executor is null)
             and status != 6
             OR
             executor = ?
@@ -135,7 +135,7 @@ class IndexController extends Controller
             SELECT COUNT(*) as `count`
             FROM s_tickets
             WHERE group_id = 2
-            AND executor = 0
+            AND (executor = 0 OR executor is null)
             and status != 6
             OR
             executor = ?
