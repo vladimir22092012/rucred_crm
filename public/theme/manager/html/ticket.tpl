@@ -53,6 +53,10 @@
                     }
                 });
             });
+
+            $('.add_message').on('click', function () {
+                $('#add-message-modal').modal();
+            })
         });
     </script>
 {/capture}
@@ -138,8 +142,8 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <hr style="width: 100%; size: 5px">
                                                 {if !empty($ticket->docs)}
+                                                    <hr style="width: 100%; size: 5px">
                                                     <div class="row pt-2 view-block">
                                                         <div class="col-md-12">
                                                             <div class="form-group row m-0">
@@ -172,14 +176,22 @@
                                                         Принять тикет
                                                     </div>
                                                 {/if}
+                                                {if in_array($manager->id, [$ticket->executor, $ticket->creator])}
                                                 <div style="margin-left: 5px" type="button"
-                                                     class="btn btn-outline-primary">
+                                                     class="btn btn-outline-primary add_message">
                                                     Ответить
                                                 </div>
-                                                {if $manager->company_id == $ticket->company_id && $ticket->status != 3}
+                                                {/if}
+                                                {if $manager->id == $ticket->creator && $ticket->status != 6}
                                                     <div style="margin-left: 5px" data-ticket="{$ticket->id}"
-                                                         class="btn btn-outline-primary close_ticket">
+                                                         class="btn btn-outline-dark close_ticket">
                                                         Закрыть тикет
+                                                    </div>
+                                                {/if}
+                                                {if $manager->id == $ticket->creator && $ticket->status == 3}
+                                                    <div style="margin-left: 5px" data-ticket="{$ticket->id}"
+                                                         class="btn btn-outline-danger">
+                                                        На доработку
                                                     </div>
                                                 {/if}
                                             </div>
@@ -200,3 +212,36 @@
 <!-- ============================================================== -->
 
 {include file='footer.tpl'}
+
+<div id="add-message-modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Добавить ответ</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert" style="display:none"></div>
+                <form method="POST" id="add_message_form">
+                    <input type="hidden" name="action" value="add_message">
+                    <input type="hidden" name="ticket_id" value="{$ticket->id}">
+                    <input type="hidden" name="manager_id" value="{$manager->id}">
+                    <div class="form-group">
+                        <label for="message" class="control-label">Комментарий</label>
+                        <input type="text" class="form-control" name="message" id="message" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="docs" class="control-label">Прикрепить документы</label>
+                        <input type="file" class="custom-file-control" name="docs[]" id="docs" multiple="multiple">
+                    </div>
+                    <div>
+                        <input type="button" class="btn btn-danger cancel" data-dismiss="modal" value="Отмена">
+                        <input type="button" class="btn btn-success send_message" value="Отправить">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

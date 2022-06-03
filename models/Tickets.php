@@ -2,7 +2,7 @@
 
 class Tickets extends Core
 {
-    public $status =
+    protected $status =
         [
             0 => 'Новая заявка',
             1 => 'Направленный тикет',

@@ -13,6 +13,10 @@ class TicketController extends Controller
                 case 'close_ticket':
                     $this->action_close_ticket();
                     break;
+
+                case 'add_message':
+                    $this->action_add_message();
+                    break;
             endswitch;
         }
 
@@ -36,7 +40,7 @@ class TicketController extends Controller
         $ticket_id = (int)$this->request->post('ticket_id');
         $executor = $this->manager->id;
 
-        $result = $this->Tickets->update_ticket($ticket_id, ['status' => 2, 'executor' => $executor]);
+        $result = $this->Tickets->update_ticket($ticket_id, ['status' => 2, 'executor' => $executor, 'note_flag' => 1]);
 
         if ($result === true) {
             echo 'success';
@@ -60,5 +64,40 @@ class TicketController extends Controller
         }
 
         exit;
+    }
+
+    private function action_add_message()
+    {
+        $ticket_id = $this->request->post('id');
+        $manager_id = $this->request->post('manager_id');
+        $message = $this->request->post('message');
+
+        if (!empty($_FILES['docs']['name'][0])) {
+            function files($name, $type, $tmp_name, $error, $size)
+            {
+                return [
+                    'name' => $name,
+                    'type' => $type,
+                    'tmp_name' => $tmp_name,
+                    'error' => $error,
+                    'size' => $size
+                ];
+            }
+
+            $files = array_map('files', $_FILES['docs']['name'], $_FILES['docs']['type'], $_FILES['docs']['tmp_name'], $_FILES['docs']['error'], $_FILES['docs']['size']);
+
+            foreach ($files as $file) {
+
+                move_uploaded_file($file['tmp_name'], $this->config->root_dir . $this->config->user_files_dir . $file['name']);
+
+                $new_file =
+                    [
+                        'ticket_id' => (int)$ticket_id,
+                        'file_name' => $file['name']
+                    ];
+
+                $this->TicketsDocs->add_doc($new_file);
+            }
+        }
     }
 }

@@ -282,7 +282,7 @@
                                                         {if $ticket->creator == 0}
                                                             ООО МКК "РУССКОЕ КРЕДИТНОЕ ОБЩЕСТВО"
                                                         {else}
-                                                            {$ticket->creator}
+                                                            {$ticket->creator_company_name}
                                                         {/if}
                                                     </td>
                                                     <td style="width: 70px;" class="jsgrid-cell">
@@ -373,6 +373,14 @@
 
                             </div>
                         {/if}
+                    </div>
+                    <div class="form-group">
+                        <label for="creator_company" class="control-label">Компания от которой обращаетесь:</label>
+                        <select class="form-control" name="creator_company" id="creator_company">
+                            {foreach $managers_companies as $key => $companies}
+                                <option value="{$key}">{$companies}</option>
+                            {/foreach}
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="lastname" class="control-label" style="width: 80%">Фамилия клиента</label>

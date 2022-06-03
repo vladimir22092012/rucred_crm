@@ -48,11 +48,17 @@ class TicketsController extends Controller
                     $ticket->executor['name'] = $manager->name;
                     $ticket->executor['id'] = $manager->id;
                 }
+
+                $company = $this->Companies->get_company($ticket->creator_company);
+                $ticket->creator_company_name = $company->name;
             }
             $this->design->assign('tickets', $tickets);
 
             $groups = $this->Groups->get_groups();
             $this->design->assign('groups', $groups);
+
+            $managers_companies = $this->ManagersEmployers->get_records($this->manager->id);
+            $this->design->assign('managers_companies', $managers_companies);
 
             return $this->design->fetch('tickets.tpl');
         }
@@ -68,6 +74,7 @@ class TicketsController extends Controller
         $text = $this->request->post('text');
         $head = $this->request->post('head');
         $manager_id = (int)$this->request->post('manager_id');
+        $creator_company = (int)$this->request->post('creator_company');
 
         $ticket =
             [
@@ -77,6 +84,7 @@ class TicketsController extends Controller
                 'client_firstname' => $firstname,
                 'client_patronymic' => $patronymic,
                 'creator' => $manager_id,
+                'creator_company' => $creator_company,
                 'text' => $text,
                 'head' => $head
             ];
