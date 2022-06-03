@@ -24,6 +24,9 @@ class TicketController extends Controller
 
         $ticket = $this->Tickets->get_ticket($ticket_id);
 
+        $messages = $this->TicketMessages->get_messages($ticket_id);
+        $this->design->assign('messages', $messages);
+
         foreach ($ticket->docs as $key => $files) {
             $size = filesize(ROOT . "/files/users/" . $files->file_name);
             $size = number_format($size / 1048576, 2) . ' MB';
@@ -68,9 +71,18 @@ class TicketController extends Controller
 
     private function action_add_message()
     {
-        $ticket_id = $this->request->post('id');
+        $ticket_id = $this->request->post('ticket_id');
         $manager_id = $this->request->post('manager_id');
         $message = $this->request->post('message');
+
+        $message =
+            [
+                'message' => $message,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $manager_id,
+            ];
+
+        $message_id = $this->TicketMessages->add_message($message);
 
         if (!empty($_FILES['docs']['name'][0])) {
             function files($name, $type, $tmp_name, $error, $size)
@@ -93,7 +105,8 @@ class TicketController extends Controller
                 $new_file =
                     [
                         'ticket_id' => (int)$ticket_id,
-                        'file_name' => $file['name']
+                        'file_name' => $file['name'],
+                        'message_id' => $message_id
                     ];
 
                 $this->TicketsDocs->add_doc($new_file);

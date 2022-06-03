@@ -14,4 +14,18 @@ class TicketsDocs extends Core
 
         return $id;
     }
+
+    public function get_docs($message_id)
+    {
+        $query = $this->db->placehold("
+            SELECT *
+            FROM s_tickets_docs
+            WHERE message_id = ?
+            ", (int)$message_id);
+
+        $this->db->query($query);
+        $docs = $this->db->results();
+
+        return $docs;
+    }
 }

@@ -91,6 +91,15 @@ class TicketsController extends Controller
 
         $ticket_id = $this->Tickets->add_ticket($ticket);
 
+        $message =
+            [
+                'message' => $text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $manager_id,
+            ];
+
+        $message_id = $this->TicketMessages->add_message($message);
+
         if (!empty($_FILES['docs']['name'][0])) {
             function files($name, $type, $tmp_name, $error, $size)
             {
@@ -111,6 +120,7 @@ class TicketsController extends Controller
 
                 $new_file =
                     [
+                        'message_id' => $message_id,
                         'ticket_id' => (int)$ticket_id,
                         'file_name' => $file['name']
                     ];

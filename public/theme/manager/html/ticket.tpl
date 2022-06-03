@@ -56,6 +56,24 @@
 
             $('.add_message').on('click', function () {
                 $('#add-message-modal').modal();
+            });
+
+            $('.send_message').on('click', function (e) {
+                e.preventDefault();
+
+                let docs = $('#docs').files;
+                let form_data = new FormData($('#add_message_form')[0]);
+                form_data.append('docs', docs);
+
+                $.ajax({
+                    method: 'POST',
+                    data: form_data,
+                    processData: false,
+                    contentType: false,
+                    success: function (resp) {
+                        location.reload();
+                    }
+                })
             })
         });
     </script>
@@ -121,7 +139,7 @@
                                                                style="margin-left: 50px; width: 7%">На проверку
                                                         </small>
                                                     {/if}
-                                                    {if $ticket->status == 4}
+                                                    {if $ticket->status == 6}
                                                         <small class="label label-success"
                                                                style="margin-left: 50px; width: 7%">Исполнено
                                                         </small>
@@ -135,39 +153,45 @@
                                                         Дата тикета: {$ticket->created|date} {$ticket->created|time}
                                                     </span>
                                                 </h6>
-                                                <div class="row pt-2 view-block">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group row m-0">
-                                                            <label class="control-label col-md-4">{$ticket->text}</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                {if !empty($ticket->docs)}
-                                                    <hr style="width: 100%; size: 5px">
+                                                {foreach $messages as $message}
                                                     <div class="row pt-2 view-block">
                                                         <div class="col-md-12">
                                                             <div class="form-group row m-0">
-                                                                <label class="control-label col-md-4">Приложенные
-                                                                    документы:</label>
-                                                                <hr style="width: 100%; size: 5px">
-                                                                {foreach $ticket->docs as $dock}
-                                                                    <div class="col-md-12">
-                                                                        <p class="form-control-static"><i
-                                                                                    class="fas fa-file-pdf fa-lg"></i>&nbsp;
-                                                                            &nbsp;
-                                                                            <a href="{$config->back_url}/files/users/{$dock->file_name}">
-                                                                                {$dock->file_name|escape}
-                                                                            </a>{$dock->size}
-                                                                        </p>
-                                                                    </div>
-                                                                    {if $dock@iteration != count($ticket->docs)}
-                                                                        <hr style="width: 100%; size: 5px">
-                                                                    {/if}
-                                                                {/foreach}
+                                                                <label class="control-label col-md-1">Дата:</label>
+                                                                <label class="control-label col-md-4">{$message->created|date} {$message->created|time}</label>
+                                                            </div>
+                                                        </div><br><br>
+                                                        <div class="col-md-12">
+                                                            <div class="form-group row m-0">
+                                                                <label class="control-label col-md-1">Автор:</label>
+                                                                <label class="control-label col-md-4">{$message->manager_name}</label>
                                                             </div>
                                                         </div>
+                                                        <br><br>
+                                                        <div class="col-md-12">
+                                                            <div class="form-group row m-0">
+                                                                <label class="control-label col-md-2">Комментарий:</label>
+                                                                <label class="control-label col-md-10">{$message->message}</label>
+                                                            </div>
+                                                        </div>
+                                                        <br><br>
+                                                        {if !empty($message->docs)}
+                                                            <div class="col-md-12">
+                                                                <label class="control-label col-md-2">Приложенные
+                                                                    документы:</label>
+                                                                {foreach $message->docs as $dock}
+                                                                    <i class="fas fa-file-pdf fa-lg" style="margin-left: 25px"></i>
+                                                                <a href="{$config->back_url}/files/users/{$dock->file_name}">
+                                                                    {$dock->file_name|escape}
+                                                                    </a>{$dock->size}
+                                                                {/foreach}
+                                                            </div>
+                                                        {/if}
                                                     </div>
-                                                {/if}
+                                                    {if $message@iteration != count($messages)}
+                                                        <hr>
+                                                    {/if}
+                                                {/foreach}
                                             </form>
                                             <div style="display: flex; justify-content: flex-end">
                                                 {if $ticket->status == 0 && $manager->id != $ticket->creator}
@@ -177,10 +201,10 @@
                                                     </div>
                                                 {/if}
                                                 {if in_array($manager->id, [$ticket->executor, $ticket->creator])}
-                                                <div style="margin-left: 5px" type="button"
-                                                     class="btn btn-outline-primary add_message">
-                                                    Ответить
-                                                </div>
+                                                    <div style="margin-left: 5px" type="button"
+                                                         class="btn btn-outline-primary add_message">
+                                                        Ответить
+                                                    </div>
                                                 {/if}
                                                 {if $manager->id == $ticket->creator && $ticket->status != 6}
                                                     <div style="margin-left: 5px" data-ticket="{$ticket->id}"
@@ -230,7 +254,7 @@
                     <input type="hidden" name="manager_id" value="{$manager->id}">
                     <div class="form-group">
                         <label for="message" class="control-label">Комментарий</label>
-                        <input type="text" class="form-control" name="message" id="message" value=""/>
+                        <textarea class="form-control" name="message" id="message"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="docs" class="control-label">Прикрепить документы</label>
