@@ -30,14 +30,19 @@
                 });
             });
 
-            $('.close_ticket').on('click', function (e) {
+            $('.close_ticket, .return_ticket').on('click', function (e) {
 
                 let ticket_id = $(this).attr('data-ticket');
+                let action = 'return_ticket';
+
+                if($(this).hasClass('close_ticket'))
+                    action = 'close_ticket';
+
 
                 $.ajax({
                     method: 'POST',
                     data: {
-                        action: 'close_ticket',
+                        action: action,
                         ticket_id: ticket_id
                     },
                     success: function (resp) {
@@ -139,7 +144,7 @@
                                                                style="margin-left: 50px; width: 7%">На проверку
                                                         </small>
                                                     {/if}
-                                                    {if $ticket->status == 6}
+                                                    {if $ticket->status == 4}
                                                         <small class="label label-success"
                                                                style="margin-left: 50px; width: 7%">Исполнено
                                                         </small>
@@ -147,6 +152,11 @@
                                                     {if $ticket->status == 5}
                                                         <small class="label label-danger"
                                                                style="margin-left: 50px; width: 7%">На доработку
+                                                        </small>
+                                                    {/if}
+                                                    {if $ticket->status == 6}
+                                                        <small class="badge badge-dark"
+                                                               style="margin-left: 50px; width: 7%">Закрыт
                                                         </small>
                                                     {/if}
                                                     <span class="label label-text" style="width: 65%">
@@ -200,7 +210,7 @@
                                                         Принять тикет
                                                     </div>
                                                 {/if}
-                                                {if in_array($manager->id, [$ticket->executor, $ticket->creator])}
+                                                {if in_array($manager->id, [$ticket->executor, $ticket->creator]) && $ticket->status != 6}
                                                     <div style="margin-left: 5px" type="button"
                                                          class="btn btn-outline-primary add_message">
                                                         Ответить
@@ -214,7 +224,7 @@
                                                 {/if}
                                                 {if $manager->id == $ticket->creator && $ticket->status == 3}
                                                     <div style="margin-left: 5px" data-ticket="{$ticket->id}"
-                                                         class="btn btn-outline-danger">
+                                                         class="btn btn-outline-danger return_ticket">
                                                         На доработку
                                                     </div>
                                                 {/if}

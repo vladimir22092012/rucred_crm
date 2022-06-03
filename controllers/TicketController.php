@@ -17,6 +17,10 @@ class TicketController extends Controller
                 case 'add_message':
                     $this->action_add_message();
                     break;
+
+                case 'return_ticket':
+                    $this->action_return_ticket();
+                    break;
             endswitch;
         }
 
@@ -58,7 +62,7 @@ class TicketController extends Controller
     {
         $ticket_id = (int)$this->request->post('ticket_id');
 
-        $result = $this->Tickets->update_ticket($ticket_id, ['status' => 6]);
+        $result = $this->Tickets->update_ticket($ticket_id, ['note_flag' => 0, 'status' => 6]);
 
         if ($result === true) {
             echo 'success';
@@ -112,5 +116,27 @@ class TicketController extends Controller
                 $this->TicketsDocs->add_doc($new_file);
             }
         }
+
+        $ticket = $this->Tickets->get_ticket($ticket_id);
+
+        if($ticket->executor == $manager_id)
+            $this->Tickets->update_ticket($ticket_id, ['note_flag' => 0, 'status' => 3]);
+        else
+            $this->Tickets->update_ticket($ticket_id, ['note_flag' => 0]);
+    }
+
+    private function action_return_ticket(){
+
+        $ticket_id = (int)$this->request->post('ticket_id');
+
+        $result = $this->Tickets->update_ticket($ticket_id, ['note_flag' => 0, 'status' => 5]);
+
+        if ($result === true) {
+            echo 'success';
+        } else {
+            echo 'error';
+        }
+
+        exit;
     }
 }
