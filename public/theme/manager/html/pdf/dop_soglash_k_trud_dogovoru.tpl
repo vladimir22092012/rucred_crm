@@ -20,7 +20,7 @@
             одной стороны, и <br>
             гражданин Российской Федерации <strong>{$lastname|escape} {$firstname|escape} {$patronymic|escape}</strong>, <strong>{$birth|date}</strong> года рождения, место рождения:
             <strong>{$birth_place}</strong>, паспорт Гражданина Российской Федерации: серия: <strong>{$passport_serial|escape}</strong>, выдан <strong>{$passport_date|date}</strong> г, код подразделения:
-            <strong>{$subdivision_code}</strong>, зарегистрированный (-ая) по адресу: <strong>{$regadress_full}</strong>, именуемый (-ая) в дальнейшем «Работник»,
+            <strong>{$subdivision_code}</strong>, зарегистрированный (-ая) по адресу: <strong>{$regaddress->adressfull}</strong>, именуемый (-ая) в дальнейшем «Работник»,
             действующий в своих интересах, от своего имени, с другой стороны, а вместе именуемые
             «Стороны», заключили настоящее Дополнительное соглашение к Трудовому договору от {$date|date} г. о следующем:
         </p>

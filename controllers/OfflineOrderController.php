@@ -544,7 +544,10 @@ class OfflineOrderController extends Controller
             $this->documents->delete_documents($order_id);
 
             $order = $this->orders->get_order($order_id);
-
+            
+            $order->regaddress = $this->addresses->get_address($order->regaddress_id);
+            $order->faktaddress = $this->addresses->get_address($order->faktaddress_id);
+            
             $settlement = $this->OrganisationSettlements->get_std_settlement();
 
             $doc_types =

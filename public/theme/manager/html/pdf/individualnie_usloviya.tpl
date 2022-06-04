@@ -73,8 +73,8 @@
     серия <strong>{$passport_serial} № {$passport_number} выдан {$passport_issued} {$passport_date|date}</strong> года,
     код
     подразделения <strong>{$subdivision_code}</strong>, зарегистрированный (-ая) по адресу
-    <strong>{$Regadressfull|upper}</strong>,
-    фактически проживающий (-ая) по адресу <strong>{$Faktadressfull|upper}</strong>, далее именуемый (-ая) «Заёмщик»,
+    <strong>{$regaddress->adressfull|upper}</strong>,
+    фактически проживающий (-ая) по адресу <strong>{$faktaddress->adressfull|upper}</strong>, далее именуемый (-ая) «Заёмщик»,
     находясь
     в здравом уме и
     ясной памяти,
@@ -931,7 +931,7 @@
         </td>
         <td style="width: 10%"></td>
         <td style="width: 45%"><u>адрес регистрации</u>
-            {$Regadressfull}
+            {$regaddress->adressfull}
         </td>
     </tr>
     <br>
@@ -939,7 +939,7 @@
         <td style="width: 45%">ОГРН 121770033532</td>
         <td style="width: 10%"></td>
         <td style="width: 45%"><u>фактический адрес проживания</u>
-            {$Faktadressfull}
+            {$faktaddress->adressfull}
         </td>
     </tr>
 </table>

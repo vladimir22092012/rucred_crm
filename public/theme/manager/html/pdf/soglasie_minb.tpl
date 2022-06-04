@@ -14,8 +14,8 @@
     года,
     код
     подразделения <strong>{$subdivision_code}</strong>, зарегистрированный (-ая) по адресу
-    <strong>{$Regadressfull|upper}</strong>,
-    фактически проживающий (-ая) по адресу <strong>{$Faktadressfull|upper}</strong>, ИНН: <strong>{$inn}</strong>, СНИЛС:
+    <strong>{$regaddress->adressfull|upper}</strong>,
+    фактически проживающий (-ая) по адресу <strong>{$faktaddress->adressfull|upper}</strong>, ИНН: <strong>{$inn}</strong>, СНИЛС:
     <strong>{$snils}</strong>, телефон: <strong>{$phone_mobile}</strong>, адрес электронной почты: <strong>{$email|upper}</strong>
 </div>
 <div align="justify"><br>в соответствии с Федеральным законом от 27.07.2006 года № 152-ФЗ «О персональных данных» для
