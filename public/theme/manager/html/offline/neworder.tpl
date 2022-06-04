@@ -906,18 +906,19 @@
                                         <br>
                                         <h4>Перечислить микрозайм по следующим реквизитам:</h4><br>
                                         <div style="width: 100%; display: flex">
+                                            <input type="hidden" name="requisite[id]" value="{$order->requisite->id}" />
                                             <div style="display: flex; flex-direction: column">
                                                 <label class="control-label">ФИО держателя счета</label>
                                                 <input class="form-control" style="width: 350px; margin-left: 30px"
-                                                       type="text" name="fio_acc_holder"
-                                                       value="{$order->fio_acc_holder}"/>
+                                                       type="text" name="requisite[holder]"
+                                                       value="{$order->requisite->holder}"/>
                                             </div>
                                             <div style="display: flex; flex-direction: column">
                                                 <label class="control-label">Номер счета</label>
                                                 <input class="form-control account_number"
                                                        style="width: 300px; margin-left: 30px"
-                                                       type="text" name="account_number"
-                                                       value="{$order->account_number}"/>
+                                                       type="text" name="requisite[number]"
+                                                       value="{$order->requisite->number}"/>
                                             </div>
                                         </div>
                                         <br>
@@ -926,14 +927,20 @@
                                                 <label class="control-label">БИК
                                                     банка</label>
                                                 <input class="form-control bik" style="width: 180px; margin-left: 30px"
-                                                       type="text" name="bik_bank" value="{$order->bik_bank}"/>
+                                                       type="text" name="requisite[bik]" value="{$order->requisite->bik}"/>
                                             </div>
                                             <div style="display: flex; flex-direction: column">
                                                 <label class="control-label">Наименование
                                                     банка</label>
                                                 <input class="form-control bank_name"
                                                        style="width: 350px;margin-left: 30px"
-                                                       type="text" name="bank_name" value="{$order->bank_name}"/>
+                                                       type="text" name="requisite[name]" value="{$order->requisite->name}"/>
+                                            </div>
+                                            <div style="display: flex; flex-direction: column">
+                                                <label class="control-label">Кор. счет</label>
+                                                <input class="form-control"
+                                                       style="width: 350px;margin-left: 30px"
+                                                       type="text" name="requisite[correspondent_acc]" value="{$order->requisite->correspondent_acc}"/>
                                             </div>
                                         </div>
                                         <br>

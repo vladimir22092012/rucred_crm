@@ -129,7 +129,7 @@
 
             $('.cors-edit').on('click', function (e) {
                 e.preventDefault();
-
+                
                 let fio_hold_front = $('.fio-hold-front').text();
 
                 let acc_num_front = $('.acc-num-front').text();
@@ -154,22 +154,12 @@
 
                 $('.cors-edit-success').on('click', function () {
                     e.preventDefault();
-                    let user_id = {{$order->user_id}};
-                    let fio_acc_holder = $('.fio-hold-edit').val();
-                    let account_number = $('.acc-num-edit').val();
-                    let bank_name = $('.bank-name-edit').val();
-                    let bik_bank = $('.bik-edit').val();
 
+                    var $form = $(this).closest('form');
+                    
                     $.ajax({
                         method: 'POST',
-                        data: {
-                            action: 'cors_change',
-                            user_id: user_id,
-                            fio_acc_holder: fio_acc_holder,
-                            account_number: account_number,
-                            bank_name: bank_name,
-                            bik_bank: bik_bank
-                        },
+                        data: $form.serialize(),
                         success: function (resp) {
                             location.reload();
                         }
@@ -2500,6 +2490,8 @@
                                                 <span class="float-right"><a class="text-white cors-edit" href=""><i
                                                                 class=" fas fa-edit"></i></a></span>
                                             </h6>
+                                            <input type="hidden" name="action" value="cors_change" />
+                                            <input type="hidden" name="requisite[id]" value="{$order->requisite->id}" />
                                             <div class="cors-front">
                                                 <div class="row view-block p-2">
                                                     <div class="col-md-12">
@@ -2512,7 +2504,7 @@
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-0 row">
                                                             <label
-                                                                    class="control-label col-md-12 fio-hold-front">{$user->fio_acc_holder}</label>
+                                                                    class="control-label col-md-12 fio-hold-front">{$order->requisite->holder}</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -2526,7 +2518,7 @@
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-0 row">
                                                             <label
-                                                                    class="control-label col-md-12 acc-num-front">{$user->account_number}</label>
+                                                                    class="control-label col-md-12 acc-num-front">{$order->requisite->number}</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -2540,7 +2532,7 @@
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-0 row">
                                                             <label
-                                                                    class="control-label col-md-12 bank-name-front">{$user->bank_name}</label>
+                                                                    class="control-label col-md-12 bank-name-front">{$order->requisite->name}</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -2553,7 +2545,20 @@
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-0 row">
                                                             <label
-                                                                    class="control-label col-md-12 bik-front">{$user->bik_bank}</label>
+                                                                    class="control-label col-md-12 bik-front">{$order->requisite->bik}</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row view-block p-2">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group mb-0 row">
+                                                            <label class="control-label col-md-8 col-7">Кор счет:</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group mb-0 row">
+                                                            <label
+                                                                    class="control-label col-md-12 ">{$order->requisite->correspondent_acc}</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -2577,24 +2582,30 @@
                                                     <label class="control-label">ФИО держателя счета</label>
                                                     <input class="form-control fio-hold-edit"
                                                            style="width: 350px; margin-left: 25px"
-                                                           type="text" name="fio_acc_holder"
-                                                           value="{$order->fio_acc_holder}"/><br>
+                                                           type="text" name="requisite[holder]"
+                                                           value="{$order->requisite->holder}"/><br>
                                                     <label class="control-label">Номер счета</label><br>
                                                     <input class="form-control acc-num-edit"
                                                            style="width: 350px; margin-left: 25px"
-                                                           type="text" name="account_number"
-                                                           value="{$order->account_number}"/>
+                                                           type="text" name="requisite[number]"
+                                                           value="{$order->requisite->number}"/>
                                                 </div>
                                                 <div style="width: 100%">
                                                     <label class="control-label">Наименование банка</label>
                                                     <input class="form-control bank-name-edit"
                                                            style="width: 350px; margin-left: 25px"
-                                                           type="text" name="bank_name"
-                                                           value="{$order->bank_name}"><br>
+                                                           type="text" name="requisite[name]"
+                                                           value="{$order->requisite->name}"><br>
                                                     <label class="control-label">БИК банка</label><br>
                                                     <input class="form-control bik-edit"
-                                                           style="width: 180px; margin-left: 25px"
-                                                           type="text" name="bik_bank" value="{$order->bik_bank}">
+                                                           style="width: 350px; margin-left: 25px"
+                                                           type="text" name="requisite[bik]" value="{$order->requisite->bik}">
+                                                    <label class="control-label">Кор счет</label>
+                                                    <br />
+                                                    <input class="form-control bank-name-edit"
+                                                           style="width: 350px; margin-left: 25px"
+                                                           type="text" name="requisite[correspondent_acc]"
+                                                           value="{$order->requisite->correspondent_acc}"><br>
                                                 </div>
                                                 <br>
                                                 <div>

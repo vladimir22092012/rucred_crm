@@ -23,6 +23,8 @@ class NeworderController extends Controller
 
             $order = $this->orders->get_order($order_id);
 
+            $order->requisite = $this->requisites->get_requisite($order->requisite_id);
+
             $fio_spouse = explode(' ', $order->fio_spouse);
 
             $passport_serial = explode(' ', $order->passport_serial);
@@ -150,12 +152,8 @@ class NeworderController extends Controller
 
         $user['patronymic'] = trim($this->request->post('patronymic'));
 
-        $user['fio_acc_holder'] = trim($this->request->post('fio_acc_holder'));
-        $user['account_number'] = trim($this->request->post('account_number'));
-        $user['bank_name'] = trim($this->request->post('bank_name'));
-        $user['bik_bank'] = trim($this->request->post('bik_bank'));
-
-        if (empty($user['fio_acc_holder']) || empty($user['account_number']) || empty($user['bank_name']) || empty($user['bik_bank'])) {
+        $requisite = $this->request->post('requisite');                
+        if (empty($requisite['name']) || empty($requisite['bik']) || empty($requisite['number']) || empty($requisite['holder']) || empty($requisite['correspondent_acc'])) {
             response_json(['error' => 1, 'reason' => 'Заполните корректно реквизиты']);
             exit;
         }
@@ -410,6 +408,12 @@ class NeworderController extends Controller
 
             $this->users->update_user($user_id, $user);
 
+            if (empty($requisite['id']))
+            {
+                $requisite['user_id'] = $user_id;
+                $requisite['id'] = $this->requisites->add_requisite($requisite);
+            }
+            
             $settlements = $this->OrganisationSettlements->get_settlements();
 
             foreach ($settlements as $key => $settlement) {
@@ -435,7 +439,8 @@ class NeworderController extends Controller
                 'group_id' => (int)$this->request->post('group'),
                 'branche_id' => (int)$this->request->post('branch'),
                 'company_id' => (int)$this->request->post('company'),
-                'settlement_id' => (int)$this->request->post('settlement')
+                'settlement_id' => (int)$this->request->post('settlement'),
+                'requisite_id' => $requisite['id'],
             );
 
             $loan_type_groups = $this->GroupLoanTypes->get_loantype_groups((int)$loan_type);

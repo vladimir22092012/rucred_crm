@@ -232,6 +232,8 @@ class OfflineOrderController extends Controller
             if ($order_id = $this->request->get('id', 'integer')) {
                 if ($order = $this->orders->get_order($order_id)) {
 
+                    $order->requisite = $this->requisites->get_requisite($order->requisite_id);
+                    
                     // сохраняем историю займов из 1с
                     $client = $this->users->get_user($order->user_id);
 
@@ -866,42 +868,6 @@ class OfflineOrderController extends Controller
             'order_id' => $order_id,
             'user_id' => $order->user_id,
         ));
-
-        $accept_code = rand(1000, 9999);
-
-        $new_contract = array(
-            'order_id' => $order_id,
-            'user_id' => $order->user_id,
-            'card_id' => $order->card_id,
-            'type' => 'base',
-            'amount' => $order->amount,
-            'period' => $order->period,
-            'create_date' => date('Y-m-d H:i:s'),
-            'status' => 0,
-            'base_percent' => $this->settings->loan_default_percent,
-            'charge_percent' => $this->settings->loan_charge_percent,
-            'peni_percent' => $this->settings->loan_peni,
-            'service_reason' => $order->service_reason,
-            'service_insurance' => $order->service_insurance,
-            'accept_code' => $accept_code,
-        );
-        $contract_id = $this->contracts->add_contract($new_contract);
-
-        $this->orders->update_order($order_id, array('contract_id' => $contract_id));
-
-        if (!empty($order->id_1c)) {
-            //$resp = $this->soap1c->block_order_1c($order->id_1c, 0);
-        }
-
-        // отправялем смс
-        //$msg = 'Активируй займ ' . ($order->amount * 1) . ' в личном кабинете, код ' . $accept_code . ' nalichnoeplus.ru/lk';
-        //$this->sms->send($order->phone_mobile, $msg);
-
-//        ящик: sale@nalichnoeplus.com
-//        заголовок: подтверждение выдачи
-//        текст: текст - полное сообщение, как в смс.
-        //$this->notify->email('sale@nalichnoeplus.com', 'Подтверждение выдачи', $msg);
-
 
         return array('success' => 1, 'status' => 2);
 
@@ -2828,21 +2794,9 @@ class OfflineOrderController extends Controller
     private function action_cors_change()
     {
         $user_id = (int)$this->request->post('user_id');
-        $fio_acc_holder = $this->request->post('fio_acc_holder');
-        $account_number = $this->request->post('account_number');
-        $bank_name = $this->request->post('bank_name');
-        $bik_bank = $this->request->post('bik_bank');
 
-        $user =
-            [
-                'fio_acc_holder' => $fio_acc_holder,
-                'account_number' => $account_number,
-                'bank_name' => $bank_name,
-                'bik_bank' => $bik_bank
-            ];
-
-
-        $this->users->update_user($user_id, $user);
+        $requisite = $this->request->post('requisite');
+        $this->requisites->update_requisite($requisite['id'], $requisite);
     }
 
     private function action_edit_schedule()
