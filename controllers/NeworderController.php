@@ -413,6 +413,10 @@ class NeworderController extends Controller
                 $requisite['user_id'] = $user_id;
                 $requisite['id'] = $this->requisites->add_requisite($requisite);
             }
+            else
+            {
+                $this->requisites->update_requisite($requisite['id'], $requisite);
+            }
             
             $settlements = $this->OrganisationSettlements->get_settlements();
 

@@ -1010,7 +1010,7 @@
             Банка России по ЦФО
         </td>
         <td style="width: 10%"></td>
-        <td style="width: 45%"> {$account_number}, БИК {$bik_bank}, открытый в {$bank_name}
+        <td style="width: 45%"> {$requisite->number}, БИК {$requisite->bik}, открытый в {$requisite->name}
         </td>
     </tr>
     <br>

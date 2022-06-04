@@ -549,6 +549,7 @@ class OfflineOrderController extends Controller
             
             $order->regaddress = $this->addresses->get_address($order->regaddress_id);
             $order->faktaddress = $this->addresses->get_address($order->faktaddress_id);
+            $order->requisite = $this->requisites->get_requisite($order->requisite_id);
             
             $settlement = $this->OrganisationSettlements->get_std_settlement();
 
