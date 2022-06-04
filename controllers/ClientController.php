@@ -88,7 +88,9 @@ class ClientController extends Controller
             $this->users->save_loan_history($client->id, $credits_history);
 
             $client = $this->users->get_user($id);
-
+            
+            $client->regaddress = $this->addresses->get_address($client->regaddress_id);
+            $client->faktaddress = $this->addresses->get_address($client->faktaddress_id);
 
             $user_close_orders = $this->orders->get_orders(array(
                 'user_id' => $client->id,
