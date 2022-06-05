@@ -143,13 +143,13 @@
                             </div>
                         </div>
                     {/if}
-
+                    {*
                     <div class="col-6 text-right">
                         <div type="button" class="btn btn-success qr">
                             <i class="fas fa-plus-circle"></i>
                             QR
                         </div>
-                    </div>
+                    </div> *}
                 </div>
             </div>
         </div>
