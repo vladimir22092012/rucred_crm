@@ -115,6 +115,9 @@ class DocumentController extends Controller
 
         $this->design->assign('psk_rub', $psk_rub);
 
+        $amount_string = $this->num2str($document->params->amount);
+        $this->design->assign('amount_string', $amount_string);
+
         $passport_serial_full = explode(' ', $document->params->passport_serial);
         $passport_serial = $passport_serial_full[0];
         $passport_number = $passport_serial_full[1];
