@@ -17,8 +17,12 @@ class TicketsController extends Controller
                 case 'search_user':
                     return $this->action_search_user();
                     break;
+
+                case 'qr':
+                    return $this->action_qr();
+                    break;
             endswitch;
-        }else{
+        } else {
             $manager_role = $this->manager->role;
             $manager_id = $this->manager->id;
 
@@ -41,8 +45,8 @@ class TicketsController extends Controller
 
             $tickets = $this->Tickets->get_tickets($manager_role, $manager_id, $in_out);
 
-            foreach ($tickets as $key => $ticket){
-                if($ticket->executor != 0){
+            foreach ($tickets as $key => $ticket) {
+                if ($ticket->executor != 0) {
                     $manager = $this->managers->get_manager($ticket->executor);
                     $ticket->executor = array();
                     $ticket->executor['name'] = $manager->name;
@@ -158,10 +162,16 @@ class TicketsController extends Controller
         $users = $this->users->get_user_by_lastname($lastname);
         $autocomplete = array();
 
-        foreach ($users as $user){
+        foreach ($users as $user) {
             $autocomplete['suggestions'][] = "$user->personal_number $user->lastname $user->firstname $user->patronymic";
         }
         echo json_encode($autocomplete);
+        exit;
+    }
+
+    private function action_qr()
+    {
+        $this->QrGenerateApi->get_qr(15000, 600);
         exit;
     }
 }
