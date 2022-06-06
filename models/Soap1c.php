@@ -844,7 +844,7 @@ class Soap1c extends Core
         $request = new StdClass();
         $request->ArrayOplata = json_encode($item);
 
-        $result = $this->send('CRM_WebService', 'PaymentOrder', $request);
+        $result = $this->send_request('CRM_WebService', 'PaymentOrder', $request);
 
         return $result;
     }
@@ -1080,6 +1080,8 @@ class Soap1c extends Core
     private function send($service, $method, $request, $log = 1, $logfile = 'soap.txt')
     {
 
+        return false;
+
         try {
             $service_url = "http://141.101.178.136:63025/work/ws/" . $service . ".1cws?wsdl";
             $client = new SoapClient($service_url);
@@ -1094,6 +1096,21 @@ class Soap1c extends Core
             $this->logging(__METHOD__, $service . ' ' . $method, (array)$request, (array)$response, $logfile);
         }
         */
+
+        return $response;
+    }
+
+    private function send_request($service, $method, $request)
+    {
+
+        try {
+            $service_url = "http://192.168.10.5 :63025/work/ws/" . $service . ".rko-test";
+            $client = new SoapClient($service_url);
+
+            $response = $client->__soapCall($method, array($request));
+        } catch (Exception $fault) {
+            $response = $fault;
+        }
 
         return $response;
     }
