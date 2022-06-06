@@ -3623,7 +3623,7 @@ class OfflineOrderController extends Controller
         $payment->amount = $order->amount;
         $payment->recepient = 9725055162;
         $payment->user_id = $order->user_id;
-        $payment->number = 40701810300000000347;
+        $payment->number = '40701810300000000347';
         $payment->description = 'Платежный агент по договору' . $order->uid;
         $payment->user_acc_number = $default_requisit->number;
         $payment->user_bik = $default_requisit->bik;
