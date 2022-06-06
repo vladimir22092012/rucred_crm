@@ -5,15 +5,15 @@ ini_set('default_socket_timeout', '300');
 class Soap1c extends Core
 {
     private $log = 1;
-    private $log_dir  = 'logs/';
-    
+    private $log_dir = 'logs/';
+
     public function __construct()
     {
         parent::__construct();
-        
-        $this->log_dir = $this->config->root_dir.$this->log_dir;
+
+        $this->log_dir = $this->config->root_dir . $this->log_dir;
     }
-    
+
 
     /**
      * Soap1c::send_loan()
@@ -25,10 +25,9 @@ class Soap1c extends Core
      */
     public function send_loan($order_id)
     {
-        if ($order = $this->orders->get_order($order_id))
-        {
+        if ($order = $this->orders->get_order($order_id)) {
             $company = $this->companies->get_company($order->company_id);
-            
+
             $passport_serial = str_replace([' ', '-'], '', $order->passport_serial);
             $passport_series = substr($passport_serial, 0, 4);
             $passport_number = substr($passport_serial, 4, 6);
@@ -47,29 +46,26 @@ class Soap1c extends Core
             $item->Порог = '1.5';
             $item->ИННОрганизации = isset($company) ? $company->inn : '';
             $item->СпособПодачиЗаявления = 'Прямой';
-            
-            $payment_schedules = array();            
-            if ($order_payment_schedule = json_decode($order->payment_schedule))
-            {
-                foreach ($order_payment_schedule as $key_date => $payment_schedule)
-                {
-                    if ($key_date != 'result')
-                    {
+
+            $payment_schedules = array();
+            if ($order_payment_schedule = json_decode($order->payment_schedule)) {
+                foreach ($order_payment_schedule as $key_date => $payment_schedule) {
+                    if ($key_date != 'result') {
                         $payment_schedule_item = new StdClass();
-                        
+
                         $payment_schedule_item->Дата = date('YmdHis', strtotime($key_date));
                         $payment_schedule_item->СуммаОД = $payment_schedule->loan_body_pay;
                         $payment_schedule_item->СуммаПроцентов = $payment_schedule->loan_percents_pay;
-                        
+
                         $payment_schedules[] = $payment_schedule_item;
                     }
                 }
                 $item->ГрафикПлатежей = $payment_schedules;
             }
-            
+
             $client = new StdClass();
             $client->id = $order->user_id;
-            $client->ФИО = $order->lastname.' '.$order->firstname.' '.$order->patronymic;
+            $client->ФИО = $order->lastname . ' ' . $order->firstname . ' ' . $order->patronymic;
             $client->Фамилия = $order->lastname;
             $client->Имя = $order->firstname;
             $client->Отчество = $order->patronymic;
@@ -80,7 +76,7 @@ class Soap1c extends Core
             $client->Телефон = $this->format_phone($order->phone_mobile);
             $client->ОКАТО = $order->okato;
             $client->ОКТМО = $order->oktmo;
-            
+
             $passport = new StdClass();
             $passport->Серия = $passport_series;
             $passport->Номер = $passport_number;
@@ -88,25 +84,18 @@ class Soap1c extends Core
             $passport->КодПодразделения = $order->subdivision_code;
             $passport->ДатаВыдачи = $order->passport_date;
             $client->Паспорт = $passport;
-            
+
             $item->Клиент = $client;
-        
+
             $request = new StdClass();
             $request->TextJSON = json_encode($item);
             $result = $this->send('CRM_WebService', 'Loans', $request, 1, 'exchange.txt');
-    
+
             return $result;
-        
+
         }
-        
+
     }
-    
-
-
-
-
-
-
 
     public function SentToTrialDebt($number)
     {
@@ -131,7 +120,7 @@ class Soap1c extends Core
         $request->Number = $number;
 
         $response = $this->send('WebCRM', 'GetDebts', $request);
-        
+
         return empty($response->return) ? array() : json_decode($response->return);
     }
 
@@ -144,12 +133,12 @@ class Soap1c extends Core
     public function get_sud_contracts()
     {
         $request = new StdClass();
-        
+
         $result = $this->send('WebCRM', 'SentToTrial', $request);
 
         return $result;
     }
-    
+
     /**
      * Soap1c::get_premier_contracts()
      *
@@ -162,35 +151,35 @@ class Soap1c extends Core
         $request = new StdClass();
         $request->НачПериода = date('Ymd000000', strtotime($date_from));
         $request->КонПериода = date('Ymd000000', strtotime($date_to));
-        
+
         $result = $this->send('WebCRM', 'CessionPremier', $request);
 
         return empty($result->return) ? array() : json_decode($result->return);
     }
-    
-    
+
+
     public function get_cession_info($contract_number, $faximile = 0)
     {
         $request = new StdClass();
         $request->number = $contract_number;
         $request->facsimile = $faximile;
-        
+
         $result = $this->send('WebCRM', 'GetCessionByNumber', $request, 1, 'cession.txt');
 
         return $result;
     }
-        
+
     public function get_pp($contract_number)
     {
         $request = new StdClass();
         $request->Number = $contract_number;
-        
+
         $result = $this->send('WebCRM', 'GettingPP', $request, 1, 'cession.txt');
 
         return $result;
     }
 
-    
+
     /**
      * Soap1c::send_cessions()
      * Отправляет договора которые переведены на цессию
@@ -202,14 +191,14 @@ class Soap1c extends Core
     {
         $request = new StdClass();
         $request->TextJson = json_encode($numbers);
-        
+
         $result = $this->send('WebCRM', 'Cess', $request);
-        echo __FILE__.' '.__LINE__.'<br /><pre>';
+        echo __FILE__ . ' ' . __LINE__ . '<br /><pre>';
         var_dump($result);
         echo '</pre><hr />';
         return $result->return;
     }
-    
+
     /**
      * Soap1c::check_manager_name()
      * Проверяет на корректность имя менеджера для обмена с 1с
@@ -220,24 +209,24 @@ class Soap1c extends Core
     {
         $request = new StdClass();
         $request->Сотрудник = $manager_name;
-        
+
         $result = $this->send('WebCRM', 'VerificationManager', $request);
 
         return $result->return;
     }
-    
-    
+
+
     public function send_collector($contract_number, $collector_id)
     {
         if (!($collector = $this->managers->get_manager($collector_id))) {
             return false;
         }
-            
+
         $request = new StdClass();
         $request->НомерЗайма = $contract_number;
         $request->Сотрудник = $collector->name_1c;
 
-        
+
         $result = $this->send('WebCRM', 'ChangeResponsible', $request);
 //  echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
         return empty($result->return) ? array() : $result->return;
@@ -249,20 +238,19 @@ class Soap1c extends Core
         $request->НомерЗаявки = $order_1c_id;
         $request->TextJson = json_encode($body);
 
-        
+
         $result = $this->send('WebCRM', 'FSSP', $request);
 //  echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
         return empty($result->return) ? array() : $result->return;
     }
-    
-    
+
+
     public function send_fms($order_1c_id, $passport, $check)
     {
         $clear_passport = trim(str_replace(array(' ', '-', '_'), '', $passport));
         $passport_series = substr($clear_passport, 0, 4);
-        $passport_number = substr($clear_passport, 4, 6);
-        ;
-        
+        $passport_number = substr($clear_passport, 4, 6);;
+
         $request = new StdClass();
         $request->НомерЗаявки = $order_1c_id;
         $request->ПаспортСерия = $passport_series;
@@ -273,8 +261,8 @@ class Soap1c extends Core
 //  echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
         return empty($result->return) ? array() : $result->return;
     }
-    
-    
+
+
     /**
      * Soap1c::send_order()
      * ОТправляет заявку в 1с
@@ -287,7 +275,7 @@ class Soap1c extends Core
         $order_passport_serial = str_replace(array(' ', '-'), '', $order->passport_serial);
         $passport_number = (string)substr($order_passport_serial, 4, 6);
         $passport_serial = (string)substr($order_passport_serial, 0, 4);
-        
+
         $request = (object)array(
             'partner' => 'NalPlus',
             'WebMaster' => '',
@@ -304,20 +292,20 @@ class Soap1c extends Core
             'subdivision_code' => $order->subdivision_code,
             'passport_issued' => $order->passport_issued,
             'Regindex' => $order->Regindex,
-            'Regregion' => trim($order->Regregion.' '.$order->Regregion_shorttype),
+            'Regregion' => trim($order->Regregion . ' ' . $order->Regregion_shorttype),
             'Regdistrict' => '',
-            'Regcity' => trim($order->Regcity.' '.$order->Regcity_shorttype),
+            'Regcity' => trim($order->Regcity . ' ' . $order->Regcity_shorttype),
             'Reglocality' => '',
-            'Regstreet' => trim($order->Regstreet.' '.$order->Regstreet_shorttype),
+            'Regstreet' => trim($order->Regstreet . ' ' . $order->Regstreet_shorttype),
             'Regbuilding' => empty($order->Regbuilding) ? '' : $order->Regbuilding,
             'Reghousing' => $order->Reghousing,
             'Regroom' => $order->Regroom,
             'Faktindex' => $order->Faktindex,
-            'Faktregion' => trim($order->Faktregion.' '.$order->Faktregion_shorttype),
+            'Faktregion' => trim($order->Faktregion . ' ' . $order->Faktregion_shorttype),
             'Faktdistrict' => '',
-            'Faktcity' => trim($order->Faktcity.' '.$order->Faktcity_shorttype),
+            'Faktcity' => trim($order->Faktcity . ' ' . $order->Faktcity_shorttype),
             'Faktlocality' => '',
-            'Faktstreet' => trim($order->Faktstreet.' '.$order->Faktstreet_shorttype),
+            'Faktstreet' => trim($order->Faktstreet . ' ' . $order->Faktstreet_shorttype),
             'Faktbuilding' => empty($order->Faktbuilding) ? '' : $order->Faktbuilding,
             'Fakthousing' => $order->Fakthousing,
             'Faktroom' => $order->Faktroom,
@@ -367,32 +355,32 @@ class Soap1c extends Core
             'oktmo' => '',
         );
         $response = $this->send('Teleport', 'ObmenFull', $request, 1, '39.txt');
-        
+
         return $response->return;
     }
-    
+
     /**
      * Soap1c::get_payments1c()
      * Возвращает оплаты зафиксированные в 1с за указанный период
      *
      * @param string $from Y-m-d
-     * @param string $to  Y-m-d
+     * @param string $to Y-m-d
      * @return array
      */
     public function get_payments1c($from, $to)
     {
         $date_from = date('Ymd000000', strtotime($from));
         $date_to = date('Ymd000000', strtotime($to));
-        
+
         $request = new StdClass();
         $request->НачПериода = $date_from;
         $request->КонПериода = $date_to;
 
         $result = $this->send('WebCRM', 'PaymentIn1c', $request);
-        
+
         return empty($result->return) ? array() : json_decode($result->return);
     }
-    
+
     /**
      * Soap1c::update_fields()
      * Обновляет в 1с данные по клиенту
@@ -405,13 +393,13 @@ class Soap1c extends Core
     public function update_fields($fields, $uid = '', $order_id_1c = '')
     {
         $z = new StdClass();
-        
+
         $z->НомерЗаявки = empty($order_id_1c) ? '' : $order_id_1c;
         $z->Uid = empty($uid) ? '' : $uid;
-        
+
         $update = new StdClass();
-        
-        
+
+
         // место регистрации
         if (isset($fields['Regcity'])) {
             $update->АдресРегистрацииГород = $fields['Regcity'];
@@ -437,14 +425,14 @@ class Soap1c extends Core
         if (isset($fields['Reglocality'])) {
             $update->АдресРегистрацииНасПункт = $fields['Reglocality'];
         }
-        
+
         if (isset($fields['okato'])) {
             $update->okato = $fields['okato'];
         }
         if (isset($fields['oktmo'])) {
             $update->oktmo = $fields['oktmo'];
         }
-        
+
         // место фактического проживания
         if (isset($fields['Faktcity'])) {
             $update->АдресФактическогоПроживанияГород = $fields['Faktcity'];
@@ -495,7 +483,7 @@ class Soap1c extends Core
             $update->Отчество = $fields['patronymic'];
         }
 
-        
+
         // паспортные данные
         if (isset($fields['passport_serial'])) {
             $cl = str_replace(array(' ', '-'), '', $fields['passport_serial']);
@@ -511,8 +499,8 @@ class Soap1c extends Core
         if (isset($fields['passport_date'])) {
             $update->ПаспортДатаВыдачи = date('Ymd000000', strtotime($fields['passport_date']));
         }
-            
-            
+
+
         //  Данные о работе
         if (isset($fields['workplace'])) {
             $update->ОрганизацияНазвание = $fields['workplace'];
@@ -539,22 +527,21 @@ class Soap1c extends Core
         if (isset($fields['expenses'])) {
             $update->ОбщаяСуммаРасходов = $fields['expenses'];
         }
-            
-            
+
 
         // Контактные лица
         if (isset($fields['contactpersons'])) {
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($fields['contactpersons']);echo '</pre><hr />';
             $update->КонтактныеЛица = ($fields['contactpersons']);
         }
-                
+
         $z->TextJson = json_encode($update);
-        
+
         $response = $this->send('WebCRM', 'GetChangingFields', $z);
-        
+
         return empty($response->return) ? array() : json_decode($response->return);
     }
-    
+
 
     public function send_order_status($order_id_1c, $status)
     {
@@ -563,10 +550,10 @@ class Soap1c extends Core
         $request->Status = $status;
 
         $response = $this->send('WebCRM', 'StatusesApplication', $request);
-        
+
         return empty($response->return) ? array() : json_decode($response->return);
     }
-    
+
 
     /**
      * Soap1c::get_client_credits()
@@ -580,10 +567,10 @@ class Soap1c extends Core
         $request->UID = $uid;
 
         $response = $this->send('WebCRM', 'HistoryZaim', $request);
-        
+
         return empty($response->return) ? array() : json_decode($response->return);
     }
-    
+
     /**
      * Soap1c::send_order_images()
      * Отправляет изображения привязанные к заявке
@@ -601,7 +588,7 @@ class Soap1c extends Core
         $request->Files = json_encode($images);
 
         $response = $this->send('WebCRM', 'RequestFiles', $request);
-        
+
         return empty($response->return) ? array() : $response->return;
     }
 
@@ -622,7 +609,7 @@ class Soap1c extends Core
         $request->Files = json_encode($documents);
 
         $response = $this->send('WebCRM', 'RequestFiles', $request);
-        
+
         return empty($response->return) ? array() : $response->return;
     }
 
@@ -647,8 +634,8 @@ class Soap1c extends Core
 
         return empty($response->return) ? null : $response->return;
     }
-    
-    
+
+
     /**
      * Soap1c::get_movements()
      * Возвращает движения по кредиту по номеру договора
@@ -662,10 +649,10 @@ class Soap1c extends Core
         $request->Number = $number;
 
         $response = $this->send('WebCRM', 'Movements', $request);
-        
+
         return empty($response->return) ? array() : json_decode($response->return);
     }
-    
+
     /**
      * Soap1c::GetCheckBlockZayavka()
      * Проверяет заблокирована ли заявка
@@ -677,12 +664,12 @@ class Soap1c extends Core
     {
         $request = new StdClass();
         $request->НомерЗаявки = $order_id_1c;
-        
+
         $result = $this->send('WebCRM', 'GetCheckBlockZayavka', $request);
-        
+
         return $result->return;
     }
-    
+
     /**
      * Soap1c::block_order_1c()
      * Блокирует или разблокирует заявку в 1с
@@ -698,7 +685,7 @@ class Soap1c extends Core
         $request->Block = $status;
 
         $result = $this->send('WebCRM', 'GetBlockZayavka', $request);
-        
+
         return $result->return;
     }
 
@@ -730,39 +717,39 @@ class Soap1c extends Core
         foreach ($this->managers->get_managers() as $m) {
             $managers[$m->id] = $m;
         }
-        
+
         $items = array();
         foreach ($comments as $comment) {
             $item = new StdClass();
-            
+
             $item->НомерЗайма = $comment->contract->number;//обязательно в номере ТИРЕ. длина номера 11 символов!!!
             $item->Дата = date('YmdHis', strtotime($comment->created));
             $item->Комментарий = $comment->text;
             $item->Сотрудник = $managers[$comment->manager_id]->name_1c;
-            
+
             if (!empty($comment->contactperson)) {
                 $expl = array_map('trim', explode(' ', $comment->contactperson->name));
                 $contactperson_lastname = (string)array_shift($expl);
                 $contactperson_firstname = (string)array_shift($expl);
                 $contactperson_patronymic = (string)implode(' ', $expl);
-            
+
                 $item->КЛ_Фамилия = $contactperson_lastname;
                 $item->КЛ_Имя = $contactperson_firstname;
                 $item->КЛ_Отчество = $contactperson_patronymic;
             }
-            
+
             $items[] = $item;
         }
-        
+
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($comments, $items);echo '</pre><hr />';
         $request = new StdClass();
         $request->TextJson = json_encode($items);
         $result = $this->send('WebCRM', 'Comments', $request);
-        
+
         return $result;
     }
-    
-    
+
+
     public function send_operations($operations)
     {
         $percents = array();
@@ -770,7 +757,7 @@ class Soap1c extends Core
         foreach ($operations as $operation) {
             if ($operation->type == 'PERCENTS') {
                 $item = new StdClass();
-                
+
                 $item->НомерЗайма = $operation->contract->number;
                 $item->ДатаНачисления = date('YmdHis', strtotime($operation->created));
                 $item->ВидОплаты = 'Проценты';
@@ -790,10 +777,10 @@ class Soap1c extends Core
                     }
                 } else {
                     $item = new StdClass();
-                    
+
                     $item->НомерЗайма = $operation->contract->number;
                     $item->ДатаНачисления = date('YmdHis', strtotime($operation->created));
-                    
+
                     $item->ВидОплаты = 'Просрочка';
                     $item->ОстатокОД = (float)$operation->loan_body_summ;
                     $item->СуммаПроцент = 0;
@@ -805,12 +792,12 @@ class Soap1c extends Core
                         $item->СуммаПени = 0;
                         $item->СуммаОтветственности = (float)$operation->amount;
                     }
-                    
+
                     $charges[$operation->contract_id] = $item;
                 }
             }
         }
-        
+
         if (!empty($charges)) {
             $request = new StdClass();
             $request->TextJson = json_encode(array_values($charges));
@@ -821,7 +808,7 @@ class Soap1c extends Core
                 return false;
             }
         }
-        
+
         if (!empty($percents)) {
             $request = new StdClass();
             $request->TextJson = json_encode($percents);
@@ -831,11 +818,38 @@ class Soap1c extends Core
                 return false;
             }
         }
-        
+
         return $result;
     }
-    
-    
+
+    /**
+     * Soap1c::send_payment()
+     * Отсылает платежку в 1с
+     */
+
+    public function send_payment($payment)
+    {
+        $item = new StdClass();
+        $item->OrderID             = $payment->order_id;
+        $item->Дата                = date('YmdHis', strtotime($payment->date));
+        $item->Сумма               = $payment->amount;
+        $item->ИННПлательщика      = $payment->recepient;
+        $item->Клиент_id           = $payment->user_id;
+        $item->СчетОрганизации     = $payment->number;
+        $item->НазначениеПлатежа   = $payment->description;
+        $item->СчетКонтрагента     = $payment->user_acc_number;
+        $item->БИКБанкаКонтрагента = $payment->user_bik;
+        $item->ИННПолучателя       = $payment->users_inn;
+
+        $request = new StdClass();
+        $request->ArrayOplata = json_encode($item);
+
+        $result = $this->send('CRM_WebService', 'PaymentOrder', $request);
+
+        return $result;
+    }
+
+
     /**
      * Soap1c::send_payments()
      * Отсылает данные по оплатам клиентов
@@ -848,27 +862,27 @@ class Soap1c extends Core
         $items = array();
         foreach ($operations as $operation) {
             $item = new StdClass();
-            
+
             $item->НомерЗайма = $operation->contract->number;//обязательно в номере ТИРЕ. длина номера 11 символов!!!
             $item->ДатаОплаты = date('YmdHis', strtotime($operation->created));
-            $item->НомеорОплаты = date('md', strtotime($operation->created)).'-'.$operation->transaction->id;//обязательно в номере ТИРЕ. длина номера 11 символов!!!
-            
+            $item->НомеорОплаты = date('md', strtotime($operation->created)) . '-' . $operation->transaction->id;//обязательно в номере ТИРЕ. длина номера 11 символов!!!
+
             $item->ID_Заказ = $operation->transaction->register_id;
             $item->ID_УспешнаяОперация = $operation->transaction->operation;
-            
+
             $item->СуммаОД = (float)$operation->transaction->loan_body_summ;
             $item->СуммаПроцент = (float)$operation->transaction->loan_percents_summ;
             $item->СуммаОтветственности = (float)$operation->transaction->loan_charge_summ;
             $item->СуммаПени = (float)$operation->transaction->loan_peni_summ;
             $item->СуммаКомиссии = (float)$operation->transaction->commision_summ;
-            
+
             $item->Пролонгация = empty($operation->transaction->prolongation) ? 0 : 1;  //1 - истина, 0 ложь
-            
+
             $item->Страховка = new StdClass();
             $item->Страховка->СуммаСтраховки = empty($operation->transaction->insurance) ? 0 : $operation->transaction->insurance->amount;
             $item->Страховка->НомерСтраховки = empty($operation->transaction->insurance) ? '' : $operation->transaction->insurance->number;
             $item->Страховка->КредитнаяЗащита = empty($operation->transaction->insurance->protection) ? 0 : 1;
-            
+
             if ($operation->transaction->sector == '7036') { // ЮК
                 $item->Organization = 'YuK';
             } elseif ($operation->transaction->sector == '7814') { // премьер
@@ -876,7 +890,7 @@ class Soap1c extends Core
             } else {
                 $item->Organization = 'NalPlus';
             }
-                
+
             $items[] = $item;
         }
 
@@ -884,11 +898,11 @@ class Soap1c extends Core
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($items);echo '</pre><hr />';
         $request->ArrayOplata = json_encode($items);
         $result = $this->send('WebCRM', 'Oplata', $request, 1, 'exchange.txt');
-        
+
         return $result;
     }
-    
-    
+
+
     /**
      * Soap1c::send_contracts()
      *
@@ -909,7 +923,7 @@ class Soap1c extends Core
         foreach ($this->managers->get_managers() as $m) {
             $managers[$m->id] = $m;
         }
-        
+
         $items = array();
         foreach ($contracts as $contract) {
             $item = new StdClass();
@@ -926,20 +940,20 @@ class Soap1c extends Core
             $item->УИД_Заявка = $contract->order->uid;
             $item->КодСМС = $contract->accept_code;
             $item->Менеджер = empty($contract->order->manager_id) ? '' : $managers[$contract->order->manager_id]->name_1c;
-            
+
             $item->Payment = new StdClass();
             $item->Payment->CardId = $contract->card_id;
             $item->Payment->Дата = date('YmdHis', strtotime($contract->p2pcredit->date));
             $item->Payment->PaymentId = $contract->p2pcredit->operation_id;
             $item->Payment->OrderId = $contract->p2pcredit->register_id;
-            
+
             $item->Страховка = new StdClass();
             $item->Страховка->Сумма = empty($contract->insurance) ? 0 : $contract->insurance->amount; //сумма страховки
             $item->Страховка->Номер = empty($contract->insurance) ? '' : $contract->insurance->number; //'200H3NZI16300047__'; по правилам от страховой компании
             $item->Страховка->OrderID = empty($contract->insurance->transaction) ? '' : $contract->insurance->transaction->register_id;
             $item->Страховка->OperationID = empty($contract->insurance->transaction) ? '' : $contract->insurance->transaction->operation;
-            $item->Страховка->КредитнаяЗащита =  empty($contract->insurance->protection) ? 0 : 1;
-            
+            $item->Страховка->КредитнаяЗащита = empty($contract->insurance->protection) ? 0 : 1;
+
             $item->Клиент = new StdClass();
             $item->Клиент->Фамилия = $contract->user->lastname;
             $item->Клиент->Имя = $contract->user->firstname;
@@ -947,23 +961,22 @@ class Soap1c extends Core
             $item->Клиент->ДатаРожденияПоПаспорту = date('YmdHis', strtotime($contract->user->birth));
 
             $item->Клиент->АдресРегистрацииИндекс = $contract->user->Regindex;
-            $item->Клиент->АдресРегистрацииРегион = trim($contract->user->Regregion.' '.$contract->user->Regregion_shorttype);
-            $item->Клиент->АдресРегистрацииРайон = trim($contract->user->Regdistrict.' '.$contract->user->Regdistrict_shorttype);
-            $item->Клиент->АдресРегистрацииГород = trim($contract->user->Regcity.' '.$contract->user->Regcity_shorttype);
-            $item->Клиент->АдресРегистрацииНасПункт = trim($contract->user->Reglocality.' '.$contract->user->Reglocality_shorttype);
-            $item->Клиент->АдресРегистрацииУлица = trim($contract->user->Regstreet.' '.$contract->user->Regstreet_shorttype);
-            $item->Клиент->АдресРегистрацииДом = $contract->user->Reghousing.(empty($contract->user->Regbuilding) ? '' : ' стр. '.$contract->user->Regbuilding);
+            $item->Клиент->АдресРегистрацииРегион = trim($contract->user->Regregion . ' ' . $contract->user->Regregion_shorttype);
+            $item->Клиент->АдресРегистрацииРайон = trim($contract->user->Regdistrict . ' ' . $contract->user->Regdistrict_shorttype);
+            $item->Клиент->АдресРегистрацииГород = trim($contract->user->Regcity . ' ' . $contract->user->Regcity_shorttype);
+            $item->Клиент->АдресРегистрацииНасПункт = trim($contract->user->Reglocality . ' ' . $contract->user->Reglocality_shorttype);
+            $item->Клиент->АдресРегистрацииУлица = trim($contract->user->Regstreet . ' ' . $contract->user->Regstreet_shorttype);
+            $item->Клиент->АдресРегистрацииДом = $contract->user->Reghousing . (empty($contract->user->Regbuilding) ? '' : ' стр. ' . $contract->user->Regbuilding);
             $item->Клиент->АдресРегистрацииКвартира = $contract->user->Regroom;
             $item->Клиент->АдресРегистрацииТелефон = '';
-            
+
             $item->Клиент->АдресФактическогоПроживанияИндекс = $contract->user->Faktindex;
-            $item->Клиент->АдресФактическогоПроживанияРегион = trim($contract->user->Faktregion.' '.$contract->user->Faktregion_shorttype);
-            $item->Клиент->АдресФактическогоПроживанияРайон = trim($contract->user->Faktdistrict.' '.$contract->user->Faktdistrict_shorttype);
-            $item->Клиент->АдресФактическогоПроживанияГород = trim($contract->user->Faktcity.' '.$contract->user->Faktcity_shorttype);
-            $item->Клиент->АдресФактическогоПроживанияНасПункт = trim($contract->user->Faktlocality.' '.$contract->user->Faktlocality_shorttype);
-            ;
-            $item->Клиент->АдресФактическогоПроживанияУлица = trim($contract->user->Faktstreet.' '.$contract->user->Faktstreet_shorttype);
-            $item->Клиент->АдресФактическогоПроживанияДом = $contract->user->Fakthousing.(empty($contract->user->Faktbuilding) ? '' : ' стр. '.$contract->user->Faktbuilding);
+            $item->Клиент->АдресФактическогоПроживанияРегион = trim($contract->user->Faktregion . ' ' . $contract->user->Faktregion_shorttype);
+            $item->Клиент->АдресФактическогоПроживанияРайон = trim($contract->user->Faktdistrict . ' ' . $contract->user->Faktdistrict_shorttype);
+            $item->Клиент->АдресФактическогоПроживанияГород = trim($contract->user->Faktcity . ' ' . $contract->user->Faktcity_shorttype);
+            $item->Клиент->АдресФактическогоПроживанияНасПункт = trim($contract->user->Faktlocality . ' ' . $contract->user->Faktlocality_shorttype);;
+            $item->Клиент->АдресФактическогоПроживанияУлица = trim($contract->user->Faktstreet . ' ' . $contract->user->Faktstreet_shorttype);
+            $item->Клиент->АдресФактическогоПроживанияДом = $contract->user->Fakthousing . (empty($contract->user->Faktbuilding) ? '' : ' стр. ' . $contract->user->Faktbuilding);
             $item->Клиент->АдресФактическогоПроживанияКвартира = $contract->user->Faktroom;
             $item->Клиент->АдресФактическогоПроживанияТелефон = '';
 
@@ -973,7 +986,7 @@ class Soap1c extends Core
             $item->Клиент->КоличествоИждевенцев = '';
             $item->Клиент->МестоРожденияПоПаспорту = $contract->user->birth_place;
             $item->Клиент->Образование = '';
-            
+
             $item->Клиент->ОрганизацияАдрес = $contract->user->workaddress;
             $item->Клиент->ОрганизацияГрафикЗанятости = '';
             $item->Клиент->ОрганизацияДолжность = $contract->user->profession;
@@ -984,7 +997,7 @@ class Soap1c extends Core
             $item->Клиент->ОрганизацияТелефон = $this->format_phone($contract->user->workphone);
             $item->Клиент->ОрганизацияФИОРуководителя = $contract->user->chief_name;
             $item->Клиент->ОрганизацияТелефонРуководителя = $this->format_phone($contract->user->chief_phone);
-            
+
             $item->Клиент->ПаспортДатаВыдачи = date('YmdHis', strtotime($contract->user->passport_date)); //формат ггггММддччммсс
             $item->Клиент->ПаспортКемВыдан = $contract->user->passport_issued;
             $item->Клиент->ПаспортКодПодразделения = $contract->user->subdivision_code;
@@ -993,19 +1006,19 @@ class Soap1c extends Core
 
             $item->Клиент->Пол = $contract->user->gender == 'male' ? 'Мужской' : 'Женский';
 //            $item->Клиент->СемейноеСтатус = '';
-            
+
             $item->Клиент->КонтактныеЛица = array();
-            
+
             $contactperson = new StdClass();
             $contact_person_array = explode(' ', $contract->user->contact_person_name);
             $contactperson->Фамилия = isset($contact_person_array[0]) ? $contact_person_array[0] : '';
-            $contactperson->Имя =  isset($contact_person_array[1]) ? $contact_person_array[1] : '';
-            $contactperson->Отчество =  isset($contact_person_array[2]) ? $contact_person_array[2] : '';
+            $contactperson->Имя = isset($contact_person_array[1]) ? $contact_person_array[1] : '';
+            $contactperson->Отчество = isset($contact_person_array[2]) ? $contact_person_array[2] : '';
             $contactperson->ТелефонМобильный = $this->format_phone($contract->user->contact_person_phone);
             $contactperson->СтепеньРодства = $contract->user->contact_person_relation;
-            
+
             $item->Клиент->КонтактныеЛица[] = $contactperson;
-            
+
             $contactperson2 = new StdClass();
             $contact_person2_array = explode(' ', $contract->user->contact_person2_name);
             $contactperson2->Фамилия = isset($contact_person2_array[0]) ? $contact_person2_array[0] : '';
@@ -1013,22 +1026,22 @@ class Soap1c extends Core
             $contactperson2->Отчество = isset($contact_person2_array[2]) ? $contact_person2_array[2] : '';
             $contactperson2->ТелефонМобильный = $this->format_phone($contract->user->contact_person2_phone);
             $contactperson2->СтепеньРодства = $contract->user->contact_person2_relation;
-            
+
             $item->Клиент->КонтактныеЛица[] = $contactperson2;
-            
-            
+
+
             $items[] = $item;
         }
-        echo __FILE__.' '.__LINE__.'<br /><pre>';
+        echo __FILE__ . ' ' . __LINE__ . '<br /><pre>';
         var_dump(($items));
         echo '</pre><hr />';
         $request = new StdClass();
         $request->ArrayContracts = json_encode($items);
         $result = $this->send('WebCRM', 'Request', $request, 1, 'exchange.txt');
-        
+
         return $result;
     }
-    
+
     /**
      * Soap1c::format_phone()
      * Форматирует номер телефона в формат принимаемый 1с
@@ -1042,20 +1055,20 @@ class Soap1c extends Core
         if (empty($phone)) {
             return '';
         }
-        
+
         if ($phone == 'не указан' || $phone == 'не указана') {
             return '';
         }
-        
+
         $replace_params = array('(', ')', ' ', '-', '+');
         $clear_phone = str_replace($replace_params, '', $phone);
-        
+
         $substr_phone = mb_substr($clear_phone, -10, 10, 'utf8');
-        $format_phone = '8('.mb_substr($substr_phone, 0, 3, 'utf8').')'.mb_substr($substr_phone, 3, 3, 'utf8').'-'.mb_substr($substr_phone, 6, 2, 'utf8').'-'.mb_substr($substr_phone, 8, 2, 'utf8');
-        
+        $format_phone = '8(' . mb_substr($substr_phone, 0, 3, 'utf8') . ')' . mb_substr($substr_phone, 3, 3, 'utf8') . '-' . mb_substr($substr_phone, 6, 2, 'utf8') . '-' . mb_substr($substr_phone, 8, 2, 'utf8');
+
         return $format_phone;
     }
-    
+
     /**
      * Soap1c::send()
      *
@@ -1066,35 +1079,35 @@ class Soap1c extends Core
      */
     private function send($service, $method, $request, $log = 1, $logfile = 'soap.txt')
     {
-        // отключил обмен
-        return false;
-        
+
         try {
-            $service_url = "http://46.29.78.222:88/work/ws/".$service.".1cws?wsdl";
+            $service_url = "http://141.101.178.136:63025/work/ws/" . $service . ".1cws?wsdl";
             $client = new SoapClient($service_url);
 
             $response = $client->__soapCall($method, array($request));
         } catch (Exception $fault) {
             $response = $fault;
         }
-        
+
+        /*
         if (!empty($log)) {
-            $this->logging(__METHOD__, $service.' '.$method, (array)$request, (array)$response, $logfile);
+            $this->logging(__METHOD__, $service . ' ' . $method, (array)$request, (array)$response, $logfile);
         }
-        
-            return $response;
+        */
+
+        return $response;
     }
 
     public function logging($local_method, $service, $request, $response, $filename = 'soap.txt')
     {
-        $log_filename = $this->log_dir.$filename;
-        
+        $log_filename = $this->log_dir . $filename;
+
         if (date('d', filemtime($log_filename)) != date('d')) {
-            $archive_filename = $this->log_dir.'archive/'.date('ymd', filemtime($log_filename)).'.'.$filename;
+            $archive_filename = $this->log_dir . 'archive/' . date('ymd', filemtime($log_filename)) . '.' . $filename;
             rename($log_filename, $archive_filename);
             file_put_contents($log_filename, "\xEF\xBB\xBF");
         }
-        
+
         if (isset($request['TextJson'])) {
             $request['TextJson'] = json_decode($request['TextJson']);
         }
@@ -1104,16 +1117,16 @@ class Soap1c extends Core
         if (isset($request['ArrayOplata'])) {
             $request['ArrayOplata'] = json_decode($request['ArrayOplata']);
         }
-        
-        $str = PHP_EOL.'==================================================================='.PHP_EOL;
-        $str .= date('d.m.Y H:i:s').PHP_EOL;
-        $str .= $service.PHP_EOL;
-        $str .= var_export($request, true).PHP_EOL;
-        $str .= var_export($response, true).PHP_EOL;
-        $str .= 'END'.PHP_EOL;
-        
+
+        $str = PHP_EOL . '===================================================================' . PHP_EOL;
+        $str .= date('d.m.Y H:i:s') . PHP_EOL;
+        $str .= $service . PHP_EOL;
+        $str .= var_export($request, true) . PHP_EOL;
+        $str .= var_export($response, true) . PHP_EOL;
+        $str .= 'END' . PHP_EOL;
+
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($str);echo '</pre><hr />';
-        
-        file_put_contents($this->log_dir.$filename, $str, FILE_APPEND);
+
+        file_put_contents($this->log_dir . $filename, $str, FILE_APPEND);
     }
 }
