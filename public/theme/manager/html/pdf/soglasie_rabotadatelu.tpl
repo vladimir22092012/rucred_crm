@@ -16,14 +16,18 @@
     код
     подразделения <strong>{$subdivision_code}</strong>, зарегистрированный (-ая) по адресу
     <strong>{$regaddress->adressfull|upper}</strong>,
-    фактически проживающий (-ая) по адресу <strong>{$faktaddress->adressfull|upper}</strong>, ИНН: <strong>{$inn}</strong>,
+    фактически проживающий (-ая) по адресу <strong>{$faktaddress->adressfull|upper}</strong>, ИНН:
+    <strong>{$inn}</strong>,
     СНИЛС:
     <strong>{$snils}</strong>, телефон: <strong>{$phone_mobile}</strong>, адрес электронной почты:
     <strong>{$email|upper}</strong>
-</div><div style="font-size: 9px" align="justify">являющийся субъектом персональных данных в соответствии со статьями 9, 10
-    Федерального закона от 27 июля 2006 года № 152-ФЗ «О персональных данных» настоящим подтверждаю, что даю своё
-    согласие Обществу с ограниченной ответственностью Микрокредитная компания «Русское кредитное общество» (ИНН
-    9725055162) на предоставление <strong>{$company->name}</strong> (ИНН <strong>{$company->inn}</strong>) следующих моих персональных
+</div>
+<div style="font-size: 9px" align="justify">являющийся субъектом персональных данных в соответствии со статьями 9, 10
+    Федерального закона от 27 июля 2006 года № 152-ФЗ «О персональных данных» настоящим подтверждаю, что <strong>даю
+        своё
+        согласие</strong> Обществу с ограниченной ответственностью <strong>{$company->name}</strong> (ИНН
+    <strong>{$company->inn}</strong>) на предоставление Обществу с ограниченной ответственностью
+    Микрокредитная компания «Русское кредитное общество» (ИНН 9725055162) следующих моих персональных
     данных, в том числе биометрических:<br>- фамилия, имя, отчество; <br>- год, месяц, дата
     и место рождения; <br>- свидетельство о гражданстве (при необходимости); <br>- реквизиты документа, удостоверяющего
     личность;<br>- идентификационный номер налогоплательщика, дата постановки его на учёт, реквизиты свидетельства
@@ -58,33 +62,33 @@
     </div>
 </div>
 {if !isset($sms)}
-<table style="width: 100%;" border="1" cellpadding="8">
-    <tr style="width: 100%">
-        <td style="width: 25%" align="center"><span style="color: #b3b2ab">ПОДПИСЬ</span></td>
-        <td style="width: 50%" align="center"><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></td>
-        <td style="width: 25%" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span></td>
-    </tr>
-</table>
+    <table style="width: 100%;" border="1" cellpadding="8">
+        <tr style="width: 100%">
+            <td style="width: 25%" align="center"><span style="color: #b3b2ab">ПОДПИСЬ</span></td>
+            <td style="width: 50%" align="center"><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></td>
+            <td style="width: 25%" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span></td>
+        </tr>
+    </table>
 {/if}
 <div>
 
 </div>
 {if isset($sms)}
-<table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
-    <tr>
-        <td>Подписано простой электронной подписью</td>
-    </tr>
-    <tr>
-        <td>{$firstname} {$patronymic} {$lastname}</td>
-    </tr>
-    <tr>
-        <td>Дата: {$confirm_date}(МСК)</td>
-    </tr>
-    <tr>
-        <td>Телефон: {$phone_mobile}</td>
-    </tr>
-    <tr>
-        <td>Код подтверждения: {$sms}</td>
-    </tr>
-</table>
+    <table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+        <tr>
+            <td>Подписано простой электронной подписью</td>
+        </tr>
+        <tr>
+            <td>{$firstname} {$patronymic} {$lastname}</td>
+        </tr>
+        <tr>
+            <td>Дата: {$confirm_date}(МСК)</td>
+        </tr>
+        <tr>
+            <td>Телефон: {$phone_mobile}</td>
+        </tr>
+        <tr>
+            <td>Код подтверждения: {$sms}</td>
+        </tr>
+    </table>
 {/if}

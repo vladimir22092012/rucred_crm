@@ -563,7 +563,9 @@ class OfflineOrderController extends Controller
                     '2.4' => 'SOGLASIE_RUKRED_RABOTODATEL',
                     '2.5' => 'SOGLASIE_NA_KRED_OTCHET',
                     '3.1' => 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP',
-                    '3.2' => 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR'
+                    '3.2' => 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR',
+                    '4.4' => 'GRAFIK_OBSL_MKR',
+                    '4.12' => 'PERECHISLENIE_ZAEMN_SREDSTV'
                 ];
 
             foreach ($doc_types as $key => $type) {

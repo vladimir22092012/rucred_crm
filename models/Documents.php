@@ -21,20 +21,24 @@ class Documents extends Core
         'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP' => 'zayavlenie_na_perechislenie_chasti_zp.tpl',
         'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR' => 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl',
         'INDIVIDUALNIE_USLOVIA' => 'individualnie_usloviya.tpl',
+        'GRAFIK_OBSL_MKR' => 'grafik_obsl_mkr.tpl',
+        'PERECHISLENIE_ZAEMN_SREDSTV' => 'perechislenie_zaemnih_sredstv.tpl',
         //'DOP_SOGLASHENIE_K_TRUDOVOMU_DOGOVORU' => 'dop_soglash_k_trud_dogovoru.tpl'
     );
     
     
     private $names = array(
-        'SOGLASIE_MINB' =>  'Согласие на обработку персональных данных МиНБанк',
+        'SOGLASIE_MINB' =>  'Согласие на обработку персональных данных и упрощенную идентификацию через МИнБ',
         'SOGLASIE_NA_KRED_OTCHET' => 'Согласие на предоставление кредитного отчета',
         'SOGLASIE_NA_OBR_PERS_DANNIH' => 'Согласие на обработку персональных данных',
         'SOGLASIE_RABOTODATEL' => 'Согласие на обработку персональных данных, разрешенных субъектом персональных данных для распространения',
-        'SOGLASIE_RDB' => 'Согласие на обработку персональных данных РосДорБанк',
-        'SOGLASIE_RUKRED_RABOTODATEL' => 'Согласие Рукред Работодателю',
+        'SOGLASIE_RDB' => 'Согласие на обработку персональных данных и упрощенную идентификацию через РДБ',
+        'SOGLASIE_RUKRED_RABOTODATEL' => 'Согласие работодателю на обработку персональных данных и передачу РуКреду',
         'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP' => 'Заявление на перечисление части зп в счет обслуживания микрозайма',
         'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR' => 'Обязательство на подачу заявления о перечислении части заработной платы на счёт третьего лица',
         'INDIVIDUALNIE_USLOVIA' => 'Индивидуальные условия микрозайма',
+        'GRAFIK_OBSL_MKR' => 'График обслуживания микрозайма',
+        'PERECHISLENIE_ZAEMN_SREDSTV' => 'Заявление на перечисление заемных денежных средств',
         //'DOP_SOGLASHENIE_K_TRUDOVOMU_DOGOVORU' => 'Дополнительное соглашение к договору микрозайма'
     );
     
@@ -46,6 +50,8 @@ class Documents extends Core
         'SOGLASIE_SPISANIE' => 0,
         'PRICHINA_OTKAZA' => 0,
         'INDIVIDUALNIE_USLOVIA' => 1,
+        'GRAFIK_OBSL_MKR' => 1,
+        'PERECHISLENIE_ZAEMN_SREDSTV' => 1,
 
         'DOP_SOGLASHENIE_K_TRUDOVOMU_DOGOVORU' => 0,
         'SOGLASIE_MINB' =>  0,

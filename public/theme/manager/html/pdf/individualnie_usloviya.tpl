@@ -773,8 +773,50 @@
         </tr>
     </table>
 </div>
+<div>
+    <br><br><br><br><br><br><br><br><br>
+</div>
+{if !isset($sms)}
+    <footer>
+        <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
+            <tr style="width: 100%">
+                <td style="width: 8%; height: 30px" align="center">
+                    <div><strong style="color: #b3b2ab;padding-top: 2px">СТР. 8</strong></div>
+                </td>
+                <td style="width: 37%" align="center">
+                    <div><span style="color: #b3b2ab">ПОДПИСЬ</span></div>
+                </td>
+                <td style="width: 40%" align="center">
+                    <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
+                </td>
+                <td style="width: 15%;" align="center">
+                    <div><span style="color: #b3b2ab">ДАТА</span></div>
+                </td>
+            </tr>
+        </table>
+    </footer>
+{/if}
+{if isset($sms)}
+    <table style="color: #880000; page-break-after: always; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
+        <tr>
+            <td>Подписано простой электронной подписью</td>
+        </tr>
+        <tr>
+            <td>{$firstname} {$patronymic} {$lastname}</td>
+        </tr>
+        <tr>
+            <td>Дата: {$confirm_date}(МСК)</td>
+        </tr>
+        <tr>
+            <td>Телефон: {$phone_mobile}</td>
+        </tr>
+        <tr>
+            <td>Код подтверждения: {$sms}</td>
+        </tr>
+    </table>
+{/if}
 <h3><strong>4. ПРИМЕРНЫЙ ГРАФИК ПЛАТЕЖЕЙ</strong></h3><br>
-<table border="1" style="width: 100%; font-size: 8px" cellpadding="4">
+<table border="1" style="width: 100%; font-size: 8px;" cellpadding="4">
 
     <tr style="width: 100%;">
         <td rowspan="3" style="background-color: #b3b2ab">Дата платежа</td>
@@ -816,26 +858,27 @@
     </tr>
 </table>
 <div>
+    <br><br><br><br><br><br><br>
 </div>
 {if !isset($sms)}
-<footer>
-    <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
-        <tr style="width: 100%">
-            <td style="width: 8%; height: 30px" align="center">
-                <div><strong style="color: #b3b2ab;padding-top: 2px">СТР. 8</strong></div>
-            </td>
-            <td style="width: 37%" align="center">
-                <div><span style="color: #b3b2ab">ПОДПИСЬ</span></div>
-            </td>
-            <td style="width: 40%" align="center">
-                <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
-            </td>
-            <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div>
-            </td>
-        </tr>
-    </table>
-</footer>
+    <footer>
+        <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
+            <tr style="width: 100%">
+                <td style="width: 8%; height: 30px" align="center">
+                    <div><strong style="color: #b3b2ab;padding-top: 2px">СТР. 9</strong></div>
+                </td>
+                <td style="width: 37%" align="center">
+                    <div><span style="color: #b3b2ab">ПОДПИСЬ</span></div>
+                </td>
+                <td style="width: 40%" align="center">
+                    <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
+                </td>
+                <td style="width: 15%;" align="center">
+                    <div><span style="color: #b3b2ab">ДАТА</span></div>
+                </td>
+            </tr>
+        </table>
+    </footer>
 {/if}
 {if isset($sms)}
     <table style="color: #880000; page-break-after: always; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
@@ -856,6 +899,8 @@
         </tr>
     </table>
 {/if}
+<div>
+</div>
 <h3><strong>5. ЗАВЕРЕНИЯ ЗАЁМЩИКА</strong></h3><br>
 <hr style="width: 100%; size: 5px">
 <div>
@@ -949,7 +994,7 @@
     <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
         <tr style="width: 100%">
             <td style="width: 8%; height: 30px" align="center">
-                <div><strong style="color: #b3b2ab;padding-top: 2px">СТР. 9</strong></div>
+                <div><strong style="color: #b3b2ab;padding-top: 2px">СТР. 10</strong></div>
             </td>
             <td style="width: 37%" align="center">
                 <div><span style="color: #b3b2ab">ПОДПИСЬ</span></div>

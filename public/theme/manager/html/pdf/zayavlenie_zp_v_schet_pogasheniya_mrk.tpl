@@ -50,8 +50,8 @@
     </tr>
     <tr>
         <td style="width: 30%">Р/с получателя</td>
-        <td style="width: 70%">р/с {$settlements[0]->payment} в {$settlements[0]->name}, БИК {$settlements[0]->bik},
-            к/с {$settlements[0]->cors} в ГУ
+        <td style="width: 70%">р/с {$settlement->payment} в {$settlement->name}, БИК {$settlement->bik},
+            к/с {$settlement->cors} в ГУ
             Банка России по ЦФО
         </td>
     </tr>
