@@ -1107,7 +1107,7 @@ class Soap1c extends Core
     {
 
         try {
-            $service_url = "http://192.168.10.5/RKO-Test/ws/" . $service . ".1cws?wsdl";
+            $service_url = "http:// 141.101.178.136:63025/RKO-Test/ws/" . $service . ".1cws?wsdl";
             $client = new SoapClient($service_url);
 
             $response = $client->__soapCall($method, array($request));
