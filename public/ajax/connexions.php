@@ -3,8 +3,8 @@
 ini_set('display_errors', 'On');
 error_reporting(-1);
 
-chdir('..');
-require 'autoload.php';
+chdir('../..');
+require __DIR__ . '/../../vendor/autoload.php';
 
 class ConnexionsAjax extends Core
 {

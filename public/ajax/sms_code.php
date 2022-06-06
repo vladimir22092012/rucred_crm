@@ -4,8 +4,8 @@ ini_set('display_errors', 'On');
 
 session_start();
 
-chdir('..');
-require 'autoload.php';
+chdir('../..');
+require __DIR__ . '/../../vendor/autoload.php';
 
 class SmsCode extends Core
 {

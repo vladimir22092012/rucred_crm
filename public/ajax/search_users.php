@@ -1,8 +1,7 @@
 <?php
 
-chdir('..');
-
-require 'autoload.php';
+chdir('../..');
+require __DIR__ . '/../../vendor/autoload.php';
 
 class SearchUsersAjax extends Core
 {

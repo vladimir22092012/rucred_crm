@@ -1,7 +1,7 @@
 <?php
 
-chdir('..');
-require 'autoload.php';
+chdir('../..');
+require __DIR__ . '/../../vendor/autoload.php';
 
         $core = new Core();
 

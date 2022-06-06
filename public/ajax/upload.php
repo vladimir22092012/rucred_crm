@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-chdir('..');
-require('autoload.php');
+chdir('../..');
+require __DIR__ . '/../../vendor/autoload.php';
 
 class UploadApp extends Core
 {

@@ -2,9 +2,8 @@
 error_reporting(-1);
 ini_set('display_errors', 'On');
 
-chdir('..');
-
-require 'autoload.php';
+chdir('../..');
+require __DIR__ . '/../../vendor/autoload.php';
 
 class RunScoringsApp extends Core
 {

@@ -9,9 +9,9 @@ header("Pragma: no-cache");
 header("Expires: -1");		
 
 session_start();
-chdir('..');
 
-require 'autoload.php';
+chdir('../..');
+require __DIR__ . '/../../vendor/autoload.php';
 
 $core = new Core();
 

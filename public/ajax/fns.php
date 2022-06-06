@@ -7,9 +7,8 @@ header("Cache-Control: must-revalidate");
 header("Pragma: no-cache");
 header("Expires: -1");	
 
-chdir('..');
-
-require 'autoload.php';
+chdir('../..');
+require __DIR__ . '/../../vendor/autoload.php';
 
 $response = array();
 $core = new Core();
