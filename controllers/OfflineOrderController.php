@@ -3630,6 +3630,8 @@ class OfflineOrderController extends Controller
         $payment->users_inn = $order->inn;
 
         $this->Soap1c->send_payment($payment);
+
+        exit;
     }
 
 }
