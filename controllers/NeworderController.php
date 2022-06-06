@@ -410,6 +410,7 @@ class NeworderController extends Controller
 
             if (empty($requisite['id']))
             {
+                unset($requisite['id']);
                 $requisite['user_id'] = $user_id;
                 $requisite['id'] = $this->requisites->add_requisite($requisite);
             }
