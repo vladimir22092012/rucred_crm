@@ -3,9 +3,6 @@
 error_reporting(-1);
 ini_set('display_errors', 'On');
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
 class OfflineOrderController extends Controller
 {
     public function fetch()
