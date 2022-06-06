@@ -3613,6 +3613,13 @@ class OfflineOrderController extends Controller
         $order = $this->orders->get_order($order_id);
         $requisits = $this->Requisites->get_requisites(['user_id' => $order->user_id]);
 
+        $default_requisit = new stdClass();
+
+        foreach ($requisits as $requisit) {
+            if ($requisit->default == 1)
+                $default_requisit = $requisit;
+        }
+
         $payment = new stdClass();
         $payment->order_id = $order_id;
         $payment->date = date('Y-m-d H:i:s');
@@ -3620,9 +3627,9 @@ class OfflineOrderController extends Controller
         $payment->recepient = 9725055162;
         $payment->user_id = $order->user_id;
         $payment->number = 40701810300000000347;
-        $payment->description = 'Платежный агент по договору'. $order->uid;
-        $payment->user_acc_number = $requisits->number;
-        $payment->user_bik = $requisits->bik;
+        $payment->description = 'Платежный агент по договору' . $order->uid;
+        $payment->user_acc_number = $default_requisit->number;
+        $payment->user_bik = $default_requisit->bik;
         $payment->users_inn = $order->inn;
 
         $this->Soap1c->send_payment($payment);
