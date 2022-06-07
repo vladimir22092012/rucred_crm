@@ -556,18 +556,22 @@ class OfflineOrderController extends Controller
 
             $doc_types =
                 [
-                    '1.1' => 'INDIVIDUALNIE_USLOVIA',
+                    '04.03.02' => 'INDIVIDUALNIE_USLOVIA',
                     '1.3' => 'DOP_SOGLASHENIE_K_TRUDOVOMU_DOGOVORU',
-                    '2.1' => 'SOGLASIE_NA_OBR_PERS_DANNIH',
-                    '2.2' => ($settlement->id == 2) ? 'SOGLASIE_MINB' : 'SOGLASIE_RDB',
-                    '2.3' => 'SOGLASIE_RABOTODATEL',
-                    '2.4' => 'SOGLASIE_RUKRED_RABOTODATEL',
-                    '2.5' => 'SOGLASIE_NA_KRED_OTCHET',
-                    '3.1' => 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP',
-                    '3.2' => 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR',
-                    '4.4' => 'GRAFIK_OBSL_MKR',
-                    '4.12' => 'PERECHISLENIE_ZAEMN_SREDSTV'
+                    '04.05' => 'SOGLASIE_NA_OBR_PERS_DANNIH',
+                    '03.03' => 'SOGLASIE_RABOTODATEL',
+                    '04.06' => 'SOGLASIE_RUKRED_RABOTODATEL',
+                    '04.07' => 'SOGLASIE_NA_KRED_OTCHET',
+                    '04.09' => 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP',
+                    '03.04' => 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR',
+                    '04.04' => 'GRAFIK_OBSL_MKR',
+                    '04.12' => 'PERECHISLENIE_ZAEMN_SREDSTV'
                 ];
+
+            if($settlement->id == 2)
+                $doc_types['04.05.1'] = 'SOGLASIE_MINB';
+            else
+                $doc_types['04.05.2'] = 'SOGLASIE_RDB';
 
             foreach ($doc_types as $key => $type) {
                 $results[$type] = $this->documents->create_document(array(
