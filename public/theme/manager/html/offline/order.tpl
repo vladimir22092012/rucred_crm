@@ -2175,7 +2175,7 @@
                                                             <label class="control-label">{$document->numeration}</label>
                                                         </div>
                                                         <div class="form-group"
-                                                             style="width: 50%!important; margin-left: 15px">
+                                                             style="width: 50%!important; margin-left: 50px">
                                                             <label class="control-label">{$document->name}</label>
                                                         </div>
                                                         <div style="margin-left: 10px">
