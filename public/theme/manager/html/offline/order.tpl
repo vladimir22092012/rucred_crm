@@ -2673,7 +2673,7 @@
                                                             <img src="{$config->back_url}/files/users/{$file->name}"
                                                                  alt="" class="img-responsive" style=""/>
                                                         </a>
-                                                        {if $order->status == 1 && ($manager->id == $order->manager_id)}
+                                                        {if in_array($order->status, [])}
                                                             <div class="order-image-actions">
                                                                 <div class="dropdown mr-1 show ">
                                                                     <button type="button"

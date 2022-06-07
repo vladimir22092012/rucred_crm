@@ -3555,9 +3555,10 @@ class OfflineOrderController extends Controller
         $user_id = $this->request->post('user');
 
         $code = random_int(1000, 9999);
+        $message = "Ваш код для подписания документов: $code. Сообщите код андеррайтеру РуКреда";
         $response = $this->sms->send(
             $phone,
-            $code
+            $message
         );
         $this->db->query('
         INSERT INTO s_sms_messages

@@ -275,9 +275,9 @@
                                                     <label class="custom-control-label" for="blocked"><strong
                                                                 class="text-danger">Заблокирован</strong></label>
                                                 </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="1">
-                                                    <label class="form-check-label" for="flexCheckDefault">
+                                                <div class="custom-control custom-checkbox mr-sm-2 mb-3">
+                                                    <input class="custom-control-input" id="blacklist" type="checkbox" value="1">
+                                                    <label class="custom-control-label" for="blacklist">
                                                         Находится в ч/с
                                                     </label>
                                                 </div>

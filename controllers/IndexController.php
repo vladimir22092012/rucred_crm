@@ -35,7 +35,7 @@ class IndexController extends Controller
         } elseif (empty($module) && !empty($this->manager->role) && ($this->manager->role == 'employer')) {
             $module = 'RegistrController';
         } elseif (empty($module)) {
-            $module = 'ManagersController';
+            $module = 'OfflineOrdersController';
         }
 
         if (class_exists($module)) {

@@ -90,14 +90,15 @@ class LoantypeController extends Controller
         }
 
         if ($id = $this->request->get('id', 'integer')) {
+
             $loantype = $this->loantypes->get_loantype($id);
 
             $groups = $this->GroupLoanTypes->get_loantype_groups($id);
 
             foreach ($groups as $group){
                 if($this->manager->group_id == $group['id']){
-                    $loantype->percent == $group->standart_percents;
-                    $loantype->profunion == $group->standart_percents;
+                    $loantype->percent = $group->standart_percents;
+                    $loantype->profunion = $group->standart_percents;
                 }
             }
 

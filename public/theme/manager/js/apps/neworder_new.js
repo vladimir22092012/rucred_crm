@@ -604,8 +604,8 @@ $(function () {
                 } else {
                     for (let user in users) {
                         let html =
-                            $('<label class="control-label">' + users[user]['lastname'] + ' ' + users[user]['firstname'] + ' ' + users[user]['patronymic'] + '</label>' +
-                            '<input style="margin-left: 25px" type="button" class="btn btn-outline-warning choose_user" data-user="' + users[user]['id'] + '" value="Выбрать"><br>');
+                            $('<label class="control-label">' + users[user]['personal_number'] + ' ' + users[user]['lastname'] + ' ' + users[user]['firstname'] + ' ' + users[user]['patronymic'] + '</label>' +
+                            '<input style="margin-left: 25px" type="button" class="btn btn-outline-warning choose_user" data-user="' + users[user]['id'] + '" value="Выбрать"><br><br>');
 
                         $('#users_same').append(html);
                     }

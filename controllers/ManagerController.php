@@ -291,9 +291,10 @@ class ManagerController extends Controller
         $phone = $this->request->post('phone');
         $user_id = $this->request->post('user_id');
         $code = random_int(1000, 9999);
+        $message = "Подтвердите Ваш номер телефона. Код подтверждения: ".$code;
         $response = $this->sms->send(
             $phone,
-            $code
+            $message
         );
         $this->db->query('
         INSERT INTO s_sms_messages
