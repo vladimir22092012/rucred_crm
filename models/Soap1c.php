@@ -841,9 +841,6 @@ class Soap1c extends Core
         $item->БИКБанкаКонтрагента = $payment->user_bik;
         $item->ИННПолучателя       = $payment->users_inn;
 
-        echo '<pre>';
-        var_dump($item);
-
         $request = new StdClass();
         $request->ArrayOplata = json_encode($item);
 
@@ -1115,7 +1112,7 @@ class Soap1c extends Core
             $response = $fault;
         }
 
-        echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($response);echo '</pre><hr />';
+        //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($response);echo '</pre><hr />';
 
         return $response;
     }
