@@ -32,7 +32,14 @@ class Config
         }
 
         $this->vars['protocol'] = $protocol;
-        $this->vars['root_url'] = $protocol.'://'.rtrim($_SERVER['HTTP_HOST']);
+        if (!empty($_SERVER['HTTP_HOST']))
+        {
+            $this->vars['root_url'] = $protocol.'://'.rtrim($_SERVER['HTTP_HOST']);
+        }
+        else
+        {
+            $this->vars['root_url'] = $this->vars['back_url'];
+        }
         if (!empty($subdir)) {
             $this->vars['root_url'] .= '/'.$subdir;
         }
