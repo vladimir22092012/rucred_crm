@@ -841,10 +841,9 @@ class Soap1c extends Core
         $item->БИКБанкаКонтрагента = $payment->user_bik;
         $item->ИННПолучателя       = $payment->users_inn;
 
-        $request = new StdClass();
-        $request->ArrayOplata = json_encode($item);
+        $item = json_encode($item);
 
-        $result = $this->send_request('CRM_WebService', 'PaymentOrder', $request);
+        $result = $this->send_request('CRM_WebService', 'PaymentOrder', $item);
 
         return $result;
     }
