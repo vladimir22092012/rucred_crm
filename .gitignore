@@ -10,7 +10,6 @@ yarn-error.log
 *.log
 .DS_Store
 Thumbs.db
-/logs
 /compiled
 /configuration/config.php
 /simpla/.passwd

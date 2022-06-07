@@ -93,7 +93,7 @@ class Soap1c extends Core
 
             $request = new StdClass();
             $request->TextJSON = json_encode($item);
-            $result = $this->send_request('CRM_WebService', 'Loans', $request, 1, 'exchange.txt');
+            $result = $this->send_request('CRM_WebService', 'Loans', $request, 1, 'exchange.log');
 
             return $result;
         }
@@ -152,7 +152,7 @@ class Soap1c extends Core
         return $format_phone;
     }
 
-    private function send_request($service, $method, $request, $log = 1, $logfile = 'soap.txt')
+    private function send_request($service, $method, $request, $log = 1, $logfile = 'soap.log')
     {
 
         try {
@@ -171,7 +171,7 @@ class Soap1c extends Core
         return $response;
     }
 
-    public function logging($local_method, $service, $request, $response, $filename = 'soap.txt')
+    public function logging($local_method, $service, $request, $response, $filename = 'soap.log')
     {
         $log_filename = $this->log_dir . $filename;
 
@@ -181,8 +181,8 @@ class Soap1c extends Core
             file_put_contents($log_filename, "\xEF\xBB\xBF");
         }
 
-        if (isset($request['TextJson'])) {
-            $request['TextJson'] = json_decode($request['TextJson']);
+        if (isset($request['TextJSON'])) {
+            $request['TextJSON'] = json_decode($request['TextJSON']);
         }
         if (isset($request['ArrayContracts'])) {
             $request['ArrayContracts'] = json_decode($request['ArrayContracts']);
