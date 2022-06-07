@@ -3629,7 +3629,8 @@ class OfflineOrderController extends Controller
         $payment->user_bik = $default_requisit->bik;
         $payment->users_inn = $order->inn;
 
-        $this->Soap1c->send_payment($payment);
+        echo '<pre>';
+        var_dump($this->Soap1c->send_payment($payment));
 
         exit;
     }
