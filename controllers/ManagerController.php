@@ -100,9 +100,6 @@ class ManagerController extends Controller
                     $errors[] = 'empty_password';
                 }
 
-//            if (!($this->soap1c->check_manager_name($user->name_1c)))
-//                $errors[] = 'name_1c_not_found';
-
                 $this->design->assign('errors', $errors);
 
                 if (!$errors) {

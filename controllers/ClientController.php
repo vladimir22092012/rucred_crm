@@ -83,12 +83,6 @@ class ClientController extends Controller
                 return false;
             }
 
-            // сохраняем историю займов из 1с
-            $credits_history = $this->soap1c->get_client_credits($client->UID);
-            $this->users->save_loan_history($client->id, $credits_history);
-
-            $client = $this->users->get_user($id);
-            
             $client->regaddress = $this->addresses->get_address($client->regaddress_id);
             $client->faktaddress = $this->addresses->get_address($client->faktaddress_id);
 
@@ -121,47 +115,6 @@ class ClientController extends Controller
             }
             $this->design->assign('comments', $comments);
 
-            // получаем комменты из 1С
-            if ($comments_1c_response = $this->soap1c->get_comments($client->UID)) {
-                $comments_1c = array();
-                if (!empty($comments_1c_response->Комментарии)) {
-                    foreach ($comments_1c_response->Комментарии as $comm) {
-                        $comment_1c_item = new StdClass();
-
-                        $comment_1c_item->created = date('Y-m-d H:i:s', strtotime($comm->Дата));
-                        $comment_1c_item->text = $comm->Комментарий;
-                        $comment_1c_item->block = $comm->Блок;
-
-                        $comments_1c[] = $comment_1c_item;
-                    }
-                }
-
-                usort($comments_1c, function ($a, $b) {
-                    return strtotime($b->created) - strtotime($a->created);
-                });
-
-                $this->design->assign('comments_1c', $comments_1c);
-
-                $blacklist_comments = array();
-                if (!empty($comments_1c_response->Комментарии)) {
-                    foreach ($comments_1c_response->Комментарии as $comm) {
-                        $blacklist_comment = new StdClass();
-
-                        $blacklist_comment->created = date('Y-m-d H:i:s', strtotime($comm->Дата));
-                        $blacklist_comment->text = $comm->Комментарий;
-                        $blacklist_comment->block = $comm->Блок;
-
-                        $blacklist_comments[] = $blacklist_comment;
-                    }
-                }
-
-                usort($blacklist_comments, function ($a, $b) {
-                    return strtotime($b->created) - strtotime($a->created);
-                });
-
-                $this->design->assign('blacklist_comments', $blacklist_comments);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($comments_1c_response);echo '</pre><hr />';
-            }
 
 
             $scorings = array();
