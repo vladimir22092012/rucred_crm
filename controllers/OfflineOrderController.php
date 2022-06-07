@@ -608,7 +608,7 @@ class OfflineOrderController extends Controller
 
         $order = $this->orders->get_order($order_id);
 
-        $filter['user_id'] = $order->user_id;
+        $filter['order_id'] = $order->order_id;
 
         $documents = $this->documents->get_documents($filter);
 
