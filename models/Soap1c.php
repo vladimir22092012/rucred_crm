@@ -841,9 +841,10 @@ class Soap1c extends Core
         $item->БИКБанкаКонтрагента = $payment->user_bik;
         $item->ИННПолучателя       = $payment->users_inn;
 
-        $item = json_encode($item);
+        $request = new StdClass();
+        $request->ArrayOplata = json_encode($item);
 
-        $result = $this->send_request('CRM_WebService', 'PaymentOrder', $item);
+        $result = $this->send_request('CRM_WebService', 'PaymentOrder', $request);
 
         return $result;
     }
@@ -1106,7 +1107,7 @@ class Soap1c extends Core
             $service_url = "http://141.101.178.136:63025/RKO-Test/ws/" . $service . ".1cws?wsdl";
             $client = new SoapClient($service_url);
 
-            $response = $client->__soapCall($method, $request);
+            $response = $client->__soapCall($method, array($request));
         } catch (Exception $fault) {
             $response = $fault;
         }
