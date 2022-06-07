@@ -2443,6 +2443,7 @@ class OfflineOrderController extends Controller
         $user_id = $this->request->post('user_id', 'integer');
 
         $statuses = $this->request->post('status');
+
         foreach ($statuses as $file_id => $status) {
             $update = array(
                 'status' => $status,

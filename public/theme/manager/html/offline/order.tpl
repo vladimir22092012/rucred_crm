@@ -129,7 +129,7 @@
 
             $('.cors-edit').on('click', function (e) {
                 e.preventDefault();
-                
+
                 let fio_hold_front = $('.fio-hold-front').text();
 
                 let acc_num_front = $('.acc-num-front').text();
@@ -156,7 +156,7 @@
                     e.preventDefault();
 
                     var $form = $(this).closest('form');
-                    
+
                     $.ajax({
                         method: 'POST',
                         data: $form.serialize(),
@@ -732,11 +732,11 @@
 
                 $.ajax({
                     method: 'POST',
-                    data:{
+                    data: {
                         action: 'create_pay_rdr',
                         order_id: order_id
                     },
-                    success:function () {
+                    success: function () {
 
                     }
                 })
@@ -2490,8 +2490,8 @@
                                                 <span class="float-right"><a class="text-white cors-edit" href=""><i
                                                                 class=" fas fa-edit"></i></a></span>
                                             </h6>
-                                            <input type="hidden" name="action" value="cors_change" />
-                                            <input type="hidden" name="requisite[id]" value="{$order->requisite->id}" />
+                                            <input type="hidden" name="action" value="cors_change"/>
+                                            <input type="hidden" name="requisite[id]" value="{$order->requisite->id}"/>
                                             <div class="cors-front">
                                                 <div class="row view-block p-2">
                                                     <div class="col-md-12">
@@ -2552,7 +2552,8 @@
                                                 <div class="row view-block p-2">
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-0 row">
-                                                            <label class="control-label col-md-8 col-7">Кор счет:</label>
+                                                            <label class="control-label col-md-8 col-7">Кор
+                                                                счет:</label>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12">
@@ -2599,9 +2600,10 @@
                                                     <label class="control-label">БИК банка</label><br>
                                                     <input class="form-control bik-edit"
                                                            style="width: 350px; margin-left: 25px"
-                                                           type="text" name="requisite[bik]" value="{$order->requisite->bik}">
+                                                           type="text" name="requisite[bik]"
+                                                           value="{$order->requisite->bik}">
                                                     <label class="control-label">Кор счет</label>
-                                                    <br />
+                                                    <br/>
                                                     <input class="form-control bank-name-edit"
                                                            style="width: 350px; margin-left: 25px"
                                                            type="text" name="requisite[correspondent_acc]"
@@ -2673,7 +2675,7 @@
                                                             <img src="{$config->back_url}/files/users/{$file->name}"
                                                                  alt="" class="img-responsive" style=""/>
                                                         </a>
-                                                        {if in_array($order->status, [])}
+                                                        {if in_array($order->status, [0,1,12])}
                                                             <div class="order-image-actions">
                                                                 <div class="dropdown mr-1 show ">
                                                                     <button type="button"
@@ -2689,42 +2691,45 @@
                                                                     <div class="dropdown-menu"
                                                                          aria-labelledby="dropdownMenuOffset"
                                                                          x-placement="bottom-start">
-                                                                        <div class="p-1 dropdown-item">
-                                                                            <button
-                                                                                    class="btn btn-sm btn-block btn-outline-success js-image-accept js-event-add-click"
-                                                                                    data-event="51"
-                                                                                    data-manager="{$manager->id}"
-                                                                                    data-order="{$order->order_id}"
-                                                                                    data-user="{$order->user_id}"
-                                                                                    data-id="{$file->id}" type="button">
-                                                                                <i class="fas fa-check-circle"></i>
-                                                                                <span>Принять</span>
-                                                                            </button>
-                                                                        </div>
-                                                                        <div class="p-1 dropdown-item">
-                                                                            <button
-                                                                                    class="btn btn-sm btn-block btn-outline-danger js-image-reject js-event-add-click"
-                                                                                    data-event="52"
-                                                                                    data-manager="{$manager->id}"
-                                                                                    data-order="{$order->order_id}"
-                                                                                    data-user="{$order->user_id}"
-                                                                                    data-id="{$file->id}" type="button">
-                                                                                <i class="fas fa-times-circle"></i>
-                                                                                <span>Отклонить</span>
-                                                                            </button>
-                                                                        </div>
-                                                                        <div class="p-1 pt-3 dropdown-item">
-                                                                            <button
-                                                                                    class="btn btn-sm btn-block btn-danger js-image-remove js-event-add-click"
-                                                                                    data-event="53"
-                                                                                    data-manager="{$manager->id}"
-                                                                                    data-order="{$order->order_id}"
-                                                                                    data-user="{$order->user_id}"
-                                                                                    data-id="{$file->id}" type="button">
-                                                                                <i class="fas fa-trash"></i>
-                                                                                <span>Удалить</span>
-                                                                            </button>
-                                                                        </div>
+                                                                            <div class="p-1 dropdown-item">
+                                                                                <button
+                                                                                        class="btn btn-sm btn-block btn-outline-success js-image-accept js-event-add-click"
+                                                                                        data-event="51"
+                                                                                        data-manager="{$manager->id}"
+                                                                                        data-order="{$order->order_id}"
+                                                                                        data-user="{$order->user_id}"
+                                                                                        data-id="{$file->id}"
+                                                                                        type="button">
+                                                                                    <i class="fas fa-check-circle"></i>
+                                                                                    <span>Принять</span>
+                                                                                </button>
+                                                                            </div>
+                                                                            <div class="p-1 dropdown-item">
+                                                                                <button
+                                                                                        class="btn btn-sm btn-block btn-outline-danger js-image-reject js-event-add-click"
+                                                                                        data-event="52"
+                                                                                        data-manager="{$manager->id}"
+                                                                                        data-order="{$order->order_id}"
+                                                                                        data-user="{$order->user_id}"
+                                                                                        data-id="{$file->id}"
+                                                                                        type="button">
+                                                                                    <i class="fas fa-times-circle"></i>
+                                                                                    <span>Отклонить</span>
+                                                                                </button>
+                                                                            </div>
+                                                                            <div class="p-1 pt-3 dropdown-item">
+                                                                                <button
+                                                                                        class="btn btn-sm btn-block btn-danger js-image-remove js-event-add-click"
+                                                                                        data-event="53"
+                                                                                        data-manager="{$manager->id}"
+                                                                                        data-order="{$order->order_id}"
+                                                                                        data-user="{$order->user_id}"
+                                                                                        data-id="{$file->id}"
+                                                                                        type="button">
+                                                                                    <i class="fas fa-trash"></i>
+                                                                                    <span>Удалить</span>
+                                                                                </button>
+                                                                            </div>
                                                                     </div>
                                                                 </div>
                                                             </div>

@@ -885,6 +885,7 @@ console.log(resp);
             $('#status_'+_id).val(_status);
 
             $(this).closest('form').submit();
+            app.update_page();
         });
 
         $(document).on('click', '.js-image-remove', function(e){
