@@ -703,8 +703,8 @@ class NeworderController extends Controller
                             if (empty($scoring_type->is_paid))
                             {
                                 $add_scoring = array(
-                                    'user_id' => $order->user_id,
-                                    'order_id' => $order->order_id,
+                                    'user_id' => $user_id,
+                                    'order_id' => $order_id,
                                     'type' => $scoring_type->name,
                                     'status' => 'new',
                                     'start_date' => date('Y-m-d H:i:s'),
