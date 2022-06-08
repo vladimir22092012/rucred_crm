@@ -236,240 +236,6 @@ class Contracts extends Core
         }
     }
     
-    
-    
-    public function check_collection_contracts_old()
-    {
-        echo __FILE__.' '.__LINE__.'<br /><pre>';
-        var_dump();
-        echo '</pre><hr />';
-        // просрочка 0-2
-        $date_minus2 = date('Y-m-d', time() - 2 * 86400);
-        $query = $this->db->placehold("
-            UPDATE __contracts
-            SET collection_status = 2,
-            collection_manager_id = 0,
-            collection_workout = 0
-            WHERE status = 4
-            AND collection_status != 2
-            AND DATE(return_date) <= ?
-            AND DATE(return_date) >= ?
-            AND collection_handchange = 0
-        ", date('Y-m-d'), $date_minus2);
-//        $this->db->query($query);
-        echo __FILE__.' '.__LINE__.'<br /><pre>';
-        var_dump($query);
-        echo '</pre><hr />';
-        
-        //Ожидание-1
-        $date_minus3 = date('Y-m-d', time() - 3 * 86400);
-        $date_minus5 = date('Y-m-d', time() - 5 * 86400);
-        $query = $this->db->placehold("
-            UPDATE __contracts
-            SET collection_status = 3,
-            collection_manager_id = 0,
-            collection_workout = 0
-            WHERE status = 4
-            AND collection_status != 3
-            AND DATE(return_date) <= ?
-            AND DATE(return_date) >= ?
-            AND collection_handchange = 0
-        ", $date_minus3, $date_minus5);
-//        $this->db->query($query);
-        echo __FILE__.' '.__LINE__.'<br /><pre>';
-        var_dump($query);
-        echo '</pre><hr />';
-                
-        // Предсофт
-        $date_minus6 = date('Y-m-d', time() - 6 * 86400);
-        $date_minus10 = date('Y-m-d', time() - 10 * 86400);
-        $query = $this->db->placehold("
-            UPDATE __contracts
-            SET collection_status = 4,
-            collection_manager_id = 0,
-            collection_workout = 0
-            WHERE status = 4
-            AND collection_status != 4
-            AND DATE(return_date) <= ?
-            AND DATE(return_date) >= ?
-            AND collection_handchange = 0
-        ", $date_minus6, $date_minus10);
-//        $this->db->query($query);
-        echo __FILE__.' '.__LINE__.'<br /><pre>';
-        var_dump($query);
-        echo '</pre><hr />';
-
-        // Ожидание-2
-        $date_minus11 = date('Y-m-d', time() - 11 * 86400);
-        $date_minus13 = date('Y-m-d', time() - 13 * 86400);
-        $query = $this->db->placehold("
-            UPDATE __contracts
-            SET collection_status = 5,
-            collection_manager_id = 0,
-            collection_workout = 0
-            WHERE status = 4
-            AND collection_status != 5
-            AND DATE(return_date) <= ?
-            AND DATE(return_date) >= ?
-            AND collection_handchange = 0
-        ", $date_minus11, $date_minus13);
-//        $this->db->query($query);
-        echo __FILE__.' '.__LINE__.'<br /><pre>';
-        var_dump($query);
-        echo '</pre><hr />';
-        
-        // Софт 14-30 включительно
-        $date_minus14 = date('Y-m-d', time() - 14 * 86400);
-        $date_minus30 = date('Y-m-d', time() - 30 * 86400);
-        $query = $this->db->placehold("
-            UPDATE __contracts
-            SET collection_status = 6,
-            collection_manager_id = 0,
-            collection_workout = 0
-            WHERE status = 4
-            AND collection_status != 6
-            AND DATE(return_date) <= ?
-            AND DATE(return_date) >= ?
-            AND collection_handchange = 0
-            AND short_soft = 1
-        ", $date_minus14, $date_minus30);
-//        $this->db->query($query);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($query);echo '</pre><hr />';
-
-        // лонг-софт 14-44 включительно
-        $date_minus14 = date('Y-m-d', time() - 14 * 86400);
-        $date_minus44 = date('Y-m-d', time() - 44 * 86400);
-        $query = $this->db->placehold("
-            UPDATE __contracts
-            SET collection_status = 6,
-            collection_manager_id = 0,
-            collection_workout = 0
-            WHERE status = 4
-            AND collection_status != 6
-            AND DATE(return_date) <= ?
-            AND DATE(return_date) >= ?
-            AND collection_handchange = 0
-            AND short_soft = 0
-        ", $date_minus14, $date_minus44);
-//        $this->db->query($query);
-        echo __FILE__.' '.__LINE__.'<br /><pre>';
-        var_dump($query);
-        echo '</pre><hr />';
-
-
-        // ожидание 3 (31-33 включительно)
-        $date_minus31 = date('Y-m-d', time() - 31 * 86400);
-        $date_minus33 = date('Y-m-d', time() - 33 * 86400);
-        $query = $this->db->placehold("
-            UPDATE __contracts
-            SET collection_status = 7,
-            collection_manager_id = 0,
-            collection_workout = 0
-            WHERE status = 4
-            AND collection_status != 7
-            AND DATE(return_date) <= ?
-            AND DATE(return_date) >= ?
-            AND collection_handchange = 0
-            AND short_soft = 1
-        ", $date_minus31, $date_minus33);
-//        $this->db->query($query);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($query);echo '</pre><hr />';
-                
-        // ожидание 3 (лонг-софт 45-47)
-        $date_minus45 = date('Y-m-d', time() - 45 * 86400);
-        $date_minus47 = date('Y-m-d', time() - 47 * 86400);
-        $query = $this->db->placehold("
-            UPDATE __contracts
-            SET collection_status = 7,
-            collection_manager_id = 0,
-            collection_workout = 0
-            WHERE status = 4
-            AND collection_status != 7
-            AND DATE(return_date) <= ?
-            AND DATE(return_date) >= ?
-            AND collection_handchange = 0
-            AND short_soft = 0
-        ", $date_minus45, $date_minus47);
-//        $this->db->query($query);
-        echo __FILE__.' '.__LINE__.'<br /><pre>';
-        var_dump($query);
-        echo '</pre><hr />';
-
-                
-        // хард (34-63 включительно)
-        $date_minus34 = date('Y-m-d', time() - 34 * 86400);
-        $date_minus63 = date('Y-m-d', time() - 63 * 86400);
-        $query = $this->db->placehold("
-            UPDATE __contracts
-            SET collection_status = 8,
-            collection_manager_id = 0,
-            collection_workout = 0
-            WHERE status = 4
-            AND collection_status != 8
-            AND DATE(return_date) <= ?
-            AND DATE(return_date) >= ?
-            AND collection_handchange = 0
-            AND short_soft = 1
-        ", $date_minus34, $date_minus63);
-//        $this->db->query($query);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($query);echo '</pre><hr />';
-
-        // хард (лонг-софт 48-77 включительно)
-        $date_minus48 = date('Y-m-d', time() - 48 * 86400);
-        $date_minus77 = date('Y-m-d', time() - 77 * 86400);
-        $query = $this->db->placehold("
-            UPDATE __contracts
-            SET collection_status = 8,
-            collection_manager_id = 0,
-            collection_workout = 0
-            WHERE status = 4
-            AND collection_status != 8
-            AND DATE(return_date) <= ?
-            AND DATE(return_date) >= ?
-            AND collection_handchange = 0
-            AND short_soft = 0
-        ", $date_minus48, $date_minus77);
-//        $this->db->query($query);
-        echo __FILE__.' '.__LINE__.'<br /><pre>';
-        var_dump($query);
-        echo '</pre><hr />';
-
-
-        
-        // ожидание 4 (64 и так далее пока шеф-коллектор не перетащит сам в хард2 на какого то менеджера руками)
-        $date_minus64 = date('Y-m-d', time() - 64 * 86400);
-        $query = $this->db->placehold("
-            UPDATE __contracts
-            SET collection_status = 9,
-            collection_manager_id = 0,
-            collection_workout = 0
-            WHERE status = 4
-            AND collection_status != 9
-            AND DATE(return_date) <= ?
-            AND collection_handchange = 0
-            AND short_soft = 1
-        ", $date_minus64);
-//        $this->db->query($query);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($query);echo '</pre><hr />';
-
-        // ожидание 4 (лонг-софт 78+)
-        $date_minus78 = date('Y-m-d', time() - 78 * 86400);
-        $query = $this->db->placehold("
-            UPDATE __contracts
-            SET collection_status = 9,
-            collection_manager_id = 0,
-            collection_workout = 0
-            WHERE status = 4
-            AND collection_status != 9
-            AND DATE(return_date) <= ?
-            AND collection_handchange = 0
-            AND short_soft = 0
-        ", $date_minus78);
-//        $this->db->query($query);
-        echo __FILE__.' '.__LINE__.'<br /><pre>';
-        var_dump($query);
-        echo '</pre><hr />';
-    }
         
     public function get_order_contract($order_id)
     {
@@ -970,9 +736,9 @@ class Contracts extends Core
     {
         $contract = (array)$contract;
         
-        if (empty($contract['create_date'])) {
-            $contract['create_date'] = date('Y-m-d H:i:s');
-        }
+//        if (empty($contract['create_date'])) {
+//            $contract['create_date'] = date('Y-m-d H:i:s');
+//        }
         
         $query = $this->db->placehold("
             INSERT INTO __contracts SET ?%
@@ -980,12 +746,11 @@ class Contracts extends Core
         $this->db->query($query);
         $id = $this->db->insert_id();
         
-        $contract_date = strtotime($contract['create_date']);
-//        $uid = 'c0'.$id.'-'.date('Y', $contract_date).'-'.date('md', $contract_date).'-'.date('Hi', $contract_date).'-c041777ac177';
-        $uid = exec($this->config->root_dir.'generic/uidgen');
-        $contract_number = date('md', $contract_date).'-'.$id;
-
-        $this->update_contract($id, array('uid' => $uid, 'number'=>$contract_number));
+//        $contract_date = strtotime($contract['create_date']);
+//        $uid = exec($this->config->root_dir.'generic/uidgen');
+//        $contract_number = date('md', $contract_date).'-'.$id;
+//
+//        $this->update_contract($id, array('uid' => $uid, 'number'=>$contract_number));
     
         return $id;
     }
