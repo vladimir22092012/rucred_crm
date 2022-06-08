@@ -2368,9 +2368,7 @@
                                                                                 {$scorings[$scoring_type->name]->created|date} {$scorings[$scoring_type->name]->created|time}
                                                                             {/if}
                                                                         {if $scoring_type->name == 'fssp'}
-                                                                            <a href="javascript:void(0);"
-                                                                               class="js-get-fssp-info float-right"
-                                                                               data-scoring="{$scorings[$scoring_type->name]->id}">Подробнее</a>
+                                                                            <a href="/ajax/show_fssp.php?id={$scorings[$scoring_type->name]->id}&password=Hjkdf8d" target="_blank">Подробнее</a>
                                                                         {/if}
                                                                         {if $scoring_type->name == 'okb'}
                                                                             <a href="javascript:void(0);"
