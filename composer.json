@@ -14,7 +14,8 @@
         "nuovo/spreadsheet-reader": "^0.5.11",
         "smarty/smarty": "^4.1",
         "mailjet/mailjet-apiv3-php": "^1.5",
-        "phpoffice/phpspreadsheet": "^1.23"
+        "phpoffice/phpspreadsheet": "^1.23",
+        "php-webdriver/webdriver": "^1.11"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

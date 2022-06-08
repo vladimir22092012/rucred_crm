@@ -5,7 +5,7 @@ ini_set('display_errors', 'On');
 
 chdir(dirname(__FILE__).'/../');
 
-require 'autoload.php';
+require __DIR__ . '/../../vendor/autoload.php';
 
 class ExchangeCron extends Core
 {
@@ -31,7 +31,7 @@ class ExchangeCron extends Core
             SELECT id
             FROM __orders
             WHERE sent_1c = 0
-            AND status IN (0, 1, 4, 5, 6, 7, 8, 9, 14, 15, 16)
+            AND status != 12
             ORDER BY date DESC
             LIMIT ?
         ", $order_limit);
