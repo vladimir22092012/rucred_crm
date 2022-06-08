@@ -826,8 +826,25 @@ class OfflineOrderController extends Controller
         
         if (!empty($resp['success']))
         {
+            $contract_id = $this->contracts->add_contract([
+                'order_id' => $order->order_id,
+                'user_id' => $order->user_id,
+                'number' => $order->uid,
+                'amount' => $order->amount,
+                'period' => $order->period,
+                'base_percent' => $order->percent,
+                'peni_percent' => $order->peni_percent,
+                'status' => 2,
+                'loan_body_summ' => $order->amount,
+                'loan_percents_summ' => 0,
+                'loan_peni_summ' => 0,
+                'issuance_date' => date('Y-m-d H:i:s'),
+                
+            ]);
+            
             $this->operations->add_operation([
                 'user_id' => $order->user_id,
+                'contract_id' => $contract_id,
                 'order_id' => $order->order_id,
                 'type' => 'P2P',
                 'amount' => $order->amount,
@@ -838,6 +855,8 @@ class OfflineOrderController extends Controller
                 'loan_peni_summ' => 0,
             ]);
             
+            
+            
             $ticket = [
                 'creator' => 0,
                 'client_lastname' => $order->lastname,
@@ -845,8 +864,8 @@ class OfflineOrderController extends Controller
                 'client_patronymic' => $order->patronymic,
                 'head' => 'Займ выдан',
                 'text' => 'Ознакомьтесь с документами по займу',
-                'company_id' => $order['company_id'],
-                'group_id' => $order['group_id'],
+                'company_id' => $order->company_id,
+                'group_id' => $order->group_id,
                 'order_id' => $order_id,
                 'status' => 0
             ];
