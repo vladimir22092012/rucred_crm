@@ -15,7 +15,7 @@
     <script>
         $(function () {
 
-            let document_link = $('#document_href').attr('href');
+            let document_link = $('#document_std_link').val();
 
             $('#document_link').on('change', function () {
                 let document_id = $(this).val();
@@ -97,7 +97,9 @@
                         <h6 class="card-subtitle"></h6>
                         <div class="table-responsive m-t-40">
                             <div class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
-                                <table id="config-table" class="table display table-striped dataTable" style="text-align: center; font-size: 13px">
+                                <input type="hidden" id="document_std_link" value="{$config->back_url}/document/">
+                                <table id="config-table" class="table display table-striped dataTable"
+                                       style="text-align: center; font-size: 13px">
                                     <thead>
                                     <tr>
                                         <th>ID ПЭПа</th>
@@ -156,9 +158,11 @@
                                                     {/foreach}
                                                 </select>
                                                 <a target="_blank" id="document_href"
-                                                   href="{$config->back_url}/document/">
-                                                    <input type="button" class="btn btn-outline-info" value="Открыть"
-                                                           style="margin-left: 5px"></a>
+                                                   href="{$config->back_url}/document/{$code->documents[0]->id}">
+                                                    <div class="btn btn-outline-info" style="margin-left: 5px">
+                                                        Открыть
+                                                    </div>
+                                                </a>
                                             </td>
                                             <td class="code_type" id="{$code->type}">
                                                 {$code->type}
