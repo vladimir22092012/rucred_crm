@@ -97,14 +97,14 @@
                         <h6 class="card-subtitle"></h6>
                         <div class="table-responsive m-t-40">
                             <div class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
-                                <table id="config-table" class="table display table-striped dataTable">
+                                <table id="config-table" class="table display table-striped dataTable" style="text-align: center; font-size: 13px">
                                     <thead>
                                     <tr>
                                         <th>ID ПЭПа</th>
                                         <th>Дата и врема</th>
-                                        <th>Пользователь</th>
+                                        <th style="width: 180px">Пользователь</th>
                                         <th>Список документов</th>
-                                        <th>Канал запроса ПЭП</th>
+                                        <th style="width: 100px">Канал запроса ПЭП</th>
                                         <th>Куда отправлен код</th>
                                         <th>Код подтверждения</th>
                                         <th>Ссылка на заявку / сделку</th>
