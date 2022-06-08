@@ -5,7 +5,7 @@ ini_set('display_errors', 'On');
 
 chdir(dirname(__FILE__).'/../');
 
-require 'autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 class ExchangeCron extends Core
 {
