@@ -6,7 +6,7 @@ ini_set('display_errors', 'On');
 //chdir('/home/v/vse4etkoy2/nalic_eva-p_ru/public_html/');
 chdir(dirname(__FILE__).'/../');
 
-require __DIR__ . '/../../vendor/autoload.php';
+require 'autoload.php';
 
 class AuditCron extends Core
 {
