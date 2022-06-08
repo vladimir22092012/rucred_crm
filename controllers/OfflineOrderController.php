@@ -243,7 +243,7 @@ class OfflineOrderController extends Controller
 
                     // причина "не удалось выдать"
                     if ($order->status == 6) {
-                        if ($p2p = $this->best2pay->get_contract_p2pcredit($order->contract_id)) {
+                        if ($p2p = $this->issuances->get_order_issuance($order->order_id)) {
                             $p2p->response = unserialize($p2p->response);
                             if (!empty($p2p->response))
                                 $p2p->response_xml = simplexml_load_string($p2p->response);
@@ -819,123 +819,47 @@ class OfflineOrderController extends Controller
     private function delivery_order_action()
     {
         $order_id = (int)$this->request->post('order_id', 'integer');
+        
         $order = $this->orders->get_order($order_id);
-
-        if (!$order) {
-            return array('error' => 'Неизвестный ордер');
-        }
-
-        if (!empty($order->manager_id) && $order->manager_id !== $this->manager->id && !in_array($this->manager->role, array('admin', 'developer'))) {
-            return array('error' => 'Не хватает прав для выполнения операции');
-        }
-
-        if ($order->delivery_id) {
-            return array('error' => 'Заявка на выплату по этому ордеру уже зарегистрирована');
-        }
-
-        $best2pay_endpoint = $this->config->best2pay_endpoint;
-        $action = "Register";
-        $request_url = $best2pay_endpoint . $action;
-
-        $best2pay_sector = (int)$this->config->best2pay_current_sector_id;
-
-        $best2pay_password = $this->config->best2pay_sector3721_pass;
-
-        $best2pay_amount = $order->amount;
-        $best2pay_currency = $this->config->best2pay_currency;
-        $best2pay_email = $order->email;
-        $best2pay_phone = $order->phone_mobile;
-        $best2pay_description = 'Регистрация отправки денег по заявке ' . $order_id;
-        $best2pay_signature = base64_encode(md5($best2pay_sector . $best2pay_amount . $best2pay_currency . $best2pay_password));
-
-        try {
-            $ch = curl_init($request_url);
-            $headers = array(
-                "Content-Type: application/x-www-form-urlencoded",
-            );
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
-                'sector' => $best2pay_sector,
-                'reference' => $order_id,
-                'amount' => $best2pay_amount,
-                'currency' => $best2pay_currency,
-                'email' => $best2pay_email,
-                'phone' => $best2pay_phone,
-                'description' => $best2pay_description,
-                'signature' => $best2pay_signature,
-            ], JSON_THROW_ON_ERROR));
-            $best2pay_response = curl_exec($ch);
-            curl_close($ch);
-            $best2pay_response_xml = simplexml_load_string($best2pay_response);
-            $best2pay_response_xml_name = $best2pay_response_xml->getName();
-            if ($best2pay_response_xml_name === 'error') {
-                return array('error' => $best2pay_response_xml->description);
-            }
-            $delivery_id = (int)simplexml_load_string($best2pay_response)->id;
-            if ($delivery_id === 0) {
-                return array('error' => 'Регистрация оплаты прошла неудачно');
-            }
-            $this->orders->update_order($order_id, array('delivery_id' => $delivery_id));
-        } catch (Exception $e) {
-            return array('error' => 1);
-        }
-
-        $best2pay_endpoint = $this->config->best2pay_endpoint;
-        $action = "PurchaseBySectorCard";
-        $request_url = $best2pay_endpoint . $action;
-
-        $best2pay_description = 'Отправка денег по заявке ' . $order_id;
-
-        $best2pay_signature = base64_encode(md5($best2pay_sector . $delivery_id . $best2pay_password));
-
-        try {
-            $ch = curl_init($request_url);
-            $headers = array(
-                "Content-Type: application/x-www-form-urlencoded",
-            );
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
-                'sector' => $best2pay_sector,
-                'id' => $delivery_id,
-                'description' => $best2pay_description,
-                'signature' => $best2pay_signature,
-            ], JSON_THROW_ON_ERROR));
-            $best2pay_response = curl_exec($ch);
-            curl_close($ch);
-            $best2pay_response_xml = simplexml_load_string($best2pay_response);
-            $best2pay_response_xml_name = $best2pay_response_xml->getName();
-            if ($best2pay_response_xml_name === 'error') {
-                return array('error' => $best2pay_response_xml->description);
-            }
-            if ($best2pay_response_xml->state->__toString() !== 'APPROVED') {
-                return array('error' => 'Платёж не прошел');
-            }
-            $this->orders->update_order($order_id, array('status' => 5));
-
-            $ticket =
-                [
-                    'creator' => 0,
-                    'client_lastname' => $order->lastname,
-                    'client_firstname' => $order->firstname,
-                    'client_patronymic' => $order->patronymic,
-                    'head' => 'Займ выдан',
-                    'text' => 'Ознакомьтесь с документами по займу',
-                    'company_id' => $order['company_id'],
-                    'group_id' => $order['group_id'],
-                    'order_id' => $order_id,
-                    'status' => 0
-                ];
+        
+        $resp = $this->best2pay->issuance($order_id);
+        
+        if (!empty($resp['success']))
+        {
+            $this->operations->add_operation([
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'type' => 'P2P',
+                'amount' => $order->amount,
+                'created' => date('Y-m-d H:i:s'),
+                'loan_body_summ' => $order->amount,
+                'loan_percents_summ' => 0,
+                'loan_charge_summ' => 0,
+                'loan_peni_summ' => 0,
+            ]);
+            
+            $ticket = [
+                'creator' => 0,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => 'Займ выдан',
+                'text' => 'Ознакомьтесь с документами по займу',
+                'company_id' => $order['company_id'],
+                'group_id' => $order['group_id'],
+                'order_id' => $order_id,
+                'status' => 0
+            ];
 
             $this->Tickets->add_ticket($ticket);
-
-            return array('success' => 1);
-        } catch (Exception $e) {
-            return array('error' => 1);
+            
+            return ['success' => 1];
         }
+        else
+        {
+            return $resp;
+        }
+
     }
 
     /**

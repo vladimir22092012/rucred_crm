@@ -10,7 +10,7 @@ class Issuances extends Core
             WHERE order_id = ?
             ORDER BY id DESC
             LIMIT 1
-        ", (int)$contract_id);
+        ", (int)$order_id);
         $this->db->query($query);
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($query);echo '</pre><hr />';
         return $this->db->result();
