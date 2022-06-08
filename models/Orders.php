@@ -540,12 +540,11 @@ class Orders extends Core
         $this->db->query($query);
         if ($results = $this->db->results()) {
             foreach ($results as $result) {
-                $result->loan_history = json_decode($result->loan_history);
+                if (!empty($result->loan_history))
+                    $result->loan_history = json_decode($result->loan_history);
             }
         }
-        if ($this->is_developer) {
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($query, $results);echo '</pre><hr />';
-        }
+
         return $results;
     }
 
