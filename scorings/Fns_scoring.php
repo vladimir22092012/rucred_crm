@@ -91,57 +91,7 @@ class Fns_scoring extends Core
         }
     }
     
-
-
-    public function run($audit_id, $user_id, $order_id)
-    {
-        $this->user_id = $user_id;
-        $this->audit_id = $audit_id;
-        $this->order_id = $order_id;
-        
-        $this->type = $this->scorings->get_type('fns');
-    	
-        $user = $this->users->get_user((int)$user_id);
-
-        return $this->scoring($user);
-    }
     
-    public function scoring($user)
-    {
-        $birthday = date('d.m.Y', strtotime($user->birth));
-        $passportdate = date('d.m.Y', strtotime($user->passport_date));
-        $fns = $this->get_inn($user->lastname, $user->firstname, $user->patronymic, $birthday, 21, $user->passport_serial, $passportdate);
-
-        if (!empty($fns->code))
-        {
-            $scoring = array(
-                'user_id' => $user->id,
-                'audit_id' => $this->audit_id,
-                'type' => 'fns',
-                'body' => $fns->inn,
-                'success' => 1,
-                'scorista_id' => '',
-                'string_result' => 'ИНН найден'
-            );
-            $this->scorings->add_scoring($scoring);
-            
-            
-        }
-        else
-        {
-            $scoring = array(
-                'user_id' => $user->id,
-                'audit_id' => $this->audit_id,
-                'type' => 'fns',
-                'body' => '',
-                'success' => 0,
-                'scorista_id' => '',
-                'string_result' => 'ИНН не найден'
-            );
-            $this->scorings->add_scoring($scoring);
-        }
-
-    }
     public function get_inn($surname, $name, $patronymic, $birthdate, $doctype, $docnumber, $docdate)
     {
         $docnumber_clear = str_replace(array('-', ' '), '', $docnumber);
