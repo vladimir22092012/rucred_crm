@@ -839,8 +839,9 @@ class OfflineOrderController extends Controller
                 'loan_percents_summ' => 0,
                 'loan_peni_summ' => 0,
                 'issuance_date' => date('Y-m-d H:i:s'),
-                
             ]);
+            
+            $this->orders->update_order($order->order_id, ['contract_id'=>$contract_id]);
             
             $this->operations->add_operation([
                 'user_id' => $order->user_id,
@@ -851,12 +852,11 @@ class OfflineOrderController extends Controller
                 'created' => date('Y-m-d H:i:s'),
                 'loan_body_summ' => $order->amount,
                 'loan_percents_summ' => 0,
-                'loan_charge_summ' => 0,
                 'loan_peni_summ' => 0,
             ]);
             
             
-            
+            /*
             $ticket = [
                 'creator' => 0,
                 'client_lastname' => $order->lastname,
@@ -871,7 +871,7 @@ class OfflineOrderController extends Controller
             ];
 
             $this->Tickets->add_ticket($ticket);
-            
+            */
             return ['success' => 1];
         }
         else

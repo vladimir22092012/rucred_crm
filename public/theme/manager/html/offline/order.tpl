@@ -274,6 +274,9 @@
                                     Swal.fire({
                                         title: 'Деньги успешно отправлены'
                                     })
+                                    setInterval(function(){
+                                        location.reload();
+                                    }, 5000);
                                 } else {
                                     Swal.fire({
                                         title: 'Произошла ошибка',
