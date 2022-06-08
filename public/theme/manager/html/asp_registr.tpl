@@ -21,7 +21,53 @@
                 let document_id = $(this).val();
 
                 $(this).closest('td').find('#document_href').attr('href', document_link + document_id);
-            })
+            });
+
+            $('.searchable:not(select)').on('change', function (e) {
+                e.preventDefault();
+
+                $('table tbody tr').show();
+
+                $('.searchable:not(select)').each(function () {
+                    let value = $(this).val();
+                    let index = $(this).parent().index() + 1;
+
+                    if (value && value.length > 0) {
+                        $('td:nth-child(' + index + ')').each(function () {
+                            let find_value = $(this).text().toLowerCase();
+                            if (find_value.includes(value) === false) {
+                                $(this).closest('tr[class="codes"]').hide();
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('#manager_filter').on('change', function () {
+                let value = $(this).val();
+
+                if (value != 'none') {
+                    $('tr[class="codes"]').show();
+                    $('tr[class="codes"]').find('td[class="manager_id"]').not('#' + value + '').parent().hide();
+                }
+                else {
+                    $('tr[class="codes"]').show();
+                }
+
+            });
+
+            $('#type_filter').on('change', function () {
+                let value = $(this).val();
+
+                if (value != 'none') {
+                    $('tr[class="codes"]').show();
+                    $('tr[class="codes"]').find('td[class="code_type"]').not('#' + value + '').parent().hide();
+                }
+                else {
+                    $('tr[class="codes"]').show();
+                }
+
+            });
         })
     </script>
 {/capture}
@@ -63,18 +109,41 @@
                                         <th>Код подтверждения</th>
                                         <th>Ссылка на заявку / сделку</th>
                                     </tr>
+                                    <tr>
+                                        <td><input type="text" class="form-control searchable"></td>
+                                        <td><input type="text" class="form-control searchable"></td>
+                                        <td>
+                                            <select class="form-control" id="manager_filter">
+                                                <option value="none">Пользователь</option>
+                                                {foreach $managers as $manager}
+                                                    <option value="{$manager->id}">{$manager->name}</option>
+                                                {/foreach}
+                                            </select>
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            <select class="form-control" id="type_filter">
+                                                <option value="sms">смс</option>
+                                                <option value="email">почта</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="text" class="form-control searchable"></td>
+                                        <td><input type="text" class="form-control searchable"></td>
+                                        <td><input type="text" class="form-control searchable"></td>
+                                    </tr>
                                     </thead>
                                     <tbody id="table-body" style="font-size: 14px">
                                     {foreach $codes as $code}
-                                        <tr>
+                                        <tr class="codes">
                                             <td>
                                                 {$code->id}
                                             </td>
                                             <td>
                                                 {$code->created|date} {$code->created|time}
                                             </td>
-                                            <td>
-                                                <a target="_blank" href="{$config->back_url}/manager/{$code->manager->id}">
+                                            <td class="manager_id" id="{$code->manager->id}">
+                                                <a target="_blank"
+                                                   href="{$config->back_url}/manager/{$code->manager->id}">
                                                     {$code->manager->name}
                                                 </a>
                                             </td>
@@ -91,7 +160,7 @@
                                                     <input type="button" class="btn btn-outline-info" value="Открыть"
                                                            style="margin-left: 5px"></a>
                                             </td>
-                                            <td>
+                                            <td class="code_type" id="{$code->type}">
                                                 {$code->type}
                                             </td>
                                             <td>
