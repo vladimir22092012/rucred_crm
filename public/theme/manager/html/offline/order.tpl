@@ -1765,7 +1765,8 @@
                                                         <input style="margin-left: 30px; display: none" type="button"
                                                                class="btn btn-danger cancel_restruct"
                                                                value="Отменить">
-                                                    {else}
+                                                    {/if}
+                                                    {if in_array($order->status, [0,1,12,14])}
                                                         <input style="margin-left: 30px" type="button"
                                                                class="btn btn-warning reform"
                                                                value="Редактировать">
@@ -2691,45 +2692,45 @@
                                                                     <div class="dropdown-menu"
                                                                          aria-labelledby="dropdownMenuOffset"
                                                                          x-placement="bottom-start">
-                                                                            <div class="p-1 dropdown-item">
-                                                                                <button
-                                                                                        class="btn btn-sm btn-block btn-outline-success js-image-accept js-event-add-click"
-                                                                                        data-event="51"
-                                                                                        data-manager="{$manager->id}"
-                                                                                        data-order="{$order->order_id}"
-                                                                                        data-user="{$order->user_id}"
-                                                                                        data-id="{$file->id}"
-                                                                                        type="button">
-                                                                                    <i class="fas fa-check-circle"></i>
-                                                                                    <span>Принять</span>
-                                                                                </button>
-                                                                            </div>
-                                                                            <div class="p-1 dropdown-item">
-                                                                                <button
-                                                                                        class="btn btn-sm btn-block btn-outline-danger js-image-reject js-event-add-click"
-                                                                                        data-event="52"
-                                                                                        data-manager="{$manager->id}"
-                                                                                        data-order="{$order->order_id}"
-                                                                                        data-user="{$order->user_id}"
-                                                                                        data-id="{$file->id}"
-                                                                                        type="button">
-                                                                                    <i class="fas fa-times-circle"></i>
-                                                                                    <span>Отклонить</span>
-                                                                                </button>
-                                                                            </div>
-                                                                            <div class="p-1 pt-3 dropdown-item">
-                                                                                <button
-                                                                                        class="btn btn-sm btn-block btn-danger js-image-remove js-event-add-click"
-                                                                                        data-event="53"
-                                                                                        data-manager="{$manager->id}"
-                                                                                        data-order="{$order->order_id}"
-                                                                                        data-user="{$order->user_id}"
-                                                                                        data-id="{$file->id}"
-                                                                                        type="button">
-                                                                                    <i class="fas fa-trash"></i>
-                                                                                    <span>Удалить</span>
-                                                                                </button>
-                                                                            </div>
+                                                                        <div class="p-1 dropdown-item">
+                                                                            <button
+                                                                                    class="btn btn-sm btn-block btn-outline-success js-image-accept js-event-add-click"
+                                                                                    data-event="51"
+                                                                                    data-manager="{$manager->id}"
+                                                                                    data-order="{$order->order_id}"
+                                                                                    data-user="{$order->user_id}"
+                                                                                    data-id="{$file->id}"
+                                                                                    type="button">
+                                                                                <i class="fas fa-check-circle"></i>
+                                                                                <span>Принять</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="p-1 dropdown-item">
+                                                                            <button
+                                                                                    class="btn btn-sm btn-block btn-outline-danger js-image-reject js-event-add-click"
+                                                                                    data-event="52"
+                                                                                    data-manager="{$manager->id}"
+                                                                                    data-order="{$order->order_id}"
+                                                                                    data-user="{$order->user_id}"
+                                                                                    data-id="{$file->id}"
+                                                                                    type="button">
+                                                                                <i class="fas fa-times-circle"></i>
+                                                                                <span>Отклонить</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="p-1 pt-3 dropdown-item">
+                                                                            <button
+                                                                                    class="btn btn-sm btn-block btn-danger js-image-remove js-event-add-click"
+                                                                                    data-event="53"
+                                                                                    data-manager="{$manager->id}"
+                                                                                    data-order="{$order->order_id}"
+                                                                                    data-user="{$order->user_id}"
+                                                                                    data-id="{$file->id}"
+                                                                                    type="button">
+                                                                                <i class="fas fa-trash"></i>
+                                                                                <span>Удалить</span>
+                                                                            </button>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>

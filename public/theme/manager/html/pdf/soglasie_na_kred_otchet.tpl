@@ -51,21 +51,25 @@
     <br>
 </div>
 {if isset($sms)}
-<table style="color: #880000; font-style: italic; border: 0.25pt solid #880000; width: 45%" cellpadding="2">
-    <tr>
-        <td>Подписано простой электронной подписью</td>
-    </tr>
-    <tr>
-        <td>{$firstname} {$patronymic} {$lastname}</td>
-    </tr>
-    <tr>
-        <td>Дата: {$confirm_date}(МСК)</td>
-    </tr>
-    <tr>
-        <td>Телефон: {$phone_mobile}</td>
-    </tr>
-    <tr>
-        <td>Код подтверждения: {$sms}</td>
-    </tr>
-</table>
+    <table style="color: #002688; page-break-after: always; font-style: italic; border: 0.25pt solid #002088; width: 50%"
+           cellpadding="1" cellspacing="5">
+        <tr>
+            <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
+        </tr>
+        <tr>
+            <td>Подписант: {$firstname} {$patronymic} {$lastname}</td>
+        </tr>
+        <tr>
+            <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
+        </tr>
+        <tr>
+            <td>ID подписания: {$code_asp->id}</td>
+        </tr>
+        <tr>
+            <td>Код подтверждения: {$code_asp->code}</td>
+        </tr>
+        <tr>
+            <td>Система ЭДО: Рестарт.Онлайн</td>
+        </tr>
+    </table>
 {/if}
