@@ -290,7 +290,7 @@
                                             class="mdi mdi-calendar"></i><span class="hide-menu">Сводные реестры</span></a>
                             </li>
                             <li {if in_array($module, ['AspRegistrController'])}class="active"{/if}>
-                                <a class="" href="/asp_registr" aria-expanded="false"><i
+                                <a class="" href="/asp_registr'" aria-expanded="false"><i
                                             class="mdi mdi-sigma"></i><span class="hide-menu">Реестр ЭЦП</span></a>
                             </li>
                         {/if}
