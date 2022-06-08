@@ -3438,7 +3438,10 @@ class OfflineOrderController extends Controller
                     'user_id' => $user_id,
                     'order_id' => $order_id,
                     'code' => $code,
-                    'created' => date('Y-m-d H:i:s')
+                    'created' => date('Y-m-d H:i:s'),
+                    'type' => 'sms',
+                    'recepient' => $phone,
+                    'manager_id' => $this->manager->id
                 ];
 
             $this->AspCodes->add_code($asp_log);

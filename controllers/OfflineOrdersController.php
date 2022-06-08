@@ -193,7 +193,6 @@ class OfflineOrdersController extends Controller
                     unset($orders[$key]);
                 }
             }
-
             $this->design->assign('orders', $orders);
             return $this->design->fetch('offline/drafts.tpl');
         } else {

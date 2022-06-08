@@ -2172,8 +2172,7 @@
                                                             {continue}
                                                         {/if}
                                                     {/if}
-                                                    <div
-                                                            style="width: 100%!important; height: 50px; margin-left: 5px; display: flex; vertical-align: middle"
+                                                    <div style="width: 100%!important; height: 50px; margin-left: 5px; display: flex; vertical-align: middle"
                                                             id="{$document->id}">
                                                         <div class="form-group"
                                                              style="width: 10px!important; margin-left: 5px">

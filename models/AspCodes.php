@@ -17,12 +17,12 @@ class AspCodes extends Core
 
     public function get_code($param = null)
     {
-       $where = '';
+        $where = '';
 
-        if(isset($param['id']))
+        if (isset($param['id']))
             $where = $this->db->placehold("WHERE id = ?", $param['id']);
 
-        if(isset($param['code']))
+        if (isset($param['code']))
             $where = $this->db->placehold("WHERE code = ?", $param['code']);
 
         $query = $this->db->placehold("
@@ -35,5 +35,18 @@ class AspCodes extends Core
         $code = $this->db->result();
 
         return $code;
+    }
+
+    public function get_codes($params = [])
+    {
+        $query = $this->db->placehold("
+        SELECT * 
+        FROM s_asp_codes
+        ");
+
+        $this->db->query($query);
+        $codes = $this->db->results();
+
+        return $codes;
     }
 }
