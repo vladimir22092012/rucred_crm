@@ -234,7 +234,6 @@ class Best2pay extends Core
     
     private function send($method, $data, $type = 'webapi')
     {
-echo 'SEND';
         $url = $this->url.$type.'/'.$method;
         $string_data = http_build_query($data);
         
