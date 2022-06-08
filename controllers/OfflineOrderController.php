@@ -833,7 +833,7 @@ class OfflineOrderController extends Controller
                 'amount' => $order->amount,
                 'period' => $order->period,
                 'base_percent' => $order->percent,
-                'peni_percent' => $order->peni_percent,
+                'peni_percent' => 0,
                 'status' => 2,
                 'loan_body_summ' => $order->amount,
                 'loan_percents_summ' => 0,
