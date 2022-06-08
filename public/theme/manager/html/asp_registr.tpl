@@ -15,13 +15,59 @@
     <script>
         $(function () {
 
-            let document_link = $('#document_href').attr('href');
+            let document_link = $('#document_std_link').val();
 
             $('#document_link').on('change', function () {
                 let document_id = $(this).val();
 
                 $(this).closest('td').find('#document_href').attr('href', document_link + document_id);
-            })
+            });
+
+            $('.searchable:not(select)').on('change', function (e) {
+                e.preventDefault();
+
+                $('table tbody tr').show();
+
+                $('.searchable:not(select)').each(function () {
+                    let value = $(this).val();
+                    let index = $(this).parent().index() + 1;
+
+                    if (value && value.length > 0) {
+                        $('td:nth-child(' + index + ')').each(function () {
+                            let find_value = $(this).text().toLowerCase();
+                            if (find_value.includes(value) === false) {
+                                $(this).closest('tr[class="codes"]').hide();
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('#manager_filter').on('change', function () {
+                let value = $(this).val();
+
+                if (value != 'none') {
+                    $('tr[class="codes"]').show();
+                    $('tr[class="codes"]').find('td[class="manager_id"]').not('#' + value + '').parent().hide();
+                }
+                else {
+                    $('tr[class="codes"]').show();
+                }
+
+            });
+
+            $('#type_filter').on('change', function () {
+                let value = $(this).val();
+
+                if (value != 'none') {
+                    $('tr[class="codes"]').show();
+                    $('tr[class="codes"]').find('td[class="code_type"]').not('#' + value + '').parent().hide();
+                }
+                else {
+                    $('tr[class="codes"]').show();
+                }
+
+            });
         })
     </script>
 {/capture}
@@ -51,30 +97,55 @@
                         <h6 class="card-subtitle"></h6>
                         <div class="table-responsive m-t-40">
                             <div class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
-                                <table id="config-table" class="table display table-striped dataTable">
+                                <input type="hidden" id="document_std_link" value="{$config->back_url}/document/">
+                                <table id="config-table" class="table display table-striped dataTable"
+                                       style="text-align: center; font-size: 13px">
                                     <thead>
                                     <tr>
                                         <th>ID ПЭПа</th>
                                         <th>Дата и врема</th>
-                                        <th>Пользователь</th>
+                                        <th style="width: 180px">Пользователь</th>
                                         <th>Список документов</th>
-                                        <th>Канал запроса ПЭП</th>
+                                        <th style="width: 100px">Канал запроса ПЭП</th>
                                         <th>Куда отправлен код</th>
                                         <th>Код подтверждения</th>
                                         <th>Ссылка на заявку / сделку</th>
                                     </tr>
+                                    <tr>
+                                        <td><input type="text" class="form-control searchable"></td>
+                                        <td><input type="text" class="form-control searchable"></td>
+                                        <td>
+                                            <select class="form-control" id="manager_filter">
+                                                <option value="none">Пользователь</option>
+                                                {foreach $managers as $manager}
+                                                    <option value="{$manager->id}">{$manager->name}</option>
+                                                {/foreach}
+                                            </select>
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            <select class="form-control" id="type_filter">
+                                                <option value="sms">смс</option>
+                                                <option value="email">почта</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="text" class="form-control searchable"></td>
+                                        <td><input type="text" class="form-control searchable"></td>
+                                        <td><input type="text" class="form-control searchable"></td>
+                                    </tr>
                                     </thead>
                                     <tbody id="table-body" style="font-size: 14px">
                                     {foreach $codes as $code}
-                                        <tr>
+                                        <tr class="codes">
                                             <td>
                                                 {$code->id}
                                             </td>
                                             <td>
                                                 {$code->created|date} {$code->created|time}
                                             </td>
-                                            <td>
-                                                <a target="_blank" href="{$config->back_url}/manager/{$code->manager->id}">
+                                            <td class="manager_id" id="{$code->manager->id}">
+                                                <a target="_blank"
+                                                   href="{$config->back_url}/manager/{$code->manager->id}">
                                                     {$code->manager->name}
                                                 </a>
                                             </td>
@@ -87,11 +158,13 @@
                                                     {/foreach}
                                                 </select>
                                                 <a target="_blank" id="document_href"
-                                                   href="{$config->back_url}/document/">
-                                                    <input type="button" class="btn btn-outline-info" value="Открыть"
-                                                           style="margin-left: 5px"></a>
+                                                   href="{$config->back_url}/document/{$code->documents[0]->id}">
+                                                    <div class="btn btn-outline-info" style="margin-left: 5px">
+                                                        Открыть
+                                                    </div>
+                                                </a>
                                             </td>
-                                            <td>
+                                            <td class="code_type" id="{$code->type}">
                                                 {$code->type}
                                             </td>
                                             <td>
