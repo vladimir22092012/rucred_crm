@@ -238,13 +238,16 @@
                         <li {if in_array($module, ['TicketsController'])}class="active"{/if}>
                         <li class="nav-small-cap">Коммуникации</li>
                         <li {if in_array($module, ['TicketsController'])}class="active"{/if}>
-                            <a href="tickets?in=true"><i class="mdi mdi-email-open badge1" {if $count_in != 0}data-badge="{$count_in}"{/if}></i><span>Входящие запросы</span></a>
+                            <a href="tickets?in=true"><i class="mdi mdi-email-open badge1"
+                                                         {if $count_in != 0}data-badge="{$count_in}"{/if}></i><span>Входящие запросы</span></a>
                         </li>
                         <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
-                                    href="tickets?out=true"><i class="mdi mdi-email-variant badge1" {if $count_out != 0}data-badge="{$count_out}"{/if}></i><span>Исходящие запросы</span></a>
+                                    href="tickets?out=true"><i class="mdi mdi-email-variant badge1"
+                                                               {if $count_out != 0}data-badge="{$count_out}"{/if}></i><span>Исходящие запросы</span></a>
                         </li>
                         <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
-                                    href="tickets?archive=true"><i class="mdi mdi-mailbox"></i><span>Архив запросов</span></a>
+                                    href="tickets?archive=true"><i
+                                        class="mdi mdi-mailbox"></i><span>Архив запросов</span></a>
                         </li>
                         <li class="nav-small-cap">Онлайн заявки</li>
                         <li {if in_array($module, ['OrderController', 'OrdersController'])}class="active"{/if}>
@@ -290,10 +293,10 @@
                                             class="mdi mdi-calendar"></i><span class="hide-menu">Сводные реестры</span></a>
                             </li>
                             {if in_array($manager->role, ['admin', 'developer'])}
-                            <li {if in_array($module, ['AspRegistrController'])}class="active"{/if}>
-                                <a class="" href="/asp_registr" aria-expanded="false"><i
-                                            class="mdi mdi-sigma"></i><span class="hide-menu">Реестр ЭЦП</span></a>
-                            </li>
+                                <li {if in_array($module, ['AspRegistrController'])}class="active"{/if}>
+                                    <a class="" href="/asp_registr" aria-expanded="false"><i
+                                                class="mdi mdi-sigma"></i><span class="hide-menu">Реестр ЭЦП</span></a>
+                                </li>
                             {/if}
                         {/if}
                         {if in_array('managers', $manager->permissions) && $manager->role != 'employer'}
@@ -326,6 +329,10 @@
                                 <a href="/blacklist"><i class="mdi mdi-tooltip"></i>Whitelist</a></li>
                             <li {if in_array($module, ['ThemesController'])}class="active"{/if}>
                                 <a href="/themes"><i class="mdi mdi-chart-arc"></i>Справочник тем КП</a></li>
+                            {if in_array($manager->role, ['developer', 'admin', 'middle'])}
+                            <li {if in_array($module, ['DockTypesController'])}class="active"{/if}>
+                                <a href="/dock_types"><i class="mdi mdi-react"></i>Типы документов</a></li>
+                            {/if}
                         {/if}
                         {if in_array('managers', $manager->permissions) && $manager->role != 'employer'}
                             <li class="nav-small-cap">Настройки</li>

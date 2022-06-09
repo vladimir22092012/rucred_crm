@@ -97,7 +97,7 @@
                                     </thead>
                                     <tbody id="table-body" style="font-size: 14px">
                                     {foreach $docs as $doc}
-                                        <tr>
+                                        <tr style="text-align: left">
                                             <td>{$doc->name}</td>
                                             <td>
                                                 <div style="display: flex;">
