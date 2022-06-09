@@ -19,7 +19,7 @@ class AspRegistrController extends Controller
             $manager = $this->Managers->get_manager($code->manager_id);
             $code->manager = $manager;
             $managers->{$manager->id} = $manager;
-            $code->documents = $this->documents->get_documents(['user_id' => $code->user_id]);
+            $code->documents = $this->documents->get_documents(['order_id' => $code->order_id]);
         }
 
         $this->design->assign('managers', $managers);
