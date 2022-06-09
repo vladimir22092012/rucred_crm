@@ -6,6 +6,28 @@
           href="theme/manager/assets/plugins/datatables.net-bs4/css/dataTables.bootstrap4.css">
     <link rel="stylesheet" type="text/css"
           href="theme/manager/assets/plugins/datatables.net-bs4/css/responsive.dataTables.min.css">
+    <link type="text/css" rel="stylesheet" href="theme/{$settings->theme|escape}/assets/plugins/jsgrid/jsgrid.min.css"/>
+    <link type="text/css" rel="stylesheet"
+          href="theme/{$settings->theme|escape}/assets/plugins/jsgrid/jsgrid-theme.min.css"/>
+    <style>
+        .jsgrid-table {
+            margin-bottom: 0
+        }
+
+        .label {
+            white-space: pre;
+        }
+
+        .workout-row > td {
+            background: #b2ffaf !important;
+        }
+
+        .workout-row a, .workout-row small, .workout-row span {
+            color: #555 !important;
+            font-weight: 300;
+        }
+
+    </style>
 {/capture}
 
 {capture name='page_scripts'}
@@ -93,28 +115,70 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title"></h4>
-                        <h6 class="card-subtitle"></h6>
-                        <div class="table-responsive m-t-40">
-                            <div class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
+                        <div id="basicgrid" class="jsgrid" style="position: relative; width: 100%;">
+                            <div class="jsgrid-grid-header jsgrid-header-scrollbar">
                                 <input type="hidden" id="document_std_link" value="{$config->back_url}/document/">
-                                <table id="config-table" class="table display table-striped dataTable"
-                                       style="text-align: center; font-size: 13px">
+                                <table class="jsgrid-table table table-striped table-hover" style="text-align: center">
                                     <thead>
-                                    <tr>
-                                        <th>ID ПЭПа</th>
-                                        <th>Дата и врема</th>
-                                        <th style="width: 180px">Пользователь</th>
-                                        <th>Список документов</th>
-                                        <th style="width: 100px">Канал запроса ПЭП</th>
-                                        <th>Куда отправлен код</th>
-                                        <th>Код подтверждения</th>
-                                        <th>Ссылка на заявку / сделку</th>
+                                    <tr class="jsgrid-header-row">
+                                        <th style="width: 70px;"
+                                            class="jsgrid-header-cell jsgrid-align-right jsgrid-header-sortable {if $sort == 'order_id_desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'order_id_asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
+                                            {if $sort == 'order_id_asc'}<a href="{url page=null sort='order_id_desc'}">
+                                                    ID</a>
+                                            {else}<a href="{url page=null sort='order_id_asc'}">ID</a>{/if}
+                                        </th>
+                                        <th style="width: 70px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'date_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'date_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'date_asc'}<a href="{url page=null sort='date_desc'}">Дата /
+                                                Время</a>
+                                            {else}<a href="{url page=null sort='date_asc'}">Дата / Время</a>{/if}
+                                        </th>
+                                        <th style="width: 90px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'amount_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'amount_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'amount_asc'}<a href="{url page=null sort='amount_desc'}">
+                                                    Пользователь</a>
+                                            {else}<a href="{url page=null sort='amount_asc'}">Пользователь</a>{/if}
+                                        </th>
+                                        <th style="width: 350px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'fio_asc'}<a href="{url page=null sort='fio_desc'}">Подписанные
+                                                документы</a>
+                                            {else}<a href="{url page=null sort='fio_asc'}">Подписанные
+                                                документы</a>{/if}
+                                        </th>
+                                        <th style="width: 150px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'company_id_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'company_id_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'company_id_asc'}<a
+                                                href="{url page=null sort='company_id_desc'}">Канал</a>
+                                            {else}<a href="{url page=null sort='fio_asc'}">Канал</a>{/if}
+                                        </th>
+                                        <th style="width: 80px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'phone_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'phone_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'phone_asc'}<a href="{url page=null sort='phone_desc'}">
+                                                    Получатель</a>
+                                            {else}<a href="{url page=null sort='phone_asc'}">Получатель</a>{/if}
+                                        </th>
+                                        <th style="width: 60px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'status_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'status_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'manager_asc'}<a href="{url page=null sort='manager_desc'}">
+                                                    Код</a>
+                                            {else}<a href="{url page=null sort='manager_asc'}">Код</a>{/if}
+                                        </th>
+                                        <th style="width: 60px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'status_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'status_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'manager_asc'}<a href="{url page=null sort='manager_desc'}">
+                                                    Сделка</a>
+                                            {else}<a href="{url page=null sort='manager_asc'}">Сделка</a>{/if}
+                                        </th>
                                     </tr>
-                                    <tr>
-                                        <td><input type="text" class="form-control searchable"></td>
-                                        <td><input type="text" class="form-control searchable"></td>
-                                        <td>
+                                    <tr class="jsgrid-filter-row">
+                                        <td style="width: 70px;" class="jsgrid-cell">
+                                            <input type="text" class="form-control searchable">
+                                        </td>
+                                        <td style="width: 70px;" class="jsgrid-cell">
+                                            <input type="text" class="form-control searchable">
+                                        </td>
+                                        <td style="width: 70px;" class="jsgrid-cell">
                                             <select class="form-control" id="manager_filter">
                                                 <option value="none">Пользователь</option>
                                                 {foreach $managers as $manager}
@@ -122,16 +186,22 @@
                                                 {/foreach}
                                             </select>
                                         </td>
-                                        <td></td>
-                                        <td>
+                                        <td style="width: 70px;" class="jsgrid-cell"></td>
+                                        <td style="width: 70px;" class="jsgrid-cell">
                                             <select class="form-control" id="type_filter">
                                                 <option value="sms">смс</option>
                                                 <option value="email">почта</option>
                                             </select>
                                         </td>
-                                        <td><input type="text" class="form-control searchable"></td>
-                                        <td><input type="text" class="form-control searchable"></td>
-                                        <td><input type="text" class="form-control searchable"></td>
+                                        <td style="width: 70px;" class="jsgrid-cell"><input type="text"
+                                                                                            class="form-control searchable">
+                                        </td>
+                                        <td style="width: 70px;" class="jsgrid-cell"><input type="text"
+                                                                                            class="form-control searchable">
+                                        </td>
+                                        <td style="width: 70px;" class="jsgrid-cell"><input type="text"
+                                                                                            class="form-control searchable">
+                                        </td>
                                     </tr>
                                     </thead>
                                     <tbody id="table-body" style="font-size: 14px">

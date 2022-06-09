@@ -129,7 +129,6 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Список заявок </h4>
-
                         <div class="clearfix">
                             {if $manager->role == 'employer'}
                                 <div class="js-filter-status mb-2 float-left">
