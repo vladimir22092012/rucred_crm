@@ -106,7 +106,7 @@
                                                              style="text-align: left">
                                                             <input class="custom-control-input" id="{$role->id}"
                                                                    type="checkbox" value="1">
-                                                            <label class="custom-control-label" for="{$role->id}">
+                                                            <label class="custom-control-label" style="padding-top: 4px!important;" for="{$role->id}">
                                                                 {$role->translate}
                                                             </label>
                                                         </div>
