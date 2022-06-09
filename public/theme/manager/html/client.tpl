@@ -178,6 +178,35 @@
                     });
                 }
             });
+
+            $('.delete_client').on('click', function (e) {
+                e.preventDefault();
+
+                let user_id = $(this).attr('data-user');
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'delete_client',
+                        user_id: user_id
+                    },
+                    success: function (resp) {
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'Ок',
+                            })
+                        } else {
+                            Swal.fire({
+                                title: 'Пользователь успешно удален',
+                            }).then((result) => {
+                                location.replace('/clients');
+                            });
+                        }
+                    }
+                })
+            })
         })
     </script>
 {/capture}
@@ -276,7 +305,8 @@
                                                                 class="text-danger">Заблокирован</strong></label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox mr-sm-2 mb-3">
-                                                    <input class="custom-control-input" id="blacklist" type="checkbox" value="1">
+                                                    <input class="custom-control-input" id="blacklist" type="checkbox"
+                                                           value="1">
                                                     <label class="custom-control-label" for="blacklist">
                                                         Находится в ч/с
                                                     </label>
@@ -649,7 +679,8 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group mb-1 {if in_array('empty_regregion', (array)$addresses_error)}has-danger{/if}">
                                                                 <label class="control-label">Область</label>
-                                                                <input type="hidden" name="regaddress_id" value="<br />{$client->regaddress_id}" />
+                                                                <input type="hidden" name="regaddress_id"
+                                                                       value="<br />{$client->regaddress_id}"/>
                                                                 <input type="text" class="form-control js-dadata-region"
                                                                        name="Regregion"
                                                                        value="{$client->regaddress->region|escape}"
@@ -665,8 +696,9 @@
                                                             <div class="form-group mb-1 {if in_array('empty_regcity', (array)$addresses_error)}has-danger{/if}">
                                                                 <label class="control-label">Город</label>
                                                                 <input type="text" class="form-control js-dadata-city"
-                                                                       name="Regcity" value="{$client->regaddress->city|escape}"
-                                                                       placeholder="" />
+                                                                       name="Regcity"
+                                                                       value="{$client->regaddress->city|escape}"
+                                                                       placeholder=""/>
                                                                 {if in_array('empty_regcity', (array)$addresses_error)}
                                                                     <small class="form-control-feedback">Укажите
                                                                         город!
@@ -681,7 +713,7 @@
                                                                        class="form-control js-dadata-district"
                                                                        name="Regdistrict"
                                                                        value="{$client->regaddress->district|escape}"
-                                                                       placeholder="" />
+                                                                       placeholder=""/>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-4">
@@ -691,7 +723,7 @@
                                                                        class="form-control js-dadata-locality"
                                                                        name="Reglocality"
                                                                        value="{$client->regaddress->locality|escape}"
-                                                                       placeholder="" />
+                                                                       placeholder=""/>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-4">
@@ -700,7 +732,7 @@
                                                                 <input type="text" class="form-control js-dadata-street"
                                                                        name="Regstreet"
                                                                        value="{$client->regaddress->street|escape}"
-                                                                       placeholder="" />
+                                                                       placeholder=""/>
                                                                 {if in_array('empty_regstreet', (array)$addresses_error)}
                                                                     <small class="form-control-feedback">Укажите
                                                                         улицу!
@@ -735,8 +767,9 @@
                                                             <div class="form-group">
                                                                 <label class="control-label">Квартира</label>
                                                                 <input type="text" class="form-control js-dadata-room"
-                                                                       name="Regroom" value="{$client->regaddress->room|escape}"
-                                                                       placeholder="" />
+                                                                       name="Regroom"
+                                                                       value="{$client->regaddress->room|escape}"
+                                                                       placeholder=""/>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3">
@@ -744,8 +777,9 @@
                                                                 <label class="control-label">Индекс</label>
                                                                 <input type="text" class="form-control js-dadata-index"
                                                                        name="Regindex"
-                                                                       value="{$client->regaddress->index|escape}" placeholder=""
-                                                                       />
+                                                                       value="{$client->regaddress->index|escape}"
+                                                                       placeholder=""
+                                                                />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -755,11 +789,12 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group mb-1 {if in_array('empty_faktregion', (array)$addresses_error)}has-danger{/if}">
                                                                 <label class="control-label">Область</label>
-                                                                <input type="hidden" name="faktaddress_id" value="{$client->faktaddress_id}" />
+                                                                <input type="hidden" name="faktaddress_id"
+                                                                       value="{$client->faktaddress_id}"/>
                                                                 <input type="text" class="form-control js-dadata-region"
                                                                        name="Faktregion"
                                                                        value="{$client->faktaddress->region|escape}"
-                                                                       placeholder="" />
+                                                                       placeholder=""/>
                                                                 {if in_array('empty_faktregion', (array)$addresses_error)}
                                                                     <small class="form-control-feedback">Укажите
                                                                         область!
@@ -772,8 +807,9 @@
                                                                 <label class="control-label">Город</label>
                                                                 <input type="text" class="form-control js-dadata-city"
                                                                        name="Faktcity"
-                                                                       value="{$client->faktaddress->city|escape}" placeholder=""
-                                                                       />
+                                                                       value="{$client->faktaddress->city|escape}"
+                                                                       placeholder=""
+                                                                />
                                                                 {if in_array('empty_faktcity', (array)$addresses_error)}
                                                                     <small class="form-control-feedback">Укажите
                                                                         город!
@@ -843,8 +879,9 @@
                                                                 <label class="control-label">Квартира</label>
                                                                 <input type="text" class="form-control js-dadata-room"
                                                                        name="Faktroom"
-                                                                       value="{$client->faktaddress->room|escape}" placeholder=""
-                                                                       />
+                                                                       value="{$client->faktaddress->room|escape}"
+                                                                       placeholder=""
+                                                                />
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3">
@@ -1154,9 +1191,12 @@
                                             </div>
                                         </div>
                                     </form>
-                                    <!-- -->
-
-
+                                    <div style="display: flex; justify-content: right">
+                                        <div type="button" class="btn btn-outline-danger delete_client"
+                                             data-user="{$client->id}" style="height: 38px;">
+                                            Удалить клиента
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -1396,8 +1436,6 @@
                                                 </div>
                                             </div>
                                         </div>
-
-
                                     </div>
                                 </div>
                             </div>
@@ -1438,7 +1476,6 @@
                             </div>
                             {*}
                         </div>
-
                     </div>
                 </div>
             </div>

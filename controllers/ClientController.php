@@ -73,6 +73,10 @@ class ClientController extends Controller
                     return $this->action_get_branches();
                     break;
 
+                case 'delete_client':
+                    $this->action_delete_client();
+                    break;
+
             endswitch;
         } else {
             if (!($id = $this->request->get('id', 'integer'))) {
@@ -114,7 +118,6 @@ class ClientController extends Controller
                 }
             }
             $this->design->assign('comments', $comments);
-
 
 
             $scorings = array();
@@ -1062,7 +1065,7 @@ class ClientController extends Controller
         $company_id = $this->request->post('company');
         $branch_id = $this->request->post('branch');
 
-        if($branch_id == 'none')
+        if ($branch_id == 'none')
             $branch_id = 0;
 
         $user =
@@ -1093,6 +1096,20 @@ class ClientController extends Controller
         $branches = $this->Branches->get_branches(['company_id' => $company_id]);
 
         echo json_encode(['branches' => $branches]);
+        exit;
+    }
+
+    private function action_delete_client()
+    {
+        $user_id = $this->request->post('user_id');
+
+        $check_orders = $this->orders->get_orders(['user_id' => $user_id]);
+
+        if (!empty($check_orders)) {
+            echo json_encode(['error' => 'У клиента есть заявки']);
+        } else {
+            echo json_encode(['success' => 'Пользователь успешно удален']);
+        }
         exit;
     }
 }
