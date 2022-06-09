@@ -4,8 +4,6 @@ use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 
-require_once( __DIR__ . '/../vendor/autoload.php');
-
 class Efrsb_scoring extends Core
 {
     public function run_scoring($scoring_id)

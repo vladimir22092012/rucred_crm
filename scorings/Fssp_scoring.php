@@ -1,392 +1,348 @@
 <?php
 
+error_reporting(-1);
+ini_set('display_errors', 'On');
+ini_set('max_execution_time', '600');
+
+use Facebook\WebDriver\WebDriverBy;
+use Facebook\WebDriver\Remote\DesiredCapabilities;
+use Facebook\WebDriver\WebDriverExpectedCondition;
+use Facebook\WebDriver\Remote\RemoteWebDriver;
+
+
 class Fssp_scoring extends Core
 {
-    private $user_id;
-    private $order_id;
-    private $audit_id;
-    private $type;
+    private $captcha_dir = 'files/scorings/captcha/';
     
-    private $api_url = 'https://api-ip.fssp.gov.ru/api/v1.0/';
-    private $api_key = '';
-    
-    private $error = null;
-    
-    
+    private $session_id = null;
+
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
         
-        $this->api_key = $this->settings->apikeys['fssp']['api_key'];
+        $this->captcha_dir = $this->config->root_dir.$this->captcha_dir;
+
+        $this->session_id = md5(rand().microtime());
     }
-    
+
     public function run_scoring($scoring_id)
     {
-        $update = array();
-        
-    	$scoring_type = $this->scorings->get_type('fssp');
-        
-        if ($scoring = $this->scorings->get_scoring($scoring_id))
-        {
-            if ($order = $this->orders->get_order((int)$scoring->order_id))
-            {
-                if (empty($order->lastname) || empty($order->firstname) || empty($order->patronymic) || empty($order->Regregion) || empty($order->birth))
-                {
+        if ($scoring = $this->scorings->get_scoring($scoring_id)) {
+            $this->scoring_id = $scoring_id;
+
+            if ($user = $this->users->get_user((int)$scoring->user_id)) {
+                $result = $this->scoring([
+                    'firstname' => $user->firstname,
+                    'patronymic' => $user->patronymic,
+                    'lastname' => $user->lastname,
+                    'birth' => date('d.m.Y', strtotime($user->birth)),
+                ]);
+
+                if (!isset($result['result'])) {
                     $update = array(
                         'status' => 'error',
-                        'string_result' => 'в заявке не достаточно данных для проведения скоринга '.$order->lastname.' '.$order->firstname.' '.$order->patronymic.' '.$order->Regregion.' '.$order->birth
+                        'body' => serialize($result),
+                        'success' => 0,
+                        'string_result' => 'Не удалось получить ответ'
                     );
+            
+                    $this->scorings->update_scoring($scoring_id, $update);
+            
+                    return $update;
                 }
-                else
-                {
-                    $regaddress = $this->addresses->get_address($order->regaddress_id);
-                    
-                    $data = array(
-                        'region' => $this->get_code($regaddress->region),
-                        'lastname' => $order->lastname,
-                        'firstname' => $order->firstname,
-                        'secondname' => $order->patronymic,
-                        'birthdate' => date('d.m.Y', strtotime($order->birth)),
-                    );
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($data);echo '</pre><hr />';                    
-                    $task = $this->create_task($data);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($task);echo '</pre><hr />';
-                    if (!empty($task->task))
-                    {
-                        do {
-                            sleep(5);
-                            $stat = $this->check_task($task->task);
-                        } while (!empty($stat) && in_array($stat->status, array(1, 2)));
-                        
-                        $resp = $this->get_task($task->task);
-echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';            
-                        if (!empty($resp))
-                        {
-                            $debt = 0;
-                            $pattern = '~([0-9.]*)\sруб~';
-                            if (!empty($resp->result[0]->result))
-                            {
-                                foreach ($resp->result[0]->result as $item)
-                                {
-                                    preg_match_all($pattern, $item->subject, $founds);
-                                    foreach ($founds[1] as $f)
-                                        $debt += $f;
-                                }
-                            }
-                            
-                            $score = $debt < $scoring_type->params['amount'];
-                            
-                            $update = array(
-                                'status' => 'completed',
-                                'body' => serialize($resp),
-                                'success' => $score,
-                                'string_result' => 'Найденная сумма долга: '.$debt.' руб',
-                            );
-                            
-                            $this->scorings->update_scoring($scoring_id, $update);
-                            
-                            $this->soap1c->send_fssp(empty($order->id_1c) ? $order->order_id : $order->id_1c, $resp);
-                            
-                            return $update;
-                        }
-                        else
-                        {
-                            if ($scoring->repeat_count < 2)
-                            {
-                                $update = array(
-                                    'status' => 'repeat',
-                                    'body' => 'Не удалось соединиться с сервером ФССП',
-                                    'string_result' => 'ПОВТОРНЫЙ ЗАПРОС',
-                                    'repeat_count' => $scoring->repeat_count + 1,
-                                );
-                                
-                            }
-                            else
-                            {
-                                $update = array(
-                                    'status' => 'error',
-                                    'body' => serialize($resp),
-                                    'string_result' => 'Не удалось соединиться с сервером ФССП'
-                                );
-                            }    
-                        }
-                    }
-                    else
-                    {
-                        if ($scoring->repeat_count < 2)
-                        {
-                            $update = array(
-                                'status' => 'repeat',
-                                'body' => 'При запросе произошла ошибка',
-                                'string_result' => 'ПОВТОРНЫЙ ЗАПРОС',
-                                'repeat_count' => $scoring->repeat_count + 1,
-                            );
-                            
-                        }
-                        else
-                        {                            
-                            $error = $this->get_error();
-                            $update = array(
-                                'status' => 'error',
-                                'body' => serialize($error),
-                                'string_result' => 'При запросе произошла ошибка'
-                            );
-                        }
-                    }
 
+                if ($result['result'] == 'Ошибка парсинга') {
+                    $update = array(
+                        'status' => 'error',
+                        'body' => serialize($result),
+                        'success' => 0,
+                        'string_result' => 'Ошибка парсинга'
+                    );
+            
+                    $this->scorings->update_scoring($scoring_id, $update);
+            
+                    return $update;
                 }
-                
-            }
-            else
-            {
+
+                if ($result['result'] == 'По вашему запросу ничего не найдено') {
+                    $update = array(
+                        'status' => 'completed',
+                        'body' => serialize($result),
+                        'success' => 1,
+                        'string_result' => 'По вашему запросу ничего не найдено'
+                    );
+            
+                    $this->scorings->update_scoring($scoring_id, $update);
+            
+                    return $update;
+                }
+
+                if (strpos($result['result'], 'Не удалось осуществить поиск') !== false) {
+                    $update = array(
+                        'status' => 'error',
+                        'body' => serialize($result),
+                        'success' => 0,
+                        'string_result' => $result['result']
+                    );
+            
+                    $this->scorings->update_scoring($scoring_id, $update);
+            
+                    return $update;
+                }
+
+                if (strpos($result['result'], 'Найдено записей') !== false) {
+                    $re = '/(\d+.\d\d) руб/';
+                    
+                    preg_match_all($re, $result['html'], $matches, PREG_SET_ORDER, 0);
+                    
+                    $result['sum'] = array_reduce($matches, function($sum, $item) {
+                        return $sum + $item[1];
+                    }, 0);
+                    
+                    $string_result = 'Найденная сумма долга: '.$result['sum'];
+
+                    if ($result['sum'] >= 50000) {
+                        $success = 0;
+                    } else {
+                        $success = 1;
+                    }
+                    
+                    $update = array(
+                        'status' => 'completed',
+                        'body' => serialize($result),
+                        'success' => $success,
+                        'string_result' => $string_result,//$result['result']
+                    );
+            
+                    $this->scorings->update_scoring($scoring_id, $update);
+            
+                    return $update;
+                }
+
                 $update = array(
                     'status' => 'error',
-                    'string_result' => 'не найдена заявка'
+                    'body' => serialize($result),
+                    'success' => 0,
+                    'string_result' => 'Что-то пошло не так'
                 );
-            }
-            
-            if (!empty($update))
+        
                 $this->scorings->update_scoring($scoring_id, $update);
-            
-            return $update;
-
+        
+                return $update;
+            } else {
+                $update = [
+                    'status' => 'error',
+                    'string_result' => 'не найден пользователь'
+                ];
+                $this->scorings->update_scoring($scoring_id, $update);
+                return $update;
+            }
         }
     }
-    
 
-
-    public function run($audit_id, $user_id, $order_id)
+    public function scoring($data)
     {
-        $this->user_id = $user_id;
-        $this->audit_id = $audit_id;
-        $this->order_id = $order_id;
-        
-        $this->type = $this->scorings->get_type('fssp');
+        $host = 'http://' . $this->settings->selenoid . ':4444/wd/hub';
 
-        $user = $this->users->get_user((int)$user_id);
+        $capabilities = DesiredCapabilities::chrome();
 
-        return $this->scoring($user->firstname, $user->patronymic, $user->lastname, $user->Regregion, $user->birth, $user->first_loan_amount, $user->phone_mobile);
+        $driver = RemoteWebDriver::create($host, $capabilities);
 
-    }
+        $driver->get('https://fssp.gov.ru/iss/ip');
 
-    private function scoring($firstname, $secondname, $lastname, $region_name, $birthday, $amount, $phone)
-    {
-        $data = array(
-            'region' => $this->get_code($region_name),
-            'lastname' => $lastname,
-            'firstname' => $firstname,
-            'secondname' => $secondname,
-            'birthdata' => $birthday,
+        sleep(1);
+
+        /*
+            self.driver.find_element(By.ID, "region_id_chosen").click()
+            self.driver.find_element(By.CSS_SELECTOR, ".active-result:nth-child(85)").click()
+            self.driver.find_element(By.ID, "input01").click()
+            self.driver.find_element(By.ID, "input01").send_keys("Иванов")
+            self.driver.find_element(By.ID, "input02").send_keys("Иван")
+            self.driver.find_element(By.ID, "input05").send_keys("Иванович")
+            self.driver.find_element(By.ID, "input06").click()
+            self.driver.find_element(By.ID, "input06").send_keys("19.12.1999")
+            self.driver.find_element(By.ID, "btn-sbm").click()
+        */
+        //#capchaVisual
+        //Хайдаров Хусан Ибрахимович 17.05.1984
+        $driver->findElement(
+            WebDriverBy::id("region_id_chosen")
+        )->click();
+
+        $driver->findElement(
+            WebDriverBy::cssSelector(".active-result:nth-child(85)")
+        )->click();
+
+        $driver->findElement(
+            WebDriverBy::id("input01")
+        )->sendKeys($data['lastname']);
+
+        $driver->findElement(
+            WebDriverBy::id("input02")
+        )->sendKeys($data['firstname']);
+
+        $driver->findElement(
+            WebDriverBy::id("input05")
+        )->sendKeys($data['patronymic']);
+
+        $driver->findElement(
+            WebDriverBy::id("input06")
+        )->click();
+
+        $driver->findElement(
+            WebDriverBy::id("input06")
+        )->sendKeys($data['birth']);
+
+        $driver->findElement(
+            WebDriverBy::id("btn-sbm")
+        )->click();
+
+        sleep(11);
+
+        $captchaCollection = $driver->findElements(
+            WebDriverBy::id("capchaVisual")
         );
-        
-        $task = $this->create_task($data);
-        if (!empty($task->task))
-        {
-            do {
-                usleep(2500);
-                $stat = $this->check_task($task->task);
-            } while (!empty($stat) && in_array($stat->status, array(1, 2)));
-            
-            $resp = $this->get_task($task->task);
 
-            $debt = 0;
-            $pattern = '~([0-9.]*)\sруб~';
-            if (!empty($resp->result[0]->result))
-            {
-                foreach ($resp->result[0]->result as $item)
-                {
-                    preg_match_all($pattern, $item->subject, $founds);
-                    foreach ($founds[1] as $f)
-                        $debt += $f;
-                }
-            }
+        //if (WebDriverExpectedCondition::elementTextContains(WebDriverBy::cssSelector("h2"), "ВВЕДИТЕ КОД С КАРТИНКИ:")) {
+        if (count($captchaCollection) > 0) {
+            //$html =  $driver->getPageSource();
+            //$driver->takeScreenshot('../logs/image123.png');
+
+            $captcha = $driver->findElement(
+                WebDriverBy::id("capchaVisual")
+            )->getAttribute('src');
+
+            $img = str_replace('data:image/jpeg;base64,', '', $captcha);
+            //$img = str_replace(' ', '+', $img);
+            $data = base64_decode($img);
+            //$this->captcha_dir.$this->session_id.'.jpeg'
+            $file = $this->captcha_dir.$this->session_id.'.jpeg';
+            $success = file_put_contents($file, $data);
+
+            echo '<img src="'.$captcha.'">';
+
+            $code = $this->get_captcha_code($file);
             
-            $score = $debt < $this->type->params['amount'];
-            
-            $add_scoring = array(
-                'user_id' => $this->user_id,
-                'audit_id' => $this->audit_id,
-                'type' => 'fssp',
-                'body' => serialize($resp),
-                'success' => (int)$score
+            /*
+                driver.findElement(By.id("captcha-popup-code")).sendKeys("дж9с8");
+                driver.findElement(By.id("ncapcha-submit")).click();
+                assertThat(driver.findElement(By.cssSelector(".b-search-message__text > h4")).getText(), is("По вашему запросу ничего не найдено"));
+            */
+
+            $driver->findElement(
+                WebDriverBy::id("captcha-popup-code")
+            )->sendKeys($code);
+
+            $driver->findElement(
+                WebDriverBy::id("ncapcha-submit")
+            )->click();
+
+            sleep(35);
+
+            //$driver->wait(20, 500)
+            //->until(WebDriverExpectedCondition::invisibilityOfElementLocated(
+            //    //css=.iss:nth-child(8) > .b-full-layer > .b-center-loader
+            //    //By.cssSelector(".iss:nth-child(8) > .b-full-layer > .b-center-loader")
+            //    WebDriverBy::cssSelector(".iss:nth-child(8) > .b-full-layer > .b-center-loader")
+            //));
+        }
+        //$driver->takeScreenshot('../logs/image456.png');
+
+        $element = $driver->findElements(
+            WebDriverBy::cssSelector(".b-search-message__text > h4")
+        );
+
+        if (count($element) > 0) {
+            $text = $driver->findElement(
+                WebDriverBy::cssSelector(".b-search-message__text > h4")
+            )->getText();
+
+            return [
+                'result' => $text,
+                'html' => $driver->getPageSource()
+            ];
+        }
+
+        $element2 = $driver->findElements(
+            WebDriverBy::cssSelector(".search-found-total-inner")
+        );
+
+        if (count($element2) > 0) {
+            $element = $driver->findElement(
+                WebDriverBy::cssSelector(".search-found-total-inner")
+            )->getText();
+
+            $results = $driver->findElements(
+                WebDriverBy::cssSelector(".results")
             );
-            if ($score)
-            {
-                $add_scoring['string_result'] = 'Долг < '.$this->type->params['amount'].' р';
+
+            if (count($results) > 0) {
+                $result = $driver->findElement(
+                    WebDriverBy::cssSelector(".results")
+                );
+
+                $outerHTML = $result->getAttribute('outerHTML');
+
+                return [
+                    'result' => $element,
+                    'html' => $driver->getPageSource(),
+                    'outerHTML' => $outerHTML
+                ];
             }
-            else
-            {
-                $add_scoring['string_result'] = 'Долг > '.$this->type->params['amount'].' р';
-            }
 
-            $this->scorings->add_scoring($add_scoring);
-            
-            return $score;
-
+            return [
+                'result' => $element,
+                'html' => $driver->getPageSource()
+            ];
         }
-        else
-        {
-            $error = $this->get_error();
+
+        //$driver->takeScreenshot('../logs/image456.png');
+
+        return [
+            'result' => 'Ошибка парсинга',
+            'html' => ''
+        ];
+
+        //".search-found-total-inner"
+
+        //ничего не найдено
+        //#content > div > div > div.iss > div > div > div > h4
+
+        //найдено
+        //#content > div > div > div.iss > div > div > div.context > div > div.search-found-total-inner
+
+        //$html =  $driver->getPageSource();
+
+        //var_dump($html);
+    }
+
+    public function get_captcha_code($file)
+    {
+        $task_id = $this->anticaptcha->create_task($file);
+        echo $task_id;
+        do {
+            sleep(1);
+            $task_result = $this->anticaptcha->get_task_result($task_id);
+        } while (!empty($task_result) && $task_result->status != 'ready' && $task_result->errorId == 0);
+
+        echo __FILE__ . ' ' . __LINE__ . '<br /><pre>';
+        var_dump($task_result);
+        echo '</pre><hr />';
+
+        if (empty($task_result->errorId)) {
+            $captcha_code = $task_result->solution->text;
+
+            return $captcha_code;          
         }
     }
-
-
-    
-    public function create_task($data)
-    {
-        $resp = $this->send('search/physical', $data);
-        
-        return ($resp);
-    }
-    
-    public function check_task($task_id)
-    {
-        $resp = $this->send('status', array('task' => $task_id));
-        
-        return $resp;
-    }
-    
-    public function get_task($task_id)
-    {
-        $resp = $this->send('result', array('task' => $task_id));
-        
-        return $resp;    	
-    }
-    
-    public function get_error()
-    {
-    	return $this->error;
-    }
-    
-    
-    public function send($method, $data)
-    {
-    	$this->error = null;
-        
-        $data['token'] = /*'hitrWj8fLR1d';*/$this->api_key;
-        
-        $url = $this->api_url. $method . '?' . http_build_query($data);
-        
-        $ch = curl_init($url);
-
-//        curl_setopt($ch, CURLOPT_PROXY, '45.10.82.72:8000');
-//        curl_setopt($ch, CURLOPT_PROXYUSERPWD, 'KUoLnb:EXRvow');
-        
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-
-        $json = curl_exec($ch);
-        curl_close($ch);
-echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump(date('H:i:s'), $json);echo '</pre><hr />';        
-        $result = json_decode($json);
-        if ($result->status != 'success')
-        {
-            $this->error = $result;
-            return false;
-        }
-        
-        return $result->response;
-    }
-    
-    public function get_code($region_name)
-    {
-        $codes = array(
-            1 => "адыгея",
-            2 => "башкортостан",
-            3 => "бурятия",
-            4 => "алтай",
-            5 => "дагестан",
-            6 => "ингушетия",
-            7 => "кабардино-балкарская",
-            8 => "калмыкия",
-            9 => "карачаево-черкесская",
-            10 => "карелия",
-            11 => "коми",
-            12 => "марий эл",
-            13 => "мордовия",
-            14 => "саха /якутия/",
-            15 => "северная осетия - алания",
-            16 => "татарстан",
-            17 => "тыва",
-            18 => "удмуртская",
-            19 => "хакасия",
-            20 => "чеченская",
-            21 => "чувашская",
-            22 => "алтайский",
-            23 => "краснодарский",
-            24 => "красноярский",
-            25 => "приморский",
-            26 => "ставропольский",
-            27 => "хабаровский", 
-            28 => "амурская",
-            29 => "архангельская",
-            30 => "астраханская",
-            31 => "белгородская",
-            32 => "брянская",
-            33 => "владимирская",
-            34 => "волгоградская",
-            35 => "вологодская",
-            36 => "воронежская",
-            37 => "ивановская",
-            38 => "иркутская",
-            39 => "калининградская",
-            40 => "калужская",
-            41 => "камчатский",
-            42 => "кемеровская",
-            43 => "кировская",
-            44 => "костромская",
-            45 => "курганская",
-            46 => "курская",
-            47 => "ленинградская",
-            48 => "липецкая",
-            49 => "магаданская",
-            50 => "московская",
-            51 => "мурманская",
-            52 => "нижегородская",
-            53 => "новгородская",
-            54 => "новосибирская",
-            55 => "омская",
-            56 => "оренбургская",
-            57 => "орловская",
-            58 => "пензенская",
-            59 => "пермский",
-            60 => "псковская",
-            61 => "ростовская",
-            62 => "рязанская",
-            63 => "самарская",
-            64 => "саратовская",
-            65 => "сахалинская",
-            66 => "свердловская",
-            67 => "смоленская",
-            68 => "тамбовская",
-            69 => "тверская",
-            70 => "томская",
-            71 => "тульская",
-            72 => "тюменская",
-            73 => "ульяновская",
-            74 => "челябинская",
-            75 => "забайкальский",
-            76 => "ярославская",
-            77 => "москва",
-            78 => "санкт-петербург",
-            82 => "крым",
-            86 => "ханты-мансийский автономный округ - югра",
-            87 => "чукотский",
-            89 => "ямало-ненецкий",
-            92 => "севастополь",
-        );
-        
-        $index = array_search(mb_strtolower($region_name, 'utf8'), $codes);
-        
-        if (mb_strtolower($region_name, 'utf8') == 'еврейская')
-            $index = 27;
-        if (mb_strtolower($region_name, 'utf8') == 'ненецкий')
-            $index = 29;
-        if (mb_strtolower($region_name, 'utf8') == 'кемеровская область - кузбасс')
-            $index = 42;
-        
-        return $index;            
-    }
-    
 }
+
+//Колчина Вероника Сергеевна 14.03.1992
+//Хайдаров Хусан Ибрахимович 17.05.1984
+
+//echo (new Fssp2_scoring)->scoring([
+//    'firstname' => 'Хусан',
+//    'patronymic' => 'Ибрахимович',
+//    'lastname' => 'Хайдаров',
+//    'birth' => '17.05.1985',
+//])['result'];

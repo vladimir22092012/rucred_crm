@@ -81,8 +81,6 @@ class Fms_scoring extends Core
                         
                         $this->scorings->update_scoring($scoring_id, $update);
                         
-                        $this->soap1c->send_fms(empty($order->id_1c) ? $order->order_id : $order->id_1c , $order->passport_serial, $score);
-                        
                         return $update;
                     }
                     else
@@ -121,70 +119,6 @@ class Fms_scoring extends Core
             return $update;
 
         }
-    }
-    
-
-
-    public function run($audit_id, $user_id, $order_id)
-    {
-        $this->user_id = $user_id;
-        $this->audit_id = $audit_id;
-        $this->order_id = $order_id;
-        
-        $this->type = $this->scorings->get_type('fms');
-    	
-        $user = $this->users->get_user((int)$user_id);
-        
-        return $this->scoring($user->passport_serial);
-    }
-
-    private function scoring($passport)
-    {
-        $passport_serial = str_replace('-', '', $passport);
-        $serial = substr($passport_serial, 0, 4);
-        $number = substr($passport_serial, 4, 6);
-        
-        $resp = $this->check_passport($serial, $number);
-        
-        $pattern = '~<h4 class="ct-h4">(.*?)</h4>~';
-        preg_match($pattern, $resp, $result_string);
-        
-        $score = 0;
-        if (!empty($result_string[1]))
-        {
-            if (stripos($result_string[1], 'Cреди недействительных не значится') === false)
-            {
-                // Первая С может быть или кирилицей или латиницей
-                if (stripos($result_string[1], 'Среди недействительных не значится') !== false)
-                    $score = 1;
-            }
-            else
-            {
-                $score = 1;
-            }
-    
-            $add_scoring = array(
-                'user_id' => $this->user_id,
-                'audit_id' => $this->audit_id,
-                'type' => 'fms',
-                'body' => $result_string[1],
-                'success' => (int)$score
-            );
-            if ($score)
-            {
-                $add_scoring['string_result'] = 'Паспорт корректный';
-            }
-            else
-            {
-                $add_scoring['string_result'] = 'Паспорт некорректный';
-            }
-
-            $this->scorings->add_scoring($add_scoring);
-
-
-        }
-        
-        return $score;
     }
 
     public function check_passport($serial, $number)
