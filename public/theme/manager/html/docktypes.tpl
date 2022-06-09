@@ -9,24 +9,6 @@
     <link type="text/css" rel="stylesheet" href="theme/{$settings->theme|escape}/assets/plugins/jsgrid/jsgrid.min.css"/>
     <link type="text/css" rel="stylesheet"
           href="theme/{$settings->theme|escape}/assets/plugins/jsgrid/jsgrid-theme.min.css"/>
-    <style>
-        .jsgrid-table {
-            margin-bottom: 0
-        }
-
-        .label {
-            white-space: pre;
-        }
-
-        .workout-row > td {
-            background: #b2ffaf !important;
-        }
-
-        .workout-row a, .workout-row small, .workout-row span {
-            color: #555 !important;
-            font-weight: 300;
-        }
-    </style>
 {/capture}
 
 {capture name='page_scripts'}
@@ -88,28 +70,25 @@
                         <div id="basicgrid" class="jsgrid" style="position: relative; width: 100%;">
                             <div class="jsgrid-grid-header jsgrid-header-scrollbar">
                                 <input type="hidden" id="document_std_link" value="{$config->back_url}/document/">
-                                <table class="jsgrid-table table table-striped table-hover" style="text-align: center">
+                                <table class="jsgrid-table table table-striped table-hover" style="display: inline-block; vertical-align: top; max-width: 100%;
+                            overflow-x: auto; white-space: nowrap;-webkit-overflow-scrolling: touch;">
                                     <thead>
                                     <tr class="jsgrid-header-row">
-                                        <th style="width: 200px">Наименование документа</th>
-                                        <th style="width: 200px">Доступность</th>
+                                        <th>Наименование документа</th>
+                                        <th>Доступность</th>
                                     </tr>
                                     </thead>
-                                    <tbody id="table-body" style="font-size: 14px">
+                                    <tbody id="table-body">
                                     {foreach $docs as $doc}
-                                        <tr style="text-align: left">
-                                            <td>{$doc->name}</td>
-                                            <td>
+                                        <tr style="text-align: left;">
+                                            <td style="width: 50%">{$doc->name}</td>
+                                            <td style="width: 50%">
                                                 <div style="display: flex;">
                                                     {foreach $roles as $role}
-                                                        <div class="custom-control custom-checkbox mr-sm-4 mb-4"
-                                                             style="text-align: left">
-                                                            <input class="custom-control-input" id="{$role->id}"
-                                                                   type="checkbox" value="1">
-                                                            <label class="custom-control-label" style="padding-top: 4px!important;" for="{$role->id}">
+                                                            <input id="{$role->name}" style="margin: 2px 15px" type="checkbox" value="1">
+                                                            <label for="{$role->name}" style="margin-left: 5px">
                                                                 {$role->translate}
                                                             </label>
-                                                        </div>
                                                     {/foreach}
                                                 </div>
                                             </td>
