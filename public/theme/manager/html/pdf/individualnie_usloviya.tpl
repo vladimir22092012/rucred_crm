@@ -247,7 +247,7 @@
             <td style="width: 30%; background-color: #b3b2ab">2.1. Сумма микрозайма или лимит микрозайма и порядок его
                 изменения
             </td>
-            <td style="width: 70%"><strong>{$amount|number_format:0:',':' '} ({$amount_to_string|upper})</strong> рублей
+            <td style="width: 70%"><strong>{$amount|number_format:0:',':' '} ({$amount_string|upper})</strong> рублей
                 <strong>00</strong>
                 копеек
             </td>

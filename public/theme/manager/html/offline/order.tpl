@@ -2130,8 +2130,7 @@
                                                             <div class="col-md-6">
                                                                 <select class="form-control" id="branch_select"
                                                                         name="branch">
-                                                                    <option value="none" selected>Отсутствует
-                                                                        филиал
+                                                                    <option value="none" selected>По умолчанию
                                                                     </option>
                                                                     {foreach $branches as $branch}
                                                                         <option value="{$branch->id}"

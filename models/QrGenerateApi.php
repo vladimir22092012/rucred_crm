@@ -2,7 +2,7 @@
 
 class QrGenerateApi extends Core
 {
-    protected $api_key = '7rfSrrnv.7W17lYF35RPUJJtgf2TM1s37e1kDJkZi';
+    protected $api_key = '2vJy2gwL.9VEXYUeji8C7EtUtxNhcRJWci45Zdejt';
 
     public function get_qr($sum, $qr_size)
     {
@@ -18,7 +18,7 @@ class QrGenerateApi extends Core
                 'X-Api-Key: ' . $this->api_key,
             ];
 
-        $ch = curl_init('https://stage.wapiserv.qrm.ooo/operations/qr-code/');
+        $ch = curl_init('https://app.devwapiserv.qrm.ooo/operations/qr-code/');
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
