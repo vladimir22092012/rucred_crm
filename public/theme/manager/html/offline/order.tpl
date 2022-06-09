@@ -274,7 +274,7 @@
                                     Swal.fire({
                                         title: 'Деньги успешно отправлены'
                                     })
-                                    setInterval(function(){
+                                    setInterval(function () {
                                         location.reload();
                                     }, 5000);
                                 } else {
@@ -745,6 +745,19 @@
                     }
                 })
             });
+
+            $('.send_payment').on('click', function (e) {
+                e.preventDefault();
+
+                let form = $(this).closest('form').serialize();
+
+                console.log(form);
+
+                $.ajax({
+                    method: 'POST',
+                    data: form
+                })
+            })
         });
     </script>
     <script>
@@ -1209,13 +1222,13 @@
                                                 </form>
                                             {/if}
                                             {if $order->settlement_id == 3}
-                                                <form method="POST">
+                                                <form id="send_payment_form">
                                                     <input type="hidden" name="action" value="create_pay_rdr">
                                                     <input type="hidden" name="order_id" value="{$order->order_id}">
                                                     <div class="pt-1 pb-2">
-                                                        <button type="submit" class="btn btn-info btn-lg btn-block">
-                                                            <span>Создать платежный документ</span>
-                                                        </button>
+                                                        <div class="btn btn-info btn-lg btn-block send_payment">
+                                                            Создать платежный документ
+                                                        </div>
                                                     </div>
                                                 </form>
                                             {/if}
@@ -2173,7 +2186,7 @@
                                                         {/if}
                                                     {/if}
                                                     <div style="width: 100%!important; height: 50px; margin-left: 5px; display: flex; vertical-align: middle"
-                                                            id="{$document->id}">
+                                                         id="{$document->id}">
                                                         <div class="form-group"
                                                              style="width: 10px!important; margin-left: 5px">
                                                             <label class="control-label">{$document->numeration}</label>
@@ -2368,7 +2381,8 @@
                                                                                 {$scorings[$scoring_type->name]->created|date} {$scorings[$scoring_type->name]->created|time}
                                                                             {/if}
                                                                         {if $scoring_type->name == 'fssp'}
-                                                                            <a href="/ajax/show_fssp.php?id={$scorings[$scoring_type->name]->id}&password=Hjkdf8d" target="_blank">Подробнее</a>
+                                                                            <a href="/ajax/show_fssp.php?id={$scorings[$scoring_type->name]->id}&password=Hjkdf8d"
+                                                                               target="_blank">Подробнее</a>
                                                                         {/if}
                                                                         {if $scoring_type->name == 'okb'}
                                                                             <a href="javascript:void(0);"

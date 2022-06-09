@@ -215,7 +215,7 @@ class OfflineOrderController extends Controller
                     break;
 
                 case 'create_pay_rdr':
-                    $this->action_create_pay_rdr();
+                    return $this->action_create_pay_rdr();
                     break;
 
 
@@ -3477,8 +3477,7 @@ class OfflineOrderController extends Controller
         $payment->users_inn = $order->inn;
 
         echo '<pre>';
-        var_dump($this->Soap1c->send_payment($payment));
-
+        print_r($this->Soap1c->send_payment($payment));
         exit;
     }
 
