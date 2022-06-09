@@ -39,9 +39,15 @@ class AspCodes extends Core
 
     public function get_codes($params = [])
     {
+        $sort = '';
+
+        if(isset($params['sort']))
+            $sort = $this->db->placehold('ORDER BY '.$params['sort']);
+
         $query = $this->db->placehold("
         SELECT * 
         FROM s_asp_codes
+        $sort
         ");
 
         $this->db->query($query);

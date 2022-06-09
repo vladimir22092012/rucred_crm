@@ -4,7 +4,14 @@ class AspRegistrController extends Controller
 {
     public function fetch()
     {
-        $codes = $this->AspCodes->get_codes();
+        $filter = [];
+
+        if ($this->request->get('sort', 'string')) {
+            $filter['sort'] = $this->request->get('sort', 'string');
+            $this->design->assign('sort', $filter['sort']);
+        }
+
+        $codes = $this->AspCodes->get_codes($filter);
 
         $managers = new stdClass();
 
