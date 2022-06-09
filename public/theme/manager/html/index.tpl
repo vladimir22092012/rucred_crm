@@ -289,10 +289,12 @@
                                 <a class="" href="registr?monthly='true'" aria-expanded="false"><i
                                             class="mdi mdi-calendar"></i><span class="hide-menu">Сводные реестры</span></a>
                             </li>
+                            {if in_array($manager->role, ['admin', 'developer'])}
                             <li {if in_array($module, ['AspRegistrController'])}class="active"{/if}>
                                 <a class="" href="/asp_registr" aria-expanded="false"><i
                                             class="mdi mdi-sigma"></i><span class="hide-menu">Реестр ЭЦП</span></a>
                             </li>
+                            {/if}
                         {/if}
                         {if in_array('managers', $manager->permissions) && $manager->role != 'employer'}
                             <li class="nav-small-cap">Администрирование</li>
