@@ -665,7 +665,8 @@ class NeworderController extends Controller
 
                         $ticket =
                             [
-                                'manager_id' => 0,
+                                'creator' => 0,
+                                'creator_company' => 2,
                                 'client_lastname' => $user['lastname'],
                                 'client_firstname' => $user['firstname'],
                                 'client_patronymic' => $user['patronymic'],
@@ -717,6 +718,7 @@ class NeworderController extends Controller
                         $ticket =
                             [
                                 'creator' => 0,
+                                'creator_company' => 2,
                                 'client_lastname' => $user['lastname'],
                                 'client_firstname' => $user['firstname'],
                                 'client_patronymic' => $user['patronymic'],
