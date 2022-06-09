@@ -856,9 +856,10 @@ class OfflineOrderController extends Controller
             ]);
             
             
-            /*
+
             $ticket = [
                 'creator' => 0,
+                'creator_company' => 2,
                 'client_lastname' => $order->lastname,
                 'client_firstname' => $order->firstname,
                 'client_patronymic' => $order->patronymic,
@@ -871,7 +872,7 @@ class OfflineOrderController extends Controller
             ];
 
             $this->Tickets->add_ticket($ticket);
-            */
+
             return ['success' => 1];
         }
         else
