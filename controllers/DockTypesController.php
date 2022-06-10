@@ -9,12 +9,17 @@ class DockTypesController extends Controller
                 case 'add_dock':
                     $this->action_add_document();
                     break;
+                case 'change_permission':
+                    $this->action_change_permission();
+                    break;
             endswitch;
         } else {
 
             $docs = $this->Docktypes->get_docs();
             $roles = $this->ManagerRoles->get_roles();
+            $permissions = $this->DocksPermissions->get_permissions();
 
+            $this->design->assign('permissions', $permissions);
             $this->design->assign('roles', $roles);
             $this->design->assign('docs', $docs);
         }
@@ -39,5 +44,26 @@ class DockTypesController extends Controller
 
         $this->Docktypes->add_dock($dock);
         exit;
+    }
+
+    private function action_change_permission()
+    {
+        $doc_id = $this->request->post('doc_id');
+        $role_id = $this->request->post('role_id');
+        $value = $this->request->post('value');
+
+        $permission =
+            [
+                'docktype_id' => $doc_id,
+                'role_id' => $role_id
+            ];
+
+        if ($value == 1) {
+            $this->DocksPermissions->add_permission($permission);
+        }
+
+        if ($value == 0) {
+            $this->DocksPermissions->delete_permission($permission);
+        }
     }
 }

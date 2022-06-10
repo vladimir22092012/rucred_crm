@@ -33,6 +33,28 @@
                         }
                     })
                 })
+            });
+
+            $('.change_permission').on('click', function () {
+
+                if ($(this).is(':checked'))
+                    $(this).val(1);
+                else
+                    $(this).val(0);
+
+                let doc_id = $(this).attr('data-doc');
+                let role_id = $(this).attr('data-role');
+                let value = $(this).val();
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'change_permission',
+                        doc_id: doc_id,
+                        role_id: role_id,
+                        value: value
+                    }
+                });
             })
         })
     </script>
@@ -85,10 +107,14 @@
                                             <td style="width: 50%">
                                                 <div style="display: flex;">
                                                     {foreach $roles as $role}
-                                                            <input id="{$role->name}" style="margin: 2px 15px" type="checkbox" value="1">
-                                                            <label for="{$role->name}" style="margin-left: 5px">
-                                                                {$role->translate}
-                                                            </label>
+                                                        <input class="change_permission" data-doc="{$doc->id}"
+                                                               data-role="{$role->id}" id="{$role->id}"
+                                                               style="margin: 2px 15px" type="checkbox" value="1"
+                                                                {foreach $permissions as $permission}
+                                                            {if $permission->role_id == $role->id && $permission->docktype_id == $doc->id}checked{/if}
+                                                                {/foreach}>
+                                                        <label for="{$role->id}"
+                                                               style="margin-left: 5px">{$role->translate}</label>
                                                     {/foreach}
                                                 </div>
                                             </td>
