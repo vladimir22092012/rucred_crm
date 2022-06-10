@@ -332,6 +332,8 @@
                             {if in_array($manager->role, ['developer', 'admin', 'middle'])}
                             <li {if in_array($module, ['DockTypesController'])}class="active"{/if}>
                                 <a href="/dock_types"><i class="mdi mdi-react"></i>Типы документов</a></li>
+                                <li {if in_array($module, ['DocksListController'])}class="active"{/if}>
+                                    <a href="/docks_list"><i class="mdi mdi-book-open-page-variant"></i>Реестр документов</a></li>
                             {/if}
                         {/if}
                         {if in_array('managers', $manager->permissions) && $manager->role != 'employer'}

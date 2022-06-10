@@ -3445,7 +3445,9 @@ class OfflineOrderController extends Controller
                     'manager_id' => $this->manager->id
                 ];
 
-            $this->AspCodes->add_code($asp_log);
+            $asp_id = $this->AspCodes->add_code($asp_log);
+
+            $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
 
             echo json_encode(['success' => 1]);
             exit;

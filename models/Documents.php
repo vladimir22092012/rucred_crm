@@ -357,6 +357,17 @@ class Documents extends Core
         
         return $id;
     }
+
+    public function update_asp($params){
+
+        $query = $this->db->placehold("
+            UPDATE __documents 
+            SET asp_id = ? 
+            WHERE id = ?
+        ", $params['asp_id'], $params['order_id']);
+
+        $this->db->query($query);
+    }
     
     public function delete_document($id)
     {
