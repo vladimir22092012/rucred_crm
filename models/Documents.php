@@ -205,7 +205,7 @@ class Documents extends Core
         $limit = 1000;
         $page = 1;
         $search_list = '';
-        $sort = $this->db->placehold("ORDER BY " . $filter['sort']);
+        $sort = $this->db->placehold("ORDER BY doc.id");
 
 
         if (!empty($filter['id'])) {

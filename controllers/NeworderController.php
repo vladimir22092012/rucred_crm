@@ -407,6 +407,8 @@ class NeworderController extends Controller
             unset($user['user_id']);
 
             $this->users->update_user($user_id, $user);
+            $this->addresses->update_address($regaddress);
+            $this->addresses->update_address($faktaddress);
 
             if (empty($requisite['id']))
             {
