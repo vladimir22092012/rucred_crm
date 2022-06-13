@@ -272,6 +272,7 @@ $(function () {
         onSelect: function (suggestion) {
             $(this).val(suggestion.data.bic);
             $('.bank_name').val(suggestion.value);
+            $('.cor').val(suggestion.data.correspondent_account);
         }
     });
 

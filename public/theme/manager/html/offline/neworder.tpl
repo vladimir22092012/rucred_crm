@@ -938,7 +938,7 @@
                                             </div>
                                             <div style="display: flex; flex-direction: column">
                                                 <label class="control-label">Кор. счет</label>
-                                                <input class="form-control"
+                                                <input class="form-control cor"
                                                        style="width: 350px;margin-left: 30px"
                                                        type="text" name="requisite[correspondent_acc]" value="{$order->requisite->correspondent_acc}"/>
                                             </div>
