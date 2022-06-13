@@ -17,7 +17,27 @@
     <script src="theme/manager/assets/plugins/datatables.net-bs4/js/dataTables.responsive.min.js"></script>
     <script>
         $(function () {
+            $('.input-sm').on('change', function () {
 
+                let fields = {};
+
+                $('.input-sm').each(function () {
+                    let value = $(this).val();
+                    let field = $(this).attr('name');
+                    fields[field] = value;
+                });
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        search: true,
+                        fields: fields,
+                    },
+                    success: function (html) {
+                        $('body').html(html);
+                    }
+                })
+            });
         })
     </script>
 {/capture}
@@ -48,12 +68,72 @@
                                 <table class="jsgrid-table table table-striped table-hover" align="center">
                                     <thead>
                                     <tr class="jsgrid-header-row">
-                                        <th>Тип документа</th>
-                                        <th>Дата</th>
-                                        <th>Название</th>
-                                        <th>Клиент</th>
-                                        <th>Заявка/Сделка</th>
-                                        <th>Подписан(Да/Нет)</th>
+                                        <th style="width: 60px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'type asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'type desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'type asc'}<a href="{url page=null sort='type desc'}">
+                                                    Тип документа</a>
+                                            {else}<a href="{url page=null sort='type asc'}">Тип документа</a>{/if}
+                                        </th>
+                                        <th style="width: 60px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'created asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'created desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'created asc'}<a href="{url page=null sort='created desc'}">
+                                                    Дата</a>
+                                            {else}<a href="{url page=null sort='created asc'}">Дата</a>{/if}
+                                        </th>
+                                        <th style="width: 60px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'name asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'name desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'name asc'}<a href="{url page=null sort='name desc'}">
+                                                    Название</a>
+                                            {else}<a href="{url page=null sort='name asc'}">Название</a>{/if}
+                                        </th>
+                                        <th style="width: 60px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'user_id asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'user_id desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'user_id asc'}<a href="{url page=null sort='user_id desc'}">
+                                                    Клиент</a>
+                                            {else}<a href="{url page=null sort='user_id asc'}">Клиент</a>{/if}
+                                        </th>
+                                        <th style="width: 60px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'order_id asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'order_id desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'order_id asc'}<a href="{url page=null sort='order_id desc'}">
+                                                    Заявка/Сделка</a>
+                                            {else}<a href="{url page=null sort='order_id asc'}">Заявка/Сделка</a>{/if}
+                                        </th>
+                                        <th style="width: 60px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'asp_id asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'asp_id desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'asp_id asc'}<a href="{url page=null sort='asp_id desc'}">
+                                                    Подписан(Да/Нет)</a>
+                                            {else}<a href="{url page=null sort='asp_id asc'}">Подписан(Да/Нет)</a>{/if}
+                                        </th>
+                                    </tr>
+                                    <tr class="jsgrid-filter-row" id="search_form">
+
+                                        <td style="width: 70px;" class="jsgrid-cell">
+                                            <input type="text" name="type" value="{$search['type']}"
+                                                   class="form-control input-sm">
+                                        </td>
+                                        <td style="width: 70px;" class="jsgrid-cell">
+                                            <input type="text" name="created" value="{$search['created']}"
+                                                   class="form-control input-sm">
+                                        </td>
+                                        <td style="width: 70px;" class="jsgrid-cell">
+                                            <input type="text" name="name" value="{$search['name']}"
+                                                   class="form-control input-sm">
+                                        </td>
+                                        <td style="width: 150px;" class="jsgrid-cell">
+                                            <input type="text" name="user" value="{$search['user']}"
+                                                   class="form-control input-sm">
+                                        </td>
+                                        <td style="width: 150px;" class="jsgrid-cell">
+                                            <input type="text" name="order" value="{$search['order']}"
+                                                   class="form-control input-sm">
+                                        </td>
+                                        <td style="width: 80px;" class="jsgrid-cell">
+                                            <select name="asp_id" class="form-control input-sm">
+                                                <option value="" {if $search['asp_id'] == ''}selected{/if}>Фильтр</option>
+                                                <option value="0" {if $search['asp_id'] == 0}selected{/if}>Нет</option>
+                                                <option value="1" {if $search['asp_id'] == 1}selected{/if}>Да</option>
+                                            </select>
+                                        </td>
                                     </tr>
                                     </thead>
                                     <tbody id="table-body">
@@ -64,10 +144,10 @@
                                             <td>{$document->name}</td>
                                             <td><a type="_blank"
                                                    href="{$config->root_url}/client/{$document->user->id}">
-                                                    {$document->user->lastname} {$document->user->firstname} {$document->user->patronymic}</a>
+                                                    {$document->lastname} {$document->firstname} {$document->patronymic}</a>
                                             </td>
                                             <td><a type="_blank"
-                                                   href="{$config->root_url}/offline_order/{$document->order_id}">{$document->order->uid}</a>
+                                                   href="{$config->root_url}/offline_order/{$document->order_id}">{$document->uid}</a>
                                             </td>
                                             <td>
                                                 {if !empty($document->asp_id)}
@@ -80,6 +160,23 @@
                                     {/foreach}
                                     </tbody>
                                 </table>
+                            </div>
+                            <div style="display: flex; justify-content: space-between">
+                                {include file='pagination.tpl'}
+                                <div class="float-right pt-1">
+                                    <select onchange="if (this.value) window.location.href = this.value"
+                                            class="form-control form-control-sm page_count" name="page-count">
+                                        <option value="{url page_count=25}" {if $page_count==25}selected=""{/if}>
+                                            Показывать 25
+                                        </option>
+                                        <option value="{url page_count=50}" {if $page_count==50}selected=""{/if}>
+                                            Показывать 50
+                                        </option>
+                                        <option value="{url page_count=100}" {if $page_count==100}selected=""{/if}>
+                                            Показывать 100
+                                        </option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>

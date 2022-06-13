@@ -1,6 +1,6 @@
 {if $total_pages_num>1}
 
-<div id="pagination_wrapper">
+<div id="pagination_wrapper" style="width: 70%">
    	
     {* Количество выводимых ссылок на страницы *}
 	{$visible_pages = 11}

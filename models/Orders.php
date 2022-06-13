@@ -179,6 +179,7 @@ class Orders extends Core
     {
         $id_filter = '';
         $offline_filter = '';
+        $uid_filter = '';
         $user_id_filter = '';
         $status_filter = '';
         $type_filter = '';
@@ -198,10 +199,13 @@ class Orders extends Core
         $sort = 'order_id DESC';
         $employer_filter = '';
 
-        if(isset($filter['employer']))
+        if (isset($filter['employer']))
             $employer_filter = $this->db->placehold("AND o.company_id IN (?@)", $filter['employer']);
 
-        if(isset($filter['manager_id']))
+        if (isset($filter['uid']))
+            $uid_filter = $this->db->placehold('AND o.uid LIKE "'.(string)$filter['uid'].'%"');
+
+        if (isset($filter['manager_id']))
             $manager_id_filter = $this->db->placehold("AND o.manager_id = ?", (int)$filter['manager_id']);
 
         if (!empty($filter['id'])) {
@@ -518,6 +522,7 @@ class Orders extends Core
             ON u.id = o.user_id
             WHERE 1
             and `status` != 16
+            $uid_filter
                 $id_filter
                 $offline_filter
                 $user_id_filter
@@ -537,6 +542,7 @@ class Orders extends Core
             ORDER BY $workout_sort $sort
             $sql_limit
         ");
+
         $this->db->query($query);
         if ($results = $this->db->results()) {
             foreach ($results as $result) {
@@ -565,7 +571,7 @@ class Orders extends Core
         $keyword_filter = '';
         $employer_filter = '';
 
-        if(isset($filter['employer']))
+        if (isset($filter['employer']))
             $employer_filter = $this->db->placehold("AND o.company_id = ?", (int)$filter['employer']);
 
         if (!empty($filter['id'])) {
