@@ -13,6 +13,15 @@ class LoantypesController extends Controller
             endswitch;
         }
 
+        $sort = $this->request->get('sort', 'string');
+
+        if (empty($sort)) {
+            $sort = 'id desc';
+        }
+
+        $filter['sort'] = $sort;
+        $this->design->assign('sort', $sort);
+
         $loantypes = array();
 
         if ($this->manager->role == 'employer') {
@@ -22,7 +31,7 @@ class LoantypesController extends Controller
                 $loantypes[] = $this->loantypes->get_loantype($loantype['id']);
             }
         }else{
-            $loantypes = $this->loantypes->get_loantypes();
+            $loantypes = $this->loantypes->get_loantypes($filter);
         }
 
         $this->design->assign('loantypes', $loantypes);

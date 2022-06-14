@@ -19,11 +19,16 @@ class Loantypes extends Core
     {
         $id_filter = '';
         $keyword_filter = '';
+        $sort = $this->db->placehold("ORDER BY id ASC");
         $limit = 1000;
         $page = 1;
         
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
+        }
+
+        if (isset($filter['sort'])) {
+            $sort = $this->db->placehold("ORDER BY ".$filter['sort']);
         }
         
         if (isset($filter['keyword'])) {
@@ -47,9 +52,9 @@ class Loantypes extends Core
             SELECT * 
             FROM __loantypes
             WHERE 1
-                $id_filter
-				$keyword_filter
-            ORDER BY id ASC 
+            $id_filter
+			$keyword_filter
+            $sort 
             $sql_limit
         ");
         $this->db->query($query);

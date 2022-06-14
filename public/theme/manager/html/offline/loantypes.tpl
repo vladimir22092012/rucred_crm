@@ -172,32 +172,44 @@
                                 <table class="jsgrid-table table table-striped table-hover" style="text-align: center">
                                     <tr class="jsgrid-header-row bg-grey">
                                         <th style="width: 60px;"
-                                            class="jsgrid-header-cell jsgrid-align-left jsgrid-header-sortable {if $sort == 'name_desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'name_asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
-                                            Наименование
-                                        </th>
-                                        <th style="width: 60px;"
-                                            class="jsgrid-header-cell jsgrid-align-left jsgrid-header-sortable {if $sort == 'type_desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'type_asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
-                                            Тип
-                                        </th>
-                                        <th style="width: 60px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'std_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'std_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            Процентная ставка
-                                        </th>
-                                        <th style="width: 60px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'free_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'free_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            Льготная ставка
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'name asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'name desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'name asc'}<a href="{url page=null sort='name desc'}">
+                                                    Наименование</a>
+                                            {else}<a href="{url page=null sort='name asc'}">Наименование</a>{/if}
                                         </th>
                                         <th style="width: 60px;"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'min_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'min_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            Мин. сумма
+                                            Тип
                                         </th>
-                                        <th style="width: 70px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'max_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'max_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            Макс.&nbsp;сумма
+                                        <th style="width: 60px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'percent asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'percent desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'percent asc'}<a href="{url page=null sort='percent desc'}">
+                                                    Процентная ставка</a>
+                                            {else}<a href="{url page=null sort='percent asc'}">Процентная ставка</a>{/if}
                                         </th>
-                                        <th style="width: 70px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'period_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'period_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            Количество выплат
+                                        <th style="width: 60px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'profunion asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'profunion desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'profunion asc'}<a href="{url page=null sort='profunion desc'}">
+                                                    Льготная ставка</a>
+                                            {else}<a href="{url page=null sort='profunion asc'}">Льготная ставка</a>{/if}
+                                        </th>
+                                        <th style="width: 60px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'min_amount asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'min_amount desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'min_amount asc'}<a href="{url page=null sort='min_amount desc'}">
+                                                    Мин. сумма</a>
+                                            {else}<a href="{url page=null sort='min_amount asc'}">Мин. сумма</a>{/if}
+                                        </th>
+                                        <th style="width: 60px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'max_amount asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'max_amount desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'max_amount asc'}<a href="{url page=null sort='max_amount desc'}">
+                                                    Макс.&nbsp;сумма</a>
+                                            {else}<a href="{url page=null sort='max_amount asc'}">Макс.&nbsp;сумма</a>{/if}
+                                        </th>
+                                        <th style="width: 60px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'max_period asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'max_period desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'max_period asc'}<a href="{url page=null sort='max_period desc'}">
+                                                    Количество выплат</a>
+                                            {else}<a href="{url page=null sort='max_period asc'}">Количество выплат</a>{/if}
                                         </th>
                                     </tr>
                                     <tr>
