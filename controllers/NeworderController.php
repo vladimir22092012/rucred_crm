@@ -334,6 +334,7 @@ class NeworderController extends Controller
         $regaddress['okato'] = $Regadress->data->okato ?? '';
         $regaddress['oktmo'] = $Regadress->data->oktmo ?? '';
 
+
         if (empty($regaddress['adressfull'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует адрес регистрации']);
             exit;
@@ -392,9 +393,11 @@ class NeworderController extends Controller
 
             $user['personal_number'] = $last_personal_number + 1;
 
+
             if ($user['user_id'] = $this->users->add_user($user)) {
-                $user['regaddress_id'] = $this->addresses->add_address($regaddress);
-                $user['faktaddress_id'] = $this->addresses->add_address($faktaddress);
+                $user['regaddress_id'] = $this->Addresses->add_address($regaddress);
+
+                $user['faktaddress_id'] = $this->Addresses->add_address($faktaddress);
             } else {
                 $this->design->assign('error', 'Не удалось создать клиента');
             }
@@ -407,8 +410,8 @@ class NeworderController extends Controller
             unset($user['user_id']);
 
             $this->users->update_user($user_id, $user);
-            $this->addresses->update_address($regaddress);
-            $this->addresses->update_address($faktaddress);
+            $this->Addresses->update_address($user['regaddress_id'], $regaddress);
+            $this->Addresses->update_address($user['faktaddress_id'], $faktaddress);
 
             if (empty($requisite['id']))
             {
