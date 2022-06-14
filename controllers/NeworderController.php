@@ -410,8 +410,13 @@ class NeworderController extends Controller
             unset($user['user_id']);
 
             $this->users->update_user($user_id, $user);
-            $this->Addresses->update_address($user['regaddress_id'], $regaddress);
-            $this->Addresses->update_address($user['faktaddress_id'], $faktaddress);
+
+            if(isset($user['regaddress_id']))
+                $this->Addresses->update_address($user['regaddress_id'], $regaddress);
+
+            if(isset($user['faktaddress_id']))
+                $this->Addresses->update_address($user['faktaddress_id'], $faktaddress);
+
 
             if (empty($requisite['id']))
             {
