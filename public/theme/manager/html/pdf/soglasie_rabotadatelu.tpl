@@ -4,7 +4,6 @@
         </td>
     </tr>
 </table>
-<div></div>
 <h3 align="left"><strong>СОГЛАСИЕ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ, РАЗРЕШЁННЫХ СУБЪЕКТОМ ПЕРСОНАЛЬНЫХ ДАННЫХ ДЛЯ
         РАСПРОСТРАНЕНИЯ</strong></h3>
 <div></div>
@@ -70,12 +69,9 @@
         </tr>
     </table>
 {/if}
-<div>
-
-</div>
 {if isset($sms)}
-    <table style="color: #002688; font-style: italic; border: 0.25pt solid #002088; width: 50%"
-           cellpadding="1" cellspacing="5">
+    <table style="color: #002688; font-size: 8px; font-style: italic; border: 0.25pt solid #002088; width: 50%"
+           cellpadding="1" cellspacing="2">
         <tr>
             <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
         </tr>

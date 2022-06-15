@@ -756,7 +756,7 @@
                     method: 'POST',
                     data: form
                 })
-            })
+            });
         });
     </script>
     <script>
@@ -909,6 +909,31 @@
 
         .warning_rest_sum {
             border: 2px solid #a90009;
+        }
+
+        .warning_asp {
+            border-bottom: 1px dotted #0077AA;
+            cursor: help;
+        }
+
+        .warning_asp::after {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 8px 8px 8px 0px;
+            box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
+            color: #FFF;
+            content: attr(data-tooltip); /* Главная часть кода, определяющая содержимое всплывающей подсказки */
+            margin-top: -24px;
+            opacity: 0; /* Наш элемент прозрачен... */
+            padding: 3px 7px;
+            position: absolute;
+            visibility: hidden; /* ...и скрыт. */
+
+            transition: all 0.4s ease-in-out; /* Добавить плавности по вкусу */
+        }
+
+        .warning_asp:hover::after {
+            opacity: 1; /* Показываем его */
+            visibility: visible;
         }
     </style>
     <link href="theme/manager/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet"
@@ -2165,18 +2190,18 @@
                                             <input type="hidden" name="order_id" value="{$order->order_id}"/>
                                             <input type="hidden" name="user_id" value="{$order->user_id}"/>
 
+                                            <h6 class="card-header">
+                                                <span class="text-white">Документы</span>
                                             {if !in_array($order->status, ['4','5','6','7','8'])}
-                                                <h6 class="card-header">
-                                                    <span class="text-white">Документы</span>
                                                     {if $manager->role != 'employer'}
                                                         <input style="margin-left: 30px" type="button"
                                                                class="btn btn-primary get-docs"
                                                                data-order="{$order->order_id}"
                                                                value="Сформировать документы">
                                                     {/if}
-                                                </h6>
-                                                <br>
                                             {/if}
+                                            </h6>
+                                            <br>
                                             {if !empty($documents)}
                                                 {foreach $documents as $document}
                                                     {if $manager->role == 'employer'}
@@ -2193,6 +2218,9 @@
                                                         <div class="form-group"
                                                              style="width: 50%!important; margin-left: 50px">
                                                             <label class="control-label">{$document->name}</label>
+                                                            {if in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP'])}
+                                                                <span style="height: 20px" data-tooltip="Этот документ нельзя подписать АСП кодом" class="badge badge-danger warning_asp">&#33;</span>
+                                                            {/if}
                                                         </div>
                                                         <div style="margin-left: 10px">
                                                             <a target="_blank"
