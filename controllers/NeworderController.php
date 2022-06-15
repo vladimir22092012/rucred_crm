@@ -3,7 +3,7 @@
 use App\Services\MailService;
 
 error_reporting(-1);
-ini_set('display_errors', 'On');
+ini_set('display_errors', 'Off');
 
 class NeworderController extends Controller
 {
@@ -22,6 +22,16 @@ class NeworderController extends Controller
             $order_id = $this->request->get('order_id');
 
             $order = $this->orders->get_order($order_id);
+
+            if (!empty($order->faktaddress_id)) {
+                $Faktaddressfull = $this->Addresses->get_address($order->faktaddress_id);
+                $this->design->assign('Faktaddressfull', $Faktaddressfull);
+            }
+
+            if (!empty($order->regaddress_id)) {
+                $Regaddressfull = $this->Addresses->get_address($order->regaddress_id);
+                $this->design->assign('Regaddressfull', $Regaddressfull);
+            }
 
             $order->requisite = $this->requisites->get_requisite($order->requisite_id);
 
@@ -135,13 +145,6 @@ class NeworderController extends Controller
             exit;
         }
 
-        $check_same_users = $this->request->post('check_same_users');
-
-        if (empty($check_same_users)) {
-            response_json(['error' => 1, 'reason' => 'Произведите проверку на совпадения']);
-            exit;
-        }
-
 
         $user['lastname'] = trim($this->request->post('lastname'));
 
@@ -152,7 +155,7 @@ class NeworderController extends Controller
 
         $user['patronymic'] = trim($this->request->post('patronymic'));
 
-        $requisite = $this->request->post('requisite');                
+        $requisite = $this->request->post('requisite');
         if (empty($requisite['name']) || empty($requisite['bik']) || empty($requisite['number']) || empty($requisite['holder']) || empty($requisite['correspondent_acc'])) {
             response_json(['error' => 1, 'reason' => 'Заполните корректно реквизиты']);
             exit;
@@ -314,7 +317,7 @@ class NeworderController extends Controller
         $user['loan_history'] = '[]';
 
         $Regadress = json_decode($this->request->post('Regadress'));
-        
+
         $regaddress = [];
         $regaddress['adressfull'] = $this->request->post('Regadressfull');
         $regaddress['zip'] = $Regadress->data->postal_code ?? '';
@@ -341,8 +344,10 @@ class NeworderController extends Controller
         }
 
         if ($this->request->post('actual_address') == 1) {
+            $user['actual_address'] = 1;
             $faktaddress = $regaddress;
         } else {
+            $user['actual_address'] = 0;
             $Fakt_adress = json_decode($this->request->post('Fakt_adress'));
 
             $faktaddress = [];
@@ -392,7 +397,7 @@ class NeworderController extends Controller
             $last_personal_number = $this->users->last_personal_number();
 
             $user['personal_number'] = $last_personal_number + 1;
-
+            $user['original'] = 1;
 
             if ($user['user_id'] = $this->users->add_user($user)) {
                 $user['regaddress_id'] = $this->Addresses->add_address($regaddress);
@@ -406,29 +411,33 @@ class NeworderController extends Controller
         $loan_type = $this->request->post('loan_type_to_submit');
 
         if (!empty($user['user_id'])) {
+            $old_user = $this->users->get_user($user['user_id']);
             $user_id = $user['user_id'];
             unset($user['user_id']);
 
+            $user['original'] = 1;
+
+            if (!empty($old_user->regaddress_id))
+                $this->Addresses->update_address($old_user->regaddress_id, $regaddress);
+            else
+                $user['regaddress_id'] = $this->Addresses->add_address($regaddress);
+
+            if (!empty($old_user->faktaddress_id))
+                $this->Addresses->update_address($old_user->faktaddress_id, $faktaddress);
+            else
+                $user['faktaddress_id'] = $this->Addresses->add_address($faktaddress);
+
             $this->users->update_user($user_id, $user);
 
-            if(isset($user['regaddress_id']))
-                $this->Addresses->update_address($user['regaddress_id'], $regaddress);
 
-            if(isset($user['faktaddress_id']))
-                $this->Addresses->update_address($user['faktaddress_id'], $faktaddress);
-
-
-            if (empty($requisite['id']))
-            {
+            if (empty($requisite['id'])) {
                 unset($requisite['id']);
                 $requisite['user_id'] = $user_id;
                 $requisite['id'] = $this->requisites->add_requisite($requisite);
-            }
-            else
-            {
+            } else {
                 $this->requisites->update_requisite($requisite['id'], $requisite);
             }
-            
+
             $settlements = $this->OrganisationSettlements->get_settlements();
 
             foreach ($settlements as $key => $settlement) {
@@ -660,59 +669,32 @@ class NeworderController extends Controller
                 $order['uid'] = $uid;
             }
 
-            if (!empty((int)$this->request->post('order_id'))) {
-                $order_id = (int)$this->request->post('order_id');
+            if (($this->request->get('order_id'))) {
+                $order_id = $this->request->get('order_id');
                 $this->orders->update_order($order_id, $order);
 
-                if ($this->request->post('create_new_order')) {
-                    header("Location: " . $this->config->root_url . '/offline_order/' . $order_id);
+                response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/neworder/draft/' . $order_id]);
+                exit;
+
+            } else {
+
+                $check_same_users = $this->request->post('check_same_users');
+
+                if (empty($check_same_users)) {
+                    response_json(['error' => 1, 'reason' => 'Произведите проверку на совпадения']);
                     exit;
                 }
-            } else {
+
+                $order_id = $this->orders->add_order($order);
+
                 if ($draft == 1) {
-                    try {
-                        $order_id = $this->orders->add_order($order);
-
-                        $ticket =
-                            [
-                                'creator' => 0,
-                                'creator_company' => 2,
-                                'client_lastname' => $user['lastname'],
-                                'client_firstname' => $user['firstname'],
-                                'client_patronymic' => $user['patronymic'],
-                                'head' => 'Новая заявка',
-                                'text' => 'Ознакомьтесь с новой заявкой',
-                                'company_id' => $order['company_id'],
-                                'group_id' => $order['group_id'],
-                                'order_id' => $order_id,
-                                'status' => 0
-                            ];
-
-                        $ticket_id = $this->Tickets->add_ticket($ticket);
-
-                        $message =
-                            [
-                                'message' => 'Ознакомьтесь с новой заявкой',
-                                'ticket_id' => $ticket_id,
-                                'manager_id' => 0,
-                            ];
-
-                        $this->TicketMessages->add_message($message);
-
-                        response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/neworder/draft/' . $order_id]);
-                    } catch (Exception $exception) {
-                        response_json(['error' => 1, 'reason' => 'Создать заявку не удалось']);
-                    }
+                    response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/neworder/draft/' . $order_id]);
                 } else {
                     try {
-                        $order_id = $this->orders->add_order($order);
-
                         // запускаем бесплатные скоринги
                         $scoring_types = $this->scorings->get_types();
-                        foreach ($scoring_types as $scoring_type)
-                        {
-                            if (empty($scoring_type->is_paid))
-                            {
+                        foreach ($scoring_types as $scoring_type) {
+                            if (empty($scoring_type->is_paid)) {
                                 $add_scoring = array(
                                     'user_id' => $user_id,
                                     'order_id' => $order_id,
@@ -723,39 +705,38 @@ class NeworderController extends Controller
                                 $this->scorings->add_scoring($add_scoring);
                             }
                         }
-                        
-
-                        $ticket =
-                            [
-                                'creator' => 0,
-                                'creator_company' => 2,
-                                'client_lastname' => $user['lastname'],
-                                'client_firstname' => $user['firstname'],
-                                'client_patronymic' => $user['patronymic'],
-                                'head' => 'Новая заявка',
-                                'text' => 'Ознакомьтесь с новой заявкой',
-                                'company_id' => $order['company_id'],
-                                'group_id' => $order['group_id'],
-                                'order_id' => $order_id,
-                                'status' => 0
-                            ];
-
-                        $ticket_id = $this->Tickets->add_ticket($ticket);
-
-                        $message =
-                            [
-                                'message' => 'Ознакомьтесь с новой заявкой',
-                                'ticket_id' => $ticket_id,
-                                'manager_id' => 0,
-                            ];
-
-                        $this->TicketMessages->add_message($message);
 
                         response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                     } catch (Exception $exception) {
                         response_json(['error' => 1, 'reason' => 'Создать заявку не удалось']);
                     }
                 }
+
+                $ticket =
+                    [
+                        'creator' => 0,
+                        'creator_company' => 2,
+                        'client_lastname' => $user['lastname'],
+                        'client_firstname' => $user['firstname'],
+                        'client_patronymic' => $user['patronymic'],
+                        'head' => 'Новая заявка',
+                        'text' => 'Ознакомьтесь с новой заявкой',
+                        'company_id' => $order['company_id'],
+                        'group_id' => $order['group_id'],
+                        'order_id' => $order_id,
+                        'status' => 0
+                    ];
+
+                $ticket_id = $this->Tickets->add_ticket($ticket);
+
+                $message =
+                    [
+                        'message' => 'Ознакомьтесь с новой заявкой',
+                        'ticket_id' => $ticket_id,
+                        'manager_id' => 0,
+                    ];
+
+                $this->TicketMessages->add_message($message);
             }
         }
 

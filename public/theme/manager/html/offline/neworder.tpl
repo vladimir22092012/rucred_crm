@@ -157,9 +157,6 @@
                     $('input[id="change_fio1"]').trigger('click');
                 }
 
-                if (order['Regadressfull'] == order['Faktadressfull'])
-                    $('input[name="actual_address"]').trigger('click');
-
                 $('input[id="sex' + order['sex'] + '"]').trigger('click');
 
                 if (order['push_not'] == 1)
@@ -207,7 +204,7 @@
                 let entries = Object.fromEntries(new FormData(document.querySelector('#forms')).entries());
                 entries['action'] = 'create_new_order';
 
-                if($(this).hasClass('create_new_draft')){
+                if ($(this).hasClass('create_new_draft')) {
                     entries['draft'] = 1;
                 }
 
@@ -585,7 +582,7 @@
                                             <label class="control-label">Адрес регистрации</label><br>
                                             <input class="form-control Regadress" name="Regadressfull"
                                                    style="width: 700px; margin-left: 25px" type="text"
-                                                   value="{$order->Regadressfull}"/>
+                                                   {if !empty($Regaddressfull)}value="{$Regaddressfull->adressfull}"{/if}/>
                                             <input style="display: none" class="Registration" name="Regadress"/>
                                         </div>
                                         <br>
@@ -593,13 +590,14 @@
                                             <label class="control-label">Место жительства</label><br>
                                             <div class="custom-checkbox">
                                                 <input type="checkbox" style="margin-left: 30px" name="actual_address"
-                                                       value="1"/>
-                                                <label class="" for="equal_address">Совпадает с адресом
+                                                       value="1" {if $order->actual_address == 1}checked{/if}/>
+                                                <label class="" for="actual_address">Совпадает с адресом
                                                     регистрации</label>
                                             </div>
                                             <input class="form-control Faktaddress" id="actual_address_toggle"
-                                                   style="width: 700px; margin-left: 25px" name="Faktadressfull"
-                                                   value="{$order->Faktadressfull}"
+                                                   style="width: 700px; margin-left: 25px; {if $order->actual_address == 1} display:none; {/if}"
+                                                   name="Faktadressfull"
+                                                   {if !empty($Faktaddressfull)}value="{$Faktaddressfull->adressfull}"{/if}
                                                    type="text"/>
                                         </div>
                                         <br>
@@ -906,7 +904,7 @@
                                         <br>
                                         <h4>Перечислить микрозайм по следующим реквизитам:</h4><br>
                                         <div style="width: 100%; display: flex">
-                                            <input type="hidden" name="requisite[id]" value="{$order->requisite->id}" />
+                                            <input type="hidden" name="requisite[id]" value="{$order->requisite->id}"/>
                                             <div style="display: flex; flex-direction: column">
                                                 <label class="control-label">ФИО держателя счета</label>
                                                 <input class="form-control" style="width: 350px; margin-left: 30px"
@@ -927,20 +925,23 @@
                                                 <label class="control-label">БИК
                                                     банка</label>
                                                 <input class="form-control bik" style="width: 180px; margin-left: 30px"
-                                                       type="text" name="requisite[bik]" value="{$order->requisite->bik}"/>
+                                                       type="text" name="requisite[bik]"
+                                                       value="{$order->requisite->bik}"/>
                                             </div>
                                             <div style="display: flex; flex-direction: column">
                                                 <label class="control-label">Наименование
                                                     банка</label>
                                                 <input class="form-control bank_name"
                                                        style="width: 350px;margin-left: 30px"
-                                                       type="text" name="requisite[name]" value="{$order->requisite->name}"/>
+                                                       type="text" name="requisite[name]"
+                                                       value="{$order->requisite->name}"/>
                                             </div>
                                             <div style="display: flex; flex-direction: column">
                                                 <label class="control-label">Кор. счет</label>
                                                 <input class="form-control cor"
                                                        style="width: 350px;margin-left: 30px"
-                                                       type="text" name="requisite[correspondent_acc]" value="{$order->requisite->correspondent_acc}"/>
+                                                       type="text" name="requisite[correspondent_acc]"
+                                                       value="{$order->requisite->correspondent_acc}"/>
                                             </div>
                                         </div>
                                         <br>
@@ -948,9 +949,11 @@
                                         <br>
                                         <h4>Перечислить микрозайм с банковского счета:</h4><br>
                                         <div style="width: 100%; display: flex">
-                                            <select class="form-control" name="settlement" style="width: 300px; margin-left: 25px">
+                                            <select class="form-control" name="settlement"
+                                                    style="width: 300px; margin-left: 25px">
                                                 {foreach $settlements as $settlement}
-                                                    <option value="{$settlement->id}" {if $settlement->std == 1}selected{/if}>{$settlement->name}</option>
+                                                    <option value="{$settlement->id}"
+                                                            {if $settlement->std == 1}selected{/if}>{$settlement->name}</option>
                                                 {/foreach}
                                             </select>
                                         </div>
@@ -1125,7 +1128,8 @@
                                                class="loan_type_to_submit" value="{$order->loan_type}">
                                         <input style="display: none" name="order_id" value="{$order->order_id}">
                                         <input style="display: none" name="user_id" value="{$order->user_id}">
-                                        <input style="display: none" name="check_same_users" value="0">
+                                        <input style="display: none" name="check_same_users"
+                                               value="{if $order->original == 1}1{else}0{/if}">
                                     </div>
                                 </form>
                             </div>

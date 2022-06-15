@@ -147,7 +147,11 @@ class Orders extends Core
                 u.personal_number,
                 u.attestation,
                 u.credits_story,
-                u.cards_story
+                u.cards_story,
+                u.regaddress_id,
+                u.faktaddress_id,
+                u.actual_address,
+                u.original
             FROM __orders AS o
             LEFT JOIN __users AS u
             ON u.id = o.user_id
