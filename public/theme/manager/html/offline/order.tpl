@@ -245,7 +245,6 @@
 
                     reform_schedule(restruct);
 
-                    location.reload();
                 });
             });
 
@@ -1353,7 +1352,7 @@
                                                 <button class="btn btn-success btn-block accept-order"
                                                         data-order="{$order->order_id}" data-manager="{$manager->id}">
                                                     <i class="fas fa-check-circle"></i>
-                                                    <span>Принять</span>
+                                                    <span>Подтвердить</span>
                                                 </button>
                                                 <button class="btn btn-danger btn-block reject-order"
                                                         data-user="{$order->user_id}"
@@ -1386,6 +1385,7 @@
                                                 <i class="fas fa-times-circle"></i>
                                                 <span>Отказать</span>
                                             </button>
+                                            <br>
                                             <form class=" pt-1 js-confirm-contract">
                                                 <div class="input-group">
                                                     <input type="hidden" name="contract_id" class="js-contract-id"
@@ -2690,7 +2690,7 @@
                                                             <img src="{$config->back_url}/files/users/{$file->name}"
                                                                  alt="" class="img-responsive" style=""/>
                                                         </a>
-                                                        {if in_array($order->status, [0,1,12])}
+                                                        {if in_array($order->status, [0, 1, 12, 14, 15])}
                                                             <div class="order-image-actions">
                                                                 <div class="dropdown mr-1 show ">
                                                                     <button type="button"
@@ -2805,18 +2805,20 @@
                                 </form>
                                 <!-- -->
                                 <div style="display: flex; width: 100%; justify-content: space-between">
-                                    <form method="POST" style="width: 50%" enctype="multipart/form-data">
-                                        {if $manager->role != 'employer'}
-                                            <div class="form_file_item">
-                                                <input type="file" name="new_file" class="new_file" id="new_file"
-                                                       data-user="{$order->user_id}" value="" style="display:none"/>
-                                                <label for="new_file" class="btn btn-large btn-primary">
-                                                    <i class="fa fa-plus-circle"></i>
-                                                    <span>Добавить</span>
-                                                </label>
-                                            </div>
-                                        {/if}
-                                    </form>
+                                    {if in_array($order->status, [0,1,12,14,15])}
+                                        <form method="POST" style="width: 50%" enctype="multipart/form-data">
+                                            {if $manager->role != 'employer'}
+                                                <div class="form_file_item">
+                                                    <input type="file" name="new_file" class="new_file" id="new_file"
+                                                           data-user="{$order->user_id}" value="" style="display:none"/>
+                                                    <label for="new_file" class="btn btn-large btn-primary">
+                                                        <i class="fa fa-plus-circle"></i>
+                                                        <span>Добавить</span>
+                                                    </label>
+                                                </div>
+                                            {/if}
+                                        </form>
+                                    {/if}
                                     {if $manager->role != 'employer' && !in_array($order->status, ['4','5','6','7','8'])}
                                         <div type="button" class="btn btn-outline-danger delete_order"
                                              data-order="{$order->order_id}" style="height: 38px">

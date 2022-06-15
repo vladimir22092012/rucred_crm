@@ -141,6 +141,7 @@
                                                     Пользователь</a>
                                             {else}<a href="{url page=null sort='manager_id asc'}">Пользователь</a>{/if}
                                         </th>
+                                        <th style="width: 90px;">Количество документов</th>
                                         <th style="width: 350px;">Подписанные
                                             документы
                                         </th>
@@ -185,7 +186,7 @@
                                                 {/foreach}
                                             </select>
                                         </td>
-                                        <td style="width: 70px;" class="jsgrid-cell"></td>
+                                        <td class="jsgrid-cell" colspan="2"></td>
                                         <td style="width: 70px;" class="jsgrid-cell">
                                             <select class="form-control" id="type_filter">
                                                 <option value="sms">смс</option>
@@ -217,6 +218,9 @@
                                                    href="{$config->back_url}/manager/{$code->manager->id}">
                                                     {$code->manager->name}
                                                 </a>
+                                            </td>
+                                            <td>
+                                                {count($code->documents)}
                                             </td>
                                             <td style="display: flex">
                                                 <select class="form-control" id="document_link" style="width: 500px;">
