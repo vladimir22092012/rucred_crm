@@ -139,7 +139,7 @@
                                     <tbody id="table-body">
                                     {foreach $documents as $document}
                                         <tr>
-                                            <td>{$document->type}</td>
+                                            <td>{$document->name}</td>
                                             <td><a target="_blank"
                                                    href="{$config->root_url}/document/{$document->id}">{$document->name}</a></td>
                                             <td><a type="_blank"
