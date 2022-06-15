@@ -955,7 +955,7 @@
     Договору микрозайма.<br><br>(04) подтверждает свои намерения о неукоснительном надлежащем исполнении всех принятых
     на
     себя обязательств по
-    Договору.<br><br>(05) подтверждает, что условия Договора микрозайма полностью соответствуют его интересам.<br>
+    Договору.<br><br>(05) подтверждает, что условия Договора микрозайма полностью соответствуют его интересам.
 </div>
 <h3><strong>6. ПРОЧИЕ ПОЛОЖЕНИЯ</strong></h3><br>
 <hr style="width: 100%; size: 5px">
@@ -1047,8 +1047,8 @@
     </footer>
 {/if}
 {if isset($sms)}
-    <table style="color: #002688; page-break-after: always; font-style: italic; border: 0.25pt solid #002088; width: 50%"
-           cellpadding="1" cellspacing="5">
+    <table style="color: #002688; page-break-after: always;  font-size: 8px!important; font-style: italic; border: 0.25pt solid #002088; width: 50%"
+           cellpadding="1" cellspacing="2">
         <tr>
             <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
         </tr>
@@ -1118,7 +1118,7 @@
     <br>
 </div>
 {if isset($sms)}
-    <table style="color: #002688; page-break-after: always; font-style: italic; border: 0.25pt solid #002088; width: 50%"
+    <table style="color: #002688; font-style: italic; border: 0.25pt solid #002088; width: 50%"
            cellpadding="1" cellspacing="5">
         <tr>
             <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
