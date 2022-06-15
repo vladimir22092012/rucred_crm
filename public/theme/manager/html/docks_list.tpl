@@ -71,14 +71,8 @@
                                         <th style="width: 60px;"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'type asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'type desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'type asc'}<a href="{url page=null sort='type desc'}">
-                                                    Тип документа</a>
-                                            {else}<a href="{url page=null sort='type asc'}">Тип документа</a>{/if}
-                                        </th>
-                                        <th style="width: 60px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'created asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'created desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'created asc'}<a href="{url page=null sort='created desc'}">
-                                                    Дата</a>
-                                            {else}<a href="{url page=null sort='created asc'}">Дата</a>{/if}
+                                                    Форма документа</a>
+                                            {else}<a href="{url page=null sort='type asc'}">Форма документа</a>{/if}
                                         </th>
                                         <th style="width: 60px;"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'name asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'name desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
@@ -99,6 +93,12 @@
                                             {else}<a href="{url page=null sort='order_id asc'}">Заявка/Сделка</a>{/if}
                                         </th>
                                         <th style="width: 60px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'created asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'created desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'created asc'}<a href="{url page=null sort='created desc'}">
+                                                    Дата</a>
+                                            {else}<a href="{url page=null sort='created asc'}">Дата</a>{/if}
+                                        </th>
+                                        <th style="width: 60px;"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'asp_id asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'asp_id desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'asp_id asc'}<a href="{url page=null sort='asp_id desc'}">
                                                     Подписан(Да/Нет)</a>
@@ -112,10 +112,6 @@
                                                    class="form-control input-sm">
                                         </td>
                                         <td style="width: 70px;" class="jsgrid-cell">
-                                            <input type="text" name="created" value="{$search['created']}"
-                                                   class="form-control input-sm">
-                                        </td>
-                                        <td style="width: 70px;" class="jsgrid-cell">
                                             <input type="text" name="name" value="{$search['name']}"
                                                    class="form-control input-sm">
                                         </td>
@@ -125,6 +121,10 @@
                                         </td>
                                         <td style="width: 150px;" class="jsgrid-cell">
                                             <input type="text" name="order" value="{$search['order']}"
+                                                   class="form-control input-sm">
+                                        </td>
+                                        <td style="width: 70px;" class="jsgrid-cell">
+                                            <input type="text" name="created" value="{$search['created']}"
                                                    class="form-control input-sm">
                                         </td>
                                         <td style="width: 80px;" class="jsgrid-cell">
@@ -140,8 +140,8 @@
                                     {foreach $documents as $document}
                                         <tr>
                                             <td>{$document->type}</td>
-                                            <td>{$document->created|date} {$document->created|time}</td>
-                                            <td>{$document->name}</td>
+                                            <td><a target="_blank"
+                                                   href="{$config->root_url}/document/{$document->id}">{$document->name}</a></td>
                                             <td><a type="_blank"
                                                    href="{$config->root_url}/client/{$document->user->id}">
                                                     {$document->lastname} {$document->firstname} {$document->patronymic}</a>
@@ -149,6 +149,7 @@
                                             <td><a type="_blank"
                                                    href="{$config->root_url}/offline_order/{$document->order_id}">{$document->uid}</a>
                                             </td>
+                                            <td>{$document->created|date} {$document->created|time}</td>
                                             <td>
                                                 {if !empty($document->asp_id)}
                                                     Да
