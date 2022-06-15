@@ -858,7 +858,7 @@ class OfflineOrderController extends Controller
             
 
             $ticket = [
-                'creator' => 0,
+                'creator' => $this->manager->id,
                 'creator_company' => 2,
                 'client_lastname' => $order->lastname,
                 'client_firstname' => $order->firstname,
@@ -871,7 +871,16 @@ class OfflineOrderController extends Controller
                 'status' => 0
             ];
 
-            $this->Tickets->add_ticket($ticket);
+            $ticket_id = $this->Tickets->add_ticket($ticket);
+
+            $message =
+                [
+                    'message' => 'Ознакомьтесь с новой заявкой',
+                    'ticket_id' => $ticket_id,
+                    'manager_id' => $this->manager->id,
+                ];
+
+            $this->TicketMessages->add_message($message);
 
             return ['success' => 1];
         }

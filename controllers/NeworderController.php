@@ -713,7 +713,7 @@ class NeworderController extends Controller
 
                 $ticket =
                     [
-                        'creator' => 0,
+                        'creator' => $this->manager->id,
                         'creator_company' => 2,
                         'client_lastname' => $user['lastname'],
                         'client_firstname' => $user['firstname'],
@@ -732,7 +732,7 @@ class NeworderController extends Controller
                     [
                         'message' => 'Ознакомьтесь с новой заявкой',
                         'ticket_id' => $ticket_id,
-                        'manager_id' => 0,
+                        'manager_id' => $this->manager->id,
                     ];
 
                 $this->TicketMessages->add_message($message);
