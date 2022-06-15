@@ -79,7 +79,7 @@
                             $('.show_phone_code').hide();
                             $('.show_phone_confirmed').show();
                             $('.accept_phone_edit').hide();
-                            $('.phone_confirmed').val('true');
+                            $('.phone_confirmed').val('1');
                         }
                     }
                 })
@@ -134,7 +134,7 @@
                             $('.show_email_code').hide();
                             $('.show_email_confirmed').show();
                             $('.accept_email_edit').hide();
-                            $('.email_confirmed').val('true');
+                            $('.email_confirmed').val('1');
                         }
                     }
                 })
@@ -218,7 +218,7 @@
                                 confirmButtonText: 'ОК'
                             });
                         } else {
-                            window.location.replace(response.redirect);
+                            //window.location.replace(response.redirect);
                         }
                     }
                 })
@@ -461,7 +461,8 @@
                                                                     class="show_phone_confirmed"> (подтвержден)</span></label>
                                                         <div class="form-row">
                                                             <div class="col">
-                                                                <input class="form-control phone_num"
+                                                                <input style="width: 400px"
+                                                                       class="form-control phone_num"
                                                                        type="text"
                                                                        name="phone"
                                                                        placeholder="+7(900)000-00-00"
@@ -470,12 +471,14 @@
                                                                 <input type="hidden" name="phone_confirmed"
                                                                        class="phone_confirmed" value="false"/>
                                                             </div>
-                                                            <div class="col">
-                                                                <input type="button"
-                                                                       data-user="{$user->id}"
-                                                                       class="btn btn-success accept_edit"
-                                                                       value="Сохранить">
-                                                            </div>
+                                                            {if $order->phone_mobile_confirmed == 0}
+                                                                <div class="col">
+                                                                    <input type="button"
+                                                                           data-user="{$user->id}"
+                                                                           class="btn btn-success accept_edit"
+                                                                           value="Сохранить">
+                                                                </div>
+                                                            {/if}
                                                             <div class="col-4">
                                                                 <div class="input-group show_phone_code"
                                                                      style="display: none">
@@ -653,18 +656,20 @@
                                                                     class="show_email_confirmed"> (подтверждена)</span></label>
                                                         <div class="form-row">
                                                             <div class="col">
-                                                                <input class="form-control email"
+                                                                <input style="width: 400px" class="form-control email"
                                                                        type="text" name="email"
                                                                        placeholder="ivanov@mail.ru(необязательно)"
                                                                        value="{$order->email}" autocomplete="off"/>
                                                                 <input type="hidden" name="email_confirmed"
                                                                        class="email_confirmed" value="false"/>
                                                             </div>
-                                                            <div class="col">
-                                                                <input type="button"
-                                                                       class="btn btn-success accept_email_edit"
-                                                                       value="Подтвердить">
-                                                            </div>
+                                                            {if $order->email_confirmed == 0}
+                                                                <div class="col">
+                                                                    <input type="button"
+                                                                           class="btn btn-success accept_email_edit"
+                                                                           value="Подтвердить">
+                                                                </div>
+                                                            {/if}
                                                             <div class="col-4">
                                                                 <div class="input-group show_email_code"
                                                                      style="display: none">
@@ -690,31 +695,31 @@
                                                  src="https://img.icons8.com/ios-glyphs/344/viber.png" width="30"
                                                  height="30">
                                             <input class="form-control phone_num viber_same"
-                                                   style="width: 450px; margin-left: 25px"
+                                                   style="width: 450px; margin-left: 25px; {if $order->viber_num == $order->phone_mobile}display: none{/if}"
                                                    type="text" name="viber" value="{$order->viber_num}"
                                                    autocomplete="off">
                                             <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
-                                                   name="viber_same">
+                                                   name="viber_same" {if $order->viber_num == $order->phone_mobile}checked{/if} value="1">
                                             <label>Совпадает с номером мобильного</label><br><br>
                                             <img class="icon_messag"
                                                  src="https://img.icons8.com/office/344/whatsapp--v1.png" width="30"
                                                  height="30">
                                             <input class="form-control phone_num whatsapp_same"
-                                                   style="width: 450px; margin-left: 25px"
+                                                   style="width: 450px; margin-left: 25px; {if $order->whatsapp_num == $order->phone_mobile}display: none{/if}"
                                                    type="text" name="whatsapp" value="{$order->whatsapp_num}"
                                                    autocomplete="off">
                                             <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
-                                                   name="whatsapp_same">
+                                                   name="whatsapp_same" {if $order->whatsapp_num == $order->phone_mobile}checked{/if} value="1">
                                             <label>Совпадает с номером мобильного</label><br><br>
                                             <img class="icon_messag"
                                                  src="https://img.icons8.com/color/344/telegram-app--v1.png" width="30"
                                                  height="30">
                                             <input class="form-control phone_num telegram_same"
-                                                   style="width: 450px; margin-left: 25px"
+                                                   style="width: 450px; margin-left: 25px; {if $order->telegram_num == $order->phone_mobile}display: none{/if}"
                                                    type="text" name="telegram" value="{$order->telegram_num}"
                                                    autocomplete="off">
                                             <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
-                                                   name="telegram_same">
+                                                   name="telegram_same" {if $order->telegram_num == $order->phone_mobile}checked{/if} value="1">
                                             <label>Совпадает с номером мобильного</label><br><br>
                                         </div>
                                         <br>

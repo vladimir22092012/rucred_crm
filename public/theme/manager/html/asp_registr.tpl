@@ -207,7 +207,7 @@
                                     {foreach $codes as $code}
                                         <tr class="codes">
                                             <td>
-                                                {$code->id}
+                                                {$code->uid}
                                             </td>
                                             <td>
                                                 {$code->created|date} {$code->created|time}

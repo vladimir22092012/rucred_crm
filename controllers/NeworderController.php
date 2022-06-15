@@ -179,7 +179,7 @@ class NeworderController extends Controller
 
         $attestations = json_encode(array_replace_recursive($attestation_date, $attestation_comment));
 
-        if ($this->request->post('no_attestation') === 1) {
+        if ($this->request->post('no_attestation') == 1) {
             $attestations = null;
         }
 
@@ -234,22 +234,22 @@ class NeworderController extends Controller
 
         $user['phone_mobile_confirmed'] = (int)$this->request->post('phone_confirmed');
 
-        if ($this->request->post('viber_same') === 1) {
+        if ($this->request->post('viber_same') == 1) {
             $user['viber_num'] = $user['phone_mobile'];
         } else {
-            $user['viber_num'] = trim($this->request->post('viber'));
+            $user['viber_num'] = trim((string)$this->request->post('viber'));
         }
 
-        if ($this->request->post('whatsapp_same') === 1) {
-            $user['viber_num'] = $user['phone_mobile'];
+        if ($this->request->post('whatsapp_same') == 1) {
+            $user['whatsapp_num'] = $user['phone_mobile'];
         } else {
-            $user['viber_num'] = trim($this->request->post('whatsapp'));
+            $user['whatsapp_num'] = trim((string)$this->request->post('whatsapp'));
         }
 
-        if ($this->request->post('telegram_same') === 1) {
-            $user['viber_num'] = $user['phone_mobile'];
+        if ($this->request->post('telegram_same') == 1) {
+            $user['telegram_num'] = $user['phone_mobile'];
         } else {
-            $user['viber_num'] = trim($this->request->post('telegram'));
+            $user['telegram_num'] = trim((string)$this->request->post('telegram'));
         }
 
 
