@@ -750,9 +750,10 @@ class NeworderController extends Controller
             exit;
         }
         $code = random_int(1000, 9999);
+        $message = "Ваш код подтверждения телефона:  $code. Сообщите код андеррайтеру РуКреда";
         $response = $this->sms->send(
             $phone,
-            $code
+            $message
         );
         $this->db->query('
         INSERT INTO s_sms_messages
@@ -803,8 +804,8 @@ class NeworderController extends Controller
             'rucred@ucase.live',
             $email,
             'RuCred | Ваш проверочный код для смены почты',
-            'Введите этот код в поле для проверки почты: ' . $code,
-            '<h1>Введите этот код в поле для проверки почты:</h1>' . "<h2>$code</h2>"
+            'Ваш код подтверждения электронной почты: ' . $code,
+            '<h1>Сообщите код андеррайтеру РуКреда: </h1>' . "<h2>$code</h2>"
         );
 
         echo json_encode(['success' => 1]);
