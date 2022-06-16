@@ -323,17 +323,20 @@
                                         href="companies"><i class="mdi mdi-compass"></i>Компании</a></li>
                             <li {if in_array($module, ['LoantypesController','LoantypeController'])}class="active"{/if}>
                                 <a href="loantypes"><i class="mdi mdi-magnet"></i>Продукты</a></li>
-                            <li {if in_array($module, ['WhitelistController'])}class="active"{/if}>
-                                <a href="/whitelist"><i class="mdi mdi-tooltip"></i>Blacklist</a></li>
-                            <li {if in_array($module, ['BlacklistController'])}class="active"{/if}>
-                                <a href="/blacklist"><i class="mdi mdi-tooltip"></i>Whitelist</a></li>
+                            {if in_array($manager->role, ['developer', 'admin'])}
+                                <li {if in_array($module, ['WhitelistController'])}class="active"{/if}>
+                                    <a href="/whitelist"><i class="mdi mdi-tooltip"></i>Blacklist</a></li>
+                                <li {if in_array($module, ['BlacklistController'])}class="active"{/if}>
+                                    <a href="/blacklist"><i class="mdi mdi-tooltip"></i>Whitelist</a></li>
+                            {/if}
                             <li {if in_array($module, ['ThemesController'])}class="active"{/if}>
                                 <a href="/themes"><i class="mdi mdi-chart-arc"></i>Справочник тем КП</a></li>
                             {if in_array($manager->role, ['developer', 'admin', 'middle'])}
-                            <li {if in_array($module, ['DockTypesController'])}class="active"{/if}>
-                                <a href="/dock_types"><i class="mdi mdi-react"></i>Типы документов</a></li>
+                                <li {if in_array($module, ['DockTypesController'])}class="active"{/if}>
+                                    <a href="/dock_types"><i class="mdi mdi-react"></i>Типы документов</a></li>
                                 <li {if in_array($module, ['DocksListController'])}class="active"{/if}>
-                                    <a href="/docks_list"><i class="mdi mdi-book-open-page-variant"></i>Реестр документов</a></li>
+                                    <a href="/docks_list"><i class="mdi mdi-book-open-page-variant"></i>Реестр
+                                        документов</a></li>
                             {/if}
                         {/if}
                         {if in_array('managers', $manager->permissions) && $manager->role != 'employer'}
@@ -342,8 +345,10 @@
                                 <li {if in_array($module, ['SettingsController'])}class="active"{/if}><a
                                             href="settings/"><i class="mdi mdi-settings"></i>Общие</a></li>
                             {/if}
-                            <li {if in_array($module, ['ScoringsController'])}class="active"{/if}>
-                                <a href="scorings/"><i class="mdi mdi-tooltip"></i>СПР</a></li>
+                            {if $manager->role != 'underwriter'}
+                                <li {if in_array($module, ['ScoringsController'])}class="active"{/if}>
+                                    <a href="scorings/"><i class="mdi mdi-tooltip"></i>СПР</a></li>
+                            {/if}
                             <li {if in_array($module, ['ReasonsController'])}class="active"{/if}><a
                                         href="reasons/"><i class="mdi mdi-react"></i>Причины отказа</a></li>
                             <li {if in_array($module, ['SmsTemplatesController'])}class="active"{/if}><a

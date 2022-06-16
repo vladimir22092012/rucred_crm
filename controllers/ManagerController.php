@@ -189,7 +189,7 @@ class ManagerController extends Controller
             $this->design->assign('companies', $companies);
         }
 
-        $managers_company = $this->ManagersEmployers->get_records($user->id);
+        $managers_company = $this->ManagersEmployers->get_records($this->manager->id);
         $this->design->assign('managers_company', $managers_company);
 
         $this->design->assign('groups', $groups);

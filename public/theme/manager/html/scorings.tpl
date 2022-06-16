@@ -251,15 +251,15 @@
                 <ol class="dd-list">
                     {foreach $scoring_types as $type}
                     <li class="dd-item dd3-item" data-id="{$type->id}">
-                        {if !in_array($manager_role, ['employer', 'underwriter'])}<div class="dd-handle dd3-handle">
+                        {if in_array($manager_role, ['developer', 'admin'])}<div class="dd-handle dd3-handle">
                             <input type="hidden" name="position[]" value="{$type->id}" />
                             <input type="hidden" name="settings[{$type->id}][id]" value="{$type->id}" />
                         </div>{/if}
                         <div class="dd3-content"> 
                             <div class="row">
                                 <div class="col-8 col-sm-9 col-md-10">
-                                    <a {if !in_array($manager_role, ['employer', 'underwriter'])} href="#content_{$type->id}" data-toggle="collapse" class="text-info collapsed"{/if}>
-                                        {if !in_array($manager_role, ['employer', 'underwriter'])}<i class="fas fa-minus-circle"></i>{/if}
+                                    <a {if in_array($manager_role, ['developer', 'admin'])} href="#content_{$type->id}" data-toggle="collapse" class="text-info collapsed"{/if}>
+                                        {if in_array($manager_role, ['developer', 'admin'])}<i class="fas fa-minus-circle"></i>{/if}
                                         <span>
                                             {$type->title}
                                         </span>
@@ -273,7 +273,7 @@
                                 </div>
                                 <div class="col-4 col-sm-3 col-md-2">
                                     <div class="onoffswitch">
-                                        <input {if in_array($manager_role, ['employer', 'underwriter'])}disabled{/if} type="checkbox" name="settings[{$type->id}][active]" class="onoffswitch-checkbox" value="1" id="active_{$type->id}" {if $type->active}checked="true"{/if} />
+                                        <input {if !in_array($manager_role, ['developer', 'admin'])}disabled{/if} type="checkbox" name="settings[{$type->id}][active]" class="onoffswitch-checkbox" value="1" id="active_{$type->id}" {if $type->active}checked="true"{/if} />
                                         <label class="onoffswitch-label" for="active_{$type->id}">
                                             <span class="onoffswitch-inner"></span>
                                             <span class="onoffswitch-switch"></span>
