@@ -99,8 +99,21 @@ class ClientController extends Controller
 
 
             $documents = $this->documents->get_documents(array('user_id' => $client->id));
+            $sort_docs = [];
 
-            $this->design->assign('documents', $documents);
+            if (!empty($documents)) {
+                foreach ($documents as $document) {
+                    $order = $this->orders->get_order($document->order_id);
+
+                    if(empty($order)){
+                        unset($document);
+                        continue;
+                    }
+
+                    $sort_docs[$document->order_id][$order->uid][] = $document;
+                }
+                $this->design->assign('sort_docs', $sort_docs);
+            }
 
             $managers = array();
             foreach ($this->managers->get_managers() as $m) {
@@ -132,14 +145,6 @@ class ClientController extends Controller
                 $scorings[$scoring->type] = $scoring;
             }
             $this->design->assign('scorings', $scorings);
-
-            $client->stages = 0;
-            $client->stages += $client->stage_personal;
-            $client->stages += $client->stage_passport;
-            $client->stages += $client->stage_address;
-            $client->stages += $client->stage_work;
-            $client->stages += $client->stage_files;
-            $client->stages += $client->stage_card;
 
             $changelogs = $this->changelogs->get_changelogs(array('user_id' => $client->id));
             foreach ($changelogs as $changelog) {

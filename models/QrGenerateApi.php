@@ -2,7 +2,7 @@
 
 class QrGenerateApi extends Core
 {
-    protected $api_key = '2vJy2gwL.pbkdf2_sha256$260000$yhVZJuqA3zjUWL6aBIRLJX$WAM/fmgBLPVrFi2/rHfWpYjnDwwjo8ji6lCnl5IwTME=';
+    protected $api_key = 'baXhkN2j.dDYdzEIgnS4HPialSRx8uutqlwndmKtE';
 
     public function get_qr($sum, $qr_size)
     {

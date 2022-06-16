@@ -1259,22 +1259,32 @@
                             </div>
 
                             <div class="tab-pane p-3" id="documents" role="tabpanel">
-                                {if $documents}
+                                {if $sort_docs}
                                     <table class="table">
-                                        {foreach $documents as $document}
-                                            <tr>
-                                                <td class="text-info">
-                                                    <a target="_blank"
-                                                       href="{$config->root_url}/document?id={$document->id}&action=download_file">
-                                                        <i class="fas fa-file-pdf fa-lg"></i>&nbsp;
-                                                        {$document->name|escape}
-                                                    </a>
-                                                </td>
-                                                <td class="text-right">
-                                                    {$document->created|date}
-                                                    {$document->created|time}
-                                                </td>
-                                            </tr>
+                                        {foreach $sort_docs as $order_id => $array}
+                                            {foreach $array as $uid => $documents}
+                                                <tr>
+                                                    <td class="text-info"><h5>Заявка номер
+                                                            <a target="_blank"
+                                                               href="{$config->root_url}/offline_order/{$order_id}">{$uid}</a>
+                                                        </h5></td>
+                                                </tr>
+                                                {foreach $documents as $document}
+                                                    <tr>
+                                                        <td class="text-info">
+                                                            <a target="_blank"
+                                                               href="{$config->root_url}/document?id={$document->id}&action=download_file">
+                                                                <i class="fas fa-file-pdf fa-lg"></i>&nbsp;
+                                                                {$document->name|escape}
+                                                            </a>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {$document->created|date}
+                                                            {$document->created|time}
+                                                        </td>
+                                                    </tr>
+                                                {/foreach}
+                                            {/foreach}
                                         {/foreach}
                                     </table>
                                 {else}
