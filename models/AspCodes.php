@@ -5,12 +5,12 @@ class AspCodes extends Core
     public function add_code($code)
     {
         $uid = rand(000000000, 999999999);
-        array_push($code, ['uid' => $uid]);
+        array_push($code, ['uid' => (string)$uid]);
 
         $query = $this->db->placehold("
         INSERT INTO s_asp_codes
         SET ?%
-        ", $code);
+        ", (array)$code);
 
         $this->db->query($query);
         $id = $this->db->insert_id();
