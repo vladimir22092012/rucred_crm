@@ -12,6 +12,8 @@ class AspCodes extends Core
         SET ?%
         ", (array)$code);
 
+        var_dump($query);
+
         $this->db->query($query);
         $id = $this->db->insert_id();
 
