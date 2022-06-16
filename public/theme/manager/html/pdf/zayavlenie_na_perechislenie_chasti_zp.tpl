@@ -25,7 +25,8 @@
 </div>
 <div align="justify">Я связи с заключением между мною и Обществом с ограниченной ответственностью Микрокредитная
     компания «Русское
-    кредитное общество» Договора микрозайма от <strong>{$probably_start_date|date}</strong> года № <strong>{$uid}</strong> на сумму <strong>{$amount|number_format:0:',':' '} ({$amount_string|upper}
+    кредитное общество» Договора микрозайма от <strong>{$probably_start_date|date}</strong> года №
+    <strong>{$uid}</strong> на сумму <strong>{$amount|number_format:0:',':' '} ({$amount_string|upper}
         )</strong> рублей <strong>00</strong> копеек и сроком на
     <strong>{$loan->max_period}</strong> {$loan->max_period|plural:'месяц':'месяцев':'месяца'}, с целью
     соблюдения условий
@@ -33,46 +34,21 @@
     рабочих дней с даты подписания настоящего обязательства направить в адрес своего работодателя заявление о
     перечислении части причитающихся мне выплат на счёт Общества с ограниченной ответственностью Микрокредитная компания
     «Русское кредитное общество» Договора как займодавца в счёт погашения задолженности по микрозайму в соответствии с
-    графиком платежей.</div>
-<div align="justify">Я проинформирован о том, что подача указанного заявления работодателю о перечислении части причитающейся мне
+    графиком платежей.
+</div>
+<div align="justify">Я проинформирован о том, что подача указанного заявления работодателю о перечислении части
+    причитающейся мне
     заработной платы является обязательным и существенным условием получения и пользования микрозаймом, невыполнение
     которого может привести к требованию досрочного погашения предоставленного микрозайма.
 </div>
 <div>
     <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 </div>
-{if !isset($sms)}
-    <table style="width: 100%;" border="1" cellpadding="8">
-        <tr style="width: 100%">
-            <td style="width: 25%; height: 30px" align="center"><span style="color: #b3b2ab">ПОДПИСЬ</span></td>
-            <td style="width: 50%" align="center"><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></td>
-            <td style="width: 25%" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span></td>
-        </tr>
-    </table>
-{/if}
-<div>
-    <br>
-</div>
-{if isset($sms)}
-    <table style="color: #002688; font-style: italic; border: 0.25pt solid #002088; width: 50%"
-           cellpadding="1" cellspacing="5">
-        <tr>
-            <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
-        </tr>
-        <tr>
-            <td>Подписант: {$firstname} {$patronymic} {$lastname}</td>
-        </tr>
-        <tr>
-            <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
-        </tr>
-        <tr>
-            <td>ID подписания: {$code_asp->id}</td>
-        </tr>
-        <tr>
-            <td>Код подтверждения: {$code_asp->code}</td>
-        </tr>
-        <tr>
-            <td>Система ЭДО: Рестарт.Онлайн</td>
-        </tr>
-    </table>
-{/if}
+
+<table style="width: 100%;" border="1" cellpadding="8">
+    <tr style="width: 100%">
+        <td style="width: 25%; height: 30px" align="center"><span style="color: #b3b2ab">ПОДПИСЬ</span></td>
+        <td style="width: 50%" align="center"><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></td>
+        <td style="width: 25%" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span></td>
+    </tr>
+</table>

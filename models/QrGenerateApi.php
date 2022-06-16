@@ -18,7 +18,7 @@ class QrGenerateApi extends Core
                 'X-Api-Key: ' . $this->api_key,
             ];
 
-        $ch = curl_init('https://app.devwapiserv.qrm.ooo/operations/qr-code/');
+        $ch = curl_init('https://app.wapiserv.qrm.ooo/operations/qr-code/');
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($ch, CURLOPT_POSTFIELDS, $query);

@@ -2193,14 +2193,14 @@
 
                                             <h6 class="card-header">
                                                 <span class="text-white">Документы</span>
-                                            {if !in_array($order->status, ['4','5','6','7','8'])}
+                                                {if !in_array($order->status, ['4','5','6','7','8'])}
                                                     {if $manager->role != 'employer'}
                                                         <input style="margin-left: 30px" type="button"
                                                                class="btn btn-primary get-docs"
                                                                data-order="{$order->order_id}"
                                                                value="Сформировать документы">
                                                     {/if}
-                                            {/if}
+                                                {/if}
                                             </h6>
                                             <br>
                                             {if !empty($documents)}
@@ -2210,19 +2210,25 @@
                                                             {continue}
                                                         {/if}
                                                     {/if}
-                                                    <div style="width: 100%!important; height: 50px; margin-left: 5px; display: flex; vertical-align: middle"
+                                                    <div style="width: 100%!important; height: 50px; margin-left: 5px; display: flex; vertical-align: middle;"
                                                          id="{$document->id}">
                                                         <div class="form-group"
                                                              style="width: 10px!important; margin-left: 5px">
                                                             <label class="control-label">{$document->numeration}</label>
                                                         </div>
                                                         <div class="form-group"
-                                                             style="width: 50%!important; margin-left: 50px">
+                                                             style="width: 40%!important; margin-left: 50px">
                                                             <label class="control-label">{$document->name}</label>
-                                                            {if in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP'])}
-                                                                <span style="height: 20px" data-tooltip="Этот документ нельзя подписать АСП кодом" class="badge badge-danger warning_asp">&#33;</span>
-                                                            {/if}
                                                         </div>
+                                                        {if in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP'])}
+                                                            <span style="height: 20px; margin-left: 10px"
+                                                                  data-tooltip="Этот документ нельзя подписать АСП кодом"
+                                                                  class="badge badge-danger warning_asp">&#33;</span>
+                                                        {else}
+                                                            <div style="margin-left: 20px">
+
+                                                            </div>
+                                                        {/if}
                                                         <div style="margin-left: 10px">
                                                             <a target="_blank"
                                                                href="{$config->root_url}/document?id={$document->id}&action=download_file"><input

@@ -755,30 +755,42 @@ class OfflineOrderController extends Controller
     {
         $order_id = $this->request->post('order_id', 'integer');
 
-        if (!($order = $this->orders->get_order((int)$order_id)))
-            return array('error' => 'Неизвестный ордер');
-
-        if ($order->user_id == 127551)
-            return array('error' => 'По данному клиенту запрещена выдача!');
+        $order = $this->orders->get_order((int)$order_id);
 
         $loan = $this->Loantypes->get_loantype($order->loan_type);
 
         $query = $this->db->placehold("
-        SELECT COUNT(*) as `count`
+        SELECT COUNT(*) as `count`, `type`
         FROM s_scans
         WHERE user_id = ?
         AND order_id = ?
+        AND `type` != 'ndfl'
         ", (int)$order->user_id, (int)$order->order_id);
 
         $this->db->query($query);
-        $count_scans = $this->db->result('count');
+        $scans = $this->db->results();
 
         $users_docs = $this->Documents->get_documents(['user_id' => $order->user_id]);
 
         if (empty($users_docs))
             return array('error' => 'Не сформированы документы!');
 
-        if ($count_scans < count($users_docs) && empty($order->sms))
+        if(!empty($order->sms))
+        {
+            $count_scans_without_asp = 0;
+
+            foreach ($scans as $scan){
+                foreach ($users_docs as $doc){
+                    if($doc->template == $scan->type && in_array($scan->type, ['soglasie_rukred_rabotadatel.tpl', 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl']))
+                        $count_scans_without_asp++;
+                }
+            }
+
+            if($count_scans_without_asp < 2)
+                return array('error' => 'Проверьте сканы для форм 03.03 и 04.09');
+        }
+
+        if (count($scans) < count($users_docs) && empty($order->sms))
             return array('error' => 'Для одобрения заявки нужны все сканы либо пэп!');
 
         if ($order->amount < $loan->min_amount && $order->amount > $loan->max_amount)

@@ -30,6 +30,13 @@ class UploadFilesController extends Controller
 
             $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
 
+            $format = substr($ext, -4);
+
+            if(!in_array($format, ['.pdf', '.jpg', '.png'])){
+                echo json_encode(['error' => 1, 'message' => 'Неверный формат файла']);
+                exit;
+            }
+
             do {
                 $new_filename = md5(microtime() . rand()) . '.' . $ext;
             } while ($this->users->check_filename($new_filename));

@@ -53,7 +53,6 @@
         дней.
     </div>
 </div>
-{if !isset($sms)}
 <table style="width: 100%;" border="1" cellpadding="5">
     <tr style="width: 100%">
         <td style="width: 25%; height: 30px" align="center"><span style="color: #b3b2ab">ПОДПИСЬ</span></td>
@@ -61,30 +60,3 @@
         <td style="width: 25%" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span></td>
     </tr>
 </table>
-{/if}
-<div>
-
-</div>
-{if isset($sms)}
-    <table style="color: #002688; font-style: italic; border: 0.25pt solid #002088; width: 50%"
-           cellpadding="1" cellspacing="5">
-        <tr>
-            <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
-        </tr>
-        <tr>
-            <td>Подписант: {$firstname} {$patronymic} {$lastname}</td>
-        </tr>
-        <tr>
-            <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
-        </tr>
-        <tr>
-            <td>ID подписания: {$code_asp->id}</td>
-        </tr>
-        <tr>
-            <td>Код подтверждения: {$code_asp->code}</td>
-        </tr>
-        <tr>
-            <td>Система ЭДО: Рестарт.Онлайн</td>
-        </tr>
-    </table>
-{/if}
