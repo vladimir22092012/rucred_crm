@@ -695,31 +695,31 @@
                                                  src="https://img.icons8.com/ios-glyphs/344/viber.png" width="30"
                                                  height="30">
                                             <input class="form-control phone_num viber_same"
-                                                   style="width: 450px; margin-left: 25px; {if $order->viber_num == $order->phone_mobile}display: none{/if}"
+                                                   style="width: 450px; margin-left: 25px; {if isset($order) && $order->viber_num == $order->phone_mobile}display: none{/if}"
                                                    type="text" name="viber" value="{$order->viber_num}"
                                                    autocomplete="off">
                                             <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
-                                                   name="viber_same" {if $order->viber_num == $order->phone_mobile}checked{/if} value="1">
+                                                   name="viber_same" {if isset($order) && $order->viber_num == $order->phone_mobile}checked{/if} value="1">
                                             <label>Совпадает с номером мобильного</label><br><br>
                                             <img class="icon_messag"
                                                  src="https://img.icons8.com/office/344/whatsapp--v1.png" width="30"
                                                  height="30">
                                             <input class="form-control phone_num whatsapp_same"
-                                                   style="width: 450px; margin-left: 25px; {if $order->whatsapp_num == $order->phone_mobile}display: none{/if}"
+                                                   style="width: 450px; margin-left: 25px; {if isset($order) && $order->whatsapp_num == $order->phone_mobile}display: none{/if}"
                                                    type="text" name="whatsapp" value="{$order->whatsapp_num}"
                                                    autocomplete="off">
                                             <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
-                                                   name="whatsapp_same" {if $order->whatsapp_num == $order->phone_mobile}checked{/if} value="1">
+                                                   name="whatsapp_same" {if isset($order) && $order->whatsapp_num == $order->phone_mobile}checked{/if} value="1">
                                             <label>Совпадает с номером мобильного</label><br><br>
                                             <img class="icon_messag"
                                                  src="https://img.icons8.com/color/344/telegram-app--v1.png" width="30"
                                                  height="30">
                                             <input class="form-control phone_num telegram_same"
-                                                   style="width: 450px; margin-left: 25px; {if $order->telegram_num == $order->phone_mobile}display: none{/if}"
+                                                   style="width: 450px; margin-left: 25px; {if isset($order) && $order->telegram_num == $order->phone_mobile}display: none{/if}"
                                                    type="text" name="telegram" value="{$order->telegram_num}"
                                                    autocomplete="off">
                                             <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
-                                                   name="telegram_same" {if $order->telegram_num == $order->phone_mobile}checked{/if} value="1">
+                                                   name="telegram_same" {if isset($order) && $order->telegram_num == $order->phone_mobile}checked{/if} value="1">
                                             <label>Совпадает с номером мобильного</label><br><br>
                                         </div>
                                         <br>
