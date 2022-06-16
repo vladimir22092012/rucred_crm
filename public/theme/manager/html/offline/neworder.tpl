@@ -498,10 +498,12 @@
                                             </div>
                                         </div>
                                         <br>
-                                        <div type="button" style="margin-left: 25px"
-                                             class="btn btn-outline-info check_users">
-                                            Проверить совпадения
-                                        </div>
+                                        {if $order->original != 1}
+                                            <div type="button" style="margin-left: 25px"
+                                                 class="btn btn-outline-info check_users">
+                                                Проверить совпадения
+                                            </div>
+                                        {/if}
                                         <br><br>
                                         <div style="display: none" id="users_same"></div>
                                         <br><br>
@@ -726,13 +728,6 @@
                                         <h4>Основные каналы связи</h4>
                                         <div class="form-check" style="display:flex; margin-left: 25px">
                                             <div class="form-check" style="margin-left: 25px">
-                                                <input class="form-check-input" type="checkbox" name="push_not"
-                                                       value="1">
-                                                <label class="form-check-label">
-                                                    Push-уведомления
-                                                </label>
-                                            </div>
-                                            <div class="form-check" style="margin-left: 25px">
                                                 <input class="form-check-input" type="checkbox" name="sms_not" value="1"
                                                        checked>
                                                 <label class="form-check-label">
@@ -750,6 +745,13 @@
                                                 <label class="form-check-label">
                                                     Мессенджеры
                                                 </label></div>
+                                            <div class="form-check" style="margin-left: 25px">
+                                                <input class="form-check-input" type="checkbox" name="push_not"
+                                                       value="1">
+                                                <label class="form-check-label">
+                                                    Push-уведомления
+                                                </label>
+                                            </div>
                                         </div>
                                         <br>
                                         <hr style="width: 100%; size: 5px">
