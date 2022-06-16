@@ -142,13 +142,6 @@
 
             let order = {{json_encode($order)}};
             if (order) {
-                if (parseInt(order['profunion']) == 3) {
-                    $('input[id="profunion2"]').trigger('click');
-                    $('input[id="want_profunion"]').trigger('click');
-                }
-                else {
-                    $('input[id="profunion' + order['profunion'] + '"]').trigger('click');
-                }
 
                 if (order['prev_fio'] != null) {
                     $('input[id="change_fio2"]').trigger('click');
@@ -193,6 +186,17 @@
 
                 setTimeout(function () {
                     $('#' + order['loan_type'] + '').trigger('click');
+
+                    if (order['profunion'] == 2) {
+                        $('input[id="profunion2"]').trigger('click');
+                    }
+                    if (order['profunion'] == 0) {
+                        $('input[id="want_profunion"]').trigger('click');
+                    }
+                    if (order['profunion'] == 1) {
+                        $('input[id="profunion1"]').trigger('click');
+                    }
+
                     $('.to_form_loan').trigger('click');
                     $('select[name="branch"] option[value="' + order['branche_id'] + '"]').prop('selected', true);
                 }, 900);
@@ -701,7 +705,9 @@
                                                    type="text" name="viber" value="{$order->viber_num}"
                                                    autocomplete="off">
                                             <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
-                                                   name="viber_same" {if isset($order) && $order->viber_num == $order->phone_mobile}checked{/if} value="1">
+                                                   name="viber_same"
+                                                   {if isset($order) && $order->viber_num == $order->phone_mobile}checked{/if}
+                                                   value="1">
                                             <label>Совпадает с номером мобильного</label><br><br>
                                             <img class="icon_messag"
                                                  src="https://img.icons8.com/office/344/whatsapp--v1.png" width="30"
@@ -711,7 +717,9 @@
                                                    type="text" name="whatsapp" value="{$order->whatsapp_num}"
                                                    autocomplete="off">
                                             <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
-                                                   name="whatsapp_same" {if isset($order) && $order->whatsapp_num == $order->phone_mobile}checked{/if} value="1">
+                                                   name="whatsapp_same"
+                                                   {if isset($order) && $order->whatsapp_num == $order->phone_mobile}checked{/if}
+                                                   value="1">
                                             <label>Совпадает с номером мобильного</label><br><br>
                                             <img class="icon_messag"
                                                  src="https://img.icons8.com/color/344/telegram-app--v1.png" width="30"
@@ -721,7 +729,9 @@
                                                    type="text" name="telegram" value="{$order->telegram_num}"
                                                    autocomplete="off">
                                             <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
-                                                   name="telegram_same" {if isset($order) && $order->telegram_num == $order->phone_mobile}checked{/if} value="1">
+                                                   name="telegram_same"
+                                                   {if isset($order) && $order->telegram_num == $order->phone_mobile}checked{/if}
+                                                   value="1">
                                             <label>Совпадает с номером мобильного</label><br><br>
                                         </div>
                                         <br>

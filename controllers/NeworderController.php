@@ -673,9 +673,39 @@ class NeworderController extends Controller
                 $this->orders->update_order($order_id, $order);
 
                 if ($draft == 1) {
+
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/neworder/draft/' . $order_id]);
                     exit;
                 }else{
+
+                    $order = $this->orders->get_order($order_id);
+
+                    $ticket =
+                        [
+                            'creator' => $this->manager->id,
+                            'creator_company' => 2,
+                            'client_lastname' => $order->lastname,
+                            'client_firstname' => $order->firstname,
+                            'client_patronymic' => $order->patronymic,
+                            'head' => 'Новая заявка',
+                            'text' => 'Ознакомьтесь с новой заявкой',
+                            'company_id' => $order->company_id,
+                            'group_id' => $order->group_id,
+                            'order_id' => $order_id,
+                            'status' => 0
+                        ];
+
+                    $ticket_id = $this->Tickets->add_ticket($ticket);
+
+                    $message =
+                        [
+                            'message' => 'Ознакомьтесь с новой заявкой',
+                            'ticket_id' => $ticket_id,
+                            'manager_id' => $this->manager->id,
+                        ];
+
+                    $this->TicketMessages->add_message($message);
+
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                     exit;
                 }
@@ -709,37 +739,39 @@ class NeworderController extends Controller
                             }
                         }
 
+                        $user = $this->users->get_user($order['user_id']);
+
+                        $ticket =
+                            [
+                                'creator' => $this->manager->id,
+                                'creator_company' => 2,
+                                'client_lastname' => $user->lastname,
+                                'client_firstname' => $user->firstname,
+                                'client_patronymic' => $user->patronymic,
+                                'head' => 'Новая заявка',
+                                'text' => 'Ознакомьтесь с новой заявкой',
+                                'company_id' => $order['company_id'],
+                                'group_id' => $order['group_id'],
+                                'order_id' => $order_id,
+                                'status' => 0
+                            ];
+
+                        $ticket_id = $this->Tickets->add_ticket($ticket);
+
+                        $message =
+                            [
+                                'message' => 'Ознакомьтесь с новой заявкой',
+                                'ticket_id' => $ticket_id,
+                                'manager_id' => $this->manager->id,
+                            ];
+
+                        $this->TicketMessages->add_message($message);
+
                         response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                     } catch (Exception $exception) {
                         response_json(['error' => 1, 'reason' => 'Создать заявку не удалось']);
                     }
                 }
-
-                $ticket =
-                    [
-                        'creator' => $this->manager->id,
-                        'creator_company' => 2,
-                        'client_lastname' => $user['lastname'],
-                        'client_firstname' => $user['firstname'],
-                        'client_patronymic' => $user['patronymic'],
-                        'head' => 'Новая заявка',
-                        'text' => 'Ознакомьтесь с новой заявкой',
-                        'company_id' => $order['company_id'],
-                        'group_id' => $order['group_id'],
-                        'order_id' => $order_id,
-                        'status' => 0
-                    ];
-
-                $ticket_id = $this->Tickets->add_ticket($ticket);
-
-                $message =
-                    [
-                        'message' => 'Ознакомьтесь с новой заявкой',
-                        'ticket_id' => $ticket_id,
-                        'manager_id' => $this->manager->id,
-                    ];
-
-                $this->TicketMessages->add_message($message);
             }
         }
 
