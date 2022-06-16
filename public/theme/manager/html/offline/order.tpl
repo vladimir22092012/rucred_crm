@@ -1220,7 +1220,7 @@
                                                 </div>
                                             </div>
                                         {/if}
-                                        {if $order->status == 14 && in_array($manager->role, ['developer', 'admin', 'middle', 'employer'])}
+                                        {if $order->status == 14 && in_array($manager->role, ['employer'])}
                                             <div class="card card-success mb-1">
                                                 <div class="box text-center">
                                                     <h4 class="text-white mb-0">Р.Подтверждена</h4>
@@ -1397,19 +1397,6 @@
                                     {/if}
                                     {if $order->status == 14 && in_array($manager->role, ['developer', 'admin', 'underwriter', 'middle'])}
                                         <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
-                                            <button
-                                                    class="btn btn-success btn-block js-approve-order js-event-add-click"
-                                                    data-event="12" data-user="{$order->user_id}"
-                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
-                                                <i class="fas fa-check-circle"></i>
-                                                <span>Одобрить</span>
-                                            </button>
-                                            <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
-                                                    data-event="13" data-user="{$order->user_id}"
-                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
-                                                <i class="fas fa-times-circle"></i>
-                                                <span>Отказать</span>
-                                            </button>
                                             <br>
                                             <form class=" pt-1 js-confirm-contract">
                                                 <div class="input-group">
@@ -1449,6 +1436,20 @@
                                                     {/if}
                                                 </div>
                                             </form>
+                                            <br>
+                                            <button
+                                                    class="btn btn-success btn-block js-approve-order js-event-add-click"
+                                                    data-event="12" data-user="{$order->user_id}"
+                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                                <i class="fas fa-check-circle"></i>
+                                                <span>Одобрить</span>
+                                            </button>
+                                            <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
+                                                    data-event="13" data-user="{$order->user_id}"
+                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                                <i class="fas fa-times-circle"></i>
+                                                <span>Отказать</span>
+                                            </button>
                                         </div>
                                     {/if}
                                 </div>
