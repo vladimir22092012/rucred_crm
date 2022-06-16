@@ -760,7 +760,7 @@ class OfflineOrderController extends Controller
         $loan = $this->Loantypes->get_loantype($order->loan_type);
 
         $query = $this->db->placehold("
-        SELECT COUNT(*) as `count`, `type`
+        SELECT `type`
         FROM s_scans
         WHERE user_id = ?
         AND order_id = ?
