@@ -3466,6 +3466,9 @@ class OfflineOrderController extends Controller
                     'manager_id' => $this->manager->id
                 ];
 
+            var_dump($asp_log);
+            exit;
+
             $asp_id = $this->AspCodes->add_code($asp_log);
 
             $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
