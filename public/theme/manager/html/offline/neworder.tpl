@@ -78,7 +78,7 @@
                         } else {
                             $('.show_phone_code').hide();
                             $('.show_phone_confirmed').show();
-                            $('.accept_phone_edit').hide();
+                            $('.accept_edit').hide();
                             $('.phone_confirmed').val('1');
                         }
                     }
