@@ -672,8 +672,13 @@ class NeworderController extends Controller
                 $order_id = $this->request->get('order_id');
                 $this->orders->update_order($order_id, $order);
 
-                response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/neworder/draft/' . $order_id]);
-                exit;
+                if ($this->request->post('create_new_order')) {
+                    response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
+                    exit;
+                }else{
+                    response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/neworder/draft/' . $order_id]);
+                    exit;
+                }
 
             } else {
 
