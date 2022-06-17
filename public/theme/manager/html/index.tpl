@@ -314,6 +314,14 @@
                             </li>
                         {/if}
                         {if in_array('managers', $manager->permissions)}
+                            <li class="nav-small-cap">Панель управления</li>
+                            {if $manager->role != 'employer'}
+                                <li {if in_array($module, ['PaymentsController'])}class="active"{/if}><a
+                                            href="payments"><i class="mdi mdi-react"></i>Генерация платежек</a></li>
+                            {/if}
+                        {/if}
+
+                        {if in_array('managers', $manager->permissions)}
                             <li class="nav-small-cap">Управление</li>
                             {if $manager->role != 'employer'}
                                 <li {if in_array($module, ['GroupsController'])}class="active"{/if}><a

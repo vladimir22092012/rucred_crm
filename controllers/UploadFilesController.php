@@ -29,8 +29,9 @@ class UploadFilesController extends Controller
         if ($file = $this->request->files('file')) {
 
             $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $user_id = $this->request->post('user_id');
 
-            $format = substr($ext, -4);
+            $format = substr($file['name'], -4);
 
             if(!in_array($format, ['.pdf', '.jpg', '.png'])){
                 echo json_encode(['error' => 1, 'message' => 'Неверный формат файла']);
@@ -41,9 +42,14 @@ class UploadFilesController extends Controller
                 $new_filename = md5(microtime() . rand()) . '.' . $ext;
             } while ($this->users->check_filename($new_filename));
 
-            if (move_uploaded_file($file['tmp_name'], $this->config->root_dir . $this->config->user_files_dir . $new_filename)) {
+            $path = $this->config->root_dir . $this->config->user_files_dir.$user_id;
 
-                $user_id = $this->request->post('user_id');
+            if (!is_dir($path)) {
+                mkdir($path);
+            }
+
+            if (move_uploaded_file($file['tmp_name'], $path .'/'. $new_filename)) {
+
                 $type = $this->request->post('type');
 
                 if ($this->request->post('is_it_scans') == 'yes') {
