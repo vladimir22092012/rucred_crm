@@ -2241,7 +2241,7 @@
                                                              style="width: 40%!important; margin-left: 50px">
                                                             <label class="control-label">{$document->name}</label>
                                                         </div>
-                                                        {if in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP'])}
+                                                        {if in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR'])}
                                                             <span style="height: 20px; margin-left: 10px"
                                                                   data-tooltip="Этот документ нельзя подписать АСП кодом"
                                                                   class="badge badge-danger warning_asp">&#33;</span>
