@@ -757,6 +757,22 @@
                     data: form
                 })
             });
+
+            $('.send_qr').on('click', function (e) {
+                e.preventDefault();
+
+                let order_id = $(this).attr('data-order');
+                let phone = $(this).attr('data-phone');
+
+                $.ajax({
+                    method: 'POST',
+                    data:{
+                        action: 'send_qr',
+                        order_id: order_id,
+                        phone: phone
+                    }
+                })
+            })
         });
     </script>
     <script>
@@ -1294,6 +1310,11 @@
                                                                 {$contract->loan_percents_summ} руб
                                                             {/if}
                                                         </h6>
+                                                    </div>
+                                                </div>
+                                                <div class="pt-1 pb-2">
+                                                    <div data-order="{$order->order_id}" data-phone="{$order->phone_mobile}" class="btn btn-info btn-lg btn-block send_qr">
+                                                        Отправить ссылку на оплату
                                                     </div>
                                                 </div>
                                             {/if}

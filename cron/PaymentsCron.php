@@ -11,33 +11,10 @@ class PaymentsCron extends Core
 
     public function make_payment_list()
     {
-        $order_id = $this->request->post('order_id');
-        $order = $this->orders->get_order($order_id);
-        $date = date('d.m.Y');
-        $time = date('H:i:s');
-        $order_created = date('d.m.Y', strtotime($order->date));
-        $token = "25c845f063f9f3161487619f630663b2d1e4dcd7";
-        $url = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/bank';
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/json',
-            'Accept: application/json',
-            'Authorization: Token ' . $token
-        ));
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['query' => $order->bik_bank]));
-        $result = curl_exec($ch);
+        $date_from = date('Y-m-d 00:00:00', strtotime('+3 days'));
+        $date_to = date('Y-m-d 23:59:59', strtotime('+3 days'));
 
-        if (!empty($result)) {
-            $result = json_decode($result);
-            $payment_city = $result->suggestions[0]->data->payment_city;
-            $correspondent_account = $result->suggestions[0]->data->correspondent_account;
-        } else {
-            $payment_city = ' ';
-            $correspondent_account = ' ';
-        }
+        $contracts = $this->contracts->get_contracts(['return_date_from' => $date_from, 'return_date_to' => $date_to]);
 
         $content = '1CClientBankExchange
 ВерсияФормата=1.03

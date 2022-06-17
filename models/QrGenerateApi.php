@@ -23,10 +23,9 @@ class QrGenerateApi extends Core
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $qr_code = curl_exec($ch);
+        $response = curl_exec($ch);
         curl_close($ch);
 
-        echo '<pre>';
-        var_dump(json_decode($qr_code));
+        return json_decode($response);
     }
 }

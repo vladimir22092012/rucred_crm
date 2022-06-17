@@ -218,6 +218,10 @@ class OfflineOrderController extends Controller
                     return $this->action_create_pay_rdr();
                     break;
 
+                case 'send_qr':
+                    return $this->action_send_qr();
+                    break;
+
 
             endswitch;
 
@@ -515,7 +519,7 @@ class OfflineOrderController extends Controller
                     '04.03.02' => 'INDIVIDUALNIE_USLOVIA',
                 ];
 
-            if($settlement->id == 2)
+            if ($settlement->id == 2)
                 $doc_types['04.05.1'] = 'SOGLASIE_MINB';
             else
                 $doc_types['04.05.2'] = 'SOGLASIE_RDB';
@@ -775,18 +779,17 @@ class OfflineOrderController extends Controller
         if (empty($users_docs))
             return array('error' => 'Не сформированы документы!');
 
-        if(!empty($order->sms))
-        {
+        if (!empty($order->sms)) {
             $count_scans_without_asp = 0;
 
-            foreach ($scans as $scan){
-                foreach ($users_docs as $doc){
-                    if($doc->template == $scan->type && in_array($scan->type, ['soglasie_rukred_rabotadatel.tpl', 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl']))
+            foreach ($scans as $scan) {
+                foreach ($users_docs as $doc) {
+                    if ($doc->template == $scan->type && in_array($scan->type, ['soglasie_rukred_rabotadatel.tpl', 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl']))
                         $count_scans_without_asp++;
                 }
             }
 
-            if($count_scans_without_asp < 2)
+            if ($count_scans_without_asp < 2)
                 return array('error' => 'Проверьте сканы для форм 03.03 и 04.09');
         }
 
@@ -831,13 +834,12 @@ class OfflineOrderController extends Controller
     private function delivery_order_action()
     {
         $order_id = (int)$this->request->post('order_id', 'integer');
-        
+
         $order = $this->orders->get_order($order_id);
-        
+
         $resp = $this->best2pay->issuance($order_id);
-        
-        if (!empty($resp['success']))
-        {
+
+        if (!empty($resp['success'])) {
             $contract_id = $this->contracts->add_contract([
                 'order_id' => $order->order_id,
                 'user_id' => $order->user_id,
@@ -852,9 +854,9 @@ class OfflineOrderController extends Controller
                 'loan_peni_summ' => 0,
                 'issuance_date' => date('Y-m-d H:i:s'),
             ]);
-            
-            $this->orders->update_order($order->order_id, ['contract_id'=>$contract_id]);
-            
+
+            $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
+
             $this->operations->add_operation([
                 'user_id' => $order->user_id,
                 'contract_id' => $contract_id,
@@ -866,8 +868,7 @@ class OfflineOrderController extends Controller
                 'loan_percents_summ' => 0,
                 'loan_peni_summ' => 0,
             ]);
-            
-            
+
 
             $ticket = [
                 'creator' => $this->manager->id,
@@ -895,9 +896,7 @@ class OfflineOrderController extends Controller
             $this->TicketMessages->add_message($message);
 
             return ['success' => 1];
-        }
-        else
-        {
+        } else {
             return $resp;
         }
 
@@ -3502,6 +3501,35 @@ class OfflineOrderController extends Controller
 
         echo '<pre>';
         print_r($this->Soap1c->send_payment($payment));
+        exit;
+    }
+
+    private function action_send_qr()
+    {
+        $order_id = $this->request->post('order_id');
+        $phone = $this->request->post('phone');
+        $order = $this->orders->get_order($order_id);
+
+        $payment_schedule = json_decode($order->payment_schedule);
+        $next_payment = array();
+        $date = date('Y-m-d');
+
+        foreach ($payment_schedule as $payday => $payment) {
+            if ($payday != 'result') {
+                $payday = date('Y-m-d', strtotime($payday));
+                if ($payday > $date) {
+                    $next_payment = $payment;
+                    break;
+                }
+            }
+        }
+
+        $sum = $next_payment->pay_sum * 100;
+        $resp = $this->QrGenerateApi->get_qr($sum, 600);
+
+        $message = "Оплата доступна по ссылке: $resp->results->qr_link";
+
+        $this->sms->send($phone, $message);
         exit;
     }
 

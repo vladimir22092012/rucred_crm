@@ -274,6 +274,7 @@ class Contracts extends Core
         $sent_status_filter = '';
         $collection_status_filter = '';
         $collection_manager_id_filter = '';
+        $return_date_filter = '';
         $inssuance_date_from_filter = '';
         $inssuance_date_to_filter = '';
         $inssuance_datetime_to_filter = '';
@@ -303,6 +304,9 @@ class Contracts extends Core
         if (!empty($filter['user_id'])) {
             $user_id_filter = $this->db->placehold("AND c.user_id = ?", (int)$filter['user_id']);
         }
+
+        if(!empty($filter['return_date_from']))
+            $return_date_filter = $this->db->placehold("AND c.return_date between ? and ?", $filter['return_date_from'], $filter['return_date_to']);
         
         if (!empty($filter['status'])) {
             $status_filter = $this->db->placehold("AND c.status IN (?@)", array_map('intval', (array)$filter['status']));
@@ -545,6 +549,7 @@ class Contracts extends Core
                 $premier_filter
                 $keyword_filter
                 $search_filter
+                $return_date_filter
             GROUP BY c.id
             ORDER BY $sort_workout $sort 
             $sql_limit
