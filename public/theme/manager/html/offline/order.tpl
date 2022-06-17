@@ -2249,7 +2249,7 @@
                                                                 <a target="_blank"
                                                                    style="text-decoration: none!important;"
                                                                    href="javascript:void(0);"
-                                                                   onclick="window.open('{$config->back_url}/files/users/{$document->scan->name}');">
+                                                                   onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}');">
                                                                     <input type="button"
                                                                            class="btn btn-outline-info {$scan->type}"
                                                                            value="Скан">
@@ -2716,7 +2716,7 @@
                                                     <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
                                                         <a class="image-popup-fit-width js-event-add-click"
                                                            href="javascript:void(0);"
-                                                           onclick="window.open('{$config->back_url}/files/users/{$file->name}');"
+                                                           onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$file->name}');"
                                                            data-event="50" data-manager="{$manager->id}"
                                                            data-order="{$order->order_id}"
                                                            data-user="{$order->user_id}">

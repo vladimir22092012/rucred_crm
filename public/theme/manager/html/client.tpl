@@ -1119,7 +1119,7 @@
                                                     {/if}
                                                     <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
                                                         <a class="image-popup-fit-width" href="javascript:void(0)"
-                                                           onclick="window.open('{$config->back_url}/files/users/{$file->name}')">
+                                                           onclick="window.open('{$config->back_url}/files/users/{$client->id}/{$file->name}')">
                                                             <div class="ribbon ribbon-corner {$ribbon_class}"><i
                                                                         class="{$ribbon_icon}"></i></div>
                                                             <img src="{$config->back_url}/files/users/{$file->name}"
