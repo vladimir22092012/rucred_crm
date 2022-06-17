@@ -3526,8 +3526,9 @@ class OfflineOrderController extends Controller
 
         $sum = $next_payment->pay_sum * 100;
         $resp = $this->QrGenerateApi->get_qr($sum, 600);
+        $pay_sum = $resp->results->qr_link;
 
-        $message = "Оплата доступна по ссылке: $resp->results->qr_link";
+        $message = "Оплата доступна по ссылке: $pay_sum";
 
         $this->sms->send($phone, $message);
         exit;
