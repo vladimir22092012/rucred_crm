@@ -1,4 +1,11 @@
 <?php
+error_reporting(-1);
+ini_set('display_errors', 'On');
+
+
+chdir(dirname(__FILE__).'/../');
+
+require __DIR__ . '/../vendor/autoload.php';
 
 class Percents extends Core
 {
@@ -40,3 +47,5 @@ class Percents extends Core
         }
     }
 }
+
+new Percents();
