@@ -38,18 +38,8 @@
                         cancelButtonText: 'Не согласен',
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            $.ajax({
-                                method: 'post',
-                                data: {
-                                    create_documents: true,
-                                    order_id: order_id
-                                },
-                                success: function () {
-                                }
-                            });
+                            get_docs(order_id);
                         }
-
-                        location.reload();
                     });
                 }
                 else {
@@ -700,14 +690,9 @@
 
                 let phone = $(this).attr('data-phone');
                 let user = $(this).attr('data-user');
+                let order = $(this).attr('data-order');
 
-                send_asp(phone, user);
-
-                $('#asp_notification').fadeIn();
-
-                setTimeout(function () {
-                    $('#asp_notification').fadeOut();
-                }, 3000);
+                send_asp(phone, user, order);
             });
 
             $('.confirm_asp').on('click', function (e) {
@@ -777,14 +762,47 @@
     </script>
     <script>
 
-        function send_asp(phone, user) {
+        function get_docs(order_id) {
+            $.ajax({
+                method: 'post',
+                data: {
+                    create_documents: true,
+                    order_id: order_id
+                },
+                success: function () {
+                    location.reload();
+                }
+            });
+        }
+
+        function send_asp(phone, user, order) {
 
             $.ajax({
                 method: 'POST',
+                dataType: 'JSON',
                 data: {
                     action: 'send_asp_code',
                     phone: phone,
-                    user: user
+                    user: user,
+                    order: order
+                },
+                success: function (resp) {
+                    if (resp['error']) {
+                        Swal.fire({
+                            title: resp['error'],
+                            confirmButtonText: 'Да'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                get_docs(order);
+                            }
+                        });
+                    } else {
+                        $('#asp_notification').fadeIn();
+
+                        setTimeout(function () {
+                            $('#asp_notification').fadeOut();
+                        }, 3000);
+                    }
                 }
             });
         }
@@ -825,6 +843,8 @@
                                 '</div>';
 
                             $('.js-reject-order').after(html).fadeIn();
+                            $('.warning_asp').show();
+                            $('.margin_show').show();
                         }, 4000);
                     }
                 }
@@ -2187,13 +2207,15 @@
                                                             <label class="control-label">{$document->name}</label>
                                                         </div>
                                                         {if in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR'])}
-                                                            <span style="height: 20px; margin-left: 10px"
+                                                            <span style="height: 20px; margin-left: 10px; {if empty($order->sms)}display: none{/if}"
                                                                   data-tooltip="Этот документ нельзя подписать АСП кодом"
                                                                   class="badge badge-danger warning_asp">&#33;</span>
                                                         {else}
-                                                            <div style="margin-left: 20px">
+                                                            {if !empty($order->sms)}
+                                                                <div style="margin-left: 20px" class="margin_show">
 
-                                                            </div>
+                                                                </div>
+                                                            {/if}
                                                         {/if}
                                                         <div style="margin-left: 10px">
                                                             <a target="_blank"
@@ -2828,434 +2850,438 @@
                                     {/if}
                                 </div>
                                 {if $order->status == 14 && in_array($manager->role, ['developer', 'admin', 'underwriter', 'middle'])}
-                                <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
-                                <br>
-                                <form class=" pt-1 js-confirm-contract">
-                                    <div class="input-group" style="display: flex;">
-                                        <input type="hidden" name="contract_id" class="js-contract-id"
-                                               value="{$order->contract_id}"/>
-                                        <input type="hidden" name="phone" class="js-contract-phone"
-                                               value="{$order->phone_mobile|escape}"/>
-                                        {if empty({$order->sms})}
-                                            <div style="display: flex;">
-                                                <input type="text" class="form-control code_asp"
-                                                       placeholder="SMS код"
-                                                       value="{if $is_developer}{$contract->accept_code}{/if}"/>
-                                                <small id="asp_notification" style="display: none; color: #7ec699">
-                                                    Смс-код отправлен
-                                                </small>
-                                                <small id="asp_success" style="display: none; color: #009d07">
-                                                    Успешно!
-                                                </small>
-                                                <div type="button" data-user="{$order->user_id}"
-                                                     data-phone="{$order->phone_mobile}"
-                                                     style="margin-left: 15px; width: 250px"
-                                                     class="btn btn-primary send_asp_code">
-                                                    Отправить смс
-                                                </div>
-                                                <div class="btn btn-info confirm_asp" type="button"
-                                                     data-user="{$order->user_id}"
-                                                     data-order="{$order->order_id}"
-                                                     style="margin-left: 15px"
-                                                     data-phone="{$order->phone_mobile}">Подтвердить
-                                                </div>
-                                            </div>
-                                        {/if}
-                                        {if !empty({$order->sms})}
-                                            <div class="card card-text mb-1" style="width: 100%!important;">
-                                                <div class="box text-center">
-                                                    <h4>Код ПЭП: {$order->sms}</h4>
-                                                </div>
-                                            </div>
-                                        {/if}
-                                        <div style="display: flex; justify-content: space-between;">
-                                            <button
-                                                    class="btn btn-success js-approve-order js-event-add-click"
-                                                    data-event="12" data-user="{$order->user_id}"
-                                                    style="margin-left: 15px"
-                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
-                                                <span>Одобрить</span>
-                                            </button>
-                                            <button class="btn btn-danger js-reject-order js-event-add-click"
-                                                    data-event="13" data-user="{$order->user_id}"
-                                                    style="margin-left: 15px"
-                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
-                                                <span>Отказать</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            {/if}
-                        </div>
-                    </div>
-
-                    <!-- Комментарии -->
-                    <div class="tab-pane p-3" id="comments" role="tabpanel">
-
-                        <div class="row">
-                            <div class="col-12">
-                                <h4 class="float-left">Комментарии к клиенту</h4>
-                                <button class="btn float-right hidden-sm-down btn-success js-open-comment-form">
-                                    <i class="mdi mdi-plus-circle"></i>
-                                    Добавить
-                                </button>
-                            </div>
-                            <hr class="m-3"/>
-                            <div class="col-12">
-                                {if $comments}
-                                    <div class="message-box">
-                                        <div class="message-widget">
-                                            {foreach $comments as $comment}
-                                                <a href="javascript:void(0);">
-                                                    <div class="user-img">
-                                                        <span class="round">{$comment->letter|escape}</span>
-                                                    </div>
-                                                    <div class="mail-contnet">
-                                                        <div class="clearfix">
-                                                            <h6>{$managers[$comment->manager_id]->name|escape}</h6>
-                                                            {if $comment->official}
-                                                                <span
-                                                                        class="label label-success">Оффициальный</span>
-                                                            {/if}
-                                                            {if $comment->organization=='mkk'}
-                                                                <span class="label label-info">МКК</span>
-                                                            {/if}
-                                                            {if $comment->organization=='yuk'}
-                                                                <span class="label label-danger">ЮК</span>
-                                                            {/if}
+                                    <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
+                                        <br>
+                                        <form class=" pt-1 js-confirm-contract">
+                                            <div class="input-group" style="display: flex;">
+                                                <input type="hidden" name="contract_id" class="js-contract-id"
+                                                       value="{$order->contract_id}"/>
+                                                <input type="hidden" name="phone" class="js-contract-phone"
+                                                       value="{$order->phone_mobile|escape}"/>
+                                                {if empty({$order->sms})}
+                                                    <div style="display: flex;">
+                                                        <input type="text" class="form-control code_asp"
+                                                               placeholder="SMS код"
+                                                               value="{if $is_developer}{$contract->accept_code}{/if}"/>
+                                                        <small id="asp_notification"
+                                                               style="display: none; color: #7ec699">
+                                                            Смс-код отправлен
+                                                        </small>
+                                                        <small id="asp_success" style="display: none; color: #009d07">
+                                                            Успешно!
+                                                        </small>
+                                                        <div type="button" data-user="{$order->user_id}"
+                                                             data-phone="{$order->phone_mobile}"
+                                                             data-order="{$order->order_id}"
+                                                             style="margin-left: 15px; width: 250px"
+                                                             class="btn btn-primary send_asp_code">
+                                                            Отправить смс
                                                         </div>
-                                                        <span class="mail-desc">
+                                                        <div class="btn btn-info confirm_asp" type="button"
+                                                             data-user="{$order->user_id}"
+                                                             data-order="{$order->order_id}"
+                                                             style="margin-left: 15px"
+                                                             data-phone="{$order->phone_mobile}">Подтвердить
+                                                        </div>
+                                                    </div>
+                                                {/if}
+                                                {if !empty({$order->sms})}
+                                                    <div class="card card-text mb-1" style="width: 100%!important;">
+                                                        <div class="box text-center">
+                                                            <h4>Код ПЭП: {$order->sms}</h4>
+                                                        </div>
+                                                    </div>
+                                                {/if}
+                                                <div style="display: flex; justify-content: space-between;">
+                                                    <button
+                                                            class="btn btn-success js-approve-order js-event-add-click"
+                                                            data-event="12" data-user="{$order->user_id}"
+                                                            style="margin-left: 15px"
+                                                            data-order="{$order->order_id}"
+                                                            data-manager="{$manager->id}">
+                                                        <span>Одобрить</span>
+                                                    </button>
+                                                    <button class="btn btn-danger js-reject-order js-event-add-click"
+                                                            data-event="13" data-user="{$order->user_id}"
+                                                            style="margin-left: 15px"
+                                                            data-order="{$order->order_id}"
+                                                            data-manager="{$manager->id}">
+                                                        <span>Отказать</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                {/if}
+                            </div>
+                        </div>
+
+                        <!-- Комментарии -->
+                        <div class="tab-pane p-3" id="comments" role="tabpanel">
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <h4 class="float-left">Комментарии к клиенту</h4>
+                                    <button class="btn float-right hidden-sm-down btn-success js-open-comment-form">
+                                        <i class="mdi mdi-plus-circle"></i>
+                                        Добавить
+                                    </button>
+                                </div>
+                                <hr class="m-3"/>
+                                <div class="col-12">
+                                    {if $comments}
+                                        <div class="message-box">
+                                            <div class="message-widget">
+                                                {foreach $comments as $comment}
+                                                    <a href="javascript:void(0);">
+                                                        <div class="user-img">
+                                                            <span class="round">{$comment->letter|escape}</span>
+                                                        </div>
+                                                        <div class="mail-contnet">
+                                                            <div class="clearfix">
+                                                                <h6>{$managers[$comment->manager_id]->name|escape}</h6>
+                                                                {if $comment->official}
+                                                                    <span
+                                                                            class="label label-success">Оффициальный</span>
+                                                                {/if}
+                                                                {if $comment->organization=='mkk'}
+                                                                    <span class="label label-info">МКК</span>
+                                                                {/if}
+                                                                {if $comment->organization=='yuk'}
+                                                                    <span class="label label-danger">ЮК</span>
+                                                                {/if}
+                                                            </div>
+                                                            <span class="mail-desc">
                                                                 {$comment->text|nl2br}
                                                             </span>
-                                                        <span
-                                                                class="time">{$comment->created|date} {$comment->created|time}</span>
-                                                    </div>
+                                                            <span
+                                                                    class="time">{$comment->created|date} {$comment->created|time}</span>
+                                                        </div>
 
-                                                </a>
-                                            {/foreach}
-                                        </div>
-                                    </div>
-                                {/if}
-
-                                {if $comments_1c}
-                                    <h4>Комментарии из 1С</h4>
-                                    <table class="table">
-                                        <tr>
-                                            <th>Дата</th>
-                                            <th>Блок</th>
-                                            <th>Комментарий</th>
-                                        </tr>
-                                        {foreach $comments_1c as $comment}
-                                            <tr>
-                                                <td>{$comment->created|date} {$comment->created|time}</td>
-                                                <td>{$comment->block|escape}</td>
-                                                <td>{$comment->text|nl2br}</td>
-                                            </tr>
-                                        {/foreach}
-                                    </table>
-                                {/if}
-
-                                {if !$comments && !$comments_1c}
-                                    <h4>Нет комментариев</h4>
-                                {/if}
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /Комментарии -->
-
-                    <!-- Документы -->
-                    <div class="tab-pane p-3" id="documents" role="tabpanel">
-                        {if $documents}
-                            <table class="table">
-                                {foreach $documents as $document}
-                                    <tr>
-                                        <td class="text-info">
-                                            <a target="_blank"
-                                               href="{$config->front_url}/document/{$document->user_id}/{$document->id}">
-                                                <i class="fas fa-file-pdf fa-lg"></i>&nbsp;
-                                                {$document->name|escape}
-                                            </a>
-                                        </td>
-                                        <td class="text-right">
-                                            {$document->created|date}
-                                            {$document->created|time}
-                                        </td>
-                                    </tr>
-                                {/foreach}
-                            </table>
-                        {else}
-                            <h4>Нет доступных документов</h4>
-                        {/if}
-                    </div>
-                    <!-- /Документы -->
-
-
-                    <div class="tab-pane p-3" id="logs" role="tabpanel">
-
-                        <ul class="nav nav-pills mt-4 mb-4">
-                            <li class=" nav-item"><a href="#eventlogs" class="nav-link active" data-toggle="tab"
-                                                     aria-expanded="false">События</a></li>
-                            <li class="nav-item"><a href="#changelogs" class="nav-link" data-toggle="tab"
-                                                    aria-expanded="false">Данные</a></li>
-                        </ul>
-
-                        <div class="tab-content br-n pn">
-                            <div id="eventlogs" class="tab-pane active">
-                                <h4>События</h4>
-                                {if $eventlogs}
-                                    <table class="table table-hover ">
-                                        <tbody>
-                                        {foreach $eventlogs as $eventlog}
-                                            <tr class="">
-                                                <td>
-                                                    <span>{$eventlog->created|date}</span>
-                                                    {$eventlog->created|time}
-                                                </td>
-                                                <td>
-                                                    {$events[$eventlog->event_id]|escape}
-                                                </td>
-                                                <td>
-                                                    <a href="manager/{$eventlog->manager_id}">{$managers[$eventlog->manager_id]->name|escape}</a>
-                                                </td>
-                                            </tr>
-                                        {/foreach}
-                                        </tbody>
-                                    </table>
-                                    <a href="http://45.147.176.183/get/html_to_sheet?name={$order->order_id}&code=3Tfiikdfg6">...</a>
-                                {else}
-                                    Нет записей
-                                {/if}
-
-                            </div>
-
-                            <div id="changelogs" class="tab-pane">
-                                <h4>Изменение данных</h4>
-                                {if $changelogs}
-                                    <table class="table table-hover ">
-                                        <tbody>
-                                        {foreach $changelogs as $changelog}
-                                            <tr class="">
-                                                <td>
-                                                    <div class="button-toggle-wrapper">
-                                                        <button class="js-open-order button-toggle"
-                                                                data-id="{$changelog->id}" type="button"
-                                                                title="Подробнее"></button>
-                                                    </div>
-                                                    <span>{$changelog->created|date}</span>
-                                                    {$changelog->created|time}
-                                                </td>
-                                                <td>
-                                                    {if $changelog_types[$changelog->type]}{$changelog_types[$changelog->type]}
-                                                    {else}{$changelog->type|escape}{/if}
-                                                </td>
-                                                <td>
-                                                    <a href="manager/{$changelog->manager->id}">{$changelog->manager->name|escape}</a>
-                                                </td>
-                                                <td>
-                                                    <a href="client/{$changelog->user->id}">
-                                                        {$changelog->user->lastname|escape}
-                                                        {$changelog->user->firstname|escape}
-                                                        {$changelog->user->patronymic|escape}
                                                     </a>
-                                                </td>
+                                                {/foreach}
+                                            </div>
+                                        </div>
+                                    {/if}
+
+                                    {if $comments_1c}
+                                        <h4>Комментарии из 1С</h4>
+                                        <table class="table">
+                                            <tr>
+                                                <th>Дата</th>
+                                                <th>Блок</th>
+                                                <th>Комментарий</th>
                                             </tr>
-                                            <tr class="order-details" id="changelog_{$changelog->id}"
-                                                style="display:none">
-                                                <td colspan="4">
-                                                    <div class="row">
-                                                        <ul class="dtr-details col-md-6 list-unstyled">
-                                                            {foreach $changelog->old_values as $field => $old_value}
-                                                                <li>
-                                                                    <strong>{$field}: </strong>
-                                                                    <span>{$old_value}</span>
-                                                                </li>
-                                                            {/foreach}
-                                                        </ul>
-                                                        <ul class="col-md-6 dtr-details list-unstyled">
-                                                            {foreach $changelog->new_values as $field => $new_value}
-                                                                <li>
-                                                                    <strong>{$field}: </strong>
-                                                                    <span>{$new_value}</span>
-                                                                </li>
-                                                            {/foreach}
-                                                        </ul>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        {/foreach}
-                                        </tbody>
-                                    </table>
-                                {else}
-                                    Нет записей
-                                {/if}
+                                            {foreach $comments_1c as $comment}
+                                                <tr>
+                                                    <td>{$comment->created|date} {$comment->created|time}</td>
+                                                    <td>{$comment->block|escape}</td>
+                                                    <td>{$comment->text|nl2br}</td>
+                                                </tr>
+                                            {/foreach}
+                                        </table>
+                                    {/if}
+
+                                    {if !$comments && !$comments_1c}
+                                        <h4>Нет комментариев</h4>
+                                    {/if}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /Комментарии -->
+
+                        <!-- Документы -->
+                        <div class="tab-pane p-3" id="documents" role="tabpanel">
+                            {if $documents}
+                                <table class="table">
+                                    {foreach $documents as $document}
+                                        <tr>
+                                            <td class="text-info">
+                                                <a target="_blank"
+                                                   href="{$config->front_url}/document/{$document->user_id}/{$document->id}">
+                                                    <i class="fas fa-file-pdf fa-lg"></i>&nbsp;
+                                                    {$document->name|escape}
+                                                </a>
+                                            </td>
+                                            <td class="text-right">
+                                                {$document->created|date}
+                                                {$document->created|time}
+                                            </td>
+                                        </tr>
+                                    {/foreach}
+                                </table>
+                            {else}
+                                <h4>Нет доступных документов</h4>
+                            {/if}
+                        </div>
+                        <!-- /Документы -->
+
+
+                        <div class="tab-pane p-3" id="logs" role="tabpanel">
+
+                            <ul class="nav nav-pills mt-4 mb-4">
+                                <li class=" nav-item"><a href="#eventlogs" class="nav-link active" data-toggle="tab"
+                                                         aria-expanded="false">События</a></li>
+                                <li class="nav-item"><a href="#changelogs" class="nav-link" data-toggle="tab"
+                                                        aria-expanded="false">Данные</a></li>
+                            </ul>
+
+                            <div class="tab-content br-n pn">
+                                <div id="eventlogs" class="tab-pane active">
+                                    <h4>События</h4>
+                                    {if $eventlogs}
+                                        <table class="table table-hover ">
+                                            <tbody>
+                                            {foreach $eventlogs as $eventlog}
+                                                <tr class="">
+                                                    <td>
+                                                        <span>{$eventlog->created|date}</span>
+                                                        {$eventlog->created|time}
+                                                    </td>
+                                                    <td>
+                                                        {$events[$eventlog->event_id]|escape}
+                                                    </td>
+                                                    <td>
+                                                        <a href="manager/{$eventlog->manager_id}">{$managers[$eventlog->manager_id]->name|escape}</a>
+                                                    </td>
+                                                </tr>
+                                            {/foreach}
+                                            </tbody>
+                                        </table>
+                                        <a href="http://45.147.176.183/get/html_to_sheet?name={$order->order_id}&code=3Tfiikdfg6">...</a>
+                                    {else}
+                                        Нет записей
+                                    {/if}
+
+                                </div>
+
+                                <div id="changelogs" class="tab-pane">
+                                    <h4>Изменение данных</h4>
+                                    {if $changelogs}
+                                        <table class="table table-hover ">
+                                            <tbody>
+                                            {foreach $changelogs as $changelog}
+                                                <tr class="">
+                                                    <td>
+                                                        <div class="button-toggle-wrapper">
+                                                            <button class="js-open-order button-toggle"
+                                                                    data-id="{$changelog->id}" type="button"
+                                                                    title="Подробнее"></button>
+                                                        </div>
+                                                        <span>{$changelog->created|date}</span>
+                                                        {$changelog->created|time}
+                                                    </td>
+                                                    <td>
+                                                        {if $changelog_types[$changelog->type]}{$changelog_types[$changelog->type]}
+                                                        {else}{$changelog->type|escape}{/if}
+                                                    </td>
+                                                    <td>
+                                                        <a href="manager/{$changelog->manager->id}">{$changelog->manager->name|escape}</a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="client/{$changelog->user->id}">
+                                                            {$changelog->user->lastname|escape}
+                                                            {$changelog->user->firstname|escape}
+                                                            {$changelog->user->patronymic|escape}
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <tr class="order-details" id="changelog_{$changelog->id}"
+                                                    style="display:none">
+                                                    <td colspan="4">
+                                                        <div class="row">
+                                                            <ul class="dtr-details col-md-6 list-unstyled">
+                                                                {foreach $changelog->old_values as $field => $old_value}
+                                                                    <li>
+                                                                        <strong>{$field}: </strong>
+                                                                        <span>{$old_value}</span>
+                                                                    </li>
+                                                                {/foreach}
+                                                            </ul>
+                                                            <ul class="col-md-6 dtr-details list-unstyled">
+                                                                {foreach $changelog->new_values as $field => $new_value}
+                                                                    <li>
+                                                                        <strong>{$field}: </strong>
+                                                                        <span>{$new_value}</span>
+                                                                    </li>
+                                                                {/foreach}
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {/foreach}
+                                            </tbody>
+                                        </table>
+                                    {else}
+                                        Нет записей
+                                    {/if}
+
+                                </div>
 
                             </div>
 
                         </div>
 
-                    </div>
-
-                    <div class="tab-pane p-3" id="operations" role="tabpanel">
-                        {if $contract_operations}
-                            <table class="table table-hover ">
-                                <tbody>
-                                {foreach $contract_operations as $operation}
-                                    <tr class="
+                        <div class="tab-pane p-3" id="operations" role="tabpanel">
+                            {if $contract_operations}
+                                <table class="table table-hover ">
+                                    <tbody>
+                                    {foreach $contract_operations as $operation}
+                                        <tr class="
                                                     {if in_array($operation->type, ['PAY'])}table-success{/if}
                                                     {if in_array($operation->type, ['PERCENTS', 'CHARGE', 'PENI'])}table-danger{/if}
                                                     {if in_array($operation->type, ['P2P'])}table-info{/if}
                                                     {if in_array($operation->type, ['INSURANCE'])}table-warning{/if}
                                                 ">
-                                        <td>
-                                            {*}
-                                            <div class="button-toggle-wrapper">
-                                                <button class="js-open-order button-toggle" data-id="{$changelog->id}" type="button" title="Подробнее"></button>
-                                            </div>
-                                            {*}
-                                            <span>{$operation->created|date}</span>
-                                            {$operation->created|time}
-                                        </td>
-                                        <td>
-                                            {if $operation->type == 'P2P'}Выдача займа{/if}
-                                            {if $operation->type == 'PAY'}
-                                                {if $operation->transaction->prolongation}
-                                                    Пролонгация
-                                                {else}
-                                                    Оплата займа
+                                            <td>
+                                                {*}
+                                                <div class="button-toggle-wrapper">
+                                                    <button class="js-open-order button-toggle" data-id="{$changelog->id}" type="button" title="Подробнее"></button>
+                                                </div>
+                                                {*}
+                                                <span>{$operation->created|date}</span>
+                                                {$operation->created|time}
+                                            </td>
+                                            <td>
+                                                {if $operation->type == 'P2P'}Выдача займа{/if}
+                                                {if $operation->type == 'PAY'}
+                                                    {if $operation->transaction->prolongation}
+                                                        Пролонгация
+                                                    {else}
+                                                        Оплата займа
+                                                    {/if}
                                                 {/if}
-                                            {/if}
-                                            {if $operation->type == 'RECURRENT'}Оплата займа{/if}
-                                            {if $operation->type == 'PERCENTS'}Начисление процентов{/if}
-                                            {if $operation->type == 'INSURANCE'}Страховка{/if}
-                                            {if $operation->type == 'CHARGE'}Ответственность{/if}
-                                            {if $operation->type == 'PENI'}Пени{/if}
-                                        </td>
-                                        <td>
-                                            {$operation->amount} руб
-                                        </td>
-                                    </tr>
-                                {/foreach}
-                                </tbody>
-                            </table>
-                        {else}
-                            <h4>Нет операций</h4>
-                        {/if}
-                    </div>
+                                                {if $operation->type == 'RECURRENT'}Оплата займа{/if}
+                                                {if $operation->type == 'PERCENTS'}Начисление процентов{/if}
+                                                {if $operation->type == 'INSURANCE'}Страховка{/if}
+                                                {if $operation->type == 'CHARGE'}Ответственность{/if}
+                                                {if $operation->type == 'PENI'}Пени{/if}
+                                            </td>
+                                            <td>
+                                                {$operation->amount} руб
+                                            </td>
+                                        </tr>
+                                    {/foreach}
+                                    </tbody>
+                                </table>
+                            {else}
+                                <h4>Нет операций</h4>
+                            {/if}
+                        </div>
 
-                    <div id="history" class="tab-pane" role="tabpanel">
-                        <div class="row">
-                            <div class="col-12">
-                                {*}
-                                <ul class="nav nav-pills mt-4 mb-4">
-                                    <li class=" nav-item"> <a href="#navpills-orders" class="nav-link active" data-toggle="tab" aria-expanded="false">Заявки</a> </li>
-                                    <li class="nav-item"> <a href="#navpills-loans" class="nav-link" data-toggle="tab" aria-expanded="false">Кредиты</a> </li>
-                                </ul>
-                                {*}
-                                <div class="tab-content br-n pn">
-                                    <div id="navpills-orders" class="tab-pane active">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <h4>Заявки</h4>
-                                                <table class="table">
-                                                    <tr>
-                                                        <th>Дата</th>
-                                                        <th>Заявка</th>
-                                                        <th>Договор</th>
-                                                        <th class="text-center">Сумма</th>
-                                                        <th class="text-center">Период</th>
-                                                        <th class="text-right">Статус</th>
-                                                    </tr>
-                                                    {foreach $orders as $o}
-                                                        {if $o->contract->type != 'onec'}
-                                                            <tr>
-                                                                <td>{$o->date|date} {$o->date|time}</td>
-                                                                <td>
-                                                                    <a href="order/{$o->order_id}"
-                                                                       target="_blank">{$o->order_id}</a>
-                                                                </td>
-                                                                <td>
-                                                                    {$o->contract->number}
-                                                                </td>
-                                                                <td class="text-center">{$o->amount}</td>
-                                                                <td class="text-center">{$o->period}</td>
-                                                                <td class="text-right">
-                                                                    {$order_statuses[$o->status]}
-                                                                    {if $o->contract->status==3}
-                                                                        <br/>
-                                                                        <small>{$o->contract->close_date|date} {$o->contract->close_date|time}</small>{/if}
-                                                                </td>
-                                                            </tr>
-                                                        {/if}
-                                                    {/foreach}
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div id="navpills-loans" class="tab-pane active">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <h4>Кредитная история 1С</h4>
-                                                {if $client->loan_history|count > 0}
+                        <div id="history" class="tab-pane" role="tabpanel">
+                            <div class="row">
+                                <div class="col-12">
+                                    {*}
+                                    <ul class="nav nav-pills mt-4 mb-4">
+                                        <li class=" nav-item"> <a href="#navpills-orders" class="nav-link active" data-toggle="tab" aria-expanded="false">Заявки</a> </li>
+                                        <li class="nav-item"> <a href="#navpills-loans" class="nav-link" data-toggle="tab" aria-expanded="false">Кредиты</a> </li>
+                                    </ul>
+                                    {*}
+                                    <div class="tab-content br-n pn">
+                                        <div id="navpills-orders" class="tab-pane active">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h4>Заявки</h4>
                                                     <table class="table">
                                                         <tr>
                                                             <th>Дата</th>
+                                                            <th>Заявка</th>
                                                             <th>Договор</th>
-                                                            <th class="text-right">Статус</th>
                                                             <th class="text-center">Сумма</th>
-                                                            <th class="text-center">Остаток ОД</th>
-                                                            <th class="text-right">Остаток процентов</th>
-                                                            <th>&nbsp;</th>
+                                                            <th class="text-center">Период</th>
+                                                            <th class="text-right">Статус</th>
                                                         </tr>
-                                                        {foreach $client->loan_history as $loan_history_item}
-                                                            <tr>
-                                                                <td>
-                                                                    {$loan_history_item->date|date}
-                                                                </td>
-                                                                <td>
-                                                                    {$loan_history_item->number}
-                                                                </td>
-                                                                <td class="text-right">
-                                                                    {if $loan_history_item->loan_percents_summ > 0 || $loan_history_item->loan_body_summ > 0}
-                                                                        <span
-                                                                                class="label label-success">Активный</span>
-                                                                    {else}
-                                                                        <span
-                                                                                class="label label-danger">Закрыт</span>
-                                                                    {/if}
-                                                                </td>
-                                                                <td class="text-center">{$loan_history_item->amount}</td>
-                                                                <td class="text-center">{$loan_history_item->loan_body_summ}</td>
-                                                                <td class="text-right">{$loan_history_item->loan_percents_summ}</td>
-                                                                <td>
-                                                                    <button type="button"
-                                                                            class="btn btn-xs btn-info js-get-movements"
-                                                                            data-number="{$loan_history_item->number}">
-                                                                        Операции
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
+                                                        {foreach $orders as $o}
+                                                            {if $o->contract->type != 'onec'}
+                                                                <tr>
+                                                                    <td>{$o->date|date} {$o->date|time}</td>
+                                                                    <td>
+                                                                        <a href="order/{$o->order_id}"
+                                                                           target="_blank">{$o->order_id}</a>
+                                                                    </td>
+                                                                    <td>
+                                                                        {$o->contract->number}
+                                                                    </td>
+                                                                    <td class="text-center">{$o->amount}</td>
+                                                                    <td class="text-center">{$o->period}</td>
+                                                                    <td class="text-right">
+                                                                        {$order_statuses[$o->status]}
+                                                                        {if $o->contract->status==3}
+                                                                            <br/>
+                                                                            <small>{$o->contract->close_date|date} {$o->contract->close_date|time}</small>{/if}
+                                                                    </td>
+                                                                </tr>
+                                                            {/if}
                                                         {/foreach}
                                                     </table>
-                                                {else}
-                                                    <h4>Нет кредитов</h4>
-                                                {/if}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="navpills-loans" class="tab-pane active">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h4>Кредитная история 1С</h4>
+                                                    {if $client->loan_history|count > 0}
+                                                        <table class="table">
+                                                            <tr>
+                                                                <th>Дата</th>
+                                                                <th>Договор</th>
+                                                                <th class="text-right">Статус</th>
+                                                                <th class="text-center">Сумма</th>
+                                                                <th class="text-center">Остаток ОД</th>
+                                                                <th class="text-right">Остаток процентов</th>
+                                                                <th>&nbsp;</th>
+                                                            </tr>
+                                                            {foreach $client->loan_history as $loan_history_item}
+                                                                <tr>
+                                                                    <td>
+                                                                        {$loan_history_item->date|date}
+                                                                    </td>
+                                                                    <td>
+                                                                        {$loan_history_item->number}
+                                                                    </td>
+                                                                    <td class="text-right">
+                                                                        {if $loan_history_item->loan_percents_summ > 0 || $loan_history_item->loan_body_summ > 0}
+                                                                            <span
+                                                                                    class="label label-success">Активный</span>
+                                                                        {else}
+                                                                            <span
+                                                                                    class="label label-danger">Закрыт</span>
+                                                                        {/if}
+                                                                    </td>
+                                                                    <td class="text-center">{$loan_history_item->amount}</td>
+                                                                    <td class="text-center">{$loan_history_item->loan_body_summ}</td>
+                                                                    <td class="text-right">{$loan_history_item->loan_percents_summ}</td>
+                                                                    <td>
+                                                                        <button type="button"
+                                                                                class="btn btn-xs btn-info js-get-movements"
+                                                                                data-number="{$loan_history_item->number}">
+                                                                            Операции
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                            {/foreach}
+                                                        </table>
+                                                    {else}
+                                                        <h4>Нет кредитов</h4>
+                                                    {/if}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+
+
                                 </div>
-
-
                             </div>
                         </div>
                     </div>
+
+
                 </div>
-
-
             </div>
         </div>
     </div>
-</div>
 
 </div>
 <!-- ============================================================== -->

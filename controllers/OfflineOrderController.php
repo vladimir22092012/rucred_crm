@@ -774,7 +774,7 @@ class OfflineOrderController extends Controller
         $this->db->query($query);
         $scans = $this->db->results();
 
-        $users_docs = $this->Documents->get_documents(['user_id' => $order->user_id]);
+        $users_docs = $this->Documents->get_documents(['order_id' => $order_id]);
 
         if (empty($users_docs))
             return array('error' => 'Не сформированы документы!');
@@ -3413,6 +3413,14 @@ class OfflineOrderController extends Controller
 
         $phone = $this->request->post('phone');
         $user_id = $this->request->post('user');
+        $order_id = $this->request->post('order');
+
+        $docs = $this->Documents->get_documents(['order_id' => $order_id]);
+
+        if(empty($docs)){
+            echo json_encode(['error' => 'Документы не сформированы, сформировать?']);
+            exit;
+        }
 
         $code = random_int(1000, 9999);
         $message = "Ваш код для подписания документов: $code. Сообщите код андеррайтеру РуКреда";
