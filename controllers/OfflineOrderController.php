@@ -3431,6 +3431,7 @@ class OfflineOrderController extends Controller
             $order->probably_return_date = $end_date;
             $order->payment_schedule = json_encode($new_shedule);
             $order->psk = $psk;
+            $order->restruct_date = date('Y-m-d');
 
             $this->documents->create_document(array(
                 'user_id' => $order->user_id,
@@ -3438,6 +3439,14 @@ class OfflineOrderController extends Controller
                 'type' => 'DOP_SOGLASHENIE',
                 'params' => $order,
                 'numeration' => '04.03.3'
+            ));
+
+            $this->documents->create_document(array(
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'type' => 'DOP_GRAFIK',
+                'params' => $order,
+                'numeration' => '04.04.1'
             ));
 
             $this->orders->update_order($order_id, $update_order);
