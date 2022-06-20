@@ -35,7 +35,7 @@
                 let ticket_id = $(this).attr('data-ticket');
                 let action = 'return_ticket';
 
-                if($(this).hasClass('close_ticket'))
+                if ($(this).hasClass('close_ticket'))
                     action = 'close_ticket';
 
 
@@ -163,6 +163,28 @@
                                                         Дата тикета: {$ticket->created|date} {$ticket->created|time}
                                                     </span>
                                                 </h6>
+                                                {if !empty($ticket->order_id)}
+                                                    <br>
+                                                    <div class="row pt-2 view-block" style="margin-left: 20px">
+                                                        <div class="col-md-12">
+                                                            <div class="btn btn-info">
+                                                                <a target="_blank"
+                                                                   style="text-decoration: none; color: #f8fff7;"
+                                                                   href="/offline_order/{$ticket->order_id}">Просмотреть
+                                                                    заявку</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <br>
+                                                    <div class="row pt-2 view-block" style="margin-left: 20px">
+                                                        <div class="col-md-12">
+                                                            Проверить сотрудника на принадлежность компании и подтвердить
+                                                        </div>
+                                                        <div class="col-md-12" style="margin-top: 30px">
+
+                                                        </div>
+                                                    </div>
+                                                {/if}
                                                 {foreach $messages as $message}
                                                     <div class="row pt-2 view-block">
                                                         <div class="col-md-12">
@@ -170,7 +192,8 @@
                                                                 <label class="control-label col-md-1">Дата:</label>
                                                                 <label class="control-label col-md-4">{$message->created|date} {$message->created|time}</label>
                                                             </div>
-                                                        </div><br><br>
+                                                        </div>
+                                                        <br><br>
                                                         <div class="col-md-12">
                                                             <div class="form-group row m-0">
                                                                 <label class="control-label col-md-1">Автор:</label>
@@ -190,7 +213,8 @@
                                                                 <label class="control-label col-md-2">Приложенные
                                                                     документы:</label>
                                                                 {foreach $message->docs as $dock}
-                                                                    <i class="fas fa-file-pdf fa-lg" style="margin-left: 25px"></i>
+                                                                    <i class="fas fa-file-pdf fa-lg"
+                                                                       style="margin-left: 25px"></i>
                                                                 <a href="{$config->back_url}/files/users/{$dock->file_name}">
                                                                     {$dock->file_name|escape}
                                                                     </a>{$dock->size}

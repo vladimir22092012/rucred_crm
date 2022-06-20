@@ -1474,13 +1474,15 @@
                                     {if in_array($order->status, [0,1])}
                                         {if in_array($manager->role, ['developer', 'admin', 'middle', 'employer'])}
                                             <div>
-                                                <button class="btn btn-success btn-block accept-order"
+                                                <button class="btn btn-success btn-block accept-order warning_asp"
+                                                        data-tooltip="Подтвердите нахождение сотрудника в данной организации"
                                                         data-order="{$order->order_id}" data-manager="{$manager->id}">
                                                     <i class="fas fa-check-circle"></i>
                                                     <span>Подтвердить</span>
                                                 </button>
-                                                <button class="btn btn-danger btn-block reject-order"
+                                                <button class="btn btn-danger btn-block reject-order warning_asp"
                                                         data-user="{$order->user_id}"
+                                                        data-tooltip="Подтвердите нахождение сотрудника в данной организации"
                                                         data-order="{$order->order_id}" data-manager="{$manager->id}">
                                                     <i class="fas fa-times-circle"></i>
                                                     <span>Отклонить</span>
@@ -1506,7 +1508,7 @@
                                    aria-selected="false" data-event="20" data-user="{$order->user_id}"
                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
                                     <span class="hidden-sm-up"><i class="ti-home"></i></span>
-                                    <span class="hidden-xs-down">Персональная информация</span>
+                                    <span class="hidden-xs-down">Информация по заявке</span>
                                 </a>
                             </li>
                             {if $manager->role != 'employer'}
@@ -2276,7 +2278,7 @@
                                                         {if in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR'])}
                                                             <span style="height: 20px; margin-left: 10px; {if empty($order->sms)}display: none{/if}"
                                                                   data-tooltip="Этот документ нельзя подписать АСП кодом"
-                                                                  class="badge badge-danger warning_asp">&#33;</span>
+                                                                  class="badge badge-danger warning_asp warning">&#33;</span>
                                                         {else}
                                                             {if !empty($order->sms)}
                                                                 <div style="margin-left: 20px" class="margin_show">
@@ -2595,94 +2597,108 @@
                                                 <span class="float-right"><a class="text-white cors-edit" href=""><i
                                                                 class=" fas fa-edit"></i></a></span>
                                             </h6>
-                                            <input type="hidden" name="action" value="cors_change"/>
-                                            <input type="hidden" name="requisite[id]" value="{$order->requisite->id}"/>
-                                            <div class="cors-front">
+                                            {if $same_holder == 1}
+                                                <input type="hidden" name="action" value="cors_change"/>
+                                                <input type="hidden" name="requisite[id]"
+                                                       value="{$order->requisite->id}"/>
+                                                <div class="cors-front">
+                                                    <div class="row view-block p-2">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group mb-0 row">
+                                                                <label class="control-label col-md-8 col-7">ФИО
+                                                                    держателя
+                                                                    счета:</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="form-group mb-0 row">
+                                                                <label
+                                                                        class="control-label col-md-12 fio-hold-front">{$order->requisite->holder}</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row view-block p-2">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group mb-0 row">
+                                                                <label class="control-label col-md-8 col-7">Номер
+                                                                    счета:</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="form-group mb-0 row">
+                                                                <label
+                                                                        class="control-label col-md-12 acc-num-front">{$order->requisite->number}</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row view-block p-2">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group mb-0 row">
+                                                                <label class="control-label col-md-8 col-7">Наименование
+                                                                    банка:</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="form-group mb-0 row">
+                                                                <label
+                                                                        class="control-label col-md-12 bank-name-front">{$order->requisite->name}</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row view-block p-2">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group mb-0 row">
+                                                                <label class="control-label col-md-8 col-7">БИК:</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="form-group mb-0 row">
+                                                                <label
+                                                                        class="control-label col-md-12 bik-front">{$order->requisite->bik}</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row view-block p-2">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group mb-0 row">
+                                                                <label class="control-label col-md-8 col-7">Кор
+                                                                    счет:</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="form-group mb-0 row">
+                                                                <label
+                                                                        class="control-label col-md-12 ">{$order->requisite->correspondent_acc}</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {if $manager->role != 'employer'}
+                                                        <div class="row view-block p-2">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group mb-0 row">
+                                                                    <label class="control-label col-md-8 col-7">Перечислить
+                                                                        из:</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <div class="form-group mb-0 row">
+                                                                    <label
+                                                                            class="control-label col-md-12 bik-front">{$settlement->name}</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {/if}
+                                                </div>
+                                            {else}
                                                 <div class="row view-block p-2">
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-0 row">
-                                                            <label class="control-label col-md-8 col-7">ФИО
-                                                                держателя
-                                                                счета:</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group mb-0 row">
-                                                            <label
-                                                                    class="control-label col-md-12 fio-hold-front">{$order->requisite->holder}</label>
+                                                            <label class="control-label col-md-8 col-7">Перечисление
+                                                                денежных средств на р/с счет третьего лица</label>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="row view-block p-2">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group mb-0 row">
-                                                            <label class="control-label col-md-8 col-7">Номер
-                                                                счета:</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group mb-0 row">
-                                                            <label
-                                                                    class="control-label col-md-12 acc-num-front">{$order->requisite->number}</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row view-block p-2">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group mb-0 row">
-                                                            <label class="control-label col-md-8 col-7">Наименование
-                                                                банка:</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group mb-0 row">
-                                                            <label
-                                                                    class="control-label col-md-12 bank-name-front">{$order->requisite->name}</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row view-block p-2">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group mb-0 row">
-                                                            <label class="control-label col-md-8 col-7">БИК:</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group mb-0 row">
-                                                            <label
-                                                                    class="control-label col-md-12 bik-front">{$order->requisite->bik}</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row view-block p-2">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group mb-0 row">
-                                                            <label class="control-label col-md-8 col-7">Кор
-                                                                счет:</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group mb-0 row">
-                                                            <label
-                                                                    class="control-label col-md-12 ">{$order->requisite->correspondent_acc}</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row view-block p-2">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group mb-0 row">
-                                                            <label class="control-label col-md-8 col-7">Перечислить
-                                                                из:</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group mb-0 row">
-                                                            <label
-                                                                    class="control-label col-md-12 bik-front">{$settlement->name}</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            {/if}
                                             <div class="cors-editor" style="display: none;">
                                                 <div style="width: 100%">
                                                     <label class="control-label">ФИО держателя счета</label>
@@ -2964,6 +2980,7 @@
                                                             class="btn btn-success js-approve-order js-event-add-click"
                                                             data-event="12" data-user="{$order->user_id}"
                                                             style="margin-left: 15px"
+
                                                             data-order="{$order->order_id}"
                                                             data-manager="{$manager->id}">
                                                         <span>Одобрить</span>
