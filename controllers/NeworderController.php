@@ -639,7 +639,8 @@ class NeworderController extends Controller
 
             $order['psk'] = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
 
-            $order['payment_schedule'] = json_encode($payment_schedule);
+            $new_schedule[date('Y-m-d')] = $payment_schedule;
+            $order['payment_schedule'] = json_encode($new_schedule);
 
             $company = $this->Companies->get_company($order['company_id']);
             $group = $this->Groups->get_group($order['group_id']);

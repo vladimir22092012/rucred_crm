@@ -971,6 +971,63 @@
             opacity: 1; /* Показываем его */
             visibility: visible;
         }
+
+        .accordion__item {
+            margin-bottom: 0.5rem;
+            border-radius: 0.25rem;
+            box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 15%);
+        }
+
+        .accordion__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #fff;
+            font-weight: 500;
+            background-color: #0d6efd;
+            border-top-left-radius: 0.25rem;
+            border-top-right-radius: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease-out;
+        }
+
+        .accordion__header::after {
+            flex-shrink: 0;
+            width: 1.25rem;
+            height: 1.25rem;
+            margin-left: auto;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-size: 1.25rem;
+            content: "";
+        }
+
+        .accordion__item_show .accordion__header::after {
+            transform: rotate(-180deg);
+        }
+
+        .accordion__header:hover {
+            background-color: #0b5ed7;
+        }
+
+        .accordion__item_hidden .accordion__header {
+            border-bottom-right-radius: 0.25rem;
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .accordion__body {
+            padding: 0.75rem 1rem;
+            overflow: hidden;
+            background: #fff;
+            border-bottom-right-radius: 0.25rem;
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .accordion__item:not(.accordion__item_show) .accordion__body {
+            display: none;
+        }
+
     </style>
     <link href="theme/manager/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet"
           type="text/css"/>
@@ -1489,6 +1546,15 @@
                                         <span class="hidden-xs-down">Кредитная история</span>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link js-event-add-click" data-toggle="tab" href="#schedule"
+                                       role="tab"
+                                       aria-selected="true" data-event="25" data-user="{$order->user_id}"
+                                       data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                        <span class="hidden-sm-up"><i class="ti-save-alt"></i></span>
+                                        <span class="hidden-xs-down">Графики платежей</span>
+                                    </a>
+                                </li>
                             {/if}
                         </ul>
 
@@ -1835,35 +1901,36 @@
                                                                         <td><input type="text"
                                                                                    class="form-control daterange"
                                                                                    name="date[][date]"
-                                                                                   value="{$date}" readonly></td>
+                                                                                   value="{$date}" readonly>
+                                                                        </td>
                                                                         <td><input type="text"
                                                                                    class="form-control restructure_pay_sum"
                                                                                    name="pay_sum[][pay_sum]"
-                                                                                   value="{$payment->pay_sum|floatval|number_format:2:',':' '}"
+                                                                                   value="{$payment['pay_sum']|floatval|number_format:2:',':' '}"
                                                                                    readonly>
                                                                         </td>
                                                                         <td><input type="text"
                                                                                    class="form-control restructure_od"
                                                                                    name="loan_body_pay[][loan_body_pay]"
-                                                                                   value="{$payment->loan_body_pay|floatval|number_format:2:',':' '}"
+                                                                                   value="{$payment['loan_body_pay']|floatval|number_format:2:',':' '}"
                                                                                    readonly>
                                                                         </td>
                                                                         <td><input type="text"
                                                                                    class="form-control restructure_prc"
                                                                                    name="loan_percents_pay[][loan_percents_pay]"
-                                                                                   value="{$payment->loan_percents_pay|floatval|number_format:2:',':' '}"
+                                                                                   value="{$payment['loan_percents_pay']|floatval|number_format:2:',':' '}"
                                                                                    readonly>
                                                                         </td>
                                                                         <td><input type="text"
                                                                                    class="form-control restructure_cms"
                                                                                    name="comission_pay[][comission_pay]"
-                                                                                   value="{$payment->comission_pay|floatval|number_format:2:',':' '}"
+                                                                                   value="{$payment['comission_pay']|floatval|number_format:2:',':' '}"
                                                                                    readonly>
                                                                         </td>
                                                                         <td><input type="text"
                                                                                    class="form-control rest_sum"
                                                                                    name="rest_pay[][rest_pay]"
-                                                                                   value="{$payment->rest_pay|floatval|number_format:2:',':' '}"
+                                                                                   value="{$payment['rest_pay']|floatval|number_format:2:',':' '}"
                                                                                    readonly>
                                                                         </td>
                                                                     </tr>
@@ -3275,317 +3342,231 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-</div>
-<!-- ============================================================== -->
-<!-- End Container fluid  -->
-<!-- ============================================================== -->
-
-{include file='footer.tpl'}
-
-</div>
-
-
-<div id="modal_reject_reason" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h4 class="modal-title">Отказать в выдаче кредита?</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            </div>
-            <div class="modal-body">
-
-
-                <div class="card">
-                    <div class="card-body">
-                        <ul class="nav nav-tabs" id="myTab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#reject_mko" role="tab"
-                                   aria-controls="home5" aria-expanded="true" aria-selected="true">
-                                    <span class="hidden-sm-up"><i class="ti-home"></i></span>
-                                    <span class="hidden-xs-down">Отказ МКО</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#reject_client" role="tab"
-                                   aria-controls="profile" aria-selected="false">
-                                    <span class="hidden-sm-up"><i class="ti-user"></i></span>
-                                    <span class="hidden-xs-down">Отказ клиента</span>
-                                </a>
-                            </li>
-                        </ul>
-                        <div class="tab-content tabcontent-border p-3" id="myTabContent">
-                            <div role="tabpanel" class="tab-pane fade active show" id="reject_mko"
-                                 aria-labelledby="home-tab">
-                                <form class="js-reject-form">
-                                    <input type="hidden" name="order_id" value="{$order->order_id}"/>
-                                    <input type="hidden" name="action" value="reject_order"/>
-                                    <input type="hidden" name="status" value="3"/>
-                                    <div class="form-group">
-                                        <label for="admin_name" class="control-label">Выберите причину отказа:</label>
-                                        <select name="reason" class="form-control">
-                                            {foreach $reject_reasons as $reject_reason}
-                                                {if $reject_reason->type == 'mko'}
-                                                    <option
-                                                            value="{$reject_reason->id|escape}">{$reject_reason->admin_name|escape}</option>
-                                                {/if}
-                                            {/foreach}
-                                        </select>
+                        <div id="schedule" class="tab-pane" role="tabpanel">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="tab-content br-n pn">
+                                        <div id="navpills-orders" class="tab-pane active">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h5>Графики платежей</h5>
+                                                    <br>
+                                                    <div class="accordion" id="accordion-1">
+                                                        {foreach $schedules as $date => $schedule}
+                                                            <div class="accordion__item">
+                                                                <div class="accordion__header">
+                                                                    График платежей от {$date|date}
+                                                                </div>
+                                                                <div class="accordion__body">
+                                                                    <table border="2" style="font-size: 15px">
+                                                                        <thead align="center">
+                                                                        <tr style="width: 100%;">
+                                                                            <th rowspan="3">Дата</th>
+                                                                            <th rowspan="3">Сумма</th>
+                                                                            <th colspan="3">Структура платежа</th>
+                                                                            <th rowspan="3">Остаток долга, руб.
+                                                                            </th>
+                                                                        </tr>
+                                                                        <tr style="width: 100%;">
+                                                                            <th>Осн. долг</th>
+                                                                            <th>Проценты</th>
+                                                                            <th>Др. платежи</th>
+                                                                        </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                        {foreach $schedule as $date => $payment}
+                                                                            {if $date != 'result'}
+                                                                                <tr>
+                                                                                    <td><input type="text"
+                                                                                               class="form-control daterange"
+                                                                                               name="date[][date]"
+                                                                                               value="{$date}" readonly>
+                                                                                    </td>
+                                                                                    <td><input type="text"
+                                                                                               class="form-control restructure_pay_sum"
+                                                                                               name="pay_sum[][pay_sum]"
+                                                                                               value="{$payment['pay_sum']|floatval|number_format:2:',':' '}"
+                                                                                               readonly>
+                                                                                    </td>
+                                                                                    <td><input type="text"
+                                                                                               class="form-control restructure_od"
+                                                                                               name="loan_body_pay[][loan_body_pay]"
+                                                                                               value="{$payment['loan_body_pay']|floatval|number_format:2:',':' '}"
+                                                                                               readonly>
+                                                                                    </td>
+                                                                                    <td><input type="text"
+                                                                                               class="form-control restructure_prc"
+                                                                                               name="loan_percents_pay[][loan_percents_pay]"
+                                                                                               value="{$payment['loan_percents_pay']|floatval|number_format:2:',':' '}"
+                                                                                               readonly>
+                                                                                    </td>
+                                                                                    <td><input type="text"
+                                                                                               class="form-control restructure_cms"
+                                                                                               name="comission_pay[][comission_pay]"
+                                                                                               value="{$payment['comission_pay']|floatval|number_format:2:',':' '}"
+                                                                                               readonly>
+                                                                                    </td>
+                                                                                    <td><input type="text"
+                                                                                               class="form-control rest_sum"
+                                                                                               name="rest_pay[][rest_pay]"
+                                                                                               value="{$payment['rest_pay']|floatval|number_format:2:',':' '}"
+                                                                                               readonly>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            {/if}
+                                                                        {/foreach}
+                                                                        <tr>
+                                                                            <td><input type="text" class="form-control"
+                                                                                       value="ИТОГО:" disabled></td>
+                                                                            <td><input type="text" class="form-control"
+                                                                                       name="result[all_sum_pay]"
+                                                                                       value="{$payment_schedule['result']->all_sum_pay|floatval|number_format:2:',':' '}"
+                                                                                       readonly></td>
+                                                                            <td><input type="text" class="form-control"
+                                                                                       name="result[all_loan_body_pay]"
+                                                                                       value="{$payment_schedule['result']->all_loan_body_pay|floatval|number_format:2:',':' '}"
+                                                                                       readonly></td>
+                                                                            <td><input type="text" class="form-control"
+                                                                                       name="result[all_loan_percents_pay]"
+                                                                                       value="{$payment_schedule['result']->all_loan_percents_pay|floatval|number_format:2:',':' '}"
+                                                                                       readonly></td>
+                                                                            <td><input type="text" class="form-control"
+                                                                                       name="result[all_comission_pay]"
+                                                                                       value="{$payment_schedule['result']->all_comission_pay|floatval|number_format:2:',':' '}"
+                                                                                       readonly></td>
+                                                                            <td><input type="text" class="form-control"
+                                                                                       name="result[all_rest_pay_sum]"
+                                                                                       value="{$payment_schedule['result']->all_rest_pay_sum|floatval|number_format:2:',':' '}"
+                                                                                       readonly></td>
+                                                                        </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                    <div>
+                                                                        <br>
+                                                                        <label>Полная стоимость микрозайма, %
+                                                                            годовых:</label>
+                                                                        <span id="psk">{$order->psk}%</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {/foreach}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="form-action clearfix">
-                                        <button type="button" class="btn btn-danger btn-lg float-left waves-effect"
-                                                data-dismiss="modal">Отменить
-                                        </button>
-                                        <button type="submit"
-                                                class="btn btn-success btn-lg float-right waves-effect waves-light">Да,
-                                            отказать
-                                        </button>
-                                    </div>
-                                </form>
+                                </div>
                             </div>
-                            <div class="tab-pane fade" id="reject_client" role="tabpanel" aria-labelledby="profile-tab">
-                                <form class="js-reject-form">
-                                    <input type="hidden" name="order_id" value="{$order->order_id}"/>
-                                    <input type="hidden" name="action" value="reject_order"/>
-                                    <input type="hidden" name="status" value="8"/>
-                                    <div class="form-group">
-                                        <label for="admin_name" class="control-label">Выберите причину отказа:</label>
-                                        <select name="reason" class="form-control">
-                                            {foreach $reject_reasons as $reject_reason}
-                                                {if $reject_reason->type == 'client'}
-                                                    <option
-                                                            value="{$reject_reason->id|escape}">{$reject_reason->admin_name|escape}</option>
-                                                {/if}
-                                            {/foreach}
-                                        </select>
-                                    </div>
-                                    <div class="form-action clearfix">
-                                        <button type="button" class="btn btn-danger btn-lg float-left waves-effect"
-                                                data-dismiss="modal">Отменить
-                                        </button>
-                                        <button type="submit"
-                                                class="btn btn-success btn-lg float-right waves-effect waves-light">Да,
-                                            отказать
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
+
+
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
+        <!-- ============================================================== -->
+        <!-- End Container fluid  -->
+        <!-- ============================================================== -->
+
+        {include file='footer.tpl'}
+
     </div>
-</div>
-
-<div id="modal_add_comment" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h4 class="modal-title">Добавить комментарий</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            </div>
-            <div class="modal-body">
-                <form method="POST" id="form_add_comment" action="order/{$order->order_id}">
-
-                    <input type="hidden" name="order_id" value="{$order->order_id}"/>
-                    <input type="hidden" name="user_id" value="{$order->user_id}"/>
-                    <input type="hidden" name="block" value=""/>
-                    <input type="hidden" name="action" value="add_comment"/>
-
-                    <div class="alert" style="display:none"></div>
-
-                    <div class="form-group">
-                        <label for="name" class="control-label">Комментарий:</label>
-                        <textarea class="form-control" name="text"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <div class="custom-control custom-checkbox mr-sm-2 mb-3">
-                            <input class="custom-control-input" type="checkbox" name="official" value="1"
-                                   id="official"/>
-                            <label for="official" class="custom-control-label">Оффициальный:</label>
-                        </div>
-                    </div>
-                    <div class="form-action">
-                        <button type="button" class="btn btn-danger waves-effect js-event-add-click" data-event="70"
-                                data-manager="{$manager->id}" data-order="{$order->order_id}"
-                                data-user="{$order->user_id}" data-dismiss="modal">Отмена
-                        </button>
-                        <button type="submit" class="btn btn-success waves-effect waves-light">Сохранить</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="modal_close_contract" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h4 class="modal-title">Закрыть договор</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            </div>
-            <div class="modal-body">
-                <form method="POST" id="form_close_contract" action="order/{$order->order_id}">
-
-                    <input type="hidden" name="order_id" value="{$order->order_id}"/>
-                    <input type="hidden" name="user_id" value="{$order->user_id}"/>
-                    <input type="hidden" name="action" value="close_contract"/>
-
-                    <div class="alert" style="display:none"></div>
-
-                    <div class="form-group">
-                        <label for="close_date" class="control-label">Дата закрытия:</label>
-                        <input type="text" class="form-control" name="close_date" required="" placeholder="ДД.ММ.ГГГГ"
-                               value="{''|date}"/>
-                    </div>
-                    <div class="form-group">
-                        <label for="comment" class="control-label">Комментарий:</label>
-                        <textarea class="form-control" id="comment" name="comment" required=""></textarea>
-                    </div>
-                    <div class="form-action">
-                        <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Отмена</button>
-                        <button type="submit" class="btn btn-success waves-effect waves-light">Сохранить</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="modal_fssp_info" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h4 class="modal-title">Результаты проверки</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            </div>
-            <div class="modal-body">
-                <table class="table table-hover table-border js-fssp-info-result">
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="loan_operations" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title" id="loan_operations_title">Операции по договору</h6>
-                <button type="button" class="btn-close btn" data-bs-dismiss="modal" aria-label="Close">
-                    <i class="fas fa-times text-white"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="modal_add_penalty" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h4 class="modal-title">Оштрафовать</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            </div>
-            <div class="modal-body">
-                <form method="POST" id="form_add_penalty" action="order/{$order->order_id}">
-
-                    <input type="hidden" name="order_id" value="{$order->order_id}"/>
-                    <input type="hidden" name="manager_id" value="{$order->manager_id}"/>
-                    <input type="hidden" name="control_manager_id" value="{$manager->id}"/>
-                    <input type="hidden" name="block" value=""/>
-                    <input type="hidden" name="action" value="add_penalty"/>
-
-                    <div class="alert" style="display:none"></div>
-
-                    <div class="form-group">
-                        <label for="close_date" class="control-label">Причина:</label>
-                        <select name="type_id" class="form-control">
-                            <option value=""></option>
-                            {foreach $penalty_types as $t}
-                                <option value="{$t->id}">{$t->name}</option>
-                            {/foreach}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="comment" class="control-label">Комментарий:</label>
-                        <textarea class="form-control" id="comment" name="comment"></textarea>
-                    </div>
-                    <div class="form-action">
-                        <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Отмена</button>
-                        <button type="submit" class="btn btn-success waves-effect waves-light">Сохранить</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="modal_send_sms" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h4 class="modal-title">Отправить смс-сообщение?</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            </div>
-            <div class="modal-body">
 
 
-                <div class="card">
-                    <div class="card-body">
+    <div id="modal_reject_reason" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
 
-                        <div class="tab-content tabcontent-border p-3" id="myTabContent">
-                            <div role="tabpanel" class="tab-pane fade active show" id="waiting_reason"
-                                 aria-labelledby="home-tab">
-                                <form class="js-sms-form">
-                                    <input type="hidden" name="user_id" value=""/>
-                                    <input type="hidden" name="order_id" value=""/>
-                                    <input type="hidden" name="yuk" value=""/>
-                                    <input type="hidden" name="action" value="send_sms"/>
-                                    <div class="form-group">
-                                        <label for="name" class="control-label">Выберите шаблон сообщения:</label>
-                                        <select name="template_id" class="form-control">
-                                            {foreach $sms_templates as $sms_template}
-                                                <option value="{$sms_template->id}"
-                                                        title="{$sms_template->template|escape}">
-                                                    {$sms_template->name|escape} ({$sms_template->template})
-                                                </option>
-                                            {/foreach}
-                                        </select>
-                                    </div>
-                                    <div class="form-action clearfix">
-                                        <button type="button" class="btn btn-danger btn-lg float-left waves-effect"
-                                                data-dismiss="modal">Отменить
-                                        </button>
-                                        <button type="submit"
-                                                class="btn btn-success btn-lg float-right waves-effect waves-light">Да,
-                                            отправить
-                                        </button>
-                                    </div>
-                                </form>
+                <div class="modal-header">
+                    <h4 class="modal-title">Отказать в выдаче кредита?</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+
+
+                    <div class="card">
+                        <div class="card-body">
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#reject_mko"
+                                       role="tab"
+                                       aria-controls="home5" aria-expanded="true" aria-selected="true">
+                                        <span class="hidden-sm-up"><i class="ti-home"></i></span>
+                                        <span class="hidden-xs-down">Отказ МКО</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#reject_client"
+                                       role="tab"
+                                       aria-controls="profile" aria-selected="false">
+                                        <span class="hidden-sm-up"><i class="ti-user"></i></span>
+                                        <span class="hidden-xs-down">Отказ клиента</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="tab-content tabcontent-border p-3" id="myTabContent">
+                                <div role="tabpanel" class="tab-pane fade active show" id="reject_mko"
+                                     aria-labelledby="home-tab">
+                                    <form class="js-reject-form">
+                                        <input type="hidden" name="order_id" value="{$order->order_id}"/>
+                                        <input type="hidden" name="action" value="reject_order"/>
+                                        <input type="hidden" name="status" value="3"/>
+                                        <div class="form-group">
+                                            <label for="admin_name" class="control-label">Выберите причину
+                                                отказа:</label>
+                                            <select name="reason" class="form-control">
+                                                {foreach $reject_reasons as $reject_reason}
+                                                    {if $reject_reason->type == 'mko'}
+                                                        <option
+                                                                value="{$reject_reason->id|escape}">{$reject_reason->admin_name|escape}</option>
+                                                    {/if}
+                                                {/foreach}
+                                            </select>
+                                        </div>
+                                        <div class="form-action clearfix">
+                                            <button type="button" class="btn btn-danger btn-lg float-left waves-effect"
+                                                    data-dismiss="modal">Отменить
+                                            </button>
+                                            <button type="submit"
+                                                    class="btn btn-success btn-lg float-right waves-effect waves-light">
+                                                Да,
+                                                отказать
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="tab-pane fade" id="reject_client" role="tabpanel"
+                                     aria-labelledby="profile-tab">
+                                    <form class="js-reject-form">
+                                        <input type="hidden" name="order_id" value="{$order->order_id}"/>
+                                        <input type="hidden" name="action" value="reject_order"/>
+                                        <input type="hidden" name="status" value="8"/>
+                                        <div class="form-group">
+                                            <label for="admin_name" class="control-label">Выберите причину
+                                                отказа:</label>
+                                            <select name="reason" class="form-control">
+                                                {foreach $reject_reasons as $reject_reason}
+                                                    {if $reject_reason->type == 'client'}
+                                                        <option
+                                                                value="{$reject_reason->id|escape}">{$reject_reason->admin_name|escape}</option>
+                                                    {/if}
+                                                {/foreach}
+                                            </select>
+                                        </div>
+                                        <div class="form-action clearfix">
+                                            <button type="button" class="btn btn-danger btn-lg float-left waves-effect"
+                                                    data-dismiss="modal">Отменить
+                                            </button>
+                                            <button type="submit"
+                                                    class="btn btn-success btn-lg float-right waves-effect waves-light">
+                                                Да,
+                                                отказать
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3593,43 +3574,286 @@
             </div>
         </div>
     </div>
-</div>
 
-<div id="modal_restruct" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
+    <div id="modal_add_comment" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
 
-            <div class="modal-header">
-                <h4 class="modal-title">Добавить компанию</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            </div>
-            <div class="modal-body">
+                <div class="modal-header">
+                    <h4 class="modal-title">Добавить комментарий</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" id="form_add_comment" action="order/{$order->order_id}">
 
-                <div class="alert" style="display:none"></div>
-                <form id="restruct_form">
-                    <input type="hidden" name="action" value="do_restruct">
-                    <input type="hidden" name="order_id" value="{$order->order_id}">
-                    <div class="form-group">
-                        <label>Дата поступившего платежа</label>
-                        <input type="text" class="form-control daterange" name="pay_date">
-                        <label>Поступивший платеж, руб</label>
-                        <input type="text" class="form-control" name="pay_amount">
-                        <label>Новый срок, мес</label>
-                        <select class="form-control" data-order="{$order->order_id}" name="new_term"
-                                id="new_term">
-                            {for $i = 1 to count($payment_schedule)-2}
-                                <option value="{$i}">{$i}</option>
-                            {/for}
-                        </select><br>
-                        <label id="new_term_digit" style="display: none; color: #880000">Новый срок, мес</label>
-                    </div>
-                    <div>
-                        <input type="button" class="btn btn-danger cancel" data-dismiss="modal" value="Отмена">
-                        <input type="button" class="btn btn-success float-right do_restruct" value="Сохранить">
-                    </div>
-                </form>
+                        <input type="hidden" name="order_id" value="{$order->order_id}"/>
+                        <input type="hidden" name="user_id" value="{$order->user_id}"/>
+                        <input type="hidden" name="block" value=""/>
+                        <input type="hidden" name="action" value="add_comment"/>
+
+                        <div class="alert" style="display:none"></div>
+
+                        <div class="form-group">
+                            <label for="name" class="control-label">Комментарий:</label>
+                            <textarea class="form-control" name="text"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox mr-sm-2 mb-3">
+                                <input class="custom-control-input" type="checkbox" name="official" value="1"
+                                       id="official"/>
+                                <label for="official" class="custom-control-label">Оффициальный:</label>
+                            </div>
+                        </div>
+                        <div class="form-action">
+                            <button type="button" class="btn btn-danger waves-effect js-event-add-click" data-event="70"
+                                    data-manager="{$manager->id}" data-order="{$order->order_id}"
+                                    data-user="{$order->user_id}" data-dismiss="modal">Отмена
+                            </button>
+                            <button type="submit" class="btn btn-success waves-effect waves-light">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    <div id="modal_close_contract" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Закрыть договор</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" id="form_close_contract" action="order/{$order->order_id}">
+
+                        <input type="hidden" name="order_id" value="{$order->order_id}"/>
+                        <input type="hidden" name="user_id" value="{$order->user_id}"/>
+                        <input type="hidden" name="action" value="close_contract"/>
+
+                        <div class="alert" style="display:none"></div>
+
+                        <div class="form-group">
+                            <label for="close_date" class="control-label">Дата закрытия:</label>
+                            <input type="text" class="form-control" name="close_date" required=""
+                                   placeholder="ДД.ММ.ГГГГ"
+                                   value="{''|date}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="comment" class="control-label">Комментарий:</label>
+                            <textarea class="form-control" id="comment" name="comment" required=""></textarea>
+                        </div>
+                        <div class="form-action">
+                            <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Отмена
+                            </button>
+                            <button type="submit" class="btn btn-success waves-effect waves-light">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal_fssp_info" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Результаты проверки</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-hover table-border js-fssp-info-result">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="loan_operations" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title" id="loan_operations_title">Операции по договору</h6>
+                    <button type="button" class="btn-close btn" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times text-white"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal_add_penalty" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Оштрафовать</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" id="form_add_penalty" action="order/{$order->order_id}">
+
+                        <input type="hidden" name="order_id" value="{$order->order_id}"/>
+                        <input type="hidden" name="manager_id" value="{$order->manager_id}"/>
+                        <input type="hidden" name="control_manager_id" value="{$manager->id}"/>
+                        <input type="hidden" name="block" value=""/>
+                        <input type="hidden" name="action" value="add_penalty"/>
+
+                        <div class="alert" style="display:none"></div>
+
+                        <div class="form-group">
+                            <label for="close_date" class="control-label">Причина:</label>
+                            <select name="type_id" class="form-control">
+                                <option value=""></option>
+                                {foreach $penalty_types as $t}
+                                    <option value="{$t->id}">{$t->name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="comment" class="control-label">Комментарий:</label>
+                            <textarea class="form-control" id="comment" name="comment"></textarea>
+                        </div>
+                        <div class="form-action">
+                            <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Отмена
+                            </button>
+                            <button type="submit" class="btn btn-success waves-effect waves-light">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal_send_sms" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Отправить смс-сообщение?</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+
+
+                    <div class="card">
+                        <div class="card-body">
+
+                            <div class="tab-content tabcontent-border p-3" id="myTabContent">
+                                <div role="tabpanel" class="tab-pane fade active show" id="waiting_reason"
+                                     aria-labelledby="home-tab">
+                                    <form class="js-sms-form">
+                                        <input type="hidden" name="user_id" value=""/>
+                                        <input type="hidden" name="order_id" value=""/>
+                                        <input type="hidden" name="yuk" value=""/>
+                                        <input type="hidden" name="action" value="send_sms"/>
+                                        <div class="form-group">
+                                            <label for="name" class="control-label">Выберите шаблон сообщения:</label>
+                                            <select name="template_id" class="form-control">
+                                                {foreach $sms_templates as $sms_template}
+                                                    <option value="{$sms_template->id}"
+                                                            title="{$sms_template->template|escape}">
+                                                        {$sms_template->name|escape} ({$sms_template->template})
+                                                    </option>
+                                                {/foreach}
+                                            </select>
+                                        </div>
+                                        <div class="form-action clearfix">
+                                            <button type="button" class="btn btn-danger btn-lg float-left waves-effect"
+                                                    data-dismiss="modal">Отменить
+                                            </button>
+                                            <button type="submit"
+                                                    class="btn btn-success btn-lg float-right waves-effect waves-light">
+                                                Да,
+                                                отправить
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal_restruct" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Добавить компанию</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="alert" style="display:none"></div>
+                    <form id="restruct_form">
+                        <input type="hidden" name="action" value="do_restruct">
+                        <input type="hidden" name="order_id" value="{$order->order_id}">
+                        <div class="form-group">
+                            <label>Дата поступившего платежа</label>
+                            <input type="text" class="form-control daterange" name="pay_date">
+                            <label>Поступивший платеж, руб</label>
+                            <input type="text" class="form-control" name="pay_amount">
+                            <label>Новый срок, мес</label>
+                            <select class="form-control" data-order="{$order->order_id}" name="new_term"
+                                    id="new_term">
+                                {for $i = 1 to count($payment_schedule)-2}
+                                    <option value="{$i}">{$i}</option>
+                                {/for}
+                            </select><br>
+                            <label id="new_term_digit" style="display: none; color: #880000">Новый срок, мес</label>
+                        </div>
+                        <div>
+                            <input type="button" class="btn btn-danger cancel" data-dismiss="modal" value="Отмена">
+                            <input type="button" class="btn btn-success float-right do_restruct" value="Сохранить">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class ItcAccordion {
+            constructor(target, config) {
+                this._el = typeof target === 'string' ? document.querySelector(target) : target;
+                const defaultConfig = {
+                    alwaysOpen: true
+                };
+                this._config = Object.assign(defaultConfig, config);
+                this.addEventListener();
+            }
+
+            addEventListener() {
+                this._el.addEventListener('click', (e) => {
+                    const elHeader = e.target.closest('.accordion__header');
+                    if (!elHeader) {
+                        return;
+                    }
+                    if (!this._config.alwaysOpen) {
+                        const elOpenItem = this._el.querySelector('.accordion__item_show');
+                        if (elOpenItem) {
+                            elOpenItem !== elHeader.parentElement ? elOpenItem.classList.toggle('accordion__item_show') : null;
+                        }
+                    }
+                    elHeader.parentElement.classList.toggle('accordion__item_show');
+                });
+            }
+        }
+
+        new ItcAccordion('#accordion-1');
+        new ItcAccordion('#accordion-2');
+    </script>

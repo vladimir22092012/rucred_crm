@@ -509,8 +509,6 @@ class OfflineOrderController extends Controller
 
             $settlement = $this->OrganisationSettlements->get_std_settlement();
 
-            $sort = ['04.05', '04.06', '03.03', '04.05.1', '04.05.2', '04.07', '04.03.02', '04.04', '04.09', '04.12', '03.04'];
-
             $doc_types =
                 [
                     '04.05' => 'SOGLASIE_NA_OBR_PERS_DANNIH',
@@ -545,7 +543,21 @@ class OfflineOrderController extends Controller
 
         }
 
-        $payment_schedule = (array)json_decode($order->payment_schedule);
+        $schedules = json_decode($order->payment_schedule, true);
+        $payment_schedule = end($schedules);
+
+        foreach ($schedules as $key => $schedule) {
+
+            uksort($schedules[$key],
+                function ($a, $b) {
+                    if ($a == $b)
+                        return 0;
+
+                    return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+                });
+        }
+
+        $this->design->assign('schedules', $schedules);
 
         uksort($payment_schedule,
             function ($a, $b) {
@@ -3112,6 +3124,12 @@ class OfflineOrderController extends Controller
         $order = $this->orders->get_order($order_id);
 
         $payment_schedule = json_decode($order->payment_schedule, true);
+
+        foreach ($payment_schedule as $schedule) {
+            $payment_schedule = (array)$schedule;
+            break;
+        }
+
         array_shift($payment_schedule);
 
         uksort($payment_schedule,
@@ -3157,6 +3175,12 @@ class OfflineOrderController extends Controller
         $order = $this->orders->get_order($order_id);
 
         $payment_schedule = json_decode($order->payment_schedule, true);
+
+        foreach ($payment_schedule as $schedule) {
+            $payment_schedule = (array)$schedule;
+            break;
+        }
+
         array_shift($payment_schedule);
 
         uksort($payment_schedule,
@@ -3393,14 +3417,24 @@ class OfflineOrderController extends Controller
             exit;
 
         } else {
-
-            $payment_schedule = json_encode($new_shedule);
+            $old_schedule = json_decode($order->payment_schedule);
+            $now_date = date('Y-m-d', strtotime('+1 day'));
+            $old_schedule->{$now_date} = $new_shedule;
+            $payment_schedule = json_encode($old_schedule);
 
             $update_order =
                 [
                     'psk' => $psk,
                     'payment_schedule' => $payment_schedule
                 ];
+
+            $this->documents->create_document(array(
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'type' => $type,
+                'params' => $order,
+                'numeration' => (string)$key
+            ));
 
             $this->orders->update_order($order_id, $update_order);
             exit;
@@ -3417,7 +3451,7 @@ class OfflineOrderController extends Controller
 
         $docs = $this->Documents->get_documents(['order_id' => $order_id]);
 
-        if(empty($docs)){
+        if (empty($docs)) {
             echo json_encode(['error' => 'Документы не сформированы, сформировать?']);
             exit;
         }
