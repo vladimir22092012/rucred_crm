@@ -21,6 +21,13 @@ class DocumentController extends Controller
 
         $this->design->assign('settlement', $settlement);
 
+        $regadress = $this->Addresses->get_address($document->params->regaddress_id);
+        $this->design->assign('regadress', $regadress);
+
+        $faktadress = $this->Addresses->get_address($document->params->faktaddress_id);
+        $this->design->assign('faktadress', $faktadress);
+
+
         $company = $this->Companies->get_company($document->params->company_id);
         $this->design->assign('company', $company);
 

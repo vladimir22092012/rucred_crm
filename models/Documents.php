@@ -23,7 +23,7 @@ class Documents extends Core
         'INDIVIDUALNIE_USLOVIA' => 'individualnie_usloviya.tpl',
         'GRAFIK_OBSL_MKR' => 'grafik_obsl_mkr.tpl',
         'PERECHISLENIE_ZAEMN_SREDSTV' => 'perechislenie_zaemnih_sredstv.tpl',
-        //'DOP_SOGLASHENIE_K_TRUDOVOMU_DOGOVORU' => 'dop_soglash_k_trud_dogovoru.tpl'
+        'DOP_SOGLASHENIE' => 'dop_soglashenie.tpl'
     );
 
 
@@ -39,12 +39,13 @@ class Documents extends Core
         'INDIVIDUALNIE_USLOVIA' => 'Индивидуальные условия договора микрозайма',
         'GRAFIK_OBSL_MKR' => 'График платежей по микрозайму',
         'PERECHISLENIE_ZAEMN_SREDSTV' => 'Заявление на перечисление заемных денежных средств',
-        //'DOP_SOGLASHENIE_K_TRUDOVOMU_DOGOVORU' => 'Дополнительное соглашение к договору микрозайма'
+        'DOP_SOGLASHENIE' => 'Дополнительное соглашение к Индивидуальным условиям договора микрозайма'
     );
 
     private $client_visible = array(
         'ANKETA_PEP' => 1,
         'SOGLASIE_VZAIMODEYSTVIE' => 0,
+        'DOP_SOGLASHENIE' => 1,
         'SOGLASIE_MEGAFON' => 0,
         'SOGLASIE_SCORING' => 0,
         'SOGLASIE_SPISANIE' => 0,

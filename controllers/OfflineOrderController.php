@@ -3428,6 +3428,18 @@ class OfflineOrderController extends Controller
                     'payment_schedule' => $payment_schedule
                 ];
 
+            $order->probably_return_date = $end_date;
+            $order->payment_schedule = json_encode($new_shedule);
+            $order->psk = $psk;
+
+            $this->documents->create_document(array(
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'type' => 'DOP_SOGLASHENIE',
+                'params' => $order,
+                'numeration' => '04.03.3'
+            ));
+
             $this->orders->update_order($order_id, $update_order);
             exit;
         }
