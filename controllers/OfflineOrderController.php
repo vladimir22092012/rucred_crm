@@ -3428,14 +3428,6 @@ class OfflineOrderController extends Controller
                     'payment_schedule' => $payment_schedule
                 ];
 
-            $this->documents->create_document(array(
-                'user_id' => $order->user_id,
-                'order_id' => $order->order_id,
-                'type' => $type,
-                'params' => $order,
-                'numeration' => (string)$key
-            ));
-
             $this->orders->update_order($order_id, $update_order);
             exit;
         }
