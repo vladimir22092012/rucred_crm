@@ -689,7 +689,7 @@ class NeworderController extends Controller
                             'client_firstname' => $order->firstname,
                             'client_patronymic' => $order->patronymic,
                             'head' => 'Новая заявка',
-                            'text' => 'Ознакомьтесь с новой заявкой',
+                            'text' => 'Ознакомьтесь с новой заявкой и верифицируйте своего сотрудника и верифицируйте своего сотрудника',
                             'company_id' => $order->company_id,
                             'group_id' => $order->group_id,
                             'order_id' => $order_id,
@@ -700,7 +700,7 @@ class NeworderController extends Controller
 
                     $message =
                         [
-                            'message' => 'Ознакомьтесь с новой заявкой',
+                            'message' => 'Ознакомьтесь с новой заявкой и верифицируйте своего сотрудника',
                             'ticket_id' => $ticket_id,
                             'manager_id' => $this->manager->id,
                         ];
@@ -750,7 +750,7 @@ class NeworderController extends Controller
                                 'client_firstname' => $user->firstname,
                                 'client_patronymic' => $user->patronymic,
                                 'head' => 'Новая заявка',
-                                'text' => 'Ознакомьтесь с новой заявкой',
+                                'text' => 'Ознакомьтесь с новой заявкой и верифицируйте своего сотрудника',
                                 'company_id' => $order['company_id'],
                                 'group_id' => $order['group_id'],
                                 'order_id' => $order_id,
@@ -761,7 +761,7 @@ class NeworderController extends Controller
 
                         $message =
                             [
-                                'message' => 'Ознакомьтесь с новой заявкой',
+                                'message' => 'Ознакомьтесь с новой заявкой и верифицируйте своего сотрудника',
                                 'ticket_id' => $ticket_id,
                                 'manager_id' => $this->manager->id,
                             ];
