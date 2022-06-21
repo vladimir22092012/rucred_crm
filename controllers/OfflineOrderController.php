@@ -2752,8 +2752,26 @@ class OfflineOrderController extends Controller
     private function action_accept_by_employer()
     {
         $order_id = (int)$this->request->post('order_id');
+        $order = $this->orders->get_order($order_id);
         $this->orders->update_order($order_id, ['status' => 14]);
         $this->Tickets->close_neworder_ticket($order_id);
+
+        $ticket =
+            [
+                'creator' => $this->manager->id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => 'Заявка подтверждена работодателем',
+                'text' => 'Продолжить работу с заявкой',
+                'company_id' => $order->company_id,
+                'group_id' => 2,
+                'order_id' => $order_id,
+                'status' => 0
+            ];
+
+        $this->Tickets->add_ticket($ticket);
         exit;
     }
 
