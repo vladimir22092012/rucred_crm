@@ -712,24 +712,24 @@ class NeworderController extends Controller
                 $order_id = $this->orders->add_order($order);
 
                 if ($draft == 1) {
+                    // запускаем бесплатные скоринги
+                    $scoring_types = $this->scorings->get_types();
+                    foreach ($scoring_types as $scoring_type) {
+                        if (empty($scoring_type->is_paid)) {
+                            $add_scoring = array(
+                                'user_id' => $user_id,
+                                'order_id' => $order_id,
+                                'type' => $scoring_type->name,
+                                'status' => 'new',
+                                'start_date' => date('Y-m-d H:i:s'),
+                            );
+                            $this->scorings->add_scoring($add_scoring);
+                        }
+                    }
+
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/neworder/draft/' . $order_id]);
                 } else {
                     try {
-                        // запускаем бесплатные скоринги
-                        $scoring_types = $this->scorings->get_types();
-                        foreach ($scoring_types as $scoring_type) {
-                            if (empty($scoring_type->is_paid)) {
-                                $add_scoring = array(
-                                    'user_id' => $user_id,
-                                    'order_id' => $order_id,
-                                    'type' => $scoring_type->name,
-                                    'status' => 'new',
-                                    'start_date' => date('Y-m-d H:i:s'),
-                                );
-                                $this->scorings->add_scoring($add_scoring);
-                            }
-                        }
-
                         $user = $this->users->get_user($order['user_id']);
 
                         $ticket =
