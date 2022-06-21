@@ -240,13 +240,35 @@ class OfflineOrderController extends Controller
                     $order->requisite = $this->requisites->get_requisite($order->requisite_id);
 
                     $holder = $order->requisite->holder;
-                    list($holder_name, $holder_firstname, $holder_patronymic) = explode(' ', $holder);
+                    $holder = explode(' ', $holder, 3);
                     $same_holder = 0;
 
-                    if ($order->lastname == $holder_name && $order->firstname == $holder_firstname && $order->patronymic == $holder_patronymic)
-                        $same_holder = 1;
+                    if(count($holder) == 3){
+                        list($holder_name, $holder_firstname, $holder_patronymic) = $holder;
+                        if ($order->lastname == $holder_name && $order->firstname == $holder_firstname && $order->patronymic == $holder_patronymic)
+                            $same_holder = 1;
+                    }
 
                     $this->design->assign('same_holder', $same_holder);
+
+                    $enough_scans = 0;
+
+                    $query = $this->db->placehold("
+                    SELECT `type`
+                    FROM s_scans
+                    WHERE order_id = ?
+                    AND `type` != 'ndfl'
+                    ", (int)$order->order_id);
+
+                    $this->db->query($query);
+                    $scans = $this->db->results();
+
+                    $users_docs = $this->Documents->get_documents(['order_id' => $order_id]);
+
+                    if(count($scans) == count($users_docs))
+                        $enough_scans = 1;
+
+                    $this->design->assign('enough_scans', $enough_scans);
 
                     $client = $this->users->get_user($order->user_id);
                     $this->design->assign('client', $client);
@@ -798,7 +820,7 @@ class OfflineOrderController extends Controller
             'user_id' => $order->user_id,
         ));
 
-        $this->form_docs($order_id);
+        $this->form_docs($order_id, $delete_scans = 0);
 
         return array('success' => 1, 'status' => 2);
 
@@ -3574,9 +3596,11 @@ class OfflineOrderController extends Controller
         exit;
     }
 
-    private function form_docs($order_id)
+    private function form_docs($order_id, $delete_scans = 1)
     {
-        $this->Scans->delete_all_scans($order_id);
+
+        if($delete_scans == 1)
+            $this->Scans->delete_all_scans($order_id);
 
         $this->documents->delete_documents($order_id);
 
@@ -3587,7 +3611,6 @@ class OfflineOrderController extends Controller
         $order->requisite = $this->requisites->get_requisite($order->requisite_id);
 
         $settlement = $this->OrganisationSettlements->get_std_settlement();
-
         $doc_types =
             [
                 '04.05' => 'SOGLASIE_NA_OBR_PERS_DANNIH',

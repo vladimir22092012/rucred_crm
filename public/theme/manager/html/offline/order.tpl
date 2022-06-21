@@ -692,6 +692,10 @@
                 let user = $(this).attr('data-user');
                 let order = $(this).attr('data-order');
 
+                $('.confirm_asp').fadeIn();
+                $('.code_asp').fadeIn();
+
+
                 send_asp(phone, user, order);
             });
 
@@ -826,26 +830,7 @@
                             confirmButtonText: 'ОК'
                         });
                     } else {
-                        $('.code_asp').hide();
-                        $('.send_asp_code').hide();
-                        $('.confirm_asp').hide();
-                        $('#asp_success').show();
-
-                        setTimeout(function () {
-                            $('#asp_success').fadeOut();
-                        }, 3000);
-
-                        setTimeout(function () {
-                            let html = '<div class="card card-text mb-1" style="width: 100%!important;">' +
-                                '<div class="box text-center">' +
-                                '<h4>Код ПЭП: ' + code + '</h4>' +
-                                '</div>' +
-                                '</div>';
-
-                            $('.js-reject-order').after(html).fadeIn();
-                            $('.warning_asp').show();
-                            $('.margin_show').show();
-                        }, 4000);
+                        location.reload();
                     }
                 }
             });
@@ -2805,7 +2790,7 @@
                                                            data-user="{$order->user_id}">
                                                             <div class="ribbon ribbon-corner {$ribbon_class}"><i
                                                                         class="{$ribbon_icon}"></i></div>
-                                                            <img src="{$config->back_url}/files/users/{$file->name}"
+                                                            <img src="{$config->back_url}/files/users/{$order->user_id}/{$file->name}"
                                                                  alt="" class="img-responsive" style=""/>
                                                         </a>
                                                         {if in_array($order->status, [0, 1, 12, 14, 15])}
@@ -2954,34 +2939,33 @@
                                                        value="{$order->contract_id}"/>
                                                 <input type="hidden" name="phone" class="js-contract-phone"
                                                        value="{$order->phone_mobile|escape}"/>
-                                                {if empty({$order->sms})}
-                                                    <div style="display: flex;">
-                                                        <input type="text" class="form-control code_asp"
-                                                               placeholder="SMS код"
-                                                               value="{if $is_developer}{$contract->accept_code}{/if}"/>
-                                                        <small id="asp_notification"
-                                                               style="display: none; color: #7ec699">
-                                                            Смс-код отправлен
-                                                        </small>
-                                                        <small id="asp_success" style="display: none; color: #009d07">
-                                                            Успешно!
-                                                        </small>
-                                                        <div type="button" data-user="{$order->user_id}"
-                                                             data-phone="{$order->phone_mobile}"
-                                                             data-order="{$order->order_id}"
-                                                             style="margin-left: 15px; width: 250px"
-                                                             class="btn btn-primary send_asp_code">
-                                                            Отправить смс
+                                                {if $enough_scans == 0}
+                                                    {if empty({$order->sms})}
+                                                        <div style="display: flex;">
+                                                            <input type="text" class="form-control code_asp"
+                                                                   style="display:none"
+                                                                   placeholder="SMS код"
+                                                                   value="{if $is_developer}{$contract->accept_code}{/if}"/>
+                                                            <small id="asp_success" style="display: none; color: #009d07">
+                                                                Успешно!
+                                                            </small>
+                                                            <div type="button" data-user="{$order->user_id}"
+                                                                 data-phone="{$order->phone_mobile}"
+                                                                 data-order="{$order->order_id}"
+                                                                 style="margin-left: 15px; width: 250px"
+                                                                 class="btn btn-primary send_asp_code">
+                                                                Отправить смс
+                                                            </div>
+                                                            <div class="btn btn-info confirm_asp" type="button"
+                                                                 data-user="{$order->user_id}"
+                                                                 data-order="{$order->order_id}"
+                                                                 style="margin-left: 15px; display:none"
+                                                                 data-phone="{$order->phone_mobile}">Подтвердить
+                                                            </div>
                                                         </div>
-                                                        <div class="btn btn-info confirm_asp" type="button"
-                                                             data-user="{$order->user_id}"
-                                                             data-order="{$order->order_id}"
-                                                             style="margin-left: 15px"
-                                                             data-phone="{$order->phone_mobile}">Подтвердить
-                                                        </div>
-                                                    </div>
+                                                    {/if}
                                                 {/if}
-                                                <div style="display: flex; justify-content: space-between;">
+                                                <div style="{if empty($order->sms) || $enough_scans == 0}display: none;{else}display: flex; justify-content: space-between;{/if}">
                                                     <button
                                                             class="btn btn-success js-approve-order js-event-add-click"
                                                             data-event="12" data-user="{$order->user_id}"

@@ -17,7 +17,7 @@ class Scans extends Core
     {
         $query = $this->db->placehold("
             SELECT * 
-            FROM __scans 
+            FROM s_scans 
             WHERE order_id = ?
         ", $order_id);
 
