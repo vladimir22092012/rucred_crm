@@ -278,7 +278,7 @@
                 });
             });
 
-            $('.photo_status').on('change', function () {
+            $(document).on('change', '.photo_status', function () {
 
                 let status = $(this).val();
                 let file_id = $(this).attr('data-file');
@@ -1320,6 +1320,13 @@
                                                 </div>
                                             </div>
                                         {/if}
+                                        {if !empty({$order->sms})}
+                                            <div class="card card-text mb-1" style="width: 100%!important;">
+                                                <div class="box text-center">
+                                                    <h4>Код ПЭП: {$order->sms}</h4>
+                                                </div>
+                                            </div>
+                                        {/if}
                                         {if $order->status == 4}
                                             <div class="card card-primary">
                                                 <div class="box text-center">
@@ -1333,7 +1340,7 @@
                                                         <button class="btn btn-info btn-lg btn-block send_money"
                                                                 data-order="{$order->order_id}">
                                                             <i class="fas fa-hospital-symbol"></i>
-                                                            <span>Отправить деньги</span>
+                                                            <span>Подтвердить и отправить деньги</span>
                                                         </button>
                                                     </div>
                                                 </form>
@@ -1344,7 +1351,7 @@
                                                     <input type="hidden" name="order_id" value="{$order->order_id}">
                                                     <div class="pt-1 pb-2">
                                                         <div class="btn btn-info btn-lg btn-block send_payment">
-                                                            Создать платежный документ
+                                                            Подтвердить и создать платежный документ
                                                         </div>
                                                     </div>
                                                 </form>
@@ -1380,7 +1387,8 @@
                                                             руб
                                                         </h6>
                                                         <h6 class="text-center text-white">
-                                                            Баланс {if empty($contract->overpay)}00.00{else}$contract->overpay{/if} рублей
+                                                            Баланс {if empty($contract->overpay)}00.00{else}$contract->overpay{/if}
+                                                            рублей
                                                         </h6>
                                                         {*
                                                         <h6 class="text-center text-white">
@@ -1947,23 +1955,23 @@
                                                                            value="ИТОГО:" disabled></td>
                                                                 <td><input type="text" class="form-control"
                                                                            name="result[all_sum_pay]"
-                                                                           value="{$payment_schedule['result']->all_sum_pay|floatval|number_format:2:',':' '}"
+                                                                           value="{$payment_schedule['result']['all_sum_pay']|floatval|number_format:2:',':' '}"
                                                                            readonly></td>
                                                                 <td><input type="text" class="form-control"
                                                                            name="result[all_loan_body_pay]"
-                                                                           value="{$payment_schedule['result']->all_loan_body_pay|floatval|number_format:2:',':' '}"
+                                                                           value="{$payment_schedule['result']['all_loan_body_pay']|floatval|number_format:2:',':' '}"
                                                                            readonly></td>
                                                                 <td><input type="text" class="form-control"
                                                                            name="result[all_loan_percents_pay]"
-                                                                           value="{$payment_schedule['result']->all_loan_percents_pay|floatval|number_format:2:',':' '}"
+                                                                           value="{$payment_schedule['result']['all_loan_percents_pay']|floatval|number_format:2:',':' '}"
                                                                            readonly></td>
                                                                 <td><input type="text" class="form-control"
                                                                            name="result[all_comission_pay]"
-                                                                           value="{$payment_schedule['result']->all_comission_pay|floatval|number_format:2:',':' '}"
+                                                                           value="{$payment_schedule['result']['all_comission_pay']|floatval|number_format:2:',':' '}"
                                                                            readonly></td>
                                                                 <td><input type="text" class="form-control"
                                                                            name="result[all_rest_pay_sum]"
-                                                                           value="{$payment_schedule['result']->all_rest_pay_sum|floatval|number_format:2:',':' '}"
+                                                                           value="{$payment_schedule['result']['all_rest_pay_sum']|floatval|number_format:2:',':' '}"
                                                                            readonly></td>
                                                             </tr>
                                                         {/if}
@@ -2916,14 +2924,15 @@
                                 <!-- -->
                                 <div style="display: flex; width: 100%; justify-content: space-between">
                                     {if in_array($order->status, [0,1,12,14,15])}
-                                        <form method="POST" style="width: 50%" enctype="multipart/form-data">
+                                        <form method="POST" style="width: 50%; margin-left: 15px"
+                                              enctype="multipart/form-data">
                                             {if $manager->role != 'employer'}
                                                 <div class="form_file_item">
                                                     <input type="file" name="new_file" class="new_file" id="new_file"
                                                            data-user="{$order->user_id}" value="" style="display:none"/>
                                                     <label for="new_file" class="btn btn-large btn-primary">
                                                         <i class="fa fa-plus-circle"></i>
-                                                        <span>Добавить</span>
+                                                        <span>Добавить фото</span>
                                                     </label>
                                                 </div>
                                             {/if}
@@ -2969,13 +2978,6 @@
                                                              data-order="{$order->order_id}"
                                                              style="margin-left: 15px"
                                                              data-phone="{$order->phone_mobile}">Подтвердить
-                                                        </div>
-                                                    </div>
-                                                {/if}
-                                                {if !empty({$order->sms})}
-                                                    <div class="card card-text mb-1" style="width: 100%!important;">
-                                                        <div class="box text-center">
-                                                            <h4>Код ПЭП: {$order->sms}</h4>
                                                         </div>
                                                     </div>
                                                 {/if}

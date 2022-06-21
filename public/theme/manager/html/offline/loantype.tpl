@@ -351,6 +351,34 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-5 ">
+                                                <label class="control-label">Льготный период, дней</label>
+                                            </div>
+                                            <div class="col-7 ">
+                                                <select class="form-control" name="free_days">
+                                                    {for $i=1 to 30}
+                                                        <option value="{$i}" {if empty($loantype->free_days) && $i == 3}selected{/if}>{$i}</option>
+                                                    {/for}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-5 ">
+                                                <label class="control-label">Минимальный срок до первой выплаты, дней</label>
+                                            </div>
+                                            <div class="col-7 ">
+                                                <select class="form-control" name="min_period">
+                                                    {for $i=1 to 30}
+                                                        <option value="{$i}" {if empty($loantype->free_days) && $i == 20}selected{/if}>{$i}</option>
+                                                    {/for}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-5 ">
                                                 <label class="control-label">Минимальная сумма, руб</label>
                                             </div>
                                             <div class="col-7 ">

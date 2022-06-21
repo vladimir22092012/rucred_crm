@@ -496,60 +496,7 @@ class OfflineOrderController extends Controller
 
         if ($this->request->post('create_documents')) {
             $order_id = $this->request->post('order_id');
-
-            $this->Scans->delete_all_scans($order_id);
-
-            $this->documents->delete_documents($order_id);
-
-            $order = $this->orders->get_order($order_id);
-
-            $order->regaddress = $this->addresses->get_address($order->regaddress_id);
-            $order->faktaddress = $this->addresses->get_address($order->faktaddress_id);
-            $order->requisite = $this->requisites->get_requisite($order->requisite_id);
-
-            $holder = $order->requisite->holder;
-            list($holder_name, $holder_firstname, $holder_patronymic) = explode(' ', $holder);
-            $same_holder = 0;
-
-            if($order->lastname == $holder_name && $order->firstname == $holder_firstname && $order->patronymic == $holder_patronymic)
-                $same_holder = 1;
-
-            $this->design->assign('same_holder', $same_holder);
-
-            $settlement = $this->OrganisationSettlements->get_std_settlement();
-
-            $doc_types =
-                [
-                    '04.05' => 'SOGLASIE_NA_OBR_PERS_DANNIH',
-                    '04.06' => 'SOGLASIE_RUKRED_RABOTODATEL',
-                    '03.03' => 'SOGLASIE_RABOTODATEL',
-                ];
-
-            if ($settlement->id == 2)
-                $doc_types['04.05.1'] = 'SOGLASIE_MINB';
-            else
-                $doc_types['04.05.2'] = 'SOGLASIE_RDB';
-
-            $doc_types['04.07'] = 'SOGLASIE_NA_KRED_OTCHET';
-            $doc_types['04.03.02'] = 'INDIVIDUALNIE_USLOVIA';
-            $doc_types['04.04'] = 'GRAFIK_OBSL_MKR';
-            $doc_types['04.12'] = 'PERECHISLENIE_ZAEMN_SREDSTV';
-            $doc_types['04.09'] = 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP';
-            $doc_types['03.04'] = 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR';
-
-
-            foreach ($doc_types as $key => $type) {
-                $results[$type] = $this->documents->create_document(array(
-                    'user_id' => $order->user_id,
-                    'order_id' => $order->order_id,
-                    'type' => $type,
-                    'params' => $order,
-                    'numeration' => (string)$key
-                ));
-            }
-
-            $filter['user_id'] = $order->user_id;
-
+            $this->form_docs($order_id);
         }
 
         $schedules = json_decode($order->payment_schedule, true);
@@ -841,6 +788,8 @@ class OfflineOrderController extends Controller
             'order_id' => $order_id,
             'user_id' => $order->user_id,
         ));
+
+        $this->form_docs($order_id);
 
         return array('success' => 1, 'status' => 2);
 
@@ -2905,7 +2854,7 @@ class OfflineOrderController extends Controller
         $annoouitet_pay = round($annoouitet_pay, '2');
 
         if (date('d', strtotime($start_date)) < $first_pay_day) {
-            if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < 3) {
+            if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < $loan->free_period) {
                 $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days, 2);
                 $sum_pay = $annoouitet_pay + $plus_loan_percents;
                 $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2, PHP_ROUND_HALF_DOWN);
@@ -2933,12 +2882,12 @@ class OfflineOrderController extends Controller
             $count_days_this_month = date('t', strtotime($issuance_date->format('Y-m-d')));
             $paydate = $this->check_pay_date($first_pay);
 
-            if (date_diff($first_pay, $issuance_date)->days < 20) {
+            if (date_diff($first_pay, $issuance_date)->days <= $loan->min_period) {
                 $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($first_pay, $issuance_date)->days;
                 $percents_pay = $sum_pay;
                 $body_pay = 0.00;
             }
-            if (date_diff($first_pay, $issuance_date)->days >= 20 && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
+            if (date_diff($first_pay, $issuance_date)->days > $loan->min_period && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
                 $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($first_pay, $issuance_date)->days);
 
                 $sum_pay = $annoouitet_pay - $minus_percents;
@@ -3595,6 +3544,64 @@ class OfflineOrderController extends Controller
         $message = "Оплата доступна по ссылке: $pay_sum";
 
         $this->sms->send($phone, $message);
+        exit;
+    }
+
+    private function form_docs($order_id)
+    {
+        $this->Scans->delete_all_scans($order_id);
+
+        $this->documents->delete_documents($order_id);
+
+        $order = $this->orders->get_order($order_id);
+
+        $order->regaddress = $this->addresses->get_address($order->regaddress_id);
+        $order->faktaddress = $this->addresses->get_address($order->faktaddress_id);
+        $order->requisite = $this->requisites->get_requisite($order->requisite_id);
+
+        $holder = $order->requisite->holder;
+        list($holder_name, $holder_firstname, $holder_patronymic) = explode(' ', $holder);
+        $same_holder = 0;
+
+        if ($order->lastname == $holder_name && $order->firstname == $holder_firstname && $order->patronymic == $holder_patronymic)
+            $same_holder = 1;
+
+        $this->design->assign('same_holder', $same_holder);
+
+        $settlement = $this->OrganisationSettlements->get_std_settlement();
+
+        $doc_types =
+            [
+                '04.05' => 'SOGLASIE_NA_OBR_PERS_DANNIH',
+                '04.06' => 'SOGLASIE_RUKRED_RABOTODATEL',
+                '03.03' => 'SOGLASIE_RABOTODATEL',
+            ];
+
+        if ($settlement->id == 2)
+            $doc_types['04.05.1'] = 'SOGLASIE_MINB';
+        else
+            $doc_types['04.05.2'] = 'SOGLASIE_RDB';
+
+        $doc_types['04.07'] = 'SOGLASIE_NA_KRED_OTCHET';
+        $doc_types['04.03.02'] = 'INDIVIDUALNIE_USLOVIA';
+        $doc_types['04.04'] = 'GRAFIK_OBSL_MKR';
+        $doc_types['04.12'] = 'PERECHISLENIE_ZAEMN_SREDSTV';
+        $doc_types['04.09'] = 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP';
+        $doc_types['03.04'] = 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR';
+
+
+        foreach ($doc_types as $key => $type) {
+            $results[$type] = $this->documents->create_document(array(
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'type' => $type,
+                'params' => $order,
+                'numeration' => (string)$key
+            ));
+        }
+
+        $filter['user_id'] = $order->user_id;
+
         exit;
     }
 

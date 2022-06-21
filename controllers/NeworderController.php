@@ -509,7 +509,7 @@ class NeworderController extends Controller
             $annoouitet_pay = round($annoouitet_pay, '2');
 
             if (date('d', strtotime($start_date)) < $first_pay_day) {
-                if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < 3) {
+                if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < $loan->free_period) {
                     $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days, 2);
                     $sum_pay = $annoouitet_pay + $plus_loan_percents;
                     $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2, PHP_ROUND_HALF_DOWN);
@@ -537,11 +537,11 @@ class NeworderController extends Controller
                 $count_days_this_month = date('t', strtotime($issuance_date->format('Y-m-d')));
                 $paydate = $this->check_pay_date($first_pay);
 
-                if (date_diff($first_pay, $issuance_date)->days < 20) {
+                if (date_diff($first_pay, $issuance_date)->days <= $loan->min_period) {
                     $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($first_pay, $issuance_date)->days;
                     $percents_pay = $sum_pay;
                 }
-                if (date_diff($first_pay, $issuance_date)->days >= 20 && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
+                if (date_diff($first_pay, $issuance_date)->days > $loan->min_period && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
                     $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($first_pay, $issuance_date)->days);
 
                     $sum_pay = $annoouitet_pay - $minus_percents;
@@ -909,7 +909,7 @@ class NeworderController extends Controller
 
         $first_pay = $this->check_pay_date($first_pay);
 
-        if (date_diff($first_pay, $start_date)->days < 20 && $first_pay->format('m') != $start_date->format('m')) {
+        if (date_diff($first_pay, $start_date)->days <= $loan->min_period && $first_pay->format('m') != $start_date->format('m')) {
             $end_date->add(new DateInterval('P1M'));
         }
 
