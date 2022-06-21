@@ -26,8 +26,8 @@
 <div></div>
 <table border="1">
     <tr style="width: 100%;">
-        <td style="width: 28%;" height="140">
-            <img src="{$config->root_url}/theme/manager/html/pdf/i/qrcode.jpg" width="140">
+        <td style="width: 28%;" height="138">
+            <img src="{$config->root_url}/theme/manager/html/pdf/i/qrcode.jpg" width="138">
         </td>
         <td style="width: 36%" align="center">
             <div>Полная стоимость микрозайма в процентах годовых
