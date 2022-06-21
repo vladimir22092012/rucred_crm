@@ -649,24 +649,17 @@ class NeworderController extends Controller
 
             if (isset($user['personal_number'])) {
                 $personal_number = $user['personal_number'];
-                $last_number = $this->orders->last_order_number($user_id);
+                $orders = $this->orders->get_orders(['user_id' => $user_id]);
 
-                $uid = "$group->number $company->number $loan_type_number $personal_number";
-
-                if ($last_number && $last_number < 10) {
-                    $last_number += 1;
-                    $uid .= '0' . $last_number;
+                if (!empty($count_orders)) {
+                    $count_orders = count($orders);
+                    str_pad($count_orders, 2, '0', STR_PAD_LEFT);
+                } else {
+                    $count_orders = '01';
                 }
 
-                if ($last_number == false) {
-                    $uid .= ' 01';
-                }
-                if ($last_number && $last_number > 10) {
-                    $last_number += 1;
-                    $uid .= "$last_number";
-                }
+                $order['uid'] = "$group->number $company->number $loan_type_number $personal_number $count_orders";
 
-                $order['uid'] = $uid;
             }
 
             if (($this->request->get('order_id'))) {
@@ -677,7 +670,7 @@ class NeworderController extends Controller
 
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/drafts/']);
                     exit;
-                }else{
+                } else {
 
                     $order = $this->orders->get_order($order_id);
 

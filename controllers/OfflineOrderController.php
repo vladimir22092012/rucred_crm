@@ -523,7 +523,6 @@ class OfflineOrderController extends Controller
                     '04.05' => 'SOGLASIE_NA_OBR_PERS_DANNIH',
                     '04.06' => 'SOGLASIE_RUKRED_RABOTODATEL',
                     '03.03' => 'SOGLASIE_RABOTODATEL',
-                    '04.03.02' => 'INDIVIDUALNIE_USLOVIA',
                 ];
 
             if ($settlement->id == 2)
@@ -532,10 +531,11 @@ class OfflineOrderController extends Controller
                 $doc_types['04.05.2'] = 'SOGLASIE_RDB';
 
             $doc_types['04.07'] = 'SOGLASIE_NA_KRED_OTCHET';
-            $doc_types['04.09'] = 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP';
-            $doc_types['03.04'] = 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR';
+            $doc_types['04.03.02'] = 'INDIVIDUALNIE_USLOVIA';
             $doc_types['04.04'] = 'GRAFIK_OBSL_MKR';
             $doc_types['04.12'] = 'PERECHISLENIE_ZAEMN_SREDSTV';
+            $doc_types['04.09'] = 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP';
+            $doc_types['03.04'] = 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR';
 
 
             foreach ($doc_types as $key => $type) {
