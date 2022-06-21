@@ -140,8 +140,7 @@
     <br>
     <tr>
         <td style="width: 45%">р/с {$settlement->payment} в {$settlement->name}, БИК {$settlement->bik},
-            к/с {$settlement->cors} в ГУ
-            Банка России по ЦФО
+            к/с {$settlement->cors}
         </td>
         <td style="width: 10%"></td>
         <td style="width: 45%"></td>

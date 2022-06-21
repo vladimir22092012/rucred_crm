@@ -45,8 +45,7 @@
     <tr>
         <td style="width: 30%">Р/с получателя</td>
         <td style="width: 70%">р/с {$requisite->number} в {$requisite->name}, БИК {$requisite->bik},
-            к/с {$requisite->correspondent_acc} в ГУ
-            Банка России по ЦФО
+            к/с {$requisite->correspondent_acc}
         </td>
     </tr>
     <tr>
