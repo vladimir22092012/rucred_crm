@@ -457,45 +457,39 @@
                                                    class="form-control daterange" value="{$order->birth|date}">
                                         </div>
                                         <br>
-                                        <div style="margin-left: 10px">
-                                            <div class="col-12">
-                                                <div class="phone_edit_form">
-                                                    <div class="mb-3">
-                                                        <label class="control-label">Телефон<span
-                                                                    class="show_phone_confirmed"> (подтвержден)</span></label>
-                                                        <div class="form-row">
-                                                            <div class="col">
-                                                                <input style="width: 400px"
-                                                                       class="form-control phone_num"
-                                                                       type="text"
-                                                                       name="phone"
-                                                                       placeholder="+7(900)000-00-00"
-                                                                       value="{$order->phone_mobile}"
-                                                                       autocomplete="off"/>
-                                                                <input type="hidden" name="phone_confirmed"
-                                                                       class="phone_confirmed" value="false"/>
-                                                            </div>
-                                                            {if $order->phone_mobile_confirmed == 0}
-                                                                <div class="col">
-                                                                    <input type="button"
-                                                                           data-user="{$user->id}"
-                                                                           class="btn btn-success accept_edit"
-                                                                           value="Сохранить">
-                                                                </div>
-                                                            {/if}
-                                                            <div class="col-4">
-                                                                <div class="input-group show_phone_code"
-                                                                     style="display: none">
-                                                                    <input type="text" class="form-control phone_code"
-                                                                           placeholder="Введите код из смс">
-                                                                    <div class="input-group-append">
-                                                                        <button class="btn btn-primary accept_edit_with_code"
-                                                                                type="button" data-user="{$user->id}">
-                                                                            Подтвердить
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                        <div class="phone_edit_form" style="width: 100%">
+                                            <label class="control-label">Телефон{if $order->phone_mobile_confirmed == 1}
+                                                <span>(подтвержден)</span>{/if}</label>
+                                            <div class="form-row">
+                                                <div class="col">
+                                                    <input style="width: 400px; margin-left: 25px"
+                                                           class="form-control phone_num"
+                                                           type="text"
+                                                           name="phone"
+                                                           placeholder="+7(900)000-00-00"
+                                                           value="{$order->phone_mobile}"
+                                                           autocomplete="off"/>
+                                                    <input type="hidden" name="phone_confirmed"
+                                                           class="phone_confirmed" value="false"/>
+                                                </div>
+                                                {if $order->phone_mobile_confirmed == 0}
+                                                    <div class="col">
+                                                        <input type="button"
+                                                               data-user="{$user->id}"
+                                                               class="btn btn-success accept_edit"
+                                                               value="Сохранить">
+                                                    </div>
+                                                {/if}
+                                                <div class="col-4">
+                                                    <div class="input-group show_phone_code"
+                                                         style="display: none">
+                                                        <input type="text" class="form-control phone_code"
+                                                               placeholder="Введите код из смс">
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-primary accept_edit_with_code"
+                                                                    type="button" data-user="{$user->id}">
+                                                                Подтвердить
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -658,8 +652,8 @@
                                             <div class="col-12">
                                                 <div class="phone_edit_form">
                                                     <div class="mb-3">
-                                                        <label class="control-label">Электронная почта<span
-                                                                    class="show_email_confirmed"> (подтверждена)</span></label>
+                                                        <label class="control-label">Электронная почта
+                                                            {if $order->email_confirmed == 1}<span>(подтверждена)</span></label>{/if}
                                                         <div class="form-row">
                                                             <div class="col">
                                                                 <input style="width: 400px" class="form-control email"
