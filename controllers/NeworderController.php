@@ -768,6 +768,21 @@ class NeworderController extends Controller
 
                         $this->TicketMessages->add_message($message);
 
+                        // запускаем бесплатные скоринги
+                        $scoring_types = $this->scorings->get_types();
+                        foreach ($scoring_types as $scoring_type) {
+                            if (empty($scoring_type->is_paid)) {
+                                $add_scoring = array(
+                                    'user_id' => $order['user_id'],
+                                    'order_id' => $order_id,
+                                    'type' => $scoring_type->name,
+                                    'status' => 'new',
+                                    'start_date' => date('Y-m-d H:i:s'),
+                                );
+                                $this->scorings->add_scoring($add_scoring);
+                            }
+                        }
+
                         response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                     } catch (Exception $exception) {
                         response_json(['error' => 1, 'reason' => 'Создать заявку не удалось']);
