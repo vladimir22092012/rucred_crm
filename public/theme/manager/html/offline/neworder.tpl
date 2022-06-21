@@ -1017,7 +1017,7 @@
                                                         <td><select class="form-control"
                                                                     name="credits_delay[][credits_delay]">
                                                                 <option value="Да">Да</option>
-                                                                <option value="Нет">Нет</option>
+                                                                <option value="Нет" selected>Нет</option>
                                                             </select></td>
                                                         {if $credits_story@iteration == 1}
                                                             <td><input type="button"
@@ -1047,7 +1047,7 @@
                                                     <td><select class="form-control"
                                                                 name="credits_delay[][credits_delay]">
                                                             <option value="Да">Да</option>
-                                                            <option value="Нет">Нет</option>
+                                                            <option value="Нет" selected>Нет</option>
                                                         </select></td>
                                                     <td><input type="button"
                                                                class="btn btn-outline-success add_to_credits_table"
@@ -1092,7 +1092,7 @@
                                                         <td><select class="form-control"
                                                                     name="cards_delay[][cards_delay]">
                                                                 <option value="Да">Да</option>
-                                                                <option value="Нет">Нет</option>
+                                                                <option value="Нет" selected>Нет</option>
                                                             </select
                                                         </td>
                                                         {if $credits_story@iteration == 1}
@@ -1120,7 +1120,7 @@
                                                                type="text" value=""></td>
                                                     <td><select class="form-control" name="cards_delay[][cards_delay]">
                                                             <option value="Да">Да</option>
-                                                            <option value="Нет">Нет</option>
+                                                            <option value="Нет" selected>Нет</option>
                                                         </select
                                                     </td>
                                                     <td><input type="button"
