@@ -1374,11 +1374,15 @@
                                                 <div class="card card-primary mb-1">
                                                     <div class="box text-center">
                                                         <h4 class="text-white">Выдан</h4>
-                                                        <h6>Договор {$contract->number}</h6>
+                                                        <h6 class="text-white">Договор {$order->uid}</h6>
                                                         <h6 class="text-center text-white">
                                                             Погашение: {$contract->loan_body_summ+$contract->loan_percents_summ+$contract->loan_charge_summ+$contract->loan_peni_summ}
                                                             руб
                                                         </h6>
+                                                        <h6 class="text-center text-white">
+                                                            Баланс {if empty($contract->overpay)}00.00{else}$contract->overpay{/if} рублей
+                                                        </h6>
+                                                        {*
                                                         <h6 class="text-center text-white">
                                                             Продление:
                                                             {if $contract->prolongation > 0}
@@ -1386,7 +1390,7 @@
                                                             {else}
                                                                 {$contract->loan_percents_summ} руб
                                                             {/if}
-                                                        </h6>
+                                                        </h6> *}
                                                     </div>
                                                 </div>
                                                 <div class="pt-1 pb-2">
