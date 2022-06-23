@@ -1556,22 +1556,6 @@
                                                     </div>
                                                     <div class="col-md-12">
                                                         <div class="form-group row m-0">
-                                                                <label class="control-label col-md-4">Адрес регистрации:</label>
-                                                                <div class="col-md-8">
-                                                                    <p class="form-control-static">{$user->regaddress->adressfull|escape}</p>
-                                                                </div>
-                                                        </div>
-                                                    </div><br>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group row m-0">
-                                                            <label class="control-label col-md-4">Адрес проживания:</label>
-                                                            <div class="col-md-8">
-                                                                <p class="form-control-static">{$user->faktaddress->adressfull|escape}</p>
-                                                            </div>
-                                                        </div>
-                                                    </div><br>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group row m-0">
                                                             <label class="control-label col-md-4">Дата рождения:</label>
                                                             <div class="col-md-8">
                                                                 <p class="form-control-static">{$order->birth|date}</p>
@@ -1613,6 +1597,22 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label class="control-label col-md-4">Адрес регистрации:</label>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$user->regaddress->adressfull|escape}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div><br>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label class="control-label col-md-4">Адрес проживания:</label>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$user->faktaddress->adressfull|escape}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div><br>
                                                     {if $order->viber_num}
                                                         <div class="col-md-12">
                                                             <div class="form-group row m-0">
@@ -2098,7 +2098,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {if $order->foreign_relative == 1}
+                                                {if $order->foreign_relative == 2}
                                                     <div class="col-md-12">
                                                         <div class="form-group  mb-2 row">
                                                             <label class="control-label col-md-8">ФИО
@@ -2275,7 +2275,7 @@
                                                                 <a target="_blank"
                                                                    style="text-decoration: none!important;"
                                                                    href="javascript:void(0);"
-                                                                   onclick="window.open('{$config->back_url}/files/users/{$document->scan->name}');">
+                                                                   onclick="window.open('{$config->back_url}/files/users/{$user->id}/{$document->scan->name}');">
                                                                     <input type="button"
                                                                            class="btn btn-outline-info {$scan->type}"
                                                                            value="Скан">
@@ -2742,13 +2742,13 @@
                                                     <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
                                                         <a class="image-popup-fit-width js-event-add-click"
                                                            href="javascript:void(0);"
-                                                           onclick="window.open('{$config->back_url}/files/users/{$file->name}');"
+                                                           onclick="window.open('{$config->root_url}/files/users/{$user->id}/{$file->name}');"
                                                            data-event="50" data-manager="{$manager->id}"
                                                            data-order="{$order->order_id}"
                                                            data-user="{$order->user_id}">
                                                             <div class="ribbon ribbon-corner {$ribbon_class}"><i
                                                                         class="{$ribbon_icon}"></i></div>
-                                                            <img src="{$config->back_url}/files/users/{$file->name}"
+                                                            <img src="'{$config->root_url}/files/users/{$user->id}/{$file->name}'"
                                                                  alt="" class="img-responsive" style=""/>
                                                         </a>
                                                         {if in_array($order->status, [0, 1, 12, 14, 15])}
