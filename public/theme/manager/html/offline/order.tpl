@@ -1375,6 +1375,10 @@
                                                             Баланс: {if empty($contract->overpay)}00.00{else}$contract->overpay{/if}
                                                             руб
                                                         </h6>
+                                                        <h6 class="text-center text-white">
+                                                            Сумма ДП: {$contract->loan_body_summ + $contract->loan_percents_summ}
+                                                            руб
+                                                        </h6>
                                                         {*
                                                         <h6 class="text-center text-white">
                                                             Продление:

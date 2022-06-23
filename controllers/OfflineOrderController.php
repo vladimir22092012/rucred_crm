@@ -253,13 +253,14 @@ class OfflineOrderController extends Controller
                         }
                     }
 
-                    $this->design->assign('next_payment', $next_payment);
+                    if(isset($next_payment))
+                        $this->design->assign('next_payment', $next_payment);
 
                     $holder = $order->requisite->holder;
                     $holder = explode(' ', $holder, 3);
                     $same_holder = 0;
 
-                    if(count($holder) == 3){
+                    if (count($holder) == 3) {
                         list($holder_name, $holder_firstname, $holder_patronymic) = $holder;
                         if ($order->lastname == $holder_name && $order->firstname == $holder_firstname && $order->patronymic == $holder_patronymic)
                             $same_holder = 1;
@@ -281,7 +282,7 @@ class OfflineOrderController extends Controller
 
                     $users_docs = $this->Documents->get_documents(['order_id' => $order_id]);
 
-                    if(count($scans) == count($users_docs))
+                    if (count($scans) == count($users_docs))
                         $enough_scans = 1;
 
                     $this->design->assign('enough_scans', $enough_scans);
@@ -836,6 +837,8 @@ class OfflineOrderController extends Controller
             'user_id' => $order->user_id,
         ));
 
+        $this->contracts->update_contract($order->contract_id, ['status' => 1]);
+
         return array('success' => 1, 'status' => 2);
 
     }
@@ -855,26 +858,13 @@ class OfflineOrderController extends Controller
         $resp = $this->best2pay->issuance($order_id);
 
         if (!empty($resp['success'])) {
-            $contract_id = $this->contracts->add_contract([
-                'order_id' => $order->order_id,
-                'user_id' => $order->user_id,
-                'number' => $order->uid,
-                'amount' => $order->amount,
-                'period' => $order->period,
-                'base_percent' => $order->percent,
-                'peni_percent' => 0,
-                'status' => 2,
-                'loan_body_summ' => $order->amount,
-                'loan_percents_summ' => 0,
-                'loan_peni_summ' => 0,
-                'issuance_date' => date('Y-m-d H:i:s'),
-            ]);
 
-            $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
+            $this->contracts->update_contract($order->contract_id, ['status' => 2]);
+            $this->orders->update_order($order_id, ['status' => 5]);
 
             $this->operations->add_operation([
                 'user_id' => $order->user_id,
-                'contract_id' => $contract_id,
+                'contract_id' => $order->contract_id,
                 'order_id' => $order->order_id,
                 'type' => 'P2P',
                 'amount' => $order->amount,
@@ -3508,6 +3498,8 @@ class OfflineOrderController extends Controller
         $user_id = $this->request->post('user');
         $order_id = $this->request->post('order');
 
+        $order = $this->orders->get_order($order_id);
+
         $this->db->query("
         SELECT code, created
         FROM s_sms_messages
@@ -3543,6 +3535,23 @@ class OfflineOrderController extends Controller
 
             $delete_scans = 0;
             $this->form_docs($order_id, $delete_scans);
+
+            $contract_id = $this->contracts->add_contract([
+                'order_id' => $order->order_id,
+                'user_id' => $order->user_id,
+                'number' => $order->uid,
+                'amount' => $order->amount,
+                'period' => $order->period,
+                'base_percent' => $order->percent,
+                'peni_percent' => 0,
+                'status' => 0,
+                'loan_body_summ' => $order->amount,
+                'loan_percents_summ' => 0,
+                'loan_peni_summ' => 0,
+                'issuance_date' => date('Y-m-d H:i:s'),
+            ]);
+
+            $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
 
             echo json_encode(['success' => 1]);
             exit;
@@ -3599,11 +3608,9 @@ class OfflineOrderController extends Controller
             }
         }
 
-        if(strripos($next_payment, ',') == false)
-        {
+        if (strripos($next_payment, ',') == false) {
             $sum = $next_payment * 100;
-        }
-        else{
+        } else {
             list($rub, $kop) = explode(',', $next_payment);
             $rub *= 100;
             $sum = $rub + $kop;
@@ -3621,7 +3628,7 @@ class OfflineOrderController extends Controller
     private function form_docs($order_id, $delete_scans = 1)
     {
 
-        if($delete_scans == 1)
+        if ($delete_scans == 1)
             $this->Scans->delete_all_scans($order_id);
 
         $this->documents->delete_documents($order_id);
