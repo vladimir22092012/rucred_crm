@@ -859,7 +859,28 @@ class OfflineOrderController extends Controller
 
         if (!empty($resp['success'])) {
 
-            $this->contracts->update_contract($order->contract_id, ['status' => 2]);
+            $payment_schedule = json_decode($order->payment_schedule, true);
+            $payment_schedule = end($payment_schedule);
+            $date = date('Y-m-d');
+
+            foreach ($payment_schedule as $payday => $payment) {
+                if ($payday != 'result') {
+                    $payday = date('Y-m-d', strtotime($payday));
+                    if ($payday > $date) {
+                        $next_payday = $date;
+                        break;
+                    }
+                }
+            }
+
+            $contract =
+                [
+                    'loan_body_summ' => $order->amount,
+                    'status' => 2,
+                    'return_date' => $next_payday
+                ];
+
+            $this->contracts->update_contract($order->contract_id, $contract);
             $this->orders->update_order($order_id, ['status' => 5]);
 
             $this->operations->add_operation([
