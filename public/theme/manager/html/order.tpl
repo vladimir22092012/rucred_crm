@@ -1546,14 +1546,18 @@
                                                         </div>
                                                     {/if}
 
-                                                    <div class="col-md-12">
-                                                        <div class="form-group row m-0">
-                                                            <label class="control-label col-md-4">Email:</label>
-                                                            <div class="col-md-8">
-                                                                <p class="form-control-static">{$order->email|escape}</p>
+                                                    {foreach $contacts as $contact}
+                                                        {if $contact->type == 'email'}
+                                                            <div class="col-md-12">
+                                                                <div class="form-group row m-0">
+                                                                    <label class="control-label col-md-4">Email:</label>
+                                                                    <div class="col-md-8">
+                                                                        <p class="form-control-static">{$contact->value|escape}</p>
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </div>
+                                                        {/if}
+                                                    {/foreach}
                                                     <div class="col-md-12">
                                                         <div class="form-group row m-0">
                                                             <label class="control-label col-md-4">Дата рождения:</label>
@@ -1613,38 +1617,38 @@
                                                             </div>
                                                         </div>
                                                     </div><br>
-                                                    {if $order->viber_num}
-                                                        <div class="col-md-12">
-                                                            <div class="form-group row m-0">
-                                                                <label class="control-label col-md 4">Viber:</label><br>
-                                                                <div class="col-md-8">
-                                                                    <p class="form-control-static">{$order->viber_num}</p>
+                                                    {foreach $contacts as $contact}
+                                                        {if $contact->type == 'viber'}
+                                                            <div class="col-md-12">
+                                                                <div class="form-group row m-0">
+                                                                    <label class="control-label col-md-4">Viber:</label>
+                                                                    <div class="col-md-8">
+                                                                        <p class="form-control-static">{$contact->value|escape}</p>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    {/if}
-                                                    {if $order->telegram_num}
-                                                        <div class="col-md-12">
-                                                            <div class="form-group row m-0">
-                                                                <label
-                                                                        class="control-label col-md 4">Telegram:</label><br>
-                                                                <div class="col-md-8">
-                                                                    <p class="form-control-static">{$order->telegram_num}</p>
+                                                        {/if}
+                                                        {if $contact->type == 'whatsapp'}
+                                                            <div class="col-md-12">
+                                                                <div class="form-group row m-0">
+                                                                    <label class="control-label col-md-4">Whatsapp:</label>
+                                                                    <div class="col-md-8">
+                                                                        <p class="form-control-static">{$contact->value|escape}</p>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    {/if}
-                                                    {if $order->whatsapp_num}
-                                                        <div class="col-md-12">
-                                                            <div class="form-group row m-0">
-                                                                <label
-                                                                        class="control-label col-md 4">WhatsApp:</label><br>
-                                                                <div class="col-md-8">
-                                                                    <p class="form-control-static">{$order->whatsapp_num}</p>
+                                                        {/if}
+                                                        {if $contact->type == 'telegram'}
+                                                            <div class="col-md-12">
+                                                                <div class="form-group row m-0">
+                                                                    <label class="control-label col-md-4">Telegram:</label>
+                                                                    <div class="col-md-8">
+                                                                        <p class="form-control-static">{$contact->value|escape}</p>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    {/if}
+                                                        {/if}
+                                                    {/foreach}
                                                 </div>
 
 
@@ -2748,7 +2752,7 @@
                                                            data-user="{$order->user_id}">
                                                             <div class="ribbon ribbon-corner {$ribbon_class}"><i
                                                                         class="{$ribbon_icon}"></i></div>
-                                                            <img src="'{$config->root_url}/files/users/{$user->id}/{$file->name}'"
+                                                            <img src="{$config->root_url}/files/users/{$user->id}/{$file->name}"
                                                                  alt="" class="img-responsive" style=""/>
                                                         </a>
                                                         {if in_array($order->status, [0, 1, 12, 14, 15])}

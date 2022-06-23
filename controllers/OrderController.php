@@ -238,6 +238,9 @@ class OrderController extends Controller
                     $client = $this->users->get_user($order->user_id);
                     $this->design->assign('client', $client);
 
+                    $contacts = $this->Contacts->get_contacts($order->user_id);
+                    $this->design->assign('contacts', $contacts);
+
                     $communications = $this->communications->get_communications(array('user_id' => $client->id));
                     $this->design->assign('communications', $communications);
 
