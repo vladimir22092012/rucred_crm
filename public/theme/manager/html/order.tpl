@@ -1556,6 +1556,22 @@
                                                     </div>
                                                     <div class="col-md-12">
                                                         <div class="form-group row m-0">
+                                                                <label class="control-label col-md-4">Адрес регистрации:</label>
+                                                                <div class="col-md-8">
+                                                                    <p class="form-control-static">{$user->regaddress->adressfull|escape}</p>
+                                                                </div>
+                                                        </div>
+                                                    </div><br>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label class="control-label col-md-4">Адрес проживания:</label>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$user->faktaddress->adressfull|escape}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div><br>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
                                                             <label class="control-label col-md-4">Дата рождения:</label>
                                                             <div class="col-md-8">
                                                                 <p class="form-control-static">{$order->birth|date}</p>
@@ -1952,6 +1968,23 @@
                                                                     Не состоит
                                                                 {elseif $order->sex == 1}
                                                                     Состоит
+                                                                {/if}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="form-group  mb-0 row">
+                                                        <label class="control-label col-md-3">Состоит ли в
+                                                            профсоюзе:</label>
+                                                        <div class="col-md-6">
+                                                            <p class="form-control-static">
+                                                                {if $order->profunion == 0}
+                                                                    Не состоит и не хочет вступать
+                                                                {elseif $order->profunion == 1}
+                                                                    Состоит
+                                                                {elseif $order->profunion == 2}
+                                                                    Не состоит и хочет вступить
                                                                 {/if}
                                                             </p>
                                                         </div>
