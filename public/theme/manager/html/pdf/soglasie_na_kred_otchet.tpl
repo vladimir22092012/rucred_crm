@@ -63,7 +63,7 @@
             <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
         </tr>
         <tr>
-            <td>ID подписания: {$code_asp->id}</td>
+            <td>ID подписания: {$code_asp->uid}</td>
         </tr>
         <tr>
             <td>Код подтверждения: {$code_asp->code}</td>

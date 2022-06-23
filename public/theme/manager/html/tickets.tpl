@@ -195,45 +195,45 @@
                                 <table class="jsgrid-table table table-striped table-hover">
                                     <tr class="jsgrid-header-row">
                                         <th style="width: 40px; text-align: center"
-                                            class="jsgrid-header-cell jsgrid-align-right jsgrid-header-sortable {if $sort == 'order_id_desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'order_id_asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
-                                            {if $sort == 'order_id_asc'}<a href="{url page=null sort='order_id_desc'}">
+                                            class="jsgrid-header-cell jsgrid-align-right jsgrid-header-sortable {if $sort == 'id desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'id asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
+                                            {if $sort == 'id asc'}<a href="{url page=null sort='id desc'}">
                                                     ID</a>
-                                            {else}<a href="{url page=null sort='order_id_asc'}">ID</a>{/if}
+                                            {else}<a href="{url page=null sort='id asc'}">ID</a>{/if}
                                         </th>
                                         <th style="width: 70px; text-align: center"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'date_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'date_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'date_asc'}<a href="{url page=null sort='date_desc'}">Дата /
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'created asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'created desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'created asc'}<a href="{url page=null sort='created desc'}">Дата /
                                                 Время</a>
-                                            {else}<a href="{url page=null sort='date_asc'}">Дата / Время</a>{/if}
+                                            {else}<a href="{url page=null sort='created asc'}">Дата / Время</a>{/if}
                                         </th>
                                         <th style="width: 70px; text-align: center"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'amount_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'amount_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'amount_asc'}<a href="{url page=null sort='amount_desc'}">
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'creator asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'creator desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'creator asc'}<a href="{url page=null sort='creator desc'}">
                                                     Постановщик</a>
-                                            {else}<a href="{url page=null sort='amount_asc'}">Постановщик</a>{/if}
+                                            {else}<a href="{url page=null sort='creator asc'}">Постановщик</a>{/if}
                                         </th>
                                         <th style="width: 70px; text-align: center"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'amount_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'amount_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'amount_asc'}<a href="{url page=null sort='amount_desc'}">
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'executor asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'executor desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'executor asc'}<a href="{url page=null sort='executor desc'}">
                                                     Постановщик</a>
-                                            {else}<a href="{url page=null sort='amount_asc'}">Исполнитель</a>{/if}
+                                            {else}<a href="{url page=null sort='executor asc'}">Исполнитель</a>{/if}
                                         </th>
                                         <th style="width: 80px; text-align: center"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'period_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'period_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'period_asc'}<a href="{url page=null sort='period_desc'}">
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'head asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'head desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'head asc'}<a href="{url page=null sort='head desc'}">
                                                     Заголовок</a>
-                                            {else}<a href="{url page=null sort='period_asc'}">Заголовок</a>{/if}
+                                            {else}<a href="{url page=null sort='head asc'}">Заголовок</a>{/if}
                                         </th>
                                         <th style="width: 130px; text-align: center"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'fio_asc'}<a href="{url page=null sort='fio_desc'}">Текст</a>
-                                            {else}<a href="{url page=null sort='fio_asc'}">Текст</a>{/if}
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'text asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'text desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'text asc'}<a href="{url page=null sort='text desc'}">Текст</a>
+                                            {else}<a href="{url page=null sort='text asc'}">Текст</a>{/if}
                                         </th>
                                         <th style="width: 70px; text-align: center"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'birth_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'birth_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'birth_asc'}<a href="{url page=null sort='birth_desc'}">
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'text asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'text desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'text asc'}<a href="{url page=null sort='text desc'}">
                                                     Вложения</a>
-                                            {else}<a href="{url page=null sort='birth_asc'}">Вложения</a>{/if}
+                                            {else}<a href="{url page=null sort='text asc'}">Вложения</a>{/if}
                                         </th>
                                     </tr>
                                     <tr class="jsgrid-filter-row" id="search_form">

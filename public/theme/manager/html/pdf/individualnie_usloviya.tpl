@@ -114,7 +114,7 @@
             <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
         </tr>
         <tr>
-            <td>ID подписания: {$code_asp->id}</td>
+            <td>ID подписания: {$code_asp->uid}</td>
         </tr>
         <tr>
             <td>Код подтверждения: {$code_asp->code}</td>
@@ -221,7 +221,7 @@
             <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
         </tr>
         <tr>
-            <td>ID подписания: {$code_asp->id}</td>
+            <td>ID подписания: {$code_asp->uid}</td>
         </tr>
         <tr>
             <td>Код подтверждения: {$code_asp->code}</td>
@@ -336,7 +336,7 @@
             <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
         </tr>
         <tr>
-            <td>ID подписания: {$code_asp->id}</td>
+            <td>ID подписания: {$code_asp->uid}</td>
         </tr>
         <tr>
             <td>Код подтверждения: {$code_asp->code}</td>
@@ -445,7 +445,7 @@
             <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
         </tr>
         <tr>
-            <td>ID подписания: {$code_asp->id}</td>
+            <td>ID подписания: {$code_asp->uid}</td>
         </tr>
         <tr>
             <td>Код подтверждения: {$code_asp->code}</td>
@@ -540,7 +540,7 @@
             <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
         </tr>
         <tr>
-            <td>ID подписания: {$code_asp->id}</td>
+            <td>ID подписания: {$code_asp->uid}</td>
         </tr>
         <tr>
             <td>Код подтверждения: {$code_asp->code}</td>
@@ -652,7 +652,7 @@
             <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
         </tr>
         <tr>
-            <td>ID подписания: {$code_asp->id}</td>
+            <td>ID подписания: {$code_asp->uid}</td>
         </tr>
         <tr>
             <td>Код подтверждения: {$code_asp->code}</td>
@@ -740,7 +740,7 @@
             <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
         </tr>
         <tr>
-            <td>ID подписания: {$code_asp->id}</td>
+            <td>ID подписания: {$code_asp->uid}</td>
         </tr>
         <tr>
             <td>Код подтверждения: {$code_asp->code}</td>
@@ -836,7 +836,7 @@
             <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
         </tr>
         <tr>
-            <td>ID подписания: {$code_asp->id}</td>
+            <td>ID подписания: {$code_asp->uid}</td>
         </tr>
         <tr>
             <td>Код подтверждения: {$code_asp->code}</td>
@@ -876,12 +876,12 @@
         {/if}
     {/foreach}
     <tr>
-        <td style="background-color: #b3b2ab">ИТОГО:</td>
-        <td style="background-color: #b3b2ab">{$payment_schedule['result']['all_sum_pay']|floatval|number_format:2:',':' '}</td>
-        <td style="background-color: #b3b2ab">{$payment_schedule['result']['all_loan_percents_pay']|floatval|number_format:2:',':' '}</td>
-        <td style="background-color: #b3b2ab">{$payment_schedule['result']['all_loan_body_pay']|floatval|number_format:2:',':' '}</td>
-        <td style="background-color: #b3b2ab">{$payment_schedule['result']['all_comission_pay']|floatval|number_format:2:',':' '}</td>
-        <td style="background-color: #b3b2ab">{$payment_schedule['result']['all_rest_pay_sum']|floatval|number_format:2:',':' '}</td>
+        <td style="background-color: #b3b2ab" align="center">ИТОГО:</td>
+        <td style="background-color: #b3b2ab" align="center">{$payment_schedule['result']['all_sum_pay']|floatval|number_format:2:',':' '}</td>
+        <td style="background-color: #b3b2ab" align="center">{$payment_schedule['result']['all_loan_percents_pay']|floatval|number_format:2:',':' '}</td>
+        <td style="background-color: #b3b2ab" align="center">{$payment_schedule['result']['all_loan_body_pay']|floatval|number_format:2:',':' '}</td>
+        <td style="background-color: #b3b2ab" align="center">{$payment_schedule['result']['all_comission_pay']|floatval|number_format:2:',':' '}</td>
+        <td style="background-color: #b3b2ab" align="center">{$payment_schedule['result']['all_rest_pay_sum']|floatval|number_format:2:',':' '}</td>
     </tr>
     <tr>
         <td colspan="5">Полная стоимость микрозайма, % годовых:</td>
@@ -924,7 +924,7 @@
             <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
         </tr>
         <tr>
-            <td>ID подписания: {$code_asp->id}</td>
+            <td>ID подписания: {$code_asp->uid}</td>
         </tr>
         <tr>
             <td>Код подтверждения: {$code_asp->code}</td>
@@ -1058,7 +1058,7 @@
             <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
         </tr>
         <tr>
-            <td>ID подписания: {$code_asp->id}</td>
+            <td>ID подписания: {$code_asp->uid}</td>
         </tr>
         <tr>
             <td>Код подтверждения: {$code_asp->code}</td>
@@ -1128,7 +1128,7 @@
             <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
         </tr>
         <tr>
-            <td>ID подписания: {$code_asp->id}</td>
+            <td>ID подписания: {$code_asp->uid}</td>
         </tr>
         <tr>
             <td>Код подтверждения: {$code_asp->code}</td>

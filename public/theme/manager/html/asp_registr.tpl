@@ -39,10 +39,9 @@
 
             let document_link = $('#document_std_link').val();
 
-            $('#document_link').on('change', function () {
+            $('.document_link').on('change', function () {
                 let document_id = $(this).val();
-
-                $(this).closest('td').find('#document_href').attr('href', document_link + document_id);
+                $(this).parent().find('a').attr('href', document_link + document_id);
             });
 
             $('.searchable:not(select)').on('change', function (e) {
@@ -117,7 +116,7 @@
                     <div class="card-body">
                         <div id="basicgrid" class="jsgrid" style="position: relative; width: 100%;">
                             <div class="jsgrid-grid-header jsgrid-header-scrollbar">
-                                <input type="hidden" id="document_std_link" value="{$config->back_url}/document/">
+                                <input type="hidden" id="document_std_link" value="{$config->root_url}/document/">
                                 <table class="jsgrid-table table table-striped table-hover" style="text-align: center">
                                     <thead>
                                     <tr class="jsgrid-header-row">
@@ -223,7 +222,7 @@
                                                 {count($code->documents)}
                                             </td>
                                             <td style="display: flex">
-                                                <select class="form-control" id="document_link" style="width: 500px;">
+                                                <select class="form-control document_link" style="width: 500px;">
                                                     {foreach $code->documents as $document}
                                                         <option value="{$document->id}">
                                                             {$document->numeration} {$document->name}
@@ -231,7 +230,7 @@
                                                     {/foreach}
                                                 </select>
                                                 <a target="_blank" id="document_href"
-                                                   href="{$config->back_url}/document/{$code->documents[0]->id}">
+                                                   href="{$config->root_url}/document/{$code->documents[0]->id}">
                                                     <div class="btn btn-outline-info" style="margin-left: 5px">
                                                         Открыть
                                                     </div>

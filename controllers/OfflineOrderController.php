@@ -239,6 +239,22 @@ class OfflineOrderController extends Controller
 
                     $order->requisite = $this->requisites->get_requisite($order->requisite_id);
 
+                    $payment_schedule = json_decode($order->payment_schedule, true);
+                    $payment_schedule = end($payment_schedule);
+                    $date = date('Y-m-d');
+
+                    foreach ($payment_schedule as $payday => $payment) {
+                        if ($payday != 'result') {
+                            $payday = date('Y-m-d', strtotime($payday));
+                            if ($payday > $date) {
+                                $next_payment = $payment['pay_sum'];
+                                break;
+                            }
+                        }
+                    }
+
+                    $this->design->assign('next_payment', $next_payment);
+
                     $holder = $order->requisite->holder;
                     $holder = explode(' ', $holder, 3);
                     $same_holder = 0;
@@ -819,8 +835,6 @@ class OfflineOrderController extends Controller
             'order_id' => $order_id,
             'user_id' => $order->user_id,
         ));
-
-        $this->form_docs($order_id, $delete_scans = 0);
 
         return array('success' => 1, 'status' => 2);
 
@@ -3131,11 +3145,7 @@ class OfflineOrderController extends Controller
         $order = $this->orders->get_order($order_id);
 
         $payment_schedule = json_decode($order->payment_schedule, true);
-
-        foreach ($payment_schedule as $schedule) {
-            $payment_schedule = (array)$schedule;
-            break;
-        }
+        $payment_schedule = end($payment_schedule);
 
         array_shift($payment_schedule);
 
@@ -3531,6 +3541,9 @@ class OfflineOrderController extends Controller
 
             $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
 
+            $delete_scans = 0;
+            $this->form_docs($order_id, $delete_scans);
+
             echo json_encode(['success' => 1]);
             exit;
         }
@@ -3572,25 +3585,34 @@ class OfflineOrderController extends Controller
         $phone = $this->request->post('phone');
         $order = $this->orders->get_order($order_id);
 
-        $payment_schedule = json_decode($order->payment_schedule);
-        $next_payment = array();
+        $payment_schedule = json_decode($order->payment_schedule, true);
+        $payment_schedule = end($payment_schedule);
         $date = date('Y-m-d');
 
         foreach ($payment_schedule as $payday => $payment) {
             if ($payday != 'result') {
                 $payday = date('Y-m-d', strtotime($payday));
                 if ($payday > $date) {
-                    $next_payment = $payment;
+                    $next_payment = $payment['pay_sum'];
                     break;
                 }
             }
         }
 
-        $sum = $next_payment->pay_sum * 100;
-        $resp = $this->QrGenerateApi->get_qr($sum, 600);
-        $pay_sum = $resp->results->qr_link;
+        if(strripos($next_payment, ',') == false)
+        {
+            $sum = $next_payment * 100;
+        }
+        else{
+            list($rub, $kop) = explode(',', $next_payment);
+            $rub *= 100;
+            $sum = $rub + $kop;
+        }
 
-        $message = "Оплата доступна по ссылке: $pay_sum";
+        $resp = $this->QrGenerateApi->get_qr($sum, 600);
+        $pay_link = $resp->results->qr_link;
+
+        $message = "Оплата доступна по ссылке: $pay_link";
 
         $this->sms->send($phone, $message);
         exit;

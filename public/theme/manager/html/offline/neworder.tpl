@@ -189,16 +189,22 @@
 
                     if (order['profunion'] == 2) {
                         $('input[id="profunion2"]').trigger('click');
+                        $('input[id="want_profunion"]').trigger('click');
                     }
                     if (order['profunion'] == 0) {
-                        $('input[id="want_profunion"]').trigger('click');
+                        $('input[id="profunion2"]').trigger('click');
                     }
                     if (order['profunion'] == 1) {
                         $('input[id="profunion1"]').trigger('click');
                     }
 
                     $('.to_form_loan').trigger('click');
-                    $('select[name="branch"] option[value="' + order['branche_id'] + '"]').prop('selected', true);
+
+                    if(order['branche_id'].length < 2)
+                        $('select[name="branch"] option[value="4"]').prop('selected', true);
+                    else
+                        $('select[name="branch"] option[value="' + order['branche_id'] + '"]').prop('selected', true);
+
                 }, 900);
             }
 
@@ -964,7 +970,7 @@
                                                     style="width: 300px; margin-left: 25px">
                                                 {foreach $settlements as $settlement}
                                                     <option value="{$settlement->id}"
-                                                            {if $settlement->std == 1}selected{/if}>{$settlement->name}</option>
+                                                            {if $order->settlement_id == $settlement->id}selected{/if}>{$settlement->name}</option>
                                                 {/foreach}
                                             </select>
                                         </div>

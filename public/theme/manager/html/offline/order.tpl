@@ -1156,7 +1156,7 @@
                                             </select>
                                         {else}
                                             {if $order->manager_id}
-                                                {$managers[$order->manager_id]->name|escape}
+                                                Ответственный: {$managers[$order->manager_id]->name|escape}
                                             {/if}
                                         {/if}
                                     </h6>
@@ -1319,7 +1319,7 @@
                                                     <h6>Договор {$contract->number}</h6>
                                                 </div>
                                             </div>
-                                            {if $order->settlement_id == 2}
+                                            {if $order->settlement_id == 2 && in_array($manager->role, ['middle', 'admin', 'developer'])}
                                                 <form class=" pt-1 js-confirm-contract">
                                                     <div class="pt-1 pb-2">
                                                         <button class="btn btn-info btn-lg btn-block send_money"
@@ -1330,7 +1330,7 @@
                                                     </div>
                                                 </form>
                                             {/if}
-                                            {if $order->settlement_id == 3}
+                                            {if $order->settlement_id == 3 && in_array($manager->role, ['middle', 'admin', 'developer'])}
                                                 <form id="send_payment_form">
                                                     <input type="hidden" name="action" value="create_pay_rdr">
                                                     <input type="hidden" name="order_id" value="{$order->order_id}">
@@ -1368,12 +1368,12 @@
                                                         <h4 class="text-white">Выдан</h4>
                                                         <h6 class="text-white">Договор {$order->uid}</h6>
                                                         <h6 class="text-center text-white">
-                                                            Погашение: {$contract->loan_body_summ+$contract->loan_percents_summ+$contract->loan_charge_summ+$contract->loan_peni_summ}
+                                                            След. платеж: {$next_payment|floatval|number_format:2:',':' '}
                                                             руб
                                                         </h6>
                                                         <h6 class="text-center text-white">
-                                                            Баланс {if empty($contract->overpay)}00.00{else}$contract->overpay{/if}
-                                                            рублей
+                                                            Баланс: {if empty($contract->overpay)}00.00{else}$contract->overpay{/if}
+                                                            руб
                                                         </h6>
                                                         {*
                                                         <h6 class="text-center text-white">
@@ -2594,7 +2594,7 @@
                                                 <span class="float-right"><a class="text-white cors-edit" href=""><i
                                                                 class=" fas fa-edit"></i></a></span>
                                             </h6>
-                                            {if $same_holder == 1}
+                                            {if $same_holder == 1 && $manager->role != 'employer'}
                                                 <input type="hidden" name="action" value="cors_change"/>
                                                 <input type="hidden" name="requisite[id]"
                                                        value="{$order->requisite->id}"/>
@@ -2923,12 +2923,6 @@
                                             {/if}
                                         </form>
                                     {/if}
-                                    {if $manager->role != 'employer' && !in_array($order->status, ['4','5','6','7','8'])}
-                                        <div type="button" class="btn btn-outline-danger delete_order"
-                                             data-order="{$order->order_id}" style="height: 38px">
-                                            Удалить заявку
-                                        </div>
-                                    {/if}
                                 </div>
                                 {if $order->status == 14 && in_array($manager->role, ['developer', 'admin', 'underwriter', 'middle'])}
                                     <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
@@ -2965,7 +2959,7 @@
                                                         </div>
                                                     {/if}
                                                 {/if}
-                                                <div style="{if empty($order->sms) || $enough_scans == 0}display: none;{else}display: flex; justify-content: space-between;{/if}">
+                                                <div style="{if empty($order->sms) && $enough_scans == 0}display: none;{else}display: flex; justify-content: space-between;{/if}">
                                                     <button
                                                             class="btn btn-success js-approve-order js-event-add-click"
                                                             data-event="12" data-user="{$order->user_id}"
@@ -2987,7 +2981,14 @@
                                         </form>
                                     </div>
                                 {/if}
-                            </div>
+                            </div><br>
+                            {if $manager->role != 'employer' && !in_array($order->status, ['4','5','6','7','8'])}
+                                <div type="button" class="btn btn-outline-danger delete_order"
+                                     data-order="{$order->order_id}" style="margin-left: 20px">
+                                    Удалить заявку
+                                </div>
+                                <br><br>
+                            {/if}
                         </div>
 
                         <!-- Комментарии -->
@@ -3800,7 +3801,7 @@
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h4 class="modal-title">Добавить компанию</h4>
+                    <h4 class="modal-title">Выберите параметры для реструктуризации</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 </div>
                 <div class="modal-body">

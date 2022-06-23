@@ -43,7 +43,14 @@ class TicketsController extends Controller
                 $in_out = 'archive';
             }
 
-            $tickets = $this->Tickets->get_tickets($manager_role, $manager_id, $in_out);
+            $sort = 'id desc';
+
+            if ($this->request->get('sort', 'string')) {
+                $sort = $this->request->get('sort', 'string');
+                $this->design->assign('sort', $sort);
+            }
+
+            $tickets = $this->Tickets->get_tickets($manager_role, $manager_id, $in_out, $sort);
 
             foreach ($tickets as $key => $ticket) {
                 if ($ticket->executor != 0) {

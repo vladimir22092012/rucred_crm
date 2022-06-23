@@ -26,7 +26,7 @@ class Tickets extends Core
         return $id;
     }
 
-    public function get_tickets($manager_role, $manager_id, $in_out)
+    public function get_tickets($manager_role, $manager_id, $in_out, $sort = 'id asc')
     {
         $out = '';
         $manager = '';
@@ -60,6 +60,7 @@ class Tickets extends Core
         $manager
         $status
         $executor
+        ORDER BY $sort
         ");
 
         $this->db->query($query);

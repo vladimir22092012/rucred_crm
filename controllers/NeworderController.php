@@ -4,6 +4,7 @@ use App\Services\MailService;
 
 error_reporting(-1);
 ini_set('display_errors', 'Off');
+date_default_timezone_set('Europe/Moscow');
 
 class NeworderController extends Controller
 {

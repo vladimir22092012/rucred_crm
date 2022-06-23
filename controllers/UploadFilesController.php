@@ -38,6 +38,11 @@ class UploadFilesController extends Controller
                 exit;
             }
 
+            if ($this->request->post('is_it_scans') == 'yes' && $format != '.pdf'){
+                echo json_encode(['error' => 1, 'message' => 'Неверный формат файла']);
+                exit;
+            }
+
             do {
                 $new_filename = md5(microtime() . rand()) . '.' . $ext;
             } while ($this->users->check_filename($new_filename));

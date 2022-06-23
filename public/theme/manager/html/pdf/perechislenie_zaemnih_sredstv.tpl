@@ -33,7 +33,7 @@
     <h4 align="center">о перечислении заемных денежных средств</h4>
 </div>
 <div style="width: 100%; font-size: 10px" align="justify"><span>Прошу причитающиеся мне заёмные денежные средства
-        в размере <strong>{$amount}</strong> (<strong>{$amount_string}</strong>) рублей <strong>00</strong> копеек по Договору микрозайма № <strong>{$uid}</strong>,
+        в размере  <strong>{$amount|number_format:0:',':' '}</strong> (<strong>{$amount_string}</strong>) рублей <strong>00</strong> копеек по Договору микрозайма № <strong>{$uid}</strong>,
         заключённому <strong>{$probably_start_date|date}</strong> года с Обществом с ограниченной ответственностью Микрокредитная компания «Русское кредитное общество», перечислить по следующим реквизитам:
 </span><br>
 </div>
@@ -87,7 +87,7 @@
             <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
         </tr>
         <tr>
-            <td>ID подписания: {$code_asp->id}</td>
+            <td>ID подписания: {$code_asp->uid}</td>
         </tr>
         <tr>
             <td>Код подтверждения: {$code_asp->code}</td>
