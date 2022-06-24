@@ -391,7 +391,7 @@ class ManagerController extends Controller
         $phone = $manager->phone;
         $message = "Привяжите Телеграм: https://t.me/rucred_bot?start=$user_token";
 
-        var_dump($this->sms->send($phone, $message));
+        $this->sms->send($phone, $message);
         exit;
     }
 }
