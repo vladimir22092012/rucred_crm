@@ -12,6 +12,5 @@ class TelegramApi extends Core
     {
         $telegram = new Api($this->token, true);
         $result = $telegram->getWebhookUpdates();
-
     }
 }

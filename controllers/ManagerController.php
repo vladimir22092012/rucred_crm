@@ -383,7 +383,13 @@ class ManagerController extends Controller
 
     private function action_telegram_hook()
     {
-        var_dump($this->TelegramApi->setWebHook());
-        exit;
+        $user_id = $this->request->post('user');
+        $user = $this->users->get_user($user_id);
+        $user_telegram_token = md5(time());
+
+        $phone = $user->phone_mobile;
+        $message = "Для завершения привязки Telegram перейдите по ссылке: https://t.me/rucred_bot?start=$user_telegram_token";
+
+        $this->sms->send($phone, $message);
     }
 }

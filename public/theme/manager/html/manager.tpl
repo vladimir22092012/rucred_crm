@@ -374,9 +374,12 @@
 
                 $.ajax({
                     method: 'POST',
-                    data:{
+                    data: {
                         action: 'telegram_hook',
                         user: user
+                    },
+                    success: function () {
+                        $('.confirm_telegram').fadeIn();
                     }
                 })
             });
@@ -918,7 +921,9 @@
                                                        value="1" {if $user->telegram_note == 1}checked{/if}>
                                                 <label class="form-check-label">
                                                     Telegram
-                                                </label></div>
+                                                </label>
+                                                <div class="btn btn-outline-success confirm_telegram" style="margin-left: 20px; display: none">Подтвердить</div>
+                                            </div>
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" name="whatsapp_note"
                                                        value="1" {if $user->whatsapp_note == 1}checked{/if}>
