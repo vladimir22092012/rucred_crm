@@ -26,11 +26,11 @@ class Soap1c extends Core
     public function send_loan($order_id)
     {
         if ($order = $this->orders->get_order($order_id)) {
-            
+
             $company = $this->companies->get_company($order->company_id);
             $order->regaddress = $this->addresses->get_address($order->regaddress_id);
             $order->faktaddress = $this->addresses->get_address($order->faktaddress_id);
-            
+
             $passport_serial = str_replace([' ', '-'], '', $order->passport_serial);
             $passport_series = substr($passport_serial, 0, 4);
             $passport_number = substr($passport_serial, 4, 6);
@@ -107,20 +107,34 @@ class Soap1c extends Core
     public function send_payment($payment)
     {
         $item = new StdClass();
-        $item->OrderID             = $payment->order_id;
-        $item->Дата                = date('YmdHis', strtotime($payment->date));
-        $item->Сумма               = $payment->amount;
-        $item->ИННПлательщика      = $payment->recepient;
-        $item->Клиент_id           = $payment->user_id;
-        $item->СчетОрганизации     = $payment->number;
-        $item->НазначениеПлатежа   = $payment->description;
-        $item->СчетКонтрагента     = $payment->user_acc_number;
+        $item->OrderID = $payment->order_id;
+        $item->Дата = date('YmdHis', strtotime($payment->date));
+        $item->Сумма = $payment->amount;
+        $item->ИННПлательщика = $payment->recepient;
+        $item->Клиент_id = $payment->user_id;
+        $item->СчетОрганизации = $payment->number;
+        $item->НазначениеПлатежа = $payment->description;
+        $item->СчетКонтрагента = $payment->user_acc_number;
         $item->БИКБанкаКонтрагента = $payment->user_bik;
-        $item->ИННПолучателя       = $payment->users_inn;
+        $item->ИННПолучателя = $payment->users_inn;
 
         $request = new StdClass();
         $request->TextJSON = json_encode($item);
         $result = $this->send_request('CRM_WebService', 'PaymentOrder', $request);
+
+        return $result;
+    }
+
+    /**
+     * Soap1c::StatusPaymentOrder()
+     * Получение статуса платежкки
+     */
+    public function StatusPaymentOrder($order_id)
+    {
+        $item = new StdClass();
+        $item->OrderID = $order_id;
+
+        $result = $this->send_request('CRM_WebService', 'StatusPaymentOrder', $item);
 
         return $result;
     }
@@ -163,11 +177,11 @@ class Soap1c extends Core
         } catch (Exception $fault) {
             $response = $fault;
         }
-        
+
         if (!empty($log)) {
             $this->logging(__METHOD__, $service . ' ' . $method, (array)$request, (array)$response, $logfile);
         }
-        
+
         return $response;
     }
 

@@ -202,6 +202,10 @@ class Orders extends Core
         $workout_sort = '';
         $sort = 'order_id DESC';
         $employer_filter = '';
+        $settlements_filter = '';
+
+        if (isset($filter['settlement_id']))
+            $settlements_filter = $this->db->placehold("AND o.settlement_id = ?", $filter['settlement_id']);
 
         if (isset($filter['employer']))
             $employer_filter = $this->db->placehold("AND o.company_id IN (?@)", $filter['employer']);
@@ -543,6 +547,7 @@ class Orders extends Core
                 $client_filter
                 $employer_filter
                 $manager_id_filter
+                $settlements_filter
             ORDER BY $workout_sort $sort
             $sql_limit
         ");

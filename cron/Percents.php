@@ -18,7 +18,7 @@ class Percents extends Core
 
     private function add_percents()
     {
-        $contracts = $this->contracts->get_contracts(array('status' => 2, 'type' => 'base'));
+        $contracts = $this->contracts->get_contracts(array('status' => 2));
 
         if(!empty($contracts)){
             foreach ($contracts as $contract)
