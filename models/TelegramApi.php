@@ -16,9 +16,14 @@ class TelegramApi extends Core
         $text = $result["message"]["text"];
         $chat_id = $result["message"]["chat"]["id"];
 
+        $this->Telegram_logs->add_log(['text' => $text]);
+        $this->Telegram_logs->add_log(['text' => $chat_id]);
+
         if($text) {
             if ($text == "/start") {
                 $reply = "Добро пожаловать!";
+                $this->Telegram_logs->add_log(['text' => $reply]);
+                $this->Telegram_logs->add_log(['text' => $telegram->sendMessage(['text' => $reply, 'chat_id' => $chat_id])]);
                 $telegram->sendMessage(['text' => $reply, 'chat_id' => $chat_id]);
 
                 $user =
@@ -26,6 +31,8 @@ class TelegramApi extends Core
                         'user_id' => $user_id,
                         'chat_id' => $chat_id
                     ];
+
+                $this->Telegram_logs->add_log(['text' => $user]);
 
                 $this->TelegramUsers->add_user($user);
             }
