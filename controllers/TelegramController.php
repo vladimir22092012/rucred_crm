@@ -12,8 +12,6 @@ class TelegramController extends Controller
 
         $result = $telegram->getWebhookUpdates();
 
-        $this->TelegramLogs->add_log(['text' => json_encode($result, JSON_UNESCAPED_UNICODE)]);
-
         $text = $result["message"]["text"];
         $chat_id = $result["message"]["chat"]["id"];
 
@@ -23,13 +21,7 @@ class TelegramController extends Controller
         if($text) {
             if ($text == "/start") {
                 $reply = "Добро пожаловать!";
-                $this->TelegramLogs->add_log(['text' => $reply]);
-                $this->TelegramLogs->add_log(['text' => $telegram->sendMessage(['text' => $reply, 'chat_id' => $chat_id])]);
                 $telegram->sendMessage(['text' => $reply, 'chat_id' => $chat_id]);
-
-                $this->TelegramLogs->add_log(['text' => $user]);
-
-                $this->TelegramUsers->add_user($user);
             }
         }
     }
