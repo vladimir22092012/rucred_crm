@@ -14,7 +14,7 @@ class TelegramApi extends Core
 
         $result = $telegram->getWebhookUpdates();
 
-        $this->TelegramLogs->add_log(['text' => $result]);
+        $this->TelegramLogs->add_log(['text' => json_encode($result, JSON_UNESCAPED_UNICODE)]);
 
         $text = $result["message"]["text"];
         $chat_id = $result["message"]["chat"]["id"];
