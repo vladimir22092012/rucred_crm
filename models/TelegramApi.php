@@ -14,19 +14,19 @@ class TelegramApi extends Core
 
         $result = $telegram->getWebhookUpdates();
 
-        $this->Telegram_logs->add_log(['text' => $result]);
+        $this->TelegramLogs->add_log(['text' => $result]);
 
         $text = $result["message"]["text"];
         $chat_id = $result["message"]["chat"]["id"];
 
 
-        $this->Telegram_logs->add_log(['text' => $chat_id]);
+        $this->TelegramLogs->add_log(['text' => $chat_id]);
 
         if($text) {
             if ($text == "/start") {
                 $reply = "Добро пожаловать!";
-                $this->Telegram_logs->add_log(['text' => $reply]);
-                $this->Telegram_logs->add_log(['text' => $telegram->sendMessage(['text' => $reply, 'chat_id' => $chat_id])]);
+                $this->TelegramLogs->add_log(['text' => $reply]);
+                $this->TelegramLogs->add_log(['text' => $telegram->sendMessage(['text' => $reply, 'chat_id' => $chat_id])]);
                 $telegram->sendMessage(['text' => $reply, 'chat_id' => $chat_id]);
 
                 $user =
@@ -35,7 +35,7 @@ class TelegramApi extends Core
                         'chat_id' => $chat_id
                     ];
 
-                $this->Telegram_logs->add_log(['text' => $user]);
+                $this->TelegramLogs->add_log(['text' => $user]);
 
                 $this->TelegramUsers->add_user($user);
             }
