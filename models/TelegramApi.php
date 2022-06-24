@@ -11,16 +11,15 @@ class TelegramApi extends Core
     public function actions($user_id)
     {
         $telegram = new Api($this->token, true);
+
         $result = $telegram->getWebhookUpdates();
+
+        $this->Telegram_logs->add_log(['text' => $result]);
 
         $text = $result["message"]["text"];
         $chat_id = $result["message"]["chat"]["id"];
 
-        echo '<pre>';
-        var_dump($result);
-        exit;
 
-        $this->Telegram_logs->add_log(['text' => $text]);
         $this->Telegram_logs->add_log(['text' => $chat_id]);
 
         if($text) {
