@@ -17,7 +17,7 @@ class TelegramController extends Controller
         list($command, $token) = explode(' ', $text);
 
         if($command) {
-            if ($text == "/start") {
+            if ($command == "/start") {
                 $reply = "Добро пожаловать!";
 
                 $telegram->sendMessage(['text' => $reply, 'chat_id' => $chat_id]);
