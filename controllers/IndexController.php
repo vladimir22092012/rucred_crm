@@ -22,9 +22,7 @@ class IndexController extends Controller
         $module = preg_replace("/[^A-Za-z0-9]+/", "", $module);
 
         if ($module != 'LoginController' && !$this->manager) {
-            if($module == 'telegram'){
-                $module = 'telegram';
-            }else{
+            if ($module != 'telegram') {
                 header('Location: ' . $this->config->root_url . '/login?back=' . $this->request->url());
                 exit;
             }
@@ -116,8 +114,8 @@ class IndexController extends Controller
             $this->design->assign('penalty_notifications', $penalty_notifications);
         }
 
-        if(isset($this->manager->role)){
-            if($this->manager->role == 'employer'){
+        if (isset($this->manager->role)) {
+            if ($this->manager->role == 'employer') {
 
                 $query = $this->db->placehold("
             SELECT COUNT(*) as `count`
@@ -134,7 +132,7 @@ class IndexController extends Controller
                 $this->db->query($query);
                 $count_in = $this->db->result('count');
             }
-            if($this->manager->role == 'underwriter'){
+            if ($this->manager->role == 'underwriter') {
                 $query = $this->db->placehold("
             SELECT COUNT(*) as `count`
             FROM s_tickets
@@ -151,7 +149,7 @@ class IndexController extends Controller
                 $count_in = $this->db->result('count');
             }
 
-            if($this->manager->role == 'middle'){
+            if ($this->manager->role == 'middle') {
                 $query = $this->db->placehold("
             SELECT COUNT(*) as `count`
             FROM s_tickets
@@ -164,7 +162,7 @@ class IndexController extends Controller
                 $this->db->query($query);
                 $count_in = $this->db->result('count');
             }
-            if(in_array($this->manager->role, ['admin', 'developer'])){
+            if (in_array($this->manager->role, ['admin', 'developer'])) {
                 $query = $this->db->placehold("
             SELECT COUNT(*) as `count`
             FROM s_tickets
@@ -188,10 +186,10 @@ class IndexController extends Controller
             $this->db->query($query);
             $count_out = $this->db->result('count');
 
-            if(!isset($count_in))
+            if (!isset($count_in))
                 $count_in = 0;
 
-            if(empty($count_out))
+            if (empty($count_out))
                 $count_out = 0;
 
             $this->design->assign('count_in', $count_in);
