@@ -20,10 +20,6 @@ class TelegramController extends Controller
             if ($text == "/start") {
                 $reply = "Добро пожаловать!";
 
-                $this->TelegramLogs->add_log(['text' => $reply]);
-
-                $this->TelegramLogs->add_log(['text' => $telegram->sendMessage(['text' => $reply, 'chat_id' => $chat_id])]);
-
                 $telegram->sendMessage(['text' => $reply, 'chat_id' => $chat_id]);
             }
         }
