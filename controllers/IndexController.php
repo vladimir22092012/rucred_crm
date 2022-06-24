@@ -23,8 +23,7 @@ class IndexController extends Controller
 
         if ($module != 'LoginController' && !$this->manager) {
             if($module == 'telegram'){
-                header('Location: ' . $this->config->root_url . $this->request->url());
-                exit;
+                $module = 'telegram';
             }else{
                 header('Location: ' . $this->config->root_url . '/login?back=' . $this->request->url());
                 exit;
