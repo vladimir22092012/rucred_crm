@@ -8,6 +8,8 @@ class TelegramController extends Controller
 
     public function fetch()
     {
+        return false;
+
         $telegram = new Api($this->token, true);
 
         $result = $telegram->getWebhookUpdates();
