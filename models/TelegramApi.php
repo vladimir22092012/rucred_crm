@@ -16,6 +16,10 @@ class TelegramApi extends Core
         $text = $result["message"]["text"];
         $chat_id = $result["message"]["chat"]["id"];
 
+        echo '<pre>';
+        var_dump($result);
+        exit;
+
         $this->Telegram_logs->add_log(['text' => $text]);
         $this->Telegram_logs->add_log(['text' => $chat_id]);
 
