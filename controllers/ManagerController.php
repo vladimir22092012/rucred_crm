@@ -48,6 +48,10 @@ class ManagerController extends Controller
                     case 'edit_login':
                         $this->action_edit_login();
                         break;
+
+                    case 'telegram_hook':
+                        $this->action_telegram_hook();
+                        break;
                 endswitch;
             } else {
                 $user = new StdClass();
@@ -288,7 +292,7 @@ class ManagerController extends Controller
         $phone = $this->request->post('phone');
         $user_id = $this->request->post('user_id');
         $code = random_int(1000, 9999);
-        $message = "Подтвердите Ваш номер телефона. Код подтверждения: ".$code;
+        $message = "Подтвердите Ваш номер телефона. Код подтверждения: " . $code;
         $response = $this->sms->send(
             $phone,
             $message
@@ -375,5 +379,11 @@ class ManagerController extends Controller
         $login = $this->request->post('login');
 
         $this->managers->update_manager($manager_id, ['login' => $login]);
+    }
+
+    private function action_telegram_hook()
+    {
+        var_dump($this->TelegramApi->setWebHook());
+        exit;
     }
 }

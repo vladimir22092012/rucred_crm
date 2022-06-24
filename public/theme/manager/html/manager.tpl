@@ -241,133 +241,144 @@
                     }
                 })
             });
-        })
-        ;
 
-        $('.js-filter-status').click(function (e) {
-            e.preventDefault();
+            $('.js-filter-status').click(function (e) {
+                e.preventDefault();
 
-            var _id = $(this).data('status');
+                var _id = $(this).data('status');
 
-            if ($(this).hasClass('active')) {
-                $(this).removeClass('active');
+                if ($(this).hasClass('active')) {
+                    $(this).removeClass('active');
 
-                $('.js-status-item').fadeIn();
+                    $('.js-status-item').fadeIn();
 
-            }
-            else {
-                $('.js-filter-status.active').removeClass('active');
+                }
+                else {
+                    $('.js-filter-status.active').removeClass('active');
 
-                $(this).addClass('active');
+                    $(this).addClass('active');
 
-                $('.js-status-item').hide();
-                $('.js-status-' + _id).fadeIn();
-            }
-        });
-
-        $('.groups').on('change', function (e) {
-            e.preventDefault();
-
-            $('.company_block').show();
-            $('.companies').empty();
-            $('.companies').append('<option value="none">Выберите из списка</option>');
-
-            let group_id = $(this).val();
-            let user_id = $(this).attr('data-user');
-
-            if (group_id != 'none') {
-                $.ajax({
-                    method: 'POST',
-                    data: {
-                        action: 'get_companies',
-                        group_id: group_id,
-                        user_id: user_id
-                    },
-                    success: function (companies) {
-                        $('.companies_form').html(companies)
-                    }
-                });
-            } else {
-                $('.company_block').hide();
-            }
-        });
-
-        $('#block_manager').on('change', function () {
-            let value = ($(this).val() == 0) ? 1 : 0;
-            let manager_id = $(this).attr('data-manager');
-
-            $.ajax({
-                method: 'POST',
-                data: {
-                    action: 'block_manager',
-                    value: value,
-                    manager_id: manager_id
+                    $('.js-status-item').hide();
+                    $('.js-status-' + _id).fadeIn();
                 }
             });
-        });
 
-        $('.delete_manager').on('click', function () {
+            $('.groups').on('change', function (e) {
+                e.preventDefault();
 
-            let manager_id = $(this).attr('data-manager');
+                $('.company_block').show();
+                $('.companies').empty();
+                $('.companies').append('<option value="none">Выберите из списка</option>');
 
-            Swal.fire({
-                title: 'Удалить пользователя',
-                showCancelButton: true,
-                confirmButtonText: 'Да',
-                cancelButtonText: 'Нет',
-            }).then((result) => {
-                if (result.value === true) {
+                let group_id = $(this).val();
+                let user_id = $(this).attr('data-user');
+
+                if (group_id != 'none') {
                     $.ajax({
                         method: 'POST',
                         data: {
-                            action: 'delete_manager',
-                            manager_id: manager_id,
+                            action: 'get_companies',
+                            group_id: group_id,
+                            user_id: user_id
                         },
-                        success: function (resp) {
-                            if (resp !== 'success') {
-                                Swal.fire({
-                                    title: resp,
-                                    confirmButtonText: 'Ок'
-                                });
-                            } else {
-                                location.replace('/managers')
-                            }
+                        success: function (companies) {
+                            $('.companies_form').html(companies)
                         }
                     });
+                } else {
+                    $('.company_block').hide();
                 }
             });
-        });
 
-        $('.edit_login').on('click', function (e) {
-
-            e.preventDefault();
-
-            $('.show_login').hide();
-            $('.login_edit_form').show();
-
-            $('.cancel_login').on('click', function () {
-                $('.show_login').show();
-                $('.login_edit_form').hide();
-            });
-
-            $('.save_login').on('click', function () {
-
-                let login = $('.new_login').val();
-                let manager_id = $(this).attr('data-user');
+            $('#block_manager').on('change', function () {
+                let value = ($(this).val() == 0) ? 1 : 0;
+                let manager_id = $(this).attr('data-manager');
 
                 $.ajax({
                     method: 'POST',
                     data: {
-                        action: 'edit_login',
-                        login: login,
+                        action: 'block_manager',
+                        value: value,
                         manager_id: manager_id
-                    },
-                    success: function () {
-                        $('.show_login').show();
-                        $('.login_edit_form').hide();
-                        $('.show_login').text(login);
                     }
                 });
+            });
+
+            $('.delete_manager').on('click', function () {
+
+                let manager_id = $(this).attr('data-manager');
+
+                Swal.fire({
+                    title: 'Удалить пользователя',
+                    showCancelButton: true,
+                    confirmButtonText: 'Да',
+                    cancelButtonText: 'Нет',
+                }).then((result) => {
+                    if (result.value === true) {
+                        $.ajax({
+                            method: 'POST',
+                            data: {
+                                action: 'delete_manager',
+                                manager_id: manager_id,
+                            },
+                            success: function (resp) {
+                                if (resp !== 'success') {
+                                    Swal.fire({
+                                        title: resp,
+                                        confirmButtonText: 'Ок'
+                                    });
+                                } else {
+                                    location.replace('/managers')
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('.edit_login').on('click', function (e) {
+
+                e.preventDefault();
+
+                $('.show_login').hide();
+                $('.login_edit_form').show();
+
+                $('.cancel_login').on('click', function () {
+                    $('.show_login').show();
+                    $('.login_edit_form').hide();
+                });
+
+                $('.save_login').on('click', function () {
+
+                    let login = $('.new_login').val();
+                    let manager_id = $(this).attr('data-user');
+
+                    $.ajax({
+                        method: 'POST',
+                        data: {
+                            action: 'edit_login',
+                            login: login,
+                            manager_id: manager_id
+                        },
+                        success: function () {
+                            $('.show_login').show();
+                            $('.login_edit_form').hide();
+                            $('.show_login').text(login);
+                        }
+                    });
+                });
+            });
+
+            $(document).on('click', '.telegram_hook', function () {
+                let user = $(this).attr('data-user');
+
+                $.ajax({
+                    method: 'POST',
+                    data:{
+                        action: 'telegram_hook',
+                        user: user
+                    }
+                })
             });
         });
     </script>
@@ -901,7 +912,9 @@
                                                 </label>
                                             </div>
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="telegram_note"
+                                                <input class="form-check-input telegram_hook" type="checkbox"
+                                                       name="telegram_note"
+                                                       data-user="{$user->id}"
                                                        value="1" {if $user->telegram_note == 1}checked{/if}>
                                                 <label class="form-check-label">
                                                     Telegram
