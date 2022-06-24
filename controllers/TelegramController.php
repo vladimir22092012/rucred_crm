@@ -13,8 +13,6 @@ class TelegramController extends Controller
         $result = $telegram->getWebhookUpdates();
 
         $this->TelegramLogs->add_log(['text' => json_encode($result, JSON_UNESCAPED_UNICODE)]);
-        echo '123';
-        exit;
 
         $text = $result["message"]["text"];
         $chat_id = $result["message"]["chat"]["id"];
