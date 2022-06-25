@@ -15,7 +15,7 @@ class ViberController extends Controller
         ]);
 
         try {
-            $bot = new Bot(['token' => $this->apiKey]);
+            $bot = new Bot(['token' => $this->apy_key]);
             $bot
                 ->onConversation(function ($event) use ($bot, $botSender) {
                     // this event fires if user open chat, you can return "welcome message"
