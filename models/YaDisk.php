@@ -14,7 +14,7 @@ class YaDisk extends Core
 
     public function upload_files()
     {
-        $resource = $this->disk->getResource('новый файл.txt');
+        $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/test.txt');
         $resource->upload($this->config->root_url.'/test.txt');
         var_dump($resource->toArray());
         exit;
