@@ -11,6 +11,7 @@ class TelegramController extends Controller
         $telegram = new Api($this->token);
 
         $result = $telegram->getWebhookUpdates();
+        header("HTTP/1.1 200 OK");
 
         $text = $result["message"]["text"];
         $chat_id = $result["message"]["chat"]["id"];
@@ -19,7 +20,6 @@ class TelegramController extends Controller
         if($command) {
             if ($command == "/start") {
                 $reply = "Добро пожаловать!";
-
                 $telegram->sendMessage(['text' => $reply, 'chat_id' => $chat_id]);
             }
         }
