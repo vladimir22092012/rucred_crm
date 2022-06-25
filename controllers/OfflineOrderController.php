@@ -3702,8 +3702,8 @@ class OfflineOrderController extends Controller
 
     private function action_upload_docs_to_yandex()
     {
-        var_dump($this->YaDisk->upload_files());
-        exit;
+
+        $this->YaDisk->upload_orders_files();
     }
 
 }

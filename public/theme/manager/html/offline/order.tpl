@@ -1133,9 +1133,6 @@
                                         </h6>
                                     {/if}
                                 </div>
-                                <div class="col-8 col-md-3 col-lg-4">
-                                    <div class="btn btn-outline-info test_ya">Тык!</div>
-                                </div>
                                 <div class="col-12 col-md-3 col-lg-3">
                                     <h5 class="form-control-static">Номер
                                         клиента: <span class="show_personal_number">{$client->personal_number}</span>
