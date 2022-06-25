@@ -1,6 +1,7 @@
 <?php
 
 use Viber\Client;
+exit(123);
 
 class ViberController extends Controller
 {
