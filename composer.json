@@ -18,7 +18,8 @@
         "php-webdriver/webdriver": "1.11",
         "vlucas/phpdotenv": "^5.4",
         "irazasyed/telegram-bot-sdk": "^2.0",
-        "arhitector/yandex": "dev-master"
+        "arhitector/yandex": "dev-master",
+        "bogdaan/viber-bot-php": "^0.0.15"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

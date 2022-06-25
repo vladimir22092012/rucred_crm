@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "779e8e4c90a9a618e0f6dd3e3d5c0c28",
+    "content-hash": "9fd6f485fca09ad47745fcaa2a4bec1c",
     "packages": [
         {
             "name": "arhitector/yandex",
@@ -74,6 +74,56 @@
                 "source": "https://github.com/jack-theripper/yandex/tree/master"
             },
             "time": "2022-04-07T09:19:24+00:00"
+        },
+        {
+            "name": "bogdaan/viber-bot-php",
+            "version": "0.0.15",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Bogdaan/viber-bot-php.git",
+                "reference": "176dc938613d88e42ca04c7e7598f842f8f1cafc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Bogdaan/viber-bot-php/zipball/176dc938613d88e42ca04c7e7598f842f8f1cafc",
+                "reference": "176dc938613d88e42ca04c7e7598f842f8f1cafc",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.2 | ^7.0",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "monolog/monolog": "^1.22",
+                "phpunit/phpunit": "^4.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Viber\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Novikov Bogdan",
+                    "email": "hcbogdan@gmail.com"
+                }
+            ],
+            "description": "Php bot interface to work with Viber API",
+            "keywords": [
+                "bot",
+                "im",
+                "viber"
+            ],
+            "support": {
+                "issues": "https://github.com/Bogdaan/viber-bot-php/issues",
+                "source": "https://github.com/Bogdaan/viber-bot-php/tree/0.0.15"
+            },
+            "time": "2022-01-23T21:49:58+00:00"
         },
         {
             "name": "clue/stream-filter",
@@ -3478,12 +3528,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "a66635bf19583447f296db28180762367690ac5a"
+                "reference": "880f953435f266cf634bb81fa8888e66fa7814f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/a66635bf19583447f296db28180762367690ac5a",
-                "reference": "a66635bf19583447f296db28180762367690ac5a",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/880f953435f266cf634bb81fa8888e66fa7814f6",
+                "reference": "880f953435f266cf634bb81fa8888e66fa7814f6",
                 "shasum": ""
             },
             "conflict": {
@@ -3751,6 +3801,7 @@
                 "pocketmine/pocketmine-mp": ">= 4.0.0-BETA5, < 4.4.2|<4.2.10",
                 "pressbooks/pressbooks": "<5.18",
                 "prestashop/autoupgrade": ">=4,<4.10.1",
+                "prestashop/blockwishlist": ">=2,<2.1.1",
                 "prestashop/contactform": ">1.0.1,<4.3",
                 "prestashop/gamification": "<2.3.2",
                 "prestashop/prestashop": ">=1.7,<=1.7.8.2",
@@ -3972,7 +4023,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-06-23T07:04:20+00:00"
+            "time": "2022-06-25T08:04:47+00:00"
         },
         {
             "name": "symfony/var-dumper",
