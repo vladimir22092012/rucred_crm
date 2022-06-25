@@ -22,6 +22,7 @@ class TelegramController extends Controller
             if ($command == "/start") {
                 $reply = "Добро пожаловать!";
                 $telegram->sendMessage(['text' => $reply, 'chat_id' => $chat_id]);
+                return $chat_id;
             }
         }
     }
