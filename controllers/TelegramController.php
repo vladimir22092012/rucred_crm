@@ -12,6 +12,7 @@ class TelegramController extends Controller
 
         $result = $telegram->getWebhookUpdates();
         http_response_code(200);
+        fastcgi_finish_request();
 
         $text = $result["message"]["text"];
         $chat_id = $result["message"]["chat"]["id"];
