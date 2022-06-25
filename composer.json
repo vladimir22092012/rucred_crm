@@ -17,7 +17,8 @@
         "phpoffice/phpspreadsheet": "^1.23",
         "php-webdriver/webdriver": "1.11",
         "vlucas/phpdotenv": "^5.4",
-        "irazasyed/telegram-bot-sdk": "^2.0"
+        "irazasyed/telegram-bot-sdk": "^2.0",
+        "arhitector/yandex": "dev-master"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

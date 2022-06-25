@@ -761,7 +761,16 @@
                         phone: phone
                     }
                 })
-            })
+            });
+
+            $(document).on('click', '.test_ya', function () {
+               $.ajax({
+                   method: 'POST',
+                   data:{
+                       action: 'upload_docs_to_yandex'
+                   }
+               })
+            });
         });
     </script>
     <script>
@@ -1124,6 +1133,9 @@
                                         </h6>
                                     {/if}
                                 </div>
+                                <div class="col-8 col-md-3 col-lg-4">
+                                    <div class="btn btn-outline-info test_ya">Тык!</div>
+                                </div>
                                 <div class="col-12 col-md-3 col-lg-3">
                                     <h5 class="form-control-static">Номер
                                         клиента: <span class="show_personal_number">{$client->personal_number}</span>
@@ -1368,7 +1380,8 @@
                                                         <h4 class="text-white">Выдан</h4>
                                                         <h6 class="text-white">Договор {$order->uid}</h6>
                                                         <h6 class="text-center text-white">
-                                                            След. платеж: {$next_payment|floatval|number_format:2:',':' '}
+                                                            След.
+                                                            платеж: {$next_payment|floatval|number_format:2:',':' '}
                                                             руб
                                                         </h6>
                                                         <h6 class="text-center text-white">
@@ -1376,7 +1389,8 @@
                                                             руб
                                                         </h6>
                                                         <h6 class="text-center text-white">
-                                                            Сумма ДП: {$contract->loan_body_summ + $contract->loan_percents_summ}
+                                                            Сумма
+                                                            ДП: {$contract->loan_body_summ + $contract->loan_percents_summ}
                                                             руб
                                                         </h6>
                                                         {*
@@ -2944,7 +2958,8 @@
                                                                    style="display:none"
                                                                    placeholder="SMS код"
                                                                    value="{if $is_developer}{$contract->accept_code}{/if}"/>
-                                                            <small id="asp_success" style="display: none; color: #009d07">
+                                                            <small id="asp_success"
+                                                                   style="display: none; color: #009d07">
                                                                 Успешно!
                                                             </small>
                                                             <div type="button" data-user="{$order->user_id}"
@@ -2985,13 +3000,15 @@
                                         </form>
                                     </div>
                                 {/if}
-                            </div><br>
+                            </div>
+                            <br>
                             {if $manager->role != 'employer' && !in_array($order->status, ['4','5','6','7','8'])}
                                 <div type="button" class="btn btn-outline-danger delete_order"
                                      data-order="{$order->order_id}" style="margin-left: 20px">
                                     Удалить заявку
                                 </div>
-                                <br><br>
+                                <br>
+                                <br>
                             {/if}
                         </div>
 

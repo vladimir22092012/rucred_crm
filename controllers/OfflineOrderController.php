@@ -222,6 +222,10 @@ class OfflineOrderController extends Controller
                     return $this->action_send_qr();
                     break;
 
+                case 'upload_docs_to_yandex':
+                    return $this->action_upload_docs_to_yandex();
+                    break;
+
 
             endswitch;
 
@@ -253,7 +257,7 @@ class OfflineOrderController extends Controller
                         }
                     }
 
-                    if(isset($next_payment))
+                    if (isset($next_payment))
                         $this->design->assign('next_payment', $next_payment);
 
                     $holder = $order->requisite->holder;
@@ -3693,6 +3697,12 @@ class OfflineOrderController extends Controller
 
         $filter['user_id'] = $order->user_id;
 
+        exit;
+    }
+
+    private function action_upload_docs_to_yandex()
+    {
+        var_dump($this->YaDisk->upload_files());
         exit;
     }
 
