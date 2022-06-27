@@ -97,6 +97,9 @@ class OfflineOrdersController extends Controller
         $current_page = max(1, $current_page);
         $this->design->assign('current_page_num', $current_page);
 
+        if ($this->request->get('drafts'))
+            $filter['status'] = 12;
+
         $orders_count = $this->orders->count_orders($filter);
 
         $pages_num = ceil($orders_count / $items_per_page);
@@ -187,24 +190,15 @@ class OfflineOrdersController extends Controller
         }
 
 
-        if ($this->request->get('drafts')) {
-            foreach ($orders as $key => $order) {
-                if ($order->status != 12) {
-                    unset($orders[$key]);
-                }
-            }
-            $this->design->assign('orders', $orders);
-            return $this->design->fetch('offline/drafts.tpl');
-        } else {
-            foreach ($orders as $key => $order) {
-                if ($order->status == 12) {
-                    unset($orders[$key]);
-                }
-            }
+        $this->design->assign('orders', $orders);
 
-            $this->design->assign('orders', $orders);
-            return $this->design->fetch('offline/orders.tpl');
+
+        if ($this->request->get('drafts')){
+            $drafts = 1;
+            $this->design->assign('drafts', $drafts);
+            return $this->design->fetch('offline/drafts.tpl');
         }
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($orders);echo '</pre><hr />';
+        else
+            return $this->design->fetch('offline/orders.tpl');
     }
 }

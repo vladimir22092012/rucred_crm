@@ -235,17 +235,16 @@
             <nav class="sidebar-nav">
                 {if isset($manager)}
                     <ul id="sidebarnav">
-                        <li {if in_array($module, ['TicketsController'])}class="active"{/if}>
                         <li class="nav-small-cap">Коммуникации</li>
-                        <li {if in_array($module, ['TicketsController'])}class="active"{/if}>
+                        <li {if $in}class="active"{/if}>
                             <a href="tickets?in=true"><i class="mdi mdi-email-open badge1"
                                                          {if $count_in != 0}data-badge="{$count_in}"{/if}></i><span>Входящие запросы</span></a>
                         </li>
-                        <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
+                        <li {if $out}class="active"{/if}><a
                                     href="tickets?out=true"><i class="mdi mdi-email-variant badge1"
                                                                {if $count_out != 0}data-badge="{$count_out}"{/if}></i><span>Исходящие запросы</span></a>
                         </li>
-                        <li {if in_array($module, ['TicketsController'])}class="active"{/if}><a
+                        <li {if $archive}class="active"{/if}><a
                                     href="tickets?archive=true"><i
                                         class="mdi mdi-mailbox"></i><span>Архив запросов</span></a>
                         </li>
@@ -268,13 +267,13 @@
                         {if in_array('offline_settings', $manager->permissions) || in_array('offline', $manager->permissions)}
                             <li class="nav-small-cap">Оффлайн заявки</li>
                             {if in_array('offline', $manager->permissions)}
-                                <li {if isset($offline)}class="active"{/if}>
+                                <li {if in_array($module, ['OfflineOrdersController']) && !isset($drafts)}class="active"{/if}>
                                     <a class="" href="offline_orders/" aria-expanded="false"><i
                                                 class="mdi mdi-animation"></i><span class="hide-menu">Заявки</span></a>
                                 </li>
                             {/if}
                             {if in_array('offline', $manager->permissions) && $manager->role != 'employer'}
-                                <li{if in_array($module, ['OfflineOrdersController'])} class="active"{/if}>
+                                <li{if $drafts == 1} class="active"{/if}>
                                     <a class="" href="drafts/" aria-expanded="false"><i
                                                 class="mdi mdi-database"></i><span
                                                 class="hide-menu">Черновики</span></a>
