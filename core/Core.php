@@ -47,4 +47,12 @@ class Core
 
         return self::$objects[$name];
     }
+
+    public function dd($item)
+    {
+        foreach (func_get_args() as $x) {
+            dump($x);
+        }
+        die;
+    }
 }

@@ -32,6 +32,7 @@ class TicketController extends Controller
         $ticket = $this->Tickets->get_ticket($ticket_id);
 
         $messages = $this->TicketMessages->get_messages($ticket_id);
+
         $this->design->assign('messages', $messages);
 
         foreach ($ticket->docs as $key => $files) {
