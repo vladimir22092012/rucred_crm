@@ -3640,8 +3640,6 @@ class OfflineOrderController extends Controller
             }
         }
 
-        $this->dd($payment_schedule);
-
         if (strripos($next_payment, ',') == false) {
             $sum = $next_payment * 100;
         } else {
@@ -3655,7 +3653,7 @@ class OfflineOrderController extends Controller
 
         $message = "Оплата доступна по ссылке: $pay_link";
 
-        $this->sms->send($phone, $message);
+        $this->dd($this->sms->send($phone, $message));
         exit;
     }
 
