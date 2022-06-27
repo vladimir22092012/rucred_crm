@@ -650,18 +650,23 @@ class NeworderController extends Controller
 
             if (isset($user['personal_number'])) {
                 $personal_number = $user['personal_number'];
-                $orders = $this->orders->get_orders(['user_id' => $user_id]);
-
-                if (!empty($count_orders)) {
-                    $count_orders = count($orders);
-                    str_pad($count_orders, 2, '0', STR_PAD_LEFT);
-                } else {
-                    $count_orders = '01';
-                }
-
-                $order['uid'] = "$group->number $company->number $loan_type_number $personal_number $count_orders";
 
             }
+
+            if (isset($user_id)){
+                $user = $this->users->get_user($user_id);
+                $personal_number = $user->personal_number;
+            }
+
+            $orders = $this->orders->get_orders(['user_id' => $user_id]);
+
+            if (!empty($count_orders)) {
+                $count_orders = count($orders);
+                str_pad($count_orders, 2, '0', STR_PAD_LEFT);
+            } else {
+                $count_orders = '01';
+            }
+            $order['uid'] = "$group->number $company->number $loan_type_number $personal_number $count_orders";
 
             if (($this->request->get('order_id'))) {
                 $order_id = $this->request->get('order_id');
