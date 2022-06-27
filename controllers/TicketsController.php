@@ -43,7 +43,7 @@ class TicketsController extends Controller
                 $in_out = 'archive';
             }
 
-            $sort = 'id desc';
+            $sort = 'n.ticket_id asc';
 
             if ($this->request->get('sort', 'string')) {
                 $sort = $this->request->get('sort', 'string');
@@ -63,6 +63,8 @@ class TicketsController extends Controller
                 $company = $this->Companies->get_company($ticket->creator_company);
                 $ticket->creator_company_name = $company->name;
             }
+
+
             $this->design->assign('tickets', $tickets);
 
             $groups = $this->Groups->get_groups();
