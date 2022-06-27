@@ -3640,6 +3640,8 @@ class OfflineOrderController extends Controller
             }
         }
 
+        $this->dd($payment_schedule);
+
         if (strripos($next_payment, ',') == false) {
             $sum = $next_payment * 100;
         } else {

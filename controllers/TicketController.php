@@ -29,6 +29,14 @@ class TicketController extends Controller
 
         $ticket_id = (int)$this->request->get('id');
 
+        $note =
+            [
+                'ticket_id' => $ticket_id,
+                'user_id' => $this->manager->id
+            ];
+
+        $this->TicketsNotes->add($note);
+
         $ticket = $this->Tickets->get_ticket($ticket_id);
 
         $messages = $this->TicketMessages->get_messages($ticket_id);
@@ -51,7 +59,9 @@ class TicketController extends Controller
         $ticket_id = (int)$this->request->post('ticket_id');
         $executor = $this->manager->id;
 
-        $result = $this->Tickets->update_ticket($ticket_id, ['status' => 2, 'executor' => $executor, 'note_flag' => 1]);
+        $this->TicketsNotes->delete($ticket_id);
+
+        $result = $this->Tickets->update_ticket($ticket_id, ['status' => 2, 'executor' => $executor]);
 
         if ($result === true) {
             echo 'success';
@@ -66,7 +76,9 @@ class TicketController extends Controller
     {
         $ticket_id = (int)$this->request->post('ticket_id');
 
-        $result = $this->Tickets->update_ticket($ticket_id, ['note_flag' => 0, 'status' => 6]);
+        $this->TicketsNotes->delete($ticket_id);
+
+        $result = $this->Tickets->update_ticket($ticket_id, ['status' => 6]);
 
         if ($result === true) {
             echo 'success';
@@ -123,17 +135,19 @@ class TicketController extends Controller
 
         $ticket = $this->Tickets->get_ticket($ticket_id);
 
-        if($ticket->executor == $manager_id)
-            $this->Tickets->update_ticket($ticket_id, ['note_flag' => 0, 'status' => 3]);
-        else
-            $this->Tickets->update_ticket($ticket_id, ['note_flag' => 0]);
+        $this->TicketsNotes->delete($ticket_id);
+
+        if ($ticket->executor == $manager_id)
+            $this->Tickets->update_ticket($ticket_id, ['status' => 3]);
     }
 
-    private function action_return_ticket(){
+    private function action_return_ticket()
+    {
 
         $ticket_id = (int)$this->request->post('ticket_id');
 
-        $result = $this->Tickets->update_ticket($ticket_id, ['note_flag' => 0, 'status' => 5]);
+        $this->TicketsNotes->delete($ticket_id);
+        $result = $this->Tickets->update_ticket($ticket_id, ['status' => 5]);
 
         if ($result === true) {
             echo 'success';

@@ -2300,14 +2300,14 @@
                                                         {/if}
                                                         <div style="margin-left: 10px">
                                                             <a target="_blank"
-                                                               href="{$config->root_url}/document?id={$document->id}&action=download_file"><input
+                                                               href="{$config->back_url}/document?id={$document->id}&action=download_file"><input
                                                                         type="button"
                                                                         class="btn btn-outline-success download_doc"
                                                                         value="Сохранить"></a>
                                                         </div>
                                                         <div style="margin-left: 10px">
                                                             <a target="_blank"
-                                                               href="{$config->root_url}/document/{$document->id}"><input
+                                                               href="{$config->back_url}/document/{$document->id}"><input
                                                                         type="button"
                                                                         class="btn btn-outline-warning print_doc"
                                                                         value="Распечатать"></a>
@@ -2318,7 +2318,7 @@
                                                                 <a target="_blank"
                                                                    style="text-decoration: none!important;"
                                                                    href="javascript:void(0);"
-                                                                   onclick="window.open('{$config->root_url}/files/users/{$order->user_id}/{$document->scan->name}');">
+                                                                   onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}');">
                                                                     <input type="button"
                                                                            class="btn btn-outline-info {$scan->type}"
                                                                            value="Скан">

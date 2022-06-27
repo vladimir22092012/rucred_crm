@@ -157,6 +157,10 @@ class NeworderController extends Controller
         $user['patronymic'] = trim($this->request->post('patronymic'));
 
         $requisite = $this->request->post('requisite');
+
+        $requisite['holder'] = $requisite['holder']['lastname'].''.$requisite['holder']['firstname'].''.$requisite['holder']['patronymic'];
+        $requisite['holder'] = trim($requisite['holder']);
+
         if (empty($requisite['name']) || empty($requisite['bik']) || empty($requisite['number']) || empty($requisite['holder']) || empty($requisite['correspondent_acc'])) {
             response_json(['error' => 1, 'reason' => 'Заполните корректно реквизиты']);
             exit;

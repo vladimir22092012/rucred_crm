@@ -923,11 +923,26 @@
                                         <div style="width: 100%; display: flex">
                                             <input type="hidden" name="requisite[id]" value="{$order->requisite->id}"/>
                                             <div style="display: flex; flex-direction: column">
-                                                <label class="control-label">ФИО держателя счета</label>
+                                                <label class="control-label">Фамилия держателя счета</label>
                                                 <input class="form-control" style="width: 350px; margin-left: 30px"
-                                                       type="text" name="requisite[holder]"
-                                                       value="{$order->requisite->holder}"/>
+                                                       type="text" name="requisite[holder][lastname]"
+                                                       value="{$order->requisite->holder->lastname}"/>
                                             </div>
+                                            <div style="display: flex; flex-direction: column">
+                                                <label class="control-label">Имя держателя счета</label>
+                                                <input class="form-control" style="width: 350px; margin-left: 30px"
+                                                       type="text" name="requisite[holder][firstname]"
+                                                       value="{$order->requisite->holder->firstname}"/>
+                                            </div>
+                                            <div style="display: flex; flex-direction: column">
+                                                <label class="control-label">Отчество держателя счета</label>
+                                                <input class="form-control" style="width: 350px; margin-left: 30px"
+                                                       type="text" name="requisite[holder][patronymic]"
+                                                       value="{$order->requisite->holder->patronymic}"/>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div style="width: 100%; display: flex">
                                             <div style="display: flex; flex-direction: column">
                                                 <label class="control-label">Номер счета</label>
                                                 <input class="form-control account_number"
@@ -935,9 +950,6 @@
                                                        type="text" name="requisite[number]"
                                                        value="{$order->requisite->number}"/>
                                             </div>
-                                        </div>
-                                        <br>
-                                        <div style="width: 100%; display: flex">
                                             <div style="display: flex; flex-direction: column">
                                                 <label class="control-label">БИК
                                                     банка</label>

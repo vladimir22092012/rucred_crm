@@ -324,7 +324,7 @@ $(function () {
         $(this).setCursorPosition(0);
     }).mask('99/99');
 
-    $('.js-lastname-input , .js-firstname-input , .js-patronymic-input').on('change', function () {
+    $(document).on('change', '.js-lastname-input , .js-firstname-input , .js-patronymic-input', function () {
 
         let lastname = $('.js-lastname-input').val();
         let firstname = $('.js-firstname-input').val();
@@ -333,9 +333,14 @@ $(function () {
         firstname = (firstname) ? firstname + ' ' : '';
         patronymic = (patronymic) ? patronymic + ' ' : '';
 
-        let fio = lastname + firstname + patronymic;
+        if($(this).hasClass('js-lastname-input'))
+            $('input[name="requisite[holder][lastname]"]').val(lastname);
 
-        $('input[name="fio_acc_holder"]').val(fio);
+        if($(this).hasClass('js-firstname-input'))
+            $('input[name="requisite[holder][firstname]"]').val(firstname);
+
+        if($(this).hasClass('js-patronymic-input'))
+            $('input[name="requisite[holder][patronymic]"]').val(patronymic);
     });
 
     $('.mask_number').each(function () {
