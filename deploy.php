@@ -14,7 +14,7 @@ set('php_fpm_version', '8.0');
 set('ssh_arguments', ['-o UserKnownHostsFile=/dev/null', '-o StrictHostKeyChecking=no']);
 set('shared_dirs', ['configuration']);
 
-host('51.250.98.13')
+host('84.252.142.48')
     ->set('remote_user', 'ploi')
     ->set('deploy_path', '/home/ploi/rucred-dev.ru');
 
