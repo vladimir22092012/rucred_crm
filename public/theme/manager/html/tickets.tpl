@@ -113,6 +113,22 @@
             white-space: pre;
         }
     </style>
+    <style>
+        .blink {
+            -webkit-animation: blink 3s linear infinite;
+            animation: blink 3s linear infinite;
+        }
+        @-webkit-keyframes blink {
+            0% { color: rgba(34, 34, 34, 1); }
+            50% { color: rgba(34, 34, 34, 0); }
+            100% { color: rgba(34, 34, 34, 1); }
+        }
+        @keyframes blink {
+            0% { color: rgba(34, 34, 34, 1); }
+            50% { color: rgba(34, 34, 34, 0); }
+            100% { color: rgba(34, 34, 34, 1); }
+        }
+    </style>
 {/capture}
 
 <div class="page-wrapper">
@@ -276,20 +292,23 @@
                                                         <a href="/ticket/{$ticket->id}/">{$ticket->id}</a><br>
                                                         {if !$archive}
                                                             {if in_array($ticket->status, [0,1])}
-                                                                <small class="label label-warning">Новый</small>
+                                                                <small class="label label-warning">Новый</small><br>
                                                             {/if}
                                                             {if $ticket->status == 2}
-                                                                <small class="label label-info">Принят</small>
+                                                                <small class="label label-info">Принят</small><br>
                                                             {/if}
                                                             {if $ticket->status == 3}
-                                                                <small class="label label-primary">На проверку</small>
+                                                                <small class="label label-primary">На проверку</small><br>
                                                             {/if}
                                                             {if $ticket->status == 4}
-                                                                <small class="label label-success">Исполнено</small>
+                                                                <small class="label label-success">Исполнено</small><br>
                                                             {/if}
                                                             {if $ticket->status == 5}
-                                                                <small class="label label-danger">На доработку</small>
+                                                                <small class="label label-danger">На доработку</small><br>
                                                             {/if}
+                                                        {/if}
+                                                        {if empty($ticket->ticket_id)}
+                                                            <small class="blink ">Новый!</small>
                                                         {/if}
                                                     </td>
                                                     <td style="width: 70px;" class="jsgrid-cell">

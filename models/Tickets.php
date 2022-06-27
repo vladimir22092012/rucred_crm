@@ -30,31 +30,32 @@ class Tickets extends Core
     {
         $out = '';
         $manager = '';
-        $status = $this->db->placehold("AND status != 6");
+        $status = $this->db->placehold("AND t.status != 6");
         $executor = '';
 
         if ($in_out == 'out') {
-            $out = $this->db->placehold("AND creator = ?", $manager_id);
+            $out = $this->db->placehold("AND t.creator = ?", $manager_id);
         }
 
         if ($manager_role == 'employer' && $in_out == 'in') {
             $employer = $this->managers->get_manager($manager_id);
-            $out = $this->db->placehold("AND group_id = ?", $employer->group_id);
+            $out = $this->db->placehold("AND t.group_id = ?", $employer->group_id);
         }
 
         if ($in_out == 'in' && in_array($manager_role, ['underwriter', 'middle'])) {
-            $out = $this->db->placehold("AND company_id = 2");
-            $manager = $this->db->placehold("AND creator != ?", $manager_id);
+            $out = $this->db->placehold("AND t.company_id = 2");
+            $manager = $this->db->placehold("AND t.creator != ?", $manager_id);
         }
 
         if ($in_out == 'archive') {
-            $status = $this->db->placehold("AND status = 6");
-            $executor = $this->db->placehold("AND executor = ?", $manager_id);
+            $status = $this->db->placehold("AND t.status = 6");
+            $executor = $this->db->placehold("AND t.executor = ?", $manager_id);
         }
 
         $query = $this->db->placehold("
         SELECT *
-        FROM s_tickets
+        FROM s_tickets as t
+        LEFT JOIN s_tickets_notifications as n on n.ticket_id = t.id
         WHERE 1
         $out
         $manager

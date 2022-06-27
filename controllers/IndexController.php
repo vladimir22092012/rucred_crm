@@ -150,7 +150,6 @@ class IndexController extends Controller
             SELECT COUNT(*) as `count`
             FROM s_tickets
             WHERE group_id = 2
-            AND note_flag = 0
             AND creator != ?
             and status != 6
             and not exists (SELECT *
@@ -165,9 +164,7 @@ class IndexController extends Controller
                 $query = $this->db->placehold("
             SELECT COUNT(*) as `count`
             FROM s_tickets
-            WHERE note_flag = 0
-            AND creator != ?
-            and status != 6
+            WHERE status != 6
             and not exists (SELECT *
             FROM s_tickets_notifications
             WHERE ticket_id = s_tickets.id)
@@ -180,8 +177,7 @@ class IndexController extends Controller
             $query = $this->db->placehold("
             SELECT COUNT(*) as `count`
             FROM s_tickets
-            WHERE note_flag = 0
-            AND creator = ?
+            WHERE creator = ?
             and status != 6
             and not exists (SELECT *
             FROM s_tickets_notifications
