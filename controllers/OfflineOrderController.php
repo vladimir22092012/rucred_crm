@@ -3653,7 +3653,7 @@ class OfflineOrderController extends Controller
 
         $message = "Оплата доступна по ссылке: $pay_link";
 
-        $this->dd($this->sms->send($phone, $message));
+        var_dump($this->sms->send($phone, $message));
         exit;
     }
 
