@@ -29,13 +29,17 @@ class TicketController extends Controller
 
         $ticket_id = (int)$this->request->get('id');
 
-        $note =
-            [
-                'ticket_id' => $ticket_id,
-                'user_id' => $this->manager->id
-            ];
+        $get_note = $this->TicketsNotes->get($ticket_id, $this->manager->id);
 
-        $this->TicketsNotes->add($note);
+        if (empty($get_note)) {
+            $note =
+                [
+                    'ticket_id' => $ticket_id,
+                    'user_id' => $this->manager->id
+                ];
+
+            $this->TicketsNotes->add($note);
+        }
 
         $ticket = $this->Tickets->get_ticket($ticket_id);
 

@@ -121,10 +121,9 @@ class IndexController extends Controller
             WHERE group_id = ?
             AND (executor = 0 OR executor is null)
             and status != 6
-            OR
-            executor = ?
-            AND note_flag = 0
-            and status != 6
+            and not exists (SELECT *
+            FROM s_tickets_notifications
+            WHERE ticket_id = s_tickets.id)
             ", $this->manager->group_id, $this->manager->id);
 
                 $this->db->query($query);
@@ -137,10 +136,9 @@ class IndexController extends Controller
             WHERE group_id = 2
             AND (executor = 0 OR executor is null)
             and status != 6
-            OR
-            executor = ?
-            AND note_flag = 0
-            and status != 6
+            and not exists (SELECT *
+            FROM s_tickets_notifications
+            WHERE ticket_id = s_tickets.id)
             ", $this->manager->id);
 
                 $this->db->query($query);
@@ -155,6 +153,9 @@ class IndexController extends Controller
             AND note_flag = 0
             AND creator != ?
             and status != 6
+            and not exists (SELECT *
+            FROM s_tickets_notifications
+            WHERE ticket_id = s_tickets.id)
             ", $this->manager->id);
 
                 $this->db->query($query);
@@ -167,6 +168,9 @@ class IndexController extends Controller
             WHERE note_flag = 0
             AND creator != ?
             and status != 6
+            and not exists (SELECT *
+            FROM s_tickets_notifications
+            WHERE ticket_id = s_tickets.id)
             ", $this->manager->id);
 
                 $this->db->query($query);
@@ -179,12 +183,15 @@ class IndexController extends Controller
             WHERE note_flag = 0
             AND creator = ?
             and status != 6
+            and not exists (SELECT *
+            FROM s_tickets_notifications
+            WHERE ticket_id = s_tickets.id)
             ", $this->manager->id);
 
             $this->db->query($query);
             $count_out = $this->db->result('count');
 
-            if (!isset($count_in))
+            if (empty($count_in))
                 $count_in = 0;
 
             if (empty($count_out))

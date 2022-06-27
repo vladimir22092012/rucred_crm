@@ -24,4 +24,19 @@ class TicketsNotes extends Core
 
         $this->db->query($query);
     }
+
+    public function get($ticket_id, $user_id)
+    {
+        $query = $this->db->placehold("
+        INSERT INTO s_tickets_notifications
+        WHERE ticket_id = ?
+        AND user_id = ?
+        ", $ticket_id, $user_id);
+
+        $this->db->query($query);
+        $id = $this->db->result();
+
+        return $id;
+
+    }
 }
