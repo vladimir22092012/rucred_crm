@@ -2318,7 +2318,7 @@
                                                                 <a target="_blank"
                                                                    style="text-decoration: none!important;"
                                                                    href="javascript:void(0);"
-                                                                   onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}');">
+                                                                   onclick="window.open('{$config->root_url}/files/users/{$order->user_id}/{$document->scan->name}');">
                                                                     <input type="button"
                                                                            class="btn btn-outline-info {$scan->type}"
                                                                            value="Скан">

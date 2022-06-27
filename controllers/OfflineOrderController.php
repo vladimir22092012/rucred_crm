@@ -843,6 +843,13 @@ class OfflineOrderController extends Controller
 
         $this->contracts->update_contract($order->contract_id, ['status' => 1]);
 
+        $upload_scans = 0;
+
+        if(count($scans) == count($users_docs))
+            $upload_scans = 1;
+
+        $this->YaDisk->upload_orders_files($order_id, $upload_scans);
+
         return array('success' => 1, 'status' => 2);
 
     }
@@ -3698,12 +3705,6 @@ class OfflineOrderController extends Controller
         $filter['user_id'] = $order->user_id;
 
         exit;
-    }
-
-    private function action_upload_docs_to_yandex()
-    {
-
-        $this->YaDisk->upload_orders_files();
     }
 
 }
