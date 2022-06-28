@@ -745,6 +745,8 @@ class Contracts extends Core
 
         $this->db->query($query);
 
+        $this->dd($query);
+
         $id = $this->db->insert_id();
 
         return $id;

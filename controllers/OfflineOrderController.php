@@ -3585,10 +3585,6 @@ class OfflineOrderController extends Controller
                     'issuance_date' => date('Y-m-d H:i:s'),
                 ];
 
-            echo '<pre>';
-            var_dump($this->contracts->add_contract($contract));
-            exit;
-
             $contract_id = $this->contracts->add_contract($contract);
 
             $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
