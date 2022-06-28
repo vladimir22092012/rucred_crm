@@ -77,7 +77,7 @@ class YaDisk extends Core
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/'.$order->personal_number.' '.$translit_lastname.'/');
                 $resource->create();
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/'.$order->personal_number.' '.$translit_lastname.'/'.$file_name.'.pdf');
-                $resource->upload($this->config->root_url . '/'.$order->user_id.'/'.$document->name);
+                $resource->upload($this->config->root_url . '/files/users/'.$order->user_id.'/'.$document->name);
                 var_dump($resource);
             }
         }
