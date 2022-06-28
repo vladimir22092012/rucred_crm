@@ -764,12 +764,12 @@
             });
 
             $(document).on('click', '.test_ya', function () {
-                $.ajax({
-                    method: 'POST',
-                    data: {
-                        action: 'upload_docs_to_yandex'
-                    }
-                })
+               $.ajax({
+                   method: 'POST',
+                   data:{
+                       action: 'upload_docs_to_yandex'
+                   }
+               })
             });
         });
     </script>
@@ -824,6 +824,7 @@
 
             $.ajax({
                 method: 'POST',
+                dataType: 'JSON',
                 data: {
                     action: 'confirm_asp',
                     user: user,
@@ -831,8 +832,15 @@
                     code: code,
                     order: order
                 },
-                success: function () {
-                    location.reload();
+                success: function (response) {
+                    if (response['error'] == 1) {
+                        Swal.fire({
+                            title: 'Неверный код',
+                            confirmButtonText: 'ОК'
+                        });
+                    } else {
+                        location.reload();
+                    }
                 }
             });
         }

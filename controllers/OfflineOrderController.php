@@ -3701,8 +3701,6 @@ class OfflineOrderController extends Controller
                 'numeration' => (string)$key
             ));
         }
-
-        exit;
     }
 
 }
