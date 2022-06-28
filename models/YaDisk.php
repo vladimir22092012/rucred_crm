@@ -1,5 +1,6 @@
 <?php
 
+ini_set('max_execution_time', 300);
 class YaDisk extends Core
 {
     protected $token;
