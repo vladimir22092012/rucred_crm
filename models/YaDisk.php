@@ -119,9 +119,6 @@ class YaDisk extends Core
 
                     $this->design->assign('period', $period);
 
-                    var_dump($document->params);
-                    exit;
-
                     $payment_schedule = json_decode($document->params->payment_schedule, true);
                     $payment_schedule = end($payment_schedule);
 
