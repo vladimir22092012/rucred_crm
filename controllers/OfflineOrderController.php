@@ -3580,16 +3580,13 @@ class OfflineOrderController extends Controller
                     'issuance_date' => date('Y-m-d H:i:s')
                 ];
 
-            $this->dd($contract);
-
             $contract_id = $this->Contracts->add_contract($contract);
 
             $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
+            $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
 
             $delete_scans = 0;
             $this->form_docs($order_id, $delete_scans);
-
-            $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
 
             echo json_encode(['success' => 1]);
             exit;
@@ -3673,11 +3670,6 @@ class OfflineOrderController extends Controller
 
         $order = $this->orders->get_order($order_id);
 
-        $order->regaddress = $this->addresses->get_address($order->regaddress_id);
-        $order->faktaddress = $this->addresses->get_address($order->faktaddress_id);
-        $order->requisite = $this->requisites->get_requisite($order->requisite_id);
-
-        $settlement = $this->OrganisationSettlements->get_std_settlement();
         $doc_types =
             [
                 '04.05' => 'SOGLASIE_NA_OBR_PERS_DANNIH',
@@ -3685,7 +3677,7 @@ class OfflineOrderController extends Controller
                 '03.03' => 'SOGLASIE_RABOTODATEL',
             ];
 
-        if ($settlement->id == 2)
+        if ($order->settlement_id == 2)
             $doc_types['04.05.1'] = 'SOGLASIE_MINB';
         else
             $doc_types['04.05.2'] = 'SOGLASIE_RDB';
@@ -3707,8 +3699,6 @@ class OfflineOrderController extends Controller
                 'numeration' => (string)$key
             ));
         }
-
-        $filter['user_id'] = $order->user_id;
 
         exit;
     }
