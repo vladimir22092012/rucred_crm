@@ -824,6 +824,7 @@
 
             $.ajax({
                 method: 'POST',
+                dataType: 'JSON',
                 data: {
                     action: 'confirm_asp',
                     user: user,
@@ -832,7 +833,8 @@
                     order: order
                 },
                 success: function (response) {
-                    if (JSON.parse(response).error == 1) {
+                    console.log(response);
+                    if (response['error'] == 1) {
                         Swal.fire({
                             title: 'Неверный код',
                             confirmButtonText: 'ОК'
