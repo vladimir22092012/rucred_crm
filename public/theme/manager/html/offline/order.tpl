@@ -1490,14 +1490,14 @@
                                                         data-tooltip="Подтвердите нахождение сотрудника в данной организации"
                                                         data-order="{$order->order_id}" data-manager="{$manager->id}">
                                                     <i class="fas fa-check-circle"></i>
-                                                    <span>Подтвердить</span>
+                                                    <span>Подтвердить сотрудника</span>
                                                 </button>
                                                 <button class="btn btn-danger btn-block reject-order warning_asp"
                                                         data-user="{$order->user_id}"
                                                         data-tooltip="Подтвердите нахождение сотрудника в данной организации"
                                                         data-order="{$order->order_id}" data-manager="{$manager->id}">
                                                     <i class="fas fa-times-circle"></i>
-                                                    <span>Отклонить</span>
+                                                    <span>Отклонить сотрудника</span>
                                                 </button>
                                             </div>
                                         {else}
