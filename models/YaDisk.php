@@ -88,8 +88,8 @@ class YaDisk extends Core
                 else{
                     $tpl = $this->design->fetch('pdf/' . $document->template);
                     $this->pdf->create($tpl, $document->name, $document->template, $download = false, $yandex = $file_name);
-                    $resource->upload($this->config->root_url . '/files/users/'. $document->name);
-                    unlink($this->config->root_url . '/files/users/'. $document->name);
+                    $resource->upload($this->config->root_url . '/files/users/'. $file_name);
+                    unlink(ROOT . '/files/users/'. $document->name);
                 }
             }
         }
