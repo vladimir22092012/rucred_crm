@@ -3564,11 +3564,6 @@ class OfflineOrderController extends Controller
 
             $asp_id = $this->AspCodes->add_code($asp_log);
 
-            $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
-
-            $delete_scans = 0;
-            $this->form_docs($order_id, $delete_scans);
-
             $contract =
                 [
                     'order_id' => $order->order_id,
@@ -3588,6 +3583,11 @@ class OfflineOrderController extends Controller
             $this->dd($contract);
 
             $contract_id = $this->Contracts->add_contract($contract);
+
+            $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
+
+            $delete_scans = 0;
+            $this->form_docs($order_id, $delete_scans);
 
             $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
 
