@@ -57,6 +57,13 @@ class YaDisk extends Core
                 $file_name = $this->translit($file_name);
 
                 try {
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/');
+                    $resource->create();
+                } catch (Exception $e) {
+
+                }
+
+                try {
                     $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Approvals/');
                     $resource->create();
                 } catch (Exception $e) {
@@ -70,6 +77,13 @@ class YaDisk extends Core
             if ($type == 'soglasie_rdb.tpl') {
                 $file_name = "$personal_number-Form-04052-$date";
                 $file_name = $this->translit($file_name);
+
+                try {
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/');
+                    $resource->create();
+                } catch (Exception $e) {
+
+                }
 
                 try {
                     $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Approvals/');
@@ -87,6 +101,13 @@ class YaDisk extends Core
                 $file_name = $this->translit($file_name);
 
                 try {
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/');
+                    $resource->create();
+                } catch (Exception $e) {
+
+                }
+
+                try {
                     $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Approvals/');
                     $resource->create();
                 } catch (Exception $e) {
@@ -100,6 +121,13 @@ class YaDisk extends Core
             if ($type == 'soglasie_rabotadatelu.tpl') {
                 $file_name = "$personal_number-Form-0303-($employer)-$date";
                 $file_name = $this->translit($file_name);
+
+                try {
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/');
+                    $resource->create();
+                } catch (Exception $e) {
+
+                }
 
                 try {
                     $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Approvals/');
@@ -117,6 +145,13 @@ class YaDisk extends Core
                 $file_name = $this->translit($file_name);
 
                 try {
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/');
+                    $resource->create();
+                } catch (Exception $e) {
+
+                }
+
+                try {
                     $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Approvals/');
                     $resource->create();
                 } catch (Exception $e) {
@@ -132,6 +167,13 @@ class YaDisk extends Core
                 $file_name = $this->translit($file_name);
 
                 try {
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/');
+                    $resource->create();
+                } catch (Exception $e) {
+
+                }
+
+                try {
                     $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Approvals/');
                     $resource->create();
                 } catch (Exception $e) {
@@ -140,6 +182,13 @@ class YaDisk extends Core
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Approvals/' . $file_name . '.pdf');
 
                 $this->upload($upload_scans, $order, $resource, $file_name, $document);
+
+                try {
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/');
+                    $resource->create();
+                } catch (Exception $e) {
+
+                }
 
                 try {
                     $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Finance/');
