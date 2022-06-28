@@ -189,6 +189,14 @@ class DocumentController extends Controller
                 $download = $fio . " - Заявление работодателю $employer  на перечисление по микрозайму " . "($date)";
             }
 
+            if ($document->template == 'grafik_obsl_mkr.tpl') {
+                $download = $fio . " - График обслуживания микрозайма" . "($date)";
+            }
+
+            if ($document->template == 'perechislenie_zaemnih_sredstv.tpl') {
+                $download = $fio . " - Согласие на перечисление заемных средств" . "($date)";
+            }
+
             if (isset($download))
                 $download = $this->translit($download);
 
