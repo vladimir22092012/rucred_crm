@@ -1,6 +1,6 @@
 <table>
     <tr style="width: 100%">
-        <td style="width: 50%"><img src="{$config->back_url}/theme/manager/html/pdf/i/RKO.png" style="height: 80px">
+        <td style="width: 50%"><img src="{$config->root_url}/theme/manager/html/pdf/i/RKO.png" style="height: 80px">
         </td>
         <td style="width: 10%"></td>
     </tr>
