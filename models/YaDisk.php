@@ -82,7 +82,15 @@ class YaDisk extends Core
             if (isset($file_name)) {
                 $file_name = $this->translit($file_name);
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->personal_number . ' ' . $translit_lastname . '/' . $file_name . '.pdf');
-                $resource->upload($this->config->root_url . '/files/users/' . $order->user_id . '/' . $document->name);
+
+                if ($upload_scans == 1)
+                    $resource->upload($this->config->root_url . '/files/users/' . $order->user_id . '/' . $document->name);
+                else{
+                    $tpl = $this->design->fetch('pdf/' . $document->template);
+                    $this->pdf->create($tpl, $document->name, $document->template, $download = false, $yandex = $file_name);
+                    $resource->upload($this->config->root_url . '/files/users/'. $document->name);
+                    unlink($this->config->root_url . '/files/users/'. $document->name);
+                }
             }
         }
     }
