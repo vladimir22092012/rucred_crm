@@ -92,6 +92,7 @@ class YaDisk extends Core
                     unlink(ROOT . '/files/users/'. $file_name.'.pdf');
                 }
             }
+            sleep(5);
         }
     }
 
