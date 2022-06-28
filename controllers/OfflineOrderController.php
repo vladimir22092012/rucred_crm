@@ -3518,6 +3518,7 @@ class OfflineOrderController extends Controller
         INSERT INTO s_sms_messages
         SET phone = ?, code = ?, response = ?, ip = ?, user_id = ?, created = ?
         ', $phone, $code, $response['resp'], $_SERVER['REMOTE_ADDR'] ?? '', $user_id, date('Y-m-d H:i:s'));
+
         echo json_encode(['success' => 1]);
         exit;
 
@@ -3568,20 +3569,27 @@ class OfflineOrderController extends Controller
             $delete_scans = 0;
             $this->form_docs($order_id, $delete_scans);
 
-            $contract_id = $this->contracts->add_contract([
-                'order_id' => $order->order_id,
-                'user_id' => $order->user_id,
-                'number' => $order->uid,
-                'amount' => $order->amount,
-                'period' => $order->period,
-                'base_percent' => $order->percent,
-                'peni_percent' => 0,
-                'status' => 0,
-                'loan_body_summ' => $order->amount,
-                'loan_percents_summ' => 0,
-                'loan_peni_summ' => 0,
-                'issuance_date' => date('Y-m-d H:i:s'),
-            ]);
+            $contract =
+                [
+                    'order_id' => $order->order_id,
+                    'user_id' => $order->user_id,
+                    'number' => $order->uid,
+                    'amount' => $order->amount,
+                    'period' => $order->period,
+                    'base_percent' => $order->percent,
+                    'peni_percent' => 0,
+                    'status' => 0,
+                    'loan_body_summ' => $order->amount,
+                    'loan_percents_summ' => 0,
+                    'loan_peni_summ' => 0,
+                    'issuance_date' => date('Y-m-d H:i:s'),
+                ];
+
+            echo '<pre>';
+            var_dump($this->contracts->add_contract($contract));
+            exit;
+
+            $contract_id = $this->contracts->add_contract($contract);
 
             $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
 

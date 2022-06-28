@@ -832,8 +832,7 @@
                     order: order
                 },
                 success: function (response) {
-                    console.log(JSON.parse(response));
-                    if (JSON.parse(response).error === 1) {
+                    if (JSON.parse(response).error == 1) {
                         Swal.fire({
                             title: 'Неверный код',
                             confirmButtonText: 'ОК'

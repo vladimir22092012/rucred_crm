@@ -739,24 +739,14 @@ class Contracts extends Core
     
     public function add_contract($contract)
     {
-        $contract = (array)$contract;
-        
-//        if (empty($contract['create_date'])) {
-//            $contract['create_date'] = date('Y-m-d H:i:s');
-//        }
-        
         $query = $this->db->placehold("
             INSERT INTO __contracts SET ?%
         ", $contract);
+
         $this->db->query($query);
+
         $id = $this->db->insert_id();
-        
-//        $contract_date = strtotime($contract['create_date']);
-//        $uid = exec($this->config->root_dir.'generic/uidgen');
-//        $contract_number = date('md', $contract_date).'-'.$id;
-//
-//        $this->update_contract($id, array('uid' => $uid, 'number'=>$contract_number));
-    
+
         return $id;
     }
     
