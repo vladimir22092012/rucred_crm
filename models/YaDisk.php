@@ -38,7 +38,7 @@ class YaDisk extends Core
                 $type = $document->template;
 
             if ($type == 'individualnie_usloviya.tpl') {
-                $file_name = "$order->uid Form 040302  $date";
+                $file_name = "$order->uid-Form-040302-$date";
                 $file_name = $this->translit($file_name);
 
                 try {
@@ -53,7 +53,7 @@ class YaDisk extends Core
             }
 
             if ($type == 'soglasie_na_obr_pers_dannih.tpl') {
-                $file_name = "$personal_number Form 0405 $date";
+                $file_name = "$personal_number-Form-0405-$date";
                 $file_name = $this->translit($file_name);
 
                 try {
@@ -68,7 +68,7 @@ class YaDisk extends Core
             }
 
             if ($type == 'soglasie_rdb.tpl') {
-                $file_name = "$personal_number Form 04052 $date";
+                $file_name = "$personal_number-Form-04052-$date";
                 $file_name = $this->translit($file_name);
 
                 try {
@@ -83,7 +83,7 @@ class YaDisk extends Core
             }
 
             if ($type == 'soglasie_minb.tpl') {
-                $file_name = "$personal_number Form 04051 $date";
+                $file_name = "$personal_number-Form-04051-$date";
                 $file_name = $this->translit($file_name);
 
                 try {
@@ -98,7 +98,7 @@ class YaDisk extends Core
             }
 
             if ($type == 'soglasie_rabotadatelu.tpl') {
-                $file_name = "$personal_number Form 0303 ($employer) $date";
+                $file_name = "$personal_number-Form-0303-($employer)-$date";
                 $file_name = $this->translit($file_name);
 
                 try {
@@ -113,7 +113,7 @@ class YaDisk extends Core
             }
 
             if ($type == 'soglasie_rukred_rabotadatel.tpl') {
-                $file_name = "$personal_number Form 0406 ($employer) $date";
+                $file_name = "$personal_number-Form-0406-($employer)-$date";
                 $file_name = $this->translit($file_name);
 
                 try {
@@ -128,7 +128,7 @@ class YaDisk extends Core
             }
 
             if ($type == 'soglasie_na_kred_otchet.tpl') {
-                $file_name = "$personal_number Form 0407 $date";
+                $file_name = "$personal_number-Form-0407-$date";
                 $file_name = $this->translit($file_name);
 
                 try {
@@ -153,7 +153,7 @@ class YaDisk extends Core
             }
 
             if ($type == 'zayavlenie_na_perechislenie_chasti_zp.tpl') {
-                $file_name = "$order->uid Form 0409 ";
+                $file_name = "$order->uid-Form-0409";
                 $file_name = $this->translit($file_name);
 
                 try {
@@ -168,7 +168,7 @@ class YaDisk extends Core
             }
 
             if ($type == 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl') {
-                $file_name = "$order->uid Form 0304 ";
+                $file_name = "$order->uid-Form-0304";
                 $file_name = $this->translit($file_name);
 
                 try {
@@ -183,7 +183,7 @@ class YaDisk extends Core
             }
 
             if ($type == 'grafik_obsl_mkr.tpl') {
-                $file_name = "$order->uid Form 0404";
+                $file_name = "$order->uid-Form-0404";
                 $file_name = $this->translit($file_name);
 
                 try {
@@ -198,7 +198,7 @@ class YaDisk extends Core
             }
 
             if ($type == 'perechislenie_zaemnih_sredstv.tpl') {
-                $file_name = "$order->uid Form 0412";
+                $file_name = "$order->uid-Form-0412";
                 $file_name = $this->translit($file_name);
 
                 try {
