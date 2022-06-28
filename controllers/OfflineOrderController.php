@@ -3582,10 +3582,12 @@ class OfflineOrderController extends Controller
                     'loan_body_summ' => $order->amount,
                     'loan_percents_summ' => 0,
                     'loan_peni_summ' => 0,
-                    'issuance_date' => date('Y-m-d H:i:s'),
+                    'issuance_date' => date('Y-m-d H:i:s')
                 ];
 
-            $contract_id = $this->contracts->add_contract($contract);
+            $this->dd($contract);
+
+            $contract_id = $this->Contracts->add_contract($contract);
 
             $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
 
