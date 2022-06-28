@@ -848,7 +848,7 @@ class OfflineOrderController extends Controller
         if(count($scans) == count($users_docs))
             $upload_scans = 1;
 
-        $this->YaDisk->upload_orders_files($order_id, $upload_scans);
+        var_dump($this->YaDisk->upload_orders_files($order_id, $upload_scans));
 
         return array('success' => 1, 'status' => 2);
 
