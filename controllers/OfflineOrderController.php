@@ -3546,8 +3546,10 @@ class OfflineOrderController extends Controller
         $results = $this->db->results();
 
         if (empty($results)) {
+
             echo json_encode(['error' => 1]);
             exit;
+
         } else {
             $this->orders->update_order($order_id, ['sms' => $code]);
 
@@ -3691,7 +3693,7 @@ class OfflineOrderController extends Controller
 
 
         foreach ($doc_types as $key => $type) {
-            $results[$type] = $this->documents->create_document(array(
+            $this->documents->create_document(array(
                 'user_id' => $order->user_id,
                 'order_id' => $order->order_id,
                 'type' => $type,
