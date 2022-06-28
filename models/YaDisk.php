@@ -17,6 +17,7 @@ class YaDisk extends Core
         $order = $this->orders->get_order($order_id);
 
         $fio = $order->lastname . ' ' . mb_substr($order->firstname, 0, 1) . mb_substr($order->patronymic, 0, 1);
+        $translit_lastname = $this->translit($order->lastname);
         $employer = explode(' ', $order->uid);
         $employer = "$employer[0]$employer[1]";
         $date = date('Y-m-d', strtotime($order->probably_start_date));
@@ -73,7 +74,7 @@ class YaDisk extends Core
 
             if(isset($file_name)){
                 $file_name = $this->translit($file_name);
-                $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/'.$file_name);
+                $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/'.'/'.$order->personal_number.' '.$translit_lastname.'/'.$file_name);
                 $resource->upload($this->config->root_url . '/'.$order->user_id.'/'.$document->name);
             }
         }
