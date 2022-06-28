@@ -79,6 +79,10 @@ class YaDisk extends Core
                 $file_name = $fio . " - Заявление работодателю $employer  на перечисление по микрозайму " . "($date)";
             }
 
+            if ($type == 'grafik_obsl_mkr.tpl') {
+                $file_name = $fio . " - График обслуживания микрозайма" . "($date)";
+            }
+
             if (isset($file_name)) {
                 $file_name = $this->translit($file_name);
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->personal_number . ' ' . $translit_lastname . '/' . $file_name . '.pdf');
