@@ -1,7 +1,7 @@
 <br><br><br><br>
 <table>
     <tr style="width: 100%">
-        <td style="width: 50%"><img src="{$config->root_url}/public/theme/manager/html/pdf/i/RKO.png" style="height: 80px">
+        <td style="width: 50%"><img src="{$config->back_url}/theme/manager/html/pdf/i/RKO.png" style="height: 80px">
         </td>
     </tr>
     <tr style="width: 100%">
