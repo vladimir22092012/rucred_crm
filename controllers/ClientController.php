@@ -225,6 +225,18 @@ class ClientController extends Controller
         $this->design->assign('company_name', $company_name);
         $this->design->assign('group_name', $group_name);
 
+        $contracts = $this->contracts->get_contracts(['user_id' => $client->id]);
+
+        $balances = 0;
+
+        if(!empty($contracts)){
+            foreach ($contracts as $contract){
+                $balances += $contract->overpay;
+            }
+        }
+
+        $this->design->assign('balances', $balances);
+
 
         return $this->design->fetch('client.tpl');
     }
