@@ -222,7 +222,7 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <select class="form-control"
-                                                        {if in_array($manager->role, ['employer', 'underwriter'])}disabled{/if}>
+                                                        {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
                                                     <option value="pdl" {if $loantype->type == 'pdl'}selected{/if}>Payroll PDL
                                                     </option>
                                                     <option value="annouitet"
@@ -240,7 +240,7 @@
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="name"
                                                        value="{$loantype->name|escape}" required=""
-                                                       {if in_array($manager->role, ['employer', 'underwriter'])}disabled{/if}/>
+                                                       {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -251,7 +251,7 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <select name="online_flag" id="online_flag" class="form-control"
-                                                        {if in_array($manager->role, ['employer', 'underwriter'])}disabled{/if}>
+                                                        {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
                                                     <option value="1" {if $loantype->online_flag == 1}selected{/if}>
                                                         Онлайн
                                                     </option>
@@ -293,7 +293,7 @@
                                                                                    class="onoffswitch-checkbox on_off_flag"
                                                                                    id="on_off_flag_{$group['id']}"
                                                                                     {if $group['on_off_flag'] == 1} checked="true" value="1" {else} value="0"{/if}
-                                                                                    {if in_array($manager->role, ['employer', 'underwriter'])}disabled{/if}>
+                                                                                    {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
                                                                             <label class="onoffswitch-label"
                                                                                    for="on_off_flag_{$group['id']}">
                                                                                 <span class="onoffswitch-inner"></span>
@@ -303,7 +303,7 @@
                                                                     </div>
                                                                 </div>
                                                             </td>
-                                                            <td>{if !in_array($manager->role, ['employer', 'underwriter'])}
+                                                            <td>{if !in_array($manager->role, ['employer', 'underwriter', 'middle'])}
                                                                 <input type="button"
                                                                        data-group="{$group['id']}"
                                                                        data-standart-percents="{$group['standart_percents']}"
@@ -333,7 +333,7 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="percent"
-                                                       {if $loantype}value="{$loantype->percent|number_format:3:',':' '}" {/if} {if in_array($manager->role, ['employer', 'underwriter'])}disabled{/if}/>
+                                                       {if $loantype}value="{$loantype->percent|number_format:3:',':' '}" {/if} {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -344,7 +344,7 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="profunion"
-                                                       {if $loantype}value="{$loantype->profunion|number_format:3:',':' '}" {/if} {if in_array($manager->role, ['employer', 'underwriter'])}disabled{/if}/>
+                                                       {if $loantype}value="{$loantype->profunion|number_format:3:',':' '}" {/if} {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -354,7 +354,7 @@
                                                 <label class="control-label">Льготный период, дней</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <select class="form-control" name="free_days">
+                                                <select class="form-control" name="free_days" {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
                                                     {for $i=1 to 30}
                                                         <option value="{$i}" {if empty($loantype->free_days) && $i == 3}selected{/if}>{$i}</option>
                                                     {/for}
@@ -368,7 +368,7 @@
                                                 <label class="control-label">Минимальный срок до первой выплаты, дней</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <select class="form-control" name="min_period">
+                                                <select class="form-control" name="min_period" {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
                                                     {for $i=1 to 30}
                                                         <option value="{$i}" {if empty($loantype->free_days) && $i == 20}selected{/if}>{$i}</option>
                                                     {/for}
@@ -384,7 +384,7 @@
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="min_amount"
                                                        value="{$loantype->min_amount|number_format:0:',':' '}"
-                                                       {if in_array($manager->role, ['employer', 'underwriter'])}disabled{/if}/>
+                                                       {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -396,7 +396,7 @@
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="max_amount"
                                                        value="{$loantype->max_amount|number_format:0:',':' '}"
-                                                       {if in_array($manager->role, ['employer', 'underwriter'])}disabled{/if}/>
+                                                       {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -408,7 +408,7 @@
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="max_period"
                                                        value="{$loantype->max_period}"
-                                                       {if in_array($manager->role, ['employer', 'underwriter'])}disabled{/if}/>
+                                                       {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}/>
                                             </div>
                                         </div>
                                     </div>
@@ -420,7 +420,7 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <select class="form-control" name="reason_flag"
-                                                        {if in_array($manager->role, ['employer', 'underwriter'])}disabled{/if}>
+                                                        {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
                                                     <option value="1" {if $loantype->reason_flag == 1} selected{/if}>На
                                                         неотложные нужды
                                                     </option>
@@ -434,7 +434,7 @@
                                 </div>
                             </div>
                         </div>
-                        {if !in_array($manager->role, ['employer', 'underwriter'])}
+                        {if !in_array($manager->role, ['employer', 'underwriter', 'middle'])}
                             <div class="col-12">
                                 <hr class="m-2"/>
                                 <div class="text-right">
