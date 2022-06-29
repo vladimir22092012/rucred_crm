@@ -21,6 +21,7 @@ class LoantypeController extends Controller
             $loantype->max_amount = str_replace(' ', '', $loantype->max_amount);
             $loantype->max_period = $this->request->post('max_period', 'integer');
             $loantype->online_flag = $this->request->post('online_flag', 'integer');
+            $loantype->reason_flag = $this->request->post('reason_flag');
 
             if (empty($loantype->name)) {
                 $this->design->assign('error', 'Укажите наименование вида кредита');

@@ -421,10 +421,10 @@
                                             <div class="col-7 ">
                                                 <select class="form-control" name="reason_flag"
                                                         {if in_array($manager->role, ['employer', 'underwriter'])}disabled{/if}>
-                                                    <option value="1" {if $loantype->reason_flag == 0} selected{/if}>На
+                                                    <option value="1" {if $loantype->reason_flag == 1} selected{/if}>На
                                                         неотложные нужды
                                                     </option>
-                                                    <option value="2" {if $loantype->reason_flag == 1} selected{/if}>На
+                                                    <option value="2" {if $loantype->reason_flag == 2} selected{/if}>На
                                                         рефинансирование обязательств перед третьими лицами
                                                     </option>
                                                 </select>
