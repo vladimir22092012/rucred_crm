@@ -211,16 +211,15 @@
             $('.create_new_order, .create_new_draft').click(function (e) {
                 e.preventDefault();
 
-                let entries = Object.fromEntries(new FormData(document.querySelector('#forms')).entries());
-                entries['action'] = 'create_new_order';
+                let form = $('#forms').serialize() + '&action=create_new_order';
 
                 if ($(this).hasClass('create_new_draft')) {
-                    entries['draft'] = 1;
+                    form = form + '&draft=1';
                 }
 
                 $.ajax({
                     method: 'POST',
-                    data: entries,
+                    data: form,
                     success: function (response) {
                         if (response.error === 1) {
                             Swal.fire({
@@ -228,7 +227,7 @@
                                 confirmButtonText: 'ОК'
                             });
                         } else {
-                            window.location.replace(response.redirect);
+                            //window.location.replace(response.redirect);
                         }
                     }
                 })

@@ -500,16 +500,24 @@ $(function () {
     $('.add_to_credits_table').on('click', function (e) {
         e.preventDefault();
 
-        $('#credits_table').append(
+        let html = $(
             '<tr>' +
             '<td><input class="form-control" name="credits_bank_name[][credits_bank_name]" type="text" value=""></td>' +
             '<td><input class="form-control" name="credits_rest_sum[][credits_rest_sum]" type="text" value=""></td>' +
             '<td><input class="form-control" name="credits_month_pay[][credits_month_pay]" type="text" value=""></td>' +
-            '<td><input class="form-control" name="credits_return_date[][credits_return_date]" type="text" value=""></td>' +
+            '<td><input class="form-control validity_period" name="credits_return_date[][credits_return_date]" type="text" value=""></td>' +
             '<td><input class="form-control" name="credits_percents[][credits_percents]" type="text" value=""></td>' +
-            '<td><input class="form-control" name="credits_delay[][credits_delay]" type="text" value=""></td>' +
+            '<td><select class="form-control" name="credits_delay[][credits_delay]"><option value="Да">Да</option>' +
+            '<option value="Нет" selected>Нет</option></select></td>' +
             '<td></td>' +
-            '</tr>');
+            '</tr>'
+        );
+
+        $('#credits_table').append(html);
+
+        $('.validity_period').click(function () {
+            $(this).setCursorPosition(0);
+        }).mask('99/99');
     });
 
     $('.add_to_cards_table').on('click', function (e) {

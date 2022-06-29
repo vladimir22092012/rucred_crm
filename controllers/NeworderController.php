@@ -184,17 +184,55 @@ class NeworderController extends Controller
 
         $attestations = json_encode(array_replace_recursive($attestation_date, $attestation_comment));
 
+        $credits_story = array_replace_recursive($credits_bank_name, $credits_rest_sum, $credits_month_pay, $credits_return_date, $credits_percents, $credits_delay);
+        $cards_story = array_replace_recursive($cards_bank_name, $cards_limit, $cards_rest_sum, $cards_validity_period, $cards_delay);
+
         if ($this->request->post('no_attestation') == 1) {
             $attestations = null;
         }
 
         $user['attestation'] = $attestations;
 
-        $credits_story = json_encode(array_replace_recursive($credits_bank_name, $credits_rest_sum, $credits_month_pay, $credits_return_date, $credits_percents, $credits_delay));
-        $cards_story = json_encode(array_replace_recursive($cards_bank_name, $cards_limit, $cards_rest_sum, $cards_validity_period, $cards_delay));
+        $user['income'] = preg_replace("/[^,.0-9]/", '', $this->request->post('income_medium'));
+        $user['expenses'] = preg_replace("/[^,.0-9]/", '', $this->request->post('outcome_medium'));
 
-        $user['credits_story'] = $credits_story;
-        $user['cards_story'] = $cards_story;
+        if (empty($user['income'])) {
+            response_json(['error' => 1, 'reason' => 'Отсутствует среднемесячный доход']);
+            exit;
+        }
+
+        if (empty($user['expenses'])) {
+            response_json(['error' => 1, 'reason' => 'Отсутствует среднемесячный расход']);
+            exit;
+        }
+
+        $all_sum_credits = 0;
+        $sum_credits_pay = 0;
+        $sum_cards_pay = 0;
+
+        if (!empty($credits_story)) {
+            foreach ($credits_story as $credit) {
+                $credit['credits_month_pay'] = preg_replace("/[^,.0-9]/", '', $credit['credits_month_pay']);
+                $sum_credits_pay+= $credit['credits_month_pay'];
+            }
+
+            $all_sum_credits+= $sum_credits_pay;
+        }
+
+        if(!empty($cards_story)){
+            foreach ($cards_story as $card) {
+                $card['cards_rest_sum'] = preg_replace("/[^,.0-9]/", '', $card['cards_rest_sum']);
+                $sum_cards_pay+= $card['cards_rest_sum'];
+            }
+
+            $sum_cards_pay *= 0.1;
+            $all_sum_credits+= $sum_cards_pay;
+        }
+
+        $user['pdn'] = round(($user['income'] / $all_sum_credits) * 100, 2);
+
+        $user['credits_story'] = json_encode($credits_story);
+        $user['cards_story'] = json_encode($cards_story);
 
         $profunion = $this->request->post('profunion');
 
@@ -304,19 +342,6 @@ class NeworderController extends Controller
 
         if (empty($user['passport_serial']) || empty($user['passport_date']) || empty($user['passport_issued']) || empty($user['subdivision_code'])) {
             response_json(['error' => 1, 'reason' => 'Заполните паспортные данные']);
-            exit;
-        }
-
-        $user['income'] = preg_replace("/[^,.0-9]/", '', $this->request->post('income_medium'));
-        $user['expenses'] = preg_replace("/[^,.0-9]/", '', $this->request->post('outcome_medium'));
-
-        if (empty($user['income'])) {
-            response_json(['error' => 1, 'reason' => 'Отсутствует среднемесячный доход']);
-            exit;
-        }
-
-        if (empty($user['expenses'])) {
-            response_json(['error' => 1, 'reason' => 'Отсутствует среднемесячный расход']);
             exit;
         }
 
@@ -988,10 +1013,10 @@ class NeworderController extends Controller
         $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date)));
 
         $percent_per_month = (($percent / 100) * 360) / 12;
-        $annoouitet_pay = $amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -1)));
-        $annoouitet_pay = round($annoouitet_pay, '2');
 
         if ($loan_id == 1) {
+            $annoouitet_pay = $amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -1)));
+            $annoouitet_pay = round($annoouitet_pay, '2');
 
             if (date('d', strtotime($start_date)) < $first_pay_day) {
                 if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < $loan->free_period) {
@@ -1102,6 +1127,8 @@ class NeworderController extends Controller
             echo json_encode($payment_schedule['result']['all_sum_pay']);
             exit;
         } else {
+            $annoouitet_pay = $amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
+            $annoouitet_pay = round($annoouitet_pay, '2');
             echo json_encode($annoouitet_pay);
             exit;
         }
