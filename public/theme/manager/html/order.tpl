@@ -757,6 +757,25 @@
                     data: form
                 })
             });
+
+            $(document).on('click', '.accept_online_order', function (e) {
+                e.preventDefault();
+
+                let order_id = $(this).attr('data-order');
+                let manager_id = $(this).attr('data-manager');
+
+                $.ajax({
+                    method: 'POST',
+                    data:{
+                        action: 'accept_online_order',
+                        order_id: order_id,
+                        manager_id: manager_id
+                    },
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            })
         });
     </script>
     <script>
@@ -1377,13 +1396,13 @@
                                                 <button class="btn btn-success btn-block accept-order"
                                                         data-order="{$order->order_id}" data-manager="{$manager->id}">
                                                     <i class="fas fa-check-circle"></i>
-                                                    <span>Подтвердить</span>
+                                                    <span>Подтвердить сотрудника</span>
                                                 </button>
                                                 <button class="btn btn-danger btn-block reject-order"
                                                         data-user="{$order->user_id}"
                                                         data-order="{$order->order_id}" data-manager="{$manager->id}">
                                                     <i class="fas fa-times-circle"></i>
-                                                    <span>Отклонить</span>
+                                                    <span>Отклонить сотрудника</span>
                                                 </button>
                                             </div>
                                         {else}
@@ -1394,6 +1413,14 @@
                                                 </div>
                                             </div>
                                         {/if}
+                                    {/if}
+                                    {if $order->status == 12 && in_array($manager->role, ['developer', 'admin', 'underwriter', 'middle'])}
+                                        <button class="btn btn-success btn-block accept_online_order"
+                                                data-event="12" data-user="{$order->user_id}"
+                                                data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                            <i class="fas fa-check-circle"></i>
+                                            <span>Принять в работу</span>
+                                        </button>
                                     {/if}
                                     {if $order->status == 14 && in_array($manager->role, ['developer', 'admin', 'underwriter', 'middle'])}
                                         <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
@@ -1603,20 +1630,24 @@
                                                     </div>
                                                     <div class="col-md-12">
                                                         <div class="form-group row m-0">
-                                                            <label class="control-label col-md-4">Адрес регистрации:</label>
+                                                            <label class="control-label col-md-4">Адрес
+                                                                регистрации:</label>
                                                             <div class="col-md-8">
                                                                 <p class="form-control-static">{$user->regaddress->adressfull|escape}</p>
                                                             </div>
                                                         </div>
-                                                    </div><br>
+                                                    </div>
+                                                    <br>
                                                     <div class="col-md-12">
                                                         <div class="form-group row m-0">
-                                                            <label class="control-label col-md-4">Адрес проживания:</label>
+                                                            <label class="control-label col-md-4">Адрес
+                                                                проживания:</label>
                                                             <div class="col-md-8">
                                                                 <p class="form-control-static">{$user->faktaddress->adressfull|escape}</p>
                                                             </div>
                                                         </div>
-                                                    </div><br>
+                                                    </div>
+                                                    <br>
                                                     {foreach $contacts as $contact}
                                                         {if $contact->type == 'viber'}
                                                             <div class="col-md-12">
@@ -2256,7 +2287,9 @@
                                                              style="width: 50%!important; margin-left: 50px">
                                                             <label class="control-label">{$document->name}</label>
                                                             {if in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP'])}
-                                                                <span style="height: 20px" data-tooltip="Этот документ нельзя подписать АСП кодом" class="badge badge-danger warning_asp">&#33;</span>
+                                                                <span style="height: 20px"
+                                                                      data-tooltip="Этот документ нельзя подписать АСП кодом"
+                                                                      class="badge badge-danger warning_asp">&#33;</span>
                                                             {/if}
                                                         </div>
                                                         <div style="margin-left: 10px">

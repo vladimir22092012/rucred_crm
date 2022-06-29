@@ -63,9 +63,7 @@ class OfflineOrdersController extends Controller
             $filter['workout_sort'] = 1;
         }
 
-        if ($this->manager->role == 'cs_pc') {
-            $filter['offline'] = 1;
-        }
+        $filter['offline'] = 1;
 
         if (!in_array($this->manager->role, array('collector', 'chief_collector', 'developer'))) {
             // показываем заявки только созданные на сайте
@@ -109,9 +107,9 @@ class OfflineOrdersController extends Controller
         $filter['page'] = $current_page;
         $filter['limit'] = $items_per_page;
 
-        if($this->manager->role == 'employer'){
+        if ($this->manager->role == 'employer') {
             $managers_company = $this->ManagersEmployers->get_records($this->manager->id);
-            foreach ($managers_company as $id => $name){
+            foreach ($managers_company as $id => $name) {
                 $filter['employer'][] = $id;
             }
         }
@@ -175,7 +173,7 @@ class OfflineOrdersController extends Controller
 
         foreach ($orders as $order) {
             foreach ($companies as $company) {
-                if ($order->company_id == $company->id){
+                if ($order->company_id == $company->id) {
                     $order->company_name = $company->name;
                     $order->company_number = $company->number;
                 }
@@ -193,12 +191,11 @@ class OfflineOrdersController extends Controller
         $this->design->assign('orders', $orders);
 
 
-        if ($this->request->get('drafts')){
+        if ($this->request->get('drafts')) {
             $drafts = 1;
             $this->design->assign('drafts', $drafts);
             return $this->design->fetch('offline/drafts.tpl');
-        }
-        else
+        } else
             return $this->design->fetch('offline/orders.tpl');
     }
 }

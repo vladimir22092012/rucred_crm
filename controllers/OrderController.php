@@ -77,6 +77,10 @@ class OrderController extends Controller
                     $this->action_cards();
                     break;
 
+                case 'accept_online_order':
+                    $this->action_accept_online_order();
+                    break;
+
                 case 'contact_status':
                     $response = $this->action_contact_status();
                     $this->json_output($response);
@@ -3498,6 +3502,41 @@ class OrderController extends Controller
 
         echo '<pre>';
         print_r($this->Soap1c->send_payment($payment));
+        exit;
+    }
+
+    private function action_accept_online_order()
+    {
+        $order_id = $this->request->post('order_id');
+        $manager_id = $this->request->post('manager_id');
+
+        $this->orders->update_order($order_id, ['status' => 1]);
+
+        $order = $this->orders->get_order($order_id);
+
+        $ticket =
+            [
+                'creator' => $manager_id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => 'Новая заявка',
+                'text' => 'Ознакомьтесь с новой заявкой и верифицируйте своего сотрудника и верифицируйте своего сотрудника',
+                'company_id' => $order->company_id,
+                'group_id' => $order->group_id,
+                'order_id' => $order_id,
+                'status' => 0
+            ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+        $message =
+            [
+                'message' => 'Ознакомьтесь с новой заявкой и верифицируйте своего сотрудника',
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+        $this->TicketMessages->add_message($message);
         exit;
     }
 
