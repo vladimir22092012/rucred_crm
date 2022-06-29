@@ -528,10 +528,15 @@ $(function () {
             '<td><input class="form-control" name="cards_bank_name[][cards_bank_name]" type="text" value=""></td>' +
             '<td><input class="form-control" name="cards_limit[][cards_limit]" type="text" value=""></td>' +
             '<td><input class="form-control" name="cards_rest_sum[][cards_rest_sum]" type="text" value=""></td>' +
-            '<td><input class="form-control" name="cards_validity_period[][cards_validity_period]" type="text" value=""></td>' +
-            '<td><input class="form-control" name="cards_delay[][cards_delay]" type="text" value=""></td>' +
+            '<td><input class="form-control validity_period" name="cards_validity_period[][cards_validity_period]" type="text" value=""></td>' +
+            '<td><select class="form-control" name="cards_delay[][cards_delay]"><option value="Да">Да</option>' +
+            '<option value="Нет" selected>Нет</option></select></td>' +
             '<td></td>' +
             '</tr>');
+
+        $('.validity_period').click(function () {
+            $(this).setCursorPosition(0);
+        }).mask('99/99');
     });
 
     $('.add_to_attestation_table').on('click', function () {
