@@ -2751,6 +2751,18 @@
                                                 </div>
                                             </div>
                                         </form>
+                                        <form class="mb-4 border">
+                                            <h6 class="card-header text-white">
+                                                <span>ПДН</span>
+                                            </h6>
+                                            <div class="row view-block p-2 snils-front">
+                                                <div class="col-md-12">
+                                                    <div class="form-group mb-0 row">
+                                                        <label class="control-label col-md-8 col-7 snils-number">{$order->pdn} %</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
 
                                     </div>
                                 </div>
