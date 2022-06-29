@@ -55,7 +55,6 @@ $(function () {
                         loan_id: loan_id,
                         date_from: date_from,
                         date_to: date_to,
-                        company_id: company_id,
                         branch_id: branch_id,
                         amount: amount,
                         percents: percents,

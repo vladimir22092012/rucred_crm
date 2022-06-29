@@ -963,7 +963,6 @@ class NeworderController extends Controller
         $date_from = date('Y-m-d', strtotime($this->request->post('date_from')));
         $date_to = date('Y-m-d', strtotime($this->request->post('date_to')));
         $branch_id = $this->request->post('branch_id');
-        $company_id = $this->request->post('company_id');
         $group_id = $this->request->post('group_id');
         $percent = $this->request->post('percents');
 
