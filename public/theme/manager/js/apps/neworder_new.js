@@ -41,28 +41,31 @@ $(function () {
 
 
                 let percents = $('.price_basic[id="' + loan_id + '"]').find('.percents:visible').find('input').val();
+                let date_from = $('#start_date').val();
+                let date_to = $('#end_date').val();
+                let company_id = $('.my_company').val();
+                let branch_id = $('.branches').val();
+                let amount = $('#order_sum').val();
+                let group_id = $('.groups').val();
 
-                console.log(percents);
-
-                let percent_per_month = ((percents / 100) * 365) / 12;
-
-                let sum_to_pay = sum * (percent_per_month / (1 - Math.pow((1 + percent_per_month), -period)));
-
-                if (parseInt(loan_id) == 1) {
-                    let date_from = new Date($('#start_date').val());
-                    let date_to = new Date($('#end_date').val());
-                    date_to.setDate(10);
-
-                    if (date_from.getDate() >= 1 && date_from.getDate() < date_to.getDate()) {
-                        let percent_sum = (10 - date_from.getDate()) * (percents / 100) * sum;
-                        sum_to_pay += percent_sum;
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'sum_to_pay',
+                        loan_id: loan_id,
+                        date_from: date_from,
+                        date_to: date_to,
+                        company_id: company_id,
+                        branch_id: branch_id,
+                        amount: amount,
+                        percents: percents,
+                        group_id: group_id
+                    },
+                    success: function (sum) {
+                        sum = new Intl.NumberFormat("ru").format(sum);
+                        $('#final_sum').val(sum);
                     }
-                }
-
-                sum_to_pay = sum_to_pay.toFixed(2);
-                sum_to_pay = new Intl.NumberFormat("ru").format(sum_to_pay);
-
-                $('#final_sum').val(sum_to_pay);
+                });
             }
             else {
                 $('.alert-danger').fadeIn();
@@ -333,13 +336,13 @@ $(function () {
         firstname = (firstname) ? firstname + ' ' : '';
         patronymic = (patronymic) ? patronymic + ' ' : '';
 
-        if($(this).hasClass('js-lastname-input'))
+        if ($(this).hasClass('js-lastname-input'))
             $('input[name="requisite[holder][lastname]"]').val(lastname);
 
-        if($(this).hasClass('js-firstname-input'))
+        if ($(this).hasClass('js-firstname-input'))
             $('input[name="requisite[holder][firstname]"]').val(firstname);
 
-        if($(this).hasClass('js-patronymic-input'))
+        if ($(this).hasClass('js-patronymic-input'))
             $('input[name="requisite[holder][patronymic]"]').val(patronymic);
     });
 
@@ -610,8 +613,8 @@ $(function () {
                 } else {
                     for (let user in users) {
                         let html =
-                            $('<label class="control-label">' + users[user]['personal_number'] + ' ' + users[user]['lastname'] + ' ' + users[user]['firstname'] + ' ' + users[user]['patronymic'] +' '+ users[user]['birth'] +'</label>' +
-                            '<input style="margin-left: 25px" type="button" class="btn btn-outline-warning choose_user" data-user="' + users[user]['id'] + '" value="Выбрать"><br><br>');
+                            $('<label class="control-label">' + users[user]['personal_number'] + ' ' + users[user]['lastname'] + ' ' + users[user]['firstname'] + ' ' + users[user]['patronymic'] + ' ' + users[user]['birth'] + '</label>' +
+                                '<input style="margin-left: 25px" type="button" class="btn btn-outline-warning choose_user" data-user="' + users[user]['id'] + '" value="Выбрать"><br><br>');
 
                         $('#users_same').append(html);
                     }
