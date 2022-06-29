@@ -848,7 +848,31 @@ class OfflineOrderController extends Controller
         if(count($scans) == count($users_docs))
             $upload_scans = 1;
 
-        var_dump($this->YaDisk->upload_orders_files($order_id, $upload_scans));
+        $this->YaDisk->upload_orders_files($order_id, $upload_scans);
+
+        $ticket =
+            [
+                'creator' => $this->manager->id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => 'Платежный документ',
+                'text' => 'Подтвердите заявку и отправьте платежный документ (деньги)',
+                'company_id' => 3,
+                'group_id' => 2,
+                'order_id' => $order_id,
+                'status' => 1
+            ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+        $message =
+            [
+                'message' => 'Подтвердите заявку и отправьте платежный документ (деньги)',
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+        $this->TicketMessages->add_message($message);
 
         return array('success' => 1, 'status' => 2);
 

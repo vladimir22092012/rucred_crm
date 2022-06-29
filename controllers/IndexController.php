@@ -121,6 +121,7 @@ class IndexController extends Controller
             WHERE group_id = ?
             AND (executor = 0 OR executor is null)
             and status != 6
+            and head != 'Платежный документ'
             and not exists (SELECT *
             FROM s_tickets_notifications
             WHERE ticket_id = s_tickets.id)
@@ -136,6 +137,7 @@ class IndexController extends Controller
             WHERE group_id = 2
             AND (executor = 0 OR executor is null)
             and status != 6
+            and head != 'Платежный документ'
             and not exists (SELECT *
             FROM s_tickets_notifications
             WHERE ticket_id = s_tickets.id)
