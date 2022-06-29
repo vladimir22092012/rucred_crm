@@ -24,7 +24,8 @@ class Documents extends Core
         'GRAFIK_OBSL_MKR' => 'grafik_obsl_mkr.tpl',
         'PERECHISLENIE_ZAEMN_SREDSTV' => 'perechislenie_zaemnih_sredstv.tpl',
         'DOP_SOGLASHENIE' => 'dop_soglashenie.tpl',
-        'DOP_GRAFIK' => 'dop_grafik.tpl'
+        'DOP_GRAFIK' => 'dop_grafik.tpl',
+        'OBSHIE_USLOVIYA' => 'obshie_uslovia.tpl'
     );
 
 
@@ -41,12 +42,14 @@ class Documents extends Core
         'GRAFIK_OBSL_MKR' => 'График платежей по микрозайму',
         'PERECHISLENIE_ZAEMN_SREDSTV' => 'Заявление на перечисление заемных денежных средств',
         'DOP_SOGLASHENIE' => 'Дополнительное соглашение к Индивидуальным условиям договора микрозайма',
-        'DOP_GRAFIK' => 'График платежей по микрозайму (после реструктуризации)'
+        'DOP_GRAFIK' => 'График платежей по микрозайму (после реструктуризации)',
+        'OBSHIE_USLOVIYA' => 'Справка по основным условиям микрозайма',
     );
 
     private $client_visible = array(
         'ANKETA_PEP' => 1,
         'SOGLASIE_VZAIMODEYSTVIE' => 0,
+        'OBSHIE_USLOVIYA' => 1,
         'DOP_SOGLASHENIE' => 1,
         'SOGLASIE_MEGAFON' => 0,
         'SOGLASIE_SCORING' => 0,
@@ -200,6 +203,7 @@ class Documents extends Core
     public function get_documents($filter = array())
     {
         $id_filter = '';
+        $obshie_usloviya_flag = '';
         $user_id_filter = '';
         $order_id_filter = '';
         $contract_id_filter = '';
@@ -216,6 +220,9 @@ class Documents extends Core
             $id_filter = $this->db->placehold("AND doc.id IN (?@)", array_map('intval', (array)$filter['id']));
         }
 
+        if (isset($filter['obshie_usloviya']))
+            $obshie_usloviya_flag = $this->db->placehold("AND doc.type != 'OBSHIE_USLOVIYA' ");
+
         if (isset($filter['search'])) {
             foreach ($filter['search'] as $field => $value) {
                 if (!empty($value)) {
@@ -230,7 +237,7 @@ class Documents extends Core
                     } elseif ($field == 'order') {
                         $search_list .= $this->db->placehold("AND os.uid = ?", $value);
                     } else {
-                        $search_list .= $this->db->placehold('AND doc.' . $field . ' LIKE "'.$value.'%"');
+                        $search_list .= $this->db->placehold('AND doc.' . $field . ' LIKE "' . $value . '%"');
                     }
                 }
             }
@@ -305,6 +312,7 @@ class Documents extends Core
                 $type_filter
  	            $keyword_filter
  	            $search_list
+ 	            $obshie_usloviya_flag
  	            AND doc.`type` != 'ndfl'
             $sort 
             $sql_limit

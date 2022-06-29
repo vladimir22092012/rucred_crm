@@ -587,6 +587,7 @@ class OfflineOrderController extends Controller
         $order = $this->orders->get_order($order_id);
 
         $filter['order_id'] = $order->order_id;
+        $filter['obshie_usloviya'] = 1;
 
         $documents = $this->documents->get_documents($filter);
 
@@ -3713,6 +3714,7 @@ class OfflineOrderController extends Controller
         $doc_types['04.04'] = 'GRAFIK_OBSL_MKR';
         $doc_types['04.12'] = 'PERECHISLENIE_ZAEMN_SREDSTV';
         $doc_types['04.09'] = 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP';
+        $doc_types['04.10'] = 'OBSHIE_USLOVIYA';
         $doc_types['03.04'] = 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR';
 
 
