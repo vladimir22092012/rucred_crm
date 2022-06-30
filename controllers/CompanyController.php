@@ -1,7 +1,5 @@
 <?php
 
-use App\Services\FileParserService;
-
 class CompanyController extends Controller
 {
     public function fetch()
@@ -55,8 +53,8 @@ class CompanyController extends Controller
                 $this->action_delete_settlement();
                 break;
 
-            case 'import_workers_list':
-                $this->action_import_workers_list();
+            case 'import_payments_list':
+                $this->action_import_payments_list();
                 break;
 
             case 'import_workers_list_attestations':
@@ -269,51 +267,53 @@ class CompanyController extends Controller
         $this->OrganisationSettlements->delete_settlements($id);
     }
 
-    private function action_import_workers_list()
+    private function action_import_payments_list()
     {
         $company_id = $this->request->post('company_id');
-        $input_file = $_FILES['file']['size'] ? $_FILES['file'] : null;
 
-        if (!$input_file) {
-            echo json_encode(['error' => 1]);
-            exit;
-        }
-        $input_file_tmp = empty($input_file['tmp_name']) ? null : $input_file['tmp_name'];
-        $input_file_ext = strtolower(pathinfo($input_file['name'], PATHINFO_EXTENSION));
-        $output_file_name = uniqid('', true) . '-' . time() . '.' . $input_file_ext;
-        $output_file = ROOT . '/files/' . $output_file_name;
+        $file = $this->request->files('file');
 
-        move_uploaded_file($input_file_tmp, $output_file);
+        $inputFileType = \PhpOffice\PhpSpreadsheet\IOFactory::identify($file['tmp_name']);
+        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader($inputFileType);
+        $spreadsheet = $reader->load($file['tmp_name']);
 
-        $parser = new FileParserService;
-        $content = $parser->parse($output_file);
+        $fio_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('fio'));
+        $income_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('income'));
+        $avanse_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('avanse'));
+        $payed_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('payed'));
+        $middle_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('middle'));
+        $ndfl_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('ndfl'));
 
-        $key = false;
-        foreach ($content as $row) {
-            $key = array_search('Сотрудник', $row, true);
-            if (is_int($key)) {
-                break;
+        $indexes = [
+            'fio' => $fio_column,
+            'income' => $income_column,
+            'avanse' => $avanse_column,
+            'payed' => $payed_column,
+            'middle' => $middle_column,
+            'ndfl' => $ndfl_column
+        ];
+
+        $active_sheet = $spreadsheet->getActiveSheet();
+
+        $first_row = 1;
+        $last_row = $active_sheet->getHighestRow();
+        $clients = [];
+
+        for ($row = $first_row; $row <= $last_row; ++$row) {
+            foreach ($indexes as $key => $index){
+                $value = $active_sheet->getCellByColumnAndRow($index, $row)->getValue();
+
+                $clients[$row][$key] = $value;
+                $clients[$row]['company_id'] = $company_id;
+
             }
         }
 
-        if ($key === false) {
-            return null;
+        foreach ($clients as $client){
+            $this->PaymentsAttestation->add($client);
         }
 
-        $workers = [];
-
-        foreach ($content as $row) {
-            $workers[] = $row[$key];
-        }
-
-        if (!$workers) {
-            echo json_encode(['error' => 'Список сотрудников в файле не найден']);
-            exit;
-        }
-
-        $company_check_id = $this->CompanyChecks->add_company_check($company_id, json_encode(['workers' => $workers], JSON_THROW_ON_ERROR), 'extra');
-
-        echo json_encode(['success' => 1, 'company_check_id' => $company_check_id, 'workers' => $workers]);
+        echo json_encode(['success' => 1]);
         exit;
     }
 

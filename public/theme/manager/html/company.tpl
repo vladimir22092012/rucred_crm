@@ -68,8 +68,6 @@
                 form_data.append('file', e.target.files[0]);
                 form_data.append('company_id', $(this).attr('data-company'));
 
-                console.log(doc_type);
-
                 switch (doc_type) {
                     case 'attestations':
                         form_data.append('action',     'import_workers_list_attestations');
@@ -81,7 +79,13 @@
                         break;
 
                     case 'payments':
-                        form_data.append('action', 'import_workers_list');
+                        form_data.append('action', 'import_payments_list');
+                        form_data.append('fio',        $('.show_payments').find('input[name="fio"]').val());
+                        form_data.append('income',     $('input[name="income"]').val());
+                        form_data.append('avanse',     $('input[name="avanse"]').val());
+                        form_data.append('payed',      $('input[name="payed"]').val());
+                        form_data.append('middle',     $('input[name="middle"]').val());
+                        form_data.append('ndfl',       $('input[name="ndfl"]').val());
                         break;
 
                     case 'extras':
@@ -95,7 +99,6 @@
                     processData: false,
                     contentType: false,
                     success: function () {
-
                     }
                 });
             });
@@ -361,6 +364,45 @@
                                                 </td>
                                                 <td>
                                                     <input class="form-control" name="birth_date">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="show_payments">
+                                    <h3>Поля для документов о выплатах</h3>
+                                    <div>
+                                        <table class="table">
+                                            <tr>
+                                                <th>ФИО</th>
+                                                <th>Всего начислено</th>
+                                                <th>Всего удержано</th>
+                                                <th>Выплата аванса</th>
+                                                <th>Выплата зарплаты</th>
+                                                <th>Выплата в межрасчетный период</th>
+                                                <th>НФДЛ</th>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <input class="form-control" name="fio">
+                                                </td>
+                                                <td>
+                                                    <input class="form-control" name="income">
+                                                </td>
+                                                <td>
+                                                    <input class="form-control" name="saved">
+                                                </td>
+                                                <td>
+                                                    <input class="form-control" name="avanse">
+                                                </td>
+                                                <td>
+                                                    <input class="form-control" name="payed">
+                                                </td>
+                                                <td>
+                                                    <input class="form-control" name="middle">
+                                                </td>
+                                                <td>
+                                                    <input class="form-control" name="ndfl">
                                                 </td>
                                             </tr>
                                         </table>
