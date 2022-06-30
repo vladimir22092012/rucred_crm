@@ -99,6 +99,9 @@
                     processData: false,
                     contentType: false,
                     success: function () {
+                        Swal.fire({
+                            title: 'Успешно'
+                        });
                     }
                 });
             });

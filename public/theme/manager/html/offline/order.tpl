@@ -262,7 +262,7 @@
                                 if (resp['success'] == 1) {
                                     Swal.fire({
                                         title: 'Деньги успешно отправлены'
-                                    })
+                                    });
                                     setInterval(function () {
                                         location.reload();
                                     }, 5000);

@@ -12,4 +12,18 @@ class PaymentsAttestation extends Core
         $this->db->query($query);
         return $this->db->insert_id();
     }
+
+    public function get($fio)
+    {
+        $query = $this->db->placehold("
+        SELECT *
+        FROM s_payments_attestation
+        WHERE fio = ?
+        ", $fio);
+
+        $this->db->query($query);
+        $results = $this->db->results();
+
+        return $results;
+    }
 }

@@ -13,13 +13,30 @@ class Employer_scoring extends Core
         {
             if ($order = $this->orders->get_order((int)$scoring->order_id))
             {
-                $response = 'за 02.22 58 735 руб';
-                
-                $update = array(
-                    'status' => 'completed',
-                    'body' => serialize(array('response' => $response)),
-                    'success' => 1
-                );
+                $fio = "$order->lastname $order->firstname $order->patronymic";
+
+                $payment_attestation = $this->PaymentsAttestation->get($fio);
+
+                if(empty($payment_attestation)){
+                    $response = 'Нет сведений по данному клиенту';
+
+                    $update = array(
+                        'status' => 'completed',
+                        'body' => $response,
+                        'success' => 0,
+                        'string_result' => $response
+                    );
+                }else{
+                    $response = "за 02.22 сумма $payment_attestation";
+
+                    $update = array(
+                        'status' => 'completed',
+                        'body' => $response,
+                        'success' => 1,
+                        'string_result' => $response
+                    );
+                }
+
                 $update['string_result'] = $response;
                 
                 $this->scorings->update_scoring($scoring_id, $update);
