@@ -213,7 +213,8 @@ class NeworderController extends Controller
         if (!empty($credits_story)) {
             foreach ($credits_story as $credit) {
                 $credit['credits_month_pay'] = preg_replace("/[^,.0-9]/", '', $credit['credits_month_pay']);
-                $sum_credits_pay+= $credit['credits_month_pay'];
+                if(!empty($credit['credits_month_pay']))
+                    $sum_credits_pay += $credit['credits_month_pay'];
             }
 
             $all_sum_credits+= $sum_credits_pay;
@@ -222,14 +223,18 @@ class NeworderController extends Controller
         if(!empty($cards_story)){
             foreach ($cards_story as $card) {
                 $card['cards_rest_sum'] = preg_replace("/[^,.0-9]/", '', $card['cards_rest_sum']);
-                $sum_cards_pay+= $card['cards_rest_sum'];
+                if(!empty($credit['cards_rest_sum']))
+                    $sum_cards_pay+= $card['cards_rest_sum'];
             }
 
             $sum_cards_pay *= 0.1;
             $all_sum_credits+= $sum_cards_pay;
         }
 
-        $user['pdn'] = round(($user['income'] / $all_sum_credits) * 100, 2);
+        if($all_sum_credits != 0)
+            $user['pdn'] = round(($user['income'] / $all_sum_credits) * 100, 2);
+        else
+            $user['pdn'] = 0;
 
         $user['credits_story'] = json_encode($credits_story);
         $user['cards_story'] = json_encode($cards_story);
