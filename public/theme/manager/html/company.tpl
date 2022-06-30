@@ -6,7 +6,6 @@
           href="theme/manager/assets/plugins/datatables.net-bs4/css/dataTables.bootstrap4.css">
     <link rel="stylesheet" type="text/css"
           href="theme/manager/assets/plugins/datatables.net-bs4/css/responsive.dataTables.min.css">
-    <link rel="stylesheet" href="//unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css"/>
     <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet"/>
     <link href="theme/manager/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet"
           type="text/css"/>
@@ -20,26 +19,8 @@
     <script src="theme/manager/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     <script src="theme/manager/assets/plugins/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="theme/manager/assets/plugins/datatables.net-bs4/js/dataTables.responsive.min.js"></script>
-    <script src="//unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/companies.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
-    <script>
-        window.Dropzone.options.fileEmployersUpload = {
-            url: "/company/{$company->com_id}",
-            parallelUploads: 1,
-            maxFilesize: 1,
-            maxFiles: 1,
-            init: function () {
-                this.on("maxfilesexceeded", function (file) {
-                    this.removeAllFiles();
-                    this.addFile(file);
-                });
-                this.on("complete", function (file) {
-                    location.reload();
-                });
-            },
-        };
-    </script>
     <script>
         $(function () {
 
@@ -77,8 +58,46 @@
                 $('.show_' + selected_option).show();
 
                 $('.import_workers_list').val('import_workers_list_' + selected_option);
+            });
 
-                console.log(selected_option);
+            $(document).on('change', '#upload_file', function (e) {
+                let form_data = new FormData();
+
+                let doc_type = $('.select_document_type').val();
+
+                form_data.append('file', e.target.files[0]);
+                form_data.append('company_id', $(this).attr('data-company'));
+
+                console.log(doc_type);
+
+                switch (doc_type) {
+                    case 'attestations':
+                        form_data.append('action',     'import_workers_list_attestations');
+                        form_data.append('fio',        $('input[name="fio"]').val());
+                        form_data.append('created',    $('input[name="created"]').val());
+                        form_data.append('creator',    $('input[name="creator"]').val());
+                        form_data.append('category',   $('input[name="category"]').val());
+                        form_data.append('birth_date', $('input[name="birth_date"]').val());
+                        break;
+
+                    case 'payments':
+                        form_data.append('action', 'import_workers_list');
+                        break;
+
+                    case 'extras':
+                        form_data.append('action', 'import_workers_list');
+                        break;
+                }
+
+                $.ajax({
+                    data: form_data,
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    success: function () {
+
+                    }
+                });
             });
         })
     </script>
@@ -236,12 +255,12 @@
                                                 </td>
                                                 <td>
                                                     {if !in_array($manager->role, ['employer', 'underwriter'])}
-                                                    <input type="button" data-settlement="{$settlement->id}"
-                                                           class="btn btn-outline-warning update_settlement"
-                                                           value="Ред">
-                                                    <input type="button" data-settlement="{$settlement->id}"
-                                                           class="btn btn-outline-danger delete_settlement"
-                                                           value="Удалить">
+                                                        <input type="button" data-settlement="{$settlement->id}"
+                                                               class="btn btn-outline-warning update_settlement"
+                                                               value="Ред">
+                                                        <input type="button" data-settlement="{$settlement->id}"
+                                                               class="btn btn-outline-danger delete_settlement"
+                                                               value="Удалить">
                                                     {/if}
                                                 </td>
                                             </tr>
@@ -258,9 +277,9 @@
                                         <td>Контактная информация:</td>
                                         <td colspan="2">
                                             {if !in_array($manager->role, ['employer', 'underwriter'])}
-                                            <button class="btn hidden-sm-down btn-outline-success add-company-modal">
-                                                <i class="mdi mdi-plus-circle"></i> Добавить филиал
-                                            </button>
+                                                <button class="btn hidden-sm-down btn-outline-success add-company-modal">
+                                                    <i class="mdi mdi-plus-circle"></i> Добавить филиал
+                                                </button>
                                             {/if}
                                         </td>
                                     </tr>
@@ -278,17 +297,18 @@
                                             <td>{$branch->payday}</td>
                                             <td>{$branch->fio} {$branch->phone}</td>
                                             {if !in_array($manager->role, ['employer', 'underwriter'])}
-                                            <td>
-                                                {if $branch->number != '00'}
+                                                <td>
+                                                    {if $branch->number != '00'}
+                                                        <input type="button" data-branch-id="{$branch->id}"
+                                                               class="btn btn-outline-danger delete_branch"
+                                                               value="Удалить">
+                                                    {/if}
+                                                </td>
+                                                <td>
                                                     <input type="button" data-branch-id="{$branch->id}"
-                                                           class="btn btn-outline-danger delete_branch" value="Удалить">
-                                                {/if}
-                                            </td>
-                                            <td>
-                                                <input type="button" data-branch-id="{$branch->id}"
-                                                       class="btn btn-outline-warning edit_branch"
-                                                       value="Редактировать">
-                                            </td>
+                                                           class="btn btn-outline-warning edit_branch"
+                                                           value="Редактировать">
+                                                </td>
                                             {/if}
                                         </tr>
                                     {/foreach}
@@ -313,6 +333,8 @@
                                     <option value="payments">Выплаты</option>
                                     <option value="extras">Дополнительно</option>
                                 </select>
+                                <input type="file" id="upload_file" data-company="{$company->com_id}"
+                                       style="margin-left: 25px">
                                 <div class="show_attestations">
                                     <h3>Поля для документов об аттестации</h3>
                                     <div>
@@ -325,21 +347,25 @@
                                                 <th>Дата рождения</th>
                                             </tr>
                                             <tr>
-                                                <td><input class="form-control" type="number" name="fullname_id"></td>
-                                                <td><input class="form-control" type="number" name="legaldate_id"></td>
-                                                <td><input class="form-control" type="number" name="owner_id"></td>
-                                                <td><input class="form-control" type="number" name="category_id"></td>
-                                                <td><input class="form-control" type="number" name="birthday_id"></td>
+                                                <td>
+                                                    <input class="form-control" name="fio">
+                                                </td>
+                                                <td>
+                                                    <input class="form-control" name="created">
+                                                </td>
+                                                <td>
+                                                    <input class="form-control" name="creator">
+                                                </td>
+                                                <td>
+                                                    <input class="form-control" name="category">
+                                                </td>
+                                                <td>
+                                                    <input class="form-control" name="birth_date">
+                                                </td>
                                             </tr>
                                         </table>
                                     </div>
                                 </div>
-                                <div class="show_payments">payments</div>
-                                <div class="show_extras">extras</div>
-                                <input type="hidden" class="import_workers_list" name="action"
-                                       value="import_workers_list">
-                                <input type="hidden" name="company_id" value="{$company->com_id}">
-                                <div class="dz-message" data-dz-message><span>Загрузите файл формата Excel</span></div>
                             </form>
                         </div>
                         <div>

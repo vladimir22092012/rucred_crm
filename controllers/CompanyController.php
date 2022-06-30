@@ -272,7 +272,8 @@ class CompanyController extends Controller
     private function action_import_workers_list()
     {
         $company_id = $this->request->post('company_id');
-        $input_file  = $_FILES['file']['size'] ? $_FILES['file'] : null;
+        $input_file = $_FILES['file']['size'] ? $_FILES['file'] : null;
+
         if (!$input_file) {
             echo json_encode(['error' => 1]);
             exit;
@@ -320,54 +321,58 @@ class CompanyController extends Controller
     {
         $company_id = $this->request->post('company_id');
 
-        $fullname_id = $this->request->post('fullname_id');
-        $legaldate_id = $this->request->post('legaldate_id');
-        $owner_id = $this->request->post('owner_id');
-        $category_id = $this->request->post('category_id');
-        $birthday_id = $this->request->post('birthday_id');
+        $file = $this->request->files('file');
 
-        $input_file  = $_FILES['file']['size'] ? $_FILES['file'] : null;
-        if (!$input_file) {
-            echo json_encode(['error' => 1]);
-            exit;
+        $inputFileType = \PhpOffice\PhpSpreadsheet\IOFactory::identify($file['tmp_name']);
+        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader($inputFileType);
+        $spreadsheet = $reader->load($file['tmp_name']);
+
+        $fio_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('fio'));
+        $created_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('created'));
+        $creator_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('creator'));
+        $category_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('category'));
+        $birth_date_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('birth_date'));
+
+        $indexes = [
+            'fio' => $fio_column,
+            'created' => $created_column,
+            'creator' => $creator_column,
+            'category' => $category_column,
+            'birth_date' => $birth_date_column
+        ];
+
+        $active_sheet = $spreadsheet->getActiveSheet();
+
+        $first_row = 1;
+        $last_row = $active_sheet->getHighestRow();
+        $clients = [];
+
+        for ($row = $first_row; $row <= $last_row; ++$row) {
+            foreach ($indexes as $key => $index){
+                $value = $active_sheet->getCellByColumnAndRow($index, $row)->getValue();
+
+                if(in_array($key, ['created', 'birth_date']))
+                    $value = date('Y-m-d', strtotime($value));
+
+                if($key == 'fio')
+                    $value = mb_convert_encoding($value, 'UTF-8');
+
+                $clients[$row][$key] = $value;
+                $clients[$row]['company_id'] = $company_id;
+
+                if($key == 'creator' && empty($value)){
+                    unset($clients[$row]);
+                    break;
+                }
+
+            }
         }
-        $input_file_tmp = empty($input_file['tmp_name']) ? null : $input_file['tmp_name'];
-        $input_file_ext = strtolower(pathinfo($input_file['name'], PATHINFO_EXTENSION));
-        $output_file_name = uniqid('', true) . '-' . time() . '.' . $input_file_ext;
-        $output_file = ROOT . '/files/' . $output_file_name;
 
-        move_uploaded_file($input_file_tmp, $output_file);
-
-        $parser = new FileParserService;
-        $content = $parser->parse($output_file);
-
-        $key = false;
-        foreach ($content as $row) {
-            print_r($row);
-//            $key = array_search('Сотрудник', $row, true);
-//            if (is_int($key)) {
-//                break;
-//            }
+        foreach ($clients as $client){
+            $this->CompanyChecks->add($client);
         }
 
-        if ($key === false) {
-            return null;
-        }
-
-        $workers = [];
-
-        foreach ($content as $row) {
-            $workers[] = $row[$key];
-        }
-
-        if (!$workers) {
-            echo json_encode(['error' => 'Список сотрудников в файле не найден']);
-            exit;
-        }
-
-        $company_check_id = $this->CompanyChecks->add_company_check($company_id, json_encode(['workers' => $workers], JSON_THROW_ON_ERROR), 'extra');
-
-        echo json_encode(['success' => 1, 'company_check_id' => $company_check_id, 'workers' => $workers]);
+        echo json_encode(['success' => 1]);
         exit;
     }
 

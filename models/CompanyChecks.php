@@ -2,12 +2,14 @@
 
 class CompanyChecks extends Core
 {
-    public function add_company_check($company_id, $data, $type)
+    public function add($client)
     {
-        $this->db->query('
+        $query = $this->db->placehold("
         INSERT INTO s_company_checks
-        SET company_id = ?, data = ?, type = ?
-        ', $company_id, $data, $type);
+        SET ?%
+        ", $client);
+
+        $this->db->query($query);
         return $this->db->insert_id();
     }
 
