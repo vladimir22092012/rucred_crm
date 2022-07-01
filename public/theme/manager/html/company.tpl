@@ -414,20 +414,7 @@
                             </form>
                         </div>
                         <div>
-                            <table class="table">
-                                <tr>
-                                    <th>Идентификатор</th>
-                                    <th>Тип</th>
-                                    <th>Дата</th>
-                                </tr>
-                                {foreach $company_checks as $company_check}
-                                    <tr>
-                                        <td>{$company_check->id}</td>
-                                        <td>{$company_check->type}</td>
-                                        <td>{$company_check->created}</td>
-                                    </tr>
-                                {/foreach}
-                            </table>
+
                         </div>
                     </div>
                 </div>

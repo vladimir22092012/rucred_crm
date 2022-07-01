@@ -78,11 +78,9 @@ class CompanyController extends Controller
         $this->design->assign('docs', $docs);
 
         $branches = $this->Branches->get_company_branches($company_id);
-        $company_checks = $this->CompanyChecks->get_five_company_checks($company_id);
 
         $this->design->assign('company', $company);
         $this->design->assign('branches', $branches);
-        $this->design->assign('company_checks', $company_checks);
 
         return $this->design->fetch('company.tpl');
     }
