@@ -140,6 +140,21 @@ class Soap1c extends Core
     }
 
     /**
+     * Soap1c::PaymentArray()
+     * Получение оплат
+     */
+
+    public function getPayments($date)
+    {
+        $item = new StdClass();
+        $item->Date = $date;
+
+        $result = $this->send_request('CRM_WebService', 'PaymentArray', $item);
+
+        return $result;
+    }
+
+    /**
      * Soap1c::format_phone()
      * Форматирует номер телефона в формат принимаемый 1с
      * формат 8(ххх)ххх-хх-хх
