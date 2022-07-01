@@ -562,7 +562,7 @@ class OrderController extends Controller
         $loantype = $this->Loantypes->get_loantype($order->loan_type);
         $this->design->assign('loantype', $loantype);
 
-        if(isset($loantype)){
+        if(isset($loantype) && $order->group_id){
             $loantypes = $this->GroupLoanTypes->get_loantypes_on($order->group_id);
             $this->design->assign('loantypes', $loantypes);
         }
