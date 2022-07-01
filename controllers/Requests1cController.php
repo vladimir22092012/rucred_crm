@@ -18,19 +18,22 @@ class Requests1cController extends Controller
 
     private function action_confirm_payment()
     {
-        $uid_payment = $this->request->get('uid');
+        $uid = $this->request->get('uid');
 
-        $operation = $this->operations->get_operation(['uid' => $uid_payment]);
+        if(!empty($uid))
+            $operation = $this->operations->get_operation(['uid' => $uid]);
 
-        if(!empty($operation)){
+        if(isset($operation) &&!empty($operation)){
             $order = $this->orders->get_order($operation->order_id);
 
             $this->response['success'] = 1;
             $this->response['order_number'] = $order->uid;
         }else{
             $this->response['error'] = 1;
-            $this->response['message'] = 'Такой операции нет';
+            $this->response['message'] = 'Operation is not exist';
         }
+
+        $this->output();
     }
 
     private function output()
