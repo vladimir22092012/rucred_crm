@@ -766,7 +766,7 @@
 
                 $.ajax({
                     method: 'POST',
-                    data:{
+                    data: {
                         action: 'accept_online_order',
                         order_id: order_id,
                         manager_id: manager_id
@@ -1872,6 +1872,7 @@
                                                 {/if}
                                             </h6>
 
+                                            {if !empty($payment_schedule)}
                                             <form id="payment_schedule">
                                                 <div class="row m-0 pt-2 view-block {if $work_error}hide{/if}">
                                                     <table border="2" style="font-size: 15px">
@@ -1892,72 +1893,71 @@
                                                         <input type="hidden" name="action" value="edit_schedule">
                                                         <input type="hidden" name="order_id" value="{$order->order_id}">
                                                         <tbody>
-                                                        {if !empty($payment_schedule)}
-                                                            {foreach $payment_schedule as $date => $payment}
-                                                                {if $date != 'result'}
-                                                                    <tr>
-                                                                        <td><input type="text"
-                                                                                   class="form-control daterange"
-                                                                                   name="date[][date]"
-                                                                                   value="{$date}" readonly>
-                                                                        </td>
-                                                                        <td><input type="text"
-                                                                                   class="form-control restructure_pay_sum"
-                                                                                   name="pay_sum[][pay_sum]"
-                                                                                   value="{$payment['pay_sum']|floatval|number_format:2:',':' '}"
-                                                                                   readonly>
-                                                                        </td>
-                                                                        <td><input type="text"
-                                                                                   class="form-control restructure_od"
-                                                                                   name="loan_body_pay[][loan_body_pay]"
-                                                                                   value="{$payment['loan_body_pay']|floatval|number_format:2:',':' '}"
-                                                                                   readonly>
-                                                                        </td>
-                                                                        <td><input type="text"
-                                                                                   class="form-control restructure_prc"
-                                                                                   name="loan_percents_pay[][loan_percents_pay]"
-                                                                                   value="{$payment['loan_percents_pay']|floatval|number_format:2:',':' '}"
-                                                                                   readonly>
-                                                                        </td>
-                                                                        <td><input type="text"
-                                                                                   class="form-control restructure_cms"
-                                                                                   name="comission_pay[][comission_pay]"
-                                                                                   value="{$payment['comission_pay']|floatval|number_format:2:',':' '}"
-                                                                                   readonly>
-                                                                        </td>
-                                                                        <td><input type="text"
-                                                                                   class="form-control rest_sum"
-                                                                                   name="rest_pay[][rest_pay]"
-                                                                                   value="{$payment['rest_pay']|floatval|number_format:2:',':' '}"
-                                                                                   readonly>
-                                                                        </td>
-                                                                    </tr>
-                                                                {/if}
-                                                            {/foreach}
-                                                            <tr>
-                                                                <td><input type="text" class="form-control"
-                                                                           value="ИТОГО:" disabled></td>
-                                                                <td><input type="text" class="form-control"
-                                                                           name="result[all_sum_pay]"
-                                                                           value="{$payment_schedule['result']['all_sum_pay']|floatval|number_format:2:',':' '}"
-                                                                           readonly></td>
-                                                                <td><input type="text" class="form-control"
-                                                                           name="result[all_loan_body_pay]"
-                                                                           value="{$payment_schedule['result']['all_loan_body_pay']|floatval|number_format:2:',':' '}"
-                                                                           readonly></td>
-                                                                <td><input type="text" class="form-control"
-                                                                           name="result[all_loan_percents_pay]"
-                                                                           value="{$payment_schedule['result']['all_loan_percents_pay']|floatval|number_format:2:',':' '}"
-                                                                           readonly></td>
-                                                                <td><input type="text" class="form-control"
-                                                                           name="result[all_comission_pay]"
-                                                                           value="{$payment_schedule['result']['all_comission_pay']|floatval|number_format:2:',':' '}"
-                                                                           readonly></td>
-                                                                <td><input type="text" class="form-control"
-                                                                           name="result[all_rest_pay_sum]"
-                                                                           value="{$payment_schedule['result']['all_rest_pay_sum']|floatval|number_format:2:',':' '}"
-                                                                           readonly></td>
-                                                            </tr>
+                                                        {foreach $payment_schedule as $date => $payment}
+                                                            {if $date != 'result'}
+                                                                <tr>
+                                                                    <td><input type="text"
+                                                                               class="form-control daterange"
+                                                                               name="date[][date]"
+                                                                               value="{$date}" readonly>
+                                                                    </td>
+                                                                    <td><input type="text"
+                                                                               class="form-control restructure_pay_sum"
+                                                                               name="pay_sum[][pay_sum]"
+                                                                               value="{$payment['pay_sum']|floatval|number_format:2:',':' '}"
+                                                                               readonly>
+                                                                    </td>
+                                                                    <td><input type="text"
+                                                                               class="form-control restructure_od"
+                                                                               name="loan_body_pay[][loan_body_pay]"
+                                                                               value="{$payment['loan_body_pay']|floatval|number_format:2:',':' '}"
+                                                                               readonly>
+                                                                    </td>
+                                                                    <td><input type="text"
+                                                                               class="form-control restructure_prc"
+                                                                               name="loan_percents_pay[][loan_percents_pay]"
+                                                                               value="{$payment['loan_percents_pay']|floatval|number_format:2:',':' '}"
+                                                                               readonly>
+                                                                    </td>
+                                                                    <td><input type="text"
+                                                                               class="form-control restructure_cms"
+                                                                               name="comission_pay[][comission_pay]"
+                                                                               value="{$payment['comission_pay']|floatval|number_format:2:',':' '}"
+                                                                               readonly>
+                                                                    </td>
+                                                                    <td><input type="text"
+                                                                               class="form-control rest_sum"
+                                                                               name="rest_pay[][rest_pay]"
+                                                                               value="{$payment['rest_pay']|floatval|number_format:2:',':' '}"
+                                                                               readonly>
+                                                                    </td>
+                                                                </tr>
+                                                            {/if}
+                                                        {/foreach}
+                                                        <tr>
+                                                            <td><input type="text" class="form-control"
+                                                                       value="ИТОГО:" disabled></td>
+                                                            <td><input type="text" class="form-control"
+                                                                       name="result[all_sum_pay]"
+                                                                       value="{$payment_schedule['result']['all_sum_pay']|floatval|number_format:2:',':' '}"
+                                                                       readonly></td>
+                                                            <td><input type="text" class="form-control"
+                                                                       name="result[all_loan_body_pay]"
+                                                                       value="{$payment_schedule['result']['all_loan_body_pay']|floatval|number_format:2:',':' '}"
+                                                                       readonly></td>
+                                                            <td><input type="text" class="form-control"
+                                                                       name="result[all_loan_percents_pay]"
+                                                                       value="{$payment_schedule['result']['all_loan_percents_pay']|floatval|number_format:2:',':' '}"
+                                                                       readonly></td>
+                                                            <td><input type="text" class="form-control"
+                                                                       name="result[all_comission_pay]"
+                                                                       value="{$payment_schedule['result']['all_comission_pay']|floatval|number_format:2:',':' '}"
+                                                                       readonly></td>
+                                                            <td><input type="text" class="form-control"
+                                                                       name="result[all_rest_pay_sum]"
+                                                                       value="{$payment_schedule['result']['all_rest_pay_sum']|floatval|number_format:2:',':' '}"
+                                                                       readonly></td>
+                                                        </tr>
                                                         {/if}
                                                         </tbody>
                                                     </table>

@@ -28,13 +28,24 @@ class Operations extends Core
         return $result;
     }
     
-    public function get_operation($id)
+    public function get_operation($filter)
     {
+        $id_filter = '';
+        $uid_filter = '';
+
+        if(isset($filter['id']))
+            $id_filter = $this->db->placehold("AND id = ?", $filter['id']);
+
+        if(isset($filter['uid']))
+            $uid_filter = $this->db->placehold("AND uid = ?", $filter['uid']);
+
         $query = $this->db->placehold("
             SELECT * 
             FROM __operations
-            WHERE id = ?
-        ", (int)$id);
+            WHERE 1
+            $id_filter
+            $uid_filter");
+
         $this->db->query($query);
         $result = $this->db->result();
     
@@ -196,6 +207,19 @@ class Operations extends Core
     
     public function add_operation($operation)
     {
+
+        $query = $this->db->placehold("
+            SELECT uid
+            FROM __operations
+            ORDER BY DESC
+            LIMIT 1
+            ");
+        $this->db->query($query);
+        $uid = (int)$this->db->result('uid');
+        $uid++;
+
+        $operation['uid'] = $uid;
+
         $query = $this->db->placehold("
             INSERT INTO __operations SET ?%
         ", (array)$operation);

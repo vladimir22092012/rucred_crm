@@ -412,8 +412,6 @@ class OrderController extends Controller
                     $this->design->assign('need_update_scorings', $need_update_scorings);
                     $this->design->assign('inactive_run_scorings', $inactive_run_scorings);
 
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scorings, $scoring_types);echo '</pre><hr />';
-
                     $user = $this->users->get_user((int)$order->user_id);
                     $user->regaddress = $this->addresses->get_address($user->regaddress_id);
                     $user->faktaddress = $this->addresses->get_address($user->faktaddress_id);
@@ -549,16 +547,21 @@ class OrderController extends Controller
         }
 
         $payment_schedule = json_decode($order->payment_schedule, true);
-        $payment_schedule = end($payment_schedule);
 
-        uksort($payment_schedule,
-            function ($a, $b) {
+        if(!empty($payment_schedule)){
+            $payment_schedule = end($payment_schedule);
 
-                if ($a == $b)
-                    return 0;
+            uksort($payment_schedule,
+                function ($a, $b) {
 
-                return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
-            });
+                    if ($a == $b)
+                        return 0;
+
+                    return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+                });
+
+            $this->design->assign('payment_schedule', $payment_schedule);
+        }
 
         $loantype = $this->Loantypes->get_loantype($order->loan_type);
         $this->design->assign('loantype', $loantype);
@@ -567,8 +570,6 @@ class OrderController extends Controller
             $loantypes = $this->GroupLoanTypes->get_loantypes_on($order->group_id);
             $this->design->assign('loantypes', $loantypes);
         }
-
-        $this->design->assign('payment_schedule', $payment_schedule);
 
         $order = $this->orders->get_order($order_id);
 
@@ -598,9 +599,6 @@ class OrderController extends Controller
         }
 
         $this->design->assign('documents', $documents);
-
-        $companies = $this->Companies->get_companies();
-        $groups = $this->Groups->get_groups();
 
         $settlement = $this->OrganisationSettlements->get_settlement($order->settlement_id);
         $this->design->assign('settlement', $settlement);
