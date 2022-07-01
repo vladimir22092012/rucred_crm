@@ -527,7 +527,7 @@ class OrderController extends Controller
                     '04.12' => 'PERECHISLENIE_ZAEMN_SREDSTV'
                 ];
 
-            if($settlement->id == 2)
+            if ($settlement->id == 2)
                 $doc_types['04.05.1'] = 'SOGLASIE_MINB';
             else
                 $doc_types['04.05.2'] = 'SOGLASIE_RDB';
@@ -548,7 +548,7 @@ class OrderController extends Controller
 
         $payment_schedule = json_decode($order->payment_schedule, true);
 
-        if(!empty($payment_schedule)){
+        if (!empty($payment_schedule)) {
             $payment_schedule = end($payment_schedule);
 
             uksort($payment_schedule,
@@ -561,12 +561,14 @@ class OrderController extends Controller
                 });
 
             $this->design->assign('payment_schedule', $payment_schedule);
+        } else {
+
         }
 
         $loantype = $this->Loantypes->get_loantype($order->loan_type);
         $this->design->assign('loantype', $loantype);
 
-        if(isset($loantype) && $order->group_id){
+        if (isset($loantype) && $order->group_id) {
             $loantypes = $this->GroupLoanTypes->get_loantypes_on($order->group_id);
             $this->design->assign('loantypes', $loantypes);
         }
@@ -835,8 +837,7 @@ class OrderController extends Controller
 
         $resp = $this->best2pay->issuance($order_id);
 
-        if (!empty($resp['success']))
-        {
+        if (!empty($resp['success'])) {
             $contract_id = $this->contracts->add_contract([
                 'order_id' => $order->order_id,
                 'user_id' => $order->user_id,
@@ -852,7 +853,7 @@ class OrderController extends Controller
                 'issuance_date' => date('Y-m-d H:i:s'),
             ]);
 
-            $this->orders->update_order($order->order_id, ['contract_id'=>$contract_id]);
+            $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
 
             $this->operations->add_operation([
                 'user_id' => $order->user_id,
@@ -865,7 +866,6 @@ class OrderController extends Controller
                 'loan_percents_summ' => 0,
                 'loan_peni_summ' => 0,
             ]);
-
 
 
             $ticket = [
@@ -894,9 +894,7 @@ class OrderController extends Controller
             $this->TicketMessages->add_message($message);
 
             return ['success' => 1];
-        }
-        else
-        {
+        } else {
             return $resp;
         }
 

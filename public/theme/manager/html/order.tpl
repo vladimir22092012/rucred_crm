@@ -3606,7 +3606,7 @@
         </div>
     </div>
 </div>
-
+{if !empty($payment_schedule)}
 <div id="modal_restruct" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
      aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
@@ -3645,3 +3645,4 @@
         </div>
     </div>
 </div>
+{/if}
