@@ -548,7 +548,8 @@ class OrderController extends Controller
 
         }
 
-        $payment_schedule = (array)json_decode($order->payment_schedule);
+        $payment_schedule = json_decode($order->payment_schedule, true);
+        $payment_schedule = end($payment_schedule);
 
         uksort($payment_schedule,
             function ($a, $b) {
