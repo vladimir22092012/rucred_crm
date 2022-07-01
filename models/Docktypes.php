@@ -27,4 +27,23 @@ class Docktypes extends Core
 
         return $docs;
     }
+
+    public function get_templates($filter = array())
+    {
+        $id_filter = '';
+
+        if(isset($filter['id']))
+            $id_filter = $this->db->placehold("AND id IN (?@)", (array)$filter['id']);
+
+        $query = $this->db->placehold("
+        SELECT templates
+        FROM s_dock_types
+        WHERE 1
+        $id_filter
+        ");
+
+        $this->db->query($query);
+        $templates = $this->db->results();
+        return $templates;
+    }
 }

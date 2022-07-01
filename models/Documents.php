@@ -203,6 +203,7 @@ class Documents extends Core
     public function get_documents($filter = array())
     {
         $id_filter = '';
+        $role_filter = '';
         $obshie_usloviya_flag = '';
         $user_id_filter = '';
         $order_id_filter = '';
@@ -218,6 +219,24 @@ class Documents extends Core
 
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND doc.id IN (?@)", array_map('intval', (array)$filter['id']));
+        }
+
+        if(isset($filter['role_id'])){
+            $permissions = $this->DocksPermissions->get_docktypes(['role_id' => $filter['role_id']]);
+
+            $doctypes_id = [];
+
+            foreach ($permissions as $permission){
+                $doctypes_id[] = $permission->docktype_id;
+            }
+            $templates = $this->Docktypes->get_templates(['id' => $doctypes_id]);
+            $templates_implode = [];
+
+            foreach ($templates as $template){
+                $templates_implode[] = $template->templates;
+            }
+
+            $role_filter = $this->db->placehold("AND doc.template IN (?@)", (array)$templates_implode);
         }
 
         if (isset($filter['obshie_usloviya']))
@@ -313,6 +332,7 @@ class Documents extends Core
  	            $keyword_filter
  	            $search_list
  	            $obshie_usloviya_flag
+ 	            $role_filter
  	            AND doc.`type` != 'ndfl'
             $sort 
             $sql_limit

@@ -16,7 +16,7 @@ class DockTypesController extends Controller
         } else {
 
             $docs = $this->Docktypes->get_docs();
-            $roles = $this->ManagerRoles->get_roles();
+            $roles = $this->ManagerRoles->get();
             $permissions = $this->DocksPermissions->get_permissions();
 
             $this->design->assign('permissions', $permissions);

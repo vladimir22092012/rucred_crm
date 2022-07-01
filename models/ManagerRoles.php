@@ -2,7 +2,7 @@
 
 class ManagerRoles extends Core
 {
-    public function get_roles()
+    public function get()
     {
         $query = $this->db->placehold("
         SELECT *

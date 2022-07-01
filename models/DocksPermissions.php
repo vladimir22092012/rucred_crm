@@ -35,4 +35,23 @@ class DocksPermissions extends Core
         $permissions = $this->db->results();
         return $permissions;
     }
+
+    public function get_docktypes($filter = array())
+    {
+        $role_id_filter = '';
+
+        if(isset($filter['role_id']))
+            $role_id_filter = $this->db->placehold("AND role_id = ?", $filter['role_id']);
+
+        $query = $this->db->placehold("
+        SELECT * 
+        FROM s_docks_permissions
+        WHERE 1
+        $role_id_filter
+        ");
+
+        $this->db->query($query);
+        $permissions = $this->db->results();
+        return $permissions;
+    }
 }

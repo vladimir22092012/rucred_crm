@@ -284,7 +284,16 @@ class OfflineOrderController extends Controller
                     $this->db->query($query);
                     $scans = $this->db->results();
 
-                    $users_docs = $this->Documents->get_documents(['order_id' => $order_id]);
+                    $managers_roles = $this->ManagerRoles->get();
+
+                    foreach ($managers_roles as $role){
+                        if($this->manager->role == $role->name)
+                            $filter['role_id'] = $role->id;
+                    }
+
+                    $filter['order_id'] = $order_id;
+
+                    $users_docs = $this->Documents->get_documents($filter);
 
                     if (count($scans) == count($users_docs))
                         $enough_scans = 1;
@@ -590,18 +599,6 @@ class OfflineOrderController extends Controller
         $filter['obshie_usloviya'] = 1;
 
         $documents = $this->documents->get_documents($filter);
-
-        $query = $this->db->placehold("
-        SELECT *
-        FROM s_scans
-        where user_id = ?
-        AND `type` = 'ndfl'
-        ", $order->user_id);
-
-        $this->db->query($query);
-        $ndfl = $this->db->result();
-
-        $this->design->assign('ndfl', $ndfl);
 
         $scans = $this->Scans->get_scans_by_order_id($order_id);
 
