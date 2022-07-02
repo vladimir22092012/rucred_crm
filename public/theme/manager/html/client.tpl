@@ -333,7 +333,7 @@
                                 <a class="nav-link active" data-toggle="tab" href="#info" role="tab"
                                    aria-selected="false">
                                     <span class="hidden-sm-up"><i class="ti-home"></i></span>
-                                    <span class="hidden-xs-down">Персональная информация</span>
+                                    <span class="hidden-xs-down">Общая информация</span>
                                 </a>
                             </li>
                             <li class="nav-item">

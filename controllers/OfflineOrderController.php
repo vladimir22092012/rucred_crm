@@ -3588,6 +3588,20 @@ class OfflineOrderController extends Controller
 
             $asp_id = $this->AspCodes->add_code($asp_log);
 
+            $payment_schedule = json_decode($order->payment_schedule, true);
+            $payment_schedule = end($payment_schedule);
+            $date = date('Y-m-d');
+
+            foreach ($payment_schedule as $payday => $payment) {
+                if ($payday != 'result') {
+                    $payday = date('Y-m-d', strtotime($payday));
+                    if ($payday > $date) {
+                        $next_payment = $payday;
+                        break;
+                    }
+                }
+            }
+
             $contract =
                 [
                     'order_id' => $order->order_id,
@@ -3601,7 +3615,8 @@ class OfflineOrderController extends Controller
                     'loan_body_summ' => $order->amount,
                     'loan_percents_summ' => 0,
                     'loan_peni_summ' => 0,
-                    'issuance_date' => date('Y-m-d H:i:s')
+                    'issuance_date' => date('Y-m-d H:i:s'),
+                    'return_date' => $next_payment
                 ];
 
             $contract_id = $this->Contracts->add_contract($contract);

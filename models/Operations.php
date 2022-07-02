@@ -211,18 +211,19 @@ class Operations extends Core
         $query = $this->db->placehold("
             SELECT uid
             FROM __operations
-            ORDER BY DESC
+            ORDER BY uid DESC
             LIMIT 1
             ");
         $this->db->query($query);
-        $uid = (int)$this->db->result('uid');
+        $uid = $this->db->result('uid');
         $uid++;
 
-        $operation['uid'] = $uid;
+        $operation['uid'] = str_pad($uid, 9, '0', STR_PAD_LEFT);
 
         $query = $this->db->placehold("
             INSERT INTO __operations SET ?%
         ", (array)$operation);
+
         $this->db->query($query);
         $id = $this->db->insert_id();
         
