@@ -46,7 +46,8 @@
                                 <a href="{if $filter_status==0}{url status=null page=null}{else}{url status=0 page=null}{/if}"
                                    class="btn btn-xs {if isset($filter_status) && $filter_status==0}btn-info{else}btn-outline-info{/if}">Предварительно</a>
                                 <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status==1}btn-danger{else}btn-outline-danger{/if}">К оплате</a>
+                                   class="btn btn-xs {if $filter_status==1}btn-danger{else}btn-outline-danger{/if}">К
+                                    оплате</a>
                                 <a href="{if $filter_status==2}{url status=null page=null}{else}{url status=2 page=null}{/if}"
                                    class="btn btn-xs {if $filter_status==2}btn-inverse{else}btn-outline-inverse{/if}">Завершен</a>
                                 {if $filter_status}
@@ -100,22 +101,22 @@
                                         </th>
                                     </tr>
                                     <tr class="jsgrid-filter-row" id="search_form">
-                                        <td style="width: 70px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 70px;" class="jsgrid-cell">
                                             <input type="hidden" name="sort" value="{$sort}"/>
                                             <input type="text" name="order_id" value="{$search['order_id']}"
                                                    class="form-control input-sm">
                                         </td>
-                                        <td style="width: 70px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 70px;" class="jsgrid-cell">
                                             <input type="hidden" name="sort" value="{$sort}"/>
                                             <input type="text" name="order_id" value="{$search['order_id']}"
                                                    class="form-control input-sm">
                                         </td>
-                                        <td style="width: 70px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 70px;" class="jsgrid-cell">
                                             <input type="hidden" name="sort" value="{$sort}"/>
                                             <input type="text" name="order_id" value="{$search['order_id']}"
                                                    class="form-control input-sm">
                                         </td>
-                                        <td style="width: 70px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 70px;" class="jsgrid-cell">
                                             <input type="hidden" name="sort" value="{$sort}"/>
                                             <input type="text" name="order_id" value="{$search['order_id']}"
                                                    class="form-control input-sm">
@@ -125,7 +126,38 @@
                             </div>
                             <div class="jsgrid-grid-body">
                                 <table class="jsgrid-table table table-striped table-hover" style="text-align: center">
-                                    <tbody></tbody>
+                                    <tbody>
+                                    {if !empty($payments)}
+                                        {foreach $payments as $payment}
+                                            <tr>
+                                                <td style="width: 70px;" class="jsgrid-cell">
+                                                    {$payment->id}
+                                                </td>
+                                                <td style="width: 70px;" class="jsgrid-cell">
+                                                    {$payment->created|date} {$payment->created|time}
+                                                </td>
+                                                <td style="width: 70px;" class="jsgrid-cell">
+                                                    {$payment->company_name}
+                                                </td>
+                                                <td style="width: 70px;" class="jsgrid-cell">
+                                                    {$payment->payday|date}
+                                                </td>
+                                                <td style="width: 70px;" class="jsgrid-cell">
+                                                </td>
+                                                <td style="width: 70px;" class="jsgrid-cell">
+                                                    <div class="btn btn-outline-primary">
+                                                        <a href="{$config->back_url}{$payment->payment_xls}" download>Реестр</a>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 70px;" class="jsgrid-cell">
+                                                    {if $payment->status == 0}
+                                                        <small class="badge badge-info">Предварительно</small>
+                                                    {/if}
+                                                </td>
+                                            </tr>
+                                        {/foreach}
+                                    {/if}
+                                    </tbody>
                                 </table>
                             </div>
                             {include file='pagination.tpl'}
