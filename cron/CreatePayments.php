@@ -249,7 +249,7 @@ class CreatePayments extends Core
 
 
             $writer = new Xlsx($spreadsheet);
-            $writer->save(ROOT . "./files/paymentlist_".date('d.m.Y').".xlsx");
+            $writer->save(ROOT . "/files/paymentlist_".date('d.m.Y').".xlsx");
 
             $payment =
                 [
