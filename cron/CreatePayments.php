@@ -267,15 +267,10 @@ class CreatePayments extends Core
                 $this->Payments->add($payment);
             }
         }catch (Exception $e){
-
-            $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
-            $mailResponse = $mailService->send(
-                'rucred@ucase.live',
-                'duircianos@yandex.ru',
-                'RuCred | Ваш проверочный код для смены почты',
-                'Ваш код подтверждения электронной почты: ' . $e,
-                '<h1>Сообщите код андеррайтеру РуКреда: </h1>' . "<h2>$e</h2>"
-            );
+            $this->Logs->add(['text' => json_encode($e->getCode())]);
+            $this->Logs->add(['text' => json_encode($e->getMessage())]);
+            $this->Logs->add(['text' => json_encode($e->getFile())]);
+            $this->Logs->add(['text' => json_encode($e->getLine())]);
         }
     }
 }

@@ -707,7 +707,10 @@
                                                    name="viber_same"
                                                    {if isset($order) && $order->viber_num == $order->phone_mobile}checked{/if}
                                                    value="1">
-                                            <label>Совпадает с номером мобильного</label><br><br>
+                                            <label>Совпадает с номером мобильного</label>
+                                            <div style="margin-left: 20px" class="btn btn-success" data-user="{$user->id}">
+                                                Подтвердить
+                                            </div><br><br>
                                             <img class="icon_messag"
                                                  src="https://img.icons8.com/office/344/whatsapp--v1.png" width="30"
                                                  height="30">
@@ -719,7 +722,10 @@
                                                    name="whatsapp_same"
                                                    {if isset($order) && $order->whatsapp_num == $order->phone_mobile}checked{/if}
                                                    value="1">
-                                            <label>Совпадает с номером мобильного</label><br><br>
+                                            <label>Совпадает с номером мобильного</label>
+                                            <div style="margin-left: 20px" class="btn btn-success" data-user="{$user->id}">
+                                                Подтвердить
+                                            </div><br><br>
                                             <img class="icon_messag"
                                                  src="https://img.icons8.com/color/344/telegram-app--v1.png" width="30"
                                                  height="30">
@@ -731,7 +737,10 @@
                                                    name="telegram_same"
                                                    {if isset($order) && $order->telegram_num == $order->phone_mobile}checked{/if}
                                                    value="1">
-                                            <label>Совпадает с номером мобильного</label><br><br>
+                                            <label>Совпадает с номером мобильного</label>
+                                            <div style="margin-left: 20px" class="btn btn-success" data-user="{$user->id}">
+                                                Подтвердить
+                                            </div><br><br>
                                         </div>
                                         <br>
                                         <h4>Основные каналы связи</h4>

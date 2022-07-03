@@ -43,7 +43,7 @@ class TicketsController extends Controller
                 $in_out = 'archive';
             }
 
-            $sort = 'n.ticket_id asc';
+            $sort = 't.id desc';
 
             if ($this->request->get('sort', 'string')) {
                 $sort = $this->request->get('sort', 'string');

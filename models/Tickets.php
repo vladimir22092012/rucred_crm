@@ -26,7 +26,7 @@ class Tickets extends Core
         return $id;
     }
 
-    public function get_tickets($manager_role, $manager_id, $in_out, $sort = 'id asc')
+    public function get_tickets($manager_role, $manager_id, $in_out, $sort = 't.id asc')
     {
         $out = '';
         $manager = '';
