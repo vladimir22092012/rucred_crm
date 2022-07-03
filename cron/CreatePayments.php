@@ -27,8 +27,6 @@ class CreatePayments extends Core
 
     private function run()
     {
-        try {
-
             $date_from = date('Y-m-d 00:00:00', strtotime('+3 days'));
             $date_to = date('Y-m-d 23:59:59', strtotime('+3 days'));
 
@@ -251,8 +249,11 @@ class CreatePayments extends Core
                 $sheet->setCellValue('G5', $all_others_pay);
 
 
+                $date = date('d.m.Y');
+
                 $writer = new Xlsx($spreadsheet);
-                $writer->save(ROOT . "/files/paymentlist_" . date('d.m.Y') . ".xlsx");
+
+                $writer->save($this->config->root_dir . "/files/paymentlist_$date.xlsx");
 
                 $payment =
                     [
@@ -266,12 +267,6 @@ class CreatePayments extends Core
 
                 $this->Payments->add($payment);
             }
-        }catch (Exception $e){
-            $this->Logs->add(['text' => json_encode($e->getCode())]);
-            $this->Logs->add(['text' => json_encode($e->getMessage())]);
-            $this->Logs->add(['text' => json_encode($e->getFile())]);
-            $this->Logs->add(['text' => json_encode($e->getLine())]);
-        }
     }
 }
 
