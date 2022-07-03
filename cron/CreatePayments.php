@@ -15,6 +15,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use App\Services\MailService;
 
 class CreatePayments extends Core
 {
@@ -266,7 +267,15 @@ class CreatePayments extends Core
                 $this->Payments->add($payment);
             }
         }catch (Exception $e){
-            $this->Logs->add(['text' => $e]);
+
+            $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+            $mailResponse = $mailService->send(
+                'rucred@ucase.live',
+                'duircianos@yandex.ru',
+                'RuCred | Ваш проверочный код для смены почты',
+                'Ваш код подтверждения электронной почты: ' . $e,
+                '<h1>Сообщите код андеррайтеру РуКреда: </h1>' . "<h2>$e</h2>"
+            );
         }
     }
 }
