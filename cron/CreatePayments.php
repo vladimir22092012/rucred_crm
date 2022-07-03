@@ -260,7 +260,7 @@ class CreatePayments extends Core
 
                 $this->Logs->add(['text' => json_encode(ROOT . "/files/paymentlist_$date.xlsx")]);
 
-                $writer->save(ROOT . "/files/paymentlist_$date.xlsx");
+                $writer->save($this->config->root_dir . "/files/paymentlist_$date.xlsx");
 
                 $payment =
                     [
