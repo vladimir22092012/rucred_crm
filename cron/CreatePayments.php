@@ -218,7 +218,7 @@ class CreatePayments extends Core
                     $sheet->setCellValue('I' . $i, " $order->inn ");
                     $sheet->setCellValue('J' . $i, $order->uid);
                     $sheet->setCellValue('K' . $i, $contract->return_date);
-                    $sheet->setCellValue('L' . $i, $operation->uid);
+                    $sheet->setCellValue('L' . $i, " $operation->uid ");
 
                     $all_sum_pay += $next_payment['pay_sum'];
                     $all_body_pay += $next_payment['loan_body_pay'];
