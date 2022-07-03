@@ -189,7 +189,7 @@ class CreatePayments extends Core
                         'loan_percents_summ' => $next_payment['loan_percents_pay']
                     ));
 
-                    $operation = $this->operations->get_operation($operation_id);
+                    $operation = $this->operations->get_operation(['id' => $operation_id]);
 
                     $destination = "{$operation->uid} Оплата по договору микрозайма № $order->uid от $contract->return_date // заёмщик - $fio, ИНН $order->inn";
 
