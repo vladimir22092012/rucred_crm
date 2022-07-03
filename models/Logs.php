@@ -1,11 +1,11 @@
 <?php
 
-class TelegramLogs extends Core
+class Logs extends Core
 {
-    public function add_log($log)
+    public function add($log)
     {
         $query = $this->db->placehold("
-        INSERT INTO s_telegram_logs
+        INSERT INTO s_logs
         SET ?%
         ", (array)$log);
 
