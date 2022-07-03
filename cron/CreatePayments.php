@@ -193,6 +193,9 @@ class CreatePayments extends Core
 
                     $destination = "{$operation->uid} Оплата по договору микрозайма № $order->uid от $contract->return_date // заёмщик - $fio, ИНН $order->inn";
 
+                    $this->Logs->add(['text' => json_encode($destination)]);
+                    $this->Logs->add(['text' => json_encode($operation_id)]);
+
                     $sheet->getRowDimension($i)->setRowHeight(30);
                     $sheet->getStyle('A' . $i)->applyFromArray($styles);
                     $sheet->getStyle('B' . $i)->applyFromArray($styles_cells);
@@ -251,7 +254,11 @@ class CreatePayments extends Core
 
                 $date = date('d.m.Y');
 
+                $this->Logs->add(['text' => json_encode($date)]);
+
                 $writer = new Xlsx($spreadsheet);
+
+                $this->Logs->add(['text' => json_encode(ROOT . "/files/paymentlist_$date.xlsx")]);
 
                 $writer->save(ROOT . "/files/paymentlist_$date.xlsx");
 
@@ -264,6 +271,8 @@ class CreatePayments extends Core
                         'payday' => $contract->return_date,
                         'payment_xls' => "/files/paymentlist_$date.xlsx"
                     ];
+
+                $this->Logs->add(['text' => json_encode($payment)]);
 
                 $this->Payments->add($payment);
             }
