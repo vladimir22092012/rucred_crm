@@ -253,7 +253,7 @@ class CreatePayments extends Core
 
                 $writer = new Xlsx($spreadsheet);
 
-                $writer->save($this->config->root_dir . "/files/paymentlist_$date.xlsx");
+                $writer->save(ROOT . "/files/paymentlist_$date.xlsx");
 
                 $payment =
                     [
@@ -262,7 +262,7 @@ class CreatePayments extends Core
                         'updated' => date('Y-m-d H:i:s'),
                         'company_id' => $order->company_id,
                         'payday' => $contract->return_date,
-                        'payment_xls' => "/files/paymentlist_" . date('d.m.Y') . ".xlsx"
+                        'payment_xls' => "/files/paymentlist_$date.xlsx"
                     ];
 
                 $this->Payments->add($payment);
