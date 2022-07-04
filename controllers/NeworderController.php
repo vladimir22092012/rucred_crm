@@ -1172,6 +1172,7 @@ class NeworderController extends Controller
             endswitch;
         }
 
+        echo json_encode(['success' => 1, 'type' => $type]);
         exit;
     }
 }

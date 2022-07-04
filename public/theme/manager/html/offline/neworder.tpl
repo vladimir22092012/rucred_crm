@@ -241,11 +241,11 @@
 
                 $('.' + attr + '').toggle();
 
-                if($(this).is(':checked')){
-                    if($(this).attr('name') == 'viber_same')
+                if ($(this).is(':checked')) {
+                    if ($(this).attr('name') == 'viber_same')
                         $('.confirm_viber').attr('data-phone', phone);
 
-                    if($(this).attr('name') == 'telegram_same')
+                    if ($(this).attr('name') == 'telegram_same')
                         $('.confirm_telegram').attr('data-phone', phone);
                 }
             });
@@ -258,15 +258,15 @@
                 let phone = $(this).parent().find('.phone_num').val();
 
                 if ($(this).hasClass('confirm_telegram')) {
-                    if ($('input[name="telegram_same"]').is(':checked')){
+                    if ($('input[name="telegram_same"]').is(':checked')) {
                         phone = $(this).attr('data-phone');
                     }
 
                     type = 'telegram';
                 }
 
-                if ($(this).hasClass('confirm_viber')){
-                    if ($('input[name="viber_same"]').is(':checked')){
+                if ($(this).hasClass('confirm_viber')) {
+                    if ($('input[name="viber_same"]').is(':checked')) {
                         phone = $(this).attr('data-phone');
                     }
 
@@ -275,11 +275,29 @@
 
                 $.ajax({
                     method: 'POST',
+                    dataType: 'JSON',
                     data: {
                         action: 'confirm_messengers',
                         type: type,
                         phone: phone,
                         user_id: user_id
+                    },
+                    success: function (resp) {
+                        if (resp['success']) {
+                            switch (resp['type']) {
+                                case 'telegram':
+                                    $('input[name="telegram_same"]').fadeOut();
+                                    $('.telegram_label').fadeOut();
+                                    $('.confirm_telegram').fadeOut();
+                                    $('.telegram_confirmed').fadeIn();
+                                    break;
+                            }
+                        } else {
+                            Swal.fire({
+                                title: 'Произошла ошибка',
+                                confirmButtonText: 'ОК'
+                            });
+                        }
                     }
                 });
             });
@@ -753,7 +771,7 @@
                                                        name="viber_same"
                                                        {if isset($order) && $order->viber_num == $order->phone_mobile}checked{/if}
                                                        value="1">
-                                                <label>Совпадает с номером мобильного</label>
+                                                <label class="viber_same_label">Совпадает с номером мобильного</label>
                                                 <div style="margin-left: 20px" class="btn btn-success confirm_viber"
                                                      data-user="{$user->id}">
                                                     Подтвердить
@@ -776,17 +794,21 @@
                                             </div>
                                             <div>
                                                 <img class="icon_messag"
-                                                     src="https://img.icons8.com/color/344/telegram-app--v1.png" width="30"
+                                                     src="https://img.icons8.com/color/344/telegram-app--v1.png"
+                                                     width="30"
                                                      height="30">
                                                 <input class="form-control phone_num telegram_same"
                                                        style="width: 450px; margin-left: 25px; {if isset($order) && $order->telegram_num == $order->phone_mobile}display: none{/if}"
                                                        type="text" name="telegram" value="{$order->telegram_num}"
                                                        autocomplete="off">
+                                                <label style="margin-left: 25px; display: none"
+                                                       class="label label-success telegram_confirmed">Подтвержден</label>
                                                 <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
                                                        name="telegram_same"
                                                        {if isset($order) && $order->telegram_num == $order->phone_mobile}checked{/if}
                                                        value="1">
-                                                <label>Совпадает с номером мобильного</label>
+                                                <label class="telegram_same_label">Совпадает с номером
+                                                    мобильного</label>
                                                 <div style="margin-left: 20px" class="btn btn-success confirm_telegram"
                                                      data-user="{$user->id}">
                                                     Подтвердить
