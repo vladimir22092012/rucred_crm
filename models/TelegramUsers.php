@@ -9,8 +9,6 @@ class TelegramUsers extends Core
         SET ?%
         ", (array)$user);
 
-        var_dump($query);
-
         $this->db->query($query);
         $id = $this->db->insert_id();
 

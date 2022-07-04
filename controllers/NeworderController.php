@@ -1151,22 +1151,34 @@ class NeworderController extends Controller
 
         if (empty($user_telegram)) {
 
+            if(empty($user_id)){
+                $query = $this->db->placehold("
+                SELECT id
+                FROM s_users
+                ORDER BY id DESC
+                LIMIT 1
+                ");
+
+                $this->db->query($query);
+                $user_id = $this->db->result('id') + 1;
+            }
+
             switch ($type):
                 case 'telegram':
                     $message = "Привяжите Телеграм: https://t.me/rucred_bot?start=$user_token";
+                    $this->sms->send($phone, $message);
+
+                    $user =
+                        [
+                            'user_id' => $user_id,
+                            'is_manager' => 0
+                        ];
+
+                    $this->TelegramUsers->add($user);
                     break;
             endswitch;
-
-            $this->sms->send($phone, $message);
-
-            $user =
-                [
-                    'user_id' => $user_id,
-                    'is_manager' => 0
-                ];
-
-            $this->TelegramUsers->add($user);
-            exit;
         }
+
+        exit;
     }
 }
