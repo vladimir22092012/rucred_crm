@@ -838,26 +838,34 @@ class OrderController extends Controller
         $resp = $this->best2pay->issuance($order_id);
 
         if (!empty($resp['success'])) {
-            $contract_id = $this->contracts->add_contract([
-                'order_id' => $order->order_id,
-                'user_id' => $order->user_id,
-                'number' => $order->uid,
-                'amount' => $order->amount,
-                'period' => $order->period,
-                'base_percent' => $order->percent,
-                'peni_percent' => 0,
-                'status' => 2,
-                'loan_body_summ' => $order->amount,
-                'loan_percents_summ' => 0,
-                'loan_peni_summ' => 0,
-                'issuance_date' => date('Y-m-d H:i:s'),
-            ]);
 
-            $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
+            $payment_schedule = json_decode($order->payment_schedule, true);
+            $payment_schedule = end($payment_schedule);
+            $date = date('Y-m-d');
+
+            foreach ($payment_schedule as $payday => $payment) {
+                if ($payday != 'result') {
+                    $payday = date('Y-m-d', strtotime($payday));
+                    if ($payday > $date) {
+                        $next_payday = $date;
+                        break;
+                    }
+                }
+            }
+
+            $contract =
+                [
+                    'loan_body_summ' => $order->amount,
+                    'status' => 2,
+                    'return_date' => $next_payday
+                ];
+
+            $this->contracts->update_contract($order->contract_id, $contract);
+            $this->orders->update_order($order_id, ['status' => 5]);
 
             $this->operations->add_operation([
                 'user_id' => $order->user_id,
-                'contract_id' => $contract_id,
+                'contract_id' => $order->contract_id,
                 'order_id' => $order->order_id,
                 'type' => 'P2P',
                 'amount' => $order->amount,
@@ -892,6 +900,30 @@ class OrderController extends Controller
                 ];
 
             $this->TicketMessages->add_message($message);
+
+            $this->design->assign('order', $order);
+            $documents = $this->documents->get_documents(['order_id' => $order->order_id]);
+            $docs_email = [];
+
+            foreach ($documents as $document){
+                if(in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR']))
+                    $docs_email[$document->type] = $document->id;
+            }
+
+            $individ_encrypt = 'https://api.rucred-dev.ru/doc/'.Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['INDIVIDUALNIE_USLOVIA'] . ' ' . rand(1, 9999999999));
+            $graphic_encrypt = 'https://api.rucred-dev.ru/doc/'.Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['GRAFIK_OBSL_MKR'] . ' ' . rand(1, 9999999999));
+
+            $this->design->assign('individ_encrypt', $individ_encrypt);
+            $this->design->assign('graphic_encrypt', $graphic_encrypt);
+
+            $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+            $mailResponse = $mailService->send(
+                'rucred@ucase.live',
+                $order->email,
+                'RuCred | Ваш займ успешно выдан',
+                'Поздравляем!',
+                $this->design->fetch('email/success_loan.tpl')
+            );
 
             return ['success' => 1];
         } else {
