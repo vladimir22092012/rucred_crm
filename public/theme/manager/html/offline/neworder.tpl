@@ -287,9 +287,11 @@
                             switch (resp['type']) {
                                 case 'telegram':
                                     $('input[name="telegram_same"]').fadeOut();
-                                    $('.telegram_label').fadeOut();
+                                    $('.telegram_same_label').fadeOut();
                                     $('.confirm_telegram').fadeOut();
-                                    $('.telegram_confirmed').fadeIn();
+                                    setTimeout(function () {
+                                        $('.telegram_confirmed').fadeIn();
+                                    }, 500);
                                     break;
                             }
                         } else {
