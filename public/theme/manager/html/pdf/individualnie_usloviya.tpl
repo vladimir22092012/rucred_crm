@@ -14,11 +14,15 @@
     <tr style="width: 100%">
         <br>
         <td style="width: 100%; font-size: 8px;" align="justify">юридический адрес
-            117449, город Москва, вн.тер.г.муниципальный округ Академический, улица Винокурова, дом 3, этаж/ком. 1/А, пом./ком.
-            I/1-3,6-11, фактический адрес места нахождения 117449, город Москва, улица Винокурова, дом 3, этаж/комната 1/А,
-            помещение I, внесённое в Единый государственный реестр МИФНС России №25 по гор. Москве 17 июля 2021 года за основным
+            117449, город Москва, вн.тер.г.муниципальный округ Академический, улица Винокурова, дом 3, этаж/ком. 1/А,
+            пом./ком.
+            I/1-3,6-11, фактический адрес места нахождения 117449, город Москва, улица Винокурова, дом 3, этаж/комната
+            1/А,
+            помещение I, внесённое в Единый государственный реестр МИФНС России №25 по гор. Москве 17 июля 2021 года за
+            основным
             государственным регистрационным номером 121770033532, ИНН 9725055162, КПП 772701001, зарегистрированное в
-            Саморегулируемой организации «Микрофинансирование и Развитие» (СРО «МиР», ОГРН 1137799014055) за №77001218 от
+            Саморегулируемой организации «Микрофинансирование и Развитие» (СРО «МиР», ОГРН 1137799014055) за №77001218
+            от
             29.09.2021 года
         </td>
     </tr>
@@ -151,7 +155,8 @@
     </tr>
     <tr style="width: 100%;">
         <td style="width: 30%; background-color: #b3b2ab">1.6. Юридический адрес:</td>
-        <td style="width: 70%">117449, город Москва, вн.тер.г.муниципальный округ Академический, улица Винокурова, дом 3, этаж/ком. 1/А,
+        <td style="width: 70%">117449, город Москва, вн.тер.г.муниципальный округ Академический, улица Винокурова, дом
+            3, этаж/ком. 1/А,
             пом./ком. I/1-3,6-11
         </td>
     </tr>
@@ -877,11 +882,16 @@
     {/foreach}
     <tr>
         <td style="background-color: #b3b2ab" align="center">ИТОГО:</td>
-        <td style="background-color: #b3b2ab" align="center">{$payment_schedule['result']['all_sum_pay']|floatval|number_format:2:',':' '}</td>
-        <td style="background-color: #b3b2ab" align="center">{$payment_schedule['result']['all_loan_percents_pay']|floatval|number_format:2:',':' '}</td>
-        <td style="background-color: #b3b2ab" align="center">{$payment_schedule['result']['all_loan_body_pay']|floatval|number_format:2:',':' '}</td>
-        <td style="background-color: #b3b2ab" align="center">{$payment_schedule['result']['all_comission_pay']|floatval|number_format:2:',':' '}</td>
-        <td style="background-color: #b3b2ab" align="center">{$payment_schedule['result']['all_rest_pay_sum']|floatval|number_format:2:',':' '}</td>
+        <td style="background-color: #b3b2ab"
+            align="center">{$payment_schedule['result']['all_sum_pay']|floatval|number_format:2:',':' '}</td>
+        <td style="background-color: #b3b2ab"
+            align="center">{$payment_schedule['result']['all_loan_percents_pay']|floatval|number_format:2:',':' '}</td>
+        <td style="background-color: #b3b2ab"
+            align="center">{$payment_schedule['result']['all_loan_body_pay']|floatval|number_format:2:',':' '}</td>
+        <td style="background-color: #b3b2ab"
+            align="center">{$payment_schedule['result']['all_comission_pay']|floatval|number_format:2:',':' '}</td>
+        <td style="background-color: #b3b2ab"
+            align="center">{$payment_schedule['result']['all_rest_pay_sum']|floatval|number_format:2:',':' '}</td>
     </tr>
     <tr>
         <td colspan="5">Полная стоимость микрозайма, % годовых:</td>
@@ -1100,41 +1110,58 @@
     <br>
     <br>
     <tr>
-        <td style="width: 45%">__________________/<strong>А.В.Лоскутов</strong>/</td>
-        <td style="width: 10%"></td>
-        {if !isset($sms)}
+        {if !isset($code_asp->code)}
+            <td style="width: 45%">
+                <table style="color: #002688; font-style: italic; border: 0.25pt solid #002088;" cellspacing="5">
+                    <tr>
+                        <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
+                    </tr>
+                    <tr>
+                        <td>Подписант: А.В. Лоскутов</td>
+                    </tr>
+                    <tr>
+                        <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
+                    </tr>
+                    <tr>
+                        <td>ID подписания: {$code_asp->uid}</td>
+                    </tr>
+                    <tr>
+                        <td>Система ЭДО: Рестарт.Онлайн</td>
+                    </tr>
+                </table>
+            </td>
+            <td style="width: 10%">
+            </td>
             <td style="width: 45%">
                 __________________/<strong>{$firstname|mb_substr:0:1}.{$patronymic|mb_substr:0:1}.{$lastname}/</strong>
             </td>
         {else}
-            <td style="width: 45%"></td>
+            <td style="width: 45%">__________________/<strong>А.В.Лоскутов</strong>/</td>
+            <td style="width: 10%">
+            </td>
+            <td style="width: 45%">
+                <table style="color: #002688; font-style: italic; border: 0.25pt solid #002088;"
+                       cellpadding="1" cellspacing="5">
+                    <tr>
+                        <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
+                    </tr>
+                    <tr>
+                        <td>Подписант: {$firstname} {$patronymic} {$lastname}</td>
+                    </tr>
+                    <tr>
+                        <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
+                    </tr>
+                    <tr>
+                        <td>ID подписания: {$code_asp->uid}</td>
+                    </tr>
+                    <tr>
+                        <td>Код подтверждения: {$code_asp->code}</td>
+                    </tr>
+                    <tr>
+                        <td>Система ЭДО: Рестарт.Онлайн</td>
+                    </tr>
+                </table>
+            </td>
         {/if}
     </tr>
-    <br>
 </table>
-<div>
-    <br>
-</div>
-{if isset($sms)}
-    <table style="color: #002688; font-style: italic; border: 0.25pt solid #002088; width: 50%"
-           cellpadding="1" cellspacing="5">
-        <tr>
-            <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
-        </tr>
-        <tr>
-            <td>Подписант: {$firstname} {$patronymic} {$lastname}</td>
-        </tr>
-        <tr>
-            <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
-        </tr>
-        <tr>
-            <td>ID подписания: {$code_asp->uid}</td>
-        </tr>
-        <tr>
-            <td>Код подтверждения: {$code_asp->code}</td>
-        </tr>
-        <tr>
-            <td>Система ЭДО: Рестарт.Онлайн</td>
-        </tr>
-    </table>
-{/if}

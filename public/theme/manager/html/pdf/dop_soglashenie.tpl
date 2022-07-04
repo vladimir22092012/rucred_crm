@@ -343,61 +343,58 @@
     <br>
     <br>
     <tr>
-        <td style="width: 45%">__________________/<strong>А.В.Лоскутов</strong>/</td>
-        <td style="width: 10%"></td>
-        {if !isset($sms)}
+        {if !isset($code_asp->code)}
+            <td style="width: 45%">
+                <table style="color: #002688; font-style: italic; border: 0.25pt solid #002088;" cellspacing="5">
+                    <tr>
+                        <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
+                    </tr>
+                    <tr>
+                        <td>Подписант: А.В. Лоскутов</td>
+                    </tr>
+                    <tr>
+                        <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
+                    </tr>
+                    <tr>
+                        <td>ID подписания: {$code_asp->uid}</td>
+                    </tr>
+                    <tr>
+                        <td>Система ЭДО: Рестарт.Онлайн</td>
+                    </tr>
+                </table>
+            </td>
+            <td style="width: 10%">
+            </td>
             <td style="width: 45%">
                 __________________/<strong>{$firstname|mb_substr:0:1}.{$patronymic|mb_substr:0:1}.{$lastname}/</strong>
             </td>
         {else}
-            <td style="width: 45%"></td>
+            <td style="width: 45%">__________________/<strong>А.В.Лоскутов</strong>/</td>
+            <td style="width: 10%">
+            </td>
+            <td style="width: 45%">
+                <table style="color: #002688; font-style: italic; border: 0.25pt solid #002088;"
+                       cellpadding="1" cellspacing="5">
+                    <tr>
+                        <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
+                    </tr>
+                    <tr>
+                        <td>Подписант: {$firstname} {$patronymic} {$lastname}</td>
+                    </tr>
+                    <tr>
+                        <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
+                    </tr>
+                    <tr>
+                        <td>ID подписания: {$code_asp->uid}</td>
+                    </tr>
+                    <tr>
+                        <td>Код подтверждения: {$code_asp->code}</td>
+                    </tr>
+                    <tr>
+                        <td>Система ЭДО: Рестарт.Онлайн</td>
+                    </tr>
+                </table>
+            </td>
         {/if}
     </tr>
-    <br>
 </table>
-<div>
-    <br><br>
-</div>
-{if !isset($sms)}
-    <footer>
-        <table style="width: 100%; font-size: 8px" border="1">
-            <tr style="width: 100%">
-                <td style="width: 8%; height: 30px" align="center">
-                    <div><strong style="color: #b3b2ab;padding-top: 2px">СТР. 2</strong></div>
-                </td>
-                <td style="width: 37%" align="center">
-                    <div><span style="color: #b3b2ab">ПОДПИСЬ</span></div>
-                </td>
-                <td style="width: 40%" align="center">
-                    <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
-                </td>
-                <td style="width: 15%;" align="center">
-                    <div><span style="color: #b3b2ab">ДАТА</span></div>
-                </td>
-            </tr>
-        </table>
-    </footer>
-{/if}
-{if isset($sms)}
-    <table style="color: #002688; font-size: 8px!important; font-style: italic; border: 0.25pt solid #002088; width: 50%"
-           cellpadding="1" cellspacing="2">
-        <tr>
-            <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
-        </tr>
-        <tr>
-            <td>Подписант: {$firstname} {$patronymic} {$lastname}</td>
-        </tr>
-        <tr>
-            <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
-        </tr>
-        <tr>
-            <td>ID подписания: {$code_asp->uid}</td>
-        </tr>
-        <tr>
-            <td>Код подтверждения: {$code_asp->code}</td>
-        </tr>
-        <tr>
-            <td>Система ЭДО: Рестарт.Онлайн</td>
-        </tr>
-    </table>
-{/if}
