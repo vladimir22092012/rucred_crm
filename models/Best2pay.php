@@ -16,18 +16,42 @@ class Best2pay extends Core
     private $sectors = array(
         'ISSUANCE' => '3721', 
     );
-    
+    /*
+Sector ID: 9282 ООО МКК "Русское кредитное общество" (rucred.ru) (СМЭВ)
+Sector ID: 9283 ООО МКК "Русское кредитное общество" (rucred.ru) (token)
+Sector ID: 9287 ООО МКК "Русское кредитное общество" (rucred.ru) (PurchasebySectorCard)
+Sector ID: 9288 ООО МКК "Русское кредитное общество" (rucred.ru) (P2PCredit)
+Sector ID: 9285 ООО МКК "Русское кредитное общество" (rucred.ru) (C2A)    
+    */
     private $passwords = array(
         '3158' => 'test', // С2А
         '3159' => 'test', // P2PCredit
         '3160' => 'test', // Ecom
         '3157' => 'test', // token
         '3721' => 'test', // PurchaseBySectorCard
-
+        
+        '9285' => 's02V01I1', // (C2A)    
+        '9288' => 'ce3XY81', // (P2PCredit)
+        '9282' => 'RWt5U82X807', // (СМЭВ)
+        '9283' => '8630FtF2', // (token)
+        '9287' => 'Dr03924', // (PurchasebySectorCard)
     );
 
     public function __construct()
     {
+        if ($this->settings->b2p_mode == 'work')
+        {
+            $this->sectors = array(
+                'ISSUANCE' => '9287', 
+            );
+        }
+        else
+        {
+            $this->sectors = array(
+                'ISSUANCE' => '3721', 
+            );            
+        }
+        
         parent::__construct();
     }
     
