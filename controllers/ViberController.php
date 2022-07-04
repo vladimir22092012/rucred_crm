@@ -23,22 +23,13 @@ class ViberController extends Controller
                     ->setSender($botSender)
                     ->setText("Can i help you?");
             })
-            ->onText('|Привет', function ($event) use ($bot, $botSender) {
+            ->onText('hello', function ($event) use ($bot, $botSender) {
                 // match by template, for example "whois Bogdaan"
                 $bot->getClient()->sendMessage(
                     (new \Viber\Api\Message\Text())
                         ->setSender($botSender)
                         ->setReceiver($event->getSender()->getId())
-                        ->setText("Привет!")
-                );
-            })
-            ->onText('/start', function ($event) use ($bot, $botSender) {
-                // match by template, for example "whois Bogdaan"
-                $bot->getClient()->sendMessage(
-                    (new \Viber\Api\Message\Text())
-                        ->setSender($botSender)
-                        ->setReceiver($event->getSender()->getId())
-                        ->setText("Добро пожаловать!")
+                        ->setText("hello!")
                 );
             })
             ->run();
