@@ -14,14 +14,29 @@ class ViberController extends Controller
             'avatar' => 'https://developers.viber.com/img/favicon.ico',
         ]);
 
-        $bot = new Bot(['token' => $this->apy_key]);
-        $bot->onText('hello', function ($event) use ($bot, $botSender) {
-            $bot->getClient()->sendMessage(
-                (new \Viber\Api\Message\Text())
-                    ->setSender($botSender)
-                    ->setReceiver($event->getSender()->getId())
-                    ->setText("hello!")
-            );
-        })->run();
+        try {
+            $bot = new Bot(['token' => $this->apy_key]);
+
+            $bot
+                ->onConversation(function ($event) use ($bot, $botSender) {
+                    // this event fires if user open chat, you can return "welcome message"
+                    // to user, but you can't send more messages!
+                    return (new \Viber\Api\Message\Text())
+                        ->setSender($botSender)
+                        ->setText("Can i help you?");
+                })
+                ->onText('|whois .*|si', function ($event) use ($bot, $botSender) {
+                    // match by template, for example "whois Bogdaan"
+                    $bot->getClient()->sendMessage(
+                        (new \Viber\Api\Message\Text())
+                            ->setSender($botSender)
+                            ->setReceiver($event->getSender()->getId())
+                            ->setText("I do not know )")
+                    );
+                })
+                ->run();
+        } catch (Exception $e) {
+            // todo - log exceptions
+        }
     }
 }

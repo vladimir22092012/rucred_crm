@@ -1169,6 +1169,20 @@ class NeworderController extends Controller
 
                     $this->TelegramUsers->add($user);
                     break;
+
+                case 'viber':
+                    $message = "Привяжите Вайбер: https://chatapi.viber.com/pa/start=$user_token";
+                    $this->sms->send($phone, $message);
+
+                    $user =
+                        [
+                            'user_id' => $user_id,
+                            'token' => $user_token,
+                            'is_manager' => 0
+                        ];
+
+                    $this->ViberUsers->add($user);
+                    break;
             endswitch;
         }
 
