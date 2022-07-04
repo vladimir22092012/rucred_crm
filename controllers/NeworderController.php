@@ -1147,21 +1147,13 @@ class NeworderController extends Controller
         $user_token = md5(time());
         $user_token = substr($user_token, 1, 10);
 
+        if(empty($user_id)){
+            $user_id = $this->users->getNextid();
+        }
+
         $user_telegram = $this->TelegramUsers->get($user_id, 0);
 
         if (empty($user_telegram)) {
-
-            if(empty($user_id)){
-                $query = $this->db->placehold("
-                SELECT id
-                FROM s_users
-                ORDER BY id DESC
-                LIMIT 1
-                ");
-
-                $this->db->query($query);
-                $user_id = $this->db->result('id') + 1;
-            }
 
             switch ($type):
                 case 'telegram':

@@ -26,6 +26,21 @@ class Users extends Core
         return $id;
     }
 
+    public function getNextid(){
+
+        $query = $this->db->placehold("
+                SELECT id
+                FROM s_users
+                ORDER BY id DESC
+                LIMIT 1
+                ");
+
+        $this->db->query($query);
+        $user_id = $this->db->result('id') + 1;
+
+        return $user_id;
+    }
+
     public function get_looker_link($user_id)
     {
         $ip = $_SERVER['REMOTE_ADDR'];
