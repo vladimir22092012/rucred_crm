@@ -1144,5 +1144,29 @@ class NeworderController extends Controller
         $type = $this->request->post('type');
         $phone = $this->request->post('phone');
         $user_id = $this->request->post('user_id');
+        $user_token = md5(time());
+        $user_token = substr($user_token, 1, 10);
+
+        $user_telegram = $this->TelegramUsers->get($user_id, 0);
+
+        if (empty($user_telegram)) {
+
+            switch ($type):
+                case 'telegram':
+                    $message = "Привяжите Телеграм: https://t.me/rucred_bot?start=$user_token";
+                    break;
+            endswitch;
+
+            $this->sms->send($phone, $message);
+
+            $user =
+                [
+                    'user_id' => $user_id,
+                    'is_manager' => 0
+                ];
+
+            $this->TelegramUsers->add($user);
+            exit;
+        }
     }
 }

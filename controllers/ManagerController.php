@@ -392,17 +392,14 @@ class ManagerController extends Controller
         $message = "Привяжите Телеграм: https://t.me/rucred_bot?start=$user_token";
 
         $this->sms->send($phone, $message);
-        $chat_id = $this->TelegramApi->actions($manager_id);
 
         $user =
             [
                 'user_id' => $manager_id,
-                'chat_id' => $chat_id,
-                'uid' => $user_token,
                 'is_manager' => 1
             ];
 
-        $this->TelegramUsers->add_user($user);
+        $this->TelegramUsers->add($user);
         exit;
     }
 }
