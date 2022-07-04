@@ -200,7 +200,7 @@
 
                     $('.to_form_loan').trigger('click');
 
-                    if(order['branche_id'].length < 2)
+                    if (order['branche_id'].length < 2)
                         $('select[name="branch"] option[value="4"]').prop('selected', true);
                     else
                         $('select[name="branch"] option[value="' + order['branche_id'] + '"]').prop('selected', true);
@@ -235,8 +235,53 @@
 
             $('input[name="viber_same"], input[name="telegram_same"], input[name="whatsapp_same"]').on('click', function () {
                 let attr = $(this).attr('name');
+                let phone = $('input[name="phone"]').val();
+
+                console.log(phone);
 
                 $('.' + attr + '').toggle();
+
+                if($(this).is(':checked')){
+                    if($(this).attr('name') == 'viber_same')
+                        $('.confirm_viber').attr('data-phone', phone);
+
+                    if($(this).attr('name') == 'telegram_same')
+                        $('.confirm_telegram').attr('data-phone', phone);
+                }
+            });
+
+            $(document).on('click', '.confirm_telegram, .confirm_viber', function (e) {
+
+                let user_id = $(this).attr('data-user');
+                let type = '';
+                let same_flag = 0;
+                let phone = $(this).parent().find('.phone_num').val();
+
+                if ($(this).hasClass('confirm_telegram')) {
+                    if ($('input[name="telegram_same"]').is(':checked')){
+                        phone = $(this).attr('data-phone');
+                    }
+
+                    type = 'telegram';
+                }
+
+                if ($(this).hasClass('confirm_viber')){
+                    if ($('input[name="viber_same"]').is(':checked')){
+                        phone = $(this).attr('data-phone');
+                    }
+
+                    type = 'viber';
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'confirm_messengers',
+                        type: type,
+                        phone: phone,
+                        user_id: user_id
+                    }
+                });
             });
         })
     </script>
@@ -695,52 +740,59 @@
                                         </div>
                                         <br>
                                         <h4>Мессенджер для связи</h4><br>
-                                        <div style="width: 100%">
-                                            <img class="icon_messag"
-                                                 src="https://img.icons8.com/ios-glyphs/344/viber.png" width="30"
-                                                 height="30">
-                                            <input class="form-control phone_num viber_same"
-                                                   style="width: 450px; margin-left: 25px; {if isset($order) && $order->viber_num == $order->phone_mobile}display: none{/if}"
-                                                   type="text" name="viber" value="{$order->viber_num}"
-                                                   autocomplete="off">
-                                            <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
-                                                   name="viber_same"
-                                                   {if isset($order) && $order->viber_num == $order->phone_mobile}checked{/if}
-                                                   value="1">
-                                            <label>Совпадает с номером мобильного</label>
-                                            <div style="margin-left: 20px" class="btn btn-success" data-user="{$user->id}">
-                                                Подтвердить
-                                            </div><br><br>
-                                            <img class="icon_messag"
-                                                 src="https://img.icons8.com/office/344/whatsapp--v1.png" width="30"
-                                                 height="30">
-                                            <input class="form-control phone_num whatsapp_same"
-                                                   style="width: 450px; margin-left: 25px; {if isset($order) && $order->whatsapp_num == $order->phone_mobile}display: none{/if}"
-                                                   type="text" name="whatsapp" value="{$order->whatsapp_num}"
-                                                   autocomplete="off">
-                                            <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
-                                                   name="whatsapp_same"
-                                                   {if isset($order) && $order->whatsapp_num == $order->phone_mobile}checked{/if}
-                                                   value="1">
-                                            <label>Совпадает с номером мобильного</label>
-                                            <div style="margin-left: 20px" class="btn btn-success" data-user="{$user->id}">
-                                                Подтвердить
-                                            </div><br><br>
-                                            <img class="icon_messag"
-                                                 src="https://img.icons8.com/color/344/telegram-app--v1.png" width="30"
-                                                 height="30">
-                                            <input class="form-control phone_num telegram_same"
-                                                   style="width: 450px; margin-left: 25px; {if isset($order) && $order->telegram_num == $order->phone_mobile}display: none{/if}"
-                                                   type="text" name="telegram" value="{$order->telegram_num}"
-                                                   autocomplete="off">
-                                            <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
-                                                   name="telegram_same"
-                                                   {if isset($order) && $order->telegram_num == $order->phone_mobile}checked{/if}
-                                                   value="1">
-                                            <label>Совпадает с номером мобильного</label>
-                                            <div style="margin-left: 20px" class="btn btn-success" data-user="{$user->id}">
-                                                Подтвердить
-                                            </div><br><br>
+                                        <div style="width: 100%; display: flex; flex-direction: column">
+                                            <div>
+                                                <img class="icon_messag"
+                                                     src="https://img.icons8.com/ios-glyphs/344/viber.png" width="30"
+                                                     height="30">
+                                                <input class="form-control phone_num viber_same"
+                                                       style="width: 450px; margin-left: 25px; {if isset($order) && $order->viber_num == $order->phone_mobile}display: none{/if}"
+                                                       type="text" name="viber" value="{$order->viber_num}"
+                                                       autocomplete="off">
+                                                <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
+                                                       name="viber_same"
+                                                       {if isset($order) && $order->viber_num == $order->phone_mobile}checked{/if}
+                                                       value="1">
+                                                <label>Совпадает с номером мобильного</label>
+                                                <div style="margin-left: 20px" class="btn btn-success confirm_viber"
+                                                     data-user="{$user->id}">
+                                                    Подтвердить
+                                                </div>
+                                                <br><br>
+                                            </div>
+                                            <div>
+                                                <img class="icon_messag"
+                                                     src="https://img.icons8.com/office/344/whatsapp--v1.png" width="30"
+                                                     height="30">
+                                                <input class="form-control phone_num whatsapp_same"
+                                                       style="width: 450px; margin-left: 25px; {if isset($order) && $order->whatsapp_num == $order->phone_mobile}display: none{/if}"
+                                                       type="text" name="whatsapp" value="{$order->whatsapp_num}"
+                                                       autocomplete="off">
+                                                <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
+                                                       name="whatsapp_same"
+                                                       {if isset($order) && $order->whatsapp_num == $order->phone_mobile}checked{/if}
+                                                       value="1">
+                                                <label>Совпадает с номером мобильного</label><br><br>
+                                            </div>
+                                            <div>
+                                                <img class="icon_messag"
+                                                     src="https://img.icons8.com/color/344/telegram-app--v1.png" width="30"
+                                                     height="30">
+                                                <input class="form-control phone_num telegram_same"
+                                                       style="width: 450px; margin-left: 25px; {if isset($order) && $order->telegram_num == $order->phone_mobile}display: none{/if}"
+                                                       type="text" name="telegram" value="{$order->telegram_num}"
+                                                       autocomplete="off">
+                                                <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
+                                                       name="telegram_same"
+                                                       {if isset($order) && $order->telegram_num == $order->phone_mobile}checked{/if}
+                                                       value="1">
+                                                <label>Совпадает с номером мобильного</label>
+                                                <div style="margin-left: 20px" class="btn btn-success confirm_telegram"
+                                                     data-user="{$user->id}">
+                                                    Подтвердить
+                                                </div>
+                                                <br><br>
+                                            </div>
                                         </div>
                                         <br>
                                         <h4>Основные каналы связи</h4>

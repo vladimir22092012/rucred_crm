@@ -67,6 +67,7 @@
 
                 form_data.append('file', e.target.files[0]);
                 form_data.append('company_id', $(this).attr('data-company'));
+                form_data.append('date_attestation', $('.date_attestation').val());
 
                 switch (doc_type) {
                     case 'attestations':
@@ -326,10 +327,16 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Проверки сотрудников</h4>
+                        <div style="display: flex">
+                            <h4 class="card-title" style="margin-top: 8px">Проверки сотрудников от </h4>
+                            <input class="form-control daterange date_attestation" style="margin-left: 25px; width: 200px">
+                        </div><br>
                         <p class="card-text">В этот раздел можно импортировать проверочные списки сотрудников компании
                             для проверки
                             при одобрении заявки на кредит</p>
+                        <div style="color: darkred;">
+                            <strong>Внимание! Перед загрузкой необходимо удалить все заголовки столбцов, до самих данных, которые необходимо загрузить.</strong>
+                        </div><br>
                         <div>
                             <form class="dropzone import_workers_list_form" id="file-employers-upload">
                                 <label>Выберите тип документа: </label>
@@ -421,7 +428,6 @@
             </div>
         </div>
     </div>
-
     {include file='footer.tpl'}
 
 </div>

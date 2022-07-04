@@ -213,25 +213,25 @@ class NeworderController extends Controller
         if (!empty($credits_story)) {
             foreach ($credits_story as $credit) {
                 $credit['credits_month_pay'] = preg_replace("/[^,.0-9]/", '', $credit['credits_month_pay']);
-                if(!empty($credit['credits_month_pay']))
+                if (!empty($credit['credits_month_pay']))
                     $sum_credits_pay += $credit['credits_month_pay'];
             }
 
-            $all_sum_credits+= $sum_credits_pay;
+            $all_sum_credits += $sum_credits_pay;
         }
 
-        if(!empty($cards_story)){
+        if (!empty($cards_story)) {
             foreach ($cards_story as $card) {
                 $card['cards_rest_sum'] = preg_replace("/[^,.0-9]/", '', $card['cards_rest_sum']);
-                if(!empty($credit['cards_rest_sum']))
-                    $sum_cards_pay+= $card['cards_rest_sum'];
+                if (!empty($credit['cards_rest_sum']))
+                    $sum_cards_pay += $card['cards_rest_sum'];
             }
 
             $sum_cards_pay *= 0.1;
-            $all_sum_credits+= $sum_cards_pay;
+            $all_sum_credits += $sum_cards_pay;
         }
 
-        if($all_sum_credits != 0)
+        if ($all_sum_credits != 0)
             $user['pdn'] = round(($user['income'] / $all_sum_credits) * 100, 2);
         else
             $user['pdn'] = 0;
@@ -1137,5 +1137,12 @@ class NeworderController extends Controller
             echo json_encode($annoouitet_pay);
             exit;
         }
+    }
+
+    private function action_confirm_messengers()
+    {
+        $type = $this->request->post('type');
+        $phone = $this->request->post('phone');
+        $user_id = $this->request->post('user_id');
     }
 }
