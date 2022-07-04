@@ -21,7 +21,7 @@ class TelegramUsers extends Core
         UPDATE s_telegram_users
         SET ?%
         WHERE token = ?
-        ", $user['token']);
+        ", $user, $user['token']);
 
         $this->db->query($query);
         $id = $this->db->insert_id();

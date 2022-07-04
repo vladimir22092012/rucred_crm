@@ -30,8 +30,6 @@ class TelegramController extends Controller
                     ];
 
                 $this->TelegramUsers->update($user);
-
-                return $chat_id;
             }
         }
     }
