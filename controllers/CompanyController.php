@@ -271,16 +271,64 @@ class CompanyController extends Controller
 
         $file = $this->request->files('file');
 
+        if (empty($file)) {
+            echo json_encode(['error' => 1, 'text' => 'Файл не был загружен']);
+            exit;
+        }
+
+        $fio = $this->request->post('fio');
+        $income = $this->request->post('income');
+        $avanse = $this->request->post('avanse');
+        $payed = $this->request->post('payed');
+        $middle = $this->request->post('middle');
+        $saved = $this->request->post('saved');
+        $ndfl = $this->request->post('ndfl');
+
+        if (empty($fio)) {
+            echo json_encode(['error' => 1, 'text' => 'Не заполена колонка ФИО']);
+            exit;
+        }
+        if (empty($income)) {
+            echo json_encode(['error' => 1, 'text' => 'Не заполена колонка Всего начислено']);
+            exit;
+        }
+
+        if (empty($avanse)) {
+            echo json_encode(['error' => 1, 'text' => 'Не заполена колонка Выплата аванса']);
+            exit;
+        }
+
+        if (empty($payed)) {
+            echo json_encode(['error' => 1, 'text' => 'Не заполена колонка Выплата зарплаты']);
+            exit;
+        }
+
+        if (empty($middle)) {
+            echo json_encode(['error' => 1, 'text' => 'Не заполена колонка Выплата в межрасчетный период']);
+            exit;
+        }
+
+        if (empty($saved)) {
+            echo json_encode(['error' => 1, 'text' => 'Не заполена колонка Всего удержано']);
+            exit;
+        }
+
+        if (empty($ndfl)) {
+            echo json_encode(['error' => 1, 'text' => 'Не заполена колонка НФДЛ']);
+            exit;
+        }
+
         $inputFileType = \PhpOffice\PhpSpreadsheet\IOFactory::identify($file['tmp_name']);
         $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader($inputFileType);
         $spreadsheet = $reader->load($file['tmp_name']);
 
-        $fio_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('fio'));
-        $income_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('income'));
-        $avanse_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('avanse'));
-        $payed_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('payed'));
-        $middle_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('middle'));
-        $ndfl_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('ndfl'));
+        $fio_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($fio);
+        $income_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($income);
+        $avanse_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($avanse);
+        $payed_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($payed);
+        $middle_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($middle);
+        $saved_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($saved);
+        $ndfl_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($ndfl);
 
         $indexes = [
             'fio' => $fio_column,
@@ -288,6 +336,7 @@ class CompanyController extends Controller
             'avanse' => $avanse_column,
             'payed' => $payed_column,
             'middle' => $middle_column,
+            'saved' => $saved_column,
             'ndfl' => $ndfl_column
         ];
 
@@ -298,7 +347,7 @@ class CompanyController extends Controller
         $clients = [];
 
         for ($row = $first_row; $row <= $last_row; ++$row) {
-            foreach ($indexes as $key => $index){
+            foreach ($indexes as $key => $index) {
                 $value = $active_sheet->getCellByColumnAndRow($index, $row)->getValue();
 
                 $clients[$row][$key] = $value;
@@ -307,7 +356,7 @@ class CompanyController extends Controller
             }
         }
 
-        foreach ($clients as $client){
+        foreach ($clients as $client) {
             $this->PaymentsAttestation->add($client);
         }
 
@@ -321,15 +370,53 @@ class CompanyController extends Controller
 
         $file = $this->request->files('file');
 
+        if (empty($file)) {
+            echo json_encode(['error' => 1, 'text' => 'Файл не был загружен']);
+            exit;
+        }
+
         $inputFileType = \PhpOffice\PhpSpreadsheet\IOFactory::identify($file['tmp_name']);
+
         $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader($inputFileType);
         $spreadsheet = $reader->load($file['tmp_name']);
 
-        $fio_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('fio'));
-        $created_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('created'));
-        $creator_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('creator'));
-        $category_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('category'));
-        $birth_date_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->request->post('birth_date'));
+        $fio = $this->request->post('fio');
+        $created = $this->request->post('created');
+        $creator = $this->request->post('creator');
+        $category = $this->request->post('category');
+        $birth_date = $this->request->post('birth_date');
+
+        if (empty($fio)) {
+            echo json_encode(['error' => 1, 'text' => 'Не заполена колонка ФИО']);
+            exit;
+        }
+        if (empty($created)) {
+            echo json_encode(['error' => 1, 'text' => 'Не заполена колонка Дата действия']);
+            exit;
+        }
+
+        if (empty($creator)) {
+            echo json_encode(['error' => 1, 'text' => 'Не заполена колонка Кем выдано']);
+            exit;
+        }
+
+        if (empty($category)) {
+            echo json_encode(['error' => 1, 'text' => 'Не заполена колонка Категория']);
+            exit;
+        }
+
+        if (empty($birth_date)) {
+            echo json_encode(['error' => 1, 'text' => 'Не заполена колонка Дата рождения']);
+            exit;
+        }
+
+
+
+        $fio_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($fio);
+        $created_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($created);
+        $creator_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($creator);
+        $category_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($category);
+        $birth_date_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($birth_date);
 
         $indexes = [
             'fio' => $fio_column,
@@ -346,19 +433,19 @@ class CompanyController extends Controller
         $clients = [];
 
         for ($row = $first_row; $row <= $last_row; ++$row) {
-            foreach ($indexes as $key => $index){
+            foreach ($indexes as $key => $index) {
                 $value = $active_sheet->getCellByColumnAndRow($index, $row)->getValue();
 
-                if(in_array($key, ['created', 'birth_date']))
+                if (in_array($key, ['created', 'birth_date']))
                     $value = date('Y-m-d', strtotime($value));
 
-                if($key == 'fio')
+                if ($key == 'fio')
                     $value = mb_convert_encoding($value, 'UTF-8');
 
                 $clients[$row][$key] = $value;
                 $clients[$row]['company_id'] = $company_id;
 
-                if($key == 'creator' && empty($value)){
+                if ($key == 'creator' && empty($value)) {
                     unset($clients[$row]);
                     break;
                 }
@@ -366,7 +453,7 @@ class CompanyController extends Controller
             }
         }
 
-        foreach ($clients as $client){
+        foreach ($clients as $client) {
             $this->CompanyChecks->add($client);
         }
 

@@ -60,13 +60,13 @@
                 $('.import_workers_list').val('import_workers_list_' + selected_option);
             });
 
-            $(document).on('change', '#upload_file', function (e) {
+            $(document).on('click', '.send_file', function (e) {
                 let form_data = new FormData();
 
                 let doc_type = $('.select_document_type').val();
 
-                form_data.append('file', e.target.files[0]);
-                form_data.append('company_id', $(this).attr('data-company'));
+                form_data.append('file', $('#upload_file')[0].files[0]);
+                form_data.append('company_id', $('#upload_file').attr('data-company'));
                 form_data.append('date_attestation', $('.date_attestation').val());
 
                 switch (doc_type) {
@@ -84,6 +84,7 @@
                         form_data.append('fio',        $('.show_payments').find('input[name="fio"]').val());
                         form_data.append('income',     $('input[name="income"]').val());
                         form_data.append('avanse',     $('input[name="avanse"]').val());
+                        form_data.append('saved',      $('input[name="saved"]').val());
                         form_data.append('payed',      $('input[name="payed"]').val());
                         form_data.append('middle',     $('input[name="middle"]').val());
                         form_data.append('ndfl',       $('input[name="ndfl"]').val());
@@ -96,13 +97,23 @@
 
                 $.ajax({
                     data: form_data,
+                    dataType: 'JSON',
                     type: 'POST',
                     processData: false,
                     contentType: false,
-                    success: function () {
-                        Swal.fire({
-                            title: 'Успешно'
-                        });
+                    success: function (resp) {
+                        console.log(resp);
+
+                        if(resp['error']){
+                            Swal.fire({
+                                title: resp['text'],
+                                confirmButtonText: 'ОК',
+                            });
+                        }else{
+                            Swal.fire({
+                                title: 'Успешно'
+                            });
+                        }
                     }
                 });
             });
@@ -348,6 +359,7 @@
                                 </select>
                                 <input type="file" id="upload_file" data-company="{$company->com_id}"
                                        style="margin-left: 25px">
+                                <div class="btn btn-outline-success float-right send_file">Отправить</div>
                                 <div class="show_attestations">
                                     <h3>Поля для документов об аттестации</h3>
                                     <div>
@@ -361,19 +373,19 @@
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <input class="form-control" name="fio">
+                                                    <input class="form-control" name="fio" placeholder="Например, A">
                                                 </td>
                                                 <td>
-                                                    <input class="form-control" name="created">
+                                                    <input class="form-control" name="created" placeholder="Например, B">
                                                 </td>
                                                 <td>
-                                                    <input class="form-control" name="creator">
+                                                    <input class="form-control" name="creator" placeholder="Например, C">
                                                 </td>
                                                 <td>
-                                                    <input class="form-control" name="category">
+                                                    <input class="form-control" name="category" placeholder="Например, D">
                                                 </td>
                                                 <td>
-                                                    <input class="form-control" name="birth_date">
+                                                    <input class="form-control" name="birth_date" placeholder="Например, E">
                                                 </td>
                                             </tr>
                                         </table>
@@ -394,25 +406,25 @@
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <input class="form-control" name="fio">
+                                                    <input class="form-control" name="fio" placeholder="Например, A">
                                                 </td>
                                                 <td>
-                                                    <input class="form-control" name="income">
+                                                    <input class="form-control" name="income" placeholder="Например, B">
                                                 </td>
                                                 <td>
-                                                    <input class="form-control" name="saved">
+                                                    <input class="form-control" name="saved" placeholder="Например, C">
                                                 </td>
                                                 <td>
-                                                    <input class="form-control" name="avanse">
+                                                    <input class="form-control" name="avanse" placeholder="Например, D">
                                                 </td>
                                                 <td>
-                                                    <input class="form-control" name="payed">
+                                                    <input class="form-control" name="payed" placeholder="Например, E">
                                                 </td>
                                                 <td>
-                                                    <input class="form-control" name="middle">
+                                                    <input class="form-control" name="middle" placeholder="Например, F">
                                                 </td>
                                                 <td>
-                                                    <input class="form-control" name="ndfl">
+                                                    <input class="form-control" name="ndfl" placeholder="Например, G">
                                                 </td>
                                             </tr>
                                         </table>
