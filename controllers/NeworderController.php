@@ -1163,6 +1163,7 @@ class NeworderController extends Controller
                     $user =
                         [
                             'user_id' => $user_id,
+                            'token' => $user_token,
                             'is_manager' => 0
                         ];
 
