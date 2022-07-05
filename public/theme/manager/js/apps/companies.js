@@ -17,11 +17,11 @@ $(function () {
     });
 
     $('.add_settlement').on('click', function () {
-       $('#add_settlement').modal();
+        $('#add_settlement').modal();
     });
 
     $('.add_document').on('click', function () {
-       $('#add_document').modal();
+        $('#add_document').modal();
     });
 
     $('.action-block-company').on('change', function () {
@@ -31,7 +31,7 @@ $(function () {
         let that = $(this);
         $.ajax({
             method: 'POST',
-            data:{
+            data: {
                 action: 'change_blocked_flag',
                 company_id: company_id,
                 value: value
@@ -114,10 +114,9 @@ $(function () {
 
         let group_number = $(this).val();
 
-        if(group_number != 'none')
-        {
-            $('tr[class="companies"]').not('#'+group_number+'').hide();
-            $('tr[class="companies"][id="'+group_number+'"]').show();
+        if (group_number != 'none') {
+            $('tr[class="companies"]').not('#' + group_number + '').hide();
+            $('tr[class="companies"][id="' + group_number + '"]').show();
         }
         else
             $('tr[class="companies"]').show();
@@ -139,7 +138,7 @@ $(function () {
             success: function (branch) {
                 $('input[class="edit_branch_form"][name="branch_id"]').val(branch['id']);
                 $('input[class="form-control edit_branch_form"][name="name"]').val(branch['name']);
-                $('select[class="form-control edit_branch_form"] option[value="'+branch['payday']+'"]').prop('selected', true);
+                $('select[class="form-control edit_branch_form"] option[value="' + branch['payday'] + '"]').prop('selected', true);
                 $('input[class="form-control edit_branch_form"][name="fio"]').val(branch['fio']);
                 $('input[class="form-control edit_branch_form"][name="phone"]').val(branch['phone']);
             }
@@ -252,7 +251,7 @@ $(function () {
             $('#bik_settlement').val(suggestion.data.bic);
         }
     });
-    
+
     $('.action_add_doc').on('click', function () {
 
         let file = $('#doc')[0].files;
@@ -269,4 +268,34 @@ $(function () {
             }
         })
     });
+
+    $(document).on('click', '.wrong_info', function (e) {
+        e.preventDefault();
+
+        let company_id = $(this).attr('data-company');
+        let group_id = $(this).attr('data-group');
+
+        $.ajax({
+            method: 'POST',
+            dataType: 'JSON',
+            data: {
+                action: 'wrong_info',
+                company_id: company_id,
+                group_id: group_id
+            },
+            success: function (resp) {
+                if (resp['error']) {
+                    Swal.fire({
+                        title: resp['text'],
+                        confirmButtonText: 'ОК'
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Тикет создан успешно',
+                        confirmButtonText: 'ОК'
+                    });
+                }
+            }
+        });
+    })
 });

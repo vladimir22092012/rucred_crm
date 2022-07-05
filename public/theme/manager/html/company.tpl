@@ -177,42 +177,48 @@
                                                        class="btn btn-outline-danger action-delete-company button-fixed"
                                                        value="Удалить компанию"></th>
                                         {/if}
+                                        <th>
+                                            <div data-company="{$company->com_id}" data-group="{$company->gr_id}"
+                                                 class="btn btn-outline-warning wrong_info" style="width: 200px">
+                                                Сообщить о неточности
+                                            </div>
+                                        </th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr>
                                         <td>Наименование компании</td>
                                         <td>{$company->gr_number}{$company->com_number}</td>
-                                        <td colspan="5">{$company->com_name}</td>
+                                        <td colspan="7">{$company->com_name}</td>
                                     </tr>
                                     <tr>
                                         <td>Позиция</td>
                                         <td>{$company->gr_number}</td>
-                                        <td colspan="5">{$company->gr_name}</td>
+                                        <td colspan="7">{$company->gr_name}</td>
                                     </tr>
                                     <tr>
                                         <td>ИНН</td>
-                                        <td colspan="6">{$company->inn}</td>
+                                        <td colspan="7">{$company->inn}</td>
                                     </tr>
                                     <tr>
                                         <td>ОГРН</td>
-                                        <td colspan="6">{$company->ogrn}</td>
+                                        <td colspan="7">{$company->ogrn}</td>
                                     </tr>
                                     <tr>
                                         <td>КПП</td>
-                                        <td colspan="6">{$company->kpp}</td>
+                                        <td colspan="7">{$company->kpp}</td>
                                     </tr>
                                     <tr>
                                         <td>Юридический адрес</td>
-                                        <td colspan="6">{$company->jur_address}</td>
+                                        <td colspan="7">{$company->jur_address}</td>
                                     </tr>
                                     <tr>
                                         <td>Адрес местонахождения</td>
-                                        <td colspan="6">{$company->phys_address}</td>
+                                        <td colspan="7">{$company->phys_address}</td>
                                     </tr>
                                     <tr>
                                         <td>Руководитель</td>
-                                        <td colspan="6">{$company->eio_position} {$company->eio_fio}</td>
+                                        <td colspan="7">{$company->eio_position} {$company->eio_fio}</td>
                                     </tr>
                                     <tr>
                                         <td {if !empty($docs)}rowspan="{count($docs)+1}"{/if}>Документы компании</td>

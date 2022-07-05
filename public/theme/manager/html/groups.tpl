@@ -12,11 +12,15 @@
     <script src="theme/manager/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     <script src="theme/manager/assets/plugins/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="theme/manager/assets/plugins/datatables.net-bs4/js/dataTables.responsive.min.js"></script>
-    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/companies.js"></script>
     <script>
         $(function () {
 
+            $(document).on('click', '.add_group', function () {
+               $('#add_group_modal').modal();
+            });
+
             $('.to_edit').on('click', function () {
+                $('.to_edit').hide();
                 $('.group_name_front').hide();
                 $('.group_name_edit').show();
             });
@@ -24,6 +28,7 @@
             $('.cancel_edit').on('click', function () {
                 $('.group_name_edit').hide();
                 $('.group_name_front').show();
+                $('.to_edit').show();
             });
 
             $('.save_edit').on('click', function (e) {
@@ -105,7 +110,7 @@
             </div>
             {if !in_array($manager->role,['employer', 'underwriter'])}
                 <div class="col-md-6 col-4 align-self-center">
-                    <button class="btn float-right hidden-sm-down btn-success add-company-modal">
+                    <button class="btn float-right hidden-sm-down btn-success add_group">
                         <i class="mdi mdi-plus-circle"></i> Добавить
                     </button>
                 </div>
@@ -124,8 +129,8 @@
                                 <table id="config-table" class="table display table-striped dataTable">
                                     <thead>
                                     <tr>
+                                        <th class="">Номер группы</th>
                                         <th class="">Наименование группы</th>
-                                        <th class="">Номер</th>
                                         <th></th>
                                     </tr>
                                     </thead>
@@ -133,9 +138,8 @@
                                     {if !empty($groups)}
                                         {foreach $groups as $group}
                                             <tr>
-                                                <td class="group_name_front">
-                                                    <input type="button" class="btn btn-outline-info {if !in_array($manager->role,['employer', 'underwriter'])}to_edit{/if}"
-                                                           value="{$group->name}"></td>
+                                                <td>{$group->number}</td>
+                                                <td class="group_name_front">{$group->name}</td>
                                                 <td class="group_name_edit" style="display: none">
                                                     <input type="text" class="form-control group_name"
                                                            style="width: 300px" value="{$group->name}">
@@ -145,15 +149,20 @@
                                                     <input type="button" class="btn btn-outline-danger cancel_edit"
                                                            value="Отменить">
                                                 </td>
-                                                <td>{$group->number}</td>
-                                                <td>{if !in_array($manager->role,['employer', 'underwriter'])}
+                                                {if !in_array($manager->role,['employer', 'underwriter'])}
+                                                    <td>
+                                                        <div class="btn btn-outline-warning to_edit">
+                                                            Редактировать
+                                                        </div>
+                                                    </td>
+                                                    <td>
                                                         {if $group->number != '00'}<input type="button"
                                                                                           data-group="{$group->id}"
                                                                                           class="btn btn-outline-danger delete_group"
                                                                                           value="Удалить">
                                                         {/if}
-                                                    {/if}
-                                                </td>
+                                                    </td>
+                                                {/if}
                                             </tr>
                                         {/foreach}
                                     {/if}
@@ -173,7 +182,7 @@
 
 </div>
 
-<div id="modal_add_item" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+<div id="add_group_modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
      aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">

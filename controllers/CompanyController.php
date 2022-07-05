@@ -64,6 +64,10 @@ class CompanyController extends Controller
             case 'add_document':
                 $this->action_add_document();
                 break;
+
+            case 'wrong_info':
+                $this->action_wrong_info();
+                break;
         endswitch;
 
         $company_id = $this->request->get('id');
@@ -411,7 +415,6 @@ class CompanyController extends Controller
         }
 
 
-
         $fio_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($fio);
         $created_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($created);
         $creator_column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($creator);
@@ -483,5 +486,39 @@ class CompanyController extends Controller
             ];
 
         $this->Docs->add_doc($document);
+    }
+
+    private function action_wrong_info()
+    {
+        $company_id = $this->request->post('company_id');
+        $group_id = $this->request->post('group_id');
+
+        $company = $this->companies->get_company($company_id);
+
+        $ticket =
+            [
+                'group_id' => $group_id,
+                'company_id' => $company_id,
+                'client_lastname' => '',
+                'client_firstname' => '',
+                'client_patronymic' => '',
+                'creator' => $this->manager->id,
+                'text' => 'Проверьте информацию по компании '. $company->name,
+                'head' => 'Недостоверность информации по компании'
+            ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+
+        $message =
+            [
+                'message' => 'Проверьте информацию по компании '. $company->name,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id
+            ];
+
+        $this->TicketMessages->add_message($message);
+
+        echo json_encode(['success' => 1]);
+        exit;
     }
 }
