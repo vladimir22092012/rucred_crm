@@ -694,6 +694,7 @@
 
                 $('.confirm_asp').fadeIn();
                 $('.code_asp').fadeIn();
+                $(this).text('Отправить смс повторно');
 
 
                 send_asp(phone, user, order);
@@ -2974,7 +2975,7 @@
                                                             <div type="button" data-user="{$order->user_id}"
                                                                  data-phone="{$order->phone_mobile}"
                                                                  data-order="{$order->order_id}"
-                                                                 style="margin-left: 15px; width: 250px"
+                                                                 style="margin-left: 15px; width: 370px"
                                                                  class="btn btn-primary send_asp_code">
                                                                 Отправить смс
                                                             </div>

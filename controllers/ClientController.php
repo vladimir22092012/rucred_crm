@@ -214,7 +214,7 @@ class ClientController extends Controller
             $group_name = 'Отсутствует группа';
 
         if (!isset($branch_name))
-            $branch_name = 'Отсутствует филиал';
+            $branch_name = 'По умолчанию';
 
         if (!isset($company_name))
             $company_name = 'Отсутствует компания';
