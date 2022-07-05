@@ -43,8 +43,8 @@ class CommunicationsThemesController extends Controller
         $number = $this->request->post('number');
         $id = $this->request->post('id');
 
-        $name_check = $this->CommunicationsThemes->gets(['name' => $name]);
-        $number_check = $this->CommunicationsThemes->gets(['number' => $number]);
+        $name_check = $this->CommunicationsThemes->gets(['name' => $name, 'id' => $id]);
+        $number_check = $this->CommunicationsThemes->gets(['number' => $number, 'id' => $id]);
 
         if (!empty($name_check)) {
             echo json_encode(['error' => 'Такая тема уже есть']);
@@ -53,7 +53,7 @@ class CommunicationsThemesController extends Controller
             echo json_encode(['error' => 'Такой номер уже есть']);
             exit;
         } else {
-            $this->CommunicationsThemes->update($id, ['name' => $name]);
+            $this->CommunicationsThemes->update($id, ['name' => $name, 'number' => $number]);
             echo json_encode(['success' => 1]);
             exit;
         }

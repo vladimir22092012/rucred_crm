@@ -31,6 +31,7 @@ class CommunicationsThemes extends Core
     {
         $name_filter = '';
         $number_filter = '';
+        $unique_filter = '';
 
         if(isset($filter['name']))
             $name_filter = $this->db->placehold("AND name = ?", $filter['name']);
@@ -38,12 +39,16 @@ class CommunicationsThemes extends Core
         if(isset($filter['number']))
             $name_filter = $this->db->placehold("AND number = ?", $filter['number']);
 
+        if(isset($filter['id']))
+            $unique_filter = $this->db->placehold("AND id != ?", $filter['id']);
+
         $query = $this->db->placehold("
         SELECT * 
         FROM s_communications_themes
         WHERE 1
         $name_filter
         $number_filter
+        $unique_filter
         ");
 
         $this->db->query($query);
