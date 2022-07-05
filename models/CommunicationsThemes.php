@@ -30,15 +30,20 @@ class CommunicationsThemes extends Core
     public function gets($filter = array())
     {
         $name_filter = '';
+        $number_filter = '';
 
         if(isset($filter['name']))
             $name_filter = $this->db->placehold("AND name = ?", $filter['name']);
+
+        if(isset($filter['number']))
+            $name_filter = $this->db->placehold("AND number = ?", $filter['number']);
 
         $query = $this->db->placehold("
         SELECT * 
         FROM s_communications_themes
         WHERE 1
         $name_filter
+        $number_filter
         ");
 
         $this->db->query($query);

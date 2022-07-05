@@ -21,15 +21,25 @@
                     e.preventDefault();
 
                     let name = $('input[name="name"]').val();
+                    let number = $('input[name="number"]').val();
 
                     $.ajax({
                         method: 'POST',
+                        dataType: 'JSON',
                         data: {
                             action: 'add_theme',
-                            name: name
+                            name: name,
+                            number: number
                         },
-                        success: function () {
-                            location.reload();
+                        success: function (resp) {
+                            if (resp['error']) {
+                                Swal.fire({
+                                    title: resp['error'],
+                                    confirmButtonText: 'ОК'
+                                });
+                            } else {
+                                location.reload();
+                            }
                         }
                     })
                 });
@@ -51,6 +61,7 @@
                 e.preventDefault();
 
                 let name = $(this).closest('tr').find('input[class="form-control name"]').val();
+                let number = $(this).closest('tr').find('input[class="form-control number"]').val();
                 let id = $(this).attr('data-theme');
 
 
@@ -60,6 +71,7 @@
                     data: {
                         action: 'update_theme',
                         name: name,
+                        number: number,
                         id: id
                     },
                     success: function (resp) {
@@ -141,7 +153,8 @@
                                     <thead>
                                     <tr>
                                         <th class="">ID</th>
-                                        <th class="">Наименование темы</th>
+                                        <th class="">Номер</th>
+                                        <th class="">Наименование</th>
                                         <th></th>
                                     </tr>
                                     </thead>
@@ -150,8 +163,12 @@
                                         {foreach $themes as $theme}
                                             <tr>
                                                 <td>{$theme->id}</td>
+                                                <td class="front">{$theme->number}</td>
                                                 <td class="front">{$theme->name}</td>
                                                 <td class="edit" style="display: none">
+                                                    <input type="text" class="form-control number"
+                                                           style="width: 150px"
+                                                           value="{$theme->number}">
                                                     <input type="text" class="form-control name"
                                                            style="width: 700px" value="{$theme->name}">
                                                     <input type="button" data-theme="{$theme->id}"
@@ -201,8 +218,11 @@
             <div class="modal-body">
                 <div class="alert" style="display:none"></div>
                 <div class="form-group">
-                    <label for="name" class="control-label">Название типа запроса для коммуникационной
-                        панели:</label>
+                    <label for="name" class="control-label">Номер:</label>
+                    <input type="text" class="form-control" name="number" value="">
+                </div>
+                <div class="form-group">
+                    <label for="name" class="control-label">Наименование:</label>
                     <input type="text" class="form-control" name="name" value="">
                 </div>
                 <div class="btn btn-danger " data-dismiss="modal">Отмена</div>

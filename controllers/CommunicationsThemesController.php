@@ -22,21 +22,35 @@ class CommunicationsThemesController extends Controller
     private function action_add_theme()
     {
         $name = $this->request->post('name');
+        $number = $this->request->post('number');
 
-        $this->CommunicationsThemes->add(['name' => $name]);
+        $number_check = $this->CommunicationsThemes->gets(['number' => $number]);
 
-        exit;
+        if (!empty($number_check)) {
+            echo json_encode(['error' => 'Такой номер уже есть']);
+            exit;
+
+        } else {
+            echo json_encode(['success' => 1]);
+            $this->CommunicationsThemes->add(['name' => $name]);
+            exit;
+        }
     }
 
     private function action_update_theme()
     {
         $name = $this->request->post('name');
+        $number = $this->request->post('number');
         $id = $this->request->post('id');
 
-        $themes = $this->CommunicationsThemes->gets(['name' => $name]);
+        $name_check = $this->CommunicationsThemes->gets(['name' => $name]);
+        $number_check = $this->CommunicationsThemes->gets(['number' => $number]);
 
-        if (!empty($themes)) {
+        if (!empty($name_check)) {
             echo json_encode(['error' => 'Такая тема уже есть']);
+            exit;
+        } elseif (!empty($number_check)) {
+            echo json_encode(['error' => 'Такой номер уже есть']);
             exit;
         } else {
             $this->CommunicationsThemes->update($id, ['name' => $name]);
