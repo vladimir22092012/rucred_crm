@@ -50,7 +50,7 @@
             $('.save_edit').on('click', function (e) {
                 e.preventDefault();
 
-                let name = $('input[class="form-control name"]').val();
+                let name = $(this).closest('tr').find('input[class="form-control name"]').val();
                 let id = $(this).attr('data-theme');
 
 
