@@ -20,7 +20,7 @@ class GroupsController extends Controller
 
         $filter = array();
 
-        if($this->manager->role == 'employer')
+        if ($this->manager->role == 'employer')
             $filter['employer'] = $this->manager->group_id;
 
         $groups = $this->Groups->get_groups($filter);
@@ -44,7 +44,7 @@ class GroupsController extends Controller
         if ($last_number == false) {
             $last_number = '00';
         }
-        if ($last_number &&  $last_number > 10) {
+        if ($last_number && $last_number > 10) {
             $last_number += 1;
         }
 
@@ -76,13 +76,25 @@ class GroupsController extends Controller
     {
         $group_id = $this->request->post('group_id', 'integer');
         $group_name = $this->request->post('group_name');
+        $number = $this->request->post('number');
 
-        $group =
-            [
-              'name' => $group_name
-            ];
+        $groups = $this->groups->get_groups(['number' => $number]);
 
-        $this->Groups->update_group($group_id, $group);
+        if(!empty($groups)){
+            echo json_encode(['error' => 'Такой номер уже есть']);
+            exit;
+        }else{
+            $group =
+                [
+                    'name' => $group_name,
+                    'number' => $number
+                ];
+
+            $this->Groups->update_group($group_id, $group);
+
+            echo json_encode(['success' => 1]);
+            exit;
+        }
     }
 
     private function action_delete_group()

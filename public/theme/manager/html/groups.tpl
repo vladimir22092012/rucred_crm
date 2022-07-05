@@ -21,13 +21,13 @@
 
             $('.to_edit').on('click', function () {
                 $('.to_edit').hide();
-                $('.group_name_front').hide();
-                $('.group_name_edit').show();
-            });
+                $('.group_front').hide();
+                $('.group_edit').show();
+        });
 
             $('.cancel_edit').on('click', function () {
-                $('.group_name_edit').hide();
-                $('.group_name_front').show();
+                $('.group_edit').hide();
+                $('.group_front').show();
                 $('.to_edit').show();
             });
 
@@ -36,17 +36,27 @@
 
                 let group_name = $(this).prev().val();
                 let group_id = $(this).attr('data-group');
+                let number = $(this).prev().prev().val();
 
 
                 $.ajax({
                     method: 'POST',
+                    dataType: 'JSON',
                     data: {
                         action: 'update_group',
                         group_name: group_name,
-                        group_id: group_id
+                        group_id: group_id,
+                        number: number
                     },
                     success: function (resp) {
-                        location.reload();
+                        if(resp['error']){
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'ОК'
+                            });
+                        }else{
+                            location.reload();
+                        }
                     }
                 })
             });
@@ -138,9 +148,11 @@
                                     {if !empty($groups)}
                                         {foreach $groups as $group}
                                             <tr>
-                                                <td>{$group->number}</td>
-                                                <td class="group_name_front">{$group->name}</td>
-                                                <td class="group_name_edit" style="display: none">
+                                                <td class="group_front">{$group->number}</td>
+                                                <td class="group_front">{$group->name}</td>
+                                                <td class="group_edit" style="display: none">
+                                                    <input type="text" class="form-control number"
+                                                           style="width: 300px" value="{$group->number}">
                                                     <input type="text" class="form-control group_name"
                                                            style="width: 300px" value="{$group->name}">
                                                     <input type="button" data-group="{$group->id}"

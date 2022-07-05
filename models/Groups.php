@@ -5,15 +5,20 @@ class Groups extends Core
     public function get_groups($filter = array())
     {
         $employer_filter = '';
+        $number_filter = '';
 
         if(isset($filter['employer']))
             $employer_filter = $this->db->placehold("AND id = ?", (int)$filter['employer']);
+
+        if(isset($filter['number']))
+            $employer_filter = $this->db->placehold("AND number = ?", (int)$filter['number']);
 
         $query = $this->db->placehold("
         SELECT *
         FROM s_groups
         WHERE 1
         $employer_filter
+        $number_filter
         ");
 
         $this->db->query($query);
