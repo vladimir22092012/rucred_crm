@@ -153,7 +153,7 @@
                                                 <td class="front">{$theme->name}</td>
                                                 <td class="edit" style="display: none">
                                                     <input type="text" class="form-control name"
-                                                           style="width: 300px" value="{$theme->name}">
+                                                           style="width: 700px" value="{$theme->name}">
                                                     <input type="button" data-theme="{$theme->id}"
                                                            class="btn btn-outline-success save_edit"
                                                            value="Сохранить">
