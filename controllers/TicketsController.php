@@ -60,7 +60,14 @@ class TicketsController extends Controller
                     $ticket->executor['id'] = $manager->id;
                 }
 
-                $company = $this->Companies->get_company($ticket->creator_company);
+                if($ticket->creator_company)
+                    $company = $this->Companies->get_company($ticket->creator_company);
+                else{
+                    $company = new stdClass();
+                    $company->name = 'Отсутствует';
+                }
+
+
                 $ticket->creator_company_name = $company->name;
             }
 
