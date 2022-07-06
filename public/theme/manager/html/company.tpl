@@ -394,7 +394,7 @@
                             <tbody>
                             {foreach $managers as $manager}
                                 <tr>
-                                    <td>{$manager->id}</td>
+                                    <td>{$manager->login}</td>
                                     <td><a target="_blank" href="/manager/{$manager->id}">{$manager->name}</a></td>
                                     <td>{$label_class="info"}
                                         {if $manager->role == 'developer' || $manager->role == 'technic'}{$label_class="danger"}{/if}
