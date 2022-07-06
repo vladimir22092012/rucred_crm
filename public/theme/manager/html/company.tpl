@@ -385,9 +385,10 @@
                         <table style="width: 100%" class="jsgrid-table table table-striped table-hover">
                             <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Имя</th>
+                                <th>Логин</th>
+                                <th>ФИО</th>
                                 <th>Роль</th>
+                                <th>Срок доступа</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -414,6 +415,7 @@
                                                             Работодатель
                                                         {/if}</span>
                                     </td>
+                                    <td>{$manager->credential_type}</td>
                                 </tr>
                             {/foreach}
                             </tbody>

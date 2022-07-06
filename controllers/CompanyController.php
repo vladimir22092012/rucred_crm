@@ -91,6 +91,21 @@ class CompanyController extends Controller
         }
 
         $managers = $this->managers->get_managers(['id' => $managers_id]);
+
+        foreach ($managers as $manager) {
+
+            $credential = $this->ManagersCredentials->gets(['company_id' => $company_id, 'manager_id' => $manager->id]);
+
+            if(!empty($credential)){
+                if ($credential->type == 'permanently')
+                    $manager->credential_type = 'Постоянный';
+                else
+                    $manager->credential_type = 'Временный по доверенности';
+            }else{
+                $manager->credential_type = 'Нет информации';
+            }
+        }
+
         $this->design->assign('managers', $managers);
 
         $this->design->assign('company', $company);

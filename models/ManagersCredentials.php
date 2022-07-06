@@ -26,15 +26,20 @@ class ManagersCredentials extends Core
     public function gets($filter){
 
         $manager_filter = '';
+        $companies_filter = '';
 
         if(isset($filter['manager_id']))
             $manager_filter = $this->db->placehold("AND manager_id = ?", $filter['manager_id']);
+
+        if(isset($filter['company_id']))
+            $companies_filter = $this->db->placehold("AND company_id = ?", $filter['company_id']);
 
         $query = $this->db->placehold("
             SELECT * 
             FROM s_managers_credentials 
             WHERE 1
             $manager_filter
+            $companies_filter
         ");
 
         $this->db->query($query);
