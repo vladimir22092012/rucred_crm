@@ -932,6 +932,21 @@
                                                 </label></div>
                                         </div>
                                     </div>
+                                    <div class="jsgrid-grid-body">
+                                        <h4>Реестр полномочий</h4>
+                                        <table style="width: 100%" class="jsgrid-table table table-striped table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th>Компания</th>
+                                                <th>Тип полномочий</th>
+                                                <th>Документ основание</th>
+                                                <th>Срок истечения полномочий</th>
+                                                <th><div class="btn btn-outline-success">+</div></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                        </table>
+                                    </div><br><br>
                                     {if in_array($manager->role, ['admin', 'developer'])}
                                         <div class="form-group">
                                             <div class="col-sm-12">
@@ -961,4 +976,42 @@
     <!-- ============================================================== -->
     {include file='footer.tpl'}
     <!-- ============================================================== -->
+</div>
+
+<div id="add_credentials" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Добавить полномочия</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert" style="display:none"></div>
+                <form method="POST" id="add_credentials_form">
+                    <input type="hidden" name="action" value="add_credentials">
+                    <div class="form-group">
+                        <label for="date_doc" class="control-label">Группа:</label>
+                        <input type="text" class="form-control daterange" name="date_doc" id="date_doc" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="control-label">Название документа:</label>
+                        <input type="text" class="form-control" name="name" id="name" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment" class="control-label">Комментарий:</label>
+                        <input type="text" class="form-control" name="comment" id="comment"
+                               value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="doc" class="control-label">Прикрепить документ</label>
+                        <input type="file" class="custom-file-control" name="doc" id="doc" value=""/>
+                    </div>
+                    <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
+                    <input type="button" class="btn btn-success action_add_doc" value="Сохранить">
+                </form>
+            </div>
+        </div>
+    </div>
 </div>

@@ -71,6 +71,8 @@ class TicketsController extends Controller
                 $ticket->creator_company_name = $company->name;
             }
 
+            $themes = $this->CommunicationsThemes->gets();
+            $this->design->assign('themes', $themes);
 
             $this->design->assign('tickets', $tickets);
 
@@ -92,7 +94,7 @@ class TicketsController extends Controller
         $firstname = $this->request->post('firstname');
         $patronymic = $this->request->post('patronymic');
         $text = $this->request->post('text');
-        $head = $this->request->post('head');
+        $theme_id = $this->request->post('theme');
         $manager_id = (int)$this->request->post('manager_id');
         $creator_company = (int)$this->request->post('creator_company');
 
@@ -106,7 +108,7 @@ class TicketsController extends Controller
                 'creator' => $manager_id,
                 'creator_company' => $creator_company,
                 'text' => $text,
-                'head' => $head
+                'theme_id' => $theme_id
             ];
 
         $ticket_id = $this->Tickets->add_ticket($ticket);

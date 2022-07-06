@@ -118,15 +118,29 @@
             -webkit-animation: blink 3s linear infinite;
             animation: blink 3s linear infinite;
         }
+
         @-webkit-keyframes blink {
-            0% { color: rgba(34, 34, 34, 1); }
-            50% { color: rgba(34, 34, 34, 0); }
-            100% { color: rgba(34, 34, 34, 1); }
+            0% {
+                color: rgba(34, 34, 34, 1);
+            }
+            50% {
+                color: rgba(34, 34, 34, 0);
+            }
+            100% {
+                color: rgba(34, 34, 34, 1);
+            }
         }
+
         @keyframes blink {
-            0% { color: rgba(34, 34, 34, 1); }
-            50% { color: rgba(34, 34, 34, 0); }
-            100% { color: rgba(34, 34, 34, 1); }
+            0% {
+                color: rgba(34, 34, 34, 1);
+            }
+            50% {
+                color: rgba(34, 34, 34, 0);
+            }
+            100% {
+                color: rgba(34, 34, 34, 1);
+            }
         }
     </style>
 {/capture}
@@ -218,19 +232,22 @@
                                         </th>
                                         <th style="width: 70px; text-align: center"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 't.created asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 't.created desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 't.created asc'}<a href="{url page=null sort='t.created desc'}">Дата /
+                                            {if $sort == 't.created asc'}<a
+                                                href="{url page=null sort='t.created desc'}">Дата /
                                                 Время</a>
                                             {else}<a href="{url page=null sort='t.created asc'}">Дата / Время</a>{/if}
                                         </th>
                                         <th style="width: 70px; text-align: center"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 't.creator asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 't.creator desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 't.creator asc'}<a href="{url page=null sort='t.creator desc'}">
+                                            {if $sort == 't.creator asc'}<a
+                                                href="{url page=null sort='t.creator desc'}">
                                                     Постановщик</a>
                                             {else}<a href="{url page=null sort='t.creator asc'}">Постановщик</a>{/if}
                                         </th>
                                         <th style="width: 70px; text-align: center"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 't.executor asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 't.executor desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 't.executor asc'}<a href="{url page=null sort='t.executor desc'}">
+                                            {if $sort == 't.executor asc'}<a
+                                                href="{url page=null sort='t.executor desc'}">
                                                     Постановщик</a>
                                             {else}<a href="{url page=null sort='t.executor asc'}">Исполнитель</a>{/if}
                                         </th>
@@ -242,7 +259,8 @@
                                         </th>
                                         <th style="width: 130px; text-align: center"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 't.text asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 't.text desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 't.text asc'}<a href="{url page=null sort='t.text desc'}">Текст</a>
+                                            {if $sort == 't.text asc'}<a href="{url page=null sort='t.text desc'}">
+                                                    Текст</a>
                                             {else}<a href="{url page=null sort='t.text asc'}">Текст</a>{/if}
                                         </th>
                                         <th style="width: 70px; text-align: center"
@@ -292,19 +310,24 @@
                                                         <a href="/ticket/{$ticket->id}/">{$ticket->id}</a><br>
                                                         {if !$archive}
                                                             {if in_array($ticket->status, [0,1])}
-                                                                <small class="label label-warning">Новый</small><br>
+                                                                <small class="label label-warning">Новый</small>
+                                                                <br>
                                                             {/if}
                                                             {if $ticket->status == 2}
-                                                                <small class="label label-info">Принят</small><br>
+                                                                <small class="label label-info">Принят</small>
+                                                                <br>
                                                             {/if}
                                                             {if $ticket->status == 3}
-                                                                <small class="label label-primary">На проверку</small><br>
+                                                                <small class="label label-primary">На проверку</small>
+                                                                <br>
                                                             {/if}
                                                             {if $ticket->status == 4}
-                                                                <small class="label label-success">Исполнено</small><br>
+                                                                <small class="label label-success">Исполнено</small>
+                                                                <br>
                                                             {/if}
                                                             {if $ticket->status == 5}
-                                                                <small class="label label-danger">На доработку</small><br>
+                                                                <small class="label label-danger">На доработку</small>
+                                                                <br>
                                                             {/if}
                                                         {/if}
                                                         {if empty($ticket->ticket_id)}
@@ -431,8 +454,16 @@
                         <input type="text" class="form-control" name="patronymic" id="patronymic" value=""/>
                     </div>
                     <div class="form-group">
-                        <label for="head" class="control-label">Заголовок:</label>
-                        <input type="text" class="form-control" name="head" id="head" value=""/>
+                        <label for="head" class="control-label">Тема тикета:</label>
+                        <select class="form-control" name="theme">
+                            {if !empty($themes)}
+                                {foreach $themes as $theme}
+                                    <option value="{$theme->id}">{$theme->name}</option>
+                                {/foreach}
+                            {else}
+                                <option value="0">Темы отсутствуют</option>
+                            {/if}
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="text" class="control-label">Текст:</label>

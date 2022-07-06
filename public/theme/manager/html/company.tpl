@@ -24,6 +24,38 @@
     <script>
         $(function () {
 
+            let token_dadata = "25c845f063f9f3161487619f630663b2d1e4dcd7";
+
+            $('#inn').suggestions({
+                token: token_dadata,
+                type: "party",
+                minChars: 3,
+                onSelect: function (suggestion) {
+                    $(this).val(suggestion.data.inn);
+                    $('#kpp').val(suggestion.data.kpp);
+                    $('#ogrn').val(suggestion.data.ogrn);
+                    $('#name').val(suggestion.value);
+                    $('#eio_fio').val(suggestion.data.management.name);
+                    $('#eio_position').val(suggestion.data.management.post);
+                    $('#jur_address').val(suggestion.data.address.value);
+                }
+            });
+
+            $('#name').suggestions({
+                token: token_dadata,
+                type: "party",
+                minChars: 3,
+                onSelect: function (suggestion) {
+                    $(this).val(suggestion.value);
+                    $('#kpp').val(suggestion.data.kpp);
+                    $('#ogrn').val(suggestion.data.ogrn);
+                    $('#inn').val(suggestion.data.inn);
+                    $('#eio_fio').val(suggestion.data.management.name);
+                    $('#eio_position').val(suggestion.data.management.post);
+                    $('#jur_address').val(suggestion.data.address.value);
+                }
+            });
+
             $('.searchable').on('change', function (e) {
                 e.preventDefault();
 
@@ -71,23 +103,23 @@
 
                 switch (doc_type) {
                     case 'attestations':
-                        form_data.append('action',     'import_workers_list_attestations');
-                        form_data.append('fio',        $('input[name="fio"]').val());
-                        form_data.append('created',    $('input[name="created"]').val());
-                        form_data.append('creator',    $('input[name="creator"]').val());
-                        form_data.append('category',   $('input[name="category"]').val());
+                        form_data.append('action', 'import_workers_list_attestations');
+                        form_data.append('fio', $('input[name="fio"]').val());
+                        form_data.append('created', $('input[name="created"]').val());
+                        form_data.append('creator', $('input[name="creator"]').val());
+                        form_data.append('category', $('input[name="category"]').val());
                         form_data.append('birth_date', $('input[name="birth_date"]').val());
                         break;
 
                     case 'payments':
                         form_data.append('action', 'import_payments_list');
-                        form_data.append('fio',        $('.show_payments').find('input[name="fio"]').val());
-                        form_data.append('income',     $('input[name="income"]').val());
-                        form_data.append('avanse',     $('input[name="avanse"]').val());
-                        form_data.append('saved',      $('input[name="saved"]').val());
-                        form_data.append('payed',      $('input[name="payed"]').val());
-                        form_data.append('middle',     $('input[name="middle"]').val());
-                        form_data.append('ndfl',       $('input[name="ndfl"]').val());
+                        form_data.append('fio', $('.show_payments').find('input[name="fio"]').val());
+                        form_data.append('income', $('input[name="income"]').val());
+                        form_data.append('avanse', $('input[name="avanse"]').val());
+                        form_data.append('saved', $('input[name="saved"]').val());
+                        form_data.append('payed', $('input[name="payed"]').val());
+                        form_data.append('middle', $('input[name="middle"]').val());
+                        form_data.append('ndfl', $('input[name="ndfl"]').val());
                         break;
 
                     case 'extras':
@@ -104,12 +136,12 @@
                     success: function (resp) {
                         console.log(resp);
 
-                        if(resp['error']){
+                        if (resp['error']) {
                             Swal.fire({
                                 title: resp['text'],
                                 confirmButtonText: 'ОК',
                             });
-                        }else{
+                        } else {
                             Swal.fire({
                                 title: 'Успешно'
                             });
@@ -333,6 +365,11 @@
                                                            class="btn btn-outline-warning edit_branch"
                                                            value="Редактировать">
                                                 </td>
+                                                <td>
+                                                    <div class="btn btn-outline-primary branch_wrong">
+                                                        Сообщить о неточности
+                                                    </div>
+                                                </td>
                                             {/if}
                                         </tr>
                                     {/foreach}
@@ -342,18 +379,64 @@
                         </div>
                     </div>
                 </div>
+                <div class="jsgrid-grid-body">
+                    {if !empty($managers)}
+                        <h4>Пользователи CRM, связанные с данной компанией</h4>
+                        <table style="width: 100%" class="jsgrid-table table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Имя</th>
+                                <th>Роль</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {foreach $managers as $manager}
+                                <tr>
+                                    <td>{$manager->id}</td>
+                                    <td><a target="_blank" href="/manager/{$manager->id}">{$manager->name}</a></td>
+                                    <td>{$label_class="info"}
+                                        {if $manager->role == 'developer' || $manager->role == 'technic'}{$label_class="danger"}{/if}
+                                        {if $manager->role == 'admin' || $manager->role == 'chief_collector' || $m->role == 'team_collector'}{$label_class="success"}{/if}
+                                        {if $manager->role == 'verificator' || $manager->role == 'user'}{$label_class="warning"}{/if}
+                                        {if $manager->role == 'collector'}{$label_class="primary"}{/if}
+
+                                        <span class="label label-{$label_class}">
+                                                        {if $manager->role == 'developer'}
+                                                            Разработчик
+                                                        {elseif $manager->role == 'admin'}
+                                                            Админ
+                                                        {elseif $manager->role == 'middle'}
+                                                            Миддл
+                                                        {elseif $manager->role == 'underwriter'}
+                                                            Андерайтер
+                                                        {elseif $manager->role == 'employer'}
+                                                            Работодатель
+                                                        {/if}</span>
+                                    </td>
+                                </tr>
+                            {/foreach}
+                            </tbody>
+                        </table>
+                    {/if}
+                </div>
+                <br>
                 <div class="card">
                     <div class="card-body">
                         <div style="display: flex">
                             <h4 class="card-title" style="margin-top: 8px">Проверки сотрудников от </h4>
-                            <input class="form-control daterange date_attestation" style="margin-left: 25px; width: 200px">
-                        </div><br>
+                            <input class="form-control daterange date_attestation"
+                                   style="margin-left: 25px; width: 200px">
+                        </div>
+                        <br>
                         <p class="card-text">В этот раздел можно импортировать проверочные списки сотрудников компании
                             для проверки
                             при одобрении заявки на кредит</p>
                         <div style="color: darkred;">
-                            <strong>Внимание! Перед загрузкой необходимо удалить все заголовки столбцов, до самих данных, которые необходимо загрузить.</strong>
-                        </div><br>
+                            <strong>Внимание! Перед загрузкой необходимо удалить все заголовки столбцов, до самих
+                                данных, которые необходимо загрузить.</strong>
+                        </div>
+                        <br>
                         <div>
                             <form class="dropzone import_workers_list_form" id="file-employers-upload">
                                 <label>Выберите тип документа: </label>
@@ -382,16 +465,20 @@
                                                     <input class="form-control" name="fio" placeholder="Например, A">
                                                 </td>
                                                 <td>
-                                                    <input class="form-control" name="created" placeholder="Например, B">
+                                                    <input class="form-control" name="created"
+                                                           placeholder="Например, B">
                                                 </td>
                                                 <td>
-                                                    <input class="form-control" name="creator" placeholder="Например, C">
+                                                    <input class="form-control" name="creator"
+                                                           placeholder="Например, C">
                                                 </td>
                                                 <td>
-                                                    <input class="form-control" name="category" placeholder="Например, D">
+                                                    <input class="form-control" name="category"
+                                                           placeholder="Например, D">
                                                 </td>
                                                 <td>
-                                                    <input class="form-control" name="birth_date" placeholder="Например, E">
+                                                    <input class="form-control" name="birth_date"
+                                                           placeholder="Например, E">
                                                 </td>
                                             </tr>
                                         </table>
@@ -437,9 +524,6 @@
                                     </div>
                                 </div>
                             </form>
-                        </div>
-                        <div>
-
                         </div>
                     </div>
                 </div>
