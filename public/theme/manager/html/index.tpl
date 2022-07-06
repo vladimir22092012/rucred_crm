@@ -313,7 +313,7 @@
                             </li>
                         {/if}
                         {if in_array('managers', $manager->permissions)}
-                            <li class="nav-small-cap">Панель управления</li>
+                            <li class="nav-small-cap">Контрольная панель</li>
                             {if $manager->role != 'employer'}
                                 <li {if in_array($module, ['PaymentsController'])}class="active"{/if}><a
                                             href="payments"><i class="mdi mdi-react"></i>Генерация платежек</a></li>
