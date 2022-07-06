@@ -47,12 +47,10 @@
                 <div class="card-body">
 
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-md-4">                            
                             <h3 class="box-title">
                                 Режим Best2pay
                             </h3>
-                        </div>
-                        <div class="col-md-4">                            
                             <div class="custom-control custom-radio">
                                 <input type="radio" id="b2p_mode_test" name="b2p_mode" value="test" {if $settings->b2p_mode=='test'}checked="checked"{/if} class="custom-control-input">
                                 <label class="custom-control-label" for="b2p_mode_test">Тестовый</label>
@@ -64,8 +62,19 @@
                         
                         </div>
 
-                        <div class="col-md-4">
-                            
+                        <div class="col-md-4">                            
+                            <h3 class="box-title">
+                                Режим ОКБ
+                            </h3>
+                            <div class="custom-control custom-radio">
+                                <input type="radio" id="okb_mode_test" name="okb_mode" value="test" {if $settings->okb_mode=='test'}checked="checked"{/if} class="custom-control-input">
+                                <label class="custom-control-label" for="okb_mode_test">Тестовый</label>
+                            </div>
+                            <div class="custom-control custom-radio">
+                                <input type="radio" id="okb_mode_work" name="okb_mode" value="work" {if $settings->okb_mode=='work'}checked="checked"{/if} class="custom-control-input">
+                                <label class="custom-control-label" for="okb_mode_work">Рабочий</label>
+                            </div>
+                        
                         </div>
                     </div>
 

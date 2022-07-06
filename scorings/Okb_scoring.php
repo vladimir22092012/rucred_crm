@@ -34,7 +34,8 @@ class Okb_scoring extends Core
                     'passport_serial' => str_replace([' ','-'], '', $order->passport_serial),
                     'passport_date' => $order->passport_date,
                 );
-                
+                if ($this->settings->okb_mode == 'test')
+                    $data['is_test'] = 1;
                 
                 $resp = $this->load($data);
                 
