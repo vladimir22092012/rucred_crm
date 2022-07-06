@@ -282,6 +282,8 @@ class CompanyController extends Controller
     private function action_import_payments_list()
     {
         $company_id = $this->request->post('company_id');
+        $date_attestation = $this->request->post('date_attestation');
+        $date_attestation = date('Y-m-d', strtotime($date_attestation));
 
         $file = $this->request->files('file');
 
@@ -366,6 +368,7 @@ class CompanyController extends Controller
 
                 $clients[$row][$key] = $value;
                 $clients[$row]['company_id'] = $company_id;
+                $clients[$row]['date'] = $date_attestation;
 
             }
         }
@@ -381,6 +384,8 @@ class CompanyController extends Controller
     private function action_import_workers_list_attestations()
     {
         $company_id = $this->request->post('company_id');
+        $date_attestation = $this->request->post('date_attestation');
+        $date_attestation = date('Y-m-d', strtotime($date_attestation));
 
         $file = $this->request->files('file');
 
@@ -457,6 +462,7 @@ class CompanyController extends Controller
 
                 $clients[$row][$key] = $value;
                 $clients[$row]['company_id'] = $company_id;
+                $clients[$row]['created'] = $date_attestation;
 
                 if ($key == 'creator' && empty($value)) {
                     unset($clients[$row]);

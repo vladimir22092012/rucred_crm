@@ -16,6 +16,9 @@ class Employer_scoring extends Core
                 $fio = "$order->lastname $order->firstname $order->patronymic";
 
                 $payment_attestation = $this->PaymentsAttestation->get($fio);
+                $date = date('m.Y', strtotime($payment_attestation->date));
+                $income = $payment_attestation->income;
+                $ndfl = $payment_attestation->ndfl;
 
                 if(empty($payment_attestation)){
                     $response = 'Нет сведений по данному клиенту';
@@ -27,7 +30,7 @@ class Employer_scoring extends Core
                         'string_result' => $response
                     );
                 }else{
-                    $response = "за 02.22 сумма $payment_attestation";
+                    $response = "за $date сумма $income($ndfl)";
 
                     $update = array(
                         'status' => 'completed',
