@@ -47,8 +47,7 @@ class Best2payAjax extends Ajax
             {
                 if ($transaction_operation = $this->operations->get_transaction_operation($transaction->id)) 
                 {
-                    $meta_title = 'Оплата уже принята';
-                    $this->design->assign('error', 'Оплата уже принята.');
+                    echo '<h1 style="color:red;line-height:100vh;text-align:center;">Оплата уже принята.</h1>';
                 } 
                 else 
                 {
@@ -72,15 +71,16 @@ class Best2payAjax extends Ajax
                         
                         if ($operation_state == 'APPROVED') 
                         {
-                            $this->transactions->catch_transaction($transaction, $xml);
+                            $this->contracts->conduct_transaction($transaction, $xml);
+
+                            echo '<h1 style="color:green;line-height:100vh;text-align:center;">Оплата успешно принята.</h1>';
                         }
                         else 
                         {
                             $reason_code_description = $this->best2pay->get_reason_code_description($code);
                             $this->design->assign('reason_code_description', $reason_code_description);
 
-                            $meta_title = 'Не удалось оплатить';
-                            $this->design->assign('error', 'При оплате произошла ошибка.');
+                            echo '<h1 style="color:red;line-height:100vh;text-align:center;">Не удалось оплатить.</h1>';
                         }
                         $this->transactions->update_transaction($transaction->id, array(
                             'operation' => $operation,
@@ -97,25 +97,20 @@ class Best2payAjax extends Ajax
                             'operation' => 0,
                             'callback_response' => $callback_response
                         ));
-                        //echo __FILE__.' '.__LINE__.'<br /><pre>';echo(htmlspecialchars($callback_response));echo '</pre><hr />';
-                        $meta_title = 'Не удалось оплатить';
-                        $this->design->assign('error', 'При оплате произошла ошибка. Код ошибки: ' . $error);
-
+                        echo '<h1 style="color:red;line-height:100vh;text-align:center;">При оплате произошла ошибка. Код ошибки: ' . $error.'</h1>';
                     }
                 }
             } 
             else 
             {
-                $meta_title = 'Ошибка: Транзакция не найдена';
-                $this->design->assign('error', 'Ошибка: Транзакция не найдена');
+                echo '<h1 style="color:red;line-height:100vh;text-align:center;">Ошибка: Транзакция не найдена</h1>';
             }
 
 
         } 
         else 
         {
-            $meta_title = 'Ошибка запроса';
-            $this->design->assign('error', 'Ошибка запроса');
+            echo '<h1 style="color:red;line-height:100vh;text-align:center;">Ошибка запроса</h1>';
         }
 
 
