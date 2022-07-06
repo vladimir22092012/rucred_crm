@@ -8,6 +8,7 @@ class SettingsController extends Controller
         if ($this->request->method('post')) {
             
             $this->settings->b2p_mode = $this->request->post('b2p_mode', 'string');
+            $this->settings->okb_mode = $this->request->post('okb_mode', 'string');
             
 //            $this->settings->loan_min_summ = $this->request->post('loan_min_summ', 'integer');
 //            $this->settings->loan_default_summ = $this->request->post('loan_default_summ', 'integer');
