@@ -1,12 +1,13 @@
 # Project deploy
+### Uncoment for activate deploy ###
 
-image: composer:2.0
+#image: composer:2.0
 
-pipelines:
-  branches:
-    master:
-      - step:
-          name: Deploy
-          deployment: staging
-          script:
-            - chmod +x deployer.phar && ./deployer.phar deploy
+#pipelines:
+  #branches:
+    #master:
+      #- step:
+          #name: Deploy
+          #deployment: staging
+          #script:
+            #- chmod +x deployer.phar && ./deployer.phar deploy
