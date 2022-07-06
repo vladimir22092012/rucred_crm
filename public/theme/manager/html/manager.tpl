@@ -5,9 +5,21 @@
 {/if}
 
 {capture name='page_scripts'}
+    <script src="theme/manager/assets/plugins/moment/moment.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
+    <script src="theme/manager/assets/plugins/daterangepicker/daterangepicker.js"></script>
     <script>
-
         $(function () {
+
+            moment.locale('ru');
+
+            $('.daterange').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true,
+                locale: {
+                    format: 'DD.MM.YYYY'
+                },
+            });
 
             $('.edit_phone').click(function (e) {
                 e.preventDefault();
@@ -383,6 +395,49 @@
                     }
                 })
             });
+
+            $(document).on('click', '.add_credentials', function () {
+
+                $('#add_credentials').modal();
+
+                $('#group_select').on('change', function () {
+                    let group_id = $(this).val();
+
+                    if (group_id == 'none') {
+                        $('.company_select').hide();
+                    } else {
+                        $.ajax({
+                            method: 'POST',
+                            data: {
+                                action: 'get_companies',
+                                group_id: group_id
+                            },
+                            success: function (companies) {
+                                $('.company_select').show();
+                                $('.company_select').html(companies);
+                            }
+                        })
+                    }
+                });
+            });
+
+            $(document).on('click', '.action_add_credentials', function (e) {
+                e.preventDefault();
+
+                //let file = $('input[name="document"]')[0].files;
+                let form_data = new FormData($('#add_credentials_form')[0]);
+                //form_data.append('file', file);
+
+                $.ajax({
+                    method: 'POST',
+                    data: form_data,
+                    processData: false,
+                    contentType: false,
+                    success: function (resp) {
+                        location.reload();
+                    }
+                })
+            })
         });
     </script>
     <script>
@@ -415,7 +470,9 @@
 {/capture}
 
 {capture name='page_styles'}
-
+    <link href="theme/manager/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="theme/manager/assets/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
 {/capture}
 
 
@@ -922,7 +979,9 @@
                                                 <label class="form-check-label">
                                                     Telegram
                                                 </label>
-                                                <div class="btn btn-outline-success confirm_telegram" style="margin-left: 20px; display: none">Подтвердить</div>
+                                                <div class="btn btn-outline-success confirm_telegram"
+                                                     style="margin-left: 20px; display: none">Подтвердить
+                                                </div>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" name="whatsapp_note"
@@ -941,12 +1000,27 @@
                                                 <th>Тип полномочий</th>
                                                 <th>Документ основание</th>
                                                 <th>Срок истечения полномочий</th>
-                                                <th><div class="btn btn-outline-success">+</div></th>
+                                                <th>
+                                                    <div class="btn btn-outline-success add_credentials">+</div>
+                                                </th>
                                             </tr>
                                             </thead>
                                             <tbody>
+                                            {if !empty($managers_credentials)}
+                                                {foreach $managers_credentials as $credentials}
+                                                    <tr>
+                                                        <td>{$credentials->company_name}</td>
+                                                        <td>{$credentials->type}</td>
+                                                        <td>-</td>
+                                                        <td>{$credentials->expiration|date}</td>
+                                                        <td></td>
+                                                    </tr>
+                                                {/foreach}
+                                            {/if}
+                                            </tbody>
                                         </table>
-                                    </div><br><br>
+                                    </div>
+                                    <br><br>
                                     {if in_array($manager->role, ['admin', 'developer'])}
                                         <div class="form-group">
                                             <div class="col-sm-12">
@@ -989,27 +1063,41 @@
             </div>
             <div class="modal-body">
                 <div class="alert" style="display:none"></div>
-                <form method="POST" id="add_credentials_form">
+                <form id="add_credentials_form">
                     <input type="hidden" name="action" value="add_credentials">
-                    <div class="form-group">
-                        <label for="date_doc" class="control-label">Группа:</label>
-                        <input type="text" class="form-control daterange" name="date_doc" id="date_doc" value=""/>
+                    <input type="hidden" name="manager_id" value="{$user->id}">
+                    <div class="form-group group_select">
+                        <label class="control-label">Группа:</label>
+                        <select class="form-control" name="group" id="group_select">
+                            <option value="none">Выберите группу</option>
+                            {foreach $groups as $group}
+                                <option value="{$group->id}"
+                                        {if $client->group_id == $group->id}selected{/if}>{$group->name}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="form-group company_select">
+
                     </div>
                     <div class="form-group">
-                        <label for="name" class="control-label">Название документа:</label>
-                        <input type="text" class="form-control" name="name" id="name" value=""/>
+                        <label class="control-label">Тип полномочий:</label>
+                        <select class="form-control" name="type">
+                            <option value="permanently">Постоянный</option>
+                            <option value="temporary">Временный по доверенности</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label for="comment" class="control-label">Комментарий:</label>
-                        <input type="text" class="form-control" name="comment" id="comment"
-                               value=""/>
+                        <label class="control-label"> Срок истечения полномочий</label>
+                        <input class="form-control daterange" name="expiration">
                     </div>
+                    {*
                     <div class="form-group">
-                        <label for="doc" class="control-label">Прикрепить документ</label>
-                        <input type="file" class="custom-file-control" name="doc" id="doc" value=""/>
+                        <label class="control-label">Документ-основание</label>
+                        <input type="file" class="custom-file-control" name="document" value=""/>
                     </div>
+                    *}
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
-                    <input type="button" class="btn btn-success action_add_doc" value="Сохранить">
+                    <input type="button" class="btn btn-success action_add_credentials" value="Сохранить">
                 </form>
             </div>
         </div>

@@ -52,6 +52,10 @@ class ManagerController extends Controller
                     case 'telegram_hook':
                         $this->action_telegram_hook();
                         break;
+
+                    case 'add_credentials':
+                        $this->action_add_credentials();
+                        break;
                 endswitch;
             } else {
                 $user = new StdClass();
@@ -193,14 +197,29 @@ class ManagerController extends Controller
             $this->design->assign('companies', $companies);
         }
 
-        if(isset($id)){
+        if (isset($id)) {
             $managers_company = $this->ManagersEmployers->get_records($id);
-        }else{
+        } else {
             $managers_company = $this->ManagersEmployers->get_records($this->manager->id);
         }
         $this->design->assign('managers_company', $managers_company);
 
         $this->design->assign('groups', $groups);
+
+        $managers_credentials = $this->ManagersCredentials->gets(['manager_id' => $id]);
+
+        if(!empty($managers_credentials)){
+            foreach ($managers_credentials as $credential){
+                $company = $this->companies->get_company($credential->company_id);
+                $credential->company_name = $company->name;
+
+                if($credential->type == 'permanently')
+                    $credential->type = 'Постоянный';
+                else
+                    $credential->type = 'Временный по доверенности';
+            }
+        }
+        $this->design->assign('managers_credentials', $managers_credentials);
 
         if ($this->request->get('main')) {
             $lk = true;
@@ -221,23 +240,35 @@ class ManagerController extends Controller
 
     private function action_get_companies()
     {
-
         $group_id = $this->request->post('group_id');
-        $user_id = $this->request->post('user_id');
         $companies = $this->Companies->get_companies(['group_id' => $group_id]);
-        $managers_company = $this->ManagersEmployers->get_records($user_id);
+        $user_id = $this->request->post('user_id');
         $html = '';
 
-        foreach ($companies as $company) {
-            $html .= '<div class="form-group">';
-            $html .= '<input type="checkbox" class="custom-checkbox"';
-            $html .= 'name="companies[][company_id]"';
-            $html .= "value='$company->id'";
-            $html .= (isset($managers_company[$company->id])) ? 'checked> ' : '> ';
-            $html .= '<label>' . $company->name . '</label>';
-            $html .= '</div>';
+        if (!empty($user_id)) {
+            $managers_company = $this->ManagersEmployers->get_records($user_id);
 
+            foreach ($companies as $company) {
+                $html .= '<div class="form-group">';
+                $html .= '<input type="checkbox" class="custom-checkbox"';
+                $html .= 'name="companies[][company_id]"';
+                $html .= "value='$company->id'";
+                $html .= (isset($managers_company[$company->id])) ? 'checked> ' : '> ';
+                $html .= '<label>' . $company->name . '</label>';
+                $html .= '</div>';
+
+            }
+        } else {
+
+            $html .= '<label for="date_doc" class="control-label">Компания:</label>';
+            $html .= '<select class="form-control" id="company_select" name="company">';
+            $html .= '<div class="form-group">';
+            foreach ($companies as $company) {
+                $html .= "<option value='$company->id'>$company->name</option>";
+            }
+            $html .= '</select>';
         }
+
         echo $html;
         exit;
     }
@@ -404,6 +435,26 @@ class ManagerController extends Controller
             ];
 
         $this->TelegramUsers->add($user);
+        exit;
+    }
+
+    private function action_add_credentials()
+    {
+        $manager_id = $this->request->post('manager_id');
+        $company_id = $this->request->post('company');
+        $type = $this->request->post('type');
+        $expiration = $this->request->post('expiration');
+        //$document = $_FILES['document'];
+
+        $credentials =
+            [
+                'manager_id' => $manager_id,
+                'company_id' => $company_id,
+                'type' => $type,
+                'expiration' => date('Y-m-d', strtotime($expiration))
+            ];
+
+        $this->ManagersCredentials->add($credentials);
         exit;
     }
 }
