@@ -341,7 +341,7 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-5 ">
-                                                <label class="control-label">Процентная ставка, %/день</label>
+                                                <label class="control-label">Регулярная ставка, % в день</label>
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="percent"
@@ -352,7 +352,7 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-5 ">
-                                                <label class="control-label">Льготная ставка, %/день</label>
+                                                <label class="control-label">Льготная ставка, % в день</label>
                                             </div>
                                             <div class="col-7 ">
                                                 <input type="text" class="form-control" name="profunion"
@@ -363,7 +363,7 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-5 ">
-                                                <label class="control-label">Льготный период, дней</label>
+                                                <label class="control-label">Льготный период до первой выплаты %, дней</label>
                                             </div>
                                             <div class="col-7 ">
                                                 <select class="form-control" name="free_days" {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
@@ -377,7 +377,7 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-5 ">
-                                                <label class="control-label">Минимальный срок до первой выплаты, дней</label>
+                                                <label class="control-label">Минимальный срок до первой выплаты по осн.долгу, дней</label>
                                             </div>
                                             <div class="col-7 ">
                                                 <select class="form-control" name="min_period" {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>

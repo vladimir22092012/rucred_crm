@@ -1059,25 +1059,6 @@
                                                                     {$scorings[$scoring_type->name]->created|date} {$scoring->created|time}
                                                                 </span>
                                                                 </div>
-                                                                <div class="col-4 col-sm-4 pb-2">
-                                                                    {if $manager->role != 'employer'}
-                                                                        {if is_null($scorings[$scoring_type->name]->success)}
-                                                                            <a class="load-btn text-info js-run-scorings run-scoring-btn float-right"
-                                                                               data-type="{$scoring_type->name}"
-                                                                               data-order="{$client->order_id}"
-                                                                               href="javascript:void(0);">
-                                                                                <i class="far fa-play-circle"></i>
-                                                                            </a>
-                                                                        {else}
-                                                                            <a class="text-info load-btn js-run-scorings run-scoring-btn float-right"
-                                                                               data-type="{$scoring_type->name}"
-                                                                               data-order="{$client->order_id}"
-                                                                               href="javascript:void(0);">
-                                                                                <i class="fas fa-undo"></i>
-                                                                            </a>
-                                                                        {/if}
-                                                                    {/if}
-                                                                </div>
                                                             </div>
                                                         </div>
                                                     {/foreach}
