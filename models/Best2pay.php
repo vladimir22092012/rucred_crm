@@ -12,10 +12,9 @@ class Best2pay extends Core
     
     private $url = 'https://test.best2pay.net/';
     private $currency_code = 643;
+    private $sectors;
+    private $fee = 0; // сумма комиссии при проведении платежа
     
-    private $sectors = array(
-        'ISSUANCE' => '3721', 
-    );
     /*
 Sector ID: 9282 ООО МКК "Русское кредитное общество" (rucred.ru) (СМЭВ)
 Sector ID: 9283 ООО МКК "Русское кредитное общество" (rucred.ru) (token)
@@ -43,12 +42,14 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
         {
             $this->sectors = array(
                 'ISSUANCE' => '9287', 
+                'PAYMENT' => '9285',
             );
         }
         else
         {
             $this->sectors = array(
                 'ISSUANCE' => '3721', 
+                'PAYMENT' => '3158',
             );            
         }
         
@@ -66,6 +67,89 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
     }
     
     
+    /**
+     * Best2pay::get_payment_link()
+     * 
+     * Метод возвращает ссылку для оплаты любой картой
+     * 
+     * @param int $amount - Сумма платежа в копейках
+     * @param string $contract_id - Номер договора
+     * @return string
+     */
+    public function get_payment_link($amount, $contract_id, $prolongation = 0, $card_id = 0, $sms = '')
+    {
+        $sector = $this->sectors['PAYMENT'];
+        $password = $this->passwords[$sector];            
+        
+        $fee = ceil(max($this->min_fee, floatval($amount * $this->fee)));
+        
+        if (!($contract = $this->contracts->get_contract($contract_id)))
+            return false;
+        
+        if (!($user = $this->users->get_user((int)$contract->user_id)))
+            return false;
+        
+        $description = 'Оплата по договору '.$contract->number;
+        
+        // регистрируем оплату
+        $data = array(
+            'sector' => $sector,
+            'amount' => $amount ,
+            'currency' => $this->currency_code,
+            'reference' => $contract->id,
+            'description' => $description,
+            'mode' => 1,
+            'fee' => $fee,
+            'url' => $this->config->root_url.'/ajax/best2pay.php?action=callback',
+            'phone' => $user->phone_mobile,
+            'fio' => $user->lastname.' '.$user->firstname.' '.$user->patronymic,
+            'contract' => $contract->number,
+//            'get_token' => 1,
+        );
+        
+        $data['signature'] = $this->get_signature(array(
+            $data['sector'], 
+            $data['amount'], 
+            $data['currency'], 
+            $password
+        ));
+        
+        $b2p_order_id = $this->send('Register', $data);
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($b2p_order_id);echo '</pre><hr />';        
+
+
+        $transaction_id = $this->transactions->add_transaction(array(
+            'user_id' => $contract->user_id,
+            'amount' => $amount,
+            'sector' => $sector,
+            'register_id' => $b2p_order_id,
+            'reference' => $contract->id,
+            'description' => $description,
+            'created' => date('Y-m-d H:i:s'),
+            'prolongation' => $prolongation,
+            'commision_summ' => $fee / 100,
+            'sms' => $sms,
+            'body' => serialize($data),
+        ));
+        // получаем длинную ссылку на оплату
+        $data = array(
+            'sector' => $sector,
+            'id' => $b2p_order_id,            
+        );
+        if (!empty($card_id))
+        {
+            $card = $this->cards->get_card((int)$card_id);
+            $data['token'] = $card->token;
+//            $data['pan_token'] = $card->pan;
+            $data['action'] = 'pay';
+        }
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($data, $card);echo '</pre><hr />';        
+        $data['signature'] = $this->get_signature(array($sector, $b2p_order_id, $password));
+
+        $link = $this->url.'webapi/Purchase?'.http_build_query($data);
+    
+        return $link;
+    }
         
     /**
      * Best2pay::issuance()
