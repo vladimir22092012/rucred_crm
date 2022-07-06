@@ -14,6 +14,26 @@ class Loantypes extends Core
     
         return $result;
     }
+
+    public function check_uniq_number($number, $id = false){
+
+        $id_filter = '';
+
+        if($id)
+            $id_filter = $this->db->placehold("AND id != ?", $id);
+
+        $query = $this->db->placehold("
+            SELECT `number`
+            FROM __loantypes
+            WHERE `number` = ?
+            $id_filter
+        ", $number);
+
+        $this->db->query($query);
+        $result = $this->db->result();
+
+        return $result;
+    }
     
     public function get_loantypes($filter = array())
     {

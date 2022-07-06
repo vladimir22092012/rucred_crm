@@ -16,12 +16,18 @@ class LoantypeController extends Controller
             $loantype->profunion = $this->request->post('profunion');
             $loantype->profunion = str_replace(',', '.', $loantype->profunion);
             $loantype->min_amount = $this->request->post('min_amount');
+            $loantype->number = $this->request->post('number');
             $loantype->max_amount = $this->request->post('max_amount');
             $loantype->min_amount = str_replace(' ', '', $loantype->min_amount);
             $loantype->max_amount = str_replace(' ', '', $loantype->max_amount);
             $loantype->max_period = $this->request->post('max_period', 'integer');
             $loantype->online_flag = $this->request->post('online_flag', 'integer');
             $loantype->reason_flag = $this->request->post('reason_flag');
+
+            $check_uniq = $this->Loantypes->check_uniq_number($loantype->number, $loantype_id);
+
+            if(!empty($check_uniq))
+                $this->design->assign('error', 'Такой номер уже есть');
 
             if (empty($loantype->name)) {
                 $this->design->assign('error', 'Укажите наименование вида кредита');

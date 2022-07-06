@@ -235,6 +235,18 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-5 ">
+                                                <label class="control-label">Номер тарифа</label>
+                                            </div>
+                                            <div class="col-7 ">
+                                                <input type="text" class="form-control" name="number"
+                                                       value="{$loantype->number}" required=""
+                                                       {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-5 ">
                                                 <label class="control-label">Наименование</label>
                                             </div>
                                             <div class="col-7 ">

@@ -178,6 +178,12 @@
                                             {else}<a href="{url page=null sort='name asc'}">Наименование</a>{/if}
                                         </th>
                                         <th style="width: 60px;"
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'number asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'number desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'number asc'}<a href="{url page=null sort='number desc'}">
+                                                    Номер</a>
+                                            {else}<a href="{url page=null sort='number asc'}">Номер</a>{/if}
+                                        </th>
+                                        <th style="width: 60px;"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'min_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'min_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             Тип
                                         </th>
@@ -214,6 +220,7 @@
                                     </tr>
                                     <tr>
                                         <th class=""><input type="text" class="form-control searchable"></th>
+                                        <th class=""><input type="text" class="form-control searchable"></th>
                                         <th class="">
                                             <select class="form-control search_type">
                                                 <option value="none">Выберите тип</option>
@@ -240,6 +247,9 @@
                                                 <a href="loantype/{$loantype->id}">
                                                     <strong>{$loantype->name|escape}</strong>
                                                 </a>
+                                            </td>
+                                            <td style="width: 60px;" class="jsgrid-cell jsgrid-align-center">
+                                            {$loantype->number}
                                             </td>
                                             <td style="width: 60px;" class="jsgrid-cell jsgrid-align-center">
                                                 {if $loantype->type == 'annouitet'}

@@ -16,7 +16,7 @@ class LoantypesController extends Controller
         $sort = $this->request->get('sort', 'string');
 
         if (empty($sort)) {
-            $sort = 'id desc';
+            $sort = 'number asc';
         }
 
         $filter['sort'] = $sort;
