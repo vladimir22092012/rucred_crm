@@ -83,6 +83,16 @@ class CompanyController extends Controller
 
         $branches = $this->Branches->get_company_branches($company_id);
 
+        $companies_managers = $this->ManagersEmployers->get_managers($company_id);
+        $managers_id = [];
+
+        foreach ($companies_managers as $item) {
+            $managers_id[] = $item->manager_id;
+        }
+
+        $managers = $this->managers->get_managers(['id' => $managers_id]);
+        $this->design->assign('managers', $managers);
+
         $this->design->assign('company', $company);
         $this->design->assign('branches', $branches);
 
@@ -503,7 +513,7 @@ class CompanyController extends Controller
                 'client_firstname' => '',
                 'client_patronymic' => '',
                 'creator' => $this->manager->id,
-                'text' => 'Проверьте информацию по компании '. $company->name,
+                'text' => 'Проверьте информацию по компании ' . $company->name,
                 'head' => 'Недостоверность информации по компании'
             ];
 
@@ -511,7 +521,7 @@ class CompanyController extends Controller
 
         $message =
             [
-                'message' => 'Проверьте информацию по компании '. $company->name,
+                'message' => 'Проверьте информацию по компании ' . $company->name,
                 'ticket_id' => $ticket_id,
                 'manager_id' => $this->manager->id
             ];

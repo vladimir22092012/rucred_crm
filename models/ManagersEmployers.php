@@ -41,6 +41,19 @@ class ManagersEmployers extends Core
         return $managers_company;
     }
 
+    public function get_managers($company_id)
+    {
+        $query = $this->db->placehold("
+            SELECT *
+            FROM s_managers_employers 
+            WHERE company_id = ?
+        ", $company_id);
+        $this->db->query($query);
+        $managers = $this->db->results();
+
+        return $managers;
+    }
+
     public function get_managers_id($company_id)
     {
         $query = $this->db->placehold("

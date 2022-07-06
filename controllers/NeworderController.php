@@ -232,7 +232,7 @@ class NeworderController extends Controller
         }
 
         if ($all_sum_credits != 0)
-            $user['pdn'] = round(($user['income'] / $all_sum_credits) * 100, 2);
+            $user['pdn'] = round(($all_sum_credits/$user['income']) * 100, 2);
         else
             $user['pdn'] = 0;
 
