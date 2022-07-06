@@ -1,10 +1,11 @@
 <?php
-error_reporting(0);
-ini_set('display_errors', 'Off');
+error_reporting(-1);
+ini_set('display_errors', 'On');
 
 chdir('..');
 
-require 'autoload.php';
+chdir('../..');
+require __DIR__ . '/../../vendor/autoload.php';
 
 class Best2payAjax extends Ajax
 {
@@ -47,7 +48,7 @@ class Best2payAjax extends Ajax
             {
                 if ($transaction_operation = $this->operations->get_transaction_operation($transaction->id)) 
                 {
-                    echo '<h1 style="color:red;line-height:100vh;text-align:center;">Оплата уже принята.</h1>';
+                    exit('<h1 style="color:red;line-height:100vh;text-align:center;">Оплата уже принята.</h1>');
                 } 
                 else 
                 {
@@ -73,14 +74,14 @@ class Best2payAjax extends Ajax
                         {
                             $this->contracts->conduct_transaction($transaction, $xml);
 
-                            echo '<h1 style="color:green;line-height:100vh;text-align:center;">Оплата успешно принята.</h1>';
+                            exit('<h1 style="color:green;line-height:100vh;text-align:center;">Оплата успешно принята.</h1>');
                         }
                         else 
                         {
                             $reason_code_description = $this->best2pay->get_reason_code_description($code);
                             $this->design->assign('reason_code_description', $reason_code_description);
 
-                            echo '<h1 style="color:red;line-height:100vh;text-align:center;">Не удалось оплатить.</h1>';
+                            exit('<h1 style="color:red;line-height:100vh;text-align:center;">Не удалось оплатить.</h1>');
                         }
                         $this->transactions->update_transaction($transaction->id, array(
                             'operation' => $operation,
@@ -97,13 +98,13 @@ class Best2payAjax extends Ajax
                             'operation' => 0,
                             'callback_response' => $callback_response
                         ));
-                        echo '<h1 style="color:red;line-height:100vh;text-align:center;">При оплате произошла ошибка. Код ошибки: ' . $error.'</h1>';
+                        exit('<h1 style="color:red;line-height:100vh;text-align:center;">При оплате произошла ошибка. Код ошибки: ' . $error.'</h1>');
                     }
                 }
             } 
             else 
             {
-                echo '<h1 style="color:red;line-height:100vh;text-align:center;">Ошибка: Транзакция не найдена</h1>';
+                exit('<h1 style="color:red;line-height:100vh;text-align:center;">Ошибка: Транзакция не найдена</h1>');
             }
 
 

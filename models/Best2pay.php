@@ -14,6 +14,7 @@ class Best2pay extends Core
     private $currency_code = 643;
     private $sectors;
     private $fee = 0; // сумма комиссии при проведении платежа
+    private $min_fee = 0; // сумма минимальной комиссии при проведении платежа
     
     /*
 Sector ID: 9282 ООО МКК "Русское кредитное общество" (rucred.ru) (СМЭВ)
@@ -76,7 +77,7 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
      * @param string $contract_id - Номер договора
      * @return string
      */
-    public function get_payment_link($amount, $contract_id, $prolongation = 0, $card_id = 0, $sms = '')
+    public function get_payment_link($amount, $contract_id, $prolongation = 0, $card_id = 0, $sms = NULL)
     {
         $sector = $this->sectors['PAYMENT'];
         $password = $this->passwords[$sector];            
@@ -128,7 +129,7 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
             'created' => date('Y-m-d H:i:s'),
             'prolongation' => $prolongation,
             'commision_summ' => $fee / 100,
-            'sms' => $sms,
+            'sms' => empty($sms) ? NULL : $sms,
             'body' => serialize($data),
         ));
         // получаем длинную ссылку на оплату
