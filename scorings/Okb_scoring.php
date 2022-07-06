@@ -89,6 +89,8 @@ class Okb_scoring extends Core
         $resp = curl_exec($ch);
         curl_close($ch);
         
+        $this->soap1c->logging(__METHOD__, $this->url, $data, $resp, 'okb.txt');
+        
         return json_decode($resp);
     }
     
