@@ -997,14 +997,12 @@
         <td style="width: 10%"></td>
         <td style="width: 45%">ЗАЁМЩИК</td>
     </tr>
-    <br>
     <tr>
         <td style="width: 45%"><strong>Общество с ограниченной ответственностью Микрокредитная компания «Русское
                 кредитное общество»</strong></td>
         <td style="width: 10%"></td>
         <td style="width: 45%"><strong>{$lastname|upper} {$firstname|upper} {$patronymic|upper}</strong></td>
-    </tr>
-    <br>
+    </tr><br>
     <tr>
         <td style="width: 45%"><u>юридический адрес</u>
             117449, город Москва, вн.тер.г.муниципальный округ Академический, улица Винокурова, дом 3, этаж/ком. 1/А,
@@ -1015,7 +1013,6 @@
             {$passport_serial} {$passport_number} выдан {$passport_issued} {$passport_date|date} года
         </td>
     </tr>
-    <br>
     <tr>
         <td style="width: 45%"><u>фактический адрес местонахождения</u>
             117449, город Москва, улица Винокурова, дом 3, этаж/комната 1/А, помещение I
@@ -1025,16 +1022,14 @@
             {$regaddress->adressfull}
         </td>
     </tr>
-    <br>
     <tr>
         <td style="width: 45%">ОГРН 121770033532</td>
         <td style="width: 10%"></td>
         <td style="width: 45%"><u>фактический адрес проживания</u>
-            {$faktaddress->adressfull}
+            {$faktadress->adressfull}
         </td>
     </tr>
 </table>
-<div></div>
 {if !isset($sms)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">

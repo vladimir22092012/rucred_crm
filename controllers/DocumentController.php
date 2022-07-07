@@ -27,6 +27,9 @@ class DocumentController extends Controller
         $faktadress = $this->Addresses->get_address($document->params->faktaddress_id);
         $this->design->assign('faktadress', $faktadress);
 
+        $requisite = $this->Requisites->get_requisites(['user_id' => $document->params->user_id]);
+        $requisite = end($requisite);
+        $this->design->assign('requisite', $requisite);
 
         $company = $this->Companies->get_company($document->params->company_id);
         $this->design->assign('company', $company);
