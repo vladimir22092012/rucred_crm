@@ -1099,7 +1099,7 @@
             к/с {$settlement->cors}
         </td>
         <td style="width: 10%"></td>
-        <td style="width: 45%"> {$requisite->number}, БИК {$requisite->bik}, открытый в {$requisite->name}
+        <td style="width: 45%"> р/с {$requisite->number} в {$requisite->name} БИК {$requisite->bik}
         </td>
     </tr>
     <br>
