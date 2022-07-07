@@ -239,11 +239,6 @@ class NeworderController extends Controller
             $all_sum_credits += $sum_cards_pay;
         }
 
-        if ($all_sum_credits != 0)
-            $user['pdn'] = round(($all_sum_credits/$user['income']) * 100, 2);
-        else
-            $user['pdn'] = 0;
-
         $user['credits_story'] = json_encode($credits_story);
         $user['cards_story'] = json_encode($cards_story);
 
@@ -551,6 +546,13 @@ class NeworderController extends Controller
             $percent_per_month = (($order['percent'] / 100) * 365) / 12;
             $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
             $annoouitet_pay = round($annoouitet_pay, '2');
+
+            $all_sum_credits += $annoouitet_pay;
+
+            if ($all_sum_credits != 0)
+                $user['pdn'] = round(($all_sum_credits/$user['income']) * 100, 2);
+            else
+                $user['pdn'] = 0;
 
             if (date('d', strtotime($start_date)) < $first_pay_day) {
                 if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < $loan->free_period) {
