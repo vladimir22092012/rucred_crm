@@ -1,0 +1,4 @@
+rucred-dev ansible_host=51.250.26.168 ansible_user='{{ user }}' ansible_ssh_pass='{{ pass }}'
+
+[deploy]
+rucred-dev

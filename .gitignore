@@ -17,3 +17,5 @@ Thumbs.db
 /cron/log.txt
 /sql/local.sql
 /public/test.php
+/deploy/vault
+/files/managers
