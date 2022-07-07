@@ -32,7 +32,7 @@ class CommunicationsThemesController extends Controller
 
         } else {
             echo json_encode(['success' => 1]);
-            $this->CommunicationsThemes->add(['name' => $name]);
+            $this->CommunicationsThemes->add(['name' => $name, 'number' => $number]);
             exit;
         }
     }
