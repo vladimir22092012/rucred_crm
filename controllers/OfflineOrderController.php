@@ -953,7 +953,7 @@ class OfflineOrderController extends Controller
                 'client_patronymic' => $order->patronymic,
                 'head' => 'Займ выдан',
                 'text' => 'Ознакомьтесь с документами по займу',
-                'company_id' => $order->company_id,
+                'company_id' => 2,
                 'group_id' => $order->group_id,
                 'order_id' => $order_id,
                 'status' => 0
