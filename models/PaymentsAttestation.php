@@ -22,8 +22,8 @@ class PaymentsAttestation extends Core
         ", $fio);
 
         $this->db->query($query);
-        $results = $this->db->results();
+        $result = $this->db->result();
 
-        return $results;
+        return $result;
     }
 }

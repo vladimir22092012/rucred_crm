@@ -132,12 +132,19 @@ class Users extends Core
         return $result;
     }
 
-    public function get_user_by_phone($phone)
+    public function get_user_by_phone($phone, $id = false)
     {
+        $id_filter = '';
+
+
+        if($id)
+            $id_filter = $this->db->placehold("AND id != ?", $id);
+
         $query = $this->db->placehold("
             SELECT id, phone_mobile, password
             FROM __users
             WHERE phone_mobile = ?
+            $id_filter
         ", (int)$phone);
         $this->db->query($query);
         $result = $this->db->result();
