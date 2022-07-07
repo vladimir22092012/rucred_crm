@@ -875,6 +875,20 @@ class OfflineOrderController extends Controller
             ];
         $this->TicketMessages->add_message($message);
 
+        $scoring_types = $this->scorings->get_types();
+        foreach ($scoring_types as $scoring_type) {
+            if ($scoring_type->name == 'okb') {
+                $add_scoring = array(
+                    'user_id' => $order['user_id'],
+                    'order_id' => $order_id,
+                    'type' => $scoring_type->name,
+                    'status' => 'new',
+                    'start_date' => date('Y-m-d H:i:s'),
+                );
+                $this->scorings->add_scoring($add_scoring);
+            }
+        }
+
         return array('success' => 1, 'status' => 2);
 
     }
