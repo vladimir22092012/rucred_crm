@@ -551,11 +551,37 @@ class Users extends Core
         return $this->db->result('id');
     }
 
-    public function get_phone_user($phone)
+    public function get_phone_user($phone, $id = false)
     {
+        $id_filter = '';
+
+        if($id)
+            $id_filter = $this->db->placehold("AND id != ?", $id);
+
         $query = $this->db->placehold("
-            SELECT id FROM __users WHERE phone_mobile = ?
+            SELECT id 
+            FROM __users 
+            WHERE phone_mobile = ?
+            $id_filter
         ", (string)$phone);
+        $this->db->query($query);
+
+        return $this->db->result('id');
+    }
+
+    public function get_email_user($email, $id = false)
+    {
+        $id_filter = '';
+
+        if($id)
+            $id_filter = $this->db->placehold("AND id != ?", $id);
+
+        $query = $this->db->placehold("
+            SELECT id 
+            FROM __users 
+            WHERE email = ?
+            $id_filter
+        ", (string)$email);
         $this->db->query($query);
 
         return $this->db->result('id');

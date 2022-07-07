@@ -836,8 +836,20 @@ class NeworderController extends Controller
     private function action_edit_phone()
     {
         $phone = $this->request->post('phone');
+        $user_id = $this->request->post('user_id');
+
+        if(empty($user_id))
+            $user_id = false;
+
+        $phone_uniq = $this->users->get_phone_user($phone, $user_id);
+
+        if(!empty($phone_uniq)){
+            echo json_encode(['error' => 'Такой номер уже зарегистрирован']);
+            exit;
+        }
+
         if (empty($phone)) {
-            echo json_encode(['error' => 1]);
+            echo json_encode(['error' => 'Вы не ввели номер телефона']);
             exit;
         }
         $code = random_int(1000, 9999);
@@ -879,6 +891,18 @@ class NeworderController extends Controller
     private function action_edit_email()
     {
         $email = $this->request->post('email');
+        $user_id = $this->request->post('user_id');
+
+        if(empty($user_id))
+            $user_id = false;
+
+        $email_uniq = $this->users->get_phone_user($email, $user_id);
+
+        if(!empty($email_uniq)){
+            echo json_encode(['error' => 'Такой email уже зарегистрирован']);
+            exit;
+        }
+
         if (empty($email)) {
             echo json_encode(['error' => 1, 'reason' => 'Не введён email']);
             exit;

@@ -37,21 +37,24 @@
                 e.preventDefault();
 
                 let phone = $('input[class="form-control phone_num"]').val();
-                let user_id = $(this).attr();
+                let user_id = $(this).attr('data-user');
 
                 $.ajax({
                     method: 'POST',
+                    dataType: 'JSON',
                     data: {
                         action: 'edit_phone',
                         phone: phone,
+                        user_id: user_id
                     },
                     success: function (response) {
-                        if (JSON.parse(response).error === 1) {
+                        if (response['error']) {
                             Swal.fire({
-                                title: 'Введите телефон',
+                                title: response['error'],
                                 confirmButtonText: 'ОК'
                             });
-                        } else {
+                        }
+                        else {
                             $('.show_phone_code').show();
                         }
                     }
@@ -94,20 +97,25 @@
                 e.preventDefault();
 
                 let email = $('input[class="form-control email"]').val();
+                let user_id = $(this).attr('data-user');
+
                 $.ajax({
                     method: 'POST',
+                    dataType: 'JSON',
                     data: {
                         action: 'edit_email',
                         email: email,
+                        user_id: user_id
                     },
                     success: function (response) {
-                        if (JSON.parse(response).error === 1) {
+                        if (response['error']) {
                             Swal.fire({
-                                title: 'Введите email',
+                                title: response['error'],
                                 confirmButtonText: 'ОК'
                             });
-                        } else {
-                            $('.show_email_code').show();
+                        }
+                        else {
+                            $('.show_phone_code').show();
                         }
                     }
                 })
@@ -738,6 +746,7 @@
                                                             {if $order->email_confirmed == 0}
                                                                 <div class="col">
                                                                     <input type="button"
+                                                                           data-user="{$order->user_id}"
                                                                            class="btn btn-success accept_email_edit"
                                                                            value="Подтвердить">
                                                                 </div>
