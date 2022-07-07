@@ -878,8 +878,8 @@ class OfflineOrderController extends Controller
         foreach ($scoring_types as $scoring_type) {
             if ($scoring_type->name == 'okb') {
                 $add_scoring = array(
-                    'user_id' => $order['user_id'],
-                    'order_id' => $order_id,
+                    'user_id' => $order->user_id,
+                    'order_id' => $order->order_id,
                     'type' => $scoring_type->name,
                     'status' => 'new',
                     'start_date' => date('Y-m-d H:i:s'),
