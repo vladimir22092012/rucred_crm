@@ -15,7 +15,8 @@
     код
     подразделения <strong>{$subdivision_code}</strong>, зарегистрированный (-ая) по адресу
     <strong>{$regaddress->adressfull|upper}</strong>,
-    фактически проживающий (-ая) по адресу <strong>{$faktaddress->adressfull|upper}</strong>, ИНН: <strong>{$inn}</strong>,
+    фактически проживающий (-ая) по адресу <strong>{$faktaddress->adressfull|upper}</strong>, ИНН:
+    <strong>{$inn}</strong>,
     СНИЛС:
     <strong>{$snils}</strong>, телефон: <strong>{$phone_mobile}</strong>, адрес электронной почты:
     <strong>{$email|upper}</strong>
@@ -50,27 +51,26 @@
     <div>
 
     </div>
-    {if !isset($sms)}
-    <footer>
-        <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
-            <tr style="width: 100%">
-                <td style="width: 8%; height: 30px" align="center">
-                    <div><strong style="color: #b3b2ab;padding-top: 2px">СТР. 1</strong></div>
-                </td>
-                <td style="width: 37%" align="center">
-                    <div><span style="color: #b3b2ab">ПОДПИСЬ</span></div>
-                </td>
-                <td style="width: 40%" align="center">
-                    <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
-                </td>
-                <td style="width: 15%;" align="center">
-                    <div><span style="color: #b3b2ab">ДАТА</span></div>
-                </td>
-            </tr>
-        </table>
-    </footer>
-    {/if}
-    {if isset($sms)}
+    {if !isset($code_asp->code)}
+        <footer>
+            <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
+                <tr style="width: 100%">
+                    <td style="width: 8%; height: 30px" align="center">
+                        <div><strong style="color: #b3b2ab;padding-top: 2px">СТР. 1</strong></div>
+                    </td>
+                    <td style="width: 37%" align="center">
+                        <div><span style="color: #b3b2ab">ПОДПИСЬ</span></div>
+                    </td>
+                    <td style="width: 40%" align="center">
+                        <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
+                    </td>
+                    <td style="width: 15%;" align="center">
+                        <div><span style="color: #b3b2ab">ДАТА</span></div>
+                    </td>
+                </tr>
+            </table>
+        </footer>
+    {else}
         <table style="color: #002688; page-break-after: always; font-style: italic; border: 0.25pt solid #002088; width: 50%"
                cellpadding="1" cellspacing="5">
             <tr>
@@ -120,8 +120,10 @@
     (продукции), в целях продвижения Займодателем своих услуг на рынке розничного бизнеса, путём осуществления прямых
     контактов со мной с помощью средств связи. Согласие на обработку Займодателем персональных данных, в целях
     продвижения Займодателем своих услуг действует до момента отзыва субъектом персональных данных данного согласия в
-    письменном виде.<br><br>Настоящим подтверждаю, что {if $foreign_flag == 1 && $foreign_relative == 1}&#x2611;{else}&#10065;{/if} не
-    являюсь / {if $foreign_flag == 2 || $foreign_relative == 2}&#x2611;{else}&#10065;{/if} являюсь иностранным публичным должностным лицом,
+    письменном виде.<br><br>Настоящим подтверждаю,
+    что {if $foreign_flag == 1 && $foreign_relative == 1}&#x2611;{else}&#10065;{/if} не
+    являюсь / {if $foreign_flag == 2 || $foreign_relative == 2}&#x2611;{else}&#10065;{/if} являюсь иностранным публичным
+    должностным лицом,
     их супругами, близкими
     родственниками (родственниками по прямой восходящей и нисходящей линии (родителями и детьми, дедушкой, бабушкой и
     внуками), полнородными и неполно родными (имеющими общих отца или мать) братьями и сёстрами, усыновителями и
@@ -141,31 +143,27 @@
 <div>
 
 </div>
-{if !isset($sms)}
-<footer>
-    <table style="width: 100%;font-size: 8px" border="1">
-        <tr style="width: 100%">
-            <td style="width: 8%; height: 30px" align="center">
-                <div><strong style="color: #b3b2ab;padding-top: 2px">СТР. 2</strong></div>
-            </td>
-            <td style="width: 37%" align="center">
-                <div><span style="color: #b3b2ab">ПОДПИСЬ</span></div>
-            </td>
-            <td style="width: 40%" align="center">
-                <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
-            </td>
-            <td style="width: 15%;" align="center">
-                <div><span style="color: #b3b2ab">ДАТА</span></div>
-            </td>
-        </tr>
-    </table>
-</footer>
-{/if}
-<div>
-
-</div>
-{if isset($sms)}
-    <table style="color: #002688; font-style: italic; border: 0.25pt solid #002088; width: 50%"
+{if !isset($code_asp->code)}
+    <footer>
+        <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
+            <tr style="width: 100%">
+                <td style="width: 8%; height: 30px" align="center">
+                    <div><strong style="color: #b3b2ab;padding-top: 2px">СТР. 2</strong></div>
+                </td>
+                <td style="width: 37%" align="center">
+                    <div><span style="color: #b3b2ab">ПОДПИСЬ</span></div>
+                </td>
+                <td style="width: 40%" align="center">
+                    <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
+                </td>
+                <td style="width: 15%;" align="center">
+                    <div><span style="color: #b3b2ab">ДАТА</span></div>
+                </td>
+            </tr>
+        </table>
+    </footer>
+{else}
+    <table style="color: #002688; page-break-after: always; font-style: italic; border: 0.25pt solid #002088; width: 50%"
            cellpadding="1" cellspacing="5">
         <tr>
             <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>

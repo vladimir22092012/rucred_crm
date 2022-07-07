@@ -57,24 +57,22 @@
 
 </table>
 <br>
-<div align="justify">Настоящее заявление составлено добровольно, никакого физического / психического воздействия на меня оказано не было.
+<div align="justify">Настоящее заявление составлено добровольно, никакого физического / психического воздействия на меня
+    оказано не было.
     Действую в своих интересах.
 </div>
 <div>
     <br>
 </div>
-{if !isset($sms)}
-    <table><tr style="width: 100%">
+{if !isset($code_asp->code)}
+    <table>
+        <tr style="width: 100%">
             <td style="width: 30%"><strong>{$date|date} года</strong></td>
             <td style="width: 20%"></td>
             <td style="width: 40%">_______________/____________</td>
         </tr>
     </table>
-{/if}
-<div>
-    <br>
-</div>
-{if isset($sms)}
+{else}
     <table style="color: #002688; font-style: italic; border: 0.25pt solid #002088; width: 50%"
            cellpadding="1" cellspacing="5">
         <tr>

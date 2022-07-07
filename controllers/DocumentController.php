@@ -59,6 +59,20 @@ class DocumentController extends Controller
             }
         );
 
+        if($document->type == 'ZAYAVLENIE_RESTRUCT'){
+            array_pop($payment_schedule);
+            $last_pay = array_pop($payment_schedule);
+            $annouitet = $last_pay['pay_sum'];
+
+            list($annouitet_first_part, $annouitet_second_part) = explode('.', $annouitet);
+
+            $annouitet_first_part = $this->num2str($annouitet_first_part);
+
+            $this->design->assign('annouitet', $annouitet);
+            $this->design->assign('annouitet_first_part', $annouitet_first_part);
+            $this->design->assign('annouitet_second_part', $annouitet_second_part);
+        }
+
         $all_pay_sum_string = explode('.', $payment_schedule['result']['all_sum_pay']);
 
         $all_pay_sum_string_part_one = $this->num2str($all_pay_sum_string[0]);
@@ -110,6 +124,7 @@ class DocumentController extends Controller
         $percents_per_year = $this->num2str($percents_per_year);
         $this->design->assign('percents_per_year', $percents_per_year);
         $psk_rub = $payment_schedule['result']['all_loan_percents_pay'] + $payment_schedule['result']['all_comission_pay'];
+
         $psk_rub = number_format($psk_rub, 2, ',', ' ');
 
         $amount_to_string = explode(',', $psk_rub);

@@ -148,9 +148,17 @@
         <td style="width: 45%"></td>
     </tr>
     <br>
-    <br>
     <tr>
         {if !isset($code_asp->code)}
+            <td style="width: 45%">
+                __________________/<strong>А.В.Лоскутов/</strong>
+            </td>
+            <td style="width: 10%">
+            </td>
+            <td style="width: 45%">
+                __________________/<strong>{$firstname|mb_substr:0:1}.{$patronymic|mb_substr:0:1}.{$lastname}/</strong>
+            </td>
+        {else}
             <td style="width: 45%">
                 <table style="color: #002688; font-style: italic; border: 0.25pt solid #002088;" cellspacing="5">
                     <tr>
@@ -170,13 +178,6 @@
                     </tr>
                 </table>
             </td>
-            <td style="width: 10%">
-            </td>
-            <td style="width: 45%">
-                __________________/<strong>{$firstname|mb_substr:0:1}.{$patronymic|mb_substr:0:1}.{$lastname}/</strong>
-            </td>
-        {else}
-            <td style="width: 45%">__________________/<strong>А.В.Лоскутов</strong>/</td>
             <td style="width: 10%">
             </td>
             <td style="width: 45%">

@@ -70,19 +70,15 @@
 <div>Приложение:<br>Копия Графика платежей от <strong>{$date|date}</strong> года<br>
 </div>
 <div><br><br></div>
-{if !isset($sms)}
-<table>
-    <tr style="width: 100%">
-        <td style="width: 30%"><strong>{$date|date} года</strong></td>
-        <td style="width: 20%"></td>
-        <td style="width: 40%">_______________/____________</td>
-    </tr>
-</table>
-{/if}
-<div>
-    <br>
-</div>
-{if isset($sms)}
+{if !isset($code_asp->code)}
+    <table>
+        <tr style="width: 100%">
+            <td style="width: 30%"><strong>{$date|date} года</strong></td>
+            <td style="width: 20%"></td>
+            <td style="width: 40%">_______________/____________</td>
+        </tr>
+    </table>
+{else}
     <table style="color: #002688; font-style: italic; border: 0.25pt solid #002088; width: 50%"
            cellpadding="1" cellspacing="5">
         <tr>

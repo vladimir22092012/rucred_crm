@@ -57,19 +57,15 @@
 <div>
     <br>
 </div>
-{if !isset($sms)}
-<table style="width: 100%;" border="1" cellpadding="8">
-    <tr style="width: 100%">
-        <td style="width: 25%; height: 30px" align="center"><span style="color: #b3b2ab">ПОДПИСЬ</span></td>
-        <td style="width: 50%" align="center"><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></td>
-        <td style="width: 25%" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span></td>
-    </tr>
-</table>
-{/if}
-<div>
-    <br>
-</div>
-{if isset($sms)}
+{if !isset($code_asp->code)}
+    <table style="width: 100%;" border="1" cellpadding="8">
+        <tr style="width: 100%">
+            <td style="width: 25%; height: 30px" align="center"><span style="color: #b3b2ab">ПОДПИСЬ</span></td>
+            <td style="width: 50%" align="center"><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></td>
+            <td style="width: 25%" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span></td>
+        </tr>
+    </table>
+{else}
     <table style="color: #002688; font-style: italic; border: 0.25pt solid #002088; width: 50%"
            cellpadding="1" cellspacing="5">
         <tr>
