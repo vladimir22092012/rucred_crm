@@ -115,14 +115,14 @@
             город Москва, улица Ленинская Слобода, дом 26, строение 28, БЦ «Слободской», офис 344
         </td>
         <td style="width: 10%"></td>
-        <td style="width: 45%"><u>адрес регистрации</u><br>{$regaddress->adressfull}
+        <td style="width: 45%"><u>адрес регистрации</u><br>{$regadress->adressfull}
         </td>
     </tr>
     <br>
     <tr>
         <td style="width: 45%">ОГРН 121770033532</td>
         <td style="width: 10%"></td>
-        <td style="width: 45%"><u>фактический адрес проживания</u><br>{$faktaddress->adressfull}
+        <td style="width: 45%"><u>фактический адрес проживания</u><br>{$faktadress->adressfull}
         </td>
     </tr>
 </table>

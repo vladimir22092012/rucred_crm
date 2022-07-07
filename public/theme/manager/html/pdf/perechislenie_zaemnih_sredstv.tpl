@@ -20,11 +20,11 @@
     </tr>
     <tr style="width: 100%">
         <td style="width: 60%"></td>
-        <td style="width: 40%">зарегистрированный по адресу: <strong>{$regaddress->adressfull}</strong></td>
+        <td style="width: 40%">зарегистрированный по адресу: <strong>{$regadress->adressfull}</strong></td>
     </tr>
     <tr style="width: 100%">
         <td style="width: 60%"></td>
-        <td style="width: 40%">фактически проживающий: <strong>{$faktaddress->adressfull}</strong></td>
+        <td style="width: 40%">фактически проживающий: <strong>{$faktadress->adressfull}</strong></td>
     </tr>
 </table>
 <div><br><br></div>

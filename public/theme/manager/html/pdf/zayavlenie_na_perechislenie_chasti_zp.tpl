@@ -17,8 +17,8 @@
     серия <strong>{$passport_serial} № {$passport_number} выдан {$passport_issued} {$passport_date|date}</strong> года,
     код
     подразделения <strong>{$subdivision_code}</strong>, зарегистрированный (-ая) по адресу
-    <strong>{$regaddress->adressfull}</strong>,
-    фактически проживающий (-ая) по адресу <strong>{$faktaddress->adressfull}</strong>,ИНН: <strong>{$inn}</strong>
+    <strong>{$regadress->adressfull}</strong>,
+    фактически проживающий (-ая) по адресу <strong>{$faktadress->adressfull}</strong>,ИНН: <strong>{$inn}</strong>
     СНИЛС:
     <strong>{$snils}</strong>телефон: <strong>{$phone_mobile}</strong> адрес электронной почты:
     <strong>{$email|upper}</strong>

@@ -36,6 +36,14 @@ class NeworderController extends Controller
 
             $order->requisite = $this->requisites->get_requisite($order->requisite_id);
 
+            if(!empty($order->requisite)){
+                list($holder_lastname, $holder_firstname, $holder_patronymic) = explode(' ', $order->requisite->holder);
+
+                $this->design->assign('holder_lastname', $holder_lastname);
+                $this->design->assign('holder_firstname', $holder_firstname);
+                $this->design->assign('holder_patronymic', $holder_patronymic);
+            }
+
             $fio_spouse = explode(' ', $order->fio_spouse);
 
             $passport_serial = explode(' ', $order->passport_serial);

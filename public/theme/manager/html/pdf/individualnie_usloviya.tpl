@@ -73,7 +73,7 @@
     код
     подразделения <strong>{$subdivision_code}</strong>, зарегистрированный (-ая) по адресу
     <strong>{$regaddress->adressfull|upper}</strong>,
-    фактически проживающий (-ая) по адресу <strong>{$faktaddress->adressfull|upper}</strong>, далее именуемый (-ая)
+    фактически проживающий (-ая) по адресу <strong>{$faktadress->adressfull|upper}</strong>, далее именуемый (-ая)
     «Заёмщик»,
     находясь
     в здравом уме и
@@ -763,7 +763,7 @@
             <td style="width: 30%; background-color: #b3b2ab">3.1. Основные параметры микрозайма
             </td>
             <td style="width: 70%" align="left">(01) Сумма микрозайма: <strong>{$amount|number_format:0:',':' '}
-                    ({$amount_to_string|upper})</strong> рублей
+                    ({$amount_string|upper})</strong> рублей
                 <strong>00</strong> копеек<br>(02) Срок микрозайма: <strong>{$period|escape}</strong>
                 (<strong>{$period_str|upper}</strong>)
                 {$period|plural:'день':'дней':'дня'}<br>(03)

@@ -37,6 +37,8 @@
                 e.preventDefault();
 
                 let phone = $('input[class="form-control phone_num"]').val();
+                let user_id = $(this).attr();
+
                 $.ajax({
                     method: 'POST',
                     data: {
@@ -1010,19 +1012,19 @@
                                                 <label class="control-label">Фамилия держателя счета</label>
                                                 <input class="form-control" style="width: 350px; margin-left: 30px"
                                                        type="text" name="requisite[holder][lastname]"
-                                                       value="{$order->requisite->holder->lastname}"/>
+                                                       value="{$holder_lastname}"/>
                                             </div>
                                             <div style="display: flex; flex-direction: column">
                                                 <label class="control-label">Имя держателя счета</label>
                                                 <input class="form-control" style="width: 350px; margin-left: 30px"
                                                        type="text" name="requisite[holder][firstname]"
-                                                       value="{$order->requisite->holder->firstname}"/>
+                                                       value="{$holder_firstname}"/>
                                             </div>
                                             <div style="display: flex; flex-direction: column">
                                                 <label class="control-label">Отчество держателя счета</label>
                                                 <input class="form-control" style="width: 350px; margin-left: 30px"
                                                        type="text" name="requisite[holder][patronymic]"
-                                                       value="{$order->requisite->holder->patronymic}"/>
+                                                       value="{$holder_patronymic}"/>
                                             </div>
                                         </div>
                                         <br>

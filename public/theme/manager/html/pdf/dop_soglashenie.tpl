@@ -301,7 +301,7 @@
         </td>
         <td style="width: 10%"></td>
         <td style="width: 45%"><u>адрес регистрации</u>
-            {$regaddress->adressfull}
+            {$regadress->adressfull}
         </td>
     </tr>
     <br>
@@ -309,7 +309,7 @@
         <td style="width: 45%">ОГРН 121770033532</td>
         <td style="width: 10%"></td>
         <td style="width: 45%"><u>фактический адрес проживания</u>
-            {$faktaddress->adressfull}
+            {$faktadress->adressfull}
         </td>
     </tr>
     <tr>
