@@ -336,8 +336,11 @@
                                 <li {if in_array($module, ['BlacklistController'])}class="active"{/if}>
                                     <a href="/blacklist"><i class="mdi mdi-tooltip"></i>Whitelist</a></li>
                             {/if}
-                            <li {if in_array($module, ['CommunicationsThemesController'])}class="active"{/if}>
-                                <a href="/communications_themes"><i class="mdi mdi-chart-arc"></i>Справочник тем КП</a></li>
+                            {if $manager->role != 'employer'}
+                                <li {if in_array($module, ['CommunicationsThemesController'])}class="active"{/if}>
+                                    <a href="/communications_themes"><i class="mdi mdi-chart-arc"></i>Справочник тем КП</a>
+                                </li>
+                            {/if}
                             {if in_array($manager->role, ['developer', 'admin', 'middle'])}
                                 <li {if in_array($module, ['DockTypesController'])}class="active"{/if}>
                                     <a href="/dock_types"><i class="mdi mdi-react"></i>Типы документов</a></li>

@@ -293,7 +293,7 @@ class Users extends Core
         }
 
         if (isset($filter['employer']))
-            $employer_filter = $this->db->placehold("AND company_id = ?", (int)$filter['employer']);
+            $employer_filter = $this->db->placehold("AND group_id = ?", (int)$filter['employer']);
 
         $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page - 1) * $limit, $limit);
 
