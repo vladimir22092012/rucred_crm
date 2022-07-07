@@ -768,4 +768,18 @@ class Contracts extends Core
         ", (int)$id);
         $this->db->query($query);
     }
+
+    public function conduct_transaction($transaction, $operation_xml)
+    {
+        $operation_reference = (string)$operation_xml->reference;
+        $reason_code = (string)$operation_xml->reason_code;
+        $payment_amount = strval($operation_xml->amount) / 100;
+        $operation_date = date('Y-m-d H:i:s', strtotime(str_replace('.', '-', (string)$operation_xml->date)));
+        
+        // проводим платеж
+        // создаем операцию 
+        // обновляем транзакцию
+        
+    }
+
 }
