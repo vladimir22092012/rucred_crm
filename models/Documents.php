@@ -204,7 +204,6 @@ class Documents extends Core
     {
         $id_filter = '';
         $role_filter = '';
-        $obshie_usloviya_flag = '';
         $user_id_filter = '';
         $order_id_filter = '';
         $contract_id_filter = '';
@@ -238,9 +237,6 @@ class Documents extends Core
 
             $role_filter = $this->db->placehold("AND doc.template IN (?@)", (array)$templates_implode);
         }
-
-        if (isset($filter['obshie_usloviya']))
-            $obshie_usloviya_flag = $this->db->placehold("AND doc.type != 'OBSHIE_USLOVIYA' ");
 
         if (isset($filter['search'])) {
             foreach ($filter['search'] as $field => $value) {
@@ -331,7 +327,6 @@ class Documents extends Core
                 $type_filter
  	            $keyword_filter
  	            $search_list
- 	            $obshie_usloviya_flag
  	            $role_filter
  	            AND doc.`type` != 'ndfl'
             $sort 

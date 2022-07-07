@@ -599,7 +599,6 @@ class OfflineOrderController extends Controller
         $order = $this->orders->get_order($order_id);
 
         $filter['order_id'] = $order->order_id;
-        $filter['obshie_usloviya'] = 1;
 
         $documents = $this->documents->get_documents($filter);
 
@@ -3275,6 +3274,7 @@ class OfflineOrderController extends Controller
         $pay_amount = $this->request->post('pay_amount');
         $pay_date = date('d.m.Y', strtotime($this->request->post('pay_date')));
         $order = $this->orders->get_order($order_id);
+        $order->new_term = $new_term;
 
         $payment_schedule = json_decode($order->payment_schedule, true);
 
