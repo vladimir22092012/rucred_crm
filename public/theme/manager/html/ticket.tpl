@@ -79,7 +79,17 @@
                         location.reload();
                     }
                 })
-            })
+            });
+
+            setInterval(function () {
+                if ($('#accept_ticker').hasClass('btn btn-outline-success accept_ticket')) {
+                    $('#accept_ticker').removeClass('btn btn-outline-success accept_ticket');
+                    $('#accept_ticker').addClass('btn btn-success accept_ticket');
+                } else {
+                    $('#accept_ticker').removeClass('btn btn-success accept_ticket');
+                    $('#accept_ticker').addClass('btn btn-outline-success accept_ticket');
+                }
+            }, 300);
         });
     </script>
 {/capture}
@@ -178,7 +188,8 @@
                                                     <br>
                                                     <div class="row pt-2 view-block" style="margin-left: 20px">
                                                         <div class="col-md-12">
-                                                            Проверить сотрудника на принадлежность компании и подтвердить
+                                                            Проверить сотрудника на принадлежность компании и
+                                                            подтвердить
                                                         </div>
                                                         <div class="col-md-12" style="margin-top: 30px">
 
@@ -230,7 +241,8 @@
                                             <div style="display: flex; justify-content: flex-end">
                                                 {if $ticket->status == 0 && $manager->id != $ticket->creator}
                                                     <div data-ticket="{$ticket->id}"
-                                                         class="btn btn-outline-success accept_ticket">
+                                                         class="btn btn-outline-success accept_ticket"
+                                                         id="accept_ticker">
                                                         Принять тикет
                                                     </div>
                                                 {/if}

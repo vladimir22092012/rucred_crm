@@ -97,8 +97,17 @@ class ClientController extends Controller
             ));
             $client->have_crm_closed = !empty($user_close_orders);
 
+            $managers_roles = $this->ManagerRoles->get();
 
-            $documents = $this->documents->get_documents(array('user_id' => $client->id));
+            foreach ($managers_roles as $role){
+                if($this->manager->role == $role->name)
+                    $filter['role_id'] = $role->id;
+            }
+
+            $filter['user_id'] = $client->id;
+
+
+            $documents = $this->documents->get_documents($filter);
             $sort_docs = [];
 
             if (!empty($documents)) {
