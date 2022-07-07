@@ -2516,6 +2516,7 @@
                                                                                 <div class="spinner-border text-info"
                                                                                      role="status"></div>
                                                                             </a>
+                                                                            {*
                                                                         {elseif $scorings[$scoring_type->name]}
                                                                             <a class="btn-load text-info js-run-scorings run-scoring-btn float-right"
                                                                                data-type="{$scoring_type->name}"
@@ -2524,12 +2525,13 @@
                                                                                 <i class="fas fa-undo"></i>
                                                                             </a>
                                                                         {else}
-                                                                            <a class="btn-load {*{if in_array(, $audit_types)}loading{/if}*} text-info js-run-scorings run-scoring-btn float-right"
+                                                                            <a class="btn-load text-info js-run-scorings run-scoring-btn float-right"
                                                                                data-type="{$scoring_type->name}"
                                                                                data-order="{$order->order_id}"
                                                                                href="javascript:void(0);">
                                                                                 <i class="far fa-play-circle"></i>
                                                                             </a>
+                                                                            *}
                                                                         {/if}
                                                                     {/if}
                                                                 </div>
@@ -2972,18 +2974,18 @@
                                                                    style="display: none; color: #009d07">
                                                                 Успешно!
                                                             </small>
+                                                            <div class="btn btn-info confirm_asp" type="button"
+                                                                 data-user="{$order->user_id}"
+                                                                 data-order="{$order->order_id}"
+                                                                 style="margin-left: 15px; display:none"
+                                                                 data-phone="{$order->phone_mobile}">Подтвердить
+                                                            </div>
                                                             <div type="button" data-user="{$order->user_id}"
                                                                  data-phone="{$order->phone_mobile}"
                                                                  data-order="{$order->order_id}"
                                                                  style="margin-left: 15px; width: 370px"
                                                                  class="btn btn-primary send_asp_code">
                                                                 Отправить смс
-                                                            </div>
-                                                            <div class="btn btn-info confirm_asp" type="button"
-                                                                 data-user="{$order->user_id}"
-                                                                 data-order="{$order->order_id}"
-                                                                 style="margin-left: 15px; display:none"
-                                                                 data-phone="{$order->phone_mobile}">Подтвердить
                                                             </div>
                                                         </div>
                                                     {/if}

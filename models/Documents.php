@@ -337,6 +337,7 @@ class Documents extends Core
             $sort 
             $sql_limit
         ");
+
         $this->db->query($query);
         if ($results = $this->db->results()) {
             foreach ($results as $result) {
@@ -440,7 +441,7 @@ class Documents extends Core
         $query = $this->db->placehold("
             UPDATE __documents 
             SET asp_id = ? 
-            WHERE id = ?
+            WHERE order_id = ?
         ", $params['asp_id'], $params['order_id']);
 
         $this->db->query($query);

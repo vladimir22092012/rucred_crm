@@ -46,7 +46,6 @@ class DocumentController extends Controller
         $this->design->assign('period', $period);
 
         $payment_schedule = json_decode($document->params->payment_schedule, true);
-        $payment_schedule = end($payment_schedule);
 
         uksort(
             $payment_schedule,
@@ -195,6 +194,14 @@ class DocumentController extends Controller
 
             if ($document->template == 'perechislenie_zaemnih_sredstv.tpl') {
                 $download = $fio . " - Согласие на перечисление заемных средств" . "($date)";
+            }
+
+            if ($document->template == 'dop_grafik.tpl') {
+                $download = $fio . " - График платежей по микрозайму (после реструктуризации)" . "($date)";
+            }
+
+            if ($document->template == 'dop_soglashenie.tpl') {
+                $download = $fio . " - Дополнительное соглашение к Индивидуальным условиям договора микрозайма" . "($date)";
             }
 
             if (isset($download))

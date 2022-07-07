@@ -3516,7 +3516,7 @@ class OfflineOrderController extends Controller
                     'payment_schedule' => $payment_schedule
                 ];
 
-            $order->probably_return_date = $end_date;
+            $order->probably_return_date = $end_date->format('Y-m-d');
             $order->payment_schedule = json_encode($new_shedule);
             $order->psk = $psk;
             $order->restruct_date = date('Y-m-d');
