@@ -2273,11 +2273,6 @@
                                             <br>
                                             {if !empty($documents)}
                                                 {foreach $documents as $document}
-                                                    {if $manager->role == 'employer'}
-                                                        {if !in_array($document->numeration, ['1.1', '2.2', '3.1'])}
-                                                            {continue}
-                                                        {/if}
-                                                    {/if}
                                                     <div style="width: 100%!important; height: 50px; margin-left: 5px; display: flex; vertical-align: middle;"
                                                          id="{$document->id}">
                                                         <div class="form-group"
