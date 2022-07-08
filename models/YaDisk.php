@@ -118,7 +118,7 @@ class YaDisk extends Core
                 $this->upload($upload_scans, $order, $resource, $file_name, $document);
             }
 
-            if ($type == 'soglasie_rabotadatelu.tpl') {
+            if ($type == 'soglasie_rukred_rabotadatel.tpl') {
                 $file_name = "$personal_number-Form-0303-($employer)-$date";
                 $file_name = $this->translit($file_name);
 
@@ -140,7 +140,7 @@ class YaDisk extends Core
                 $this->upload($upload_scans, $order, $resource, $file_name, $document);
             }
 
-            if ($type == 'soglasie_rukred_rabotadatel.tpl') {
+            if ($type == 'soglasie_rabotadatelu.tpl') {
                 $file_name = "$personal_number-Form-0406-($employer)-$date";
                 $file_name = $this->translit($file_name);
 
