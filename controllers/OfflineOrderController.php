@@ -3735,8 +3735,14 @@ class OfflineOrderController extends Controller
             $sum = $rub + $kop;
         }
 
+        /*
+
         $resp = $this->QrGenerateApi->get_qr($sum, 600);
         $pay_link = $resp->results->qr_link;
+
+        */
+
+        $pay_link = $this->Best2pay->get_payment_link($sum, $order_id);
 
         $message = "Оплата доступна по ссылке: $pay_link";
 
