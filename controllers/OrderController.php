@@ -3465,6 +3465,7 @@ class OrderController extends Controller
         $code = $this->request->post('code');
         $user_id = $this->request->post('user');
         $order_id = $this->request->post('order');
+        $restruct = $this->request->post('restruct');
 
         $this->db->query("
         SELECT code, created
@@ -3497,7 +3498,21 @@ class OrderController extends Controller
 
             $asp_id = $this->AspCodes->add_code($asp_log);
 
-            $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
+            if(!empty($restruct)){
+
+                $date_from = date('Y-m-d 00:00:00');
+                $date_to = date('Y-m-d 23:59:59');
+
+                $this->db->query("
+                UPDATE s_documents
+                SET asp_id = ?
+                WHERE `type` in ('DOP_GRAFIK', 'DOP_SOGLASHENIE')
+                AND order_id = ?
+                AND created between $date_from and $date_to
+                ", $asp_id, $order_id);
+            }else{
+                $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
+            }
 
             echo json_encode(['success' => 1]);
             exit;

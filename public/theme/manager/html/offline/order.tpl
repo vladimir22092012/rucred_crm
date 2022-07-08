@@ -707,8 +707,9 @@
                 let user = $(this).attr('data-user');
                 let order = $(this).attr('data-order');
                 let code = $('input[class="form-control code_asp"]').val();
+                let restruct = $(this).attr('data-restruct');
 
-                confirm_asp(user, phone, code, order);
+                confirm_asp(user, phone, code, order, restruct);
 
             });
 
@@ -765,14 +766,25 @@
             });
 
             $(document).on('click', '.test_ya', function () {
-               $.ajax({
-                   method: 'POST',
-                   data:{
-                       action: 'upload_docs_to_yandex'
-                   }
-               })
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'upload_docs_to_yandex'
+                    }
+                })
             });
         });
+
+        $('a[href^="#"]').click(function (e) {
+            e.preventDefault();
+
+            let anchor = $(this).attr('href');
+
+            $('html, body').animate({
+                scrollTop: $(anchor).offset().top
+            }, 600);
+        });
+
     </script>
     <script>
 
@@ -821,7 +833,7 @@
             });
         }
 
-        function confirm_asp(user, phone, code, order) {
+        function confirm_asp(user, phone, code, order, restruct) {
 
             $.ajax({
                 method: 'POST',
@@ -831,7 +843,8 @@
                     user: user,
                     phone: phone,
                     code: code,
-                    order: order
+                    order: order,
+                    restruct: restruct
                 },
                 success: function (response) {
                     if (response['error'] == 1) {
@@ -1877,8 +1890,10 @@
                                                                value="Отменить">
                                                     {/if}
                                                     {if $asp_restruct == 1}
-                                                        <div class="btn btn-primary" style="margin-left: 15px">
-                                                            Подписать документы о реструктуризации
+                                                        <div class="btn btn-primary"
+                                                             style="margin-left: 15px">
+                                                            <a href="#send_asp" style="text-decoration: none!important; color: #ffffff!important;">
+                                                                Подписать документы о реструктуризации</a>
                                                         </div>
                                                     {/if}
                                                     {if in_array($order->status, [0,1,12,14])}
@@ -2761,7 +2776,8 @@
                                             <div class="row view-block p-2 snils-front">
                                                 <div class="col-md-12">
                                                     <div class="form-group mb-0 row">
-                                                        <label class="control-label col-md-8 col-7 snils-number">{$order->pdn} %</label>
+                                                        <label class="control-label col-md-8 col-7 snils-number">{$order->pdn}
+                                                            %</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -2981,6 +2997,7 @@
                                                                  data-phone="{$order->phone_mobile}">Подтвердить
                                                             </div>
                                                             <div type="button" data-user="{$order->user_id}"
+                                                                 id="send_asp"
                                                                  data-phone="{$order->phone_mobile}"
                                                                  data-order="{$order->order_id}"
                                                                  style="margin-left: 15px; width: 370px"
@@ -3010,6 +3027,33 @@
                                                 </div>
                                             </div>
                                         </form>
+                                    </div>
+                                {/if}
+                                {if $asp_restruct == 1}
+                                    <div style="display: flex;">
+                                        <input type="text" class="form-control code_asp"
+                                               style="display:none"
+                                               placeholder="SMS код"
+                                               value="{if $is_developer}{$contract->accept_code}{/if}"/>
+                                        <small id="asp_success"
+                                               style="display: none; color: #009d07">
+                                            Успешно!
+                                        </small>
+                                        <div class="btn btn-info confirm_asp" type="button"
+                                             data-user="{$order->user_id}"
+                                             data-order="{$order->order_id}"
+                                             data-restruct = "1"
+                                             style="margin-left: 15px; display:none"
+                                             data-phone="{$order->phone_mobile}">Подтвердить
+                                        </div>
+                                        <div type="button" data-user="{$order->user_id}"
+                                             id="send_asp"
+                                             data-phone="{$order->phone_mobile}"
+                                             data-order="{$order->order_id}"
+                                             style="margin-left: 15px; width: 370px"
+                                             class="btn btn-primary send_asp_code">
+                                            Отправить смс
+                                        </div>
                                     </div>
                                 {/if}
                             </div>
