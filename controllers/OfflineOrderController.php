@@ -849,13 +849,6 @@ class OfflineOrderController extends Controller
 
         $this->contracts->update_contract($order->contract_id, ['status' => 1]);
 
-        //$upload_scans = 0;
-
-        //if(count($scans) == count($users_docs))
-            //$upload_scans = 1;
-
-        //$this->YaDisk->upload_orders_files($order_id, $upload_scans);
-
         $ticket =
             [
                 'creator' => $this->manager->id,
@@ -893,6 +886,13 @@ class OfflineOrderController extends Controller
                 $this->scorings->add_scoring($add_scoring);
             }
         }
+
+        $upload_scans = 0;
+
+        if(count($scans) == count($users_docs))
+            $upload_scans = 1;
+
+        $this->YaDisk->upload_orders_files($order_id, $upload_scans);
 
         return array('success' => 1, 'status' => 2);
 
