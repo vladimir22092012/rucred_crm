@@ -48,8 +48,15 @@ class DocumentController extends Controller
 
         $this->design->assign('period', $period);
 
-        $payment_schedule = json_decode($document->params->payment_schedule, true);
-        $payment_schedule = end($payment_schedule);
+        if (in_array($document->type, ['DOP_SOGLASHENIE', 'DOP_GRAFIK'])) {
+            $order = $this->orders->get_order($document->params->order_id);
+            $payment_schedule = json_decode($order->payment_schedule, true);
+            $payment_schedule = end($payment_schedule);
+
+        } else {
+            $payment_schedule = json_decode($document->params->payment_schedule, true);
+            $payment_schedule = end($payment_schedule);
+        }
 
         uksort(
             $payment_schedule,
@@ -60,10 +67,9 @@ class DocumentController extends Controller
                 }
 
                 return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
-            }
-        );
+            });
 
-        if($document->type == 'ZAYAVLENIE_RESTRUCT'){
+        if ($document->type == 'ZAYAVLENIE_RESTRUCT') {
             array_pop($payment_schedule);
             $last_pay = array_pop($payment_schedule);
             $annouitet = $last_pay['pay_sum'];

@@ -1876,6 +1876,11 @@
                                                                class="btn btn-danger cancel_restruct"
                                                                value="Отменить">
                                                     {/if}
+                                                    {if $asp_restruct == 1}
+                                                        <div class="btn btn-primary" style="margin-left: 15px">
+                                                            Подписать документы о реструктуризации
+                                                        </div>
+                                                    {/if}
                                                     {if in_array($order->status, [0,1,12,14])}
                                                         <input style="margin-left: 30px" type="button"
                                                                class="btn btn-warning reform"

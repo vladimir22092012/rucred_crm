@@ -27,7 +27,7 @@ class Soap1c extends Core
     {
         if ($order = $this->orders->get_order($order_id)) {
 
-            $company = $this->companies->get_company($order->company_id);
+            $company = $this->companies->get_company(2);
             $order->regaddress = $this->addresses->get_address($order->regaddress_id);
             $order->faktaddress = $this->addresses->get_address($order->faktaddress_id);
 

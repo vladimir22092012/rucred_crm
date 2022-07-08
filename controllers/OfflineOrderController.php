@@ -604,13 +604,19 @@ class OfflineOrderController extends Controller
 
         $scans = $this->Scans->get_scans_by_order_id($order_id);
 
+        $asp_restruct = 0;
+
         foreach ($documents as $document) {
             foreach ($scans as $scan) {
                 if ($document->template == $scan->type)
                     $document->scan = $scan;
             }
+
+            if($document->type == 'DOP_GRAFIK' && empty($document->asp_id))
+                $asp_restruct = 1;
         }
 
+        $this->design->assign('asp_restruct', $asp_restruct);
         $this->design->assign('documents', $documents);
 
         $settlement = $this->OrganisationSettlements->get_settlement($order->settlement_id);
@@ -3277,11 +3283,7 @@ class OfflineOrderController extends Controller
         $order->new_term = $new_term;
 
         $payment_schedule = json_decode($order->payment_schedule, true);
-
-        foreach ($payment_schedule as $schedule) {
-            $payment_schedule = (array)$schedule;
-            break;
-        }
+        $payment_schedule = end($payment_schedule);
 
         array_shift($payment_schedule);
 
@@ -3522,6 +3524,7 @@ class OfflineOrderController extends Controller
             $old_schedule = json_decode($order->payment_schedule);
             $now_date = date('Y-m-d', strtotime('+1 day'));
             $old_schedule->{$now_date} = $new_shedule;
+
             $payment_schedule = json_encode($old_schedule);
 
             $update_order =
@@ -3530,10 +3533,10 @@ class OfflineOrderController extends Controller
                     'payment_schedule' => $payment_schedule
                 ];
 
-            $order->probably_return_date = $end_date->format('Y-m-d');
-            $order->payment_schedule = json_encode($new_shedule);
-            $order->psk = $psk;
             $order->restruct_date = date('Y-m-d');
+            $order->probably_return_date = $end_date->format('Y-m-d');
+            $order->payment_schedule[$order->restruct_date] = json_encode($new_shedule);
+            $order->psk = $psk;
 
             $this->documents->create_document(array(
                 'user_id' => $order->user_id,
@@ -3552,6 +3555,7 @@ class OfflineOrderController extends Controller
             ));
 
             $this->orders->update_order($order_id, $update_order);
+            $this->users->update_user($order->user_id, ['balance_blocked' => 1]);
             exit;
         }
 
