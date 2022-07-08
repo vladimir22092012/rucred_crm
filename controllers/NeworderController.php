@@ -550,9 +550,11 @@ class NeworderController extends Controller
             $all_sum_credits += $annoouitet_pay;
 
             if ($all_sum_credits != 0)
-                $user['pdn'] = round(($all_sum_credits/$user['income']) * 100, 2);
+                $pdn = round(($all_sum_credits/$user['income']) * 100, 2);
             else
-                $user['pdn'] = 0;
+                $pdn = 0;
+
+            $this->users->update_user($user_id, ['pdn' => $pdn]);
 
             if (date('d', strtotime($start_date)) < $first_pay_day) {
                 if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < $loan->free_period) {
