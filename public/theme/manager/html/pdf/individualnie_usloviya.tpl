@@ -72,7 +72,7 @@
     серия <strong>{$passport_serial} № {$passport_number} выдан {$passport_issued} {$passport_date|date}</strong> года,
     код
     подразделения <strong>{$subdivision_code}</strong>, зарегистрированный (-ая) по адресу
-    <strong>{$regaddress->adressfull|upper}</strong>,
+    <strong>{$regadress->adressfull|upper}</strong>,
     фактически проживающий (-ая) по адресу <strong>{$faktadress->adressfull|upper}</strong>, далее именуемый (-ая)
     «Заёмщик»,
     находясь
@@ -1019,7 +1019,7 @@
         </td>
         <td style="width: 10%"></td>
         <td style="width: 45%"><u>адрес регистрации</u>
-            {$regaddress->adressfull}
+            {$regadress->adressfull}
         </td>
     </tr>
     <tr>
