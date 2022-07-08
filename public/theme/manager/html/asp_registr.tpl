@@ -137,8 +137,8 @@
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'manager_id asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'manager_id desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'manager_id asc'}<a
                                                 href="{url page=null sort='manager_id desc'}">
-                                                    Пользователь</a>
-                                            {else}<a href="{url page=null sort='manager_id asc'}">Пользователь</a>{/if}
+                                                    Подписант</a>
+                                            {else}<a href="{url page=null sort='manager_id asc'}">Подписант</a>{/if}
                                         </th>
                                         <th style="width: 90px;">Количество документов</th>
                                         <th style="width: 350px;">Подписанные
@@ -179,7 +179,7 @@
                                         </td>
                                         <td style="width: 70px;" class="jsgrid-cell">
                                             <select class="form-control" id="manager_filter">
-                                                <option value="none">Пользователь</option>
+                                                <option value="none">Подписант</option>
                                                 {foreach $managers as $manager}
                                                     <option value="{$manager->id}">{$manager->name}</option>
                                                 {/foreach}

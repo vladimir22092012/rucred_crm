@@ -328,12 +328,9 @@ $(function () {
 
     $(document).on('change', '.js-lastname-input , .js-firstname-input , .js-patronymic-input', function () {
 
-        let lastname = $('.js-lastname-input').val();
-        let firstname = $('.js-firstname-input').val();
-        let patronymic = $('.js-patronymic-input').val();
-        lastname = (lastname) ? lastname + ' ' : '';
-        firstname = (firstname) ? firstname + ' ' : '';
-        patronymic = (patronymic) ? patronymic + ' ' : '';
+        let lastname = $('.js-lastname-input').val().replace(/ /g,'');
+        let firstname = $('.js-firstname-input').val().replace(/ /g,'');
+        let patronymic = $('.js-patronymic-input').val().replace(/ /g,'');
 
         if ($(this).hasClass('js-lastname-input'))
             $('input[name="requisite[holder][lastname]"]').val(lastname);

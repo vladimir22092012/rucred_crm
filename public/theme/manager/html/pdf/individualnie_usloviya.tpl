@@ -1077,7 +1077,7 @@
     <tr>
         <td style="width: 45%">ИНН 9725055162</td>
         <td style="width: 10%"></td>
-        <td style="width: 45%">{$inn}</td>
+        <td style="width: 45%">ИНН {$inn}</td>
     </tr>
     <br>
     <tr>
@@ -1099,7 +1099,7 @@
             к/с {$settlement->cors}
         </td>
         <td style="width: 10%"></td>
-        <td style="width: 45%"> р/с {$requisite->number} в {$requisite->name} БИК {$requisite->bik}
+        <td style="width: 45%">р/с {$requisite->number} в {$requisite->name} БИК {$requisite->bik}
         </td>
     </tr>
     <br>

@@ -115,7 +115,7 @@
                             });
                         }
                         else {
-                            $('.show_phone_code').show();
+                            $('.show_email_code').show();
                         }
                     }
                 })
@@ -313,7 +313,12 @@
                     }
                 });
             });
-        })
+            
+            $(document).on('input', '.fio', function () {
+                let val = $(this).val().toUpperCase();
+                $(this).val(val);
+            })
+        });
     </script>
 {/capture}
 
@@ -513,12 +518,12 @@
                                         <h3>ФИО</h3><br>
                                         <div style="width: 100%">
                                             <input style="width: 350px; margin-left: 25px" type="text" name="lastname"
-                                                   class="form-control js-lastname-input"
+                                                   class="form-control js-lastname-input fio"
                                                    placeholder="Фамилия" required value="{$order->lastname}"/>
                                             <input style="width: 350px; margin-left: 25px" type="text" name="firstname"
-                                                   class="form-control js-firstname-input"
+                                                   class="form-control js-firstname-input fio"
                                                    placeholder="Имя" required value="{$order->firstname}"/>
-                                            <input class="form-control js-patronymic-input"
+                                            <input class="form-control js-patronymic-input fio"
                                                    style="width: 350px; margin-left: 25px"
                                                    name="patronymic"
                                                    placeholder="Отчество(если есть)" type="text"
@@ -605,7 +610,7 @@
                                             <label class="control-label">Предыдущие ФИО</label>
                                             <label class="control-label" style="margin-left: 230px">Дата
                                                 изменения</label><br>
-                                            <input class="form-control prev_fio" style="width: 350px; margin-left: 25px"
+                                            <input class="form-control prev_fio fio" style="width: 350px; margin-left: 25px"
                                                    type="text" name="prev_fio" value="{$order->prev_fio}"
                                             />
                                             <input type="text" style="width: 180px; margin-left: 25px"
@@ -703,15 +708,15 @@
                                         <div style="width: 100%; display: none;" id="sex_toggle">
                                             <label class="control-label">ФИО Супруги(-а)</label><br>
                                             <div style="display: flex">
-                                                <input class="form-control fio_spouse"
+                                                <input class="form-control fio_spouse fio"
                                                        style="width: 350px; margin-left: 25px"
                                                        type="text" name="fio_spouse[lastname]" placeholder="Фамилия"
                                                        value="{$fio_spouse[0]}"/>
-                                                <input class="form-control fio_spouse"
+                                                <input class="form-control fio_spouse fio"
                                                        style="width: 350px; margin-left: 25px"
                                                        type="text" name="fio_spouse[firstname]" placeholder="Имя"
                                                        value="{$fio_spouse[1]}"/><br><br>
-                                                <input class="form-control fio_spouse"
+                                                <input class="form-control fio_spouse fio"
                                                        style="width: 350px; margin-left: 25px"
                                                        type="text" name="fio_spouse[patronymic]"
                                                        placeholder="Отчество(если есть)" value="{$fio_spouse[2]}"/>
@@ -755,7 +760,7 @@
                                                                 <div class="input-group show_email_code"
                                                                      style="display: none">
                                                                     <input type="text" class="form-control email_code"
-                                                                           placeholder="Введите код из письма">
+                                                                           placeholder="Код из письма">
                                                                     <div class="input-group-append">
                                                                         <button class="btn btn-primary accept_edit_email_with_code"
                                                                                 type="button" data-user="{$user->id}">
@@ -981,7 +986,7 @@
                                         <br>
                                         <div style="width: 100%; display: none" id="foreign_husb_wife_toggle">
                                             <label class="control-label">ФИО Супруги(-а)</label><br>
-                                            <input class="form-control fio_public_spouse" name="fio_public_spouse"
+                                            <input class="form-control fio_public_spouse fio" name="fio_public_spouse"
                                                    style="width: 500px; margin-left: 25px" type="text"
                                                    value="{$order->fio_public_spouse}"/>
                                         </div>
@@ -1007,7 +1012,7 @@
                                         <br>
                                         <div style="width: 100%; display: none" id="foreign_relative_toggle">
                                             <label class="control-label">ФИО родственника</label><br>
-                                            <input class="form-control fio_relative" name="fio_relative"
+                                            <input class="form-control fio_relative fio" name="fio_relative"
                                                    style="width: 500px; margin-left: 25px" type="text"
                                                    value="{$order->fio_relative}"/>
                                         </div>
@@ -1019,19 +1024,19 @@
                                             <input type="hidden" name="requisite[id]" value="{$order->requisite->id}"/>
                                             <div style="display: flex; flex-direction: column">
                                                 <label class="control-label">Фамилия держателя счета</label>
-                                                <input class="form-control" style="width: 350px; margin-left: 30px"
+                                                <input class="form-control fio" style="width: 350px; margin-left: 30px"
                                                        type="text" name="requisite[holder][lastname]"
                                                        value="{$holder_lastname}"/>
                                             </div>
                                             <div style="display: flex; flex-direction: column">
                                                 <label class="control-label">Имя держателя счета</label>
-                                                <input class="form-control" style="width: 350px; margin-left: 30px"
+                                                <input class="form-control fio" style="width: 350px; margin-left: 30px"
                                                        type="text" name="requisite[holder][firstname]"
                                                        value="{$holder_firstname}"/>
                                             </div>
                                             <div style="display: flex; flex-direction: column">
                                                 <label class="control-label">Отчество держателя счета</label>
-                                                <input class="form-control" style="width: 350px; margin-left: 30px"
+                                                <input class="form-control fio" style="width: 350px; margin-left: 30px"
                                                        type="text" name="requisite[holder][patronymic]"
                                                        value="{$holder_patronymic}"/>
                                             </div>

@@ -280,6 +280,11 @@
 
             $(document).on('change', '.photo_status', function () {
 
+                if($(this).val() != 1)
+                    $('div[class="order-image-actions"]').show();
+                else
+                    $('div[class="order-image-actions"]').hide();
+
                 let status = $(this).val();
                 let file_id = $(this).attr('data-file');
 
@@ -2839,8 +2844,7 @@
                                                             <img src="{$config->back_url}/files/users/{$order->user_id}/{$file->name}"
                                                                  alt="" class="img-responsive" style=""/>
                                                         </a>
-                                                        {if in_array($order->status, [0, 1, 12, 14, 15])}
-                                                            <div class="order-image-actions">
+                                                            <div class="order-image-actions" {if !in_array($order->status, [0, 1, 12, 14, 15]) || $file->type == 'document'}style="display: none"{/if}>
                                                                 <div class="dropdown mr-1 show ">
                                                                     <button type="button"
                                                                             class="btn {if $file->status==2}btn-success{elseif $file->status==3}btn-danger{else}btn-secondary{/if} dropdown-toggle"
@@ -2897,7 +2901,6 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        {/if}
                                                     </li>
                                                     <select class="form-control photo_status" data-file="{$file->id}"
                                                             name="photo_status">
