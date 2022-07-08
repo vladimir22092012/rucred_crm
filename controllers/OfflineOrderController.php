@@ -3713,6 +3713,7 @@ class OfflineOrderController extends Controller
         $order_id = $this->request->post('order_id');
         $phone = $this->request->post('phone');
         $order = $this->orders->get_order($order_id);
+        $contract = $this->contracts->get_order_contract($order_id);
 
         $payment_schedule = json_decode($order->payment_schedule, true);
         $payment_schedule = end($payment_schedule);
@@ -3743,7 +3744,7 @@ class OfflineOrderController extends Controller
 
         */
 
-        $pay_link = $this->Best2pay->get_payment_link($sum, $order_id);
+        $pay_link = $this->Best2pay->get_payment_link($sum, $contract->id);
 
         $message = "Оплата доступна по ссылке: $pay_link";
 
