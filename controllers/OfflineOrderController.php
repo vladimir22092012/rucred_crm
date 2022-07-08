@@ -990,13 +990,12 @@ class OfflineOrderController extends Controller
 
             $this->design->assign('individ_encrypt', $individ_encrypt);
             $this->design->assign('graphic_encrypt', $graphic_encrypt);
-            $this->design->assign('order', $order);
-            $fetch = $this->design->fetch('email/success_loan.tpl');
+            $fetch = $this->design->fetch('email/success_loan_2.tpl');
 
             $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
             $mailResponse = $mailService->send(
                 'rucred@ucase.live',
-                'duircianos@yandex.ru',
+                $order->email,
                 'RuCred | Ваш займ успешно выдан',
                 'Поздравляем!',
                 $fetch
