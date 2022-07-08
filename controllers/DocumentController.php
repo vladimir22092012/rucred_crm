@@ -123,6 +123,7 @@ class DocumentController extends Controller
         $percents = $percents_per_year;
 
         $percents = number_format($percents, 3, ',', ' ');
+        $percents = str_pad($percents, 6, '0', STR_PAD_RIGHT);
 
         $this->design->assign('percents', $percents);
         $percents_str = explode(',', $percents);
