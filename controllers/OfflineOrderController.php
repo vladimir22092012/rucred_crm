@@ -1,7 +1,7 @@
 <?php
 
 use App\Services\MailService;
-use App\Application\Classes\Encryption;
+use App\Services\Encryption;
 
 error_reporting(-1);
 ini_set('display_errors', 'On');
@@ -990,14 +990,16 @@ class OfflineOrderController extends Controller
 
             $this->design->assign('individ_encrypt', $individ_encrypt);
             $this->design->assign('graphic_encrypt', $graphic_encrypt);
+            $this->design->assign('order', $order);
+            $fetch = $this->design->fetch('email/success_loan.tpl');
 
             $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
             $mailResponse = $mailService->send(
                 'rucred@ucase.live',
-                $order->email,
+                'duircianos@yandex.ru',
                 'RuCred | Ваш займ успешно выдан',
                 'Поздравляем!',
-                $this->design->fetch('email/success_loan.tpl')
+                $fetch
             );
 
             return ['success' => 1];

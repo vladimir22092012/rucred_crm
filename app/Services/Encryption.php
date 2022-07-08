@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\Classes;
+namespace App\Services;
 
 class Encryption
 {

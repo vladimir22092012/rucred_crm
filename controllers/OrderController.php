@@ -922,7 +922,7 @@ class OrderController extends Controller
                 $order->email,
                 'RuCred | Ваш займ успешно выдан',
                 'Поздравляем!',
-                $this->design->fetch('email/success_loan.tpl')
+                $this->design->fetch('email/success_loan.php')
             );
 
             return ['success' => 1];
