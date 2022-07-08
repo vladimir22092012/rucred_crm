@@ -849,12 +849,12 @@ class OfflineOrderController extends Controller
 
         $this->contracts->update_contract($order->contract_id, ['status' => 1]);
 
-        $upload_scans = 0;
+        //$upload_scans = 0;
 
-        if(count($scans) == count($users_docs))
-            $upload_scans = 1;
+        //if(count($scans) == count($users_docs))
+            //$upload_scans = 1;
 
-        $this->YaDisk->upload_orders_files($order_id, $upload_scans);
+        //$this->YaDisk->upload_orders_files($order_id, $upload_scans);
 
         $ticket =
             [
