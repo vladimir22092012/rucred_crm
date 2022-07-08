@@ -3671,7 +3671,7 @@ class OfflineOrderController extends Controller
             $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
 
             $delete_scans = 0;
-            $this->form_docs($order_id, $delete_scans);
+            $this->form_docs($order_id, $delete_scans, $asp_id);
 
             echo json_encode(['success' => 1]);
             exit;
@@ -3752,7 +3752,7 @@ class OfflineOrderController extends Controller
         exit;
     }
 
-    private function form_docs($order_id, $delete_scans = 1)
+    private function form_docs($order_id, $delete_scans = 1, $asp_id = false)
     {
 
         if ($delete_scans == 1)
@@ -3781,6 +3781,9 @@ class OfflineOrderController extends Controller
         $doc_types['04.09'] = 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP';
         $doc_types['04.10'] = 'OBSHIE_USLOVIYA';
         $doc_types['03.04'] = 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR';
+
+        if($asp_id)
+            $order->asp = $asp_id;
 
 
         foreach ($doc_types as $key => $type) {

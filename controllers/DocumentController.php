@@ -34,8 +34,10 @@ class DocumentController extends Controller
         $company = $this->Companies->get_company($document->params->company_id);
         $this->design->assign('company', $company);
 
-        $code_asp = $this->AspCodes->get_code(['code' => $document->params->sms]);
-        $this->design->assign('code_asp', $code_asp);
+        if(!empty($document->params->asp)){
+            $code_asp = $this->AspCodes->get_code(['code' => $document->params->asp]);
+            $this->design->assign('code_asp', $code_asp);
+        }
 
         $loan_id = $document->params->loan_type;
         $loan = $this->Loantypes->get_loantype($loan_id);
