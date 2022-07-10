@@ -10,6 +10,6 @@
   tags: deploy
 
 - name: Synchronize file from deploy folder to floder deployed
-  shell: rsync -zvarc --exclude 'logs' "{{ temp_repo_path }}"/* /home/rucred-crm/rucred-crm/ && rsync -zvarc --exclude 'logs' "{{ temp_repo_path }}"/.git /home/rucred-crm/rucred-crm/ 
+  shell: rsync -zvarc --exclude 'logs' "{{ temp_repo_path }}"/* "{{ repo_path }}"/ && rsync -zvarc --exclude 'logs' "{{ temp_repo_path }}"/.git "{{ repo_path }}"/ 
   when: code_upload.changed
   tags: deploy
