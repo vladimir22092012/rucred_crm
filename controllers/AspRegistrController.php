@@ -13,16 +13,15 @@ class AspRegistrController extends Controller
 
         $codes = $this->AspCodes->get_codes($filter);
 
-        $managers = new stdClass();
+        $users = new stdClass();
 
         foreach($codes as $code){
-            $manager = $this->Managers->get_manager($code->manager_id);
-            $code->manager = $manager;
-            $managers->{$manager->id} = $manager;
+            $code->user = $this->users->get_user($code->user_id);
+            $code->manager =  $this->managers->get_manager($code->manager_id);
             $code->documents = $this->documents->get_documents(['order_id' => $code->order_id]);
         }
 
-        $this->design->assign('managers', $managers);
+        $this->design->assign('users', $users);
 
         $this->design->assign('codes', $codes);
         return $this->design->fetch('asp_registr.tpl');

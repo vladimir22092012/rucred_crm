@@ -64,12 +64,12 @@
                 });
             });
 
-            $('#manager_filter').on('change', function () {
+            $('#user_filter').on('change', function () {
                 let value = $(this).val();
 
                 if (value != 'none') {
                     $('tr[class="codes"]').show();
-                    $('tr[class="codes"]').find('td[class="manager_id"]').not('#' + value + '').parent().hide();
+                    $('tr[class="codes"]').find('td[class="user_id"]').not('#' + value + '').parent().hide();
                 }
                 else {
                     $('tr[class="codes"]').show();
@@ -133,18 +133,18 @@
                                                     Время</a>
                                             {else}<a href="{url page=null sort='created asc'}">Дата / Время</a>{/if}
                                         </th>
-                                        <th style="width: 90px;"
+                                        <th style="width: 120px;"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'manager_id asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'manager_id desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'manager_id asc'}<a
                                                 href="{url page=null sort='manager_id desc'}">
                                                     Подписант</a>
                                             {else}<a href="{url page=null sort='manager_id asc'}">Подписант</a>{/if}
                                         </th>
-                                        <th style="width: 90px;">Количество документов</th>
+                                        <th style="width: 70px;">Количество документов</th>
                                         <th style="width: 350px;">Подписанные
                                             документы
                                         </th>
-                                        <th style="width: 150px;"
+                                        <th style="width: 70px;"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'type asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'type desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'type asc'}<a
                                                 href="{url page=null sort='type desc'}">Канал</a>
@@ -177,28 +177,24 @@
                                         <td style="width: 70px;" class="jsgrid-cell">
                                             <input type="text" class="form-control searchable">
                                         </td>
-                                        <td style="width: 70px;" class="jsgrid-cell">
-                                            <select class="form-control" id="manager_filter">
-                                                <option value="none">Подписант</option>
-                                                {foreach $managers as $manager}
-                                                    <option value="{$manager->id}">{$manager->name}</option>
-                                                {/foreach}
-                                            </select>
+                                        <td style="width: 120px;" class="jsgrid-cell">
+                                            <input type="text" class="form-control searchable">
                                         </td>
-                                        <td class="jsgrid-cell" colspan="2"></td>
+                                        <td style="width: 70px;"></td>
+                                        <td style="width: 350px;"></td>
                                         <td style="width: 70px;" class="jsgrid-cell">
                                             <select class="form-control" id="type_filter">
                                                 <option value="sms">смс</option>
                                                 <option value="email">почта</option>
                                             </select>
                                         </td>
-                                        <td style="width: 70px;" class="jsgrid-cell"><input type="text"
+                                        <td style="width: 80px;" class="jsgrid-cell"><input type="text"
                                                                                             class="form-control searchable">
                                         </td>
-                                        <td style="width: 70px;" class="jsgrid-cell"><input type="text"
+                                        <td style="width: 60px;" class="jsgrid-cell"><input type="text"
                                                                                             class="form-control searchable">
                                         </td>
-                                        <td style="width: 70px;" class="jsgrid-cell"><input type="text"
+                                        <td style="width: 60px;" class="jsgrid-cell"><input type="text"
                                                                                             class="form-control searchable">
                                         </td>
                                     </tr>
@@ -212,18 +208,67 @@
                                             <td>
                                                 {$code->created|date} {$code->created|time}
                                             </td>
-                                            <td class="manager_id" id="{$code->manager->id}">
+                                            <td class="user_id" id="{$code->user->id}">
                                                 <a target="_blank"
-                                                   href="{$config->back_url}/manager/{$code->manager->id}">
-                                                    {$code->manager->name}
+                                                   href="{$config->back_url}/manager/{$code->user->id}">
+                                                    {$code->user->lastname} {$code->user->firstname} {$code->user->patronymic}
                                                 </a>
                                             </td>
                                             <td>
                                                 {count($code->documents)}
                                             </td>
                                             <td style="display: flex">
+                                                <select class="form-control document_link">
+                                                    {foreach $code->documents as $document}
+                                                        <option value="{$document->id}">
+                                                            {$document->numeration} {$document->name}
+                                                        </option>
+                                                    {/foreach}
+                                                </select>
+                                                <a target="_blank" id="document_href"
+                                                   href="{$config->root_url}/document/{$code->documents[0]->id}">
+                                                    <div class="btn btn-outline-info" style="margin-left: 5px">
+                                                        Открыть
+                                                    </div>
+                                                </a>
+                                            </td>
+                                            <td class="code_type" id="{$code->type}">
+                                                {$code->type}
+                                            </td>
+                                            <td>
+                                                {$code->recepient}
+                                            </td>
+                                            <td>
+                                                {$code->code}
+                                            </td>
+                                            <td>
+                                                <a target="_blank"
+                                                   href="{$config->root_url}/offline_order/{$code->order_id}">
+                                                    {$code->order_id}</a>
+                                            </td>
+                                        </tr>
+                                        <tr class="codes">
+                                            <td>
+                                                {$code->uid}
+                                            </td>
+                                            <td>
+                                                {$code->created|date} {$code->created|time}
+                                            </td>
+                                            <td class="manager_id">
+                                                <a target="_blank"
+                                                   href="{$config->back_url}/manager/{$code->manager->id}">
+                                                    {$code->manager->name}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                2
+                                            </td>
+                                            <td style="display: flex">
                                                 <select class="form-control document_link" style="width: 500px;">
                                                     {foreach $code->documents as $document}
+                                                        {if !in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR', 'DOP_GRAFIK', 'DOP_SOGLASHENIE'])}
+                                                            {continue}
+                                                        {/if}
                                                         <option value="{$document->id}">
                                                             {$document->numeration} {$document->name}
                                                         </option>
