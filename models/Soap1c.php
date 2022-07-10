@@ -152,7 +152,7 @@ class Soap1c extends Core
 
         $result = $this->send_request('CRM_WebService', 'PaymentArray', $item);
 
-        return $result;
+        return empty($result->return) ? [] : json_decode($result->return);
     }
 
     /**
