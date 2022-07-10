@@ -990,7 +990,7 @@ class OfflineOrderController extends Controller
 
             $this->design->assign('individ_encrypt', $individ_encrypt);
             $this->design->assign('graphic_encrypt', $graphic_encrypt);
-            $fetch = $this->design->fetch('email/success_loan_2.tpl');
+            $fetch = $this->design->fetch('email/approved.tpl');
 
             $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
             $mailResponse = $mailService->send(
