@@ -796,6 +796,7 @@
                                                 </div>
                                                 <br><br>
                                             </div>
+                                            {*
                                             <div>
                                                 <img class="icon_messag"
                                                      src="https://img.icons8.com/office/344/whatsapp--v1.png" width="30"
@@ -810,6 +811,7 @@
                                                        value="1">
                                                 <label>Совпадает с номером мобильного</label><br><br>
                                             </div>
+                                            *}
                                             <div>
                                                 <img class="icon_messag"
                                                      src="https://img.icons8.com/color/344/telegram-app--v1.png"

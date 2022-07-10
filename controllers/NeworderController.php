@@ -292,11 +292,13 @@ class NeworderController extends Controller
             $user['viber_num'] = trim((string)$this->request->post('viber'));
         }
 
+        /*
         if ($this->request->post('whatsapp_same') == 1) {
             $user['whatsapp_num'] = $user['phone_mobile'];
         } else {
             $user['whatsapp_num'] = trim((string)$this->request->post('whatsapp'));
         }
+        */
 
         if ($this->request->post('telegram_same') == 1) {
             $user['telegram_num'] = $user['phone_mobile'];
