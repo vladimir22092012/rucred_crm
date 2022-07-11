@@ -3240,10 +3240,9 @@ class OfflineOrderController extends Controller
         $order_id = $this->request->post('order_id');
         $new_term = $this->request->post('new_term');
         $pay_date = date('Y-m-d', strtotime($this->request->post('pay_date')));
-        $order = $this->orders->get_order($order_id);
 
-        $payment_schedule = json_decode($order->payment_schedule, true);
-        $payment_schedule = end($payment_schedule);
+        $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
+        $payment_schedule = json_decode($payment_schedule->schedule, true);
 
         array_shift($payment_schedule);
 
@@ -3531,6 +3530,8 @@ class OfflineOrderController extends Controller
 
         } else {
 
+            $this->PaymentsSchedules->updates($order->order_id, ['actual' => 0]);
+
             $order->payment_schedule =
                 [
                     'user_id' => $order->user_id,
@@ -3539,7 +3540,7 @@ class OfflineOrderController extends Controller
                     'created' => date('Y-m-d H:i:s'),
                     'type' => 'restruct',
                     'actual' => 1,
-                    'schedule' => $payment_schedule,
+                    'schedule' => json_encode($new_shedule),
                     'psk' => $psk,
                     'comment' => $comment
                 ];
@@ -3565,8 +3566,6 @@ class OfflineOrderController extends Controller
                 'params' => $order,
                 'numeration' => '04.04.1'
             ));
-
-            $this->PaymentsSchedules->updates($order->order_id, ['actual' => 0]);
 
             $this->users->update_user($order->user_id, ['balance_blocked' => 1]);
             exit;
@@ -3773,7 +3772,7 @@ class OfflineOrderController extends Controller
         $this->documents->delete_documents($order_id);
 
         $order = $this->orders->get_order($order_id);
-        $order->payment_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
+        $order->payment_schedule = (array)$this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
 
         $doc_types =
             [

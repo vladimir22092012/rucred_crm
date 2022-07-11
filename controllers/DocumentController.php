@@ -50,7 +50,7 @@ class DocumentController extends Controller
 
         $this->design->assign('period', $period);
 
-        $payment_schedule = json_decode($document->params->payment_schedule->schedule, true);
+        $payment_schedule = json_decode($document->params->payment_schedule['schedule'], true);
 
         uksort(
             $payment_schedule,

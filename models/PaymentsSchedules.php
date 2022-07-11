@@ -7,7 +7,7 @@ class PaymentsSchedules extends Core
         $query = $this->db->placehold("
         INSERT INTO s_payments_schedules
         SET ?%
-        ", $schedule);
+        ", (array)$schedule);
 
         $this->db->query($query);
         return $this->db->insert_id();
