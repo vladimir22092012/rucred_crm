@@ -3661,30 +3661,44 @@ class OfflineOrderController extends Controller
                 }
             }
 
-            $contract =
-                [
-                    'order_id' => $order->order_id,
-                    'user_id' => $order->user_id,
-                    'number' => $order->uid,
-                    'amount' => $order->amount,
-                    'period' => $order->period,
-                    'base_percent' => $order->percent,
-                    'peni_percent' => 0,
-                    'status' => 0,
-                    'loan_body_summ' => $order->amount,
-                    'loan_percents_summ' => 0,
-                    'loan_peni_summ' => 0,
-                    'issuance_date' => date('Y-m-d H:i:s'),
-                    'return_date' => $next_payment
-                ];
+            if(!empty($restruct) && $restruct == 1){
+                $this->Contracts->update_contract($order->contract_id, ['return_date' => $next_payment]);
 
-            $contract_id = $this->Contracts->add_contract($contract);
+                $query = $this->db->placehold("
+                UPDATE s_documents
+                SET asp_id = ?
+                WHERE `type` in ('DOP_GRAFIK', 'DOP_SOGLASHENIE')
+                AND asp_id is null
+                ", $asp_id);
 
-            $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
-            $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
+                $this->db->query($query);
+            }else{
 
-            $delete_scans = 0;
-            $this->form_docs($order_id, $delete_scans, $asp_id);
+                $contract =
+                    [
+                        'order_id' => $order->order_id,
+                        'user_id' => $order->user_id,
+                        'number' => $order->uid,
+                        'amount' => $order->amount,
+                        'period' => $order->period,
+                        'base_percent' => $order->percent,
+                        'peni_percent' => 0,
+                        'status' => 0,
+                        'loan_body_summ' => $order->amount,
+                        'loan_percents_summ' => 0,
+                        'loan_peni_summ' => 0,
+                        'issuance_date' => date('Y-m-d H:i:s'),
+                        'return_date' => $next_payment
+                    ];
+
+                $contract_id = $this->Contracts->add_contract($contract);
+
+                $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
+                $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
+
+                $delete_scans = 0;
+                $this->form_docs($order_id, $delete_scans, $asp_id);
+            }
 
             echo json_encode(['success' => 1]);
             exit;
