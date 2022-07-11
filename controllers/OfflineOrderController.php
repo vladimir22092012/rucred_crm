@@ -246,23 +246,6 @@ class OfflineOrderController extends Controller
 
                     $order->requisite = $this->requisites->get_requisite($order->requisite_id);
 
-                    $payment_schedule = json_decode($order->payment_schedule, true);
-                    $payment_schedule = end($payment_schedule);
-                    $date = date('Y-m-d');
-
-                    foreach ($payment_schedule as $payday => $payment) {
-                        if ($payday != 'result') {
-                            $payday = date('Y-m-d', strtotime($payday));
-                            if ($payday > $date) {
-                                $next_payment = $payment['pay_sum'];
-                                break;
-                            }
-                        }
-                    }
-
-                    if (isset($next_payment))
-                        $this->design->assign('next_payment', $next_payment);
-
                     $holder = $order->requisite->holder;
                     $holder = explode(' ', $holder, 3);
                     $same_holder = 0;
@@ -563,13 +546,32 @@ class OfflineOrderController extends Controller
             $this->form_docs($order_id);
         }
 
-        $schedules = json_decode($order->payment_schedule, true);
-        $payment_schedule = end($schedules);
+        $schedules = $this->PaymentsSchedules->gets($order_id);
 
-        foreach ($schedules as $key => $schedule) {
+        if(count($schedules) > 1){
 
-            uksort($schedules[$key],
+            foreach ($schedules as $key => $schedule){
+                $schedule->schedule = json_decode($schedule->schedule, true);
+
+                uksort($schedule->schedule,
+                    function ($a, $b) {
+
+                        if ($a == $b)
+                            return 0;
+
+                        return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+                    });
+
+                if($schedule->actual == 1)
+                    $payment_schedule = end($schedules);
+            }
+        }else{
+            $payment_schedule = end($schedules);
+            $payment_schedule->schedule = json_decode($payment_schedule->schedule, true);
+
+            uksort($payment_schedule->schedule,
                 function ($a, $b) {
+
                     if ($a == $b)
                         return 0;
 
@@ -577,24 +579,27 @@ class OfflineOrderController extends Controller
                 });
         }
 
+        foreach ($payment_schedule as $payday => $payment) {
+            if ($payday != 'result') {
+                $payday = date('Y-m-d', strtotime($payday));
+                if ($payday > date('Y-m-d')) {
+                    $next_payment = $payment['pay_sum'];
+                    break;
+                }
+            }
+        }
+
+        if (isset($next_payment))
+            $this->design->assign('next_payment', $next_payment);
+
         $this->design->assign('schedules', $schedules);
-
-        uksort($payment_schedule,
-            function ($a, $b) {
-
-                if ($a == $b)
-                    return 0;
-
-                return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
-            });
+        $this->design->assign('payment_schedule', $payment_schedule);
 
         $loantype = $this->Loantypes->get_loantype($order->loan_type);
         $this->design->assign('loantype', $loantype);
 
         $loantypes = $this->GroupLoanTypes->get_loantypes_on($order->group_id);
         $this->design->assign('loantypes', $loantypes);
-
-        $this->design->assign('payment_schedule', $payment_schedule);
 
         $order = $this->orders->get_order($order_id);
 
@@ -2777,6 +2782,7 @@ class OfflineOrderController extends Controller
     {
 
         $date = $this->request->post('date');
+        $schedule_id = $this->request->post('schedule_id');
         $pay_sum = $this->request->post('pay_sum');
         $loan_percents_pay = $this->request->post('loan_percents_pay');
         $loan_body_pay = mb_convert_encoding($this->request->post('loan_body_pay'), 'UTF-8');
@@ -2835,13 +2841,14 @@ class OfflineOrderController extends Controller
 
         $psk = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
 
-        $update_order =
+        $update =
             [
                 'psk' => $psk,
-                'payment_schedule' => json_encode($payment_schedule)
+                'schedule' => json_encode($payment_schedule)
             ];
 
-        $this->orders->update_order($order_id, $update_order);
+        $this->PaymentsSchedules->update($schedule_id, $update);
+        exit;
     }
 
     private function action_change_photo_status()
@@ -3283,8 +3290,8 @@ class OfflineOrderController extends Controller
         $order = $this->orders->get_order($order_id);
         $order->new_term = $new_term;
 
-        $payment_schedule = json_decode($order->payment_schedule, true);
-        $payment_schedule = end($payment_schedule);
+        $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
+        $payment_schedule = json_decode($payment_schedule->schedule, true);
 
         array_shift($payment_schedule);
 
@@ -3522,22 +3529,25 @@ class OfflineOrderController extends Controller
             exit;
 
         } else {
-            $old_schedule = json_decode($order->payment_schedule);
-            $now_date = date('Y-m-d', strtotime('+1 day'));
-            $old_schedule->{$now_date} = $new_shedule;
 
-            $payment_schedule = json_encode($old_schedule);
-
-            $update_order =
+            $order->payment_schedule =
                 [
+                    'user_id' => $order->user_id,
+                    'order_id' => $order->order_id,
+                    'contract_id' => $order->contract_id,
+                    'created' => date('Y-m-d H:i:s'),
+                    'type' => 'restruct',
+                    'actual' => 1,
+                    'schedule' => $payment_schedule,
                     'psk' => $psk,
-                    'payment_schedule' => $payment_schedule
+                    'comment' => 'Реструктуризация за '. $order->restruct_date
                 ];
+
+            $this->PaymentsSchedules->add($order->payment_schedule);
+
 
             $order->restruct_date = date('Y-m-d');
             $order->probably_return_date = $end_date->format('Y-m-d');
-            $order->payment_schedule[$order->restruct_date] = json_encode($new_shedule);
-            $order->psk = $psk;
 
             $this->documents->create_document(array(
                 'user_id' => $order->user_id,
@@ -3555,7 +3565,8 @@ class OfflineOrderController extends Controller
                 'numeration' => '04.04.1'
             ));
 
-            $this->orders->update_order($order_id, $update_order);
+            $this->PaymentsSchedules->updates($order->order_id, ['actual' => 0]);
+
             $this->users->update_user($order->user_id, ['balance_blocked' => 1]);
             exit;
         }
@@ -3761,6 +3772,7 @@ class OfflineOrderController extends Controller
         $this->documents->delete_documents($order_id);
 
         $order = $this->orders->get_order($order_id);
+        $order->payment_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
 
         $doc_types =
             [

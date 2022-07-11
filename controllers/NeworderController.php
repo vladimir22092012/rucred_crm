@@ -687,10 +687,9 @@ class NeworderController extends Controller
             $xirr = round($this->Financial->XIRR($payments, $new_dates) * 100, 3);
             $xirr /= 100;
 
-            $order['psk'] = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
+            $psk = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
 
-            $new_schedule[date('Y-m-d')] = $payment_schedule;
-            $order['payment_schedule'] = json_encode($new_schedule);
+            $payment_schedule = json_encode($payment_schedule);
 
             $company = $this->Companies->get_company($order['company_id']);
             $group = $this->Groups->get_group($order['group_id']);
@@ -752,6 +751,21 @@ class NeworderController extends Controller
                             'manager_id' => $this->manager->id,
                         ];
                     $this->TicketMessages->add_message($message);
+
+                    $schedules =
+                        [
+                            'user_id' => $user_id,
+                            'order_id' => $order_id,
+                            'created' => date('Y-m-d H:i:s'),
+                            'type' => 'first',
+                            'actual' => 1,
+                            'schedule' => $payment_schedule,
+                            'psk' => $psk,
+                            'comment' => 'Первый график'
+                        ];
+
+                    $this->PaymentsSchedules->add($schedules);
+
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                     exit;
                 }
@@ -812,6 +826,20 @@ class NeworderController extends Controller
                             ];
 
                         $this->TicketMessages->add_message($message);
+
+                        $schedules =
+                            [
+                                'user_id' => $user_id,
+                                'order_id' => $order_id,
+                                'created' => date('Y-m-d H:i:s'),
+                                'type' => 'first',
+                                'actual' => 1,
+                                'schedule' => $payment_schedule,
+                                'psk' => $psk,
+                                'comment' => 'Первый график'
+                            ];
+
+                        $this->PaymentsSchedules->add($schedules);
 
                         // запускаем бесплатные скоринги
                         $scoring_types = $this->scorings->get_types();

@@ -50,15 +50,7 @@ class DocumentController extends Controller
 
         $this->design->assign('period', $period);
 
-        if (in_array($document->type, ['DOP_SOGLASHENIE', 'DOP_GRAFIK'])) {
-            $order = $this->orders->get_order($document->params->order_id);
-            $payment_schedule = json_decode($order->payment_schedule, true);
-            $payment_schedule = end($payment_schedule);
-
-        } else {
-            $payment_schedule = json_decode($document->params->payment_schedule, true);
-            $payment_schedule = end($payment_schedule);
-        }
+        $payment_schedule = json_decode($document->params->payment_schedule->schedule, true);
 
         uksort(
             $payment_schedule,
@@ -119,7 +111,7 @@ class DocumentController extends Controller
         $this->design->assign('first_part_all_sum_pay', $first_part_all_sum_pay);
 
 
-        $percents_per_year = $document->params->psk;
+        $percents_per_year = $document->params->payment_schedule->psk;
         $percents = $percents_per_year;
 
         $percents = number_format($percents, 3, ',', ' ');

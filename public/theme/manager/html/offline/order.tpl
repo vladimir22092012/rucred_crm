@@ -212,6 +212,7 @@
                 e.preventDefault();
 
                 let restruct = 0;
+                let schedule_id = $(this).attr('data-schedule');
 
                 $(this).hide();
                 $('.edit_schedule').hide();
@@ -233,7 +234,7 @@
                 $('.reset_shedule').on('click', function (e) {
                     e.preventDefault();
 
-                    reform_schedule(restruct);
+                    reform_schedule(restruct, schedule_id);
 
                 });
             });
@@ -249,7 +250,6 @@
                     confirmButtonText: 'Да',
                     cancelButtonText: 'Нет',
                 }).then((result) => {
-                    /* Read more about isConfirmed, isDenied below */
                     if (result.isConfirmed) {
                         $.ajax({
                             method: 'POST',
@@ -445,6 +445,8 @@
                     val = val.replace(' ', '');
                     val = val.replace(' ', '');
                     val = val.replace(',', '.');
+
+                    console.log(val);
 
                     loan_od = loan_od + parseFloat(val);
                 });
@@ -909,9 +911,9 @@
             $('input[name="result[all_sum_pay]"]').val(new Intl.NumberFormat('ru-RU').format(sum));
         }
 
-        function reform_schedule(restruct) {
+        function reform_schedule(restruct, schedule_id = false) {
 
-            let form = $('#payment_schedule').serialize() + '&restruct=' + restruct;
+            let form = $('#payment_schedule').serialize() + '&restruct=' + restruct + '&schedule_id=' + schedule_id;
 
             if (restruct == 1) {
                 Swal.fire({
@@ -1903,6 +1905,7 @@
                                                     {/if}
                                                     {if in_array($order->status, [0,1,12,14])}
                                                         <input style="margin-left: 30px" type="button"
+                                                               data-schedule="{$payment_schedule->id}"
                                                                class="btn btn-warning reform"
                                                                value="Редактировать">
                                                     {/if}
@@ -1935,7 +1938,7 @@
                                                         <input type="hidden" name="order_id" value="{$order->order_id}">
                                                         <tbody>
                                                         {if !empty($payment_schedule)}
-                                                            {foreach $payment_schedule as $date => $payment}
+                                                            {foreach $payment_schedule->schedule as $date => $payment}
                                                                 {if $date != 'result'}
                                                                     <tr>
                                                                         <td><input type="text"
@@ -1981,23 +1984,23 @@
                                                                            value="ИТОГО:" disabled></td>
                                                                 <td><input type="text" class="form-control"
                                                                            name="result[all_sum_pay]"
-                                                                           value="{$payment_schedule['result']['all_sum_pay']|floatval|number_format:2:',':' '}"
+                                                                           value="{$payment_schedule->schedule['result']['all_sum_pay']|floatval|number_format:2:',':' '}"
                                                                            readonly></td>
                                                                 <td><input type="text" class="form-control"
                                                                            name="result[all_loan_body_pay]"
-                                                                           value="{$payment_schedule['result']['all_loan_body_pay']|floatval|number_format:2:',':' '}"
+                                                                           value="{$payment_schedule->schedule['result']['all_loan_body_pay']|floatval|number_format:2:',':' '}"
                                                                            readonly></td>
                                                                 <td><input type="text" class="form-control"
                                                                            name="result[all_loan_percents_pay]"
-                                                                           value="{$payment_schedule['result']['all_loan_percents_pay']|floatval|number_format:2:',':' '}"
+                                                                           value="{$payment_schedule->schedule['result']['all_loan_percents_pay']|floatval|number_format:2:',':' '}"
                                                                            readonly></td>
                                                                 <td><input type="text" class="form-control"
                                                                            name="result[all_comission_pay]"
-                                                                           value="{$payment_schedule['result']['all_comission_pay']|floatval|number_format:2:',':' '}"
+                                                                           value="{$payment_schedule->schedule['result']['all_comission_pay']|floatval|number_format:2:',':' '}"
                                                                            readonly></td>
                                                                 <td><input type="text" class="form-control"
                                                                            name="result[all_rest_pay_sum]"
-                                                                           value="{$payment_schedule['result']['all_rest_pay_sum']|floatval|number_format:2:',':' '}"
+                                                                           value="{$payment_schedule->schedule['result']['all_rest_pay_sum']|floatval|number_format:2:',':' '}"
                                                                            readonly></td>
                                                             </tr>
                                                         {/if}
@@ -2007,7 +2010,7 @@
                                                         <br>
                                                         <label>Полная стоимость микрозайма, %
                                                             годовых:</label>
-                                                        <span id="psk">{$order->psk}%</span>
+                                                        <span id="psk">{$payment_schedule->psk}%</span>
                                                     </div>
                                             </form>
                                         </div>
@@ -3440,10 +3443,10 @@
                                                     <h5>Графики платежей</h5>
                                                     <br>
                                                     <div class="accordion" id="accordion-1">
-                                                        {foreach $schedules as $date => $schedule}
+                                                        {foreach $schedules as $schedule}
                                                             <div class="accordion__item">
                                                                 <div class="accordion__header">
-                                                                    График платежей от {$date|date}
+                                                                    График платежей от {$schedule->created|date}
                                                                 </div>
                                                                 <div class="accordion__body">
                                                                     <table border="2" style="font-size: 15px">
@@ -3462,7 +3465,7 @@
                                                                         </tr>
                                                                         </thead>
                                                                         <tbody>
-                                                                        {foreach $schedule as $date => $payment}
+                                                                        {foreach $schedule->schedule as $date => $payment}
                                                                             {if $date != 'result'}
                                                                                 <tr>
                                                                                     <td><input type="text"
@@ -3471,31 +3474,31 @@
                                                                                                value="{$date}" readonly>
                                                                                     </td>
                                                                                     <td><input type="text"
-                                                                                               class="form-control restructure_pay_sum"
+                                                                                               class="form-control"
                                                                                                name="pay_sum[][pay_sum]"
                                                                                                value="{$payment['pay_sum']|floatval|number_format:2:',':' '}"
                                                                                                readonly>
                                                                                     </td>
                                                                                     <td><input type="text"
-                                                                                               class="form-control restructure_od"
+                                                                                               class="form-control"
                                                                                                name="loan_body_pay[][loan_body_pay]"
                                                                                                value="{$payment['loan_body_pay']|floatval|number_format:2:',':' '}"
                                                                                                readonly>
                                                                                     </td>
                                                                                     <td><input type="text"
-                                                                                               class="form-control restructure_prc"
+                                                                                               class="form-control"
                                                                                                name="loan_percents_pay[][loan_percents_pay]"
                                                                                                value="{$payment['loan_percents_pay']|floatval|number_format:2:',':' '}"
                                                                                                readonly>
                                                                                     </td>
                                                                                     <td><input type="text"
-                                                                                               class="form-control restructure_cms"
+                                                                                               class="form-control"
                                                                                                name="comission_pay[][comission_pay]"
                                                                                                value="{$payment['comission_pay']|floatval|number_format:2:',':' '}"
                                                                                                readonly>
                                                                                     </td>
                                                                                     <td><input type="text"
-                                                                                               class="form-control rest_sum"
+                                                                                               class="form-control"
                                                                                                name="rest_pay[][rest_pay]"
                                                                                                value="{$payment['rest_pay']|floatval|number_format:2:',':' '}"
                                                                                                readonly>
@@ -3508,23 +3511,23 @@
                                                                                        value="ИТОГО:" disabled></td>
                                                                             <td><input type="text" class="form-control"
                                                                                        name="result[all_sum_pay]"
-                                                                                       value="{$payment_schedule['result']->all_sum_pay|floatval|number_format:2:',':' '}"
+                                                                                       value="{$schedule->schedule['result']->all_sum_pay|floatval|number_format:2:',':' '}"
                                                                                        readonly></td>
                                                                             <td><input type="text" class="form-control"
                                                                                        name="result[all_loan_body_pay]"
-                                                                                       value="{$payment_schedule['result']->all_loan_body_pay|floatval|number_format:2:',':' '}"
+                                                                                       value="{$schedule->schedule['result']->all_loan_body_pay|floatval|number_format:2:',':' '}"
                                                                                        readonly></td>
                                                                             <td><input type="text" class="form-control"
                                                                                        name="result[all_loan_percents_pay]"
-                                                                                       value="{$payment_schedule['result']->all_loan_percents_pay|floatval|number_format:2:',':' '}"
+                                                                                       value="{$schedule->schedule['result']->all_loan_percents_pay|floatval|number_format:2:',':' '}"
                                                                                        readonly></td>
                                                                             <td><input type="text" class="form-control"
                                                                                        name="result[all_comission_pay]"
-                                                                                       value="{$payment_schedule['result']->all_comission_pay|floatval|number_format:2:',':' '}"
+                                                                                       value="{$schedule->schedule['result']->all_comission_pay|floatval|number_format:2:',':' '}"
                                                                                        readonly></td>
                                                                             <td><input type="text" class="form-control"
                                                                                        name="result[all_rest_pay_sum]"
-                                                                                       value="{$payment_schedule['result']->all_rest_pay_sum|floatval|number_format:2:',':' '}"
+                                                                                       value="{$schedule->schedule['result']->all_rest_pay_sum|floatval|number_format:2:',':' '}"
                                                                                        readonly></td>
                                                                         </tr>
                                                                         </tbody>
@@ -3533,7 +3536,7 @@
                                                                         <br>
                                                                         <label>Полная стоимость микрозайма, %
                                                                             годовых:</label>
-                                                                        <span id="psk">{$order->psk}%</span>
+                                                                        <span id="psk">{$schedule->psk}%</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -3898,7 +3901,7 @@
                             <label>Новый срок, мес</label>
                             <select class="form-control" data-order="{$order->order_id}" name="new_term"
                                     id="new_term">
-                                {for $i = 1 to count($payment_schedule)-2}
+                                {for $i = 1 to count($payment_schedule->schedule)-2}
                                     <option value="{$i}">{$i}</option>
                                 {/for}
                             </select><br>
