@@ -77,7 +77,6 @@ class Orders extends Core
                 o.group_id,
                 o.company_id,
                 o.branche_id,
-                o.payment_schedule,
                 o.delivery_id,
                 o.psk,
                 o.sms,
@@ -159,6 +158,7 @@ class Orders extends Core
             WHERE o.id = ?
             and `status` != 16
         ", (int)$id);
+
         $this->db->query($query);
         $result = $this->db->result();
 
@@ -223,6 +223,8 @@ class Orders extends Core
 
         if (!empty($filter['status'])) {
             $status_filter = $this->db->placehold("AND o.status IN (?@)", (array)$filter['status']);
+        }else{
+            $status_filter = $this->db->placehold("AND o.status != 12");
         }
 
         if (!empty($filter['client'])) {

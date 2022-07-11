@@ -3,7 +3,7 @@
 use App\Services\MailService;
 
 error_reporting(-1);
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'On');
 date_default_timezone_set('Europe/Moscow');
 
 class NeworderController extends Controller
@@ -34,25 +34,30 @@ class NeworderController extends Controller
                 $this->design->assign('Regaddressfull', $Regaddressfull);
             }
 
-            $order->requisite = $this->requisites->get_requisite($order->requisite_id);
+            if(!empty($order->requisite_id)){
+                $order->requisite = $this->requisites->get_requisite($order->requisite_id);
 
-            if(!empty($order->requisite)){
-                list($holder_lastname, $holder_firstname, $holder_patronymic) = explode(' ', $order->requisite->holder);
+                if(!empty($order->requisite)){
+                    list($holder_lastname, $holder_firstname, $holder_patronymic) = explode(' ', $order->requisite->holder);
 
-                $this->design->assign('holder_lastname', $holder_lastname);
-                $this->design->assign('holder_firstname', $holder_firstname);
-                $this->design->assign('holder_patronymic', $holder_patronymic);
+                    $this->design->assign('holder_lastname', $holder_lastname);
+                    $this->design->assign('holder_firstname', $holder_firstname);
+                    $this->design->assign('holder_patronymic', $holder_patronymic);
+                }
             }
 
-            $fio_spouse = explode(' ', $order->fio_spouse);
+            if(!empty($order->passport_serial)){
+                $passport_serial = explode(' ', $order->passport_serial);
+                $order->passport_serial = $passport_serial[0];
+                $order->passport_number = $passport_serial[1];
+            }
 
-            $passport_serial = explode(' ', $order->passport_serial);
-
-            $order->passport_serial = $passport_serial[0];
-            $order->passport_number = $passport_serial[1];
+            if(!empty($order->fio_spouse)){
+                $fio_spouse = explode(' ', $order->fio_spouse);
+                $this->design->assign('fio_spouse', $fio_spouse);
+            }
 
             $this->design->assign('order', $order);
-            $this->design->assign('fio_spouse', $fio_spouse);
         }
 
         if ($this->request->get('start_date')) {
@@ -166,7 +171,7 @@ class NeworderController extends Controller
 
         $requisite = $this->request->post('requisite');
 
-        $requisite['holder'] = $requisite['holder']['lastname'] . '' . $requisite['holder']['firstname'] . '' . $requisite['holder']['patronymic'];
+        $requisite['holder'] = $requisite['holder']['lastname'] . ' ' . $requisite['holder']['firstname'] . ' ' . $requisite['holder']['patronymic'];
         $requisite['holder'] = trim($requisite['holder']);
 
         if (empty($requisite['name']) || empty($requisite['bik']) || empty($requisite['number']) || empty($requisite['holder']) || empty($requisite['correspondent_acc'])) {
@@ -719,6 +724,7 @@ class NeworderController extends Controller
             if (($this->request->get('order_id'))) {
                 $order_id = $this->request->get('order_id');
                 $this->orders->update_order($order_id, $order);
+
 
                 if ($draft == 1) {
 

@@ -3820,7 +3820,8 @@ class OfflineOrderController extends Controller
                 'order_id' => $order->order_id,
                 'type' => $type,
                 'params' => $order,
-                'numeration' => (string)$key
+                'numeration' => (string)$key,
+                'asp_id' => $asp_id
             ));
         }
     }
