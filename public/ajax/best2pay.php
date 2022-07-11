@@ -111,7 +111,7 @@ class Best2payAjax extends Ajax
         } 
         else 
         {
-            echo '<h1 style="color:red;line-height:100vh;text-align:center;">Ошибка запроса</h1>';
+            exit('<h1 style="color:red;line-height:100vh;text-align:center;">Ошибка запроса</h1>');
         }
 
 
