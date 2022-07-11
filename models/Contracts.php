@@ -775,10 +775,61 @@ class Contracts extends Core
         $reason_code = (string)$operation_xml->reason_code;
         $payment_amount = strval($operation_xml->amount) / 100;
         $operation_date = date('Y-m-d H:i:s', strtotime(str_replace('.', '-', (string)$operation_xml->date)));
-        
-        // проводим платеж
-        // создаем операцию 
-        // обновляем транзакцию
+        $contract = $this->contracts->get_contract($operation_xml->order_id);
+
+        $rest_amount = $payment_amount;
+
+        // списываем проценты
+        if ($contract->loan_percents_summ > 0) {
+            if ($rest_amount >= $contract->loan_percents_summ) {
+                $contract_loan_percents_summ = 0;
+                $rest_amount -= $contract->loan_percents_summ;
+                $transaction_loan_percents_summ = $contract->loan_percents_summ;
+            } else {
+                $contract_loan_percents_summ = $contract->loan_percents_summ - $rest_amount;
+                $transaction_loan_percents_summ = $rest_amount;
+                $rest_amount = 0;
+            }
+        }
+
+        // списываем основной долг
+        if ($contract->loan_body_summ > 0) {
+            if ($rest_amount >= $contract->loan_body_summ) {
+                $contract_loan_body_summ = 0;
+                $rest_amount -= $contract->loan_body_summ;
+                $transaction_loan_body_summ = $contract->loan_body_summ;
+            } else {
+                $contract_loan_body_summ = $contract->loan_body_summ - $rest_amount;
+                $transaction_loan_body_summ = $rest_amount;
+                $rest_amount = 0;
+            }
+        }
+
+        //обновляем транзакцию
+        $this->transactions->update_transaction($transaction->id, array(
+            'loan_body_summ' => $transaction_loan_body_summ,
+            'loan_percents_summ' => $transaction_loan_percents_summ,
+        ));
+
+        //обновляем контракт
+        $this->contracts->update_contract($contract->id, array(
+            'loan_body_summ' => $contract_loan_body_summ,
+            'loan_percents_summ' => $contract_loan_percents_summ,
+        ));
+
+        //создаем операцию
+        $this->operations->add_operation(array(
+            'contract_id' => $contract->id,
+            'user_id' => $contract->user_id,
+            'order_id' => $contract->order_id,
+            'transaction_id' => $transaction->id,
+            'type' => 'PAY',
+            'amount' => $payment_amount,
+            'created' => $operation_date,
+            'sent_date' => $operation_date,
+            'loan_body_summ' => $contract_loan_body_summ,
+            'loan_percents_summ' => $contract_loan_percents_summ,
+        ));
         
     }
 

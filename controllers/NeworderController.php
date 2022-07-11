@@ -34,10 +34,10 @@ class NeworderController extends Controller
                 $this->design->assign('Regaddressfull', $Regaddressfull);
             }
 
-            if(!empty($order->requisite_id)){
+            if (!empty($order->requisite_id)) {
                 $order->requisite = $this->requisites->get_requisite($order->requisite_id);
 
-                if(!empty($order->requisite)){
+                if (!empty($order->requisite)) {
                     list($holder_lastname, $holder_firstname, $holder_patronymic) = explode(' ', $order->requisite->holder);
 
                     $this->design->assign('holder_lastname', $holder_lastname);
@@ -46,13 +46,13 @@ class NeworderController extends Controller
                 }
             }
 
-            if(!empty($order->passport_serial)){
+            if (!empty($order->passport_serial)) {
                 $passport_serial = explode(' ', $order->passport_serial);
                 $order->passport_serial = $passport_serial[0];
                 $order->passport_number = $passport_serial[1];
             }
 
-            if(!empty($order->fio_spouse)){
+            if (!empty($order->fio_spouse)) {
                 $fio_spouse = explode(' ', $order->fio_spouse);
                 $this->design->assign('fio_spouse', $fio_spouse);
             }
@@ -221,7 +221,6 @@ class NeworderController extends Controller
 
         $all_sum_credits = 0;
         $sum_credits_pay = 0;
-        $sum_cards_pay = 0;
 
         if (!empty($credits_story)) {
             foreach ($credits_story as $credit) {
@@ -236,12 +235,17 @@ class NeworderController extends Controller
         if (!empty($cards_story)) {
             foreach ($cards_story as $card) {
                 $card['cards_rest_sum'] = preg_replace("/[^,.0-9]/", '', $card['cards_rest_sum']);
-                if (!empty($credit['cards_rest_sum']))
-                    $sum_cards_pay += $card['cards_rest_sum'];
+                $card['cards_limit'] = preg_replace("/[^,.0-9]/", '', $card['cards_rest_sum']);
             }
 
-            $sum_cards_pay *= 0.1;
-            $all_sum_credits += $sum_cards_pay;
+            if (!empty($credit['cards_rest_sum'])) {
+                $max = 0.05 * $card['cards_rest_sum'] + $card['cards_limit'];
+            }
+            if (!empty($credit['cards_limit'])) {
+                $min = 0.1 * $card['cards_limit'];
+            }
+
+            $all_sum_credits += min($max, $min);
         }
 
         $user['credits_story'] = json_encode($credits_story);
@@ -555,10 +559,12 @@ class NeworderController extends Controller
             $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
             $annoouitet_pay = round($annoouitet_pay, '2');
 
-            $all_sum_credits += $annoouitet_pay;
+            $month_pay = $amount * ((1 / $loan->max_period) + (($order['percent'] / 100) / 12));
+
+            $all_sum_credits += $month_pay;
 
             if ($all_sum_credits != 0)
-                $pdn = round(($all_sum_credits/$user['income']) * 100, 2);
+                $pdn = round(($all_sum_credits / $user['income']) * 100, 2);
             else
                 $pdn = 0;
 
@@ -879,12 +885,12 @@ class NeworderController extends Controller
         $phone = $this->request->post('phone');
         $user_id = $this->request->post('user_id');
 
-        if(empty($user_id))
+        if (empty($user_id))
             $user_id = false;
 
         $phone_uniq = $this->users->get_phone_user($phone, $user_id);
 
-        if(!empty($phone_uniq)){
+        if (!empty($phone_uniq)) {
             echo json_encode(['error' => 'Такой номер уже зарегистрирован']);
             exit;
         }
@@ -935,12 +941,12 @@ class NeworderController extends Controller
         $email = $this->request->post('email');
         $user_id = $this->request->post('user_id');
 
-        if(empty($user_id))
+        if (empty($user_id))
             $user_id = false;
 
         $email_uniq = $this->users->get_phone_user($email, $user_id);
 
-        if(!empty($email_uniq)){
+        if (!empty($email_uniq)) {
             echo json_encode(['error' => 'Такой email уже зарегистрирован']);
             exit;
         }
@@ -1223,7 +1229,7 @@ class NeworderController extends Controller
         $user_token = md5(time());
         $user_token = substr($user_token, 1, 10);
 
-        if(empty($user_id)){
+        if (empty($user_id)) {
             $user_id = $this->users->getNextid();
         }
 
