@@ -3285,6 +3285,7 @@ class OfflineOrderController extends Controller
     {
         $order_id = $this->request->post('order_id');
         $new_term = $this->request->post('new_term');
+        $comment = $this->request->post('comment');
         $pay_amount = $this->request->post('pay_amount');
         $pay_date = date('d.m.Y', strtotime($this->request->post('pay_date')));
         $order = $this->orders->get_order($order_id);
@@ -3540,7 +3541,7 @@ class OfflineOrderController extends Controller
                     'actual' => 1,
                     'schedule' => $payment_schedule,
                     'psk' => $psk,
-                    'comment' => 'Реструктуризация за '. $order->restruct_date
+                    'comment' => $comment
                 ];
 
             $this->PaymentsSchedules->add($order->payment_schedule);

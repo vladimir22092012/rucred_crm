@@ -2006,11 +2006,19 @@
                                                         {/if}
                                                         </tbody>
                                                     </table>
-                                                    <div>
+                                                    <div style="display: flex; flex-direction: column">
                                                         <br>
-                                                        <label>Полная стоимость микрозайма, %
-                                                            годовых:</label>
-                                                        <span id="psk">{$payment_schedule->psk}%</span>
+                                                        <div class="form-group">
+                                                            <label>Полная стоимость микрозайма, %
+                                                                годовых:</label>
+                                                            <span id="psk">{$payment_schedule->psk}%</span>
+                                                        </div>
+                                                        {if $payment_schedule->type == 'restruct'}
+                                                            <div class="form-group">
+                                                                <label>Причина:</label>
+                                                                <span>{$payment_schedule->comment}</span>
+                                                            </div>
+                                                        {/if}
                                                     </div>
                                             </form>
                                         </div>
@@ -3893,18 +3901,28 @@
                     <form id="restruct_form">
                         <input type="hidden" name="action" value="do_restruct">
                         <input type="hidden" name="order_id" value="{$order->order_id}">
-                        <div class="form-group">
-                            <label>Дата поступившего платежа</label>
-                            <input type="text" class="form-control daterange" name="pay_date">
-                            <label>Поступивший платеж, руб</label>
-                            <input type="text" class="form-control" name="pay_amount">
-                            <label>Новый срок, мес</label>
-                            <select class="form-control" data-order="{$order->order_id}" name="new_term"
-                                    id="new_term">
-                                {for $i = 1 to count($payment_schedule->schedule)-2}
-                                    <option value="{$i}">{$i}</option>
-                                {/for}
-                            </select><br>
+                        <div class="form-group" style="display:flex; flex-direction: column">
+                            <div class="form-group">
+                                <label>Дата поступившего платежа</label>
+                                <input type="text" class="form-control daterange" name="pay_date">
+                            </div>
+                            <div class="form-group">
+                                <label>Поступивший платеж, руб</label>
+                                <input type="text" class="form-control" name="pay_amount">
+                            </div>
+                            <div class="form-group">
+                                <label>Новый срок, мес</label>
+                                <select class="form-control" data-order="{$order->order_id}" name="new_term"
+                                        id="new_term">
+                                    {for $i = 1 to count($payment_schedule->schedule)-2}
+                                        <option value="{$i}">{$i}</option>
+                                    {/for}
+                                </select><br>
+                            </div>
+                            <div class="form-group">
+                                <label>Комментарий</label>
+                                <textarea class="form-control" name="comment"></textarea>
+                            </div>
                             <label id="new_term_digit" style="display: none; color: #880000">Новый срок, мес</label>
                         </div>
                         <div>
