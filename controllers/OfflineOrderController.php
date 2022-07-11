@@ -3609,6 +3609,7 @@ class OfflineOrderController extends Controller
         $code = $this->request->post('code');
         $user_id = $this->request->post('user');
         $order_id = $this->request->post('order');
+        $restruct = $this->request->post('restruct');
 
         $order = $this->orders->get_order($order_id);
 
@@ -3645,8 +3646,9 @@ class OfflineOrderController extends Controller
 
             $asp_id = $this->AspCodes->add_code($asp_log);
 
-            $payment_schedule = json_decode($order->payment_schedule, true);
-            $payment_schedule = end($payment_schedule);
+            $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
+            $payment_schedule = json_decode($payment_schedule->schedule, true);
+
             $date = date('Y-m-d');
 
             foreach ($payment_schedule as $payday => $payment) {
