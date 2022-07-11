@@ -367,6 +367,8 @@
                                 <li {if in_array($module, ['ApikeysController'])}class="active"{/if}><a
                                             href="apikeys/"><i class="mdi mdi-apple-finder"></i>Ключи для API</a></li>
                             {/if}
+                            <li {if in_array($module, ['StatisticsController'])}class="active"{/if}><a
+                                        href="/statistics"><i class="mdi mdi-book-open-page-variant"></i>Статистика</a></li>
                         {/if}
                     </ul>
                 {/if}

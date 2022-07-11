@@ -2643,7 +2643,7 @@
                                                 <span class="float-right"><a class="text-white cors-edit" href=""><i
                                                                 class=" fas fa-edit"></i></a></span>
                                             </h6>
-                                            {if $same_holder == 1 && $manager->role != 'employer'}
+                                            {if $same_holder == 1}
                                                 <input type="hidden" name="action" value="cors_change"/>
                                                 <input type="hidden" name="requisite[id]"
                                                        value="{$order->requisite->id}"/>

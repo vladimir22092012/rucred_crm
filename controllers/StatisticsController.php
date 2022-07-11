@@ -7,8 +7,6 @@ class StatisticsController extends Controller
     public function fetch()
     {
 
-        return false;
-
         switch ($this->request->get('action', 'string')) :
             case 'main':
                 return $this->action_main();
