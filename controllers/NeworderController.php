@@ -290,6 +290,7 @@ class NeworderController extends Controller
         }
 
         $user['phone_mobile_confirmed'] = (int)$this->request->post('phone_confirmed');
+        $user['email_confirmed'] = (int)$this->request->post('email_confirmed');
 
         if ($this->request->post('viber_same') == 1) {
             $user['viber_num'] = $user['phone_mobile'];
@@ -919,6 +920,7 @@ class NeworderController extends Controller
         ORDER BY created DESC
         LIMIT 1
         ", $phone, $code);
+
         $results = $this->db->results();
         if (empty($results)) {
             echo json_encode(['error' => 1]);
@@ -980,7 +982,9 @@ class NeworderController extends Controller
         ORDER BY created DESC
         LIMIT 1
         ", $email, $code);
+
         $results = $this->db->results();
+
         if (empty($results)) {
             echo json_encode(['error' => 1]);
             exit;
