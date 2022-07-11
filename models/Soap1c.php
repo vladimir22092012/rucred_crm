@@ -42,7 +42,6 @@ class Soap1c extends Core
             $item->Срок = $order->period;
             $item->Периодичность = 'День';
             $item->ПроцентнаяСтавка = $order->percent;
-            $item->ПСК = $order->psk;
             $item->ИдентификаторФормыВыдачи = 'Безналичная';
             $item->ИдентификаторФормыОплаты = 'ТретьеЛицо';
             $item->Сумма = $order->amount;
@@ -50,9 +49,10 @@ class Soap1c extends Core
             $item->ИННОрганизации = isset($company) ? $company->inn : '';
             $item->СпособПодачиЗаявления = 'Прямой';
 
+            $order->payment_schedule = $this->PaymentsSchedules->get(['order_id'=>$order->order_id, 'actual'=>1]);
             $payment_schedules = array();
-            if ($order_payment_schedule = (array)json_decode($order->payment_schedule)) {
-                $order_payment_schedule_end = end($order_payment_schedule);
+            $item->ПСК = $order->payment_schedule->psk;
+            if ($order_payment_schedule = (array)json_decode($order->payment_schedule->schedule)) {
                 foreach ($order_payment_schedule_end as $key_date => $payment_schedule) {
                     if ($key_date != 'result') {
                         $payment_schedule_item = new StdClass();
