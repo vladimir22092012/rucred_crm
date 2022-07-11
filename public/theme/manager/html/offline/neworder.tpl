@@ -1202,7 +1202,7 @@
                                                         <td><input class="form-control validity_period"
                                                                    name="cards_validity_period[][cards_validity_period]"
                                                                    type="text"
-                                                                   value="{$credits_story->cards_validity_period}"></td>
+                                                                   value="{$cards_story->cards_validity_period}"></td>
                                                         <td><select class="form-control"
                                                                     name="cards_delay[][cards_delay]">
                                                                 <option value="Да">Да</option>
