@@ -253,11 +253,6 @@
                             <a class="" href="orders/" aria-expanded="false"><i class="mdi mdi-animation"></i><span
                                         class="hide-menu">Заявки</span></a>
                         </li>
-                        <li {if in_array($module, ['ClientController', 'ClientsController'])}class="active"{/if}>
-                            <a class="" href="clients/" aria-expanded="false"><i
-                                        class="mdi mdi-chart-bubble"></i><span
-                                        class="hide-menu">Клиенты</span></a>
-                        </li>
                         {if $manager->role != 'employer'}
                             <li {if in_array($module, ['MissingController'])}class="active"{/if}>
                                 <a class="" href="missing/" aria-expanded="false"><i class="mdi mdi-sleep"></i><span
@@ -283,6 +278,11 @@
                         {/if}
                         {if in_array('managers', $manager->permissions)}
                             <li class="nav-small-cap">Сделки</li>
+                            <li {if in_array($module, ['ClientController', 'ClientsController'])}class="active"{/if}>
+                                <a class="" href="clients/" aria-expanded="false"><i
+                                            class="mdi mdi-chart-bubble"></i><span
+                                            class="hide-menu">Реестр клиентов</span></a>
+                            </li>
                             <li {if in_array($module, ['RegistrController'])}class="active"{/if}>
                                 <a class="" href="registr/" aria-expanded="false"><i
                                             class="mdi mdi-book-open-page-variant"></i><span class="hide-menu">Реестр сделок</span></a>
