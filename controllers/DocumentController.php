@@ -111,7 +111,7 @@ class DocumentController extends Controller
         $this->design->assign('first_part_all_sum_pay', $first_part_all_sum_pay);
 
 
-        $percents_per_year = $document->params->payment_schedule->psk;
+        $percents_per_year = $document->params->payment_schedule['psk'];
         $percents = $percents_per_year;
 
         $percents = number_format($percents, 3, ',', ' ');
