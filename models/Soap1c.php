@@ -53,7 +53,7 @@ class Soap1c extends Core
             $payment_schedules = array();
             $item->ПСК = $order->payment_schedule->psk;
             if ($order_payment_schedule = (array)json_decode($order->payment_schedule->schedule)) {
-                foreach ($order_payment_schedule_end as $key_date => $payment_schedule) {
+                foreach ($order_payment_schedule as $key_date => $payment_schedule) {
                     if ($key_date != 'result') {
                         $payment_schedule_item = new StdClass();
 
