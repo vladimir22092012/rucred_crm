@@ -482,44 +482,13 @@ class StatisticsController extends Controller
 
     private function action_payments()
     {
-        if ($operation_id = $this->request->get('operation_id', 'integer')) {
-            if ($operation = $this->operations->get_operation($operation_id)) {
-                $operation->contract = $this->contracts->get_contract($operation->contract_id);
-                $operation->transaction = $this->transactions->get_transaction($operation->transaction_id);
-                if ($operation->transaction->insurance_id) {
-                    $operation->transaction->insurance = $this->insurances->get_insurance($operation->transaction->insurance_id);
-                }
-
-                if ($operation->type == 'REJECT_REASON') {
-                    $result = $this->soap1c->send_reject_reason($operation);
-                    if (!((isset($result->return) && $result->return == 'OK') || $result == 'OK')) {
-                        $order = $this->orders->get_order($operation->order_id);
-                        $this->soap1c->send_order($order);
-                        $result = $this->soap1c->send_reject_reason($operation);
-                    }
-                } else {
-                    $result = $this->soap1c->send_payments(array($operation));
-                }
-
-                if ((isset($result->return) && $result->return == 'OK') || $result == 'OK') {
-                    $this->operations->update_operation($operation->id, array(
-                        'sent_date' => date('Y-m-d H:i:s'),
-                        'sent_status' => 2
-                    ));
-                    $this->json_output(array('success' => 'Операция отправлена'));
-                } else {
-                    $this->json_output(array('error' => 'Ошибка при отправке'));
-                }
-            } else {
-                $this->json_output(array('error' => 'Операция не найдена'));
-            }
-        } elseif ($daterange = $this->request->get('daterange')) {
+        if ($daterange = $this->request->get('daterange')) {
             $search_filter = '';
 
             list($from, $to) = explode('-', $daterange);
 
-            $date_from = date('Y-m-d', strtotime($from));
-            $date_to = date('Y-m-d', strtotime($to));
+            $date_from = date('Y-m-d 00:00:00', strtotime($from));
+            $date_to = date('Y-m-d 23:59:59', strtotime($to));
 
             $this->design->assign('date_from', $date_from);
             $this->design->assign('date_to', $date_to);
@@ -528,7 +497,7 @@ class StatisticsController extends Controller
 
             if ($search = $this->request->get('search')) {
                 if (!empty($search['created'])) {
-                    $search_filter .= $this->db->placehold(' AND DATE(t.created) = ?', date('Y-m-d', strtotime($search['created'])));
+                    $search_filter .= $this->db->placehold('AND o.created between ? and ?', date('Y-m-d', strtotime($search['created'])));
                 }
                 if (!empty($search['number'])) {
                     $search_filter .= $this->db->placehold(' AND c.number LIKE "%'.$this->db->escape($search['number']).'%"');
@@ -537,19 +506,7 @@ class StatisticsController extends Controller
                     $search_filter .= $this->db->placehold(' AND (u.lastname LIKE "%'.$this->db->escape($search['fio']).'%" OR u.firstname LIKE "%'.$this->db->escape($search['fio']).'%" OR u.patronymic LIKE "%'.$this->db->escape($search['fio']).'%")');
                 }
                 if (!empty($search['amount'])) {
-                    $search_filter .= $this->db->placehold(' AND t.amount = ?', $search['amount'] * 100);
-                }
-                if (!empty($search['card'])) {
-                    $search_filter .= $this->db->placehold(' AND t.callback_response LIKE "%'.$this->db->escape($search['card']).'%"');
-                }
-                if (!empty($search['register_id'])) {
-                    $search_filter .= $this->db->placehold(' AND t.register_id LIKE "%'.$this->db->escape($search['register_id']).'%"');
-                }
-                if (!empty($search['operation'])) {
-                    $search_filter .= $this->db->placehold(' AND t.operation LIKE "%'.$this->db->escape($search['operation']).'%"');
-                }
-                if (!empty($search['description'])) {
-                    $search_filter .= $this->db->placehold(' AND t.description LIKE "%'.$this->db->escape($search['description']).'%"');
+                    $search_filter .= $this->db->placehold(' AND o.amount = ?', $search['amount'] * 100);
                 }
             }
 
@@ -562,54 +519,32 @@ class StatisticsController extends Controller
                     o.transaction_id,
                     o.type,
                     o.amount,
-                    t.created,
+                    o.created,
                     o.sent_date,
                     c.number AS contract_number,
                     u.lastname,
                     u.firstname,
                     u.patronymic,
-                    u.birth,
-                    t.register_id,
-                    t.operation,
-                    t.prolongation,
-                    t.insurance_id,
-                    t.description,
-                    t.callback_response,
-                    i.number AS insurance_number,
-                    i.amount AS insurance_amount,
-                    t.sector
+                    u.birth
                 FROM __operations AS o
-                LEFT JOIN __contracts AS c
+                JOIN __contracts AS c
                 ON c.id = o.contract_id
-                LEFT JOIN __users AS u
+                JOIN __users AS u
                 ON u.id = o.user_id
-                LEFT JOIN __transactions AS t
-                ON t.id = o.transaction_id
-                LEFT JOIN __insurances AS i
-                ON i.id = t.insurance_id
-                WHERE o.type != 'INSURANCE'
+                WHERE 1
                 $search_filter
-                AND DATE(t.created) >= ?
-                AND DATE(t.created) <= ?
-                AND t.reason_code = 1
-                ORDER BY t.created
+                AND o.created between ? and ?
+                AND o.`type` = 'PAY'
+                ORDER BY o.created
             ", $date_from, $date_to);
+
             $this->db->query($query);
 
-            $operations = array();
-            foreach ($this->db->results() as $op) {
-                if ($xml = simplexml_load_string($op->callback_response)) {
-                    $op->pan = (string)$xml->pan;
-                    $operations[$op->id] = $op;
-                }
-            }
+            $operations = $this->db->results();
 
 
             $statuses = $this->contracts->get_statuses();
             $this->design->assign('statuses', $statuses);
-
-            $collection_statuses = $this->contracts->get_collection_statuses();
-            $this->design->assign('collection_statuses', $collection_statuses);
 
 
 

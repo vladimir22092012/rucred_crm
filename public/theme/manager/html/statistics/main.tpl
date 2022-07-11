@@ -66,7 +66,6 @@
                     </a>
                 </div>
             </div>
-            -->
             {if in_array('analitics', $manager->permissions)} 
             <div class="col-md-6 col-lg-3 col-xlg-3">
                 <div class="card card-inverse card-danger">
@@ -84,14 +83,16 @@
                     </a>
                 </div>
             </div>
+            -->
             <div class="col-md-6 col-lg-3 col-xlg-3">
                 <div class="card card-inverse card-primary">
                     <a href="statistics/payments" class="box text-center">
                         <h1 class="font-light text-white">Оплаты</h1>
-                        <h6 class="text-white">Операции по займам</h6>
+                        <h6 class="text-white">Отчет по оплатам</h6>
                     </a>
                 </div>
             </div>
+            <!-- Column
             <div class="col-md-6 col-lg-3 col-xlg-3">
                 <div class="card card-inverse card-warning">
                     <a href="statistics/eventlogs" class="box text-center">
@@ -111,6 +112,7 @@
                 </div>
             </div>
             {/if}
+            -->
         </div>        
 
     </div> 
