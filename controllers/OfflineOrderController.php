@@ -821,7 +821,7 @@ class OfflineOrderController extends Controller
             }
 
             if ($count_scans_without_asp < 2)
-                return array('error' => 'Проверьте сканы для форм 03.03 и 04.09');
+                return array('error' => 'Проверьте сканы для форм 03.03 и 03.04');
         }
 
         if (count($scans) < count($users_docs) && empty($order->sms))
@@ -3815,6 +3815,7 @@ class OfflineOrderController extends Controller
 
 
         foreach ($doc_types as $key => $type) {
+
             $this->documents->create_document(array(
                 'user_id' => $order->user_id,
                 'order_id' => $order->order_id,

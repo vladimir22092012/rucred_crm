@@ -150,7 +150,8 @@ class Documents extends Core
             'client_visible' => $this->client_visible[$data['type']],
             'params' => $data['params'],
             'created' => date('Y-m-d H:i:s'),
-            'numeration' => $data['numeration']
+            'numeration' => $data['numeration'],
+            'asp_id' => $data['asp_id']
         );
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($created);echo '</pre><hr />';
         $id = $this->add_document($created);
