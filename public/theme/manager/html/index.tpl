@@ -318,6 +318,11 @@
                                 <li {if in_array($module, ['PaymentsController'])}class="active"{/if}><a
                                             href="payments"><i class="mdi mdi-react"></i>Генерация платежек</a></li>
                             {/if}
+                            {if in_array($manager->role, ['admin', 'developer'])}
+                                <li {if in_array($module, ['StatisticsController'])}class="active"{/if}><a
+                                            href="/statistics/payments"><i class="mdi mdi-book-open-page-variant"></i>Реестр платежей СБП/МПС</a>
+                                </li>
+                            {/if}
                         {/if}
 
                         {if in_array('managers', $manager->permissions)}
@@ -366,11 +371,6 @@
                             {if !in_array($manager->role, ['employer', 'underwriter'])}
                                 <li {if in_array($module, ['ApikeysController'])}class="active"{/if}><a
                                             href="apikeys/"><i class="mdi mdi-apple-finder"></i>Ключи для API</a></li>
-                            {/if}
-                            {if in_array($manager->role, ['admin', 'developer'])}
-                                <li {if in_array($module, ['StatisticsController'])}class="active"{/if}><a
-                                            href="/statistics"><i class="mdi mdi-book-open-page-variant"></i>Статистика</a>
-                                </li>
                             {/if}
                         {/if}
                     </ul>
