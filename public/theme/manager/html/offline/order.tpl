@@ -789,6 +789,10 @@
                     scrollTop: $(anchor).offset().top
                 }, 600);
             });
+
+            $('.phone_mobile_format').text(function(i, text) {
+                return text.replace(/(\d)(\d\d\d)(\d\d\d)(\d\d)(\d\d)/, '+$1($2)$3-$4-$5');
+            });
         });
     </script>
     <script>
@@ -1207,7 +1211,7 @@
                                                 </a>
                                             </h6>
                                             <h4>
-                                                <span>{$order->phone_mobile}</span>
+                                                <span class="phone_mobile_format">{$order->phone_mobile}</span>
                                             </h4>
                                             <a href="javascript:void(0);"
                                                class="text-info js-edit-form edit-amount js-event-add-click"
