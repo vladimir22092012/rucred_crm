@@ -917,10 +917,10 @@ class OfflineOrderController extends Controller
 
         $resp = $this->best2pay->issuance($order_id);
 
-        if (!empty($resp['success'])) {
+        if (isset($resp['success']) && $resp['success'] == 1) {
 
-            $payment_schedule = json_decode($order->payment_schedule, true);
-            $payment_schedule = end($payment_schedule);
+            $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
+            $payment_schedule = json_decode($payment_schedule->schedule, true);
             $date = date('Y-m-d');
 
             foreach ($payment_schedule as $payday => $payment) {
