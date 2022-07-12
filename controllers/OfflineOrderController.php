@@ -3695,9 +3695,6 @@ class OfflineOrderController extends Controller
 
                 $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
                 $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
-
-                $delete_scans = 0;
-                $this->form_docs($order_id, $delete_scans, $asp_id);
             }
 
             echo json_encode(['success' => 1]);
