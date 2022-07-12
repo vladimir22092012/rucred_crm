@@ -791,7 +791,7 @@
             });
 
             $('.phone_mobile_format').text(function(i, text) {
-                return text.replace(/(\d)(\d\d\d)(\d\d\d)(\d\d)(\d\d)/, '+$1($2)$3-$4-$5');
+                return text.replace(/(\d)(\d\d\d)(\d\d\d)(\d\d)(\d\d)/, '+$1 ($2) $3-$4-$5');
             });
         });
     </script>
