@@ -235,21 +235,21 @@ class NeworderController extends Controller
         if (!empty($cards_story)) {
             foreach ($cards_story as $card) {
                 $card['cards_rest_sum'] = preg_replace("/[^,.0-9]/", '', $card['cards_rest_sum']);
-                $card['cards_limit'] = preg_replace("/[^,.0-9]/", '', $card['cards_rest_sum']);
-            }
+                $card['cards_limit'] = preg_replace("/[^,.0-9]/", '', $card['cards_limit']);
 
-            if (!empty($credit['cards_rest_sum'])) {
-                $max = 0.05 * $card['cards_rest_sum'] + $card['cards_limit'];
-            }else{
-                $max = 0;
-            }
-            if (!empty($credit['cards_limit'])) {
-                $min = 0.1 * $card['cards_limit'];
-            }else{
-                $min = 0;
-            }
+                if (!empty($card['cards_limit'])) {
+                    $max = 0.05 * $card['cards_limit'];
+                }else{
+                    $max = 0;
+                }
+                if (!empty($card['cards_rest_sum'])) {
+                    $min = 0.1 * $card['cards_rest_sum'];
+                }else{
+                    $min = 0;
+                }
 
-            $all_sum_credits += min($max, $min);
+                $all_sum_credits += min($max, $min);
+            }
         }
 
         $user['credits_story'] = json_encode($credits_story);
@@ -563,17 +563,6 @@ class NeworderController extends Controller
             $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
             $annoouitet_pay = round($annoouitet_pay, '2');
 
-            $month_pay = $amount * ((1 / $loan->max_period) + (($order['percent'] / 100) / 12));
-
-            $all_sum_credits += $month_pay;
-
-            if ($all_sum_credits != 0)
-                $pdn = round(($all_sum_credits / $user['income']) * 100, 2);
-            else
-                $pdn = 0;
-
-            $this->users->update_user($user_id, ['pdn' => $pdn]);
-
             if (date('d', strtotime($start_date)) < $first_pay_day) {
                 if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < $loan->free_period) {
                     $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days, 2);
@@ -704,6 +693,17 @@ class NeworderController extends Controller
             $xirr /= 100;
 
             $psk = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
+
+            $month_pay = $amount * ((1 / $loan->max_period) + (($psk/ 100) / 12));
+
+            $all_sum_credits += $month_pay;
+
+            if ($all_sum_credits != 0)
+                $pdn = round(($all_sum_credits / $user['income']) * 100, 2);
+            else
+                $pdn = 0;
+
+            $this->users->update_user($user_id, ['pdn' => $pdn]);
 
             $payment_schedule = json_encode($payment_schedule);
 
