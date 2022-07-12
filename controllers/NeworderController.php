@@ -574,7 +574,7 @@ class NeworderController extends Controller
                 if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < $loan->free_period) {
                     $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days, 2);
                     $sum_pay = $annoouitet_pay + $plus_loan_percents;
-                    $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2, PHP_ROUND_HALF_DOWN);
+                    $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2);
                     $body_pay = $sum_pay - $loan_percents_pay;
                     $paydate->add(new DateInterval('P1M'));
                     $paydate = $this->check_pay_date($paydate);
@@ -1109,7 +1109,7 @@ class NeworderController extends Controller
                 if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < $loan->free_period) {
                     $plus_loan_percents = round(($percent / 100) * $amount * date_diff($paydate, $issuance_date)->days, 2);
                     $sum_pay = $annoouitet_pay + $plus_loan_percents;
-                    $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2, PHP_ROUND_HALF_DOWN);
+                    $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2);
                     $body_pay = $sum_pay - $loan_percents_pay;
                     $paydate->add(new DateInterval('P1M'));
                     $paydate = $this->check_pay_date($paydate);

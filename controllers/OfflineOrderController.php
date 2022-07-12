@@ -2955,8 +2955,23 @@ class OfflineOrderController extends Controller
         $loan_tarif = $this->request->post('loan_tarif');
         $probably_start_date = $this->request->post('probably_start_date');
         $loantype = $this->Loantypes->get_loantype((int)$loan_tarif);
+        $order = $this->orders->get_order($order_id);
 
-        $probably_return_date = new DateTime(date('Y-m-10', strtotime($probably_start_date . '+' . $loantype->max_period . 'month')));
+        if (empty($order->branche_id)) {
+            $branches = $this->Branches->get_branches(['group_id' => $order->group_id]);
+
+            foreach ($branches as $branch) {
+                if ($branch->number == '00') {
+                    $first_pay_day = $branch->payday;
+                    $user['branche_id'] = $branch->id;
+                }
+            }
+        } else {
+            $branch = $this->Branches->get_branch($order->branche_id);
+            $first_pay_day = $branch->payday;
+        }
+
+        $probably_return_date = new DateTime(date('Y-m-'.$first_pay_day, strtotime($probably_start_date . '+' . $loantype->max_period . 'month')));
         $probably_return_date = $this->check_pay_date($probably_return_date);
 
         if ($amount < $loantype->min_amount || $amount > $loantype->max_amount) {
@@ -3018,7 +3033,7 @@ class OfflineOrderController extends Controller
             if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < $loan->free_period) {
                 $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days, 2);
                 $sum_pay = $annoouitet_pay + $plus_loan_percents;
-                $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2, PHP_ROUND_HALF_DOWN);
+                $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2);
                 $body_pay = $sum_pay - $loan_percents_pay;
                 $paydate->add(new DateInterval('P1M'));
                 $paydate = $this->check_pay_date($paydate);
@@ -3144,17 +3159,12 @@ class OfflineOrderController extends Controller
         $xirr = round($this->Financial->XIRR($payments, $new_dates) * 100, 3);
         $xirr /= 100;
 
-        $order['psk'] = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
+        $psk = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
 
-        $order['payment_schedule'] = json_encode($payment_schedule);
+        $schedule = json_encode($payment_schedule);
 
-        $update_order =
-            [
-                'psk' => $order['psk'],
-                'payment_schedule' => $order['payment_schedule']
-            ];
-
-        $this->orders->update_order($order_id, $update_order);
+        $actual_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
+        $this->PaymentsSchedules->update($actual_schedule->id, ['psk' => $psk, 'schedule' => $schedule]);
     }
 
     private function check_pay_date($date)
