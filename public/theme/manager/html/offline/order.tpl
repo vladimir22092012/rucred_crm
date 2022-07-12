@@ -6,7 +6,6 @@
     <script src="theme/{$settings->theme|escape}/assets/plugins/fancybox3/dist/jquery.fancybox.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/offline_order.js?v=1.17"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/movements.app.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery.maskedinput@1.4.1/src/jquery.maskedinput.min.js"
             type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
@@ -37,7 +36,7 @@
                         confirmButtonText: 'Согласен',
                         cancelButtonText: 'Не согласен',
                     }).then((result) => {
-                        if (result.isConfirmed) {
+                        if (result.value) {
                             get_docs(order_id);
                         }
                     });
@@ -250,7 +249,7 @@
                     confirmButtonText: 'Да',
                     cancelButtonText: 'Нет',
                 }).then((result) => {
-                    if (result.isConfirmed) {
+                    if (result.value) {
                         $.ajax({
                             method: 'POST',
                             dataType: 'JSON',
@@ -280,7 +279,7 @@
 
             $(document).on('change', '.photo_status', function () {
 
-                if($(this).val() != 1)
+                if ($(this).val() != 1)
                     $('div[class="order-image-actions"]').show();
                 else
                     $('div[class="order-image-actions"]').hide();
@@ -780,18 +779,17 @@
                     }
                 })
             });
+
+            $('a[href^="#"]').click(function (e) {
+                e.preventDefault();
+
+                let anchor = $(this).attr('href');
+
+                $('html, body').animate({
+                    scrollTop: $(anchor).offset().top
+                }, 600);
+            });
         });
-
-        $('a[href^="#"]').click(function (e) {
-            e.preventDefault();
-
-            let anchor = $(this).attr('href');
-
-            $('html, body').animate({
-                scrollTop: $(anchor).offset().top
-            }, 600);
-        });
-
     </script>
     <script>
 
@@ -825,7 +823,7 @@
                             title: resp['error'],
                             confirmButtonText: 'Да'
                         }).then((result) => {
-                            if (result.isConfirmed) {
+                            if (result.value) {
                                 get_docs(order);
                             }
                         });
@@ -923,9 +921,9 @@
                     confirmButtonText: 'С доп платежом',
                     denyButtonText: 'Без доп платежа',
                 }).then((result) => {
-                    if (result.isConfirmed) {
+                    if (result.value) {
                         form += '&add_period=1';
-                    } else if (result.isDenied) {
+                    } else if (result.dismiss) {
                         form += '&add_period=0';
                     }
                     $.ajax({
@@ -1899,7 +1897,8 @@
                                                     {if $asp_restruct == 1}
                                                         <div class="btn btn-primary"
                                                              style="margin-left: 15px">
-                                                            <a href="#send_asp" style="text-decoration: none!important; color: #ffffff!important;">
+                                                            <a href="#send_asp"
+                                                               style="text-decoration: none!important; color: #ffffff!important;">
                                                                 Подписать документы о реструктуризации</a>
                                                         </div>
                                                     {/if}
@@ -2855,63 +2854,64 @@
                                                             <img src="{$config->back_url}/files/users/{$order->user_id}/{$file->name}"
                                                                  alt="" class="img-responsive" style=""/>
                                                         </a>
-                                                            <div class="order-image-actions" {if !in_array($order->status, [0, 1, 12, 14, 15]) || $file->type == 'document'}style="display: none"{/if}>
-                                                                <div class="dropdown mr-1 show ">
-                                                                    <button type="button"
-                                                                            class="btn {if $file->status==2}btn-success{elseif $file->status==3}btn-danger{else}btn-secondary{/if} dropdown-toggle"
-                                                                            id="dropdownMenuOffset"
-                                                                            data-toggle="dropdown" aria-haspopup="true"
-                                                                            aria-expanded="true">
-                                                                        {if $file->status == 2}Принят
-                                                                        {elseif $file->status == 3}Отклонен
-                                                                        {else}Статус
-                                                                        {/if}
-                                                                    </button>
-                                                                    <div class="dropdown-menu"
-                                                                         aria-labelledby="dropdownMenuOffset"
-                                                                         x-placement="bottom-start">
-                                                                        <div class="p-1 dropdown-item">
-                                                                            <button
-                                                                                    class="btn btn-sm btn-block btn-outline-success js-image-accept js-event-add-click"
-                                                                                    data-event="51"
-                                                                                    data-manager="{$manager->id}"
-                                                                                    data-order="{$order->order_id}"
-                                                                                    data-user="{$order->user_id}"
-                                                                                    data-id="{$file->id}"
-                                                                                    type="button">
-                                                                                <i class="fas fa-check-circle"></i>
-                                                                                <span>Принять</span>
-                                                                            </button>
-                                                                        </div>
-                                                                        <div class="p-1 dropdown-item">
-                                                                            <button
-                                                                                    class="btn btn-sm btn-block btn-outline-danger js-image-reject js-event-add-click"
-                                                                                    data-event="52"
-                                                                                    data-manager="{$manager->id}"
-                                                                                    data-order="{$order->order_id}"
-                                                                                    data-user="{$order->user_id}"
-                                                                                    data-id="{$file->id}"
-                                                                                    type="button">
-                                                                                <i class="fas fa-times-circle"></i>
-                                                                                <span>Отклонить</span>
-                                                                            </button>
-                                                                        </div>
-                                                                        <div class="p-1 pt-3 dropdown-item">
-                                                                            <button
-                                                                                    class="btn btn-sm btn-block btn-danger js-image-remove js-event-add-click"
-                                                                                    data-event="53"
-                                                                                    data-manager="{$manager->id}"
-                                                                                    data-order="{$order->order_id}"
-                                                                                    data-user="{$order->user_id}"
-                                                                                    data-id="{$file->id}"
-                                                                                    type="button">
-                                                                                <i class="fas fa-trash"></i>
-                                                                                <span>Удалить</span>
-                                                                            </button>
-                                                                        </div>
+                                                        <div class="order-image-actions"
+                                                             {if !in_array($order->status, [0, 1, 12, 14, 15]) || $file->type == 'document'}style="display: none"{/if}>
+                                                            <div class="dropdown mr-1 show ">
+                                                                <button type="button"
+                                                                        class="btn {if $file->status==2}btn-success{elseif $file->status==3}btn-danger{else}btn-secondary{/if} dropdown-toggle"
+                                                                        id="dropdownMenuOffset"
+                                                                        data-toggle="dropdown" aria-haspopup="true"
+                                                                        aria-expanded="true">
+                                                                    {if $file->status == 2}Принят
+                                                                    {elseif $file->status == 3}Отклонен
+                                                                    {else}Статус
+                                                                    {/if}
+                                                                </button>
+                                                                <div class="dropdown-menu"
+                                                                     aria-labelledby="dropdownMenuOffset"
+                                                                     x-placement="bottom-start">
+                                                                    <div class="p-1 dropdown-item">
+                                                                        <button
+                                                                                class="btn btn-sm btn-block btn-outline-success js-image-accept js-event-add-click"
+                                                                                data-event="51"
+                                                                                data-manager="{$manager->id}"
+                                                                                data-order="{$order->order_id}"
+                                                                                data-user="{$order->user_id}"
+                                                                                data-id="{$file->id}"
+                                                                                type="button">
+                                                                            <i class="fas fa-check-circle"></i>
+                                                                            <span>Принять</span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="p-1 dropdown-item">
+                                                                        <button
+                                                                                class="btn btn-sm btn-block btn-outline-danger js-image-reject js-event-add-click"
+                                                                                data-event="52"
+                                                                                data-manager="{$manager->id}"
+                                                                                data-order="{$order->order_id}"
+                                                                                data-user="{$order->user_id}"
+                                                                                data-id="{$file->id}"
+                                                                                type="button">
+                                                                            <i class="fas fa-times-circle"></i>
+                                                                            <span>Отклонить</span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="p-1 pt-3 dropdown-item">
+                                                                        <button
+                                                                                class="btn btn-sm btn-block btn-danger js-image-remove js-event-add-click"
+                                                                                data-event="53"
+                                                                                data-manager="{$manager->id}"
+                                                                                data-order="{$order->order_id}"
+                                                                                data-user="{$order->user_id}"
+                                                                                data-id="{$file->id}"
+                                                                                type="button">
+                                                                            <i class="fas fa-trash"></i>
+                                                                            <span>Удалить</span>
+                                                                        </button>
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                        </div>
                                                     </li>
                                                     <select class="form-control photo_status" data-file="{$file->id}"
                                                             name="photo_status">
@@ -3056,7 +3056,7 @@
                                         <div class="btn btn-info confirm_asp" type="button"
                                              data-user="{$order->user_id}"
                                              data-order="{$order->order_id}"
-                                             data-restruct = "1"
+                                             data-restruct="1"
                                              style="margin-left: 15px; display:none"
                                              data-phone="{$order->phone_mobile}">Подтвердить
                                         </div>
