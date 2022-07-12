@@ -6,7 +6,6 @@
     <script src="theme/{$settings->theme|escape}/assets/plugins/fancybox3/dist/jquery.fancybox.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/offline_order.js?v=1.17"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/movements.app.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery.maskedinput@1.4.1/src/jquery.maskedinput.min.js"
             type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
@@ -37,7 +36,7 @@
                         confirmButtonText: 'Согласен',
                         cancelButtonText: 'Не согласен',
                     }).then((result) => {
-                        if (result.isConfirmed) {
+                        if (result.value) {
                             $.ajax({
                                 method: 'post',
                                 data: {
@@ -259,8 +258,8 @@
                     confirmButtonText: 'Да',
                     cancelButtonText: 'Нет',
                 }).then((result) => {
-                    /* Read more about isConfirmed, isDenied below */
-                    if (result.isConfirmed) {
+                    /* Read more about value, dismiss below */
+                    if (result.value) {
                         $.ajax({
                             method: 'POST',
                             dataType: 'JSON',
@@ -891,9 +890,9 @@
                     confirmButtonText: 'С доп платежом',
                     denyButtonText: 'Без доп платежа',
                 }).then((result) => {
-                    if (result.isConfirmed) {
+                    if (result.value) {
                         form += '&add_period=1';
-                    } else if (result.isDenied) {
+                    } else if (result.dismiss) {
                         form += '&add_period=0';
                     }
                     $.ajax({
