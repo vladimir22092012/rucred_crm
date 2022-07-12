@@ -298,12 +298,17 @@ class YaDisk extends Core
             $faktadress = $this->Addresses->get_address($document->params->faktaddress_id);
             $this->design->assign('faktadress', $faktadress);
 
+            $requisite = $this->Requisites->get_requisites(['user_id' => $document->params->user_id]);
+            $requisite = end($requisite);
+            $this->design->assign('requisite', $requisite);
 
             $company = $this->Companies->get_company($document->params->company_id);
             $this->design->assign('company', $company);
 
-            $code_asp = $this->AspCodes->get_code(['code' => $document->params->sms]);
-            $this->design->assign('code_asp', $code_asp);
+            if(!empty($document->asp_id)){
+                $code_asp = $this->AspCodes->get_code(['id' => $document->params->asp]);
+                $this->design->assign('code_asp', $code_asp);
+            }
 
             $loan_id = $document->params->loan_type;
             $loan = $this->Loantypes->get_loantype($loan_id);
@@ -316,8 +321,7 @@ class YaDisk extends Core
 
             $this->design->assign('period', $period);
 
-            $payment_schedule = json_decode($document->params->payment_schedule, true);
-            $payment_schedule = end($payment_schedule);
+            $payment_schedule = json_decode($document->params->payment_schedule['schedule'], true);
 
             uksort(
                 $payment_schedule,
@@ -328,8 +332,21 @@ class YaDisk extends Core
                     }
 
                     return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
-                }
-            );
+                });
+
+            if ($document->type == 'ZAYAVLENIE_RESTRUCT') {
+                array_pop($payment_schedule);
+                $last_pay = array_pop($payment_schedule);
+                $annouitet = $last_pay['pay_sum'];
+
+                list($annouitet_first_part, $annouitet_second_part) = explode('.', $annouitet);
+
+                $annouitet_first_part = $this->num2str($annouitet_first_part);
+
+                $this->design->assign('annouitet', $annouitet);
+                $this->design->assign('annouitet_first_part', $annouitet_first_part);
+                $this->design->assign('annouitet_second_part', $annouitet_second_part);
+            }
 
             $all_pay_sum_string = explode('.', $payment_schedule['result']['all_sum_pay']);
 
@@ -365,10 +382,11 @@ class YaDisk extends Core
             $this->design->assign('first_part_all_sum_pay', $first_part_all_sum_pay);
 
 
-            $percents_per_year = $document->params->psk;
+            $percents_per_year = $document->params->payment_schedule['psk'];
             $percents = $percents_per_year;
 
             $percents = number_format($percents, 3, ',', ' ');
+            $percents = str_pad($percents, 6, '0', STR_PAD_RIGHT);
 
             $this->design->assign('percents', $percents);
             $percents_str = explode(',', $percents);
@@ -382,6 +400,7 @@ class YaDisk extends Core
             $percents_per_year = $this->num2str($percents_per_year);
             $this->design->assign('percents_per_year', $percents_per_year);
             $psk_rub = $payment_schedule['result']['all_loan_percents_pay'] + $payment_schedule['result']['all_comission_pay'];
+
             $psk_rub = number_format($psk_rub, 2, ',', ' ');
 
             $amount_to_string = explode(',', $psk_rub);
