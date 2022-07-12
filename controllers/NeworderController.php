@@ -240,9 +240,13 @@ class NeworderController extends Controller
 
             if (!empty($credit['cards_rest_sum'])) {
                 $max = 0.05 * $card['cards_rest_sum'] + $card['cards_limit'];
+            }else{
+                $max = 0;
             }
             if (!empty($credit['cards_limit'])) {
                 $min = 0.1 * $card['cards_limit'];
+            }else{
+                $min = 0;
             }
 
             $all_sum_credits += min($max, $min);
