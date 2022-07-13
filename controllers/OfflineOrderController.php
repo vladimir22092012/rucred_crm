@@ -3411,7 +3411,7 @@ class OfflineOrderController extends Controller
         $user = (array)$this->users->get_user($order->user_id);
 
         if (empty($user['branche_id'])) {
-            $branches = $this->Branches->get_branches(['group_id' => $user['group_id']]);
+            $branches = $this->Branches->get_branches(['company_id' => $user['company_id']]);
 
             foreach ($branches as $branch) {
                 if ($branch->number == '00')
