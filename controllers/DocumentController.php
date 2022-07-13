@@ -35,7 +35,7 @@ class DocumentController extends Controller
         $this->design->assign('company', $company);
 
         if(!empty($document->asp_id)){
-            $code_asp = $this->AspCodes->get_code(['id' => $document->params->asp]);
+            $code_asp = $this->AspCodes->get_code(['id' => $document->asp_id]);
             $this->design->assign('code_asp', $code_asp);
         }
 
