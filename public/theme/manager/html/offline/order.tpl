@@ -2536,7 +2536,7 @@
                                                                             <a href="/ajax/show_fssp.php?id={$scorings[$scoring_type->name]->id}&password=Hjkdf8d"
                                                                                target="_blank">Подробнее</a>
                                                                         {/if}
-                                                                        {if $scoring_type->name == 'okb'}
+                                                                        {if $scoring_type->name == 'okb' && $scorings[$scoring_type->name]->success}
                                                                             <a href="javascript:void(0);"
                                                                                class="js-get-okb-info float-right"
                                                                                data-scoring="{$scorings[$scoring_type->name]->id}">Подробнее</a>
