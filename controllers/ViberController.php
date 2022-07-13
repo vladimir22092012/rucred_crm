@@ -56,7 +56,7 @@ class ViberController extends Controller
             $result = $client->setWebhook($webhookUrl);
             echo "Success!\n";
         } catch (Exception $e) {
-            echo "Error: ". $e->getCode() ."\n";
+            echo "Error: ". $e->getCode() . $e->getMessage() ."\n";
         }
 
     }
