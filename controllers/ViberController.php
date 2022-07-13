@@ -13,7 +13,6 @@ class ViberController extends Controller
 
         var_dump($this->setWebhook());
         var_dump('123');
-        exit;
 
         $botSender = new Sender([
             'name' => 'Whois bot',
@@ -50,10 +49,14 @@ class ViberController extends Controller
     {
 
         $webhookUrl = 'https://re-aktiv.ru/viber';
-        $client = new Client(['token' => $this->apy_key]);
-        $result = $client->setWebhook($webhookUrl);
 
-        var_dump($result);
+        try {
+            $client = new Client([ 'token' => $this->apy_key ]);
+            $result = $client->setWebhook($webhookUrl);
+            echo "Success!\n";
+        } catch (Exception $e) {
+            echo "Error: ". $e->getError() ."\n";
+        }
 
     }
 }
