@@ -1,5 +1,6 @@
-;function OrderApp()
-{
+;
+
+function OrderApp() {
     var app = this;
 
     app.sms_timer;
@@ -7,14 +8,14 @@
     app.image_deg = 0;
 
 
-    var _init_upload_file = function(){
-        $(document).on('change', '.new_file', function(){
+    var _init_upload_file = function () {
+        $(document).on('change', '.new_file', function () {
             app.upload(this);
         });
 
     };
 
-    app.upload = function(input){
+    app.upload = function (input) {
 
         var $this = $(input);
 
@@ -36,14 +37,13 @@
             data: form_data,
             type: 'POST',
             dataType: 'json',
-            processData : false,
-            contentType : false,
-            beforeLoad: function(){
+            processData: false,
+            contentType: false,
+            beforeLoad: function () {
                 $fileblock.addClass('loading');
             },
-            success: function(resp){
-                if (!!resp.error)
-                {
+            success: function (resp) {
+                if (!!resp.error) {
                     var error_text = '';
                     if (resp.error == 'max_file_size')
                         error_text = 'Превышен максимально допустимый размер файла.';
@@ -52,10 +52,9 @@
                     else
                         error_text = resp.error;
 
-                    $fileblock.append('<div class="error_text">'+error_text+'</div>');
+                    $fileblock.append('<div class="error_text">' + error_text + '</div>');
                 }
-                else
-                {
+                else {
                     $fileblock.find('.error_text').remove();
 
                     app.update_page();
@@ -65,8 +64,8 @@
         });
     };
 
-    var _init_return_insure = function(){
-        $(document).on('click', '.js-return-insure', function(e){
+    var _init_return_insure = function () {
+        $(document).on('click', '.js-return-insure', function (e) {
             e.preventDefault();
 
             var $btn = $(this);
@@ -93,14 +92,13 @@
                             action: 'return_insure',
                             contract_id: contract_id,
                         },
-                        beforeSend: function(){
+                        beforeSend: function () {
                             $btn.addClass('loading')
                         },
-                        success: function(resp){
+                        success: function (resp) {
                             $btn.removeClass('loading');
 
-                            if (!!resp.error)
-                            {
+                            if (!!resp.error) {
                                 Swal.fire({
                                     timer: 5000,
                                     title: 'Ошибка!',
@@ -108,8 +106,7 @@
                                     type: 'error',
                                 });
                             }
-                            else
-                            {
+                            else {
                                 Swal.fire({
                                     title: 'Успешно!',
                                     text: 'Запрос на возврат страховки отправлен',
@@ -127,8 +124,8 @@
         })
     }
 
-    var _init_fssp_info = function(){
-        $(document).on('click', '.js-get-fssp-info', function(e){
+    var _init_fssp_info = function () {
+        $(document).on('click', '.js-get-fssp-info', function (e) {
             e.preventDefault();
 
             var $this = $(this);
@@ -142,43 +139,41 @@
                     action: 'fssp',
                     'scoring_id': $this.data('scoring')
                 },
-                beforeSend: function(){
+                beforeSend: function () {
                     $this.addClass('loading');
                 },
-                success: function(resp){
+                success: function (resp) {
                     $this.removeClass('loading');
 
 
-                    if (!!resp.body.result[0].result)
-                    {
+                    if (!!resp.body.result[0].result) {
                         var _html = '';
-                        $.each(resp.body.result[0].result, function(k, item){
+                        $.each(resp.body.result[0].result, function (k, item) {
                             var _row = '<tr>';
-                            _row += '<td>'+item.exe_production+'</td>';
-                            _row += '<td>'+item.details+'</td>';
-                            _row += '<td>'+item.subject+'</td>';
-                            _row += '<td>'+item.department+'</td>';
-                            _row += '<td>'+item.ip_end+'</td>';
+                            _row += '<td>' + item.exe_production + '</td>';
+                            _row += '<td>' + item.details + '</td>';
+                            _row += '<td>' + item.subject + '</td>';
+                            _row += '<td>' + item.department + '</td>';
+                            _row += '<td>' + item.ip_end + '</td>';
                             _row += '</tr>';
 
                             _html += _row;
                         })
                     }
-                    else
-                    {
+                    else {
                         var _html = '<h4>Производства не найдены</h4>';
                     }
 
                     $('.js-fssp-info-result').html(_html);
 
                     $('#modal_fssp_info').modal();
-console.info(resp);
+                    console.info(resp);
                 }
             })
         });
     };
 
-    var _init_open_image_popup = function(){
+    var _init_open_image_popup = function () {
 
         $.fancybox.defaults.btnTpl.rotate_left = '<button class="js-fancybox-rotate-left fancybox-button " ><i class="mdi mdi-rotate-left"></i></button>';
         $.fancybox.defaults.btnTpl.rotate_right = '<button class="js-fancybox-rotate-right fancybox-button " ><i class="mdi mdi-rotate-right"></i></button>';
@@ -199,42 +194,40 @@ console.info(resp);
         });
 
         app.image_deg = 0
-        $(document).on('click', '.js-fancybox-rotate-left', function(e){
+        $(document).on('click', '.js-fancybox-rotate-left', function (e) {
             e.preventDefault();
 
             var $img = $('.fancybox-content img');
 
             new_deg = app.image_deg == 360 ? 0 : app.image_deg - 90;
-            $img.css({'transform':'rotate('+new_deg+'deg)'})
+            $img.css({'transform': 'rotate(' + new_deg + 'deg)'})
 
             app.image_deg = new_deg
             //$img.attr('data-deg', new_deg);
         });
-        $(document).on('click', '.js-fancybox-rotate-right', function(e){
+        $(document).on('click', '.js-fancybox-rotate-right', function (e) {
             e.preventDefault();
 
             var $img = $('.fancybox-content img');
 
             new_deg = app.image_deg == 270 ? 0 : app.image_deg + 90;
-            $img.css({'transform':'rotate('+new_deg+'deg)'})
+            $img.css({'transform': 'rotate(' + new_deg + 'deg)'})
 
             app.image_deg = new_deg
         });
     }
 
 
-    var _init_confirm_contract = function(){
+    var _init_confirm_contract = function () {
 
-        var _set_timer = function(_seconds){
-            app.sms_timer = setInterval(function(){
+        var _set_timer = function (_seconds) {
+            app.sms_timer = setInterval(function () {
                 _seconds--;
-                if (_seconds > 0)
-                {
-                    $('.js-sms-timer').text(_seconds+'сек');
+                if (_seconds > 0) {
+                    $('.js-sms-timer').text(_seconds + 'сек');
                     $('.js-sms-send').addClass('disable');
                 }
-                else
-                {
+                else {
                     $('.js-sms-timer').text('');
                     $('.js-sms-send').removeClass('disable');
                     clearInterval(app.sms_timer);
@@ -243,7 +236,7 @@ console.info(resp);
 
         };
 
-        $(document).on('click', '.js-sms-send', function(e){
+        $(document).on('click', '.js-sms-send', function (e) {
             e.preventDefault();
 
             if ($(this).hasClass('disable'))
@@ -257,23 +250,20 @@ console.info(resp);
                     action: 'send_accept_code',
                     contract_id: _contract_id
                 },
-                success: function(resp){
-                    if (!!resp.error)
-                    {
+                success: function (resp) {
+                    if (!!resp.error) {
                         if (resp.error == 'sms_time')
                             _set_timer(resp.time_left);
                         else
                             console.log(resp);
                     }
-                    else
-                    {
+                    else {
                         _set_timer(resp.time_left);
                         app.sms_sent = 1;
 
 
                     }
-                    if (!!resp.developer_code)
-                    {
+                    if (!!resp.developer_code) {
                         $('.js-contract-code').val(resp.developer_code);
                     }
                 }
@@ -282,7 +272,7 @@ console.info(resp);
 
         })
 
-        $(document).on('submit', '.js-confirm-contract', function(e){
+        $(document).on('submit', '.js-confirm-contract', function (e) {
             e.preventDefault();
 
             var $form = $(this);
@@ -302,26 +292,23 @@ console.info(resp);
                     phone: phone,
                     code: code,
                 },
-                beforeSend: function(){
+                beforeSend: function () {
                     $form.addClass('loading');
                 },
-                success: function(resp){
+                success: function (resp) {
                     $form.removeClass('loading');
-                    if (!!resp.error)
-                    {
+                    if (!!resp.error) {
                         Swal.fire({
                             title: 'Ошибка!',
                             text: resp.error,
                             type: 'error',
                         });
                     }
-                    else if (!!resp.success)
-                    {
+                    else if (!!resp.success) {
                         app.update_page();
-console.log(resp);
+                        console.log(resp);
                     }
-                    else
-                    {
+                    else {
                         console.error(resp);
                     }
 
@@ -330,8 +317,8 @@ console.log(resp);
         });
     };
 
-    var _init_accept_order = function(){
-        $(document).on('click', '.js-accept-order', function(e){
+    var _init_accept_order = function () {
+        $(document).on('click', '.js-accept-order', function (e) {
             e.preventDefault();
 
             var $btn = $(this);
@@ -346,34 +333,31 @@ console.log(resp);
                     action: 'accept_order',
                     order_id: order_id,
                 },
-                beforeSend: function(){
+                beforeSend: function () {
                     $btn.addClass('loading')
                 },
-                success: function(resp){
+                success: function (resp) {
                     $btn.removeClass('loading');
 
-                    if (!!resp.error)
-                    {
+                    if (!!resp.error) {
                         Swal.fire({
                             timer: 5000,
                             title: 'Ошибка!',
                             text: resp.error,
                             type: 'error',
                         });
-                        setTimeout(function(){
+                        setTimeout(function () {
                             location.href = 'orders';
                         }, 5000);
                     }
-                    else if (!!resp.success)
-                    {
+                    else if (!!resp.success) {
                         $('.js-order-manager').html(resp.manager);
                         $('.js-accept-order-block').remove();
                         $('.js-approve-reject-block').removeClass('hide');
 
                         app.update_page();
                     }
-                    else
-                    {
+                    else {
                         console.error(resp);
                     }
                 },
@@ -381,8 +365,8 @@ console.log(resp);
         });
     };
 
-    var _init_approve_order = function(){
-        $(document).on('click', '.js-approve-order', function(e){
+    var _init_approve_order = function () {
+        $(document).on('click', '.js-approve-order', function (e) {
             e.preventDefault();
 
             var $btn = $(this);
@@ -394,13 +378,12 @@ console.log(resp);
 
             // проверяем фото
             var files_ready = 1;
-            $('.js-file-status').each(function(){
+            $('.js-file-status').each(function () {
                 if ($(this).val() != 2 && $(this).val() != 4)
                     files_ready = 0;
             });
 
-            if (!files_ready)
-            {
+            if (!files_ready) {
 
                 Swal.fire({
                     timer: 5000,
@@ -409,7 +392,7 @@ console.log(resp);
                     text: 'Необходимо принять файлы клиента!',
                     onClose: () => {
                         $('html, body').animate({
-                            scrollTop: $("#images_form").offset().top-100  // класс объекта к которому приезжаем
+                            scrollTop: $("#images_form").offset().top - 100  // класс объекта к которому приезжаем
                         }, 1000);
                     }
                 });
@@ -429,34 +412,23 @@ console.log(resp);
                 confirmButtonText: 'Да, одобрить'
             }).then((result) => {
                 if (result.value) {
-
                     $.ajax({
                         type: 'POST',
+                        dataType: 'JSON',
                         data: {
                             action: 'approve_order',
                             order_id: order_id,
                         },
-                        beforeSend: function(){
-                            $btn.addClass('loading')
-                        },
-                        success: function(resp){
-                            $btn.removeClass('loading');
-
-                            if (!!resp.error)
-                            {
+                        success: function (resp) {
+                            if (resp['error']) {
                                 Swal.fire({
-                                    timer: 5000,
                                     title: 'Ошибка!',
-                                    text: resp.error,
+                                    text: resp['error'],
                                     type: 'error',
                                 });
-
-                                location.reload();
                             }
-                            else
-                            {
+                            else {
                                 location.reload();
-
                             }
                         },
                     })
@@ -465,14 +437,14 @@ console.log(resp);
         });
     };
 
-    var _init_reject_order = function(){
-        $(document).on('click', '.js-reject-order', function(e){
+    var _init_reject_order = function () {
+        $(document).on('click', '.js-reject-order', function (e) {
             e.preventDefault();
 
             $('#modal_reject_reason').modal();
         });
 
-        $(document).on('submit', '.js-reject-form', function(e){
+        $(document).on('submit', '.js-reject-form', function (e) {
             e.preventDefault();
 
             var $form = $(this);
@@ -483,27 +455,25 @@ console.log(resp);
             $.ajax({
                 type: 'POST',
                 data: $form.serialize(),
-                beforeSend: function(){
+                beforeSend: function () {
                     $form.addClass('loading')
                 },
-                success: function(resp){
+                success: function (resp) {
                     $form.removeClass('loading');
                     $('#modal_reject_reason').modal('hide');
 
-                    if (!!resp.error)
-                    {
+                    if (!!resp.error) {
                         Swal.fire({
                             timer: 5000,
                             title: 'Ошибка!',
                             text: resp.error,
                             type: 'error',
                         });
-                        setTimeout(function(){
+                        setTimeout(function () {
                             location.href = 'orders';
                         }, 5000);
                     }
-                    else
-                    {
+                    else {
                         app.update_page();
 
                     }
@@ -513,9 +483,8 @@ console.log(resp);
     };
 
 
-
-    var _init_change_status = function(){
-        $(document).on('change', '.js-status-select', function(e){
+    var _init_change_status = function () {
+        $(document).on('change', '.js-status-select', function (e) {
 
             var $this = $(this);
             var $option = $this.find('option:selected');
@@ -530,13 +499,12 @@ console.log(resp);
                     order_id: order_id,
                     status: status
                 },
-                beforeSend: function(){
+                beforeSend: function () {
                     $this.attr('disabled', true);
                 },
-                success: function(resp){
+                success: function (resp) {
                     $this.removeAttr('disabled');
-                    if (!!resp.error)
-                    {
+                    if (!!resp.error) {
                         Swal.fire({
                             timer: 5000,
                             title: 'Ошибка!',
@@ -551,8 +519,8 @@ console.log(resp);
         });
     }
 
-    var _init_take_order = function(){
-        $(document).on('click', '.js-take-order', function(e){
+    var _init_take_order = function () {
+        $(document).on('click', '.js-take-order', function (e) {
             e.preventDefault();
 
             var $btn = $(this);
@@ -568,26 +536,24 @@ console.log(resp);
                     order_id: order_id,
                     status: 1
                 },
-                beforeSend: function(){
+                beforeSend: function () {
                     $btn.addClass('loading')
                 },
-                success: function(resp){
+                success: function (resp) {
                     $btn.removeClass('loading');
 
-                    if (!!resp.error)
-                    {
+                    if (!!resp.error) {
                         Swal.fire({
                             timer: 5000,
                             title: 'Ошибка!',
                             text: resp.error,
                             type: 'error',
                         });
-                        setTimeout(function(){
+                        setTimeout(function () {
                             location.href = 'orders';
                         }, 5000);
                     }
-                    else
-                    {
+                    else {
                         $btn.remove();
                         $('.js-status-select-wrapper').removeClass('hide');
 
@@ -600,8 +566,8 @@ console.log(resp);
         });
     };
 
-    var _init_autoretry_accept = function(){
-        $(document).on('click', '.js-autoretry-accept', function(e){
+    var _init_autoretry_accept = function () {
+        $(document).on('click', '.js-autoretry-accept', function (e) {
             e.preventDefault();
 
             var $btn = $(this);
@@ -617,14 +583,13 @@ console.log(resp);
                     order_id: order_id,
                     status: 1
                 },
-                beforeSend: function(){
+                beforeSend: function () {
                     $btn.addClass('loading')
                 },
-                success: function(resp){
+                success: function (resp) {
                     $btn.removeClass('loading');
 
-                    if (!!resp.error)
-                    {
+                    if (!!resp.error) {
                         Swal.fire({
                             timer: 5000,
                             title: 'Ошибка!',
@@ -632,8 +597,7 @@ console.log(resp);
                             type: 'error',
                         });
                     }
-                    else
-                    {
+                    else {
                         app.update_page();
                     }
 
@@ -644,11 +608,10 @@ console.log(resp);
     };
 
 
-
-    var _init_toggle_form = function(){
+    var _init_toggle_form = function () {
 
         // редактирование формы
-        $(document).on('click', '.js-edit-form', function(e){
+        $(document).on('click', '.js-edit-form', function (e) {
             e.preventDefault();
 
             var $form = $(this).closest('form');
@@ -657,7 +620,7 @@ console.log(resp);
         });
 
         // отмена редактирования
-        $('.js-cancel-edit').click(function(e){
+        $('.js-cancel-edit').click(function (e) {
             e.preventDefault();
 
             var $form = $(this).closest('form');
@@ -668,31 +631,29 @@ console.log(resp);
         });
     };
 
-    var _init_open_order = function(){
-        $(document).on('click', '.js-open-order', function(e){
+    var _init_open_order = function () {
+        $(document).on('click', '.js-open-order', function (e) {
             e.preventDefault();
 
             var _id = $(this).data('id');
 
-            if ($(this).hasClass('open'))
-            {
+            if ($(this).hasClass('open')) {
                 $(this).removeClass('open');
                 $('.order-details').fadeOut();
             }
-            else
-            {
+            else {
                 $('.js-open-order.open').removeClass('open')
                 $(this).addClass('open')
 
                 $('.order-details').hide();
-                $('#changelog_'+_id).fadeIn();
+                $('#changelog_' + _id).fadeIn();
             }
         })
     };
 
-    var _init_mango_call = function(){
+    var _init_mango_call = function () {
 
-        $(document).on('click', '.js-mango-call', function(e){
+        $(document).on('click', '.js-mango-call', function (e) {
             e.preventDefault();
 
             var _phone = $(this).data('phone');
@@ -700,7 +661,7 @@ console.log(resp);
 
             Swal.fire({
                 title: 'Выполнить звонок?',
-                text: "Вы хотите позвонить на номер: "+_phone,
+                text: "Вы хотите позвонить на номер: " + _phone,
                 type: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -716,14 +677,12 @@ console.log(resp);
                             phone: _phone,
                             yuk: _yuk
                         },
-                        beforeSend: function(){
+                        beforeSend: function () {
 
                         },
-                        success: function(resp){
-                            if (!!resp.error)
-                            {
-                                if (resp.error == 'empty_mango')
-                                {
+                        success: function (resp) {
+                            if (!!resp.error) {
+                                if (resp.error == 'empty_mango') {
                                     Swal.fire(
                                         'Ошибка!',
                                         'Необходимо указать Ваш внутренний номер сотрудника Mango-office.',
@@ -731,8 +690,7 @@ console.log(resp);
                                     )
                                 }
 
-                                if (resp.error == 'empty_mango')
-                                {
+                                if (resp.error == 'empty_mango') {
                                     Swal.fire(
                                         'Ошибка!',
                                         'Не хватает прав на выполнение операции.',
@@ -740,16 +698,14 @@ console.log(resp);
                                     )
                                 }
                             }
-                            else if (resp.success)
-                            {
+                            else if (resp.success) {
                                 Swal.fire(
                                     '',
                                     'Выполняется звонок.',
                                     'success'
                                 )
                             }
-                            else
-                            {
+                            else {
                                 console.error(resp);
                                 Swal.fire(
                                     'Ошибка!',
@@ -769,15 +725,14 @@ console.log(resp);
     };
 
 
-    var _init_submit_form = function(){
-        $(document).on('submit', '.js-order-item-form', function(e){
+    var _init_submit_form = function () {
+        $(document).on('submit', '.js-order-item-form', function (e) {
             e.preventDefault();
 
             var $form = $(this);
             var _id = $form.attr('id');
 
-            if ($form.hasClass('js-check-amount'))
-            {
+            if ($form.hasClass('js-check-amount')) {
                 if (!_check_amount())
                     return false;
             }
@@ -786,12 +741,12 @@ console.log(resp);
                 url: $form.attr('action'),
                 type: 'POST',
                 data: $form.serialize(),
-                beforeSend: function(){
+                beforeSend: function () {
                     $form.addClass('loading');
                 },
-                success: function(resp){
+                success: function (resp) {
 
-                    var $content = $(resp).find('#'+_id).html();
+                    var $content = $(resp).find('#' + _id).html();
 
                     $form.html($content);
 
@@ -803,11 +758,10 @@ console.log(resp);
         });
     }
 
-    var _check_amount = function(){
+    var _check_amount = function () {
         var amount = parseInt($('[name=amount]').val())
 
-        if (amount > 15000)
-        {
+        if (amount > 15000) {
             $('.js-check-amount').append('<div class="check-amount-info"><small class="text-danger">Максимальная сумма 15000 руб!</small></div>')
             return false;
         }
@@ -816,21 +770,21 @@ console.log(resp);
         return true;
     };
 
-    var _init_change_image_status = function(){
+    var _init_change_image_status = function () {
 
-        $(document).on('click', '.js-image-reject, .js-image-accept', function(e){
+        $(document).on('click', '.js-image-reject, .js-image-accept', function (e) {
             var _id = $(this).data('id');
             if ($(this).hasClass('js-image-reject'))
                 var _status = 3;
             else if ($(this).hasClass('js-image-accept'))
                 var _status = 2;
 
-            $('#status_'+_id).val(_status);
+            $('#status_' + _id).val(_status);
 
             $(this).closest('form').submit();
         });
 
-        $(document).on('click', '.js-image-remove', function(e){
+        $(document).on('click', '.js-image-remove', function (e) {
             var _id = $(this).data('id');
             var _user_id = $(this).data('user');
             $.ajax({
@@ -841,10 +795,10 @@ console.log(resp);
                     user_id: _user_id
                 },
                 type: 'POST',
-                beforeSend: function(){
+                beforeSend: function () {
 
                 },
-                success: function(resp){
+                success: function (resp) {
                     app.update_page();
                 }
             });
@@ -853,8 +807,8 @@ console.log(resp);
 
     };
 
-    var _init_change_manager = function(){
-        $(document).on('change', '.js-order-manager', function(){
+    var _init_change_manager = function () {
+        $(document).on('change', '.js-order-manager', function () {
             var manager_id = $(this).val();
             var order_id = $(this).data('order');
 
@@ -865,9 +819,8 @@ console.log(resp);
                     manager_id: manager_id,
                     order_id: order_id
                 },
-                success: function(resp){
-                    if (!!resp.error)
-                    {
+                success: function (resp) {
+                    if (!!resp.error) {
                         Swal.fire({
                             text: resp.error,
                             type: 'error',
@@ -878,16 +831,16 @@ console.log(resp);
         });
     }
 
-    var _init_comment_form = function(){
+    var _init_comment_form = function () {
 
-        $(document).on('click', '.js-open-comment-form', function(e){
+        $(document).on('click', '.js-open-comment-form', function (e) {
             e.preventDefault();
 
             $('#modal_add_comment [name=text]').text('')
             $('#modal_add_comment').modal();
         });
 
-        $(document).on('submit', '#form_add_comment', function(e){
+        $(document).on('submit', '#form_add_comment', function (e) {
             e.preventDefault();
 
             var $form = $(this);
@@ -896,9 +849,8 @@ console.log(resp);
                 url: $form.attr('action'),
                 data: $form.serialize(),
                 type: 'POST',
-                success: function(resp){
-                    if (resp.success)
-                    {
+                success: function (resp) {
+                    if (resp.success) {
                         $('#modal_add_comment').modal('hide');
                         $form.find('[name=text]').val('')
 
@@ -910,8 +862,7 @@ console.log(resp);
                             type: 'success',
                         });
                     }
-                    else
-                    {
+                    else {
                         Swal.fire({
                             text: resp.error,
                             type: 'error',
@@ -923,31 +874,28 @@ console.log(resp);
         })
     }
 
-    app.update_page = function(active_tab){
+    app.update_page = function (active_tab) {
         $.ajax({
-            success: function(resp){
+            success: function (resp) {
 
                 $('#order_wrapper').html($(resp).find('#order_wrapper').html());
-                if (!!active_tab)
-                {
+                if (!!active_tab) {
                     $('#order_tabs .active').removeClass('active');
-                    $('#order_tabs [href="#'+active_tab+'"]').addClass('active');
+                    $('#order_tabs [href="#' + active_tab + '"]').addClass('active');
 
                     $('#order_tabs_content .tab-pane').removeClass('active');
-                    $('#order_tabs_content').find('#'+active_tab).addClass('active');
+                    $('#order_tabs_content').find('#' + active_tab).addClass('active');
 
                 }
 
-                if ($('.js-dadata-address').length > 0)
-                {
+                if ($('.js-dadata-address').length > 0) {
 
-                    $('.js-dadata-address').each(function(){
+                    $('.js-dadata-address').each(function () {
                         new DadataAddressApp($(this));
                     });
                 }
-                if ($('.js-dadata-work').length > 0)
-                {
-                    $('.js-dadata-work').each(function(){
+                if ($('.js-dadata-work').length > 0) {
+                    $('.js-dadata-work').each(function () {
                         new DadataWorkApp($(this));
                     });
                 }
@@ -957,15 +905,15 @@ console.log(resp);
         })
     }
 
-    var _init_close_contract = function(){
-        $(document).on('click', '.js-open-close-form', function(e){
+    var _init_close_contract = function () {
+        $(document).on('click', '.js-open-close-form', function (e) {
             e.preventDefault();
 
             $('#modal_add_comment [name=comment]').text('')
             $('#modal_close_contract').modal();
         });
 
-        $(document).on('submit', '#form_close_contract', function(e){
+        $(document).on('submit', '#form_close_contract', function (e) {
             e.preventDefault();
 
             var $form = $(this);
@@ -974,9 +922,8 @@ console.log(resp);
                 url: $form.attr('action'),
                 data: $form.serialize(),
                 type: 'POST',
-                success: function(resp){
-                    if (resp.success)
-                    {
+                success: function (resp) {
+                    if (resp.success) {
                         $('#modal_close_contract').modal('hide');
                         $form.find('[name=comment]').val('')
 
@@ -988,8 +935,7 @@ console.log(resp);
                             type: 'success',
                         });
                     }
-                    else
-                    {
+                    else {
                         Swal.fire({
                             text: resp.error,
                             type: 'error',
@@ -1002,8 +948,8 @@ console.log(resp);
 
     };
 
-    var _init_repay_contract = function(){
-        $(document).on('click', '.js-repay-contract', function(e){
+    var _init_repay_contract = function () {
+        $(document).on('click', '.js-repay-contract', function (e) {
             e.preventDefault();
             var $button = $(this);
 
@@ -1030,20 +976,18 @@ console.log(resp);
                             action: 'repay',
                             contract_id: _contract
                         },
-                        beforeSend: function(){
+                        beforeSend: function () {
                             $button.addClass('loading');
                         },
-                        success: function(resp){
-                            if (!!resp.error)
-                            {
+                        success: function (resp) {
+                            if (!!resp.error) {
                                 Swal.fire(
                                     'Ошибка!',
                                     resp.error,
                                     'error'
                                 )
                             }
-                            else if (resp.success)
-                            {
+                            else if (resp.success) {
                                 Swal.fire(
                                     'Успешно',
                                     'Договор поставлен в очередь на выдачу.',
@@ -1051,8 +995,7 @@ console.log(resp);
                                 )
                                 app.update_page();
                             }
-                            else
-                            {
+                            else {
                                 console.error(resp);
                                 Swal.fire(
                                     'Ошибка!',
@@ -1070,8 +1013,8 @@ console.log(resp);
         })
     }
 
-    var _init_penalty = function(){
-        $(document).on('click', '.js-add-penalty', function(){
+    var _init_penalty = function () {
+        $(document).on('click', '.js-add-penalty', function () {
             var _block = $(this).data('block');
 
             $('#modal_add_penalty [name=block]').val(_block);
@@ -1079,7 +1022,7 @@ console.log(resp);
             $('#modal_add_penalty').modal();
         });
 
-        $(document).on('submit', '#form_add_penalty', function(e){
+        $(document).on('submit', '#form_add_penalty', function (e) {
             e.preventDefault();
 
             var $form = $(this);
@@ -1091,12 +1034,11 @@ console.log(resp);
                 url: '/penalties',
                 data: $form.serialize(),
                 type: 'POST',
-                beforeSend: function(){
+                beforeSend: function () {
                     $form.addClass('loading');
                 },
-                success: function(resp){
-                    if (resp.success)
-                    {
+                success: function (resp) {
+                    if (resp.success) {
                         $('#modal_add_penalty').modal('hide');
                         $form.find('[name=text]').val('')
 
@@ -1108,8 +1050,7 @@ console.log(resp);
                             type: 'success',
                         });
                     }
-                    else
-                    {
+                    else {
                         Swal.fire({
                             text: resp.error,
                             type: 'error',
@@ -1122,21 +1063,20 @@ console.log(resp);
 
         });
 
-        $(document).on('click', '.js-strike-penalty', function(e){
+        $(document).on('click', '.js-strike-penalty', function (e) {
             e.preventDefault();
 
             var _id = $(this).data('penalty');
 
             $.ajax({
-                url : '/penalties',
+                url: '/penalties',
                 data: {
                     id: _id,
                     action: 'strike_penalty'
                 },
                 type: 'POST',
-                success: function(resp){
-                    if (resp.success)
-                    {
+                success: function (resp) {
+                    if (resp.success) {
                         app.update_page();
 
                         Swal.fire({
@@ -1145,8 +1085,7 @@ console.log(resp);
                             type: 'success',
                         });
                     }
-                    else
-                    {
+                    else {
                         Swal.fire({
                             text: resp.error,
                             type: 'error',
@@ -1157,21 +1096,20 @@ console.log(resp);
             })
         });
 
-        $(document).on('click', '.js-reject-penalty', function(e){
+        $(document).on('click', '.js-reject-penalty', function (e) {
             e.preventDefault();
 
             var _id = $(this).data('penalty');
 
             $.ajax({
-                url : '/penalties',
+                url: '/penalties',
                 data: {
                     id: _id,
                     action: 'reject_penalty'
                 },
                 type: 'POST',
-                success: function(resp){
-                    if (resp.success)
-                    {
+                success: function (resp) {
+                    if (resp.success) {
                         app.update_page();
 
                         Swal.fire({
@@ -1180,8 +1118,7 @@ console.log(resp);
                             type: 'success',
                         });
                     }
-                    else
-                    {
+                    else {
                         Swal.fire({
                             text: resp.error,
                             type: 'error',
@@ -1192,21 +1129,20 @@ console.log(resp);
             })
         });
 
-        $(document).on('click', '.js-correct-penalty', function(e){
+        $(document).on('click', '.js-correct-penalty', function (e) {
             e.preventDefault();
 
             var _id = $(this).data('penalty');
 
             $.ajax({
-                url : '/penalties',
+                url: '/penalties',
                 data: {
                     id: _id,
                     action: 'correct_penalty'
                 },
                 type: 'POST',
-                success: function(resp){
-                    if (resp.success)
-                    {
+                success: function (resp) {
+                    if (resp.success) {
                         app.update_page();
 
                         Swal.fire({
@@ -1215,8 +1151,7 @@ console.log(resp);
                             type: 'success',
                         });
                     }
-                    else
-                    {
+                    else {
                         Swal.fire({
                             text: resp.error,
                             type: 'error',
@@ -1228,70 +1163,68 @@ console.log(resp);
 
     };
 
-    var _init_sms = function(){
-        $(document).on('click', '.js-open-sms-modal', function(e){
-            e.preventDefault();
+    var _init_sms = function () {
+            $(document).on('click', '.js-open-sms-modal', function (e) {
+                e.preventDefault();
 
-            var _user_id = $(this).data('user');
-            var _order_id = $(this).data('order');
-            var _yuk = $(this).hasClass('is-yuk') ? 1 : 0;
+                var _user_id = $(this).data('user');
+                var _order_id = $(this).data('order');
+                var _yuk = $(this).hasClass('is-yuk') ? 1 : 0;
 
-            $('#modal_send_sms [name=user_id]').val(_user_id)
-            $('#modal_send_sms [name=order_id]').val(_order_id)
-            $('#modal_send_sms [name=yuk]').val(_yuk)
-            $('#modal_send_sms').modal();
-        });
+                $('#modal_send_sms [name=user_id]').val(_user_id)
+                $('#modal_send_sms [name=order_id]').val(_order_id)
+                $('#modal_send_sms [name=yuk]').val(_yuk)
+                $('#modal_send_sms').modal();
+            });
 
-        $(document).on('submit', '.js-sms-form', function(e){
-            e.preventDefault();
+            $(document).on('submit', '.js-sms-form', function (e) {
+                e.preventDefault();
 
-            var $form = $(this);
+                var $form = $(this);
 
-            var _user_id = $form.find('[name=user_id]').val();
-            var _order_id = $form.find('[name=order_id]').val();
+                var _user_id = $form.find('[name=user_id]').val();
+                var _order_id = $form.find('[name=order_id]').val();
 
-            if ($form.hasClass('loading'))
-                return false;
+                if ($form.hasClass('loading'))
+                    return false;
 
-            $.ajax({
-                url: 'order/'+_order_id,
-                type: 'POST',
-                data: $form.serialize(),
-                beforeSend: function(){
-                    $form.addClass('loading')
-                },
-                success: function(resp){
-                    $form.removeClass('loading');
-                    $('#modal_send_sms').modal('hide');
+                $.ajax({
+                    url: 'order/' + _order_id,
+                    type: 'POST',
+                    data: $form.serialize(),
+                    beforeSend: function () {
+                        $form.addClass('loading')
+                    },
+                    success: function (resp) {
+                        $form.removeClass('loading');
+                        $('#modal_send_sms').modal('hide');
 
-                    if (!!resp.error)
-                    {
-                        Swal.fire({
-                            timer: 5000,
-                            title: 'Ошибка!',
-                            text: resp.error,
-                            type: 'error',
-                        });
-                    }
-                    else
-                    {
-                        Swal.fire({
-                            timer: 5000,
-                            title: '',
-                            text: 'Сообщение отправлено',
-                            type: 'success',
-                        });
+                        if (!!resp.error) {
+                            Swal.fire({
+                                timer: 5000,
+                                title: 'Ошибка!',
+                                text: resp.error,
+                                type: 'error',
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                timer: 5000,
+                                title: '',
+                                text: 'Сообщение отправлено',
+                                type: 'success',
+                            });
 
-                    }
-                },
-            })
+                        }
+                    },
+                })
 
-        });
+            });
 
 
-    }
+        }
 
-    ;(function(){
+    ;(function () {
 
         _init_toggle_form();
         _init_submit_form();

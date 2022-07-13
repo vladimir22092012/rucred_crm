@@ -807,8 +807,10 @@ class OfflineOrderController extends Controller
 
         $users_docs = $this->Documents->get_documents(['order_id' => $order_id]);
 
-        if (empty($users_docs))
-            return array('error' => 'Не сформированы документы!');
+        if (empty($users_docs)){
+            echo json_encode(['error' => 'Не сформированы документы!']);
+            exit;
+        }
 
         if (!empty($order->sms)) {
             $count_scans_without_asp = 0;
@@ -820,15 +822,21 @@ class OfflineOrderController extends Controller
                 }
             }
 
-            if ($count_scans_without_asp < 2)
-                return array('error' => 'Проверьте сканы для форм 03.03 и 03.04');
+            if ($count_scans_without_asp < 2){
+                echo json_encode(['error' => 'Проверьте сканы для форм 03.03 и 03.04']);
+                exit;
+            }
         }
 
-        if (count($scans) < count($users_docs) && empty($order->sms))
-            return array('error' => 'Для одобрения заявки нужны все сканы либо пэп!');
+        if (count($scans) < count($users_docs) && empty($order->sms)){
+            echo json_encode(['error' => 'Для одобрения заявки нужны все сканы либо пэп!']);
+            exit;
+        }
 
-        if ($order->amount < $loan->min_amount && $order->amount > $loan->max_amount)
-            return array('error' => 'Проверьте сумму займа!');
+        if ($order->amount < $loan->min_amount && $order->amount > $loan->max_amount){
+            echo json_encode(['error' => 'Проверьте сумму займа!']);
+            exit;
+        }
 
         $update = array(
             'status' => 4,
@@ -916,7 +924,8 @@ class OfflineOrderController extends Controller
 
         }
 
-        return array('success' => 1, 'status' => 2);
+        echo json_encode(['success' => 'Проверьте сумму займа!']);
+        exit;
 
     }
 
