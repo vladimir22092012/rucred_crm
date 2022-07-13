@@ -744,6 +744,7 @@ class NeworderController extends Controller
                 } else {
 
                     $order = $this->orders->get_order($order_id);
+                    $communication_theme = $this->CommunicationsThemes->get(8);
 
                     $ticket =
                         [
@@ -752,8 +753,8 @@ class NeworderController extends Controller
                             'client_lastname' => $order->lastname,
                             'client_firstname' => $order->firstname,
                             'client_patronymic' => $order->patronymic,
-                            'head' => 'Новая заявка',
-                            'text' => 'Ознакомьтесь с новой заявкой и верифицируйте своего сотрудника и верифицируйте своего сотрудника',
+                            'head' => $communication_theme->head,
+                            'text' => $communication_theme->text,
                             'company_id' => 2,
                             'group_id' => $order->group_id,
                             'order_id' => $order_id,
@@ -763,7 +764,7 @@ class NeworderController extends Controller
                     $ticket_id = $this->Tickets->add_ticket($ticket);
                     $message =
                         [
-                            'message' => 'Ознакомьтесь с новой заявкой и верифицируйте своего сотрудника',
+                            'message' => $communication_theme->text,
                             'ticket_id' => $ticket_id,
                             'manager_id' => $this->manager->id,
                         ];
@@ -818,6 +819,8 @@ class NeworderController extends Controller
                     try {
                         $user = $this->users->get_user($order['user_id']);
 
+                        $communication_theme = $this->CommunicationsThemes->get(8);
+
                         $ticket =
                             [
                                 'creator' => $this->manager->id,
@@ -825,23 +828,21 @@ class NeworderController extends Controller
                                 'client_lastname' => $user->lastname,
                                 'client_firstname' => $user->firstname,
                                 'client_patronymic' => $user->patronymic,
-                                'head' => 'Новая заявка',
-                                'text' => 'Ознакомьтесь с новой заявкой и верифицируйте своего сотрудника',
-                                'company_id' => $order['company_id'],
-                                'group_id' => $order['group_id'],
+                                'head' => $communication_theme->head,
+                                'text' => $communication_theme->text,
+                                'company_id' => 2,
+                                'group_id' => $user->group_id,
                                 'order_id' => $order_id,
                                 'status' => 0
                             ];
 
                         $ticket_id = $this->Tickets->add_ticket($ticket);
-
                         $message =
                             [
-                                'message' => 'Ознакомьтесь с новой заявкой и верифицируйте своего сотрудника',
+                                'message' => $communication_theme->text,
                                 'ticket_id' => $ticket_id,
                                 'manager_id' => $this->manager->id,
                             ];
-
                         $this->TicketMessages->add_message($message);
 
                         $schedules =

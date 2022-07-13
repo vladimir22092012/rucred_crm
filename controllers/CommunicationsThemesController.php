@@ -41,7 +41,9 @@ class CommunicationsThemesController extends Controller
     {
         $name = $this->request->post('name');
         $number = $this->request->post('number');
-        $id = $this->request->post('id');
+        $head = $this->request->post('head');
+        $text = $this->request->post('text');
+        $id = $this->request->post('theme_id');
 
         $name_check = $this->CommunicationsThemes->gets(['name' => $name, 'id' => $id]);
         $number_check = $this->CommunicationsThemes->gets(['number' => $number, 'id' => $id]);
@@ -53,7 +55,14 @@ class CommunicationsThemesController extends Controller
             echo json_encode(['error' => 'Такой номер уже есть']);
             exit;
         } else {
-            $this->CommunicationsThemes->update($id, ['name' => $name, 'number' => $number]);
+            $theme =
+                [
+                    'name' => $name,
+                    'number' => $number,
+                    'head' => $head,
+                    'text' => $text
+                ];
+            $this->CommunicationsThemes->update($id, $theme);
             echo json_encode(['success' => 1]);
             exit;
         }
@@ -66,6 +75,14 @@ class CommunicationsThemesController extends Controller
         $this->CommunicationsThemes->delete($id);
 
         echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    public function action_get_theme()
+    {
+        $id = $this->request->post('id');
+        $theme = $this->CommunicationsThemes->get($id);
+        echo json_encode($theme);
         exit;
     }
 }
