@@ -853,6 +853,7 @@ class OfflineOrderController extends Controller
         ));
 
         $this->contracts->update_contract($order->contract_id, ['status' => 1]);
+        $communication_theme = $this->CommunicationsThemes->get(12);
 
         $ticket =
             [
@@ -861,8 +862,9 @@ class OfflineOrderController extends Controller
                 'client_lastname' => $order->lastname,
                 'client_firstname' => $order->firstname,
                 'client_patronymic' => $order->patronymic,
-                'head' => 'Платежный документ',
-                'text' => 'Подтвердите заявку и отправьте платежный документ (деньги)',
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => 12,
                 'company_id' => 3,
                 'group_id' => 2,
                 'order_id' => $order_id,
@@ -872,7 +874,7 @@ class OfflineOrderController extends Controller
         $ticket_id = $this->Tickets->add_ticket($ticket);
         $message =
             [
-                'message' => 'Подтвердите заявку и отправьте платежный документ (деньги)',
+                'message' => $communication_theme->text,
                 'ticket_id' => $ticket_id,
                 'manager_id' => $this->manager->id,
             ];
@@ -891,6 +893,17 @@ class OfflineOrderController extends Controller
                 $this->scorings->add_scoring($add_scoring);
             }
         }
+
+        $this->db->query("
+        SELECT id
+        FROM s_asp_codes
+        WHERE order_id = ?
+        ORDER BY id DESC
+        LIMIT 1
+        ", $order_id);
+        $asp_id = $this->db->result('id');
+
+        $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
 
         $upload_scans = 0;
 
@@ -955,6 +968,8 @@ class OfflineOrderController extends Controller
                 'loan_peni_summ' => 0,
             ]);
 
+            $communication_theme = $this->CommunicationsThemes->get(17);
+
 
             $ticket = [
                 'creator' => $this->manager->id,
@@ -962,8 +977,9 @@ class OfflineOrderController extends Controller
                 'client_lastname' => $order->lastname,
                 'client_firstname' => $order->firstname,
                 'client_patronymic' => $order->patronymic,
-                'head' => 'Займ выдан',
-                'text' => 'Ознакомьтесь с документами по займу',
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => 17,
                 'company_id' => 2,
                 'group_id' => $order->group_id,
                 'order_id' => $order_id,
@@ -974,7 +990,7 @@ class OfflineOrderController extends Controller
 
             $message =
                 [
-                    'message' => 'Ознакомьтесь с новой заявкой',
+                    'message' => $communication_theme->text,
                     'ticket_id' => $ticket_id,
                     'manager_id' => $this->manager->id,
                 ];
@@ -2889,6 +2905,7 @@ class OfflineOrderController extends Controller
         $order = $this->orders->get_order($order_id);
         $this->orders->update_order($order_id, ['status' => 14]);
         $this->Tickets->close_neworder_ticket($order_id);
+        $communication_theme = $this->CommunicationsThemes->get(11);
 
         $ticket =
             [
@@ -2897,8 +2914,9 @@ class OfflineOrderController extends Controller
                 'client_lastname' => $order->lastname,
                 'client_firstname' => $order->firstname,
                 'client_patronymic' => $order->patronymic,
-                'head' => 'Заявка подтверждена работодателем',
-                'text' => 'Продолжить работу с заявкой',
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => 11,
                 'company_id' => $order->company_id,
                 'group_id' => 2,
                 'order_id' => $order_id,
@@ -3702,8 +3720,6 @@ class OfflineOrderController extends Controller
                     ];
 
                 $contract_id = $this->Contracts->add_contract($contract);
-
-                $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
                 $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
             }
 
