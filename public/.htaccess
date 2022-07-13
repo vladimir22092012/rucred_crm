@@ -69,6 +69,7 @@ RewriteRule ^clients/?$                 index.php?module=ClientsController  [L,Q
 RewriteRule ^client/([^/]*)/?$          index.php?module=ClientController&id=$1  [L,QSA]
 
 RewriteRule ^telegram/?$                 index.php?module=TelegramController  [L,QSA]
+RewriteRule ^viber/?$                    index.php?module=ViberController  [L,QSA]
 
 RewriteRule ^managers/?$                index.php?module=ManagersController  [L,QSA]
 RewriteRule ^manager/?$                 index.php?module=ManagerController  [L,QSA]
