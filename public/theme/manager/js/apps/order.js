@@ -400,7 +400,6 @@ function OrderApp() {
                 return false;
             }
 
-
             Swal.fire({
                 title: 'Одобрить выдачу кредита?',
                 text: "",
@@ -423,15 +422,14 @@ function OrderApp() {
                             if (resp['error']) {
                                 Swal.fire({
                                     title: 'Ошибка!',
-                                    text: resp['error'],
-                                    type: 'error',
+                                    text: resp['error']
                                 });
                             }
                             else {
                                 location.reload();
                             }
                         },
-                    })
+                    });
                 }
             });
         });

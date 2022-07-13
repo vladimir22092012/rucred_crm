@@ -104,8 +104,7 @@ class OfflineOrderController extends Controller
 
                 // одобрить заявку
                 case 'approve_order':
-                    $response = $this->approve_order_action();
-                    $this->json_output($response);
+                    $this->approve_order_action();
                     break;
 
                 // совершить выплату по заявку
@@ -924,7 +923,7 @@ class OfflineOrderController extends Controller
 
         }
 
-        echo json_encode(['success' => 'Проверьте сумму займа!']);
+        echo json_encode(['success' => 1]);
         exit;
 
     }
