@@ -50,11 +50,7 @@ class ViberController extends Controller
     {
 
         $webhookUrl = 'https://re-aktiv.ru/viber';
-
-        var_dump($this->apiKey);
-
-        $client = new Client(['token' => $this->apiKey]);
-
+        $client = new Client(['token' => $this->apy_key]);
         $result = $client->setWebhook($webhookUrl);
 
         var_dump($result);
