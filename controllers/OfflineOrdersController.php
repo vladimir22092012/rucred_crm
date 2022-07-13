@@ -132,6 +132,8 @@ class OfflineOrdersController extends Controller
                 }
             }
 
+            $order->count_schedules = count($this->PaymentsSchedules->gets($order->order_id));
+
             if (!empty($order->contract_id)) {
                 $order->contract = $this->contracts->get_contract((int)$order->contract_id);
             }

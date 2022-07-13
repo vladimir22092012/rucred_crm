@@ -3357,16 +3357,14 @@ class OfflineOrderController extends Controller
 
             $date = date('d.m.Y', strtotime($date));
             if ($pay_date == $date) {
-                $rest_sum = $schedule['pay_sum'];
-
                 if ($pay_amount < $schedule['pay_sum']) {
                     if ($pay_amount >= $schedule['loan_percents_pay']) {
                         $percent_pay = $schedule['loan_percents_pay'];
-                        $rest_sum -= $pay_amount;
+                        $pay_amount -= $percent_pay;
 
-                        if ($rest_sum > 0) {
-                            $body_pay = $rest_sum;
-                            $new_loan -= $rest_sum;
+                        if ($pay_amount > 0) {
+                            $body_pay = $pay_amount;
+                            $new_loan -= $pay_amount;
                         }
 
                     } else {
@@ -3377,8 +3375,8 @@ class OfflineOrderController extends Controller
 
                 if ($pay_amount > $schedule['pay_sum']) {
                     $percent_pay = $schedule['loan_percents_pay'];
-                    $rest_sum -= $schedule['loan_percents_pay'];
-                    $body_pay = $rest_sum;
+                    $pay_amount -= $schedule['loan_percents_pay'];
+                    $body_pay = $pay_amount;
                     $new_loan = $new_loan - ($pay_amount - $schedule['loan_body_pay']);
                 }
                 if ($pay_amount == 0) {
@@ -3393,7 +3391,7 @@ class OfflineOrderController extends Controller
 
                 $new_shedule[$date] =
                     [
-                        'pay_sum' => $pay_amount,
+                        'pay_sum' => $body_pay+$percent_pay,
                         'loan_body_pay' => $body_pay,
                         'loan_percents_pay' => $percent_pay,
                         'comission_pay' => $comission_pay,

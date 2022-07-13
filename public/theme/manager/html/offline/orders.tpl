@@ -291,7 +291,7 @@
                                                 {if $order->contract}
                                                     <div>
                                                     <small>{$order->contract->number}</small></div>{/if}
-                                                <br><small>
+                                                <small>
                                                     {if $order->status == 0}
                                                         <span class="label label-warning">Новая</span>
                                                     {elseif $order->status == 1}
@@ -318,6 +318,9 @@
                                                         <span class="label label-danger">Р.Отклонена</span>
                                                     {/if}
                                                 </small>
+                                                {if $order->count_schedules > 1}
+                                                    <span class="label label-danger">Реструктуризирован</span>
+                                                {/if}
                                             </td>
                                             <td style="width: 70px;" class="jsgrid-cell">
                                                 {$order->date|date}
