@@ -23,6 +23,8 @@ class CommunicationsThemesController extends Controller
     {
         $name = $this->request->post('name');
         $number = $this->request->post('number');
+        $head = $this->request->post('head');
+        $text = $this->request->post('text');
 
         $number_check = $this->CommunicationsThemes->gets(['number' => $number]);
 
@@ -32,7 +34,16 @@ class CommunicationsThemesController extends Controller
 
         } else {
             echo json_encode(['success' => 1]);
-            $this->CommunicationsThemes->add(['name' => $name, 'number' => $number]);
+
+            $theme =
+                [
+                    'name' => $name,
+                    'number' => $number,
+                    'head' => $head,
+                    'text' => $text
+                ];
+
+            $this->CommunicationsThemes->add($theme);
             exit;
         }
     }

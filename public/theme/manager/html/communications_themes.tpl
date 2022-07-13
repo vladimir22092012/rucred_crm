@@ -20,17 +20,12 @@
                 $(document).on('click', '.save', function (e) {
                     e.preventDefault();
 
-                    let name = $('input[name="name"]').val();
-                    let number = $('input[name="number"]').val();
+                    let form = $('#add_theme_form').serialize();
 
                     $.ajax({
                         method: 'POST',
                         dataType: 'JSON',
-                        data: {
-                            action: 'add_theme',
-                            name: name,
-                            number: number
-                        },
+                        data: form,
                         success: function (resp) {
                             if (resp['error']) {
                                 Swal.fire({
@@ -212,16 +207,28 @@
             </div>
             <div class="modal-body">
                 <div class="alert" style="display:none"></div>
-                <div class="form-group">
-                    <label for="name" class="control-label">Номер:</label>
-                    <input type="text" class="form-control" name="number" value="">
-                </div>
-                <div class="form-group">
-                    <label for="name" class="control-label">Наименование:</label>
-                    <input type="text" class="form-control" name="name" value="">
-                </div>
-                <div class="btn btn-danger " data-dismiss="modal">Отмена</div>
-                <div class="btn btn-success save">Сохранить</div>
+                <form id="add_theme_form">
+                    <input type="hidden" name="action" value="add_theme">
+                    <input type="hidden" name="theme_id" value="">
+                    <div class="form-group">
+                        <label for="name" class="control-label">Номер:</label>
+                        <input type="text" class="form-control" name="number" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="control-label">Наименование:</label>
+                        <input type="text" class="form-control" name="name" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="control-label">Заголовок:</label>
+                        <input type="text" class="form-control" name="head" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="control-label">Текст тикета:</label>
+                        <textarea type="text" class="form-control" name="text"></textarea>
+                    </div>
+                    <div class="btn btn-danger " data-dismiss="modal">Отмена</div>
+                    <div class="btn btn-success save">Сохранить</div>
+                </form>
             </div>
         </div>
     </div>
