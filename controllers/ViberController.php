@@ -11,7 +11,7 @@ class ViberController extends Controller
     public function fetch()
     {
 
-        $this->setWebhook();
+        var_dump($this->setWebhook());
         exit;
 
         $botSender = new Sender([
