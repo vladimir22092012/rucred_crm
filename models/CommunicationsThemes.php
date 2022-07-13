@@ -32,6 +32,7 @@ class CommunicationsThemes extends Core
         $name_filter = '';
         $number_filter = '';
         $unique_filter = '';
+        $sort = $filter['sort'];
 
         if(isset($filter['name']))
             $name_filter = $this->db->placehold("AND name = ?", $filter['name']);
@@ -49,6 +50,7 @@ class CommunicationsThemes extends Core
         $name_filter
         $number_filter
         $unique_filter
+        ORDER BY $sort
         ");
 
         $this->db->query($query);

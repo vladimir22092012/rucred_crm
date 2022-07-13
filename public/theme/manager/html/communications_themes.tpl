@@ -109,6 +109,28 @@
                     }
                 });
             });
+
+            $('.searchable').on('change', function (e) {
+                e.preventDefault();
+
+                $('table tbody tr').show();
+
+                $('.searchable').each(function () {
+                    let value = $(this).val();
+                    value = value.toLowerCase();
+                    let index = $(this).parent().index() + 1;
+
+                    if (value && value.length > 0) {
+                        $('td:nth-child(' + index + ')').each(function () {
+                            let find_value = $(this).text().toLowerCase();
+                            console.log(find_value,value);
+                            if (find_value.includes(value) === false) {
+                                $(this).closest('tr[class="codes"]').hide();
+                            }
+                        });
+                    }
+                });
+            });
         })
     </script>
 {/capture}
@@ -152,16 +174,42 @@
                                     <tr>
                                         <th class="">ID</th>
                                         <th class="">Номер</th>
-                                        <th class="" style="width: 300px">Наименование</th>
-                                        <th>Заголовок</th>
-                                        <th>Текст тикета</th>
+                                        <th
+                                                class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'name asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'name desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'name asc'}<a href="{url page=null sort='name desc'}">
+                                                    Наименование</a>
+                                            {else}<a href="{url page=null sort='name asc'}">Наименование</a>{/if}
+                                        </th>
+                                        <th
+                                                class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'head asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'head desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'head asc'}<a href="{url page=null sort='head desc'}">
+                                                    Заголовок</a>
+                                            {else}<a href="{url page=null sort='head asc'}">Заголовок</a>{/if}
+                                        </th>
+                                        <th
+                                                class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'text asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'text desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'text asc'}<a href="{url page=null sort='text desc'}">
+                                                    Текст тикета</a>
+                                            {else}<a href="{url page=null sort='text asc'}">Текст тикета</a>{/if}
+                                        </th>
                                         <th></th>
+                                    </tr>
+                                    <tr class="jsgrid-filter-row">
+                                        <td></td>
+                                        <td></td>
+                                        <td style="width: 500px;" class="jsgrid-cell"><input type="text"class="form-control searchable">
+                                        </td>
+                                        <td class="jsgrid-cell"><input type="text" class="form-control searchable">
+                                        </td>
+                                        <td class="jsgrid-cell"><input type="text" class="form-control searchable">
+                                        </td>
+                                        <td></td>
                                     </tr>
                                     </thead>
                                     <tbody id="table-body">
                                     {if isset($themes)}
                                         {foreach $themes as $theme}
-                                            <tr>
+                                            <tr class="codes">
                                                 <td>{$theme->id}</td>
                                                 <td style="width: 60px">{$theme->number}</td>
                                                 <td style="width: 500px">{$theme->name}</td>
