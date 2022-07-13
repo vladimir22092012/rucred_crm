@@ -50,7 +50,7 @@ class ViberController extends Controller
 
         $webhookUrl = 'https://re-aktiv.ru/viber'; // <- PLACE-YOU-HTTPS-URL
         try {
-            $client = new Client([ 'token' => $this->apiKey ]);
+            $client = new Client(['token' => $this->apiKey]);
             $result = $client->setWebhook($webhookUrl);
             echo "Success!\n";
         } catch (Exception $e) {
