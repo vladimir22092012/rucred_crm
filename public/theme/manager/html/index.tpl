@@ -11,7 +11,7 @@
     <meta name="author" content="">
     <!-- Favicon icon -->
     <link rel="icon" href="/favicon.ico"/>
-    <title>{$meta_title}</title>
+    <title>CRM - Кредитный конвейер Рукред</title>
 
     {if isset($canonical)}
         <link rel="canonical" href="{$canonical}"/>
