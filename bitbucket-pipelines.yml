@@ -11,3 +11,20 @@
           #deployment: staging
           #script:
             #- chmod +x deployer.phar && ./deployer.phar deploy
+
+# Project deploy
+
+image: python:3.10
+
+pipelines:
+  branches:
+    master:
+      - step:
+          name: Deploy across ansible
+          caches:
+            - pip
+          script:
+            - pip install ansible
+            - apt-get update && apt-get install sshpass -y
+            - export ANSIBLE_HOST_KEY_CHECKING=False
+            - echo "$vault" > deploy/vault && ansible-playbook -i deploy/inventory deploy/rucred-deploy.yml --vault-password-file deploy/vault
