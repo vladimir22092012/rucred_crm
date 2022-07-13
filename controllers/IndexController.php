@@ -119,9 +119,9 @@ class IndexController extends Controller
             SELECT COUNT(*) as `count`
             FROM s_tickets
             WHERE group_id = ?
+            AND creator != ?
             AND (executor = 0 OR executor is null)
             and status != 6
-            and head != 'Платежный документ'
             and not exists (SELECT *
             FROM s_tickets_notifications
             WHERE ticket_id = s_tickets.id)
@@ -135,9 +135,10 @@ class IndexController extends Controller
             SELECT COUNT(*) as `count`
             FROM s_tickets
             WHERE group_id = 2
+            AND creator != ?
             AND (executor = 0 OR executor is null)
             and status != 6
-            and head != 'Платежный документ'
+            and theme_id not in (12, 37)
             and not exists (SELECT *
             FROM s_tickets_notifications
             WHERE ticket_id = s_tickets.id)
@@ -167,6 +168,7 @@ class IndexController extends Controller
             SELECT COUNT(*) as `count`
             FROM s_tickets
             WHERE status != 6
+            AND creator != ?
             and not exists (SELECT *
             FROM s_tickets_notifications
             WHERE ticket_id = s_tickets.id)
@@ -183,8 +185,9 @@ class IndexController extends Controller
             and status != 6
             and not exists (SELECT *
             FROM s_tickets_notifications
-            WHERE ticket_id = s_tickets.id)
-            ", $this->manager->id);
+            WHERE ticket_id = s_tickets.id
+            AND user_id = ?)
+            ", $this->manager->id, $this->manager->id);
 
             $this->db->query($query);
             $count_out = $this->db->result('count');
