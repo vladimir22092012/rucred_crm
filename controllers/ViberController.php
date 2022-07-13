@@ -48,7 +48,7 @@ class ViberController extends Controller
 
     public function setWebhook(){
 
-        $webhookUrl = 'https://viber.hcbogdan.com/bot.php'; // <- PLACE-YOU-HTTPS-URL
+        $webhookUrl = 'https://re-aktiv.ru/viber'; // <- PLACE-YOU-HTTPS-URL
         try {
             $client = new Client([ 'token' => $this->apiKey ]);
             $result = $client->setWebhook($webhookUrl);
