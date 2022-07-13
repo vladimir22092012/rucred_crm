@@ -39,7 +39,7 @@
         <div align="left">
             <a target="_blank" style="text-decoration: none; color: white"
                href="https://rucred.andr-dev.ru/auth"><img
-                        src="https://avatars.mds.yandex.net/get-images-cbir/195643/gtwJuG2B_pfNEUyx0twycQ2252/ocr"></a>
+                        src="https://1.downloader.disk.yandex.ru/preview/e48f9242ee8c50fc1caffad3fc788ebf1560f24984966c741fccf6cea0d3f5b2/inf/Xd_3SKwR4Nnc1GEpPvESC1xIis-Txp_N0bP6o8BzpSgLvRsD1PKSHZdiCNG5_FxbQ4LQffjPWKbcD3ZgJRg7-A%3D%3D?uid=1038001787&filename=lk.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&owner_uid=1038001787&tknv=v2&size=1920x937"></a>
         </div>
         <br><br>
         <div align="left">
@@ -52,10 +52,10 @@
         </div>
         <br>
         <div align="left">
-            <img src="https://avatars.mds.yandex.net/get-images-cbir/1818750/1jKDrNjFzvqFKuwtjQX2wA2308/ocr">
-            <img src="https://avatars.mds.yandex.net/get-images-cbir/1646438/CPz7tmYuJjLug4WachHJKw2376/ocr">
-            <img src="https://avatars.mds.yandex.net/get-images-cbir/1605006/RuX71NqQnlyvTTwDeK11MQ2353/ocr">
-            <img src="https://avatars.mds.yandex.net/get-images-cbir/989668/LUu8p3NftHXBHq5WbmSLmg2340/ocr">
+            <img src="https://3.downloader.disk.yandex.ru/preview/d54d95d23237c2b1d6925f69e0ca769d007e465148172b938b44d4a6d3392a3b/inf/4rfzRgZ_ncTqQpZb05m6jXE8oLsftGr-4hOAflIYKjNQyP4g1_t31nX16GmJc9fH-PVdEcTsewjPS8W4V2tR5Q%3D%3D?uid=1038001787&filename=first-btn.jpg&disposition=inline&hash=&limit=0&content_type=image%2Fjpeg&owner_uid=1038001787&tknv=v2&size=1920x937">
+            <img src="https://1.downloader.disk.yandex.ru/preview/7a033bb2cc25f32fe8afd3fe2f6b073c1eea0ef6da8dfe0dabe6c0ceba97bd57/inf/kjGKNmYqXJC7kEBs1_kPd3E8oLsftGr-4hOAflIYKjOPiJUxyYoeARvuVhb4VXpqynufBoJeWzlryzVFU2OPKQ%3D%3D?uid=1038001787&filename=download-googleplay.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&owner_uid=1038001787&tknv=v2&size=1920x937">
+            <img src="https://3.downloader.disk.yandex.ru/preview/088e20e7712d433b57221f816b338b77760eb595634988f88f4aa3ffb4a5c20c/inf/8DCFYXH9VrIyYyDkq2TGo3E8oLsftGr-4hOAflIYKjNF8RbBnb0VHxUZidF9n_1EC_6YgdnSETMBuqsgJOmjog%3D%3D?uid=1038001787&filename=restart.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&owner_uid=1038001787&tknv=v2&size=1920x937">
+            <img src="https://2.downloader.disk.yandex.ru/preview/c0c5666ee930b22ab7cccc268096f9822ff3fc436e818cba764c2ad6912ea9d5/inf/4hmJLUQdojss-CL0QrTsMFxIis-Txp_N0bP6o8BzpSihbD1UniVS032zDWpyNxOdt2GgU27aD9cM1x3XVnrdFw%3D%3D?uid=1038001787&filename=logo.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&owner_uid=1038001787&tknv=v2&size=1920x937">
         </div>
         <br>
         <div align="left" style="font-size: 12px;">
