@@ -68,6 +68,8 @@ RewriteRule ^mailing/([^/]*)/?$         index.php?module=MailingController&actio
 RewriteRule ^clients/?$                 index.php?module=ClientsController  [L,QSA]
 RewriteRule ^client/([^/]*)/?$          index.php?module=ClientController&id=$1  [L,QSA]
 
+RewriteRule ^telegram/?$                 index.php?module=TelegramController  [L,QSA]
+
 RewriteRule ^managers/?$                index.php?module=ManagersController  [L,QSA]
 RewriteRule ^manager/?$                 index.php?module=ManagerController  [L,QSA]
 RewriteRule ^manager/([^/]*)/?$         index.php?module=ManagerController&id=$1  [L,QSA]

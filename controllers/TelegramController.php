@@ -14,10 +14,6 @@ class TelegramController extends Controller
         http_response_code(200);
         fastcgi_finish_request();
 
-        $this->Logs->add(['text' => '123']);
-        $this->Logs->add(['text' => $result]);
-        $this->Logs->add(['text' => $result["message"]]);
-
         $text = $result["message"]["text"];
         $chat_id = $result["message"]["chat"]["id"];
         list($command, $token) = explode(' ', $text);
