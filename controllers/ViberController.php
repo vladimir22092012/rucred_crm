@@ -12,6 +12,7 @@ class ViberController extends Controller
     {
 
         var_dump($this->setWebhook());
+        var_dump('123');
         exit;
 
         $botSender = new Sender([
