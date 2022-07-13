@@ -2,6 +2,7 @@
 
 use Viber\Bot;
 use Viber\Api\Sender;
+use Viber\Client;
 
 class ViberController extends Controller
 {
@@ -9,6 +10,10 @@ class ViberController extends Controller
 
     public function fetch()
     {
+
+        $this->setWebhook();
+        exit;
+
         $botSender = new Sender([
             'name' => 'Whois bot',
             'avatar' => 'https://developers.viber.com/img/favicon.ico',
@@ -37,6 +42,18 @@ class ViberController extends Controller
                 ->run();
         } catch (Exception $e) {
             // todo - log exceptions
+        }
+    }
+
+    public function setWebhook(){
+
+        $webhookUrl = 'https://viber.hcbogdan.com/bot.php'; // <- PLACE-YOU-HTTPS-URL
+        try {
+            $client = new Client([ 'token' => $this->apiKey ]);
+            $result = $client->setWebhook($webhookUrl);
+            echo "Success!\n";
+        } catch (Exception $e) {
+            echo "Error: ". $e->getError() ."\n";
         }
     }
 }
