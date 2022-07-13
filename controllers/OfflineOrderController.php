@@ -3777,6 +3777,7 @@ class OfflineOrderController extends Controller
         $contract = $this->contracts->get_order_contract($order_id);
 
         $payment_schedule = (array)$this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
+        $payment_schedule = json_decode($payment_schedule['schedule'], true);
         $date = date('Y-m-d');
 
         foreach ($payment_schedule as $payday => $payment) {
@@ -3808,7 +3809,8 @@ class OfflineOrderController extends Controller
 
         $message = "Оплата доступна по ссылке: $pay_link";
 
-        var_dump($this->sms->send($phone, $message));
+        $this->sms->send($phone, $message);
+        echo json_encode(['success' => 1]);
         exit;
     }
 

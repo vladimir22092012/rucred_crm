@@ -763,10 +763,24 @@
 
                 $.ajax({
                     method: 'POST',
+                    dataType: 'JSON',
                     data: {
                         action: 'send_qr',
                         order_id: order_id,
                         phone: phone
+                    },
+                    success: function (resp) {
+                        if(resp['success']){
+                            Swal.fire({
+                                title: 'Ссылка на оплату успешно отправлена',
+                                confirmButtonText: 'Ок'
+                            });
+                        }else{
+                            Swal.fire({
+                                title: 'Произошла ошибка',
+                                confirmButtonText: 'Ок'
+                            });
+                        }
                     }
                 })
             });
