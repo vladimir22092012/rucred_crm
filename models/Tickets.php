@@ -52,6 +52,9 @@ class Tickets extends Core
             $executor = $this->db->placehold("AND t.executor = ?", $manager_id);
         }
 
+        $group_by = explode(' ', $sort);
+        $group_by = $group_by[0];
+
         $query = $this->db->placehold("
         SELECT *
         FROM s_tickets as t
@@ -61,8 +64,12 @@ class Tickets extends Core
         $manager
         $status
         $executor
+        GROUP BY $group_by
         ORDER BY $sort
         ");
+
+        var_dump($query);
+        exit;
 
         $this->db->query($query);
         $tickets = $this->db->results();
