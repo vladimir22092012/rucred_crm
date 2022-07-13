@@ -3774,11 +3774,9 @@ class OfflineOrderController extends Controller
     {
         $order_id = $this->request->post('order_id');
         $phone = $this->request->post('phone');
-        $order = $this->orders->get_order($order_id);
         $contract = $this->contracts->get_order_contract($order_id);
 
-        $payment_schedule = json_decode($order->payment_schedule, true);
-        $payment_schedule = end($payment_schedule);
+        $payment_schedule = (array)$this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
         $date = date('Y-m-d');
 
         foreach ($payment_schedule as $payday => $payment) {
