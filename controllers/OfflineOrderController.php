@@ -905,12 +905,16 @@ class OfflineOrderController extends Controller
 
         $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
 
-        $upload_scans = 0;
+        try{
+            $upload_scans = 0;
 
-        if(count($scans) == count($users_docs))
-            $upload_scans = 1;
+            if(count($scans) == count($users_docs))
+                $upload_scans = 1;
 
-        $this->YaDisk->upload_orders_files($order_id, $upload_scans);
+            $this->YaDisk->upload_orders_files($order_id, $upload_scans);
+        }catch (Exception $e){
+
+        }
 
         return array('success' => 1, 'status' => 2);
 
