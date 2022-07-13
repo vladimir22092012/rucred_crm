@@ -9,8 +9,8 @@ class LoginController extends Controller
         if ($this->request->get('action') == 'logout') {
             unset($_SESSION['manager_id']);
             unset($_SESSION['offline_point_id']);
-            setcookie('mid', null, time() -1, '/', $this->config->root_url);
-            setcookie('ah', null, time() -1, '/', $this->config->root_url);
+            setcookie('mid', null, time() -1, '/', $this->config->main_domain);
+            setcookie('ah', null, time() -1, '/', $this->config->main_domain);
             header('Location: '.$this->config->root_url);
             exit();
         } elseif ($this->request->method('post') && $this->request->post('offline_form')) {
@@ -45,8 +45,8 @@ class LoginController extends Controller
 
                     $hash = md5(sha1($_SERVER['REMOTE_ADDR'].$manager_id).$salt);
 
-                    setcookie('mid', $manager_id, time() + 7*86400, '/', $this->config->root_url);
-                    setcookie('ah', $hash, time() + 7*86400, '/', $this->config->root_url);
+                    setcookie('mid', $manager_id, time() + 7*86400, '/', $this->config->main_domain);
+                    setcookie('ah', $hash, time() + 7*86400, '/', $this->config->main_domain);
 
                     $update['salt'] = $salt;
                 }

@@ -37,12 +37,30 @@ class Okb_scoring extends Core
                 $resp = $this->load($data);
 
                 if (empty($resp->message)) {
-                    $update = array(
-                        'status' => 'completed',
-                        'body' => serialize($resp),
-                        'success' => 1,
-                        'string_result' => 'Проверка пройдена',
-                    );
+                    
+                    $filtering = array_filter((array)$resp, function($var){
+                        return $var->value;
+                    });
+                    if (empty($filtering))
+                    {
+                        $update = array(
+                            'status' => 'completed',
+                            'body' => serialize($resp),
+                            'success' => 0,
+                            'string_result' => 'User report not found',
+                        );
+                        
+                    }
+                    else
+                    {
+                        $update = array(
+                            'status' => 'completed',
+                            'body' => serialize($resp),
+                            'success' => 1,
+                            'string_result' => 'Проверка пройдена',
+                        );
+                        
+                    }
 
                 } else {
                     $update = array(
@@ -80,7 +98,7 @@ class Okb_scoring extends Core
         $resp = curl_exec($ch);
         curl_close($ch);
 
-        $this->soap1c->logging(__METHOD__, $this->url, $data, $resp, 'okb.txt');
+        $this->soap1c->logging(__METHOD__, $this->url, $data, json_decode($resp), 'okb.txt');
 
         return json_decode($resp);
     }
