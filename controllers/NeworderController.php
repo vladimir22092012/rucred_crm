@@ -539,8 +539,8 @@ class NeworderController extends Controller
                 $order['percent'] = (float)$record['preferential_percents'];
             }
 
-            if (empty($user['branche_id'])) {
-                $branches = $this->Branches->get_branches(['group_id' => $user['group_id']]);
+            if (empty($user['branche_id']) || $user['branche_id'] == 'none') {
+                $branches = $this->Branches->get_branches(['company_id' => $user['company_id']]);
 
                 foreach ($branches as $branch) {
                     if ($branch->number == '00') {
@@ -1010,9 +1010,10 @@ class NeworderController extends Controller
     {
         $start_date = $this->request->get('start_date');
         $loan_id = $this->request->get('loan_id');
+        $branche_id = $this->request->get('branche_id');
         $company_id = $this->request->get('company_id');
 
-        if (empty($user['branche_id'])) {
+        if (empty($branche_id) || in_array($branche_id, ['none', null, 0])) {
             $branches = $this->Branches->get_branches(['company_id' => $company_id]);
 
             foreach ($branches as $branch) {
@@ -1020,7 +1021,7 @@ class NeworderController extends Controller
                     $first_pay_day = $branch->payday;
             }
         } else {
-            $branch = $this->Branches->get_branch($user['branche_id']);
+            $branch = $this->Branches->get_branch($branche_id);
             $first_pay_day = $branch->payday;
         }
 
@@ -1082,13 +1083,13 @@ class NeworderController extends Controller
         $date_from = date('Y-m-d', strtotime($this->request->post('date_from')));
         $date_to = date('Y-m-d', strtotime($this->request->post('date_to')));
         $branch_id = $this->request->post('branch_id');
-        $group_id = $this->request->post('group_id');
+        $company_id= $this->request->post('company_id');
         $percent = $this->request->post('percents');
 
         $loan = $this->Loantypes->get_loantype($loan_id);
 
         if (empty($branch_id) || $branch_id == 'none') {
-            $branches = $this->Branches->get_branches(['group_id' => $group_id]);
+            $branches = $this->Branches->get_branches(['company_id' => $company_id]);
 
             foreach ($branches as $branch) {
                 if ($branch->number == '00') {

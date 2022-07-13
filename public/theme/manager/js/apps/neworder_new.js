@@ -58,7 +58,7 @@ $(function () {
                         branch_id: branch_id,
                         amount: amount,
                         percents: percents,
-                        group_id: group_id
+                        company_id: company_id
                     },
                     success: function (sum) {
                         sum = new Intl.NumberFormat("ru").format(sum);
@@ -107,6 +107,8 @@ $(function () {
         let period = $(this).data('loan-period');
         let min_amount = $(this).data('min-amount');
         let max_amount = $(this).data('max-amount');
+        let branche_id = $('.branches').val();
+        let company_id = $('.my_company').val();
 
         $('.to_form_loan').attr('data-loan', loan_id);
         $('.to_form_loan').attr('data-loan-period', period);
@@ -129,7 +131,9 @@ $(function () {
             dataType: 'JSON',
             data: {
                 start_date: start_date,
-                loan_id: loan_id
+                loan_id: loan_id,
+                branche_id: branche_id,
+                company_id: company_id
             },
             success: function (suc) {
                 $('#end_date').val(suc['date'])
