@@ -3,13 +3,18 @@
 error_reporting(-1);
 ini_set('display_errors', 'Off');
 
-class DocumentController extends Controller
+use App\Services\Encryption;
+
+class OnlineDocsController extends Controller
 {
     public function fetch()
     {
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($document);echo '</pre><hr />';
 
-        $id = $this->request->get('id');
+
+        $link = Encryption::decryption($this->request->get('id'));
+        $link = explode(' ', $link);
+        $id = $link[1];
         $document = $this->documents->get_document($id);
 
         foreach ($document->params as $param_name => $param_value) {
@@ -33,7 +38,7 @@ class DocumentController extends Controller
         $company = $this->Companies->get_company($document->params->company_id);
         $this->design->assign('company', $company);
 
-        if(!empty($document->asp_id)){
+        if (!empty($document->asp_id)) {
             $code_asp = $this->AspCodes->get_code(['id' => $document->asp_id]);
             $this->design->assign('code_asp', $code_asp);
         }

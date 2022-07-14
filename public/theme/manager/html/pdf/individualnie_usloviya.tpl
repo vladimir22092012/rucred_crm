@@ -768,7 +768,7 @@
                 (<strong>{$period_str|upper}</strong>)
                 {$period|plural:'день':'дней':'дня'}<br>(03)
                 Процентная
-                ставка по микрозайму в день: <strong>{$percent|number_format:2:',':' '}%
+                ставка по микрозайму в день: <strong>{$percent|number_format:3:',':' '}%
                     ({$percents_per_day_str_part_one|upper} {if $percents_per_day_str_part_two|upper} ЦЕЛЫХ И {$percents_per_day_str_part_two|upper} СОТЫХ ПРОЦЕНТА{/if}
                     )</strong><br>(04) Полная
                 стоимость микрозайма в валюте
@@ -778,8 +778,7 @@
                 копеек<br>(05)
                 Полная стоимость микрозайма в процентах
                 годовых: <strong>{$percents}%
-                    ({$percents_per_year|upper} {if $second_part_percents|upper} ЦЕЛЫХ И {$second_part_percents|upper} ТЫСЯЧНЫХ ПРОЦЕНТОВ{/if}
-                    )</strong>
+                    ({$percents_per_year|upper} {if $second_part_percents|upper} ЦЕЛЫХ И {$second_part_percents|upper} ТЫСЯЧНЫХ ПРОЦЕНТОВ{/if})</strong>
                 годовых<br>(06) Общая сумма процентов за период пользования
                 микрозаймом:
                 <br><strong>{$payment_schedule['result']['all_loan_percents_pay']|number_format:2:',':' '}</strong>
@@ -1099,7 +1098,7 @@
             к/с {$settlement->cors}
         </td>
         <td style="width: 10%"></td>
-        <td style="width: 45%">р/с {$requisite->number} в {$requisite->name} БИК {$requisite->bik}
+        <td style="width: 45%">р/с {$requisite->number} в {$requisite->name} БИК {$requisite->bik} к/с {$requisite->correspondent_acc}
         </td>
     </tr>
     <br>
