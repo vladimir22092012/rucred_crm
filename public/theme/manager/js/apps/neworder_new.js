@@ -14,6 +14,15 @@ $(function () {
         },
     });
 
+    $('.birth_date').daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true,
+        startDate: moment().subtract(18, 'years'),
+        locale: {
+            format: 'DD.MM.YYYY'
+        },
+    });
+
     $('.to_form_loan').on('click', function (e) {
 
         let sum = $('#order_sum').val();
@@ -334,9 +343,9 @@ $(function () {
 
     $(document).on('change', '.js-lastname-input , .js-firstname-input , .js-patronymic-input', function () {
 
-        let lastname = $('.js-lastname-input').val().replace(/ /g,'');
-        let firstname = $('.js-firstname-input').val().replace(/ /g,'');
-        let patronymic = $('.js-patronymic-input').val().replace(/ /g,'');
+        let lastname = $('.js-lastname-input').val().replace(/ /g, '');
+        let firstname = $('.js-firstname-input').val().replace(/ /g, '');
+        let patronymic = $('.js-patronymic-input').val().replace(/ /g, '');
 
         if ($(this).hasClass('js-lastname-input'))
             $('input[name="requisite[holder][lastname]"]').val(lastname);

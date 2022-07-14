@@ -768,12 +768,12 @@
                         phone: phone
                     },
                     success: function (resp) {
-                        if(resp['success']){
+                        if (resp['success']) {
                             Swal.fire({
                                 title: 'Ссылка на оплату успешно отправлена',
                                 confirmButtonText: 'Ок'
                             });
-                        }else{
+                        } else {
                             Swal.fire({
                                 title: 'Произошла ошибка',
                                 confirmButtonText: 'Ок'
@@ -802,9 +802,15 @@
                 }, 600);
             });
 
-            $('.phone_mobile_format').text(function(i, text) {
+            $('.phone_mobile_format').text(function (i, text) {
                 return text.replace(/(\d)(\d\d\d)(\d\d\d)(\d\d)(\d\d)/, '+$1 ($2) $3-$4-$5');
             });
+
+            let scroll = {{json_encode($scroll_to_photo)}};
+
+            if (scroll == 1) {
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+            }
         });
     </script>
     <script>
@@ -1647,7 +1653,22 @@
                                                             </div>
                                                         </div>
                                                     {/if}
-
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label class="control-label col-md-4">ФИО:</label>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$order->lastname} {$order->firstname} {$order->patronymic}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label class="control-label col-md-4">Телефон:</label>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$order->phone_mobile}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <div class="col-md-12">
                                                         <div class="form-group row m-0">
                                                             <label class="control-label col-md-4">Email:</label>
@@ -2538,8 +2559,8 @@
                                                                             <a href="javascript:void(0);"
                                                                                class="js-get-okb-info float-right"
                                                                                data-scoring="{$scorings[$scoring_type->name]->id}">Подробнее</a>
-                                                                            
-                                                                            <a href="/ajax/get_info.php?action=okb&scoring_id={$scorings[$scoring_type->name]->id}" target="_blank">Исходник</a>
+                                                                            <a href="/ajax/get_info.php?action=okb&scoring_id={$scorings[$scoring_type->name]->id}"
+                                                                               target="_blank">Исходник</a>
                                                                         {/if}
                                                                         {if $scoring_type->name == 'efrsb' && $scorings[$scoring_type->name]->body}
                                                                             {foreach $scorings[$scoring_type->name]->body as $efrsb_link}
@@ -2803,19 +2824,19 @@
                                             </div>
                                         </form>
                                         {if $manager->role != 'employer'}
-                                        <form class="mb-4 border">
-                                            <h6 class="card-header text-white">
-                                                <span>ПДН</span>
-                                            </h6>
-                                            <div class="row view-block p-2 snils-front">
-                                                <div class="col-md-12">
-                                                    <div class="form-group mb-0 row">
-                                                        <label class="control-label col-md-8 col-7 snils-number">{$order->pdn}
-                                                            %</label>
+                                            <form class="mb-4 border">
+                                                <h6 class="card-header text-white">
+                                                    <span>ПДН</span>
+                                                </h6>
+                                                <div class="row view-block p-2 snils-front">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group mb-0 row">
+                                                            <label class="control-label col-md-8 col-7 snils-number">{$order->pdn}
+                                                                %</label>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </form>
+                                            </form>
                                         {/if}
                                     </div>
                                 </div>

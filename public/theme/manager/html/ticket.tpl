@@ -243,7 +243,7 @@
                                                     <div data-ticket="{$ticket->id}"
                                                          class="btn btn-outline-success accept_ticket"
                                                          id="accept_ticker">
-                                                        Принять тикет
+                                                        Назначить ответственным себя
                                                     </div>
                                                 {/if}
                                                 {if in_array($manager->id, [$ticket->executor, $ticket->creator]) && $ticket->status != 6}

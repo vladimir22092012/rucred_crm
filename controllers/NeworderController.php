@@ -291,6 +291,7 @@ class NeworderController extends Controller
 
         $user['phone_mobile'] = trim((string)$this->request->post('phone'));
         $user['phone_mobile'] = preg_replace('/[^0-9]/', '', $user['phone_mobile']);
+        $user['dependents'] = $this->request->post('dependents');
 
         if (empty($user['phone_mobile'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует номер телефона']);
@@ -785,7 +786,7 @@ class NeworderController extends Controller
 
                     $this->PaymentsSchedules->add($schedules);
 
-                    response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
+                    response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id.'?scroll=1']);
                     exit;
                 }
             } else {
@@ -876,7 +877,7 @@ class NeworderController extends Controller
                             }
                         }
 
-                        response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
+                        response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' .$order_id.'?scroll=1']);
                     } catch (Exception $exception) {
                         response_json(['error' => 1, 'reason' => 'Создать заявку не удалось']);
                     }

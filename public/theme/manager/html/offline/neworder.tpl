@@ -539,7 +539,7 @@
                                             />
                                             <input type="text" style="width: 180px; margin-left: 25px"
                                                    name="birth"
-                                                   class="form-control daterange" value="{$order->birth|date}">
+                                                   class="form-control birth_date" value="{$order->birth|date}">
                                         </div>
                                         <br>
                                         <div class="phone_edit_form" style="width: 100%">
@@ -887,9 +887,9 @@
                                             <div class="form-group">
                                                 <label style="margin-left: 25px!important;">Количество
                                                     иждивенцев</label><br>
-                                                <input class="form-control" name="children"
+                                                <input class="form-control" name="dependents"
                                                        style="width: 300px; margin-left: 25px"
-                                                       placeholder="необязательно" type="text">
+                                                       placeholder="необязательно" type="text" value="{$order->dependents}">
                                             </div>
                                         </div>
                                         <br>
