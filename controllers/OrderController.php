@@ -1,5 +1,8 @@
 <?php
 
+use App\Services\MailService;
+use App\Services\Encryption;
+
 error_reporting(-1);
 ini_set('display_errors', 'On');
 
@@ -77,10 +80,6 @@ class OrderController extends Controller
                     $this->action_cards();
                     break;
 
-                case 'accept_online_order':
-                    $this->action_accept_online_order();
-                    break;
-
                 case 'contact_status':
                     $response = $this->action_contact_status();
                     $this->json_output($response);
@@ -105,8 +104,7 @@ class OrderController extends Controller
 
                 // одобрить заявку
                 case 'approve_order':
-                    $response = $this->approve_order_action();
-                    $this->json_output($response);
+                    $this->approve_order_action();
                     break;
 
                 // совершить выплату по заявку
@@ -222,6 +220,18 @@ class OrderController extends Controller
                     return $this->action_create_pay_rdr();
                     break;
 
+                case 'send_qr':
+                    return $this->action_send_qr();
+                    break;
+
+                case 'upload_docs_to_yandex':
+                    return $this->action_upload_docs_to_yandex();
+                    break;
+
+                case 'accept_online_order':
+                    $this->action_accept_online_order();
+                    break;
+
 
             endswitch;
 
@@ -239,11 +249,48 @@ class OrderController extends Controller
 
                     $order->requisite = $this->requisites->get_requisite($order->requisite_id);
 
+                    $holder = $order->requisite->holder;
+                    $holder = explode(' ', $holder, 3);
+                    $same_holder = 0;
+
+                    if (count($holder) == 3) {
+                        list($holder_name, $holder_firstname, $holder_patronymic) = $holder;
+                        if ($order->lastname == $holder_name && $order->firstname == $holder_firstname && $order->patronymic == $holder_patronymic)
+                            $same_holder = 1;
+                    }
+
+                    $this->design->assign('same_holder', $same_holder);
+
+                    $enough_scans = 0;
+
+                    $query = $this->db->placehold("
+                    SELECT `type`
+                    FROM s_scans
+                    WHERE order_id = ?
+                    AND `type` != 'ndfl'
+                    ", (int)$order->order_id);
+
+                    $this->db->query($query);
+                    $scans = $this->db->results();
+
+                    $managers_roles = $this->ManagerRoles->get();
+
+                    foreach ($managers_roles as $role){
+                        if($this->manager->role == $role->name)
+                            $filter['role_id'] = $role->id;
+                    }
+
+                    $filter['order_id'] = $order_id;
+
+                    $users_docs = $this->Documents->get_documents($filter);
+
+                    if (count($scans) == count($users_docs))
+                        $enough_scans = 1;
+
+                    $this->design->assign('enough_scans', $enough_scans);
+
                     $client = $this->users->get_user($order->user_id);
                     $this->design->assign('client', $client);
-
-                    $contacts = $this->Contacts->get_contacts($order->user_id);
-                    $this->design->assign('contacts', $contacts);
 
                     $communications = $this->communications->get_communications(array('user_id' => $client->id));
                     $this->design->assign('communications', $communications);
@@ -306,13 +353,10 @@ class OrderController extends Controller
                     }
 
                     if (!isset($branch_name))
-                        $branch_name = 'Отсутствует филиал';
+                        $branch_name = 'По умолчанию';
 
                     if (!isset($company_name))
                         $company_name = 'Отсутствует компания';
-
-                    if (!isset($group_name))
-                        $group_name = 'Отсутствует группа';
 
                     $this->design->assign('groups', $groups);
                     $this->design->assign('companies', $companies);
@@ -412,6 +456,8 @@ class OrderController extends Controller
                     $this->design->assign('need_update_scorings', $need_update_scorings);
                     $this->design->assign('inactive_run_scorings', $inactive_run_scorings);
 
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scorings, $scoring_types);echo '</pre><hr />';
+
                     $user = $this->users->get_user((int)$order->user_id);
                     $user->regaddress = $this->addresses->get_address($user->regaddress_id);
                     $user->faktaddress = $this->addresses->get_address($user->faktaddress_id);
@@ -500,58 +546,33 @@ class OrderController extends Controller
 
         if ($this->request->post('create_documents')) {
             $order_id = $this->request->post('order_id');
-
-            $this->Scans->delete_all_scans($order_id);
-
-            $this->documents->delete_documents($order_id);
-
-            $order = $this->orders->get_order($order_id);
-
-            $order->regaddress = $this->addresses->get_address($order->regaddress_id);
-            $order->faktaddress = $this->addresses->get_address($order->faktaddress_id);
-            $order->requisite = $this->requisites->get_requisite($order->requisite_id);
-
-            $settlement = $this->OrganisationSettlements->get_std_settlement();
-
-            $doc_types =
-                [
-                    '04.03.02' => 'INDIVIDUALNIE_USLOVIA',
-                    '1.3' => 'DOP_SOGLASHENIE_K_TRUDOVOMU_DOGOVORU',
-                    '04.05' => 'SOGLASIE_NA_OBR_PERS_DANNIH',
-                    '03.03' => 'SOGLASIE_RABOTODATEL',
-                    '04.06' => 'SOGLASIE_RUKRED_RABOTODATEL',
-                    '04.07' => 'SOGLASIE_NA_KRED_OTCHET',
-                    '04.09' => 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP',
-                    '03.04' => 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR',
-                    '04.04' => 'GRAFIK_OBSL_MKR',
-                    '04.12' => 'PERECHISLENIE_ZAEMN_SREDSTV'
-                ];
-
-            if ($settlement->id == 2)
-                $doc_types['04.05.1'] = 'SOGLASIE_MINB';
-            else
-                $doc_types['04.05.2'] = 'SOGLASIE_RDB';
-
-            foreach ($doc_types as $key => $type) {
-                $results[$type] = $this->documents->create_document(array(
-                    'user_id' => $order->user_id,
-                    'order_id' => $order->order_id,
-                    'type' => $type,
-                    'params' => $order,
-                    'numeration' => (string)$key
-                ));
-            }
-
-            $filter['user_id'] = $order->user_id;
-
+            $this->form_docs($order_id);
         }
 
-        $payment_schedule = json_decode($order->payment_schedule, true);
+        $schedules = $this->PaymentsSchedules->gets($order_id);
 
-        if (!empty($payment_schedule)) {
-            $payment_schedule = end($payment_schedule);
+        if(count($schedules) > 1){
 
-            uksort($payment_schedule,
+            foreach ($schedules as $key => $schedule){
+                $schedule->schedule = json_decode($schedule->schedule, true);
+
+                uksort($schedule->schedule,
+                    function ($a, $b) {
+
+                        if ($a == $b)
+                            return 0;
+
+                        return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+                    });
+
+                if($schedule->actual == 1)
+                    $payment_schedule = end($schedules);
+            }
+        }else{
+            $payment_schedule = end($schedules);
+            $payment_schedule->schedule = json_decode($payment_schedule->schedule, true);
+
+            uksort($payment_schedule->schedule,
                 function ($a, $b) {
 
                     if ($a == $b)
@@ -559,19 +580,29 @@ class OrderController extends Controller
 
                     return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
                 });
-
-            $this->design->assign('payment_schedule', $payment_schedule);
-        } else {
-
         }
+
+        foreach ($payment_schedule as $payday => $payment) {
+            if ($payday != 'result') {
+                $payday = date('Y-m-d', strtotime($payday));
+                if ($payday > date('Y-m-d')) {
+                    $next_payment = $payment['pay_sum'];
+                    break;
+                }
+            }
+        }
+
+        if (isset($next_payment))
+            $this->design->assign('next_payment', $next_payment);
+
+        $this->design->assign('schedules', $schedules);
+        $this->design->assign('payment_schedule', $payment_schedule);
 
         $loantype = $this->Loantypes->get_loantype($order->loan_type);
         $this->design->assign('loantype', $loantype);
 
-        if (isset($loantype) && $order->group_id) {
-            $loantypes = $this->GroupLoanTypes->get_loantypes_on($order->group_id);
-            $this->design->assign('loantypes', $loantypes);
-        }
+        $loantypes = $this->GroupLoanTypes->get_loantypes_on($order->group_id);
+        $this->design->assign('loantypes', $loantypes);
 
         $order = $this->orders->get_order($order_id);
 
@@ -579,33 +610,27 @@ class OrderController extends Controller
 
         $documents = $this->documents->get_documents($filter);
 
-        $query = $this->db->placehold("
-        SELECT *
-        FROM s_scans
-        where user_id = ?
-        AND `type` = 'ndfl'
-        ", $order->user_id);
-
-        $this->db->query($query);
-        $ndfl = $this->db->result();
-
-        $this->design->assign('ndfl', $ndfl);
-
         $scans = $this->Scans->get_scans_by_order_id($order_id);
+
+        $asp_restruct = 0;
 
         foreach ($documents as $document) {
             foreach ($scans as $scan) {
                 if ($document->template == $scan->type)
                     $document->scan = $scan;
             }
+
+            if($document->type == 'DOP_GRAFIK' && empty($document->asp_id))
+                $asp_restruct = 1;
         }
 
+        $this->design->assign('asp_restruct', $asp_restruct);
         $this->design->assign('documents', $documents);
 
         $settlement = $this->OrganisationSettlements->get_settlement($order->settlement_id);
         $this->design->assign('settlement', $settlement);
 
-        $body = $this->design->fetch('order.tpl');
+        $body = $this->design->fetch('offline/order.tpl');
 
         if ($this->request->get('ajax', 'integer')) {
             echo $body;
@@ -768,34 +793,53 @@ class OrderController extends Controller
     {
         $order_id = $this->request->post('order_id', 'integer');
 
-        if (!($order = $this->orders->get_order((int)$order_id)))
-            return array('error' => 'Неизвестный ордер');
-
-        if ($order->user_id == 127551)
-            return array('error' => 'По данному клиенту запрещена выдача!');
+        $order = $this->orders->get_order((int)$order_id);
 
         $loan = $this->Loantypes->get_loantype($order->loan_type);
 
         $query = $this->db->placehold("
-        SELECT COUNT(*) as `count`
+        SELECT `type`
         FROM s_scans
         WHERE user_id = ?
         AND order_id = ?
+        AND `type` != 'ndfl'
         ", (int)$order->user_id, (int)$order->order_id);
 
         $this->db->query($query);
-        $count_scans = $this->db->result('count');
+        $scans = $this->db->results();
 
-        $users_docs = $this->Documents->get_documents(['user_id' => $order->user_id]);
+        $users_docs = $this->Documents->get_documents(['order_id' => $order_id]);
 
-        if (empty($users_docs))
-            return array('error' => 'Не сформированы документы!');
+        if (empty($users_docs)){
+            echo json_encode(['error' => 'Не сформированы документы!']);
+            exit;
+        }
 
-        if ($count_scans < count($users_docs) && empty($order->sms))
-            return array('error' => 'Для одобрения заявки нужны все сканы либо пэп!');
+        if (!empty($order->sms)) {
+            $count_scans_without_asp = 0;
 
-        if ($order->amount < $loan->min_amount && $order->amount > $loan->max_amount)
-            return array('error' => 'Проверьте сумму займа!');
+            foreach ($scans as $scan) {
+                foreach ($users_docs as $doc) {
+                    if ($doc->template == $scan->type && in_array($scan->type, ['soglasie_rukred_rabotadatel.tpl', 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl']))
+                        $count_scans_without_asp++;
+                }
+            }
+
+            if ($count_scans_without_asp < 2){
+                echo json_encode(['error' => 'Проверьте сканы для форм 03.03 и 03.04']);
+                exit;
+            }
+        }
+
+        if (count($scans) < count($users_docs) && empty($order->sms)){
+            echo json_encode(['error' => 'Для одобрения заявки нужны все сканы либо пэп!']);
+            exit;
+        }
+
+        if ($order->amount < $loan->min_amount && $order->amount > $loan->max_amount){
+            echo json_encode(['error' => 'Проверьте сумму займа!']);
+            exit;
+        }
 
         $update = array(
             'status' => 4,
@@ -819,7 +863,72 @@ class OrderController extends Controller
             'user_id' => $order->user_id,
         ));
 
-        return array('success' => 1, 'status' => 2);
+        $this->contracts->update_contract($order->contract_id, ['status' => 1]);
+        $communication_theme = $this->CommunicationsThemes->get(12);
+
+        $ticket =
+            [
+                'creator' => $this->manager->id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => 12,
+                'company_id' => 3,
+                'group_id' => 2,
+                'order_id' => $order_id,
+                'status' => 1
+            ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+        $this->TicketMessages->add_message($message);
+
+        $scoring_types = $this->scorings->get_types();
+        foreach ($scoring_types as $scoring_type) {
+            if ($scoring_type->name == 'okb') {
+                $add_scoring = array(
+                    'user_id' => $order->user_id,
+                    'order_id' => $order->order_id,
+                    'type' => $scoring_type->name,
+                    'status' => 'new',
+                    'start_date' => date('Y-m-d H:i:s'),
+                );
+                $this->scorings->add_scoring($add_scoring);
+            }
+        }
+
+        $this->db->query("
+        SELECT id
+        FROM s_asp_codes
+        WHERE order_id = ?
+        ORDER BY id DESC
+        LIMIT 1
+        ", $order_id);
+        $asp_id = $this->db->result('id');
+
+        $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
+
+        try{
+            $upload_scans = 0;
+
+            if(count($scans) == count($users_docs))
+                $upload_scans = 1;
+
+            $this->YaDisk->upload_orders_files($order_id, $upload_scans);
+        }catch (Exception $e){
+
+        }
+
+        echo json_encode(['success' => 1]);
+        exit;
 
     }
 
@@ -837,10 +946,10 @@ class OrderController extends Controller
 
         $resp = $this->best2pay->issuance($order_id);
 
-        if (!empty($resp['success'])) {
+        if (isset($resp['success']) && $resp['success'] == 1) {
 
-            $payment_schedule = json_decode($order->payment_schedule, true);
-            $payment_schedule = end($payment_schedule);
+            $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
+            $payment_schedule = json_decode($payment_schedule->schedule, true);
             $date = date('Y-m-d');
 
             foreach ($payment_schedule as $payday => $payment) {
@@ -875,6 +984,8 @@ class OrderController extends Controller
                 'loan_peni_summ' => 0,
             ]);
 
+            $communication_theme = $this->CommunicationsThemes->get(17);
+
 
             $ticket = [
                 'creator' => $this->manager->id,
@@ -882,9 +993,10 @@ class OrderController extends Controller
                 'client_lastname' => $order->lastname,
                 'client_firstname' => $order->firstname,
                 'client_patronymic' => $order->patronymic,
-                'head' => 'Займ выдан',
-                'text' => 'Ознакомьтесь с документами по займу',
-                'company_id' => $order->company_id,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => 17,
+                'company_id' => 2,
                 'group_id' => $order->group_id,
                 'order_id' => $order_id,
                 'status' => 0
@@ -894,7 +1006,7 @@ class OrderController extends Controller
 
             $message =
                 [
-                    'message' => 'Ознакомьтесь с новой заявкой',
+                    'message' => $communication_theme->text,
                     'ticket_id' => $ticket_id,
                     'manager_id' => $this->manager->id,
                 ];
@@ -915,6 +1027,7 @@ class OrderController extends Controller
 
             $this->design->assign('individ_encrypt', $individ_encrypt);
             $this->design->assign('graphic_encrypt', $graphic_encrypt);
+            $fetch = $this->design->fetch('email/approved.tpl');
 
             $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
             $mailResponse = $mailService->send(
@@ -922,7 +1035,7 @@ class OrderController extends Controller
                 $order->email,
                 'RuCred | Ваш займ успешно выдан',
                 'Поздравляем!',
-                $this->design->fetch('email/success_loan.php')
+                $fetch
             );
 
             return ['success' => 1];
@@ -2701,6 +2814,7 @@ class OrderController extends Controller
     {
 
         $date = $this->request->post('date');
+        $schedule_id = $this->request->post('schedule_id');
         $pay_sum = $this->request->post('pay_sum');
         $loan_percents_pay = $this->request->post('loan_percents_pay');
         $loan_body_pay = mb_convert_encoding($this->request->post('loan_body_pay'), 'UTF-8');
@@ -2759,13 +2873,14 @@ class OrderController extends Controller
 
         $psk = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
 
-        $update_order =
+        $update =
             [
                 'psk' => $psk,
-                'payment_schedule' => json_encode($payment_schedule)
+                'schedule' => json_encode($payment_schedule)
             ];
 
-        $this->orders->update_order($order_id, $update_order);
+        $this->PaymentsSchedules->update($schedule_id, $update);
+        exit;
     }
 
     private function action_change_photo_status()
@@ -2803,8 +2918,28 @@ class OrderController extends Controller
     private function action_accept_by_employer()
     {
         $order_id = (int)$this->request->post('order_id');
+        $order = $this->orders->get_order($order_id);
         $this->orders->update_order($order_id, ['status' => 14]);
         $this->Tickets->close_neworder_ticket($order_id);
+        $communication_theme = $this->CommunicationsThemes->get(11);
+
+        $ticket =
+            [
+                'creator' => $this->manager->id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => 11,
+                'company_id' => $order->company_id,
+                'group_id' => 2,
+                'order_id' => $order_id,
+                'status' => 0
+            ];
+
+        $this->Tickets->add_ticket($ticket);
         exit;
     }
 
@@ -2854,8 +2989,23 @@ class OrderController extends Controller
         $loan_tarif = $this->request->post('loan_tarif');
         $probably_start_date = $this->request->post('probably_start_date');
         $loantype = $this->Loantypes->get_loantype((int)$loan_tarif);
+        $order = $this->orders->get_order($order_id);
 
-        $probably_return_date = new DateTime(date('Y-m-10', strtotime($probably_start_date . '+' . $loantype->max_period . 'month')));
+        if (empty($order->branche_id)) {
+            $branches = $this->Branches->get_branches(['group_id' => $order->group_id]);
+
+            foreach ($branches as $branch) {
+                if ($branch->number == '00') {
+                    $first_pay_day = $branch->payday;
+                    $user['branche_id'] = $branch->id;
+                }
+            }
+        } else {
+            $branch = $this->Branches->get_branch($order->branche_id);
+            $first_pay_day = $branch->payday;
+        }
+
+        $probably_return_date = new DateTime(date('Y-m-'.$first_pay_day, strtotime($probably_start_date . '+' . $loantype->max_period . 'month')));
         $probably_return_date = $this->check_pay_date($probably_return_date);
 
         if ($amount < $loantype->min_amount || $amount > $loantype->max_amount) {
@@ -2914,10 +3064,10 @@ class OrderController extends Controller
         $annoouitet_pay = round($annoouitet_pay, '2');
 
         if (date('d', strtotime($start_date)) < $first_pay_day) {
-            if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < 3) {
+            if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < $loan->free_period) {
                 $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days, 2);
                 $sum_pay = $annoouitet_pay + $plus_loan_percents;
-                $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2, PHP_ROUND_HALF_DOWN);
+                $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2);
                 $body_pay = $sum_pay - $loan_percents_pay;
                 $paydate->add(new DateInterval('P1M'));
                 $paydate = $this->check_pay_date($paydate);
@@ -2942,12 +3092,12 @@ class OrderController extends Controller
             $count_days_this_month = date('t', strtotime($issuance_date->format('Y-m-d')));
             $paydate = $this->check_pay_date($first_pay);
 
-            if (date_diff($first_pay, $issuance_date)->days < 20) {
+            if (date_diff($first_pay, $issuance_date)->days <= $loan->min_period) {
                 $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($first_pay, $issuance_date)->days;
                 $percents_pay = $sum_pay;
                 $body_pay = 0.00;
             }
-            if (date_diff($first_pay, $issuance_date)->days >= 20 && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
+            if (date_diff($first_pay, $issuance_date)->days > $loan->min_period && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
                 $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($first_pay, $issuance_date)->days);
 
                 $sum_pay = $annoouitet_pay - $minus_percents;
@@ -3043,17 +3193,12 @@ class OrderController extends Controller
         $xirr = round($this->Financial->XIRR($payments, $new_dates) * 100, 3);
         $xirr /= 100;
 
-        $order['psk'] = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
+        $psk = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
 
-        $order['payment_schedule'] = json_encode($payment_schedule);
+        $schedule = json_encode($payment_schedule);
 
-        $update_order =
-            [
-                'psk' => $order['psk'],
-                'payment_schedule' => $order['payment_schedule']
-            ];
-
-        $this->orders->update_order($order_id, $update_order);
+        $actual_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
+        $this->PaymentsSchedules->update($actual_schedule->id, ['psk' => $psk, 'schedule' => $schedule]);
     }
 
     private function check_pay_date($date)
@@ -3139,9 +3284,10 @@ class OrderController extends Controller
         $order_id = $this->request->post('order_id');
         $new_term = $this->request->post('new_term');
         $pay_date = date('Y-m-d', strtotime($this->request->post('pay_date')));
-        $order = $this->orders->get_order($order_id);
 
-        $payment_schedule = json_decode($order->payment_schedule, true);
+        $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
+        $payment_schedule = json_decode($payment_schedule->schedule, true);
+
         array_shift($payment_schedule);
 
         uksort($payment_schedule,
@@ -3158,7 +3304,7 @@ class OrderController extends Controller
         foreach ($payment_schedule as $date => $schedule) {
             $date = date('Y-m-d', strtotime($date));
 
-            if ($pay_date == $date) {
+            if ($pay_date < $date) {
                 break;
             }
             $i++;
@@ -3182,11 +3328,15 @@ class OrderController extends Controller
     {
         $order_id = $this->request->post('order_id');
         $new_term = $this->request->post('new_term');
+        $comment = $this->request->post('comment');
         $pay_amount = $this->request->post('pay_amount');
         $pay_date = date('d.m.Y', strtotime($this->request->post('pay_date')));
         $order = $this->orders->get_order($order_id);
+        $order->new_term = $new_term;
 
-        $payment_schedule = json_decode($order->payment_schedule, true);
+        $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
+        $payment_schedule = json_decode($payment_schedule->schedule, true);
+
         array_shift($payment_schedule);
 
         uksort($payment_schedule,
@@ -3210,17 +3360,15 @@ class OrderController extends Controller
         foreach ($payment_schedule as $date => $schedule) {
 
             $date = date('d.m.Y', strtotime($date));
-            if ($pay_date == $date) {
-                $rest_sum = $schedule['pay_sum'];
-
+            if ($pay_date < $date) {
                 if ($pay_amount < $schedule['pay_sum']) {
                     if ($pay_amount >= $schedule['loan_percents_pay']) {
                         $percent_pay = $schedule['loan_percents_pay'];
-                        $rest_sum -= $pay_amount;
+                        $pay_amount -= $percent_pay;
 
-                        if ($rest_sum > 0) {
-                            $body_pay = $rest_sum;
-                            $new_loan -= $rest_sum;
+                        if ($pay_amount > 0) {
+                            $body_pay = $pay_amount;
+                            $new_loan -= $pay_amount;
                         }
 
                     } else {
@@ -3231,8 +3379,8 @@ class OrderController extends Controller
 
                 if ($pay_amount > $schedule['pay_sum']) {
                     $percent_pay = $schedule['loan_percents_pay'];
-                    $rest_sum -= $schedule['loan_percents_pay'];
-                    $body_pay = $rest_sum;
+                    $pay_amount -= $schedule['loan_percents_pay'];
+                    $body_pay = $pay_amount;
                     $new_loan = $new_loan - ($pay_amount - $schedule['loan_body_pay']);
                 }
                 if ($pay_amount == 0) {
@@ -3247,7 +3395,7 @@ class OrderController extends Controller
 
                 $new_shedule[$date] =
                     [
-                        'pay_sum' => $pay_amount,
+                        'pay_sum' => $body_pay+$percent_pay,
                         'loan_body_pay' => $body_pay,
                         'loan_percents_pay' => $percent_pay,
                         'comission_pay' => $comission_pay,
@@ -3267,7 +3415,7 @@ class OrderController extends Controller
         $user = (array)$this->users->get_user($order->user_id);
 
         if (empty($user['branche_id'])) {
-            $branches = $this->Branches->get_branches(['group_id' => $user['group_id']]);
+            $branches = $this->Branches->get_branches(['company_id' => $user['company_id']]);
 
             foreach ($branches as $branch) {
                 if ($branch->number == '00')
@@ -3424,15 +3572,44 @@ class OrderController extends Controller
 
         } else {
 
-            $payment_schedule = json_encode($new_shedule);
+            $this->PaymentsSchedules->updates($order->order_id, ['actual' => 0]);
 
-            $update_order =
+            $order->payment_schedule =
                 [
+                    'user_id' => $order->user_id,
+                    'order_id' => $order->order_id,
+                    'contract_id' => $order->contract_id,
+                    'created' => date('Y-m-d H:i:s'),
+                    'type' => 'restruct',
+                    'actual' => 1,
+                    'schedule' => json_encode($new_shedule),
                     'psk' => $psk,
-                    'payment_schedule' => $payment_schedule
+                    'comment' => $comment
                 ];
 
-            $this->orders->update_order($order_id, $update_order);
+            $this->PaymentsSchedules->add($order->payment_schedule);
+
+
+            $order->restruct_date = date('Y-m-d');
+            $order->probably_return_date = $end_date->format('Y-m-d');
+
+            $this->documents->create_document(array(
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'type' => 'DOP_SOGLASHENIE',
+                'params' => $order,
+                'numeration' => '04.03.3'
+            ));
+
+            $this->documents->create_document(array(
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'type' => 'DOP_GRAFIK',
+                'params' => $order,
+                'numeration' => '04.04.1'
+            ));
+
+            $this->users->update_user($order->user_id, ['balance_blocked' => 1]);
             exit;
         }
 
@@ -3443,6 +3620,14 @@ class OrderController extends Controller
 
         $phone = $this->request->post('phone');
         $user_id = $this->request->post('user');
+        $order_id = $this->request->post('order');
+
+        $docs = $this->Documents->get_documents(['order_id' => $order_id]);
+
+        if (empty($docs)) {
+            echo json_encode(['error' => 'Документы не сформированы, сформировать?']);
+            exit;
+        }
 
         $code = random_int(1000, 9999);
         $message = "Ваш код для подписания документов: $code. Сообщите код андеррайтеру РуКреда";
@@ -3454,6 +3639,7 @@ class OrderController extends Controller
         INSERT INTO s_sms_messages
         SET phone = ?, code = ?, response = ?, ip = ?, user_id = ?, created = ?
         ', $phone, $code, $response['resp'], $_SERVER['REMOTE_ADDR'] ?? '', $user_id, date('Y-m-d H:i:s'));
+
         echo json_encode(['success' => 1]);
         exit;
 
@@ -3466,6 +3652,8 @@ class OrderController extends Controller
         $user_id = $this->request->post('user');
         $order_id = $this->request->post('order');
         $restruct = $this->request->post('restruct');
+
+        $order = $this->orders->get_order($order_id);
 
         $this->db->query("
         SELECT code, created
@@ -3480,8 +3668,10 @@ class OrderController extends Controller
         $results = $this->db->results();
 
         if (empty($results)) {
+
             echo json_encode(['error' => 1]);
             exit;
+
         } else {
             $this->orders->update_order($order_id, ['sms' => $code]);
 
@@ -3498,20 +3688,53 @@ class OrderController extends Controller
 
             $asp_id = $this->AspCodes->add_code($asp_log);
 
-            if(!empty($restruct)){
+            $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
+            $payment_schedule = json_decode($payment_schedule->schedule, true);
 
-                $date_from = date('Y-m-d 00:00:00');
-                $date_to = date('Y-m-d 23:59:59');
+            $date = date('Y-m-d');
 
-                $this->db->query("
+            foreach ($payment_schedule as $payday => $payment) {
+                if ($payday != 'result') {
+                    $payday = date('Y-m-d', strtotime($payday));
+                    if ($payday > $date) {
+                        $next_payment = $payday;
+                        break;
+                    }
+                }
+            }
+
+            if(!empty($restruct) && $restruct == 1){
+                $this->Contracts->update_contract($order->contract_id, ['return_date' => $next_payment]);
+
+                $query = $this->db->placehold("
                 UPDATE s_documents
                 SET asp_id = ?
                 WHERE `type` in ('DOP_GRAFIK', 'DOP_SOGLASHENIE')
-                AND order_id = ?
-                AND created between $date_from and $date_to
-                ", $asp_id, $order_id);
+                AND asp_id is null
+                ", $asp_id);
+
+                $this->db->query($query);
             }else{
-                $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
+
+                $contract =
+                    [
+                        'order_id' => $order->order_id,
+                        'user_id' => $order->user_id,
+                        'number' => $order->uid,
+                        'amount' => $order->amount,
+                        'period' => $order->period,
+                        'base_percent' => $order->percent,
+                        'peni_percent' => 0,
+                        'status' => 0,
+                        'loan_body_summ' => $order->amount,
+                        'loan_percents_summ' => 0,
+                        'loan_peni_summ' => 0,
+                        'issuance_date' => date('Y-m-d H:i:s'),
+                        'return_date' => $next_payment
+                    ];
+
+                $contract_id = $this->Contracts->add_contract($contract);
+                $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
             }
 
             echo json_encode(['success' => 1]);
@@ -3547,6 +3770,98 @@ class OrderController extends Controller
         echo '<pre>';
         print_r($this->Soap1c->send_payment($payment));
         exit;
+    }
+
+    private function action_send_qr()
+    {
+        $order_id = $this->request->post('order_id');
+        $phone = $this->request->post('phone');
+        $contract = $this->contracts->get_order_contract($order_id);
+
+        $payment_schedule = (array)$this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
+        $payment_schedule = json_decode($payment_schedule['schedule'], true);
+        $date = date('Y-m-d');
+
+        foreach ($payment_schedule as $payday => $payment) {
+            if ($payday != 'result') {
+                $payday = date('Y-m-d', strtotime($payday));
+                if ($payday > $date) {
+                    $next_payment = $payment['pay_sum'];
+                    break;
+                }
+            }
+        }
+
+        if (strripos($next_payment, ',') == false) {
+            $sum = $next_payment * 100;
+        } else {
+            list($rub, $kop) = explode(',', $next_payment);
+            $rub *= 100;
+            $sum = $rub + $kop;
+        }
+
+        /*
+
+        $resp = $this->QrGenerateApi->get_qr($sum, 600);
+        $pay_link = $resp->results->qr_link;
+
+        */
+
+        $pay_link = $this->Best2pay->get_payment_link($sum, $contract->id);
+
+        $message = "Оплата доступна по ссылке: $pay_link";
+
+        $this->sms->send($phone, $message);
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function form_docs($order_id, $delete_scans = 1, $asp_id = false)
+    {
+
+        if ($delete_scans == 1)
+            $this->Scans->delete_all_scans($order_id);
+
+        $this->documents->delete_documents($order_id);
+
+        $order = $this->orders->get_order($order_id);
+        $order->payment_schedule = (array)$this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
+
+        $doc_types =
+            [
+                '04.05' => 'SOGLASIE_NA_OBR_PERS_DANNIH',
+                '04.06' => 'SOGLASIE_RUKRED_RABOTODATEL',
+                '03.03' => 'SOGLASIE_RABOTODATEL',
+            ];
+
+        if ($order->settlement_id == 2)
+            $doc_types['04.05.1'] = 'SOGLASIE_MINB';
+        else
+            $doc_types['04.05.2'] = 'SOGLASIE_RDB';
+
+        $doc_types['04.07'] = 'SOGLASIE_NA_KRED_OTCHET';
+        $doc_types['04.03.02'] = 'INDIVIDUALNIE_USLOVIA';
+        $doc_types['04.04'] = 'GRAFIK_OBSL_MKR';
+        $doc_types['04.12'] = 'PERECHISLENIE_ZAEMN_SREDSTV';
+        $doc_types['04.09'] = 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP';
+        $doc_types['04.10'] = 'OBSHIE_USLOVIYA';
+        $doc_types['03.04'] = 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR';
+
+        if($asp_id)
+            $order->asp = $asp_id;
+
+
+        foreach ($doc_types as $key => $type) {
+
+            $this->documents->create_document(array(
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'type' => $type,
+                'params' => $order,
+                'numeration' => (string)$key,
+                'asp_id' => $order->asp
+            ));
+        }
     }
 
     private function action_accept_online_order()
