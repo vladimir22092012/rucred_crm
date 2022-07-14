@@ -50,7 +50,7 @@ class Tickets extends Core
         if ($in_out == 'in') {
             $creator = $this->db->placehold("AND t.creator != ?", $manager_id);
             if(in_array($manager_role, ['underwriter', 'middle'])){
-                $out = $this->db->placehold("AND t.company_id = 2");
+                $out = $this->db->placehold("AND t.group_id = 2");
                 $manager = $this->db->placehold("AND t.creator != ?", $manager_id);
             }
         }
