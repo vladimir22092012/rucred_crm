@@ -50,7 +50,7 @@ class TicketsController extends Controller
                 $this->design->assign('sort', $sort);
             }
 
-            $tickets = $this->Tickets->get_tickets($manager_role, $manager_id, $in_out, $sort);
+            $tickets = $this->Tickets->get_tickets($manager_role, $manager_id, $in_out, ['sort' => $sort]);
 
             foreach ($tickets as $key => $ticket) {
                 if ($ticket->executor != 0) {
@@ -71,7 +71,7 @@ class TicketsController extends Controller
                 $ticket->creator_company_name = $company->name;
             }
 
-            $themes = $this->CommunicationsThemes->gets();
+            $themes = $this->CommunicationsThemes->gets(['sort' => 'id DESC']);
             $this->design->assign('themes', $themes);
 
             $this->design->assign('tickets', $tickets);

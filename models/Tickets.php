@@ -34,6 +34,10 @@ class Tickets extends Core
         $executor = '';
         $creator = '';
 
+
+        if(isset($sort['sort']))
+            $sort = $sort['sort'];
+
         if ($in_out == 'out') {
             $out = $this->db->placehold("AND t.creator = ?", $manager_id);
         }
