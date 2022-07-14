@@ -145,7 +145,7 @@
 </div>
 {if !isset($code_asp->code)}
     <footer>
-        <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
+        <table style="width: 100%; font-size: 8px" border="1">
             <tr style="width: 100%">
                 <td style="width: 8%; height: 30px" align="center">
                     <div><strong style="color: #b3b2ab;padding-top: 2px">СТР. 2</strong></div>
@@ -163,7 +163,7 @@
         </table>
     </footer>
 {else}
-    <table style="color: #002688; page-break-after: always; font-style: italic; border: 0.25pt solid #002088; width: 50%"
+    <table style="color: #002688; font-style: italic; border: 0.25pt solid #002088; width: 50%"
            cellpadding="1" cellspacing="5">
         <tr>
             <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>

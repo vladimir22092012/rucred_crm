@@ -76,6 +76,51 @@
         <td>{$percents}%</td>
     </tr>
 </table>
+<div>
+    <br><br>
+</div>
+{if !isset($code_asp->code)}
+    <footer>
+        <table style="width: 100%; font-size: 8px" border="1">
+            <tr style="width: 100%">
+                <td style="width: 8%; height: 30px" align="center">
+                    <div><strong style="color: #b3b2ab;padding-top: 2px">СТР. 1</strong></div>
+                </td>
+                <td style="width: 37%" align="center">
+                    <div><span style="color: #b3b2ab">ПОДПИСЬ</span></div>
+                </td>
+                <td style="width: 40%" align="center">
+                    <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
+                </td>
+                <td style="width: 15%;" align="center">
+                    <div><span style="color: #b3b2ab">ДАТА</span></div>
+                </td>
+            </tr>
+        </table>
+    </footer>
+{else}
+    <table style="color: #002688; font-size: 8px!important; font-style: italic; border: 0.25pt solid #002088; width: 50%"
+           cellpadding="1" cellspacing="2">
+        <tr>
+            <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
+        </tr>
+        <tr>
+            <td>Подписант: {$firstname} {$patronymic} {$lastname}</td>
+        </tr>
+        <tr>
+            <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
+        </tr>
+        <tr>
+            <td>ID подписания: {$code_asp->uid}</td>
+        </tr>
+        <tr>
+            <td>Код подтверждения: {$code_asp->code}</td>
+        </tr>
+        <tr>
+            <td>Система ЭДО: Рестарт.Онлайн</td>
+        </tr>
+    </table>
+{/if}
 <div style="page-break-after: always;"></div>
 <h3><strong>РЕКВИЗИТЫ И ПОДПИСИ СТОРОН</strong></h3><br>
 <hr style="width: 100%; size: 5px">

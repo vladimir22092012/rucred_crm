@@ -1018,8 +1018,8 @@ class OfflineOrderController extends Controller
                     $docs_email[$document->type] = $document->id;
             }
 
-            $individ_encrypt = 'https://api.rucred-dev.ru/doc/'.Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['INDIVIDUALNIE_USLOVIA'] . ' ' . rand(1, 9999999999));
-            $graphic_encrypt = 'https://api.rucred-dev.ru/doc/'.Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['GRAFIK_OBSL_MKR'] . ' ' . rand(1, 9999999999));
+            $individ_encrypt = $this->config->back_url.'/online_docs/'.Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['INDIVIDUALNIE_USLOVIA'] . ' ' . rand(1, 9999999999));
+            $graphic_encrypt = $this->config->back_url.'/online_docs/'.Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['GRAFIK_OBSL_MKR'] . ' ' . rand(1, 9999999999));
 
             $this->design->assign('individ_encrypt', $individ_encrypt);
             $this->design->assign('graphic_encrypt', $graphic_encrypt);
@@ -1027,7 +1027,7 @@ class OfflineOrderController extends Controller
 
             $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
             $mailResponse = $mailService->send(
-                'rucred@ucase.live',
+                'client@rucred.ru',
                 $order->email,
                 'RuCred | Ваш займ успешно выдан',
                 'Поздравляем!',
@@ -3095,8 +3095,7 @@ class OfflineOrderController extends Controller
             }
             if (date_diff($first_pay, $issuance_date)->days > $loan->min_period && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
                 $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($first_pay, $issuance_date)->days);
-
-                $sum_pay = $annoouitet_pay - $minus_percents;
+                $sum_pay = $annoouitet_pay - round($minus_percents, 2);
                 $percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
                 $body_pay = $sum_pay - $percents_pay;
             }

@@ -428,7 +428,7 @@ function OrderApp() {
                             else {
                                 location.reload();
                             }
-                        },
+                        }
                     });
                 }
             });

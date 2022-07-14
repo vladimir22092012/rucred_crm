@@ -492,6 +492,7 @@ console.log(resp);
 
                     $.ajax({
                         type: 'POST',
+                        dataType: 'JSON',
                         data: {
                             action: 'approve_order',
                             order_id: order_id,

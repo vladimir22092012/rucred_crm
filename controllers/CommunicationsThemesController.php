@@ -16,14 +16,13 @@ class CommunicationsThemesController extends Controller
         $sort = $this->request->get('sort');
 
         if (empty($sort)) {
-            $sort = 'id asc';
+            $sort = 't.id asc';
         }
 
         $this->design->assign('sort', $sort);
 
         $themes = $this->CommunicationsThemes->gets(['sort' => $sort]);
         $this->design->assign('themes', $themes);
-
         return $this->design->fetch('communications_themes.tpl');
     }
 

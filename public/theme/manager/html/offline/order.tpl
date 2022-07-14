@@ -1359,7 +1359,7 @@
                                         {if $order->status == 4}
                                             <div class="card card-primary">
                                                 <div class="box text-center">
-                                                    <h4 class="text-white">Подписан</h4>
+                                                    <h4 class="text-white">Подписан со стороны клиента</h4>
                                                     <h6>Договор {$contract->number}</h6>
                                                 </div>
                                             </div>
@@ -2802,6 +2802,7 @@
                                                 </div>
                                             </div>
                                         </form>
+                                        {if $manager->role != 'employer'}
                                         <form class="mb-4 border">
                                             <h6 class="card-header text-white">
                                                 <span>ПДН</span>
@@ -2815,7 +2816,7 @@
                                                 </div>
                                             </div>
                                         </form>
-
+                                        {/if}
                                     </div>
                                 </div>
                                 <!-- -->
