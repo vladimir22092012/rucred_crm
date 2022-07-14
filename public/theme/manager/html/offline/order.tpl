@@ -1359,7 +1359,7 @@
                                         {if $order->status == 4}
                                             <div class="card card-primary">
                                                 <div class="box text-center">
-                                                    <h4 class="text-white">Подписан</h4>
+                                                    <h4 class="text-white">Подписан со стороны клиента</h4>
                                                     <h6>Договор {$contract->number}</h6>
                                                 </div>
                                             </div>

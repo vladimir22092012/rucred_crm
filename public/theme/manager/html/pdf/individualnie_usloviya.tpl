@@ -85,7 +85,7 @@
     Заимодавцем Заёмщику на сайте http://www.рукред.рф/ до подписания настоящего Договора микрозайма и заключает
     настоящий Договор микрозайма (далее – «Договор») на следующих Индивидуальных условиях.<br>
 </div>
-{if !isset($sms)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -104,10 +104,9 @@
             </tr>
         </table>
     </footer>
-{/if}
-{if isset($sms)}
-    <table style="color: #002688; page-break-after: always; font-style: italic; border: 0.25pt solid #002088; width: 50%"
-           cellpadding="1" cellspacing="5">
+{else}
+    <table style="color: #002688; page-break-after: always;  font-size: 8px!important; font-style: italic; border: 0.25pt solid #002088; width: 50%"
+           cellpadding="1" cellspacing="2">
         <tr>
             <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
         </tr>
@@ -193,7 +192,7 @@
 <div>
     <br><br><br><br><br><br><br><br><br>
 </div>
-{if !isset($sms)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -212,10 +211,9 @@
             </tr>
         </table>
     </footer>
-{/if}
-{if isset($sms)}
-    <table style="color: #002688; page-break-after: always; font-style: italic; border: 0.25pt solid #002088; width: 50%"
-           cellpadding="1" cellspacing="5">
+{else}
+    <table style="color: #002688; page-break-after: always;  font-size: 8px!important; font-style: italic; border: 0.25pt solid #002088; width: 50%"
+           cellpadding="1" cellspacing="2">
         <tr>
             <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
         </tr>
@@ -308,7 +306,7 @@
 <div>
 
 </div>
-{if !isset($sms)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -327,10 +325,9 @@
             </tr>
         </table>
     </footer>
-{/if}
-{if isset($sms)}
-    <table style="color: #002688; page-break-after: always; font-style: italic; border: 0.25pt solid #002088; width: 50%"
-           cellpadding="1" cellspacing="5">
+{else}
+    <table style="color: #002688; page-break-after: always;  font-size: 8px!important; font-style: italic; border: 0.25pt solid #002088; width: 50%"
+           cellpadding="1" cellspacing="2">
         <tr>
             <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
         </tr>
@@ -417,7 +414,7 @@
 <div>
     <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 </div>
-{if !isset($sms)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -436,10 +433,9 @@
             </tr>
         </table>
     </footer>
-{/if}
-{if isset($sms)}
-    <table style="color: #002688; page-break-after: always; font-style: italic; border: 0.25pt solid #002088; width: 50%"
-           cellpadding="1" cellspacing="5">
+{else}
+    <table style="color: #002688; page-break-after: always;  font-size: 8px!important; font-style: italic; border: 0.25pt solid #002088; width: 50%"
+           cellpadding="1" cellspacing="2">
         <tr>
             <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
         </tr>
@@ -512,7 +508,7 @@
 <div>
     <br><br><br><br><br>
 </div>
-{if !isset($sms)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -531,10 +527,9 @@
             </tr>
         </table>
     </footer>
-{/if}
-{if isset($sms)}
-    <table style="color: #002688; page-break-after: always; font-style: italic; border: 0.25pt solid #002088; width: 50%"
-           cellpadding="1" cellspacing="5">
+{else}
+    <table style="color: #002688; page-break-after: always;  font-size: 8px!important; font-style: italic; border: 0.25pt solid #002088; width: 50%"
+           cellpadding="1" cellspacing="2">
         <tr>
             <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
         </tr>
@@ -622,9 +617,9 @@
     </table>
 </div>
 <div>
-    <br><br><br><br><br><br><br><br><br>
+    <br><br><br>
 </div>
-{if !isset($sms)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -643,10 +638,9 @@
             </tr>
         </table>
     </footer>
-{/if}
-{if isset($sms)}
-    <table style="color: #002688; page-break-after: always; font-style: italic; border: 0.25pt solid #002088; width: 50%"
-           cellpadding="1" cellspacing="5">
+{else}
+    <table style="color: #002688; page-break-after: always;  font-size: 8px!important; font-style: italic; border: 0.25pt solid #002088; width: 50%"
+           cellpadding="1" cellspacing="2">
         <tr>
             <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
         </tr>
@@ -710,9 +704,9 @@
     </table>
 </div>
 <div>
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 </div>
-{if !isset($sms)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -731,10 +725,9 @@
             </tr>
         </table>
     </footer>
-{/if}
-{if isset($sms)}
-    <table style="color: #002688; page-break-after: always; font-style: italic; border: 0.25pt solid #002088; width: 50%"
-           cellpadding="1" cellspacing="5">
+{else}
+    <table style="color: #002688; page-break-after: always;  font-size: 8px!important; font-style: italic; border: 0.25pt solid #002088; width: 50%"
+           cellpadding="1" cellspacing="2">
         <tr>
             <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
         </tr>
@@ -807,7 +800,7 @@
 <div>
     <br><br><br><br><br><br><br><br><br>
 </div>
-{if !isset($sms)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -826,10 +819,9 @@
             </tr>
         </table>
     </footer>
-{/if}
-{if isset($sms)}
-    <table style="color: #002688; page-break-after: always; font-style: italic; border: 0.25pt solid #002088; width: 50%"
-           cellpadding="1" cellspacing="5">
+{else}
+    <table style="color: #002688; page-break-after: always;  font-size: 8px!important; font-style: italic; border: 0.25pt solid #002088; width: 50%"
+           cellpadding="1" cellspacing="2">
         <tr>
             <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
         </tr>
@@ -900,7 +892,7 @@
 <div>
     <br><br><br><br><br><br><br>
 </div>
-{if !isset($sms)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -919,10 +911,9 @@
             </tr>
         </table>
     </footer>
-{/if}
-{if isset($sms)}
-    <table style="color: #002688; page-break-after: always; font-style: italic; border: 0.25pt solid #002088; width: 50%"
-           cellpadding="1" cellspacing="5">
+{else}
+    <table style="color: #002688; page-break-after: always;  font-size: 8px!important; font-style: italic; border: 0.25pt solid #002088; width: 50%"
+           cellpadding="1" cellspacing="2">
         <tr>
             <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
         </tr>
@@ -1029,7 +1020,7 @@
         </td>
     </tr>
 </table>
-{if !isset($sms)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -1048,8 +1039,7 @@
             </tr>
         </table>
     </footer>
-{/if}
-{if isset($sms)}
+    {else}
     <table style="color: #002688; page-break-after: always;  font-size: 8px!important; font-style: italic; border: 0.25pt solid #002088; width: 50%"
            cellpadding="1" cellspacing="2">
         <tr>
