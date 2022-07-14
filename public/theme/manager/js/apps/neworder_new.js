@@ -243,6 +243,8 @@ $(function () {
         minChars: 3,
         /* Вызывается, когда пользователь выбирает одну из подсказок */
         onSelect: function (suggestion) {
+            $('.passport_issued').empty();
+            $(this).empty();
             $('.passport_issued').val(suggestion.value);
             $(this).val(suggestion.data.code);
         }
