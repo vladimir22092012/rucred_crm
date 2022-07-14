@@ -30,14 +30,44 @@ class Okb_scoring extends Core
                     'companyName' => empty($company) ? 'не указана' : $company->name,
                     'passport_serial' => str_replace([' ', '-'], '', $order->passport_serial),
                     'passport_date' => $order->passport_date,
+                    'xml_string' => 1,
+                );
+                if ($this->settings->okb_mode == 'test')
+                    $data['is_test'] = 1;
+
+                $xml_resp = $this->load($data);
+                
+                if (!empty($xml_resp->data))
+                {
+                    $expl = explode('<s>', $xml_resp->data);
+                    array_shift($expl);
+                    $xml_resp_data = '<s>'.implode('<s>', $expl);
+                    $expl = explode('</s>', $xml_resp_data);
+                    array_pop($expl);
+                    $xml_resp_data = implode('</s>', $expl).'</s>';
+echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($xml_resp_data, $xml_resp->data);echo '</pre><hr />';
+                }
+                
+                $data = array(
+                    'firstname' => $order->firstname,
+                    'patronymic' => $order->patronymic,
+                    'lastname' => $order->lastname,
+                    'gender' => $order->gender,
+                    'birth' => $order->birth,
+                    'companyName' => empty($company) ? 'не указана' : $company->name,
+                    'passport_serial' => str_replace([' ', '-'], '', $order->passport_serial),
+                    'passport_date' => $order->passport_date,
+                    'xml_string' => 0,
                 );
                 if ($this->settings->okb_mode == 'test')
                     $data['is_test'] = 1;
 
                 $resp = $this->load($data);
+                
+                $resp->xml = $xml_resp_data;
 
                 if (empty($resp->message)) {
-                    
+
                     $filtering = array_filter((array)$resp, function($var){
                         return $var->value;
                     });
