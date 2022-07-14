@@ -16,7 +16,7 @@ class CommunicationsThemesController extends Controller
         $sort = $this->request->get('sort');
 
         if (empty($sort)) {
-            $sort = 't.id asc';
+            $sort = 'id asc';
         }
 
         $this->design->assign('sort', $sort);
