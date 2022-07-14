@@ -2538,6 +2538,8 @@
                                                                             <a href="javascript:void(0);"
                                                                                class="js-get-okb-info float-right"
                                                                                data-scoring="{$scorings[$scoring_type->name]->id}">Подробнее</a>
+                                                                            
+                                                                            <a href="/ajax/get_info.php?action=okb&scoring_id={$scorings[$scoring_type->name]->id}" target="_blank">Исходник</a>
                                                                         {/if}
                                                                         {if $scoring_type->name == 'efrsb' && $scorings[$scoring_type->name]->body}
                                                                             {foreach $scorings[$scoring_type->name]->body as $efrsb_link}

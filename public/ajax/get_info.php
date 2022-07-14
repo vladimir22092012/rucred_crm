@@ -35,10 +35,30 @@ class GetInfoAjax extends Core
                 
             break;
             
+            case 'okb':
+            
+                $this->action_okb();
+            
+            break;
+            
         endswitch;
 
         $this->json_output();
         
+    }
+    
+    private function action_okb()
+    {
+    	$scoring_id = $this->request->get('scoring_id', 'integer');
+        
+        $scoring = $this->scorings->get_scoring($scoring_id);
+        $scoring->body = unserialize($scoring->body);
+        
+        header('Content-type:application/xml');
+        
+        echo $scoring->body->xml;
+        
+        exit;
     }
     
     private function action_fssp()
@@ -50,8 +70,7 @@ class GetInfoAjax extends Core
         
         $this->response = $scoring;
     }
-    
-    
+        
     private function action_movements()
     {
         $number = $this->request->get('number');
