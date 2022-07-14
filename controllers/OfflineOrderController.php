@@ -1027,7 +1027,7 @@ class OfflineOrderController extends Controller
 
             $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
             $mailResponse = $mailService->send(
-                'rucred@ucase.live',
+                'client@rucred.ru',
                 $order->email,
                 'RuCred | Ваш займ успешно выдан',
                 'Поздравляем!',

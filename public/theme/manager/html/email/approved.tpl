@@ -12,7 +12,7 @@
 
     </div>
     <div style="width: 50%">
-        <div align="left" style="font-style: italic">
+        <div align="left">
             <h1>Уважаемый<br>{$order->lastname} {$order->firstname} {$order->patronymic}!</h1>
         </div>
         <div align="left">
@@ -47,8 +47,8 @@
         </div>
         <br><br>
         <div align="left" style="font-size: 12px;">
-            Вы всегда можете задать нам любой вопрос, позвонив в службу поддержки по<br>номеру 8 (800) 123-45-67 или
-            отправив обращение на почту <a target="blank" href="restartonline@info.ru">restartonline@info.ru</a>
+            Вы всегда можете задать нам любой вопрос, позвонив в службу поддержки по<br>номеру 8(800)123-45-67 или
+            отправив обращение на почту <a target="blank" href="client@rucred.ru">client@rucred.ru</a>
         </div>
         <br>
         <div align="left">
@@ -60,7 +60,7 @@
         <br>
         <div align="left" style="font-size: 12px;">
             <small style="color: #b3b2ab">Чтобы уведомления случайно не попали в нежелательную почту, добавьте,
-                пожалуйста, restartonline@info.ru в адресную книгу
+                пожалуйста, client@rucred.ru в адресную книгу
             </small>
         </div>
     </div>
