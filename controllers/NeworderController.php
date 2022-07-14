@@ -1148,10 +1148,9 @@ class NeworderController extends Controller
                 }
                 if (date_diff($first_pay, $issuance_date)->days > $loan->min_period && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
                     $minus_percents = ($percent / 100) * $amount * ($count_days_this_month - date_diff($first_pay, $issuance_date)->days);
-
-                    $sum_pay = $annoouitet_pay - $minus_percents;
-                    $loan_percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
-                    $body_pay = $sum_pay - $loan_percents_pay;
+                    $sum_pay = $annoouitet_pay - round($minus_percents, 2);
+                    $percents_pay = ($rest_sum * $percent_per_month) - round($minus_percents, 2);
+                    $body_pay = $sum_pay - $percents_pay;
                 }
                 if (date_diff($first_pay, $issuance_date)->days >= $count_days_this_month) {
                     $sum_pay = $annoouitet_pay;

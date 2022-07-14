@@ -3026,15 +3026,13 @@ class OfflineOrderController extends Controller
     private function action_reform_schedule($order_id)
     {
         $order = $this->orders->get_order($order_id);
-
         $order = (array)$order;
         $loan = $this->Loantypes->get_loantype($order['loan_type']);
-
         $user = $this->users->get_user($order['user_id']);
         $user = (array)$user;
 
         if (empty($user['branche_id'])) {
-            $branches = $this->Branches->get_branches(['group_id' => $user['group_id']]);
+            $branches = $this->Branches->get_branches(['company_id' => $user['company_id']]);
 
             foreach ($branches as $branch) {
                 if ($branch->number == '00')
@@ -3043,8 +3041,6 @@ class OfflineOrderController extends Controller
         } else {
             $branch = $this->Branches->get_branch($user['branche_id']);
             $first_pay_day = $branch->payday;
-
-
         }
 
         $rest_sum = $order['amount'];
@@ -3096,7 +3092,7 @@ class OfflineOrderController extends Controller
             if (date_diff($first_pay, $issuance_date)->days > $loan->min_period && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
                 $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($first_pay, $issuance_date)->days);
                 $sum_pay = $annoouitet_pay - round($minus_percents, 2);
-                $percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
+                $percents_pay = ($rest_sum * $percent_per_month) - round($minus_percents, 2);
                 $body_pay = $sum_pay - $percents_pay;
             }
             if (date_diff($first_pay, $issuance_date)->days >= $count_days_this_month) {
