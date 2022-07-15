@@ -82,9 +82,6 @@ class Tickets extends Core
         ORDER BY $sort
         ");
 
-        var_dump($query);
-        exit;
-
         $this->db->query($query);
         $tickets = $this->db->results();
 
