@@ -30,6 +30,7 @@ class Tickets extends Core
     {
         $out = '';
         $manager = '';
+        $theme = '';
         $status = $this->db->placehold("AND t.status != 6");
         $executor = '';
         $creator = '';
@@ -49,9 +50,12 @@ class Tickets extends Core
 
         if ($in_out == 'in') {
             $creator = $this->db->placehold("AND t.creator != ?", $manager_id);
+            $out = $this->db->placehold("AND t.group_id = 2");
             if(in_array($manager_role, ['underwriter', 'middle'])){
-                $out = $this->db->placehold("AND t.group_id = 2");
                 $manager = $this->db->placehold("AND t.creator != ?", $manager_id);
+
+                if($manager_role == 'underwriter')
+                    $theme = $this->db->placehold("AND t.theme_id not in (12, 37)");
             }
         }
 
@@ -73,6 +77,7 @@ class Tickets extends Core
         $status
         $executor
         $creator
+        $theme
         GROUP BY $group_by
         ORDER BY $sort
         ");

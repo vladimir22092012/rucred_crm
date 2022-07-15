@@ -372,6 +372,12 @@ class OfflineOrderController extends Controller
                     $this->design->assign('comments', $comments);
 
                     $files = $this->users->get_files(array('user_id' => $order->user_id));
+                    foreach ($files as $file){
+                        $format = explode('.', $file->name);
+
+                        if($format[1] == 'pdf')
+                            $file->format = 'PDF';
+                    }
                     $this->design->assign('files', $files);
 
 

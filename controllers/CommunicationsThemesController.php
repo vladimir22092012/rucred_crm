@@ -1,5 +1,6 @@
 <?php
-
+error_reporting(-1);
+ini_set('display_errors', 'Off');
 class CommunicationsThemesController extends Controller
 {
     public function fetch()
@@ -61,6 +62,7 @@ class CommunicationsThemesController extends Controller
         $number = $this->request->post('number');
         $head = $this->request->post('head');
         $text = $this->request->post('text');
+        $need_response = $this->request->post('need_response');
         $id = $this->request->post('theme_id');
 
         $name_check = $this->CommunicationsThemes->gets(['name' => $name, 'id' => $id]);
@@ -78,9 +80,11 @@ class CommunicationsThemesController extends Controller
                     'name' => $name,
                     'number' => $number,
                     'head' => $head,
-                    'text' => $text
+                    'text' => $text,
+                    'need_response' => $need_response
                 ];
             $this->CommunicationsThemes->update($id, $theme);
+
             echo json_encode(['success' => 1]);
             exit;
         }

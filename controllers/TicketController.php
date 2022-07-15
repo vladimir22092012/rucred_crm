@@ -43,6 +43,20 @@ class TicketController extends Controller
 
         $ticket = $this->Tickets->get_ticket($ticket_id);
 
+        if (in_array($ticket->theme_id, [12, 37]) && $this->manager->role == 'middle') {
+            if (empty($ticket->executor)) {
+                $this->Tickets->update_ticket($ticket_id, ['executor' => $this->manager->id]);
+            }
+        }
+
+        if(!empty($ticket->executor)){
+            $manager = $this->managers->get_manager($ticket->executor);
+            if($this->manager->role == $manager->role){
+                $can_take_it = 1;
+                $this->design->assign('can_take_it', $can_take_it);
+            }
+        }
+
         $messages = $this->TicketMessages->get_messages($ticket_id);
 
         $this->design->assign('messages', $messages);

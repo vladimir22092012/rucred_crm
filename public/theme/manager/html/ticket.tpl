@@ -239,7 +239,7 @@
                                                 {/foreach}
                                             </form>
                                             <div style="display: flex; justify-content: flex-end">
-                                                {if $ticket->status == 0 && $manager->id != $ticket->creator}
+                                                {if $ticket->status == 0 && $manager->id != $ticket->creator || isset($can_take_it)}
                                                     <div data-ticket="{$ticket->id}"
                                                          class="btn btn-outline-success accept_ticket"
                                                          id="accept_ticker">

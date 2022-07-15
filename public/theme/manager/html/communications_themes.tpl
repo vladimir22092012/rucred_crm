@@ -57,6 +57,11 @@
                         $('#modal_edit_theme').find('input[name="head"]').val(theme['head']);
                         $('#modal_edit_theme').find('textarea[name="text"]').val(theme['text']);
                         $('#modal_edit_theme').find('input[name="theme_id"]').val(theme['id']);
+                        if(theme['need_response'] == 1){
+                            $('#modal_edit_theme').find('input[name="need_response"]').prop('checked', true);
+                        }else{
+                            $('#modal_edit_theme').find('input[name="need_response"]').prop('checked', false);
+                        }
                         $('#modal_edit_theme').modal();
                     }
                 });
@@ -123,7 +128,7 @@
                     if (value && value.length > 0) {
                         $('td:nth-child(' + index + ')').each(function () {
                             let find_value = $(this).text().toLowerCase();
-                            console.log(find_value,value);
+                            console.log(find_value, value);
                             if (find_value.includes(value) === false) {
                                 $(this).closest('tr[class="codes"]').hide();
                             }
@@ -172,8 +177,18 @@
                                 <table id="config-table" class="table display table-striped dataTable">
                                     <thead>
                                     <tr>
-                                        <th class="">ID</th>
-                                        <th class="">Номер</th>
+                                        <th
+                                                class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'id asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'id desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'id asc'}<a href="{url page=null sort='id desc'}">
+                                                    ID</a>
+                                            {else}<a href="{url page=null sort='id asc'}">ID</a>{/if}
+                                        </th>
+                                        <th
+                                                class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'number asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'number desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'number asc'}<a href="{url page=null sort='number desc'}">
+                                                    Номер</a>
+                                            {else}<a href="{url page=null sort='number asc'}">Номер</a>{/if}
+                                        </th>
                                         <th
                                                 class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'name asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'name desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'name asc'}<a href="{url page=null sort='name desc'}">
@@ -192,17 +207,21 @@
                                                     Текст тикета</a>
                                             {else}<a href="{url page=null sort='text asc'}">Текст тикета</a>{/if}
                                         </th>
+                                        <th>Need response</th>
                                         <th></th>
                                     </tr>
                                     <tr class="jsgrid-filter-row">
                                         <td></td>
                                         <td></td>
-                                        <td style="width: 500px;" class="jsgrid-cell"><input type="text"class="form-control searchable">
+                                        <td style="width: 500px;" class="jsgrid-cell"><input type="text"
+                                                                                             class="form-control searchable">
                                         </td>
                                         <td class="jsgrid-cell"><input type="text" class="form-control searchable">
                                         </td>
                                         <td class="jsgrid-cell"><input type="text" class="form-control searchable">
                                         </td>
+                                        <td></td>
+                                        <td></td>
                                         <td></td>
                                     </tr>
                                     </thead>
@@ -215,6 +234,12 @@
                                                 <td style="width: 500px">{$theme->name}</td>
                                                 <td>{$theme->head}</td>
                                                 <td>{$theme->text}</td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <input type="checkbox" name="need_response"
+                                                               class="custom-checkbox" disabled {if $theme->need_response == 1}checked{/if}>
+                                                    </div>
+                                                </td>
                                                 {if !in_array($manager->role,['employer', 'underwriter'])}
                                                     <td>
                                                         <div class="btn btn-outline-warning to_edit" id="{$theme->id}">
@@ -309,6 +334,10 @@
                     <div class="form-group">
                         <label for="name" class="control-label">Текст тикета:</label>
                         <textarea type="text" class="form-control" name="text"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="need_response" class="control-label">Need response:</label>
+                        <input type="checkbox" name="need_response" class="custom-checkbox" value="1">
                     </div>
                     <div class="btn btn-danger " data-dismiss="modal">Отмена</div>
                     <div class="btn btn-success save_edit">Сохранить</div>

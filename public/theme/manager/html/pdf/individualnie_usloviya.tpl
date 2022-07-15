@@ -36,8 +36,7 @@
         <td style="width: 36%" align="center">
             <div>Полная стоимость микрозайма в процентах годовых
                 <strong>{$percents}%<br>
-                    ({$percents_per_year|upper} {if $second_part_percents|upper} ЦЕЛЫХ И {$second_part_percents|upper} ТЫСЯЧНЫХ ПРОЦЕНТОВ{/if}
-                    )</strong> годовых
+                    ({$percents_per_year|upper} {if $second_part_percents|upper} ЦЕЛЫХ И {$second_part_percents|upper} ТЫСЯЧНЫХ ПРОЦЕНТОВ{/if})</strong> годовых
             </div>
         </td>
         <td style="width: 36%;" align="center">
@@ -762,8 +761,7 @@
                 {$period|plural:'день':'дней':'дня'}<br>(03)
                 Процентная
                 ставка по микрозайму в день: <strong>{$percent|number_format:3:',':' '}%
-                    ({$percents_per_day_str_part_one|upper} {if $percents_per_day_str_part_two|upper} ЦЕЛЫХ И {$percents_per_day_str_part_two|upper} СОТЫХ ПРОЦЕНТА{/if}
-                    )</strong><br>(04) Полная
+                    ({$percents_per_day_str_part_one|upper} {if $percents_per_day_str_part_two|upper} ЦЕЛЫХ И {$percents_per_day_str_part_two|upper} СОТЫХ ПРОЦЕНТА{/if})</strong><br>(04) Полная
                 стоимость микрозайма в валюте
                 микрозайма: <br><strong>{$psk_rub}</strong>
                 (<strong>{$all_pay_sum_string_part_one|upper})</strong>
