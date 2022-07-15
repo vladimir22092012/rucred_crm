@@ -809,8 +809,28 @@
             let scroll = {{json_encode($scroll_to_photo)}};
 
             if (scroll == 1) {
-                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                })
             }
+
+            $('.confirm_restruct').on('click', function (e) {
+                e.preventDefault();
+
+                let order_id = $(this).attr('data-order');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'confirm_restruct',
+                        order_id: order_id
+                    },
+                    success: function () {
+                        location.reload();
+                    }
+                })
+            })
         });
     </script>
     <script>
@@ -3086,7 +3106,7 @@
                                         </form>
                                     </div>
                                 {/if}
-                                {if $asp_restruct == 1}
+                                {if $asp_restruct == 1 && $need_confirm_restruct == 0}
                                     <div style="display: flex;">
                                         <input type="text" class="form-control code_asp"
                                                style="display:none"
@@ -3113,6 +3133,18 @@
                                         </div>
                                     </div>
                                 {/if}
+                                {if $need_confirm_restruct == 1 && in_array($manager->role, ['admin', 'middle', 'developer'])}
+                                    <div data-order="{$order->order_id}"
+                                         style="margin-left: 15px;"
+                                         class="btn btn-success confirm_restruct">
+                                        Подтвердить реструктуризацию
+                                    </div>
+                                    <div data-order="{$order->order_id}"
+                                         style="margin-left: 15px;"
+                                         class="btn btn-danger cancell_restruct">
+                                        Отменить реструктуризацию
+                                    </div>
+                                {/if}
                             </div>
                             <br>
                             {if $manager->role != 'employer' && !in_array($order->status, ['4','5','6','7','8'])}
@@ -3120,7 +3152,6 @@
                                      data-order="{$order->order_id}" style="margin-left: 20px">
                                     Удалить заявку
                                 </div>
-                                <br>
                                 <br>
                             {/if}
                         </div>

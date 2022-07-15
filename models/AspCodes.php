@@ -42,13 +42,19 @@ class AspCodes extends Core
     public function get_codes($params = [])
     {
         $sort = '';
+        $order = '';
 
         if(isset($params['sort']))
             $sort = $this->db->placehold('ORDER BY '.$params['sort']);
 
+        if(isset($params['order_id']))
+            $order = $this->db->placehold("AND order_id = ?", $params['order_id']);
+
         $query = $this->db->placehold("
         SELECT * 
         FROM s_asp_codes
+        WHERE 1
+        $order
         $sort
         ");
 

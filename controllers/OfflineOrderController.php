@@ -224,6 +224,10 @@ class OfflineOrderController extends Controller
                     return $this->action_send_qr();
                     break;
 
+                case 'confirm_restruct':
+                    return $this->action_confirm_restruct();
+                    break;
+
                 case 'upload_docs_to_yandex':
                     return $this->action_upload_docs_to_yandex();
                     break;
@@ -274,8 +278,8 @@ class OfflineOrderController extends Controller
 
                     $managers_roles = $this->ManagerRoles->get();
 
-                    foreach ($managers_roles as $role){
-                        if($this->manager->role == $role->name)
+                    foreach ($managers_roles as $role) {
+                        if ($this->manager->role == $role->name)
                             $filter['role_id'] = $role->id;
                     }
 
@@ -372,10 +376,10 @@ class OfflineOrderController extends Controller
                     $this->design->assign('comments', $comments);
 
                     $files = $this->users->get_files(array('user_id' => $order->user_id));
-                    foreach ($files as $file){
+                    foreach ($files as $file) {
                         $format = explode('.', $file->name);
 
-                        if($format[1] == 'pdf')
+                        if ($format[1] == 'pdf')
                             $file->format = 'PDF';
                     }
                     $this->design->assign('files', $files);
@@ -556,9 +560,9 @@ class OfflineOrderController extends Controller
 
         $schedules = $this->PaymentsSchedules->gets($order_id);
 
-        if(count($schedules) > 1){
+        if (count($schedules) > 1) {
 
-            foreach ($schedules as $key => $schedule){
+            foreach ($schedules as $key => $schedule) {
                 $schedule->schedule = json_decode($schedule->schedule, true);
 
                 uksort($schedule->schedule,
@@ -570,10 +574,10 @@ class OfflineOrderController extends Controller
                         return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
                     });
 
-                if($schedule->actual == 1)
+                if ($schedule->actual == 1)
                     $payment_schedule = end($schedules);
             }
-        }else{
+        } else {
             $payment_schedule = end($schedules);
             $payment_schedule->schedule = json_decode($payment_schedule->schedule, true);
 
@@ -616,19 +620,26 @@ class OfflineOrderController extends Controller
         $documents = $this->documents->get_documents($filter);
 
         $scans = $this->Scans->get_scans_by_order_id($order_id);
-
         $asp_restruct = 0;
+        $need_confirm_restruct = 0;
 
         foreach ($documents as $document) {
             foreach ($scans as $scan) {
                 if ($document->template == $scan->type)
                     $document->scan = $scan;
             }
+            if (in_array($document->type, ['DOP_GRAFIK', 'DOP_SOGLASHENIE']) && empty($document->asp_id)) {
 
-            if($document->type == 'DOP_GRAFIK' && empty($document->asp_id))
-                $asp_restruct = 1;
+                if (empty($document->pre_asp_id)) {
+                    $asp_restruct = 1;
+                } else {
+                    $asp_restruct = 0;
+                    $need_confirm_restruct = 1;
+                }
+            }
         }
 
+        $this->design->assign('need_confirm_restruct', $need_confirm_restruct);
         $this->design->assign('asp_restruct', $asp_restruct);
         $this->design->assign('documents', $documents);
 
@@ -655,7 +666,8 @@ class OfflineOrderController extends Controller
         return array('success' => 1, 'contact_status' => $contact_status);
     }
 
-    private function action_contactperson_status()
+    private
+    function action_contactperson_status()
     {
         $contact_status = $this->request->post('contact_status', 'integer');
         $contactperson_id = $this->request->post('contactperson_id', 'integer');
@@ -665,7 +677,8 @@ class OfflineOrderController extends Controller
         return array('success' => 1, 'contact_status' => $contact_status);
     }
 
-    private function action_workout()
+    private
+    function action_workout()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $workout = $this->request->post('workout', 'integer');
@@ -675,7 +688,8 @@ class OfflineOrderController extends Controller
         return array('success' => 1, 'contact_status' => $contact_status);
     }
 
-    private function confirm_contract_action()
+    private
+    function confirm_contract_action()
     {
         $contract_id = $this->request->post('contract_id', 'integer');
         $code = $this->request->post('code', 'integer');
@@ -719,7 +733,8 @@ class OfflineOrderController extends Controller
 
     }
 
-    private function change_manager_action()
+    private
+    function change_manager_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $manager_id = $this->request->post('manager_id', 'integer');
@@ -758,7 +773,8 @@ class OfflineOrderController extends Controller
      *
      * @return array
      */
-    private function accept_order_action()
+    private
+    function accept_order_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
 
@@ -794,7 +810,8 @@ class OfflineOrderController extends Controller
      * Одобрение заявки
      * @return array
      */
-    private function approve_order_action()
+    private
+    function approve_order_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
 
@@ -815,7 +832,7 @@ class OfflineOrderController extends Controller
 
         $users_docs = $this->Documents->get_documents(['order_id' => $order_id]);
 
-        if (empty($users_docs)){
+        if (empty($users_docs)) {
             echo json_encode(['error' => 'Не сформированы документы!']);
             exit;
         }
@@ -830,18 +847,18 @@ class OfflineOrderController extends Controller
                 }
             }
 
-            if ($count_scans_without_asp < 2){
+            if ($count_scans_without_asp < 2) {
                 echo json_encode(['error' => 'Проверьте сканы для форм 03.03 и 03.04']);
                 exit;
             }
         }
 
-        if (count($scans) < count($users_docs) && empty($order->sms)){
+        if (count($scans) < count($users_docs) && empty($order->sms)) {
             echo json_encode(['error' => 'Для одобрения заявки нужны все сканы либо пэп!']);
             exit;
         }
 
-        if ($order->amount < $loan->min_amount && $order->amount > $loan->max_amount){
+        if ($order->amount < $loan->min_amount && $order->amount > $loan->max_amount) {
             echo json_encode(['error' => 'Проверьте сумму займа!']);
             exit;
         }
@@ -921,14 +938,14 @@ class OfflineOrderController extends Controller
 
         $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
 
-        try{
+        try {
             $upload_scans = 0;
 
-            if(count($scans) == count($users_docs))
+            if (count($scans) == count($users_docs))
                 $upload_scans = 1;
 
             $this->YaDisk->upload_orders_files($order_id, $upload_scans);
-        }catch (Exception $e){
+        } catch (Exception $e) {
 
         }
 
@@ -943,7 +960,8 @@ class OfflineOrderController extends Controller
      *
      * @return array
      */
-    private function delivery_order_action()
+    private
+    function delivery_order_action()
     {
         $order_id = (int)$this->request->post('order_id', 'integer');
 
@@ -1022,13 +1040,13 @@ class OfflineOrderController extends Controller
             $documents = $this->documents->get_documents(['order_id' => $order->order_id]);
             $docs_email = [];
 
-            foreach ($documents as $document){
-                if(in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR']))
+            foreach ($documents as $document) {
+                if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR']))
                     $docs_email[$document->type] = $document->id;
             }
 
-            $individ_encrypt = $this->config->back_url.'/online_docs/'.Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['INDIVIDUALNIE_USLOVIA'] . ' ' . rand(1, 9999999999));
-            $graphic_encrypt = $this->config->back_url.'/online_docs/'.Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['GRAFIK_OBSL_MKR'] . ' ' . rand(1, 9999999999));
+            $individ_encrypt = $this->config->back_url . '/online_docs/' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['INDIVIDUALNIE_USLOVIA'] . ' ' . rand(1, 9999999999));
+            $graphic_encrypt = $this->config->back_url . '/online_docs/' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['GRAFIK_OBSL_MKR'] . ' ' . rand(1, 9999999999));
 
             $this->design->assign('individ_encrypt', $individ_encrypt);
             $this->design->assign('graphic_encrypt', $graphic_encrypt);
@@ -1056,7 +1074,8 @@ class OfflineOrderController extends Controller
      *
      * @return array
      */
-    private function delivery_order_status_action()
+    private
+    function delivery_order_status_action()
     {
         $order_id = (int)$this->request->post('order_id', 'integer');
         $order = $this->orders->get_order($order_id);
@@ -1106,7 +1125,8 @@ class OfflineOrderController extends Controller
         }
     }
 
-    private function autoretry_accept_action()
+    private
+    function autoretry_accept_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
 
@@ -1175,7 +1195,8 @@ class OfflineOrderController extends Controller
 
     }
 
-    private function reject_order_action()
+    private
+    function reject_order_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $reason_id = $this->request->post('reason', 'integer');
@@ -1275,7 +1296,8 @@ class OfflineOrderController extends Controller
         return array('success' => 1, 'status' => $status);
     }
 
-    private function status_action($status)
+    private
+    function status_action($status)
     {
         $order_id = $this->request->post('order_id', 'integer');
 
@@ -1316,7 +1338,8 @@ class OfflineOrderController extends Controller
         return array('success' => 1, 'status' => $status);
     }
 
-    private function action_cards()
+    private
+    function action_cards()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -1376,7 +1399,8 @@ class OfflineOrderController extends Controller
 
     }
 
-    private function action_amount()
+    private
+    function action_amount()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -1447,7 +1471,8 @@ class OfflineOrderController extends Controller
         $this->design->assign('amount_error', $amount_error);
     }
 
-    private function contactdata_action()
+    private
+    function contactdata_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -1557,7 +1582,8 @@ class OfflineOrderController extends Controller
 
     }
 
-    private function contacts_action()
+    private
+    function contacts_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -1628,7 +1654,8 @@ class OfflineOrderController extends Controller
         $this->design->assign('order', $order);
     }
 
-    private function fio_action()
+    private
+    function fio_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -1716,7 +1743,8 @@ class OfflineOrderController extends Controller
         $this->design->assign('order', $order);
     }
 
-    private function addresses_action()
+    private
+    function addresses_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -1857,7 +1885,8 @@ class OfflineOrderController extends Controller
 
     }
 
-    private function work_action()
+    private
+    function work_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -1948,7 +1977,8 @@ class OfflineOrderController extends Controller
     }
 
 
-    private function action_personal()
+    private
+    function action_personal()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -2023,7 +2053,8 @@ class OfflineOrderController extends Controller
         $this->design->assign('order', $order);
     }
 
-    private function action_passport()
+    private
+    function action_passport()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -2090,7 +2121,8 @@ class OfflineOrderController extends Controller
         $this->design->assign('order', $order);
     }
 
-    private function reg_address_action()
+    private
+    function reg_address_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -2171,7 +2203,8 @@ class OfflineOrderController extends Controller
         $this->design->assign('order', $order);
     }
 
-    private function fakt_address_action()
+    private
+    function fakt_address_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -2253,7 +2286,8 @@ class OfflineOrderController extends Controller
     }
 
 
-    private function workdata_action()
+    private
+    function workdata_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -2321,7 +2355,8 @@ class OfflineOrderController extends Controller
     }
 
 
-    private function work_address_action()
+    private
+    function work_address_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -2392,7 +2427,8 @@ class OfflineOrderController extends Controller
         $this->design->assign('order', $order);
     }
 
-    private function socials_action()
+    private
+    function socials_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -2450,7 +2486,8 @@ class OfflineOrderController extends Controller
         $this->design->assign('order', $order);
     }
 
-    private function action_images()
+    private
+    function action_images()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -2531,7 +2568,8 @@ class OfflineOrderController extends Controller
         $this->design->assign('files', $files);
     }
 
-    private function action_services()
+    private
+    function action_services()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -2587,7 +2625,8 @@ class OfflineOrderController extends Controller
         $this->design->assign('order', $order);
     }
 
-    private function action_add_comment()
+    private
+    function action_add_comment()
     {
         $user_id = $this->request->post('user_id', 'integer');
         $contactperson_id = $this->request->post('contactperson_id', 'integer');
@@ -2625,7 +2664,8 @@ class OfflineOrderController extends Controller
         }
     }
 
-    private function action_close_contract()
+    private
+    function action_close_contract()
     {
         $user_id = $this->request->post('user_id', 'integer');
         $order_id = $this->request->post('order_id', 'integer');
@@ -2680,7 +2720,8 @@ class OfflineOrderController extends Controller
         }
     }
 
-    public function action_repay()
+    public
+    function action_repay()
     {
         $contract_id = $this->request->post('contract_id', 'integer');
 
@@ -2722,7 +2763,8 @@ class OfflineOrderController extends Controller
         }
     }
 
-    private function send_sms_action()
+    private
+    function send_sms_action()
     {
         $yuk = $this->request->post('yuk', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -2791,7 +2833,8 @@ class OfflineOrderController extends Controller
         $this->json_output(array('success' => true));
     }
 
-    private function action_inn_change()
+    private
+    function action_inn_change()
     {
         $user_id = (int)$this->request->post('user_id');
         $inn_number = $this->request->post('inn_number');
@@ -2799,7 +2842,8 @@ class OfflineOrderController extends Controller
         $this->users->update_user($user_id, ['inn' => $inn_number]);
     }
 
-    private function action_snils_change()
+    private
+    function action_snils_change()
     {
         $user_id = (int)$this->request->post('user_id');
         $snils_number = $this->request->post('snils_number');
@@ -2807,7 +2851,8 @@ class OfflineOrderController extends Controller
         $this->users->update_user($user_id, ['snils' => $snils_number]);
     }
 
-    private function action_cors_change()
+    private
+    function action_cors_change()
     {
         $user_id = (int)$this->request->post('user_id');
 
@@ -2815,7 +2860,8 @@ class OfflineOrderController extends Controller
         $this->requisites->update_requisite($requisite['id'], $requisite);
     }
 
-    private function action_edit_schedule()
+    private
+    function action_edit_schedule()
     {
 
         $date = $this->request->post('date');
@@ -2888,7 +2934,8 @@ class OfflineOrderController extends Controller
         exit;
     }
 
-    private function action_change_photo_status()
+    private
+    function action_change_photo_status()
     {
         $status = $this->request->post('status', 'integer');
         $file_id = $this->request->post('file_id');
@@ -2920,7 +2967,8 @@ class OfflineOrderController extends Controller
         $this->db->query($query);
     }
 
-    private function action_accept_by_employer()
+    private
+    function action_accept_by_employer()
     {
         $order_id = (int)$this->request->post('order_id');
         $order = $this->orders->get_order($order_id);
@@ -2948,14 +2996,16 @@ class OfflineOrderController extends Controller
         exit;
     }
 
-    private function action_reject_by_employer()
+    private
+    function action_reject_by_employer()
     {
         $order_id = (int)$this->request->post('order_id');
         $this->orders->update_order($order_id, ['status' => 15]);
         exit;
     }
 
-    private function action_edit_personal_number()
+    private
+    function action_edit_personal_number()
     {
         $user_id = (int)$this->request->post('user_id');
         $order_id = (int)$this->request->post('order_id');
@@ -2987,7 +3037,8 @@ class OfflineOrderController extends Controller
         }
     }
 
-    private function action_change_loan_settings()
+    private
+    function action_change_loan_settings()
     {
         $order_id = (int)$this->request->post('order_id');
         $amount = $this->request->post('amount');
@@ -3010,7 +3061,7 @@ class OfflineOrderController extends Controller
             $first_pay_day = $branch->payday;
         }
 
-        $probably_return_date = new DateTime(date('Y-m-'.$first_pay_day, strtotime($probably_start_date . '+' . $loantype->max_period . 'month')));
+        $probably_return_date = new DateTime(date('Y-m-' . $first_pay_day, strtotime($probably_start_date . '+' . $loantype->max_period . 'month')));
         $probably_return_date = $this->check_pay_date($probably_return_date);
 
         if ($amount < $loantype->min_amount || $amount > $loantype->max_amount) {
@@ -3032,7 +3083,8 @@ class OfflineOrderController extends Controller
         exit;
     }
 
-    private function action_reform_schedule($order_id)
+    private
+    function action_reform_schedule($order_id)
     {
         $order = $this->orders->get_order($order_id);
         $order = (array)$order;
@@ -3201,7 +3253,8 @@ class OfflineOrderController extends Controller
         $this->PaymentsSchedules->update($actual_schedule->id, ['psk' => $psk, 'schedule' => $schedule]);
     }
 
-    private function check_pay_date($date)
+    private
+    function check_pay_date($date)
     {
 
         for ($i = 0; $i <= 15; $i++) {
@@ -3218,7 +3271,8 @@ class OfflineOrderController extends Controller
         return $date;
     }
 
-    private function action_delete_order()
+    private
+    function action_delete_order()
     {
 
         $order_id = $this->request->post('order_id');
@@ -3226,7 +3280,8 @@ class OfflineOrderController extends Controller
         $this->orders->update_order($order_id, ['status' => 16]);
     }
 
-    private function action_change_employer_info()
+    private
+    function action_change_employer_info()
     {
         $order_id = $this->request->post('order_id');
         $group_id = $this->request->post('group');
@@ -3244,7 +3299,8 @@ class OfflineOrderController extends Controller
         exit;
     }
 
-    private function check_date($start_date, $loan_id)
+    private
+    function check_date($start_date, $loan_id)
     {
         $loan = $this->Loantypes->get_loantype($loan_id);
 
@@ -3324,7 +3380,8 @@ class OfflineOrderController extends Controller
         exit;
     }
 
-    private function action_do_restruct()
+    private
+    function action_do_restruct()
     {
         $order_id = $this->request->post('order_id');
         $new_term = $this->request->post('new_term');
@@ -3395,7 +3452,7 @@ class OfflineOrderController extends Controller
 
                 $new_shedule[$date] =
                     [
-                        'pay_sum' => $body_pay+$percent_pay,
+                        'pay_sum' => $body_pay + $percent_pay,
                         'loan_body_pay' => $body_pay,
                         'loan_percents_pay' => $percent_pay,
                         'comission_pay' => $comission_pay,
@@ -3615,7 +3672,8 @@ class OfflineOrderController extends Controller
 
     }
 
-    private function action_send_asp_code()
+    private
+    function action_send_asp_code()
     {
 
         $phone = $this->request->post('phone');
@@ -3645,7 +3703,8 @@ class OfflineOrderController extends Controller
 
     }
 
-    private function action_confirm_asp()
+    private
+    function action_confirm_asp()
     {
         $phone = $this->request->post('phone');
         $code = $this->request->post('code');
@@ -3681,40 +3740,30 @@ class OfflineOrderController extends Controller
                     'order_id' => $order_id,
                     'code' => $code,
                     'created' => date('Y-m-d H:i:s'),
-                    'type' => 'sms',
                     'recepient' => $phone,
                     'manager_id' => $this->manager->id
                 ];
 
-            $asp_id = $this->AspCodes->add_code($asp_log);
+            if (empty($restruct)) {
 
-            $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
-            $payment_schedule = json_decode($payment_schedule->schedule, true);
+                $asp_log['type'] = 'sms';
 
-            $date = date('Y-m-d');
+                $this->AspCodes->add_code($asp_log);
 
-            foreach ($payment_schedule as $payday => $payment) {
-                if ($payday != 'result') {
-                    $payday = date('Y-m-d', strtotime($payday));
-                    if ($payday > $date) {
-                        $next_payment = $payday;
-                        break;
+                $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
+                $payment_schedule = json_decode($payment_schedule->schedule, true);
+
+                $date = date('Y-m-d');
+
+                foreach ($payment_schedule as $payday => $payment) {
+                    if ($payday != 'result') {
+                        $payday = date('Y-m-d', strtotime($payday));
+                        if ($payday > $date) {
+                            $next_payment = $payday;
+                            break;
+                        }
                     }
                 }
-            }
-
-            if(!empty($restruct) && $restruct == 1){
-                $this->Contracts->update_contract($order->contract_id, ['return_date' => $next_payment]);
-
-                $query = $this->db->placehold("
-                UPDATE s_documents
-                SET asp_id = ?
-                WHERE `type` in ('DOP_GRAFIK', 'DOP_SOGLASHENIE')
-                AND asp_id is null
-                ", $asp_id);
-
-                $this->db->query($query);
-            }else{
 
                 $number = $order->uid;
                 $number = explode(' ', $number);
@@ -3752,11 +3801,40 @@ class OfflineOrderController extends Controller
 
                 $contract_id = $this->Contracts->add_contract($contract);
                 $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
-            }
 
-            echo json_encode(['success' => 1]);
-            exit;
+                echo json_encode(['success' => 1]);
+                exit;
+            } else {
+                $asp_log['type'] = 'restruct_sms';
+                $asp_id = $this->AspCodes->add_code($asp_log);
+
+                $order_id = $this->request->post('order_id');
+                $documents = $this->documents->get_documents(['order_id' => $order_id]);
+
+                foreach ($documents as $document) {
+                    if (in_array($document->type, ['DOP_GRAFIK', 'DOP_SOGLASHENIE']) && empty($document->asp_id)) {
+                        $this->documents->update_document($document->id, ['pre_asp_id' => $asp_id]);
+                    }
+                }
+
+                echo json_encode(['success' => 1]);
+                exit;
+            }
         }
+    }
+
+    private function action_confirm_restruct()
+    {
+        $order_id = $this->request->post('order_id');
+        $documents = $this->documents->get_documents(['order_id' => $order_id]);
+
+        foreach ($documents as $document) {
+            if (in_array($document->type, ['DOP_GRAFIK', 'DOP_SOGLASHENIE']) && empty($document->asp_id)) {
+                $this->documents->update_document($document->id, ['asp_id' => $document->pre_asp_id]);
+            }
+        }
+
+        exit;
     }
 
     private function action_create_pay_rdr()
@@ -3789,7 +3867,8 @@ class OfflineOrderController extends Controller
         exit;
     }
 
-    private function action_send_qr()
+    private
+    function action_send_qr()
     {
         $order_id = $this->request->post('order_id');
         $phone = $this->request->post('phone');
@@ -3833,7 +3912,8 @@ class OfflineOrderController extends Controller
         exit;
     }
 
-    private function form_docs($order_id, $delete_scans = 1, $asp_id = false)
+    private
+    function form_docs($order_id, $delete_scans = 1, $asp_id = false)
     {
 
         if ($delete_scans == 1)
@@ -3864,7 +3944,7 @@ class OfflineOrderController extends Controller
         $doc_types['04.10'] = 'OBSHIE_USLOVIYA';
         $doc_types['03.04'] = 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR';
 
-        if($asp_id)
+        if ($asp_id)
             $order->asp = $asp_id;
 
 

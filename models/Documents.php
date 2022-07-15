@@ -312,6 +312,7 @@ class Documents extends Core
             doc.sent_date,
             doc.ready,
             doc.asp_id,
+            doc.pre_asp_id,
             us.lastname,
             us.firstname,
             us.patronymic,
