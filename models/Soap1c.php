@@ -6,12 +6,18 @@ class Soap1c extends Core
 {
     private $log = 1;
     private $log_dir = 'logs/';
+    private $link;
 
     public function __construct()
     {
         parent::__construct();
-
         $this->log_dir = $this->config->root_dir . $this->log_dir;
+        $onec_mode = $this->SettingsTable->gets(['name' => 'onec_mode']);
+
+        if($onec_mode->value == 'test')
+            $this->link = "http://141.101.178.136:63025/RKO-Test/ws/";
+        else
+            $this->link = "http://141.101.178.136:63025/RKO/ws/";
     }
 
 
