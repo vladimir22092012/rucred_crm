@@ -343,7 +343,7 @@
                             {/if}
                             {if $manager->role != 'employer'}
                                 <li {if in_array($module, ['CommunicationsThemesController'])}class="active"{/if}>
-                                    <a href="/communications_themes"><i class="mdi mdi-chart-arc"></i>Справочник тем КП</a>
+                                    <a href="/communications_themes"><i class="mdi mdi-chart-arc"></i>Справочник коммуникаций</a>
                                 </li>
                             {/if}
                             {if in_array($manager->role, ['developer', 'admin', 'middle'])}

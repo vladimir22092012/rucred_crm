@@ -1,4 +1,4 @@
-{$meta_title = 'Список тем КП' scope=parent}
+{$meta_title = 'Справочник коммуникаций' scope=parent}
 
 {capture name='page_styles'}
     <link href="theme/manager/assets/plugins/Magnific-Popup-master/dist/magnific-popup.css" rel="stylesheet"/>
@@ -150,10 +150,10 @@
         <!-- ============================================================== -->
         <div class="row page-titles">
             <div class="col-md-6 col-8 align-self-center">
-                <h3 class="text-themecolor mb-0 mt-0">Справочник тем КП</h3>
+                <h3 class="text-themecolor mb-0 mt-0">Справочник коммуникаций</h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
-                    <li class="breadcrumb-item active">Справочник тем КП</li>
+                    <li class="breadcrumb-item active">Справочник коммуникаций</li>
                 </ol>
             </div>
             <div class="col-md-6 col-4 align-self-center">
