@@ -269,6 +269,7 @@ class Contracts extends Core
     {
         $id_filter = '';
         $user_id_filter = '';
+        $order_id_filter = '';
         $status_filter = '';
         $type_filter = '';
         $sent_status_filter = '';
@@ -303,6 +304,10 @@ class Contracts extends Core
         
         if (!empty($filter['user_id'])) {
             $user_id_filter = $this->db->placehold("AND c.user_id = ?", (int)$filter['user_id']);
+        }
+
+        if (isset($filter['order_id'])) {
+            $order_id_filter = $this->db->placehold("AND c.order_id = ?", (int)$filter['order_id']);
         }
 
         if(!empty($filter['return_date_from']))
@@ -550,6 +555,7 @@ class Contracts extends Core
                 $keyword_filter
                 $search_filter
                 $return_date_filter
+                $order_id_filter
             GROUP BY c.id
             ORDER BY $sort_workout $sort 
             $sql_limit
