@@ -1051,6 +1051,23 @@ class OfflineOrderController extends Controller
 
             $this->design->assign('individ_encrypt', $individ_encrypt);
             $this->design->assign('graphic_encrypt', $graphic_encrypt);
+
+            $contracts = $this->contracts->get_contracts(['order_id' => $order->order_id]);
+            $group = $this->groups->get_group($order->group_id);
+            $company = $this->companies->get_company($order->company_id);
+
+            if (!empty($contracts)) {
+                $count_contracts = count($contracts);
+                $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
+            } else {
+                $count_contracts = '01';
+            }
+
+            $loantype = $this->Loantypes->get_loantype($order->loan_type);
+
+            $uid = "$group->number$company->number $loantype->number $order->personal_number $count_contracts";
+            $this->design->assign('uid', $uid);
+
             $fetch = $this->design->fetch('email/approved.tpl');
 
             $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
