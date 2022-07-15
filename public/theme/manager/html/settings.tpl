@@ -4,28 +4,28 @@
     <script>
         $(function () {
 
-            $(document).on('change', '.b2p, .okb, .onec', function () {
+            $('.b2p, .okb, .onec').on('click', function () {
 
-                console.log($(this).hasClass('b2p'));
+                let type = '';
+                let value = '';
+
 
                 if ($(this).hasClass('b2p')) {
-                    let type = 'b2p';
-                    let values = $(this).val()
+                    type = 'b2p_mode';
+                    value = $(this).val();
                 }
 
                 if ($(this).hasClass('okb')) {
-                    let type = 'okb';
-                    let values = $(this).val()
+                    type = 'okb_mode';
+                    value = $(this).val();
                 }
 
                 if ($(this).hasClass('onec')) {
-                    let type = 'onec';
-                    let values = $(this).val()
+                    type = 'onec_mode';
+                    value = $(this).val();
                 }
 
-                console.log(values);
-
-                change_type(type, values)
+                change_type(type, value);
             });
         });
     </script>

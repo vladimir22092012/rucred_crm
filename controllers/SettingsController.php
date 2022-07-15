@@ -6,45 +6,26 @@ class SettingsController extends Controller
     {
 
         if ($this->request->method('post')) {
-            
 
-            $this->settings->b2p_mode = $this->request->post('b2p_mode', 'string');
-            var_dump($this->settings->b2p_mode);
-
-            $this->Settings->_set('b2p_mode', $this->settings->b2p_mode);
-
-            $this->settings->okb_mode = $this->request->post('okb_mode', 'string');
-            $this->Settings->_set('okb_mode', $this->settings->okb_mode);
-
-            $this->settings->onec_mode = $this->request->post('onec_mode', 'string');
-            $this->Settings->_set('onec_mode', $this->settings->onec_mode);
-
-
-            
-//            $this->settings->loan_min_summ = $this->request->post('loan_min_summ', 'integer');
-//            $this->settings->loan_default_summ = $this->request->post('loan_default_summ', 'integer');
-//            $this->settings->loan_max_summ = $this->request->post('loan_max_summ', 'integer');
-//
-//            $this->settings->loan_min_period = $this->request->post('loan_min_period', 'integer');
-//            $this->settings->loan_default_period = $this->request->post('loan_default_period', 'integer');
-//            $this->settings->loan_max_period = $this->request->post('loan_max_period', 'integer');
-//            
-//            $this->settings->loan_default_percent = (float)str_replace(',', '.', $this->request->post('loan_default_percent'));
-//            $this->settings->loan_peni = (float)str_replace(',', '.', $this->request->post('loan_peni'));
-//            $this->settings->loan_charge_percent = (float)str_replace(',', '.', $this->request->post('loan_charge_percent'));
-//            
-//            $this->settings->prolongation_period = $this->request->post('prolongation_period', 'integer');
-//            $this->settings->prolongation_amount = $this->request->post('prolongation_amount', 'integer');
-//        
-//            $this->settings->cession_period = $this->request->post('cession_period', 'integer');
-//            $this->settings->cession_amount = $this->request->post('cession_amount', 'integer');
-//            
-//            $this->settings->report_email = $this->request->post('report_email');
-        } else {
+            if ($this->request->post('action', 'string')) {
+                $methodName = 'action_' . $this->request->post('action', 'string');
+                if (method_exists($this, $methodName)) {
+                    $this->$methodName();
+                }
+            }
         }
-        
 
-  
+        $settings = $this->SettingsTable->gets();
+        $this->design->assign('settings', $settings);
+
         return $this->design->fetch('settings.tpl');
+    }
+
+    private function action_change_type()
+    {
+        $type = $this->request->post('type');
+        $value = $this->request->post('value');
+
+        $this->SettingsTable->update($type, $value);
     }
 }
