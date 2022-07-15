@@ -2902,8 +2902,10 @@
                                                     {$ribbon_icon="fab fa-cloudversify"}
                                                 {/if}
                                                 <div style="display: flex; flex-direction: column; margin-left: 15px">
-                                                    {if isset($file->type)}
+                                                    {if isset($file->format)}
                                                         <label class="badge badge-danger">Это PDF</label>
+                                                        {else}
+                                                        <label class="badge badge-primary">Это фото</label>
                                                     {/if}
                                                     <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
                                                         <a class="image-popup-fit-width js-event-add-click"

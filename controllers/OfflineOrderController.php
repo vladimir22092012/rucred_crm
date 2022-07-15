@@ -382,6 +382,7 @@ class OfflineOrderController extends Controller
                         if ($format[1] == 'pdf')
                             $file->format = 'PDF';
                     }
+
                     $this->design->assign('files', $files);
 
 
