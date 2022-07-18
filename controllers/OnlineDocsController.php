@@ -1,7 +1,7 @@
 <?php
 
 error_reporting(-1);
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'On');
 
 use App\Services\Encryption;
 
@@ -13,12 +13,6 @@ class OnlineDocsController extends Controller
 
 
         $link = Encryption::decryption($this->request->get('id'));
-
-        var_dump($link);
-        exit;
-
-
-
         $link = explode(' ', $link);
         $id = $link[1];
         $document = $this->documents->get_document($id);
