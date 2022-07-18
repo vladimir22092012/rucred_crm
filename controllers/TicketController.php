@@ -49,6 +49,9 @@ class TicketController extends Controller
             }
         }
 
+        if($this->manager->role == 'employer' && $ticket->creator != $this->manager->id && empty($ticket->executor))
+            $this->Tickets->update_ticket($ticket_id, ['executor' => $this->manager->id]);
+
         if(!empty($ticket->executor)){
             $manager = $this->managers->get_manager($ticket->executor);
             if($this->manager->role == $manager->role && $this->manager->id != $manager->id){
