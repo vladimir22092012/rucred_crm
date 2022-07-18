@@ -13,12 +13,14 @@ class OnlineDocsController extends Controller
 
 
         $link = Encryption::decryption($this->request->get('id'));
-        $link = explode(' ', $link);
-        $id = $link[1];
 
-        var_dump($id);
+        var_dump($link);
         exit;
 
+
+
+        $link = explode(' ', $link);
+        $id = $link[1];
         $document = $this->documents->get_document($id);
 
         foreach ($document->params as $param_name => $param_value) {
