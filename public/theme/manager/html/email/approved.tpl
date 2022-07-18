@@ -16,7 +16,7 @@
             <h1>Уважаемый<br>{$order->lastname} {$order->firstname} {$order->patronymic}!</h1>
         </div>
         <div align="left">
-            Вы успешно заключили договор микрозайма с ООО МКК «Русское кредитное общество»<br>№ {$order->uid}
+            Вы успешно заключили договор микрозайма с ООО МКК «Русское кредитное общество»<br>№ {$uid}
             от {$order->probably_start_date|date} г.
         </div>
         <div>
@@ -29,10 +29,10 @@
         <br>
         <div align="left">
             <ul>
-                <li><a target="_blank" href="{$individ_encrypt}">№ {$order->uid} от
+                <li><a target="_blank" href="{$individ_encrypt}">№ {$uid} от
                         {$order->probably_start_date|date} г.</a></li>
                 <br>
-                <li><a target="_blank" href="{$graphic_encrypt}">График платажей по договору № {$order->uid}</a></li>
+                <li><a target="_blank" href="{$graphic_encrypt}">График платажей по договору № {$uid}</a></li>
             </ul>
         </div>
         <br>
