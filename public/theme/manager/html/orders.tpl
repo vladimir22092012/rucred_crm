@@ -310,8 +310,10 @@
                                     {foreach $orders as $order}
                                         <tr class="jsgrid-row js-order-row {if ($manager->role == 'quality_control' || $manager->role == 'quality_control_plus') && $order->quality_workout}workout-row{/if}">
                                             <td style="width: 70px;" class="jsgrid-cell jsgrid-align-right">
-                                                <a href="order/{$order->order_id}">{$order->order_id}</a>
-                                                {if isset($order->contract)}<div><small>{$order->contract->number}</small></div>{/if}
+                                                <a href="order/{$order->order_id}">{$order->uid}</a>
+                                                {if $order->contract}
+                                                    <div>
+                                                    <small>{$order->contract->number}</small></div>{/if}
                                                 <small>
                                                     <span class="label label-primary">{$statuses[$order->status]}</span>
 

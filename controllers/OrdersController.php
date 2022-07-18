@@ -168,6 +168,7 @@ class OrdersController extends Controller
 
         $orders = array();
         foreach ($this->orders->get_orders($filter) as $order) {
+            $order->number = str_pad($order->order_id, 5, '0', STR_PAD_LEFT);
             $order->scorings = array();
             $order->penalties = array();
             foreach ($this->scorings->get_scorings(array('user_id' => $order->user_id)) as $sc) {

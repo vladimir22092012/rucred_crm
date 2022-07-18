@@ -1135,12 +1135,12 @@
         <div class="row page-titles">
             <div class="col-md-6 col-8 align-self-center">
                 <h4 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i> Заявка
-                    № {$order->group_number} {$order->company_number} {$order->personal_number}</h4>
+                    № {$order->uid}</h4>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
                     <li class="breadcrumb-item"><a href="offline_orders">Заявки</a></li>
                     <li class="breadcrumb-item active">Заявка
-                        № {$order->group_number} {$order->company_number} {$order->personal_number}</li>
+                        № {$order->uid}</li>
                 </ol>
             </div>
             <div class="col-md-6 col-4 align-self-center">
