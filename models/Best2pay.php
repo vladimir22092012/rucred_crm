@@ -181,7 +181,7 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
             return ['error' => 'Не найдены организация отправителя'];
         }
 
-        if (!($company = $this->companies->get_company($order->company_id))) {
+        if (!($company = $this->companies->get_company(2))) {
             return ['error' => 'Не найдены компания отправителя'];
         }
         $this->orders->update_order($order->order_id, array('status' => 9));
@@ -229,7 +229,7 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
                 'bank_name' => $settlement->name,
                 'fio' => $order->lastname.' '.$order->firstname.' '.$order->patronymic, 
                 'acc_number' => $requisite->number,
-                'P008-1' => $company->name, //Наименование Плательщика.  
+                'P008-1' => str_replace('"', '', $company->name), //Наименование Плательщика.  
                 'P008-2' => $company->jur_address, //Адрес Плательщика.  
                 'P014' => $requisite->bik, // БИК получателя (ровно 9 цифр).  
                 'P016' => $requisite->holder, // Наименование Получателя.  
