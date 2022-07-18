@@ -1112,30 +1112,13 @@ class OfflineOrderController extends Controller
 
             $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'second_pak' => 1]);
 
-            $query = $this->db->placehold("
-                SELECT `type`
-                FROM s_scans
-                WHERE user_id = ?
-                AND order_id = ?
-                AND `type` != 'ndfl'
-                AND `type` in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')
-                ", (int)$order->user_id, (int)$order->order_id);
+            $cron =
+                [
+                    'order_id' => $order_id,
+                    'pak' => 'second_pak'
+                ];
 
-            $this->db->query($query);
-            $scans = $this->db->results();
-
-            $users_docs = $this->Documents->get_documents(['order_id' => $order_id, 'second_pak' => 1]);
-
-            try {
-                $upload_scans = 0;
-
-                if (count($scans) == count($users_docs))
-                    $upload_scans = 1;
-
-                $this->YaDisk->upload_orders_files($order_id, $upload_scans, $pak = 'second');
-            } catch (Exception $e) {
-
-            }
+            $this->YaDiskCron->add($cron);
 
             return ['success' => 1];
         } else {
@@ -3889,29 +3872,14 @@ class OfflineOrderController extends Controller
 
                 $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'first_pak' => 1]);
 
-                $query = $this->db->placehold("
-                SELECT `type`
-                FROM s_scans
-                WHERE user_id = ?
-                AND order_id = ?
-                AND `type` not in ('ndfl', 'INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')
-                ", (int)$order->user_id, (int)$order->order_id);
+                $cron =
+                    [
+                        'order_id' => $order_id,
+                        'pak' => 'first_pak'
+                    ];
 
-                $this->db->query($query);
-                $scans = $this->db->results();
+                $this->YaDiskCron->add($cron);
 
-                $users_docs = $this->Documents->get_documents(['order_id' => $order_id, 'first_pak' => 1]);
-
-                try {
-                    $upload_scans = 0;
-
-                    if (count($scans) == count($users_docs))
-                        $upload_scans = 1;
-
-                    $this->YaDisk->upload_orders_files($order_id, $upload_scans, $pak = 'first');
-                } catch (Exception $e) {
-
-                }
 
                 echo json_encode(['success' => 1]);
                 exit;
