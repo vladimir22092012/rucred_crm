@@ -355,6 +355,8 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
         $resp = curl_exec($curl);
         curl_close($curl);
         
+        $this->soap_1c->logging_(__METHOD__, $url, $data, $resp, 'b2p.txt');
+        
         if ($error = curl_error($curl))
         {
             echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($error);echo '</pre><hr />';
