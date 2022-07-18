@@ -22,6 +22,23 @@ class OnlineDocsController extends Controller
         }
 
         $settlement = $this->OrganisationSettlements->get_settlement($document->params->settlement_id);
+        $order = $this->orders->get_order($document->params->order_id);
+        $contracts = $this->contracts->get_contracts(['order_id' => $document->params->order_id]);
+        $group = $this->groups->get_group($order->group_id);
+        $company = $this->companies->get_company($order->company_id);
+
+        if (!empty($contracts)) {
+            $count_contracts = count($contracts);
+            $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
+        } else {
+            $count_contracts = '01';
+        }
+
+        $loantype = $this->Loantypes->get_loantype($order->loan_type);
+
+        $uid = "$group->number$company->number $loantype->number $order->personal_number $count_contracts";
+        $this->design->assign('uid', $uid);
+
 
         $this->design->assign('settlement', $settlement);
 
@@ -38,7 +55,7 @@ class OnlineDocsController extends Controller
         $company = $this->Companies->get_company($document->params->company_id);
         $this->design->assign('company', $company);
 
-        if (!empty($document->asp_id)) {
+        if(!empty($document->asp_id)){
             $code_asp = $this->AspCodes->get_code(['id' => $document->asp_id]);
             $this->design->assign('code_asp', $code_asp);
         }
