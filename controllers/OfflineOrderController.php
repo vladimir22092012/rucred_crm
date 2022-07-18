@@ -247,18 +247,18 @@ class OfflineOrderController extends Controller
             if ($order_id = $this->request->get('id', 'integer')) {
                 if ($order = $this->orders->get_order($order_id)) {
 
-                    $orders = $this->orders->get_orders(['user_id' => $order->user_id]);
+                    $old_orders = $this->orders->get_orders(['user_id' => $order->user_id]);
 
                     $client_status = 'Повтор';
 
-                    if(count($orders) > 1){
-                        foreach ($orders as $order){
-                            if(in_array($order->status, [5,7]))
+                    if(count($old_orders) > 1){
+                        foreach ($old_orders as $old_order){
+                            if(in_array($old_order->status, [5,7]))
                                 $client_status = 'ПК';
                         }
                     }
 
-                    if(count($orders) == 1)
+                    if(count($old_orders) == 1)
                         $client_status = 'Новая';
 
                     $this->design->assign('client_status', $client_status);
