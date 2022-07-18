@@ -1429,7 +1429,7 @@
                                                 <div class="card card-primary mb-1">
                                                     <div class="box text-center">
                                                         <h4 class="text-white">Выдан</h4>
-                                                        <h6 class="text-white">Договор {$order->uid}</h6>
+                                                        <h6 class="text-white">Договор {$contract->number}</h6>
                                                         <h6 class="text-center text-white">
                                                             След.
                                                             платеж: {$next_payment|floatval|number_format:2:',':' '}
