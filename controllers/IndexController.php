@@ -125,7 +125,7 @@ class IndexController extends Controller
             and not exists (SELECT *
             FROM s_tickets_notifications
             AND user_id = ?)
-            ", $this->manager->id, $this->manager->id);
+            ", $this->manager->id, $this->manager->id, $this->manager->id);
 
                 $this->db->query($query);
                 $count_in = $this->db->result('count');
