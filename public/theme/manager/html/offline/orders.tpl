@@ -336,27 +336,15 @@
                                                     {$order->patronymic}
                                                 </a>
                                                 <br/>
-                                                {if $order->client_status}
-                                                    {if $order->client_status == 'pk'}
+                                                    {if $order->client_status == "ПК"}
                                                         <span class="label label-success"
                                                               title="Клиент уже имеет погашенные займы">ПК</span>
-                                                    {elseif  in_array($order->client_status, ['crm', 'rep'])}
-                                                        <span class="label label-primary"
-                                                              title="Клиент уже имеет погашенные займы в CRM">ПК CRM</span>
-                                                    {elseif $order->client_status == 'nk'}
+                                                    {elseif $order->client_status == 'Новая'}
                                                         <span class="label label-info" title="Новый клиент">Новая</span>
+                                                    {elseif $order->client_status == 'Повтор'}
+                                                        <span class="label label-warning"
+                                                              title="Клиент уже подавал ранее заявки">Повтор</span>
                                                     {/if}
-                                                {else}
-                                                    {if $order->have_crm_closed}
-                                                        <span class="label label-primary"
-                                                              title="Клиент уже имеет погашенные займы в CRM">ПК CRM</span>
-                                                    {elseif $order->first_loan}
-                                                        <span class="label label-info" title="Новый клиент">Новая</span>
-                                                    {else}
-                                                        <span class="label label-primary"
-                                                              title="Клиент уже имеет погашенные займы в CRM">ПК CRM</span>
-                                                    {/if}
-                                                {/if}
                                                 {if $order->autoretry}
                                                     <span class="label label-danger" title="">Автоповтор</span>
                                                 {/if}
