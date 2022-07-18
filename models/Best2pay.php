@@ -224,7 +224,7 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
             
             $data = [
                 'sector' => $sector,
-                'id' => $register_id,
+                'reference' => $register_id,
                 'country' => 'RU',
                 'bank_name' => $settlement->name,
                 'fio' => $order->lastname.' '.$order->firstname.' '.$order->patronymic, 
