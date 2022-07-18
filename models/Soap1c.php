@@ -192,7 +192,7 @@ class Soap1c extends Core
     {
 
         try {
-            $service_url = "http://141.101.178.136:63025/RKO-Test/ws/" . $service . ".1cws?wsdl";
+            $service_url = $this->link . $service . ".1cws?wsdl";
 
             $client = new SoapClient($service_url);
             $response = $client->__soapCall($method, array($request));
@@ -201,7 +201,7 @@ class Soap1c extends Core
         }
 
         if (!empty($log)) {
-            $this->logging(__METHOD__, $service . ' ' . $method, (array)$request, (array)$response, $logfile);
+            $this->logging(__METHOD__, $service_url . ' ' . $method, (array)$request, (array)$response, $logfile);
         }
 
         return $response;
