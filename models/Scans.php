@@ -13,7 +13,7 @@ class Scans extends Core
         return $id;
     }
 
-    public function get_scans_by_order_id($order_id, $pak)
+    public function get_scans_by_order_id($order_id, $pak = false)
     {
 
         $first_pak = '';
