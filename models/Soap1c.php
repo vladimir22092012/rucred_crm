@@ -14,7 +14,7 @@ class Soap1c extends Core
         $this->log_dir = $this->config->root_dir . $this->log_dir;
         $onec_mode = $this->settings->onec_mode;
 
-        if($onec_mode->value == 'test')
+        if($onec_mode == 'test')
             $this->link = "http://141.101.178.136:63025/RKO-Test/ws/";
         else
             $this->link = "http://141.101.178.136:63025/RKO/ws/";
