@@ -811,8 +811,7 @@ class OfflineOrderController extends Controller
      * Одобрение заявки
      * @return array
      */
-    private
-    function approve_order_action()
+    private function approve_order_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
 
@@ -928,28 +927,6 @@ class OfflineOrderController extends Controller
             }
         }
 
-        $this->db->query("
-        SELECT id
-        FROM s_asp_codes
-        WHERE order_id = ?
-        ORDER BY id DESC
-        LIMIT 1
-        ", $order_id);
-        $asp_id = $this->db->result('id');
-
-        $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
-
-        try {
-            $upload_scans = 0;
-
-            if (count($scans) == count($users_docs))
-                $upload_scans = 1;
-
-            $this->YaDisk->upload_orders_files($order_id, $upload_scans);
-        } catch (Exception $e) {
-
-        }
-
         echo json_encode(['success' => 1]);
         exit;
 
@@ -961,8 +938,7 @@ class OfflineOrderController extends Controller
      *
      * @return array
      */
-    private
-    function delivery_order_action()
+    private function delivery_order_action()
     {
         $order_id = (int)$this->request->post('order_id', 'integer');
 
@@ -1078,6 +1054,43 @@ class OfflineOrderController extends Controller
                 'Поздравляем!',
                 $fetch
             );
+
+            $this->db->query("
+                SELECT id
+                FROM s_asp_codes
+                WHERE order_id = ?
+                ORDER BY id DESC
+                LIMIT 1
+                ", $order_id);
+
+            $asp_id = $this->db->result('id');
+
+            $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'second_pak' => 1]);
+
+            $query = $this->db->placehold("
+                SELECT `type`
+                FROM s_scans
+                WHERE user_id = ?
+                AND order_id = ?
+                AND `type` != 'ndfl'
+                AND `type` in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')
+                ", (int)$order->user_id, (int)$order->order_id);
+
+            $this->db->query($query);
+            $scans = $this->db->results();
+
+            $users_docs = $this->Documents->get_documents(['order_id' => $order_id, 'second_pak' => 1]);
+
+            try {
+                $upload_scans = 0;
+
+                if (count($scans) == count($users_docs))
+                    $upload_scans = 1;
+
+                $this->YaDisk->upload_orders_files($order_id, $upload_scans, $pak = 'second');
+            } catch (Exception $e) {
+
+            }
 
             return ['success' => 1];
         } else {
@@ -3721,8 +3734,7 @@ class OfflineOrderController extends Controller
 
     }
 
-    private
-    function action_confirm_asp()
+    private function action_confirm_asp()
     {
         $phone = $this->request->post('phone');
         $code = $this->request->post('code');
@@ -3819,6 +3831,42 @@ class OfflineOrderController extends Controller
 
                 $contract_id = $this->Contracts->add_contract($contract);
                 $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
+
+                $this->db->query("
+                SELECT id
+                FROM s_asp_codes
+                WHERE order_id = ?
+                ORDER BY id DESC
+                LIMIT 1
+                ", $order_id);
+
+                $asp_id = $this->db->result('id');
+
+                $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'firs_pak' => 1]);
+
+                $query = $this->db->placehold("
+                SELECT `type`
+                FROM s_scans
+                WHERE user_id = ?
+                AND order_id = ?
+                AND `type` not in ('ndfl', 'INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')
+                ", (int)$order->user_id, (int)$order->order_id);
+
+                $this->db->query($query);
+                $scans = $this->db->results();
+
+                $users_docs = $this->Documents->get_documents(['order_id' => $order_id, 'first_pak' => 1]);
+
+                try {
+                    $upload_scans = 0;
+
+                    if (count($scans) == count($users_docs))
+                        $upload_scans = 1;
+
+                    $this->YaDisk->upload_orders_files($order_id, $upload_scans, $pak = 'first');
+                } catch (Exception $e) {
+
+                }
 
                 echo json_encode(['success' => 1]);
                 exit;

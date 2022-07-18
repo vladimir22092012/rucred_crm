@@ -12,10 +12,17 @@ class YaDisk extends Core
         $this->disk = new Arhitector\Yandex\Disk($this->token);
     }
 
-    public function upload_orders_files($order_id, $upload_scans)
+    public function upload_orders_files($order_id, $upload_scans, $pak = false)
     {
-        $order = $this->orders->get_order($order_id);
+        if ($pak) {
+            if ($pak == 'first')
+                $pak = ['first_pak' => 1];
+            else
+                $pak = ['second_pak' => 1];
+        }
 
+
+        $order = $this->orders->get_order($order_id);
         $fio = $order->lastname . ' ' . mb_substr($order->firstname, 0, 1) . mb_substr($order->patronymic, 0, 1);
         $translit_fio = $this->translit($fio);
         $employer = explode(' ', $order->uid);
@@ -25,9 +32,9 @@ class YaDisk extends Core
         $personal_number = $order->personal_number;
 
         if ($upload_scans == 1) {
-            $upload_files = $this->Scans->get_scans_by_order_id($order_id);
+            $upload_files = $this->Scans->get_scans_by_order_id($order_id, $pak);
         } else {
-            $upload_files = $this->Documents->get_documents(['order_id' => $order_id]);
+            $upload_files = $this->Documents->get_documents(['order_id' => $order_id, $pak]);
         }
 
         foreach ($upload_files as $document) {
@@ -278,7 +285,8 @@ class YaDisk extends Core
         }
     }
 
-    private function upload($upload_scans, $order, $resource, $file_name, $document){
+    private function upload($upload_scans, $order, $resource, $file_name, $document)
+    {
 
         if ($upload_scans == 1)
             $resource->upload($this->config->root_url . '/files/users/' . $order->user_id . '/' . $document->name, true);
@@ -322,7 +330,7 @@ class YaDisk extends Core
             $company = $this->Companies->get_company($document->params->company_id);
             $this->design->assign('company', $company);
 
-            if(!empty($document->asp_id)){
+            if (!empty($document->asp_id)) {
                 $code_asp = $this->AspCodes->get_code(['id' => $document->asp_id]);
                 $this->design->assign('code_asp', $code_asp);
             }

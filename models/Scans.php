@@ -13,13 +13,27 @@ class Scans extends Core
         return $id;
     }
 
-    public function get_scans_by_order_id($order_id)
+    public function get_scans_by_order_id($order_id, $pak)
     {
+
+        $first_pak = '';
+        $second_pak = '';
+
+
+        if(isset($pak['first_pak']))
+            $first_pak = $this->db->placehold("AND `type` not in ('individualnie_usloviya.tpl', 'grafik_obsl_mkr.tpl')");
+
+        if(isset($pak['second_pak']))
+            $second_pak = $this->db->placehold("AND `type` in ('individualnie_usloviya.tpl', 'grafik_obsl_mkr.tpl')");
+
+
         $query = $this->db->placehold("
             SELECT * 
             FROM s_scans 
             WHERE order_id = ?
-        ", $order_id);
+            $first_pak
+            $second_pak
+            ", $order_id);
 
         $this->db->query($query);
 

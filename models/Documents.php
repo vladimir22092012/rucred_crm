@@ -204,6 +204,8 @@ class Documents extends Core
     public function get_documents($filter = array())
     {
         $id_filter = '';
+        $first_pak = '';
+        $second_pak = '';
         $role_filter = '';
         $user_id_filter = '';
         $order_id_filter = '';
@@ -220,6 +222,12 @@ class Documents extends Core
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND doc.id IN (?@)", array_map('intval', (array)$filter['id']));
         }
+
+        if(isset($params['first_pak']))
+            $first_pak = $this->db->placehold("AND `type` not in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
+
+        if(isset($params['second_pak']))
+            $second_pak = $this->db->placehold("AND `type` in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
 
         if(isset($filter['role_id'])){
             $permissions = $this->DocksPermissions->get_docktypes(['role_id' => $filter['role_id']]);
@@ -330,6 +338,8 @@ class Documents extends Core
  	            $keyword_filter
  	            $search_list
  	            $role_filter
+ 	            $first_pak
+                $second_pak
  	            AND doc.`type` != 'ndfl'
             $sort 
             $sql_limit
@@ -435,10 +445,21 @@ class Documents extends Core
     public function update_asp($params)
     {
 
+        $first_pak = '';
+        $second_pak = '';
+
+        if(isset($params['first_pak']))
+            $first_pak = $this->db->placehold("AND `type` not in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
+
+        if(isset($params['second_pak']))
+            $second_pak = $this->db->placehold("AND `type` in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
+
         $query = $this->db->placehold("
             UPDATE __documents 
             SET asp_id = ? 
             WHERE order_id = ?
+            $first_pak
+            $second_pak
         ", $params['asp_id'], $params['order_id']);
 
         $this->db->query($query);
