@@ -47,6 +47,14 @@ class RegistrController extends Controller
 
         $orders = $this->orders->get_orders($filter);
 
+        foreach ($orders as $order){
+            $order->number = str_pad($order->order_id, 5, '0', STR_PAD_LEFT);
+
+            if (!empty($order->contract_id)) {
+                $order->contract = $this->contracts->get_contract((int)$order->contract_id);
+            }
+        }
+
         $managers = array();
         foreach ($this->managers->get_managers() as $m) {
             $managers[$m->id] = $m;

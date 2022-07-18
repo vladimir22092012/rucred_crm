@@ -3818,7 +3818,7 @@ class OfflineOrderController extends Controller
 
                 if (!empty($contracts)) {
                     $count_contracts = count($contracts);
-                    str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
+                    $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
                 } else {
                     $count_contracts = '01';
                 }

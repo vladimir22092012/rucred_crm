@@ -124,6 +124,7 @@ class IndexController extends Controller
             and status != 6
             and not exists (SELECT *
             FROM s_tickets_notifications
+            WHERE ticket_id = s_tickets.id
             AND user_id = ?)
             ", $this->manager->id, $this->manager->id, $this->manager->id);
 
@@ -141,6 +142,7 @@ class IndexController extends Controller
             and theme_id not in (12, 37)
             and not exists (SELECT *
             FROM s_tickets_notifications
+            WHERE ticket_id = s_tickets.id
             AND user_id = ?)
             ", $this->manager->id, $this->manager->id);
 
@@ -172,6 +174,7 @@ class IndexController extends Controller
             AND creator != ?
             and not exists (SELECT *
             FROM s_tickets_notifications
+            WHERE ticket_id = s_tickets.id
             AND user_id = ?)
             ", $this->manager->id, $this->manager->id);
 
