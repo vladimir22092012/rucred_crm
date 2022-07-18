@@ -124,8 +124,8 @@ class IndexController extends Controller
             and status != 6
             and not exists (SELECT *
             FROM s_tickets_notifications
-            WHERE ticket_id = s_tickets.id)
-            ", $this->manager->group_id, $this->manager->id);
+            AND user_id = ?)
+            ", $this->manager->id, $this->manager->id);
 
                 $this->db->query($query);
                 $count_in = $this->db->result('count');
@@ -141,8 +141,8 @@ class IndexController extends Controller
             and theme_id not in (12, 37)
             and not exists (SELECT *
             FROM s_tickets_notifications
-            WHERE ticket_id = s_tickets.id)
-            ", $this->manager->id);
+            AND user_id = ?)
+            ", $this->manager->id, $this->manager->id);
 
                 $this->db->query($query);
                 $count_in = $this->db->result('count');
@@ -157,8 +157,9 @@ class IndexController extends Controller
             and status != 6
             and not exists (SELECT *
             FROM s_tickets_notifications
-            WHERE ticket_id = s_tickets.id)
-            ", $this->manager->id);
+            WHERE ticket_id = s_tickets.id
+            AND user_id = ?)
+            ", $this->manager->id, $this->manager->id);
 
                 $this->db->query($query);
                 $count_in = $this->db->result('count');
@@ -171,8 +172,8 @@ class IndexController extends Controller
             AND creator != ?
             and not exists (SELECT *
             FROM s_tickets_notifications
-            WHERE ticket_id = s_tickets.id)
-            ", $this->manager->id);
+            AND user_id = ?)
+            ", $this->manager->id, $this->manager->id);
 
                 $this->db->query($query);
                 $count_in = $this->db->result('count');
