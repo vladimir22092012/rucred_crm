@@ -45,6 +45,7 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
                 'ISSUANCE' => '9287', 
                 'PAYMENT' => '9285',
             );
+            $this->url = 'https://pay.best2pay.net/';
         }
         else
         {
@@ -52,6 +53,7 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
                 'ISSUANCE' => '3721', 
                 'PAYMENT' => '3158',
             );            
+            $this->url = 'https://test.best2pay.net/';
         }
         
         parent::__construct();
