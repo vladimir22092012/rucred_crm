@@ -45,6 +45,7 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
                 'ISSUANCE' => '9287', 
                 'PAYMENT' => '9285',
             );
+            $this->url = 'https://pay.best2pay.net/';
         }
         else
         {
@@ -52,6 +53,7 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
                 'ISSUANCE' => '3721', 
                 'PAYMENT' => '3158',
             );            
+            $this->url = 'https://test.best2pay.net/';
         }
         
         parent::__construct();
@@ -179,7 +181,7 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
             return ['error' => 'Не найдены организация отправителя'];
         }
 
-        if (!($company = $this->companies->get_company($order->company_id))) {
+        if (!($company = $this->companies->get_company(2))) {
             return ['error' => 'Не найдены компания отправителя'];
         }
         $this->orders->update_order($order->order_id, array('status' => 9));
@@ -222,16 +224,21 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
             
             $data = [
                 'sector' => $sector,
-                'id' => $register_id,
+                'reference' => $register_id,
+                'amount' => $order->amount * 100,
+                'currency' => $this->currency_code,
+                'email' => $order->email,
+                'phone' => $order->phone_mobile,
+                'description' => $description,
                 'country' => 'RU',
                 'bank_name' => $settlement->name,
                 'fio' => $order->lastname.' '.$order->firstname.' '.$order->patronymic, 
                 'acc_number' => $requisite->number,
-                'P008-1' => $company->name, //Наименование Плательщика.  
+                'P008-1' => str_replace('"', '', $company->name), //Наименование Плательщика.  
                 'P008-2' => $company->jur_address, //Адрес Плательщика.  
                 'P014' => $requisite->bik, // БИК получателя (ровно 9 цифр).  
                 'P016' => $requisite->holder, // Наименование Получателя.  
-                'P017' => $requisite->correspondent_acc, // Счет получателя (ровно 20 цифр).  
+                'P017' => $requisite->number, // Счет получателя (ровно 20 цифр).  
                 'P020' => '1', // Очередность платежа (ровно 1 цифра).  
                 'P024' => $description, // Назначение платежа.  
                 'P060' => $company->inn ?? 0, // ИНН Плательщика (10 или 12 цифр). Если отсутствует —проставьте 0.   
@@ -243,8 +250,9 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
             ];
             
             $data['signature'] = $this->get_signature(array(
-                $data['sector'],
-                $data['id'],
+                $register_data['sector'],
+                $register_data['amount'],
+                $register_data['currency'],
                 $password
             ));
             
@@ -354,6 +362,8 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
 
         $resp = curl_exec($curl);
         curl_close($curl);
+        
+        $this->soap1c->logging(__METHOD__, $url, $data, $resp, 'b2p.txt');
         
         if ($error = curl_error($curl))
         {
