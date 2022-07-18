@@ -54,6 +54,7 @@ class Soap1c extends Core
             $item->Порог = '1.5';
             $item->ИННОрганизации = isset($company) ? $company->inn : '';
             $item->СпособПодачиЗаявления = 'Прямой';
+            $item->ПДН = $order->pdn;
 
             $order->payment_schedule = $this->PaymentsSchedules->get(['order_id'=>$order->order_id, 'actual'=>1]);
             $payment_schedules = array();
