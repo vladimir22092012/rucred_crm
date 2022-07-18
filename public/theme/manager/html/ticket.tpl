@@ -185,16 +185,6 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <br>
-                                                    <div class="row pt-2 view-block" style="margin-left: 20px">
-                                                        <div class="col-md-12">
-                                                            Проверить сотрудника на принадлежность компании и
-                                                            подтвердить
-                                                        </div>
-                                                        <div class="col-md-12" style="margin-top: 30px">
-
-                                                        </div>
-                                                    </div>
                                                 {/if}
                                                 {foreach $messages as $message}
                                                     <div class="row pt-2 view-block">
