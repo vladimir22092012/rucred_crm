@@ -225,6 +225,11 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
             $data = [
                 'sector' => $sector,
                 'reference' => $register_id,
+                'amount' => $order->amount * 100,
+                'currency' => $this->currency_code,
+                'email' => $order->email,
+                'phone' => $order->phone_mobile,
+                'description' => $description,
                 'country' => 'RU',
                 'bank_name' => $settlement->name,
                 'fio' => $order->lastname.' '.$order->firstname.' '.$order->patronymic, 
@@ -245,8 +250,9 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
             ];
             
             $data['signature'] = $this->get_signature(array(
-                $data['sector'],
-                $data['id'],
+                $register_data['sector'],
+                $register_data['amount'],
+                $register_data['currency'],
                 $password
             ));
             
