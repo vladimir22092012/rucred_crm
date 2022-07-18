@@ -604,7 +604,110 @@
                                                 </div>
                                             </form>
                                             <!-- / Контакты-->
+                                            <form action="{url}" class="border js-order-item-form mb-3" id="images_form">
 
+                                                <input type="hidden" name="action" value="images"/>
+                                                <input type="hidden" name="user_id" value="{$client->id}"/>
+
+                                                <h5 class="card-header">
+                                                    <span class="text-white">Фотографии</span>
+
+                                                </h5>
+
+                                                <div class="row p-2 view-block {if $socials_error}hide{/if}">
+                                                    <ul class="col-md-12 list-inline">
+                                                        {foreach $files as $file}
+                                                            {if $file->status == 0}
+                                                                {$item_class="border-warning"}
+                                                                {$ribbon_class="ribbon-warning"}
+                                                                {$ribbon_icon="fas fa-question"}
+                                                            {elseif $file->status == 1}
+                                                                {$item_class="border-primary"}
+                                                                {$ribbon_class="ribbon-primary"}
+                                                                {$ribbon_icon="fas fa-clock"}
+                                                            {elseif $file->status == 2}
+                                                                {$item_class="border-success border border-bg"}
+                                                                {$ribbon_class="ribbon-success"}
+                                                                {$ribbon_icon="fa fa-check-circle"}
+                                                            {elseif $file->status == 3}
+                                                                {$item_class="border-danger border"}
+                                                                {$ribbon_class="ribbon-danger"}
+                                                                {$ribbon_icon="fas fa-times-circle"}
+                                                            {/if}
+                                                            <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
+                                                                <a class="image-popup-fit-width" href="javascript:void(0)"
+                                                                   onclick="window.open('{$config->back_url}/files/users/{$client->id}/{$file->name}')">
+                                                                    <div class="ribbon ribbon-corner {$ribbon_class}"><i
+                                                                                class="{$ribbon_icon}"></i></div>
+                                                                    <img src="{$config->back_url}/files/users/{$file->name}"
+                                                                         alt="" class="img-responsive" style=""/>
+                                                                </a>
+                                                                <div class="order-image-actions">
+                                                                    <div class="dropdown mr-1 show ">
+                                                                        <button type="button"
+                                                                                class="btn {if $file->status==2}btn-success{elseif $file->status==3}btn-danger{else}btn-secondary{/if} dropdown-toggle"
+                                                                                id="dropdownMenuOffset" data-toggle="dropdown"
+                                                                                aria-haspopup="true" aria-expanded="true">
+                                                                            {if $file->status == 2}Принят
+                                                                            {elseif $file->status == 3}Отклонен
+                                                                            {else}Статус
+                                                                            {/if}
+                                                                        </button>
+                                                                        <div class="dropdown-menu"
+                                                                             aria-labelledby="dropdownMenuOffset"
+                                                                             x-placement="bottom-start">
+                                                                            <div class="p-1 dropdown-item">
+                                                                                <button class="btn btn-sm btn-block btn-success js-image-accept"
+                                                                                        data-id="{$file->id}" type="button">
+                                                                                    <i class="fas fa-check-circle"></i>
+                                                                                    <span>Принят</span>
+                                                                                </button>
+                                                                            </div>
+                                                                            <div class="p-1 dropdown-item">
+                                                                                <button class="btn btn-sm btn-block btn-danger js-image-reject"
+                                                                                        data-id="{$file->id}" type="button">
+                                                                                    <i class="fas fa-times-circle"></i>
+                                                                                    <span>Отклонен</span>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        {/foreach}
+                                                    </ul>
+                                                </div>
+
+                                                <div class="row edit-block {if !$images_error}hide{/if}">
+                                                    {foreach $files as $file}
+                                                        <div class="col-md-4 col-lg-3 col-xlg-3">
+                                                            <div class="card card-body">
+                                                                <div class="row">
+
+                                                                    <div class="col-md-6 col-lg-8">
+                                                                        <div class="form-group">
+                                                                            <label class="control-label">Статус</label>
+                                                                            <input type="text" id="status_{$file->id}"
+                                                                                   name="status[{$file->id}]"
+                                                                                   value="{$file->status}"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {/foreach}
+                                                    <div class="col-md-12">
+                                                        <div class="form-actions">
+                                                            <button type="submit" class="btn btn-success"><i
+                                                                        class="fa fa-check"></i> Сохранить
+                                                            </button>
+                                                            <button type="button" class="btn btn-inverse js-cancel-edit">
+                                                                Отмена
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
                                             <!-- /Контактные лица -->
 
                                             <form action="{url}" class="js-order-item-form mb-3 border"
@@ -1091,110 +1194,6 @@
                                         </div>
                                     </div>
                                     <!-- -->
-                                    <form action="{url}" class="border js-order-item-form mb-3" id="images_form">
-
-                                        <input type="hidden" name="action" value="images"/>
-                                        <input type="hidden" name="user_id" value="{$client->id}"/>
-
-                                        <h5 class="card-header">
-                                            <span class="text-white">Фотографии</span>
-
-                                        </h5>
-
-                                        <div class="row p-2 view-block {if $socials_error}hide{/if}">
-                                            <ul class="col-md-12 list-inline">
-                                                {foreach $files as $file}
-                                                    {if $file->status == 0}
-                                                        {$item_class="border-warning"}
-                                                        {$ribbon_class="ribbon-warning"}
-                                                        {$ribbon_icon="fas fa-question"}
-                                                    {elseif $file->status == 1}
-                                                        {$item_class="border-primary"}
-                                                        {$ribbon_class="ribbon-primary"}
-                                                        {$ribbon_icon="fas fa-clock"}
-                                                    {elseif $file->status == 2}
-                                                        {$item_class="border-success border border-bg"}
-                                                        {$ribbon_class="ribbon-success"}
-                                                        {$ribbon_icon="fa fa-check-circle"}
-                                                    {elseif $file->status == 3}
-                                                        {$item_class="border-danger border"}
-                                                        {$ribbon_class="ribbon-danger"}
-                                                        {$ribbon_icon="fas fa-times-circle"}
-                                                    {/if}
-                                                    <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
-                                                        <a class="image-popup-fit-width" href="javascript:void(0)"
-                                                           onclick="window.open('{$config->back_url}/files/users/{$client->id}/{$file->name}')">
-                                                            <div class="ribbon ribbon-corner {$ribbon_class}"><i
-                                                                        class="{$ribbon_icon}"></i></div>
-                                                            <img src="{$config->back_url}/files/users/{$file->name}"
-                                                                 alt="" class="img-responsive" style=""/>
-                                                        </a>
-                                                        <div class="order-image-actions">
-                                                            <div class="dropdown mr-1 show ">
-                                                                <button type="button"
-                                                                        class="btn {if $file->status==2}btn-success{elseif $file->status==3}btn-danger{else}btn-secondary{/if} dropdown-toggle"
-                                                                        id="dropdownMenuOffset" data-toggle="dropdown"
-                                                                        aria-haspopup="true" aria-expanded="true">
-                                                                    {if $file->status == 2}Принят
-                                                                    {elseif $file->status == 3}Отклонен
-                                                                    {else}Статус
-                                                                    {/if}
-                                                                </button>
-                                                                <div class="dropdown-menu"
-                                                                     aria-labelledby="dropdownMenuOffset"
-                                                                     x-placement="bottom-start">
-                                                                    <div class="p-1 dropdown-item">
-                                                                        <button class="btn btn-sm btn-block btn-success js-image-accept"
-                                                                                data-id="{$file->id}" type="button">
-                                                                            <i class="fas fa-check-circle"></i>
-                                                                            <span>Принят</span>
-                                                                        </button>
-                                                                    </div>
-                                                                    <div class="p-1 dropdown-item">
-                                                                        <button class="btn btn-sm btn-block btn-danger js-image-reject"
-                                                                                data-id="{$file->id}" type="button">
-                                                                            <i class="fas fa-times-circle"></i>
-                                                                            <span>Отклонен</span>
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                {/foreach}
-                                            </ul>
-                                        </div>
-
-                                        <div class="row edit-block {if !$images_error}hide{/if}">
-                                            {foreach $files as $file}
-                                                <div class="col-md-4 col-lg-3 col-xlg-3">
-                                                    <div class="card card-body">
-                                                        <div class="row">
-
-                                                            <div class="col-md-6 col-lg-8">
-                                                                <div class="form-group">
-                                                                    <label class="control-label">Статус</label>
-                                                                    <input type="text" id="status_{$file->id}"
-                                                                           name="status[{$file->id}]"
-                                                                           value="{$file->status}"/>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            {/foreach}
-                                            <div class="col-md-12">
-                                                <div class="form-actions">
-                                                    <button type="submit" class="btn btn-success"><i
-                                                                class="fa fa-check"></i> Сохранить
-                                                    </button>
-                                                    <button type="button" class="btn btn-inverse js-cancel-edit">
-                                                        Отмена
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
                                     <div style="display: flex; justify-content: right">
                                         <div type="button" class="btn btn-outline-danger delete_client"
                                              data-user="{$client->id}" style="height: 38px;">

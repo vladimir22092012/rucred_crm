@@ -151,7 +151,8 @@ class Orders extends Core
                 u.faktaddress_id,
                 u.actual_address,
                 u.original,
-                u.pdn
+                u.pdn,
+                u.dependents
             FROM __orders AS o
             LEFT JOIN __users AS u
             ON u.id = o.user_id

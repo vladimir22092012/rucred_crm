@@ -848,6 +848,35 @@ class OfflineOrderController extends Controller
 
         $users_docs = $this->Documents->get_documents(['order_id' => $order_id]);
 
+        $this->db->query("
+        SELECT *
+        FROM s_files
+        WHERE user_id = ?
+        ", $order->user_id);
+
+        $photos = $this->db->results();
+        $count_photos = 0;
+        $count_approved_photos = 0;
+
+        foreach ($photos as $photo){
+            if(in_array($photo->type, ['Паспорт: разворот', 'Паспорт: регистрация', 'Селфи с паспортом'])){
+                $count_photos++;
+
+                if($photo->status != 0)
+                    $count_approved_photos++;
+            }
+        }
+
+        if($count_photos < 3){
+            echo json_encode(['error' => 'Не забудьте добавить фото документов и селфи с паспортом!']);
+            exit;
+        }
+
+        if($count_approved_photos < 3){
+            echo json_encode(['error' => 'Не забудьте подтвердить фото клиента!']);
+            exit;
+        }
+
         if (empty($users_docs)) {
             echo json_encode(['error' => 'Не сформированы документы!']);
             exit;

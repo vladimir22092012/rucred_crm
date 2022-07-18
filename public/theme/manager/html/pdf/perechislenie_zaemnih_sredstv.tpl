@@ -51,7 +51,7 @@
     <tr>
         <td style="width: 30%">Назначение платежа:</td>
         <td style="width: 70%">Оплата по договору микрозайма № <strong>{$uid}</strong> от <strong>{$date|date}</strong>
-            за <strong>{$lastname|upper} {$firstname|upper} {$patronymic|upper}</strong> // ИНН <strong>{$inn}</strong>
+            // заемщик <strong>{$lastname|upper} {$firstname|upper} {$patronymic|upper}</strong> ИНН <strong>{$inn}</strong>
         </td>
     </tr>
 

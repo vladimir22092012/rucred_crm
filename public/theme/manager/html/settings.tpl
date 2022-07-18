@@ -89,13 +89,13 @@
                             </h3>
                             <div class="custom-control custom-radio">
                                 <input type="radio" id="b2p_mode_test" name="b2p_mode" value="test"
-                                       {if $settings->b2p_mode=='test'}checked="checked"{/if}
+                                       {if $settings->b2p_mode=='test'}checked="checked"{/if} {if !in_array($manager->role, ['admin', 'developer'])}disabled{/if}
                                        class="custom-control-input b2p">
                                 <label class="custom-control-label" for="b2p_mode_test">Тестовый</label>
                             </div>
                             <div class="custom-control custom-radio">
                                 <input type="radio" id="b2p_mode_work" name="b2p_mode" value="work"
-                                       {if $settings->b2p_mode=='work'}checked="checked"{/if}
+                                       {if $settings->b2p_mode=='work'}checked="checked"{/if} {if !in_array($manager->role, ['admin', 'developer'])}disabled{/if}
                                        class="custom-control-input b2p">
                                 <label class="custom-control-label" for="b2p_mode_work">Рабочий</label>
                             </div>
@@ -108,13 +108,13 @@
                             </h3>
                             <div class="custom-control custom-radio">
                                 <input type="radio" id="okb_mode_test" name="okb_mode" value="test"
-                                       {if $settings->okb_mode=='test'}checked="checked"{/if}
+                                       {if $settings->okb_mode=='test'}checked="checked"{/if} {if !in_array($manager->role, ['admin', 'developer'])}disabled{/if}
                                        class="custom-control-input okb">
                                 <label class="custom-control-label" for="okb_mode_test">Тестовый</label>
                             </div>
                             <div class="custom-control custom-radio">
                                 <input type="radio" id="okb_mode_work" name="okb_mode" value="work"
-                                       {if $settings->okb_mode=='work'}checked="checked"{/if}
+                                       {if $settings->okb_mode=='work'}checked="checked"{/if} {if !in_array($manager->role, ['admin', 'developer'])}disabled{/if}
                                        class="custom-control-input okb">
                                 <label class="custom-control-label" for="okb_mode_work">Рабочий</label>
                             </div>
@@ -126,13 +126,13 @@
                             </h3>
                             <div class="custom-control custom-radio">
                                 <input type="radio" id="onec_mode_test" name="onec_mode" value="test"
-                                       {if $settings->onec_mode=='test'}checked="checked"{/if}
+                                       {if $settings->onec_mode=='test'}checked="checked"{/if} {if !in_array($manager->role, ['admin', 'developer'])}disabled{/if}
                                        class="custom-control-input onec">
                                 <label class="custom-control-label" for="onec_mode_test">Тестовый</label>
                             </div>
                             <div class="custom-control custom-radio">
                                 <input type="radio" id="onec_mode_work" name="onec_mode" value="work"
-                                       {if $settings->onec_mode=='work'}checked="checked"{/if}
+                                       {if $settings->onec_mode=='work'}checked="checked"{/if} {if !in_array($manager->role, ['admin', 'developer'])}disabled{/if}
                                        class="custom-control-input onec">
                                 <label class="custom-control-label" for="onec_mode_work">Рабочий</label>
                             </div>
@@ -292,13 +292,14 @@
             </div>
 
             <hr class="mb-3 mt-3"/>
-
             <div class="row">
+                {if in_array($manager->role, ['admin', 'developer'])}
                 <div class="col-12 grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-width="12">
                     <div class="form-actions">
                         <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Сохранить</button>
                     </div>
                 </div>
+                {/if}
         </form>
         <!-- Row -->
         <!-- ============================================================== -->

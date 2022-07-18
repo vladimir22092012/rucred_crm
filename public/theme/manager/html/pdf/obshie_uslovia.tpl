@@ -74,8 +74,7 @@
     <tr>
         <td style="40%"><strong>6.</strong> Ставка по микрозайму</td>
         <td style="60%"><strong>{$percents}%
-                ({$percents_per_year|upper} {if $second_part_percents|upper} ЦЕЛЫХ И {$second_part_percents|upper} ТЫСЯЧНЫХ ПРОЦЕНТОВ{/if}
-                )</strong> годовых
+                ({$percents_per_year|upper} {if $second_part_percents|upper} ЦЕЛЫХ И {$second_part_percents|upper} ТЫСЯЧНЫХ ПРОЦЕНТОВ{/if})</strong> годовых
         </td>
     </tr>
     <tr>
