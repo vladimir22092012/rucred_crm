@@ -16,10 +16,16 @@ class AspRegistrController extends Controller
         foreach($codes as $key => $code){
             $code->user = $this->users->get_user($code->user_id);
             $code->manager =  $this->managers->get_manager($code->manager_id);
-            $code->documents = $this->documents->get_documents(['order_id' => $code->order_id]);
+            $code->documents = $this->documents->get_documents(['order_id' => $code->order_id, 'asp_flag' => 1]);
 
-            if(empty($code->documents) || count($code->documents) < 11)
+            if(empty($code->documents) || $code->code == 0)
                 unset($codes[$key]);
+            else{
+                foreach ($code->documents as $document){
+                    if(in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR', 'DOP_GRAFIK', 'DOP_SOGLASHENIE']))
+                        $code->rucred_stamp = true;
+                }
+            }
         }
 
         $this->design->assign('codes', $codes);

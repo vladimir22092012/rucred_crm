@@ -247,6 +247,8 @@ class OfflineOrderController extends Controller
             if ($order_id = $this->request->get('id', 'integer')) {
                 if ($order = $this->orders->get_order($order_id)) {
 
+                    $orders = $this->orders->get_orders();
+
                     $scroll_to_photo = $this->request->get('scroll');
                     $this->design->assign('scroll_to_photo', $scroll_to_photo);
 

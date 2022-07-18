@@ -204,6 +204,7 @@ class Documents extends Core
     public function get_documents($filter = array())
     {
         $id_filter = '';
+        $asp_flag = '';
         $first_pak = '';
         $second_pak = '';
         $role_filter = '';
@@ -228,6 +229,9 @@ class Documents extends Core
 
         if(isset($params['second_pak']))
             $second_pak = $this->db->placehold("AND `type` in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
+
+        if(isset($params['asp_flag']))
+            $asp_flag = $this->db->placehold("AND asp_id is not null");
 
         if(isset($filter['role_id'])){
             $permissions = $this->DocksPermissions->get_docktypes(['role_id' => $filter['role_id']]);
@@ -340,6 +344,7 @@ class Documents extends Core
  	            $role_filter
  	            $first_pak
                 $second_pak
+                $asp_flag
  	            AND doc.`type` != 'ndfl'
             $sort 
             $sql_limit

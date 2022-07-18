@@ -247,6 +247,7 @@
                                                     {$code->order_id}</a>
                                             </td>
                                         </tr>
+                                        {if $code->rucred_stamp}
                                         <tr class="codes">
                                             <td>
                                                 {$code->uid}
@@ -296,6 +297,7 @@
                                                     {$code->order_id}</a>
                                             </td>
                                         </tr>
+                                        {/if}
                                     {/foreach}
                                     </tbody>
                                 </table>
