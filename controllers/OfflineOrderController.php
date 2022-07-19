@@ -3095,8 +3095,7 @@ class OfflineOrderController extends Controller
         }
     }
 
-    private
-    function action_change_loan_settings()
+    private function action_change_loan_settings()
     {
         $order_id = (int)$this->request->post('order_id');
         $amount = $this->request->post('amount');
@@ -3141,8 +3140,7 @@ class OfflineOrderController extends Controller
         exit;
     }
 
-    private
-    function action_reform_schedule($order_id)
+    private function action_reform_schedule($order_id)
     {
         $order = $this->orders->get_order($order_id);
         $order = (array)$order;
