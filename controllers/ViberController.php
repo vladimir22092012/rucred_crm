@@ -28,6 +28,8 @@ class ViberController extends Controller
                             ->setReceiver($event->getSender()->getId())
                             ->setText("I do not know )")
                     );
+
+                    $this->ViberUsers->add(['chat_id' => $event->getSender()->getId()]);
                 })
                 ->run();
         } catch (Exception $e) {
