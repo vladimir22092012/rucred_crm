@@ -1257,7 +1257,7 @@ class NeworderController extends Controller
 
                 case 'viber':
                     $message = "Привяжите Вайбер: https://chatapi.viber.com/pa/start=registration";
-                    $this->sms->send($phone, $message);
+                    var_dump($this->sms->send($phone, $message));
 
                     $user =
                         [
