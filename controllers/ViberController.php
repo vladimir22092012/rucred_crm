@@ -25,6 +25,7 @@ class ViberController extends Controller
                     // to user, but you can't send more messages!
                     return (new \Viber\Api\Message\Text())
                         ->setSender($botSender)
+                        ->setReceiver($event->getSender()->getId())
                         ->setText("Can i help you?");
                 })
                 ->onText('|whois .*|si', function ($event) use ($bot, $botSender) {
