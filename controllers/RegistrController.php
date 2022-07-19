@@ -50,6 +50,20 @@ class RegistrController extends Controller
         foreach ($orders as $order){
             $order->number = str_pad($order->order_id, 5, '0', STR_PAD_LEFT);
 
+            $old_orders = $this->orders->get_orders(['user_id' => $order->user_id]);
+
+            $order->client_status = 'Повтор';
+
+            if(count($old_orders) > 1){
+                foreach ($old_orders as $old_order){
+                    if(in_array($old_order->status, [5,7]))
+                        $order->client_status = 'ПК';
+                }
+            }
+
+            if(count($orders) == 1)
+                $order->client_status = 'Новая';
+
             if (!empty($order->contract_id)) {
                 $order->contract = $this->contracts->get_contract((int)$order->contract_id);
             }

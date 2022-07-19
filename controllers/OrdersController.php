@@ -4,9 +4,12 @@ class OrdersController extends Controller
 {
     public function fetch()
     {
-        $items_per_page = 20;
+        $items_per_page = 100;
 
         $filter = array();
+
+        $filter['offline'] = 1;
+        $this->design->assign('offline', $filter['offline']);
 
         if (!($period = $this->request->get('period'))) {
             $period = 'all';
@@ -44,43 +47,6 @@ class OrdersController extends Controller
         endswitch;
         $this->design->assign('period', $period);
 
-
-        if (!($issuance_period = $this->request->get('issuance_period'))) {
-            $issuance_period = 'all';
-        }
-
-        switch ($issuance_period) :
-            case 'today':
-                $filter['issuance_date_from'] = date('Y-m-d');
-                break;
-
-            case 'yesterday':
-                $filter['issuance_date_from'] = date('Y-m-d', time() - 86400);
-                $filter['issuance_date_to'] = date('Y-m-d', time() - 86400);
-                break;
-
-            case 'month':
-                $filter['issuance_date_from'] = date('Y-m-01');
-                break;
-
-            case 'year':
-                $filter['issuance_date_from'] = date('Y-01-01');
-                break;
-
-            case 'all':
-                $filter['issuance_date_from'] = null;
-                $filter['issuance_date_to'] = null;
-                break;
-
-            case 'optional':
-                $daterange = $this->request->get('daterange');
-                $filter_daterange = array_map('trim', explode('-', $daterange));
-                $filter['issuance_date_from'] = date('Y-m-d', strtotime($filter_daterange[0]));
-                $filter['issuance_date_to'] = date('Y-m-d', strtotime($filter_daterange[1]));
-                break;
-        endswitch;
-        $this->design->assign('issuance_period', $issuance_period);
-
         /*
                 // показывать менеджеру только его заявки
                 if ($this->manager->role == 'user')
@@ -88,22 +54,18 @@ class OrdersController extends Controller
                     $filter['current'] = $this->manager->id;
                 }
         */
-        $filter['offline'] = $this->request->get('offline', 'integer');
-        $this->design->assign('offline', $filter['offline']);
-
         if ($this->manager->role == 'collector' || $this->manager->role == 'chief_collector') {
             // показываем только выданные заявки
             $filter['status'] = array(5);
         }
 
-        if ($this->manager->role == 'quality_control' || $this->manager->role == 'quality_control_plus') {
+        if ($this->manager->role == 'quality_control') {
             $filter['workout_sort'] = 1;
-//            $filter['date_from'] = '2021-10-14';
         }
 
         $filter['offline'] = 0;
 
-        if (!in_array($this->manager->role, array('collector', 'chief_collector'))) {
+        if (!in_array($this->manager->role, array('collector', 'chief_collector', 'developer'))) {
             // показываем заявки только созданные на сайте
             $filter['type'] = 'base';
         }
@@ -142,29 +104,12 @@ class OrdersController extends Controller
         $filter['page'] = $current_page;
         $filter['limit'] = $items_per_page;
 
-
-        /*
-                $orders = array();
-                foreach ($this->orders->get_orders($filter) as $order)
-                {
-                    $order->scorings = $this->scorings->get_scorings(array('user_id'=>$order->user_id));
-                    if (empty($order->scorings) || !count($order->scorings))
-                    {
-                        $order->scorings_result = 'Не проводился';
-                    }
-                    else
-                    {
-                        $order->scorings_result = 'Пройден';
-                        foreach ($order->scorings as $scoring)
-                        {
-                            if (!$scoring->success)
-                                $order->scorings_result = 'Не пройден: '.$scoring->type;
-                        }
-                    }
-
-                    $orders[$order->order_id] = $order;
-                }
-        */
+        if ($this->manager->role == 'employer') {
+            $managers_company = $this->ManagersEmployers->get_records($this->manager->id);
+            foreach ($managers_company as $id => $name) {
+                $filter['employer'][] = $id;
+            }
+        }
 
         $orders = array();
         foreach ($this->orders->get_orders($filter) as $order) {
@@ -184,6 +129,8 @@ class OrdersController extends Controller
                     }
                 }
             }
+
+            $order->count_schedules = count($this->PaymentsSchedules->gets($order->order_id));
 
             if (!empty($order->contract_id)) {
                 $order->contract = $this->contracts->get_contract((int)$order->contract_id);
@@ -218,15 +165,44 @@ class OrdersController extends Controller
         $scoring_types = $this->scorings->get_types();
         $this->design->assign('scoring_types', $scoring_types);
 
-        $statuses = $this->orders->get_statuses();
-        $this->design->assign('statuses', $statuses);
-
-        $this->design->assign('orders', $orders);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($orders);echo '</pre><hr />';
-
         $sms_templates = $this->sms->get_templates(array('type' => 'order'));
         $this->design->assign('sms_templates', $sms_templates);
 
+        $companies = $this->Companies->get_companies();
+        $groups = $this->Groups->get_groups();
+
+        foreach ($orders as $order) {
+            foreach ($companies as $company) {
+                if ($order->company_id == $company->id) {
+                    $order->company_name = $company->name;
+                    $order->company_number = $company->number;
+                }
+            }
+        }
+
+        foreach ($orders as $order) {
+            foreach ($groups as $group) {
+                if ($order->group_id == $group->id)
+                    $order->group_number = $group->number;
+            }
+
+            $old_orders = $this->orders->get_orders(['user_id' => $order->user_id]);
+
+            $order->client_status = 'Повтор';
+
+            if(count($old_orders) > 1){
+                foreach ($old_orders as $old_order){
+                    if(in_array($old_order->status, [5,7]))
+                        $order->client_status = 'ПК';
+                }
+            }
+
+            if(count($orders) == 1)
+                $order->client_status = 'Новая';
+        }
+
+
+        $this->design->assign('orders', $orders);
 
         return $this->design->fetch('orders.tpl');
     }
