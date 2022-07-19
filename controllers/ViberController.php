@@ -20,7 +20,7 @@ class ViberController extends Controller
             $bot = new Bot(['token' => $this->apy_key]);
 
             $bot
-                ->onText('hello', function ($event) use ($bot, $botSender) {
+                ->onText('|hello|', function ($event) use ($bot, $botSender) {
                     // match by template, for example "whois Bogdaan"
                     $bot->getClient()->sendMessage(
                         (new \Viber\Api\Message\Text())
