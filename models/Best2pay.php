@@ -173,6 +173,10 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
             return ['error' => 'Заявка не находится в статусе подписана'];
         }
         
+        if (!($contract = $this->contracts->get_contract($order->contract_id))) {
+            return ['error' => 'Не найден договор '.$order->contract_id];
+        }
+        
         if (!($requisite = $this->requisites->get_requisite($order->requisite_id))) {
             return ['error' => 'Не найдены реквизиты получателя'];
         }
@@ -186,7 +190,7 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
         }
         $this->orders->update_order($order->order_id, array('status' => 9));
 
-        $description = 'Перечисление средств по договору микрозайма №'.$order->uid.' от '.date('d.m.Y', strtotime($order->date)).' г., Сумма '.$order->amount.' Без налога (НДС)';
+        $description = 'Перечисление средств по договору микрозайма №'.$contract->number.' от '.date('d.m.Y', strtotime($order->date)).' г., Сумма '.$contract->amount.' Без налога (НДС)';
 
         $register_data = [
             'sector' => $sector,
