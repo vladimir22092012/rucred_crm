@@ -582,7 +582,7 @@ class OrderController extends Controller
                 });
         }
 
-        foreach ($payment_schedule as $payday => $payment) {
+        foreach ($payment_schedule->schedule as $payday => $payment) {
             if ($payday != 'result') {
                 $payday = date('Y-m-d', strtotime($payday));
                 if ($payday > date('Y-m-d')) {

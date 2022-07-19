@@ -11,10 +11,6 @@ class ViberController extends Controller
     public function fetch()
     {
 
-        var_dump($this->setWebhook());
-        var_dump('123');
-        exit;
-
         $botSender = new Sender([
             'name' => 'Whois bot',
             'avatar' => 'https://developers.viber.com/img/favicon.ico',

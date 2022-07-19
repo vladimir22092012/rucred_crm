@@ -608,7 +608,7 @@ class OfflineOrderController extends Controller
                 });
         }
 
-        foreach ($payment_schedule as $payday => $payment) {
+        foreach ($payment_schedule->schedule as $payday => $payment) {
             if ($payday != 'result') {
                 $payday = date('Y-m-d', strtotime($payday));
                 if ($payday > date('Y-m-d')) {
@@ -1133,8 +1133,7 @@ class OfflineOrderController extends Controller
      *
      * @return array
      */
-    private
-    function delivery_order_status_action()
+    private function delivery_order_status_action()
     {
         $order_id = (int)$this->request->post('order_id', 'integer');
         $order = $this->orders->get_order($order_id);
