@@ -16,39 +16,55 @@ class ViberController extends Controller
             'avatar' => 'https://developers.viber.com/img/favicon.ico',
         ]);
 
-        try {
-            $bot = new Bot(['token' => $this->apy_key]);
+        $bot = new Bot(['token' => $this->apy_key]);
 
-            $bot
-                ->onText('|hello|', function ($event) use ($bot, $botSender) {
-                    // match by template, for example "whois Bogdaan"
+        $bot
+            ->onText('|hello|', function ($event) use ($bot, $botSender) {
+                $bot->getClient()->sendMessage(
+                    (new \Viber\Api\Message\Text())
+                        ->setSender($botSender)
+                        ->setReceiver($event->getSender()->getId())
+                        ->setText("I do not know )")
+                );
+            })
+            ->onText('|registration|', function ($event) use ($bot, $botSender) {
+
+                $chat_id = $event->getSender()->getId();
+                $user = $this->ViberUsers->get_user_by_chat_id($chat_id);
+
+                if(!empty($user)){
                     $bot->getClient()->sendMessage(
                         (new \Viber\Api\Message\Text())
                             ->setSender($botSender)
                             ->setReceiver($event->getSender()->getId())
-                            ->setText("I do not know )")
+                            ->setText("Такой пользователь уже зарегистрирован")
+                    );
+                }else{
+                    $bot->getClient()->sendMessage(
+                        (new \Viber\Api\Message\Text())
+                            ->setSender($botSender)
+                            ->setReceiver($event->getSender()->getId())
+                            ->setText("Вы успешно привязали аккаунт")
                     );
 
                     $this->ViberUsers->add(['chat_id' => $event->getSender()->getId()]);
-                })
-                ->run();
-        } catch (Exception $e) {
-            // todo - log exceptions
-        }
+                }
+            })
+            ->run();
     }
 
-    public function setWebhook()
+    private function setWebhook()
     {
 
         $webhookUrl = 'https://re-aktiv.ru/viber';
 
         try {
-            $client = new Client([ 'token' => $this->apy_key ]);
+            $client = new Client(['token' => $this->apy_key]);
             $result = $client->setWebhook($webhookUrl);
             echo "Success!\n";
         } catch (Exception $e) {
             echo '<pre>';
-            echo "Error: ". $e."\n";
+            echo "Error: " . $e . "\n";
         }
 
     }

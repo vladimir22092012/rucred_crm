@@ -31,7 +31,7 @@ class ViberUsers extends Core
 
     public function get($user_id, $manager_flag = false)
     {
-        if($manager_flag)
+        if ($manager_flag)
             $this->db->placehold("AND is_manager = ?", $manager_flag);
 
         $query = $this->db->placehold("
@@ -40,6 +40,20 @@ class ViberUsers extends Core
         WHERE user_id = ?
         $manager_flag
         ", $user_id);
+
+        $this->db->query($query);
+        $user = $this->db->result();
+
+        return $user;
+    }
+
+    public function get_user_by_chat_id($chat_id)
+    {
+        $query = $this->db->placehold("
+        SELECT * 
+        FROM s_viber_users
+        WHERE chat_id = ?
+        ", $chat_id);
 
         $this->db->query($query);
         $user = $this->db->result();
