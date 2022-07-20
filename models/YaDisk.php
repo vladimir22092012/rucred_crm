@@ -21,9 +21,6 @@ class YaDisk extends Core
                 $pak = ['second_pak' => 1];
         }
 
-        $this->Logs->add(['text' => $pak]);
-
-
         $order = $this->orders->get_order($order_id);
         $fio = $order->lastname . ' ' . mb_substr($order->firstname, 0, 1) . mb_substr($order->patronymic, 0, 1);
         $translit_fio = $this->translit($fio);
