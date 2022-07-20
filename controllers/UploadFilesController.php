@@ -28,6 +28,9 @@ class UploadFilesController extends Controller
     {
         if ($file = $this->request->files('file')) {
 
+            var_dump($file);
+            exit;
+
             $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
             $user_id = $this->request->post('user_id');
 
@@ -52,9 +55,6 @@ class UploadFilesController extends Controller
             if (!is_dir($path)) {
                 mkdir($path);
             }
-
-            var_dump($file);
-            exit;
 
             if (move_uploaded_file($file['tmp_name'], $path .'/'. $new_filename)) {
 
