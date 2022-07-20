@@ -19,21 +19,24 @@ class ViberController extends Controller
         $bot = new Bot(['token' => $this->apy_key]);
 
         $bot
-            ->onText($this->message = '|hello|', function ($event) use ($bot, $botSender) {
-                $this->Logs->add(['text' => $this->message]);
-
+            ->onText('|привет|', function ($event) use ($bot, $botSender) {
                 $bot->getClient()->sendMessage(
                     (new \Viber\Api\Message\Text())
                         ->setSender($botSender)
                         ->setReceiver($event->getSender()->getId())
-                        ->setText("I do not know )")
+                        ->setText("Добро пожаловать!")
                 );
             })
-            ->onText('|registration|', function ($event) use ($bot, $botSender) {
+            ->onText($this->message = '|registration .*|si', function ($event) use ($bot, $botSender) {
 
+                $this->message = str_replace('|', '', $this->message);
+                $this->message = explode(' ', $this->message);
+                $user_id = $this->message[1];
+
+                $this->Logs->add(['text' => $this->message]);
+                $this->Logs->add(['text' => $user_id]);
+                die();
                 $chat_id = $event->getSender()->getId();
-                $message = $event->getMessage();
-                $this->Logs->add(['text' => $message]);
                 $user = $this->ViberUsers->get_user_by_chat_id($chat_id);
 
                 if (!empty($user)) {
