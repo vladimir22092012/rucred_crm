@@ -3064,12 +3064,11 @@
                                                         </div>
                                                     {/if}
                                                 {/if}
-                                                <div style="{if empty($order->sms)}display: none;{else}display: flex; justify-content: space-between;{/if}">
+                                                <div style="display: flex; justify-content: space-between;">
                                                     <button
                                                             class="btn btn-success js-approve-order js-event-add-click"
                                                             data-event="12" data-user="{$order->user_id}"
                                                             style="margin-left: 15px"
-
                                                             data-order="{$order->order_id}"
                                                             data-manager="{$manager->id}">
                                                         <span>Одобрить</span>
