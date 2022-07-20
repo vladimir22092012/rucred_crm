@@ -3064,7 +3064,7 @@
                                                         </div>
                                                     {/if}
                                                 {/if}
-                                                <div style="{if empty($order->sms) && $enough_scans == 0}display: none;{else}display: flex; justify-content: space-between;{/if}">
+                                                <div style="{if empty($order->sms)}display: none;{else}display: flex; justify-content: space-between;{/if}">
                                                     <button
                                                             class="btn btn-success js-approve-order js-event-add-click"
                                                             data-event="12" data-user="{$order->user_id}"
