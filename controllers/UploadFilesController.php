@@ -53,7 +53,7 @@ class UploadFilesController extends Controller
                 mkdir($path);
             }
 
-            var_dump(move_uploaded_file($file['tmp_name'], $path .'/'. $new_filename));
+            var_dump($file['tmp_name'], $path .'/'. $new_filename);
             exit;
 
             if (move_uploaded_file($file['tmp_name'], $path .'/'. $new_filename)) {
