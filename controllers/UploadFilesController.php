@@ -66,6 +66,15 @@ class UploadFilesController extends Controller
                         'type' => $type
                     ));
 
+                    var_dump($this->Scans->add_scan(array(
+                        'user_id' => $user_id,
+                        'name' => $new_filename,
+                        'type' => $type,
+                        'status' => 0,
+                        'order_id' => (int)$this->request->post('order_id')
+                    )));
+                    exit;
+
 
                     $file_id = $this->Scans->add_scan(array(
                         'user_id' => $user_id,
@@ -106,7 +115,7 @@ class UploadFilesController extends Controller
             }
         }
 
-        echo json_encode(['success' => 1, 'message' => 'Файл загружен успешно'], JSON_THROW_ON_ERROR);
+        echo json_encode(['success' => 1, 'message' => 'Файл загружен успешно']);
         exit;
     }
 
