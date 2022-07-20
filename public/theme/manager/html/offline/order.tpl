@@ -58,8 +58,6 @@
             $('.new_scan').on('change', function (e) {
                 let form_data = new FormData();
 
-                console.log(e.target.files[0]);
-
                 form_data.append('file', e.target.files[0]);
                 form_data.append('user_id', $(this).attr('data-user'));
                 form_data.append('type', 'document');
@@ -68,6 +66,8 @@
                 form_data.append('order_id', $(this).attr('data-order'));
                 form_data.append('notreplace', '1');
                 form_data.append('is_it_scans', 'yes');
+
+                console.log(form_data);
 
                 $.ajax({
                     url: '/upload_files',
