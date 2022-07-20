@@ -7,6 +7,7 @@ use Viber\Client;
 class ViberController extends Controller
 {
     protected $apy_key = '4f668e111aa7defb-b74d69004af9235c-371097ebb1cfa25e';
+    protected $message;
 
     public function fetch()
     {
@@ -18,8 +19,8 @@ class ViberController extends Controller
         $bot = new Bot(['token' => $this->apy_key]);
 
         $bot
-            ->onText($text = '|hello|', function ($event) use ($bot, $botSender) {
-                $this->Logs->add(['text' => $text]);
+            ->onText($this->message = '|hello|', function ($event) use ($bot, $botSender) {
+                $this->Logs->add(['text' => $this->message]);
 
                 $bot->getClient()->sendMessage(
                     (new \Viber\Api\Message\Text())
