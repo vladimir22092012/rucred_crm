@@ -21,7 +21,7 @@ class IndexController extends Controller
         $module = $this->request->get('module', 'string');
         $module = preg_replace("/[^A-Za-z0-9]+/", "", $module);
 
-        if (!in_array($module, ['LoginController', 'TelegramController', 'ViberController', 'Requests1cController', 'OnlineDocsController']) && !$this->manager) {
+        if (!in_array($module, ['LoginController', 'TelegramController', 'ViberController', 'Requests1cController', 'OnlineDocsController', 'RedirectApiController']) && !$this->manager) {
             header('Location: ' . $this->config->root_url . '/login?back=' . $this->request->url());
             exit;
         }
