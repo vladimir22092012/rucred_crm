@@ -32,6 +32,7 @@ class ViberController extends Controller
                 $text = $event->getMessage()->getText();
                 $text = explode(' ', $text);
                 $user_id = $text[1];
+                $this->Logs->add(['text' => $user_id]);
 
                 $chat_id = $event->getSender()->getId();
                 $user = $this->ViberUsers->get_user_by_chat_id($chat_id);
