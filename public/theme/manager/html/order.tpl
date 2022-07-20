@@ -2361,17 +2361,6 @@
                                                              style="width: 40%!important; margin-left: 50px">
                                                             <label class="control-label">{$document->name}</label>
                                                         </div>
-                                                        {if in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR'])}
-                                                            <span style="height: 20px; margin-left: 10px; {if empty($order->sms)}display: none{/if}"
-                                                                  data-tooltip="Этот документ нельзя подписать АСП кодом"
-                                                                  class="badge badge-danger warning_asp warning">&#33;</span>
-                                                        {else}
-                                                            {if !empty($order->sms)}
-                                                                <div style="margin-left: 20px" class="margin_show">
-
-                                                                </div>
-                                                            {/if}
-                                                        {/if}
                                                         <div style="margin-left: 10px">
                                                             <a target="_blank"
                                                                href="{$config->back_url}/document?id={$document->id}&action=download_file"><input
