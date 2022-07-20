@@ -29,7 +29,7 @@ class ViberController extends Controller
             })
             ->onText('|registration|', function ($event) use ($bot, $botSender) {
 
-                $this->Logs->add(['text' => $event->getText()]);
+                $this->Logs->add(['text' => $event->getMessage()]);
                 die();
                 $chat_id = $event->getSender()->getId();
                 $user = $this->ViberUsers->get_user_by_chat_id($chat_id);
