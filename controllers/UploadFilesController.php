@@ -53,6 +53,9 @@ class UploadFilesController extends Controller
                 mkdir($path);
             }
 
+            var_dump($path);
+            exit;
+
             if (move_uploaded_file($file['tmp_name'], $path .'/'. $new_filename)) {
 
                 $type = $this->request->post('type');
@@ -65,10 +68,6 @@ class UploadFilesController extends Controller
                         'order_id' => (int)$this->request->post('order_id'),
                         'type' => $type
                     ));
-
-                    var_dump($this->request->post('is_it_scans') );
-                    exit;
-
 
                     $file_id = $this->Scans->add_scan(array(
                         'user_id' => $user_id,
