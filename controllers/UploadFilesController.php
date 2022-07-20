@@ -28,7 +28,7 @@ class UploadFilesController extends Controller
     {
         if ($file = $this->request->files('file')) {
 
-            var_dump($file);
+            var_dump($_FILES);
             exit;
 
             $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
