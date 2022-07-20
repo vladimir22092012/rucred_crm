@@ -1263,7 +1263,7 @@ class NeworderController extends Controller
                         $email,
                         'RuCred | Ссылка для привязки Viber',
                         'Ваша ссылка для привязки Viber:',
-                        '<h1>viber://pa?chatURI=rucred_bot</h1>'
+                        '<h1>viber://pa?chatURI=rucred_bot&context=testnew</h1>'
                     );
 
                     $user =
