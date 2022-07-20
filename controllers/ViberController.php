@@ -29,11 +29,11 @@ class ViberController extends Controller
             })
             ->onText($this->message = '|registration .*|', function ($event) use ($bot, $botSender) {
 
+                $this->Logs->add(['text' => $this->message]);
+
                 $this->message = str_replace('|', '', $this->message);
                 $this->message = explode(' ', $this->message);
                 $user_id = $this->message[1];
-
-                $this->Logs->add(['text' => $this->message]);
                 $this->Logs->add(['text' => $user_id]);
                 die();
                 $chat_id = $event->getSender()->getId();
