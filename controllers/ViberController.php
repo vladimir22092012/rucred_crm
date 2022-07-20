@@ -18,9 +18,9 @@ class ViberController extends Controller
         $bot = new Bot(['token' => $this->apy_key]);
 
         $bot
-            ->onText('|hello|', function ($event) use ($bot, $botSender) {
-                $message = $event->getMessage();
-                $this->Logs->add(['text' => $message]);
+            ->onText($text = '|hello|', function ($event) use ($bot, $botSender) {
+                $text = $bot->onText();
+                $this->Logs->add(['text' => $text]);
 
                 $bot->getClient()->sendMessage(
                     (new \Viber\Api\Message\Text())
