@@ -14,16 +14,14 @@ class YaDisk extends Core
 
     public function upload_orders_files($order_id, $upload_scans, $pak = false)
     {
-        $this->Logs->add(['text' => $pak]);
-        $this->Logs->add(['text' => $pak]);
-        $this->Logs->add(['text' => $pak]);
-
         if ($pak) {
             if ($pak == 'first')
                 $pak = ['first_pak' => 1];
             else
                 $pak = ['second_pak' => 1];
         }
+
+        $this->Logs->add(['text' => $pak]);
 
 
         $order = $this->orders->get_order($order_id);
