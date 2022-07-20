@@ -22,8 +22,6 @@ class SendYaDiskCron extends Core
 
         $crons = $this->YaDiskCron->gets();
 
-        $this->Logs->add(['text' => $crons]);
-
         foreach ($crons as $cron){
 
             $type = '';
@@ -49,7 +47,8 @@ class SendYaDiskCron extends Core
 
             $users_docs = $this->Documents->get_documents(['order_id' => $cron->order_id, $cron->pak => 1]);
 
-            $this->Logs->add(['text' => $users_docs]);
+            $this->Logs->add(['text' => count($scans)]);
+            $this->Logs->add(['text' => count($users_docs)]);
 
             try {
                 $upload_scans = 0;
