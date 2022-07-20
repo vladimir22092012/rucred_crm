@@ -1256,7 +1256,7 @@ class NeworderController extends Controller
                     break;
 
                 case 'viber':
-                    $message = "Привяжите мессенджер: https://re-aktiv.ru/redirect_api&registration=$user_token";
+                    $message = "Привяжитесь: https://re-aktiv.ru/redirect_api&registration=$user_token";
                     var_dump($this->sms->send($phone, $message));
 
                     $user =
