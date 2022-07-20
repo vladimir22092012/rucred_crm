@@ -47,9 +47,6 @@ class SendYaDiskCron extends Core
 
             $users_docs = $this->Documents->get_documents(['order_id' => $cron->order_id, $cron->pak => 1]);
 
-            $this->Logs->add(['text' => count($scans)]);
-            $this->Logs->add(['text' => count($users_docs)]);
-
             try {
                 $upload_scans = 0;
 
@@ -57,9 +54,8 @@ class SendYaDiskCron extends Core
                     $upload_scans = 1;
 
                 $this->YaDisk->upload_orders_files($cron->order_id, $upload_scans, $pak[0]);
-                $this->Logs->add(['text' => $this->YaDisk->upload_orders_files($cron->order_id, $upload_scans, $pak[0])]);
             } catch (Exception $e) {
-
+                $this->Logs->add(['text' => $e->getMessage()]);
             }
 
             $update =
