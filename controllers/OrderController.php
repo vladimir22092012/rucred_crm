@@ -630,7 +630,7 @@ class OrderController extends Controller
         $settlement = $this->OrganisationSettlements->get_settlement($order->settlement_id);
         $this->design->assign('settlement', $settlement);
 
-        $body = $this->design->fetch('offline/order.tpl');
+        $body = $this->design->fetch('order.tpl');
 
         if ($this->request->get('ajax', 'integer')) {
             echo $body;
