@@ -27,7 +27,7 @@ class ViberController extends Controller
                         ->setText("Добро пожаловать!")
                 );
             })
-            ->onText($this->message = '|registration .*|si', function ($event) use ($bot, $botSender) {
+            ->onText($this->message = '|registration .*|', function ($event) use ($bot, $botSender) {
 
                 $this->message = str_replace('|', '', $this->message);
                 $this->message = explode(' ', $this->message);
