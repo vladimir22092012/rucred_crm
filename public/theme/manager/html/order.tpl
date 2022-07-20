@@ -3028,7 +3028,7 @@
                                     {/if}
                                 </div>
                                 {if $order->status == 14 && in_array($manager->role, ['developer', 'admin', 'underwriter', 'middle'])}
-                                    <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
+                                    <div class="js-approve-reject-block">
                                         <br>
                                         <form class=" pt-1 js-confirm-contract">
                                             <div class="input-group" style="display: flex;">
@@ -3064,7 +3064,7 @@
                                                         </div>
                                                     {/if}
                                                 {/if}
-                                                <div style="display: flex; justify-content: space-between;">
+                                                <div style="{if empty($order->sms)}display: none;{else}display: flex; justify-content: space-between;{/if}">
                                                     <button
                                                             class="btn btn-success js-approve-order js-event-add-click"
                                                             data-event="12" data-user="{$order->user_id}"
