@@ -33,6 +33,8 @@ class Soap1c extends Core
     {
         if ($order = $this->orders->get_order($order_id)) {
 
+            $contract = $this->contracts->get_contract($order->contract_id);
+            
             $company = $this->companies->get_company(2);
             $order->regaddress = $this->addresses->get_address($order->regaddress_id);
             $order->faktaddress = $this->addresses->get_address($order->faktaddress_id);
@@ -43,7 +45,7 @@ class Soap1c extends Core
 
             $item = new StdClass();
 
-            $item->ID = $order->uid;
+            $item->ID = empty($contract) ? $order->uid : $contract->number;
             $item->Дата = date('YmdHis', strtotime($order->date));
             $item->Срок = $order->period;
             $item->Периодичность = 'День';
