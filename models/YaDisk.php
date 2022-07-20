@@ -14,6 +14,10 @@ class YaDisk extends Core
 
     public function upload_orders_files($order_id, $upload_scans, $pak = false)
     {
+        $this->Logs->add(['text' => $pak]);
+        $this->Logs->add(['text' => $pak]);
+        $this->Logs->add(['text' => $pak]);
+
         if ($pak) {
             if ($pak == 'first')
                 $pak = ['first_pak' => 1];
@@ -30,8 +34,6 @@ class YaDisk extends Core
         $date = date('Y-m-d', strtotime($order->probably_start_date));
         $bank = ($order->settlement_id == 2) ? 'МИнБанк' : 'РосДорБанк';
         $personal_number = $order->personal_number;
-
-        $this->Logs->add(['text' => $pak]);
 
         if ($upload_scans == 1) {
             $upload_files = $this->Scans->get_scans_by_order_id($order_id, $pak);
