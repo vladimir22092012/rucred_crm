@@ -58,6 +58,8 @@
             $('.new_scan').on('change', function (e) {
                 let form_data = new FormData();
 
+                console.log(e.target.files[0]);
+
                 form_data.append('file', e.target.files[0]);
                 form_data.append('user_id', $(this).attr('data-user'));
                 form_data.append('type', 'document');
