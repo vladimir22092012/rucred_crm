@@ -266,6 +266,7 @@
                 let type = '';
                 let same_flag = 0;
                 let phone = $(this).parent().find('.phone_num').val();
+                let email = $('input[name="email"]').val();
 
                 if ($(this).hasClass('confirm_telegram')) {
                     if ($('input[name="telegram_same"]').is(':checked')) {
@@ -290,7 +291,8 @@
                         action: 'confirm_messengers',
                         type: type,
                         phone: phone,
-                        user_id: user_id
+                        user_id: user_id,
+                        email: email
                     },
                     success: function (resp) {
                         if (resp['success']) {
@@ -791,8 +793,7 @@
                                                        value="1">
                                                 <label class="viber_same_label">Совпадает с номером мобильного</label>
                                                 <div style="margin-left: 20px" class="btn btn-success confirm_viber"
-                                                     data-user="{$user->id}">
-                                                    Подтвердить
+                                                     data-user="{$user->id}">Подтвердить
                                                 </div>
                                                 <br><br>
                                             </div>

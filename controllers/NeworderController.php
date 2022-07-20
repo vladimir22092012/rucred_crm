@@ -1229,6 +1229,7 @@ class NeworderController extends Controller
         $type = $this->request->post('type');
         $phone = $this->request->post('phone');
         $user_id = $this->request->post('user_id');
+        $email = $this->request->post('email');
         $user_token = md5(time());
         $user_token = substr($user_token, 1, 10);
 
@@ -1256,8 +1257,14 @@ class NeworderController extends Controller
                     break;
 
                 case 'viber':
-                    $message = "Привяжитесь: https://re-aktiv.ru/redirect_api&registration=$user_token";
-                    var_dump($this->sms->send($phone, $message));
+                    $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+                    $mailResponse = $mailService->send(
+                        'rucred@ucase.live',
+                        $email,
+                        'RuCred | Ссылка для привязки Viber',
+                        'Ваша ссылка для привязки Viber:',
+                        '<h1>viber://pa?chatURI=rucred_bot</h1>'
+                    );
 
                     $user =
                         [
