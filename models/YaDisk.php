@@ -31,6 +31,8 @@ class YaDisk extends Core
         $bank = ($order->settlement_id == 2) ? 'МИнБанк' : 'РосДорБанк';
         $personal_number = $order->personal_number;
 
+        $this->Logs->add(['text' => $pak]);
+
         if ($upload_scans == 1) {
             $upload_files = $this->Scans->get_scans_by_order_id($order_id, $pak);
         } else {
