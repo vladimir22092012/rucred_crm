@@ -24,7 +24,44 @@ class Percents extends Core
         if(!empty($contracts)){
             foreach ($contracts as $contract)
             {
-                $percents_summ = round($contract->loan_body_summ / 100 * $contract->base_percent, 2);
+                $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $contract->order_id, 'actual' => 1]);
+                $payment_schedule = json_decode($payment_schedule->schedule, true);
+                $now = date('Y-m-d');
+                $start_period = '';
+                $end_period = '';
+
+                foreach ($payment_schedule as $payday => $payment) {
+                    if ($payday != 'result') {
+                        $payday = date('Y-m-d', strtotime($payday));
+                        if ($payday > $now) {
+                            $percent = $payment['loan_percents_pay'];
+                            $end_period = $payday;
+                            break;
+                        }
+                        $start_period = $payday;
+                    }
+                }
+
+                $start_period = date('Y-m-d 00:00:00', strtotime($start_period));
+                $end_period = date('Y-m-d 23:59:59', strtotime($end_period));
+
+                $query = $this->db->placehold("
+                SELECT count(amount) as count_amount
+                FROM s_operations
+                WHERE order_id = ?
+                AND created between ? and ?
+                ", $contract->order_id, (string)$start_period, (string)$end_period);
+
+                $this->db->query($query);
+
+                $all_sum_percents = $this->db->result('count_amount');
+
+                $start_period = new DateTime($start_period);
+                $end_period = new DateTime($end_period);
+                $period = date_diff($start_period, $end_period)->days;
+                $now_day = date('d');
+
+                $percents_summ = round(($percent * ($now_day/$period)) - $all_sum_percents, 2);
                 $this->contracts->update_contract($contract->id, array(
                     'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ
                 ));
