@@ -51,7 +51,7 @@ class ViberController extends Controller
                             ->setText("Вы успешно привязали аккаунт")
                     );
 
-                    $this->ViberUsers->add(['chat_id' => $event->getSender()->getId()], $user_id);
+                    $this->ViberUsers->update(['chat_id' => $event->getSender()->getId()], $user_id);
                 }
             })
             ->run();
