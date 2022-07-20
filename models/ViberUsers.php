@@ -15,13 +15,13 @@ class ViberUsers extends Core
         return $id;
     }
 
-    public function update($user)
+    public function update($user, $user_id)
     {
         $query = $this->db->placehold("
         UPDATE s_viber_users
         SET ?%
-        WHERE token = ?
-        ", $user, $user['token']);
+        WHERE user_id = ?
+        ", $user, $user_id);
 
         $this->db->query($query);
         $id = $this->db->insert_id();
