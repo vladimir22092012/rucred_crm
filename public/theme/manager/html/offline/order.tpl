@@ -67,8 +67,6 @@
                 form_data.append('notreplace', '1');
                 form_data.append('is_it_scans', 'yes');
 
-                console.log(form_data);
-
                 $.ajax({
                     url: '/upload_files',
                     data: form_data,
@@ -76,7 +74,7 @@
                     processData: false,
                     contentType: false,
                     success: function () {
-                        //window.location.reload();
+                        window.location.reload();
                     }
                 });
             });
