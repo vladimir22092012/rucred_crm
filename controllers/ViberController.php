@@ -11,10 +11,15 @@ class ViberController extends Controller
     public function fetch()
     {
 
-        $botSender = new Sender([
-            'name' => 'Whois bot',
-            'avatar' => 'https://developers.viber.com/img/favicon.ico',
-        ]);
+        $registration = $this->request->get('registration');
+
+        if (!empty($registration))
+            $this->registration($registration);
+
+            $botSender = new Sender([
+                'name' => 'Whois bot',
+                'avatar' => 'https://developers.viber.com/img/favicon.ico',
+            ]);
 
         $bot = new Bot(['token' => $this->apy_key]);
 
@@ -32,14 +37,14 @@ class ViberController extends Controller
                 $chat_id = $event->getSender()->getId();
                 $user = $this->ViberUsers->get_user_by_chat_id($chat_id);
 
-                if(!empty($user)){
+                if (!empty($user)) {
                     $bot->getClient()->sendMessage(
                         (new \Viber\Api\Message\Text())
                             ->setSender($botSender)
                             ->setReceiver($event->getSender()->getId())
                             ->setText("Такой пользователь уже зарегистрирован")
                     );
-                }else{
+                } else {
                     $bot->getClient()->sendMessage(
                         (new \Viber\Api\Message\Text())
                             ->setSender($botSender)
@@ -67,5 +72,11 @@ class ViberController extends Controller
             echo "Error: " . $e . "\n";
         }
 
+    }
+
+    private function registration($token)
+    {
+        header("Location: viber://pa?chatURI=rucred_bot&registration=$token");
+        exit;
     }
 }
