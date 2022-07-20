@@ -66,13 +66,7 @@ class UploadFilesController extends Controller
                         'type' => $type
                     ));
 
-                    var_dump($this->Scans->add_scan(array(
-                        'user_id' => $user_id,
-                        'name' => $new_filename,
-                        'type' => $type,
-                        'status' => 0,
-                        'order_id' => (int)$this->request->post('order_id')
-                    )));
+                    var_dump($this->request->post('is_it_scans') );
                     exit;
 
 
