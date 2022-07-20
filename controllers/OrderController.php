@@ -815,22 +815,6 @@ class OrderController extends Controller
             exit;
         }
 
-        if (!empty($order->sms)) {
-            $count_scans_without_asp = 0;
-
-            foreach ($scans as $scan) {
-                foreach ($users_docs as $doc) {
-                    if ($doc->template == $scan->type && in_array($scan->type, ['soglasie_rukred_rabotadatel.tpl', 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl']))
-                        $count_scans_without_asp++;
-                }
-            }
-
-            if ($count_scans_without_asp < 2){
-                echo json_encode(['error' => 'Проверьте сканы для форм 03.03 и 03.04']);
-                exit;
-            }
-        }
-
         if (count($scans) < count($users_docs) && empty($order->sms)){
             echo json_encode(['error' => 'Для одобрения заявки нужны все сканы либо пэп!']);
             exit;
