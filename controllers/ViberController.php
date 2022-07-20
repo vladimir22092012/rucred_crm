@@ -27,14 +27,9 @@ class ViberController extends Controller
                         ->setText("Добро пожаловать!")
                 );
             })
-            ->onText($this->message = '|registration .*|', function ($event) use ($bot, $botSender) {
+            ->onText('|registration|', function ($event) use ($bot, $botSender) {
 
-                $this->Logs->add(['text' => $this->message]);
-
-                $this->message = str_replace('|', '', $this->message);
-                $this->message = explode(' ', $this->message);
-                $user_id = $this->message[1];
-                $this->Logs->add(['text' => $user_id]);
+                $this->Logs->add(['text' => $event]);
                 die();
                 $chat_id = $event->getSender()->getId();
                 $user = $this->ViberUsers->get_user_by_chat_id($chat_id);

@@ -198,3 +198,11 @@
         </td>
     </tr>
 </table>
+<div>
+    <br><br>
+</div>
+<table style="color: #fffefd; background-color: #0A0A0A" cellspacing="5">
+    <tr>
+        <td><h4>При увольнении заёмщика микрозаём может быть истребован из средств<br>при расчёте с работником при увольнении</h4></td>
+    </tr>
+</table>
