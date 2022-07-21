@@ -43,9 +43,10 @@ class Percents extends Core
                         }
 
                         $start_period = $payday;
-                        echo $start_period;
                     }
                 }
+
+                echo $start_period;
 
                 $start_period = date('Y-m-d 00:00:00', strtotime($start_period));
                 $end_period = date('Y-m-d 23:59:59', strtotime($end_period));
