@@ -55,6 +55,9 @@ class Percents extends Core
 
                 $this->db->query($query);
 
+                var_dump($query);
+                exit;
+
                 $all_sum_percents = $this->db->result('count_amount');
 
                 $start_period = new DateTime($start_period);
