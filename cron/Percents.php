@@ -46,10 +46,11 @@ class Percents extends Core
                     }
                 }
 
-                echo $start_period;
-
                 $start_period = date('Y-m-d 00:00:00', strtotime($start_period));
                 $end_period = date('Y-m-d 23:59:59', strtotime($end_period));
+
+                var_dump($start_period);
+                var_dump($end_period);
 
                 $query = $this->db->placehold("
                 SELECT count(amount) as count_amount
