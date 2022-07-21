@@ -120,13 +120,12 @@ class IndexController extends Controller
             FROM s_tickets
             WHERE group_id = ?
             AND creator != ?
-            AND (executor = 0 OR executor is null)
             and status != 6
             and not exists (SELECT *
             FROM s_tickets_notifications
             WHERE ticket_id = s_tickets.id
             AND user_id = ?)
-            ", $this->manager->id, $this->manager->id, $this->manager->id);
+            ", $this->manager->group_id, $this->manager->id, $this->manager->id);
 
                 $this->db->query($query);
                 $count_in = $this->db->result('count');
