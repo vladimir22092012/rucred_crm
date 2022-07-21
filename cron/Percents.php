@@ -24,8 +24,6 @@ class Percents extends Core
         if(!empty($contracts)){
             foreach ($contracts as $contract)
             {
-                var_dump($start_period);
-
                 $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $contract->order_id, 'actual' => 1]);
                 $payment_schedule = json_decode($payment_schedule->schedule, true);
                 $now = date('Y-m-d');
@@ -58,6 +56,8 @@ class Percents extends Core
                         $start_period = $payday;
                     }
                 }
+
+                var_dump($start_period);
 
                 $start_period = date('Y-m-d 00:00:00', strtotime($start_period));
                 $end_period = date('Y-m-d 23:59:59', strtotime($end_period));
