@@ -36,10 +36,12 @@ class Percents extends Core
                         if ($payday > $now) {
                             $percent = $payment['loan_percents_pay'];
                             $end_period = $payday;
+
+                            if(empty($start_period))
+                                $start_period = date('Y-m-d 00:00:00', strtotime($contract->issuance_date));
                             break;
                         }
 
-                        var_dump($payday);
                         $start_period = $payday;
                     }
                 }
