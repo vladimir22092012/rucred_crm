@@ -24,6 +24,10 @@ class Percents extends Core
         if(!empty($contracts)){
             foreach ($contracts as $contract)
             {
+                if($contract->id != 25)
+                    continue;
+
+
                 $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $contract->order_id, 'actual' => 1]);
                 $payment_schedule = json_decode($payment_schedule->schedule, true);
                 $now = date('Y-m-d');
@@ -77,7 +81,16 @@ class Percents extends Core
                 $period = date_diff($start_period, $end_period)->days;
                 $now_day = date('d');
 
+                var_dump($all_sum_percents);
+                var_dump($start_period);
+                var_dump($end_period);
+                var_dump($period);
+                var_dump($now_day);
+
                 $percents_summ = round(($percent * ($now_day/$period)) - $all_sum_percents, 2);
+
+                var_dump($percents_summ);
+                /*
 
                 $this->contracts->update_contract($contract->id, array(
                     'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ
@@ -96,6 +109,7 @@ class Percents extends Core
                         'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ,
                     ));
                 }
+                */
             }
         }
     }
