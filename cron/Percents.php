@@ -28,6 +28,7 @@ class Percents extends Core
                 $payment_schedule = json_decode($payment_schedule->schedule, true);
                 $now = date('Y-m-d');
                 $end_period = '';
+                $start_period = '';
 
                 uksort(
                     $payment_schedule,
@@ -47,7 +48,7 @@ class Percents extends Core
                             $percent = $payment['loan_percents_pay'];
                             $end_period = $payday;
 
-                            if(!isset($start_period))
+                            if(empty($start_period))
                                 $start_period = date('Y-m-d 00:00:00', strtotime($contract->issuance_date));
 
                             break;
