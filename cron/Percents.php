@@ -80,8 +80,7 @@ class Percents extends Core
                 $end_period = new DateTime($end_period);
                 $period = date_diff($start_period, $end_period)->days;
                 $now_day = new DateTime(date('Y-m-d'));
-                $day_by_period = date_diff($now_day, $start_period);
-                var_dump($day_by_period);
+                $day_by_period = date_diff($now_day, $start_period)->days;
 
                 $percents_summ = round(($percent * ($day_by_period/$period)) - $all_sum_percents, 2);
 
