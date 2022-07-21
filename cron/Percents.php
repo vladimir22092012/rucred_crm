@@ -72,7 +72,7 @@ class Percents extends Core
 
                 $all_sum_percents = $this->db->result('sum_amount');
 
-                var_dump($all_sum_percents);
+                var_dump($start_period);
 
 
 
