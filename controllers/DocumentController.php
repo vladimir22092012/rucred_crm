@@ -53,6 +53,9 @@ class DocumentController extends Controller
         if(!empty($document->asp_id)){
             $code_asp = $this->AspCodes->get_code(['id' => $document->asp_id]);
             $this->design->assign('code_asp', $code_asp);
+
+            $rucred_asp = $this->AspCodes->get_code(['type' => 'rucred_sms', 'order_id' => $document->params->order_id]);
+            $this->design->assign('rucred_asp', $rucred_asp);
         }
 
         $loan_id = $document->params->loan_type;

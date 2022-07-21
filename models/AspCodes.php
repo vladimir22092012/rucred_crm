@@ -40,14 +40,21 @@ class AspCodes extends Core
         $where = '';
 
         if (isset($param['id']))
-            $where = $this->db->placehold("WHERE id = ?", $param['id']);
+            $where = $this->db->placehold("AND id = ?".PHP_EOL, $param['id']);
 
         if (isset($param['code']))
-            $where = $this->db->placehold("WHERE code = ?", $param['code']);
+            $where = $this->db->placehold("AND code = ?".PHP_EOL, $param['code']);
+
+        if (isset($param['order_id']))
+            $where = $this->db->placehold("AND order_id = ?".PHP_EOL, $param['order_id']);
+
+        if (isset($param['type']))
+            $where = $this->db->placehold("AND `type` = ?".PHP_EOL, $param['type']);
 
         $query = $this->db->placehold("
         SELECT * 
         FROM s_asp_codes
+        WHERE 1
         $where
         ");
 
