@@ -38,6 +38,8 @@ class Percents extends Core
                             $end_period = $payday;
                             break;
                         }
+
+                        var_dump($payday);
                         $start_period = $payday;
                     }
                 }
@@ -55,7 +57,6 @@ class Percents extends Core
 
                 $this->db->query($query);
 
-                var_dump($query);
                 /*
 
                 $all_sum_percents = $this->db->result('count_amount');
