@@ -3933,7 +3933,8 @@ class OfflineOrderController extends Controller
         $payment->recepient = 9725055162;
         $payment->user_id = $order->user_id;
         $payment->number = '40701810300000000347';
-        $payment->description = 'Платежный агент по договору ' . $order->uid. ' '.rand(0,200);
+        $payment->description = "Оплата по договору микрозайма № $order->uid от $order->probably_start_date
+            // заемщик $order->lastname $order->firstname $order->patronymic ИНН $order->inn";
         $payment->user_acc_number = $default_requisit->number;
         $payment->user_bik = $default_requisit->bik;
         $payment->users_inn = $order->inn;

@@ -304,6 +304,10 @@
                                 <a class="" href="managers/" aria-expanded="false"><i
                                             class="mdi mdi-account-multiple-outline"></i><span class="hide-menu">Пользователи</span></a>
                             </li>
+                            <li {if in_array($module, ['GraphicConstructorController'])}class="active"{/if}>
+                                <a class="" href="graphic_constructor/" aria-expanded="false"><i
+                                            class="mdi mdi-account-multiple-outline"></i><span class="hide-menu">Тест-калькулятор</span></a>
+                            </li>
                         {/if}
                         {if in_array('managers', $manager->permissions)}
                             <li {if in_array($module, ['ChangelogsController'])}class="active"{/if}>
