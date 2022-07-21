@@ -3805,6 +3805,19 @@ class OfflineOrderController extends Controller
 
                 $this->AspCodes->add_code($asp_log);
 
+                $asp_log =
+                    [
+                        'user_id' => $user_id,
+                        'order_id' => $order_id,
+                        'code' => $code,
+                        'created' => date('Y-m-d H:i:s'),
+                        'type' => 'rucred_sms',
+                        'recepient' => $phone,
+                        'manager_id' => $this->manager->id
+                    ];
+
+                $this->AspCodes->add_code($asp_log);
+
                 $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
                 $payment_schedule = json_decode($payment_schedule->schedule, true);
 
