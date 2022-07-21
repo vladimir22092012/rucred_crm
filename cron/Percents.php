@@ -58,8 +58,6 @@ class Percents extends Core
                     }
                 }
 
-                var_dump($start_period);
-
                 $start_period = date('Y-m-d 00:00:00', strtotime($start_period));
                 $end_period = date('Y-m-d 23:59:59', strtotime($end_period));
 
@@ -74,11 +72,6 @@ class Percents extends Core
                 $this->db->query($query);
 
                 $all_sum_percents = $this->db->result('sum_amount');
-
-                var_dump($start_period);
-
-
-
                 $start_period = new DateTime($start_period);
                 $end_period = new DateTime($end_period);
                 $period = date_diff($start_period, $end_period)->days;
@@ -86,10 +79,6 @@ class Percents extends Core
 
                 $percents_summ = round(($percent * ($now_day/$period)) - $all_sum_percents, 2);
 
-                var_dump($contract->id);
-                var_dump($percents_summ);
-
-                /*
                 $this->contracts->update_contract($contract->id, array(
                     'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ
                 ));
@@ -107,7 +96,6 @@ class Percents extends Core
                         'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ,
                     ));
                 }
-                */
             }
         }
     }
