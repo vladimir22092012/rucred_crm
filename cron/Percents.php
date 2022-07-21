@@ -49,6 +49,7 @@ class Percents extends Core
                 SELECT count(amount) as count_amount
                 FROM s_operations
                 WHERE order_id = ?
+                AND `type` = 'PERCENTS'
                 AND created between ? and ?
                 ", $contract->order_id, (string)$start_period, (string)$end_period);
 
