@@ -84,9 +84,6 @@ class Percents extends Core
 
                 $percents_summ = round(($percent * ($day_by_period/$period)) - $all_sum_percents, 2);
 
-                var_dump($percents_summ);
-                /*
-
                 $this->contracts->update_contract($contract->id, array(
                     'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ
                 ));
@@ -104,7 +101,6 @@ class Percents extends Core
                         'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ,
                     ));
                 }
-                */
             }
         }
     }
