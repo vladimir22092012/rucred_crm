@@ -4,8 +4,7 @@ class AspCodes extends Core
 {
     public function add_code($code)
     {
-        $uid = rand(000000000, 999999999);
-        $code['uid'] = $uid;
+        $code['uid'] = $this->uniq_id();
 
         $query = $this->db->placehold("
         INSERT INTO s_asp_codes
@@ -15,6 +14,25 @@ class AspCodes extends Core
         $id = $this->db->insert_id();
 
         return $id;
+    }
+
+    public function uniq_id(){
+
+        $uid = rand(000000000, 999999999);
+
+        $query = $this->db->placehold("
+        SELECT * 
+        FROM s_asp_codes
+        WHERE uid = ?
+        ", $uid);
+
+        $this->db->query($query);
+        $code = $this->db->result();
+
+        if(!empty($code))
+            $this->uniq_id();
+        else
+            return $code;
     }
 
     public function get_code($param = null)
