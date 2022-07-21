@@ -1073,7 +1073,7 @@ class ClientController extends Controller
 
             foreach ($orders as $order) {
                 $uid = explode(' ', $order->uid);
-                $uid[3] = (string)$number;
+                $uid[1] = (string)$number;
                 $uid = implode(' ', $uid);
 
                 $this->orders->update_order($order->id, ['uid' => $uid]);
