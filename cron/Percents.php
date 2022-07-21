@@ -29,6 +29,17 @@ class Percents extends Core
                 $now = date('Y-m-d');
                 $end_period = '';
 
+                uksort(
+                    $payment_schedule,
+                    function ($a, $b) {
+
+                        if ($a == $b) {
+                            return 0;
+                        }
+
+                        return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+                    });
+
                 foreach ($payment_schedule as $payday => $payment) {
                     if ($payday != 'result') {
                         $payday = date('Y-m-d', strtotime($payday));
