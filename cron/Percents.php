@@ -43,6 +43,7 @@ class Percents extends Core
                         }
 
                         $start_period = $payday;
+                        var_dump($start_period);
                     }
                 }
 
