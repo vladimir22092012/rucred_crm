@@ -541,7 +541,7 @@
                                             />
                                             <input type="text" style="width: 180px; margin-left: 25px"
                                                    name="birth"
-                                                   class="form-control birth_date" value="{$order->birth|date}">
+                                                   class="form-control birth_date" {if $order->birth}value="{$order->birth|date}"{else}value="21.07.2004"{/if}>
                                         </div>
                                         <br>
                                         <div class="phone_edit_form" style="width: 100%">

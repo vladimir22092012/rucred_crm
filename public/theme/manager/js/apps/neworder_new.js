@@ -14,15 +14,6 @@ $(function () {
         },
     });
 
-    $('.birth_date').daterangepicker({
-        singleDatePicker: true,
-        showDropdowns: true,
-        startDate: moment().subtract(18, 'years'),
-        locale: {
-            format: 'DD.MM.YYYY'
-        },
-    });
-
     $('.to_form_loan').on('click', function (e) {
 
         let sum = $('#order_sum').val();
