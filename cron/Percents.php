@@ -24,10 +24,6 @@ class Percents extends Core
         if(!empty($contracts)){
             foreach ($contracts as $contract)
             {
-                if($contract->id != 25)
-                    continue;
-
-
                 $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $contract->order_id, 'actual' => 1]);
                 $payment_schedule = json_decode($payment_schedule->schedule, true);
                 $now = date('Y-m-d');
