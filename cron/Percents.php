@@ -61,7 +61,7 @@ class Percents extends Core
                 $end_period = date('Y-m-d 23:59:59', strtotime($end_period));
 
                 $query = $this->db->placehold("
-                SELECT count(amount) as count_amount
+                SELECT SUM(amount) as sum_amount
                 FROM s_operations
                 WHERE order_id = ?
                 AND `type` = 'PERCENTS'
@@ -70,7 +70,7 @@ class Percents extends Core
 
                 $this->db->query($query);
 
-                $all_sum_percents = $this->db->result('count_amount');
+                $all_sum_percents = $this->db->result('sum_amount');
 
                 var_dump($all_sum_percents);
 
