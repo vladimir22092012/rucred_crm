@@ -86,6 +86,7 @@ class Percents extends Core
                 var_dump($end_period);
                 var_dump($period);
                 var_dump($now_day);
+                var_dump($percent);
 
                 $percents_summ = round(($percent * ($now_day/$period)) - $all_sum_percents, 2);
 
