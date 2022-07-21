@@ -215,7 +215,7 @@
                         <td>Подписант: А.В. Лоскутов</td>
                     </tr>
                     <tr>
-                        <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
+                        <td>Дата подписания: {$rucred_asp->created|date} {$rucred_asp->created|time}(МСК)</td>
                     </tr>
                     <tr>
                         <td>ID подписания: {$rucred_asp->uid}</td>
@@ -237,7 +237,7 @@
                         <td>Подписант: {$firstname} {$patronymic} {$lastname}</td>
                     </tr>
                     <tr>
-                        <td>Дата подписания: {$confirm_date|date} {$confirm_date|time}(МСК)</td>
+                        <td>Дата подписания: {$code_asp->created|date} {$code_asp->created|time}(МСК)</td>
                     </tr>
                     <tr>
                         <td>ID подписания: {$code_asp->uid}</td>

@@ -35,21 +35,21 @@ class AspCodes extends Core
             return $code;
     }
 
-    public function get_code($param = null)
+    public function get_code($param = array())
     {
         $where = '';
 
         if (isset($param['id']))
-            $where = $this->db->placehold("AND id = ?".PHP_EOL, $param['id']);
+            $where .= $this->db->placehold("AND id = ? ", $param['id']);
 
         if (isset($param['code']))
-            $where = $this->db->placehold("AND code = ?".PHP_EOL, $param['code']);
+            $where .= $this->db->placehold("AND code = ? ", $param['code']);
 
         if (isset($param['order_id']))
-            $where = $this->db->placehold("AND order_id = ?".PHP_EOL, $param['order_id']);
+            $where .= $this->db->placehold("AND order_id = ? ", $param['order_id']);
 
         if (isset($param['type']))
-            $where = $this->db->placehold("AND `type` = ?".PHP_EOL, $param['type']);
+            $where .= $this->db->placehold("AND `type` = ? ", $param['type']);
 
         $query = $this->db->placehold("
         SELECT * 
