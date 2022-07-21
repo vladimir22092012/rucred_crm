@@ -56,7 +56,7 @@ class Percents extends Core
                 $this->db->query($query);
 
                 var_dump($query);
-                exit;
+                /*
 
                 $all_sum_percents = $this->db->result('count_amount');
 
@@ -83,6 +83,7 @@ class Percents extends Core
                         'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ,
                     ));
                 }
+                */
             }
         }
     }
