@@ -256,17 +256,17 @@
                                 order_id: order_id
                             },
                             success: function (resp) {
-                                if (resp['success'] == 1) {
+                                if (resp['error']) {
+                                    Swal.fire({
+                                        title: resp['error']
+                                    });
+                                } else {
                                     Swal.fire({
                                         title: 'Деньги успешно отправлены'
                                     });
                                     setInterval(function () {
                                         location.reload();
                                     }, 5000);
-                                } else {
-                                    Swal.fire({
-                                        title: resp['error']
-                                    })
                                 }
                             }
                         });
