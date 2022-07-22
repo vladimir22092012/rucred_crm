@@ -265,8 +265,7 @@
                                     }, 5000);
                                 } else {
                                     Swal.fire({
-                                        title: 'Произошла ошибка',
-                                        text: resp['error']
+                                        title: resp['error']
                                     })
                                 }
                             }
