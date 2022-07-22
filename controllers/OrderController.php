@@ -2802,7 +2802,7 @@ class OrderController extends Controller
         var_dump($schedule_id);
         $pay_sum = $this->request->post('pay_sum');
         $loan_percents_pay = $this->request->post('loan_percents_pay');
-        $loan_body_pay = mb_convert_encoding($this->request->post('loan_body_pay'), 'UTF-8');
+        $loan_body_pay = $this->request->post('loan_body_pay');
         $comission_pay = $this->request->post('comission_pay');
         $rest_pay = $this->request->post('rest_pay');
         $order_id = $this->request->post('order_id');
