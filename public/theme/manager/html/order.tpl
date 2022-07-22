@@ -1537,7 +1537,7 @@
                                             <h4 class="text-danger mb-0">АСП: {$contract->accept_code}</h4>
                                         {/if}
                                     </div>
-                                    {if in_array($order->status, [0,1])}
+                                    {if $order->status == 1}
                                         {if in_array($manager->role, ['developer', 'admin', 'middle', 'employer'])}
                                             <div>
                                                 <button class="btn btn-success btn-block accept-order warning_asp"
@@ -1563,7 +1563,7 @@
                                             </div>
                                         {/if}
                                     {/if}
-                                    {if $order->status == 12 && in_array($manager->role, ['developer', 'admin', 'underwriter', 'middle'])}
+                                    {if $order->status == 0 && in_array($manager->role, ['developer', 'admin', 'underwriter', 'middle'])}
                                         <button class="btn btn-success btn-block accept_online_order"
                                                 data-event="12" data-user="{$order->user_id}"
                                                 data-order="{$order->order_id}" data-manager="{$manager->id}">
