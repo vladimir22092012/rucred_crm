@@ -10,6 +10,8 @@ class Pdf extends Core
 
     public function create($template, $name, $filename, $download = false, $yandex = false)
     {
+        $root_dir = '/home/rucred-crm/rucred-crm/';
+
         $this->tcpdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
         // set document information
@@ -37,7 +39,7 @@ class Pdf extends Core
         if ($download) {
             $this->tcpdf->Output($download . '.pdf', 'D');
         } elseif ($yandex) {
-            $this->tcpdf->Output($this->config->root_url  . '/files/users/' . $yandex . '.pdf', 'F');
+            $this->tcpdf->Output($root_dir  . '/files/users/' . $yandex . '.pdf', 'F');
         } else {
             $this->tcpdf->Output($filename . '.pdf', 'I');
         }
