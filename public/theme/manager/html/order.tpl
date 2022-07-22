@@ -1151,29 +1151,14 @@
                             <div class="row">
                                 <div class="col-4 col-md-3 col-lg-2">
                                     <h4 class="form-control-static">
-                                        {if $order->client_status}
-                                            {if $order->client_status == 'pk'}
-                                                <span class="label label-success"
-                                                      title="Клиент уже имеет погашенные займы">ПК</span>
-                                            {elseif $order->client_status == 'crm'}
-                                                <span class="label label-primary"
-                                                      title="Клиент уже имеет погашенные займы в CRM">ПК CRM</span>
-                                            {elseif $order->client_status == 'rep'}
-                                                <span class="label label-warning"
-                                                      title="Клиент уже подавал ранее заявки">Повтор</span>
-                                            {elseif $order->client_status == 'nk'}
-                                                <span class="label label-info" title="Новый клиент">Новая</span>
-                                            {/if}
-                                        {else}
-                                            {if $order->have_crm_closed}
-                                                <span class="label label-primary"
-                                                      title="Клиент уже имеет погашенные займы в CRM">ПК CRM</span>
-                                            {elseif $order->first_loan}
-                                                <span class="label label-info" title="Новый клиент">Новая</span>
-                                            {else}
-                                                <span class="label label-warning"
-                                                      title="Клиент уже подавал ранее заявки">Повтор</span>
-                                            {/if}
+                                        {if $client_status == 'ПК'}
+                                            <span class="label label-success"
+                                                  title="Клиент уже имеет погашенные займы">ПК</span>
+                                        {elseif $client_status == 'Повтор'}
+                                            <span class="label label-warning"
+                                                  title="Клиент уже подавал ранее заявки">Повтор</span>
+                                        {elseif $client_status == 'Новая'}
+                                            <span class="label label-info" title="Новый клиент">Новая</span>
                                         {/if}
                                     </h4>
                                 </div>

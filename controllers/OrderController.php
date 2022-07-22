@@ -247,6 +247,22 @@ class OrderController extends Controller
             if ($order_id = $this->request->get('id', 'integer')) {
                 if ($order = $this->orders->get_order($order_id)) {
 
+                    $old_orders = $this->orders->get_orders(['user_id' => $order->user_id]);
+
+                    $client_status = 'Повтор';
+
+                    if (count($old_orders) > 1) {
+                        foreach ($old_orders as $old_order) {
+                            if (in_array($old_order->status, [5, 7]))
+                                $client_status = 'ПК';
+                        }
+                    }
+
+                    if (count($old_orders) == 1)
+                        $client_status = 'Новая';
+
+                    $this->design->assign('client_status', $client_status);
+
                     $order->requisite = $this->requisites->get_requisite($order->requisite_id);
 
                     $holder = $order->requisite->holder;

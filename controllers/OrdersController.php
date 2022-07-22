@@ -197,7 +197,7 @@ class OrdersController extends Controller
                 }
             }
 
-            if(count($orders) == 1)
+            if(count($old_orders) == 1)
                 $order->client_status = 'Новая';
         }
 
