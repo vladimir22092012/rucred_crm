@@ -2799,7 +2799,6 @@ class OrderController extends Controller
 
         $date = $this->request->post('date');
         $schedule_id = $this->request->post('schedule_id');
-        var_dump($schedule_id);
         $pay_sum = $this->request->post('pay_sum');
         $loan_percents_pay = $this->request->post('loan_percents_pay');
         $loan_body_pay = $this->request->post('loan_body_pay');
