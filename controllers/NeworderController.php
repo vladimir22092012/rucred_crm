@@ -178,8 +178,9 @@ class NeworderController extends Controller
 
         $payout_type = $this->request->post('payout_type');
         $requisite = $this->request->post('requisite');
+        $settlement_id = (int)$this->request->post('settlement');
 
-        if($payout_type == 'bank'){
+        if($payout_type == 'bank' || $settlement_id == 3){
 
             $requisite['holder'] = $requisite['holder']['lastname'] . ' ' . $requisite['holder']['firstname'] . ' ' . $requisite['holder']['patronymic'];
             $requisite['holder'] = trim($requisite['holder']);
@@ -512,7 +513,7 @@ class NeworderController extends Controller
 
             $card_id = $this->request->post('card_id');
 
-            if($payout_type == 'bank'){
+            if($payout_type == 'bank' || $settlement_id == 3){
 
                 if(!empty($card_id)){
                     $this->Cards->delete_card($card_id);

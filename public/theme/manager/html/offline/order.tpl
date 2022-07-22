@@ -154,6 +154,34 @@
                 })
             });
 
+            $('.cards_edit, .cards-edit-cancel').on('click', function (e) {
+                e.preventDefault();
+
+                $('.cards-front').toggle();
+                $('.cards-editor').toggle();
+
+                $('.cards-edit-success').on('click', function () {
+                    let cards_name = $('input[name="card_name"]').val();
+                    let pan = $('input[name="pan"]').val();
+                    let expdate = $('input[name="expdate"]').val();
+                    let card_id = $('input[name="card_id"]').val();
+
+                    $.ajax({
+                        method: 'POST',
+                        data: {
+                            action: 'cards_change',
+                            cards_name: cards_name,
+                            pan: pan,
+                            expdate: expdate,
+                            card_id: card_id
+                        },
+                        success: function () {
+                            location.reload();
+                        }
+                    })
+                });
+            });
+
             $('.snils-edit').on('click', function (e) {
                 e.preventDefault();
 
@@ -1159,15 +1187,15 @@
                             <div class="row">
                                 <div class="col-4 col-md-3 col-lg-2">
                                     <h4 class="form-control-static">
-                                            {if $client_status == 'ПК'}
-                                                <span class="label label-success"
-                                                      title="Клиент уже имеет погашенные займы">ПК</span>
-                                            {elseif $client_status == 'Повтор'}
-                                                <span class="label label-warning"
-                                                      title="Клиент уже подавал ранее заявки">Повтор</span>
-                                            {elseif $client_status == 'Новая'}
-                                                <span class="label label-info" title="Новый клиент">Новая</span>
-                                            {/if}
+                                        {if $client_status == 'ПК'}
+                                            <span class="label label-success"
+                                                  title="Клиент уже имеет погашенные займы">ПК</span>
+                                        {elseif $client_status == 'Повтор'}
+                                            <span class="label label-warning"
+                                                  title="Клиент уже подавал ранее заявки">Повтор</span>
+                                        {elseif $client_status == 'Новая'}
+                                            <span class="label label-info" title="Новый клиент">Новая</span>
+                                        {/if}
                                     </h4>
                                 </div>
                                 <div class="col-8 col-md-3 col-lg-4">
@@ -1924,7 +1952,8 @@
                                                 </h6>
 
                                                 <div class="row p-2 view-block {if $socials_error}hide{/if}">
-                                                    <ul class="col-md-12 list-inline" style="display: flex; justify-content: left">
+                                                    <ul class="col-md-12 list-inline"
+                                                        style="display: flex; justify-content: left">
                                                         {foreach $files as $file}
                                                             {if $file->status == 0}
                                                                 {$item_class="border-warning"}
@@ -1960,7 +1989,8 @@
                                                                        data-event="50" data-manager="{$manager->id}"
                                                                        data-order="{$order->order_id}"
                                                                        data-user="{$order->user_id}">
-                                                                        <div class="ribbon ribbon-corner {$ribbon_class}"><i
+                                                                        <div class="ribbon ribbon-corner {$ribbon_class}">
+                                                                            <i
                                                                                     class="{$ribbon_icon}"></i></div>
                                                                         <img src="{$config->back_url}/files/users/{$order->user_id}/{$file->name}"
                                                                              alt="" class="img-responsive" style=""/>
@@ -1971,7 +2001,8 @@
                                                                             <button type="button"
                                                                                     class="btn {if $file->status==2}btn-success{elseif $file->status==3}btn-danger{else}btn-secondary{/if} dropdown-toggle"
                                                                                     id="dropdownMenuOffset"
-                                                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                                                    data-toggle="dropdown"
+                                                                                    aria-haspopup="true"
                                                                                     aria-expanded="true">
                                                                                 {if $file->status == 2}Принят
                                                                                 {elseif $file->status == 3}Отклонен
@@ -2024,9 +2055,11 @@
                                                                         </div>
                                                                     </div>
                                                                 </li>
-                                                                <select class="form-control photo_status" data-file="{$file->id}"
+                                                                <select class="form-control photo_status"
+                                                                        data-file="{$file->id}"
                                                                         name="photo_status">
-                                                                    <option value="1" {if $file->type == 'document'}selected{/if}>
+                                                                    <option value="1"
+                                                                            {if $file->type == 'document'}selected{/if}>
                                                                         Выберите тип документа
                                                                     </option>
                                                                     <option value="2"
@@ -2070,7 +2103,8 @@
                                                             <button type="submit" class="btn btn-success"><i
                                                                         class="fa fa-check"></i> Сохранить
                                                             </button>
-                                                            <button type="button" class="btn btn-inverse js-cancel-edit">
+                                                            <button type="button"
+                                                                    class="btn btn-inverse js-cancel-edit">
                                                                 Отмена
                                                             </button>
                                                         </div>
@@ -2083,8 +2117,10 @@
                                                           enctype="multipart/form-data">
                                                         {if $manager->role != 'employer'}
                                                             <div class="form_file_item">
-                                                                <input type="file" name="new_file" class="new_file" id="new_file"
-                                                                       data-user="{$order->user_id}" value="" style="display:none"/>
+                                                                <input type="file" name="new_file" class="new_file"
+                                                                       id="new_file"
+                                                                       data-user="{$order->user_id}" value=""
+                                                                       style="display:none"/>
                                                                 <label for="new_file" class="btn btn-large btn-primary">
                                                                     <i class="fa fa-plus-circle"></i>
                                                                     <span>Добавить фото</span>
@@ -2093,7 +2129,8 @@
                                                         {/if}
                                                     </form>
                                                 {/if}
-                                            </div><br>
+                                            </div>
+                                            <br>
 
 
                                             <!-- Данные о работе -->
@@ -2861,29 +2898,177 @@
                                                 </div>
                                             </div>
                                         </form>
-                                        <form class="mb-3 border js-order-item-form">
-                                            <h6 class="card-header text-white">
-                                                <span>Расчетный счет</span>
-                                                <span class="float-right"><a class="text-white cors-edit" href=""><i
-                                                                class=" fas fa-edit"></i></a></span>
-                                            </h6>
-                                            {if $same_holder == 1}
-                                                <input type="hidden" name="action" value="cors_change"/>
-                                                <input type="hidden" name="requisite[id]"
-                                                       value="{$order->requisite->id}"/>
-                                                <div class="cors-front">
+                                        {if !empty($order->requisite_id)}
+                                            <form class="mb-3 border js-order-item-form">
+                                                <h6 class="card-header text-white">
+                                                    <span>Расчетный счет</span>
+                                                    <span class="float-right"><a class="text-white cors-edit" href=""><i
+                                                                    class=" fas fa-edit"></i></a></span>
+                                                </h6>
+                                                {if $same_holder == 1}
+                                                    <input type="hidden" name="action" value="cors_change"/>
+                                                    <input type="hidden" name="requisite[id]"
+                                                           value="{$order->requisite->id}"/>
+                                                    <div class="cors-front">
+                                                        <div class="row view-block p-2">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group mb-0 row">
+                                                                    <label class="control-label col-md-8 col-7">ФИО
+                                                                        держателя
+                                                                        счета:</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <div class="form-group mb-0 row">
+                                                                    <label
+                                                                            class="control-label col-md-12 fio-hold-front">{$order->requisite->holder}</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row view-block p-2">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group mb-0 row">
+                                                                    <label class="control-label col-md-8 col-7">Номер
+                                                                        счета:</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <div class="form-group mb-0 row">
+                                                                    <label
+                                                                            class="control-label col-md-12 acc-num-front">{$order->requisite->number}</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row view-block p-2">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group mb-0 row">
+                                                                    <label class="control-label col-md-8 col-7">Наименование
+                                                                        банка:</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <div class="form-group mb-0 row">
+                                                                    <label
+                                                                            class="control-label col-md-12 bank-name-front">{$order->requisite->name}</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row view-block p-2">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group mb-0 row">
+                                                                    <label class="control-label col-md-8 col-7">БИК:</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <div class="form-group mb-0 row">
+                                                                    <label
+                                                                            class="control-label col-md-12 bik-front">{$order->requisite->bik}</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row view-block p-2">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group mb-0 row">
+                                                                    <label class="control-label col-md-8 col-7">Кор
+                                                                        счет:</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <div class="form-group mb-0 row">
+                                                                    <label
+                                                                            class="control-label col-md-12 ">{$order->requisite->correspondent_acc}</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {if $manager->role != 'employer'}
+                                                            <div class="row view-block p-2">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group mb-0 row">
+                                                                        <label class="control-label col-md-8 col-7">Перечислить
+                                                                            из:</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group mb-0 row">
+                                                                        <label
+                                                                                class="control-label col-md-12 bik-front">{$settlement->name}</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {/if}
+                                                    </div>
+                                                {else}
                                                     <div class="row view-block p-2">
                                                         <div class="col-md-12">
                                                             <div class="form-group mb-0 row">
-                                                                <label class="control-label col-md-8 col-7">ФИО
-                                                                    держателя
-                                                                    счета:</label>
+                                                                <label class="control-label col-md-8 col-7">Перечисление
+                                                                    денежных средств на р/с счет третьего лица</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {/if}
+                                                <div class="cors-editor" style="display: none;">
+                                                    <div style="width: 100%">
+                                                        <label class="control-label">ФИО держателя счета</label>
+                                                        <input class="form-control fio-hold-edit"
+                                                               style="width: 350px; margin-left: 25px"
+                                                               type="text" name="requisite[holder]"
+                                                               value="{$order->requisite->holder}"/><br>
+                                                        <label class="control-label">Номер счета</label><br>
+                                                        <input class="form-control acc-num-edit"
+                                                               style="width: 350px; margin-left: 25px"
+                                                               type="text" name="requisite[number]"
+                                                               value="{$order->requisite->number}"/>
+                                                    </div>
+                                                    <div style="width: 100%">
+                                                        <label class="control-label">Наименование банка</label>
+                                                        <input class="form-control bank-name-edit"
+                                                               style="width: 350px; margin-left: 25px"
+                                                               type="text" name="requisite[name]"
+                                                               value="{$order->requisite->name}"><br>
+                                                        <label class="control-label">БИК банка</label><br>
+                                                        <input class="form-control bik-edit"
+                                                               style="width: 350px; margin-left: 25px"
+                                                               type="text" name="requisite[bik]"
+                                                               value="{$order->requisite->bik}">
+                                                        <label class="control-label">Кор счет</label>
+                                                        <br/>
+                                                        <input class="form-control bank-name-edit"
+                                                               style="width: 350px; margin-left: 25px"
+                                                               type="text" name="requisite[correspondent_acc]"
+                                                               value="{$order->requisite->correspondent_acc}"><br>
+                                                    </div>
+                                                    <br>
+                                                    <div>
+                                                        <input type="button" class="btn btn-success cors-edit-success"
+                                                               value="Сохранить">
+                                                        <input type="button" style="float: right;"
+                                                               class="btn btn-inverse cors-edit-cancel" value="Отмена">
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        {/if}
+                                        {if !empty($order->card_id)}
+                                            <form class="mb-3 border">
+                                                <h6 class="card-header text-white">
+                                                    <span>Банковская карта</span>
+                                                    <span class="float-right"><a class="text-white cards_edit"
+                                                                                 href=""><i
+                                                                    class=" fas fa-edit"></i></a></span>
+                                                </h6>
+                                                <input type="hidden" name="card_id"
+                                                       value="{$order->card_id}"/>
+                                                <div class="cards-front">
+                                                    <div class="row view-block p-2">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group mb-0 row">
+                                                                <label class="control-label col-md-8 col-7">Держатель
+                                                                    карты:</label>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-12">
                                                             <div class="form-group mb-0 row">
-                                                                <label
-                                                                        class="control-label col-md-12 fio-hold-front">{$order->requisite->holder}</label>
+                                                                <label class="control-label col-md-12">{$order->card_name}</label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -2891,54 +3076,26 @@
                                                         <div class="col-md-12">
                                                             <div class="form-group mb-0 row">
                                                                 <label class="control-label col-md-8 col-7">Номер
-                                                                    счета:</label>
+                                                                    карты:</label>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-12">
                                                             <div class="form-group mb-0 row">
-                                                                <label
-                                                                        class="control-label col-md-12 acc-num-front">{$order->requisite->number}</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row view-block p-2">
-                                                        <div class="col-md-12">
-                                                            <div class="form-group mb-0 row">
-                                                                <label class="control-label col-md-8 col-7">Наименование
-                                                                    банка:</label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-12">
-                                                            <div class="form-group mb-0 row">
-                                                                <label
-                                                                        class="control-label col-md-12 bank-name-front">{$order->requisite->name}</label>
+                                                                <label class="control-label col-md-12">{$order->pan}</label>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="row view-block p-2">
                                                         <div class="col-md-12">
                                                             <div class="form-group mb-0 row">
-                                                                <label class="control-label col-md-8 col-7">БИК:</label>
+                                                                <label class="control-label col-md-8 col-7">Срок
+                                                                    годности:</label>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-12">
                                                             <div class="form-group mb-0 row">
                                                                 <label
-                                                                        class="control-label col-md-12 bik-front">{$order->requisite->bik}</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row view-block p-2">
-                                                        <div class="col-md-12">
-                                                            <div class="form-group mb-0 row">
-                                                                <label class="control-label col-md-8 col-7">Кор
-                                                                    счет:</label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-12">
-                                                            <div class="form-group mb-0 row">
-                                                                <label
-                                                                        class="control-label col-md-12 ">{$order->requisite->correspondent_acc}</label>
+                                                                        class="control-label col-md-12 bank-name-front">{$order->expdate}</label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -2959,56 +3116,34 @@
                                                         </div>
                                                     {/if}
                                                 </div>
-                                            {else}
-                                                <div class="row view-block p-2">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group mb-0 row">
-                                                            <label class="control-label col-md-8 col-7">Перечисление
-                                                                денежных средств на р/с счет третьего лица</label>
-                                                        </div>
+                                                <div class="cards-editor" style="display: none;">
+                                                    <div style="width: 100%">
+                                                        <label class="control-label">Держатель карты</label><br>
+                                                        <input class="form-control"
+                                                               style="width: 350px; margin-left: 25px"
+                                                               type="text" name="card_name"
+                                                               value="{$order->card_name}"/><br>
+                                                        <label class="control-label">Номер карты</label><br>
+                                                        <input class="form-control"
+                                                               style="width: 350px; margin-left: 25px"
+                                                               type="text" name="pan"
+                                                               value="{$order->pan}"/><br>
+                                                        <label class="control-label">Срок годности</label><br>
+                                                        <input class="form-control"
+                                                               style="width: 350px; margin-left: 25px"
+                                                               type="text" name="expdate"
+                                                               value="{$order->expdate}"/>
+                                                    </div>
+                                                    <br>
+                                                    <div>
+                                                        <input type="button" class="btn btn-success cards-edit-success"
+                                                               value="Сохранить">
+                                                        <input type="button" style="float: right;"
+                                                               class="btn btn-inverse cards-edit-cancel" value="Отмена">
                                                     </div>
                                                 </div>
-                                            {/if}
-                                            <div class="cors-editor" style="display: none;">
-                                                <div style="width: 100%">
-                                                    <label class="control-label">ФИО держателя счета</label>
-                                                    <input class="form-control fio-hold-edit"
-                                                           style="width: 350px; margin-left: 25px"
-                                                           type="text" name="requisite[holder]"
-                                                           value="{$order->requisite->holder}"/><br>
-                                                    <label class="control-label">Номер счета</label><br>
-                                                    <input class="form-control acc-num-edit"
-                                                           style="width: 350px; margin-left: 25px"
-                                                           type="text" name="requisite[number]"
-                                                           value="{$order->requisite->number}"/>
-                                                </div>
-                                                <div style="width: 100%">
-                                                    <label class="control-label">Наименование банка</label>
-                                                    <input class="form-control bank-name-edit"
-                                                           style="width: 350px; margin-left: 25px"
-                                                           type="text" name="requisite[name]"
-                                                           value="{$order->requisite->name}"><br>
-                                                    <label class="control-label">БИК банка</label><br>
-                                                    <input class="form-control bik-edit"
-                                                           style="width: 350px; margin-left: 25px"
-                                                           type="text" name="requisite[bik]"
-                                                           value="{$order->requisite->bik}">
-                                                    <label class="control-label">Кор счет</label>
-                                                    <br/>
-                                                    <input class="form-control bank-name-edit"
-                                                           style="width: 350px; margin-left: 25px"
-                                                           type="text" name="requisite[correspondent_acc]"
-                                                           value="{$order->requisite->correspondent_acc}"><br>
-                                                </div>
-                                                <br>
-                                                <div>
-                                                    <input type="button" class="btn btn-success cors-edit-success"
-                                                           value="Сохранить">
-                                                    <input type="button" style="float: right;"
-                                                           class="btn btn-inverse cors-edit-cancel" value="Отмена">
-                                                </div>
-                                            </div>
-                                        </form>
+                                            </form>
+                                        {/if}
                                         {if $manager->role != 'employer'}
                                             <form class="mb-4 border">
                                                 <h6 class="card-header text-white">

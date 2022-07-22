@@ -228,8 +228,8 @@ class OfflineOrderController extends Controller
                     return $this->action_confirm_restruct();
                     break;
 
-                case 'upload_docs_to_yandex':
-                    return $this->action_upload_docs_to_yandex();
+                case 'cards_change':
+                    return $this->action_cards_change();
                     break;
 
 
@@ -266,19 +266,28 @@ class OfflineOrderController extends Controller
                     $scroll_to_photo = $this->request->get('scroll');
                     $this->design->assign('scroll_to_photo', $scroll_to_photo);
 
-                    $order->requisite = $this->requisites->get_requisite($order->requisite_id);
+                    if (!empty($order->requisite_id)) {
+                        $order->requisite = $this->requisites->get_requisite($order->requisite_id);
 
-                    $holder = $order->requisite->holder;
-                    $holder = explode(' ', $holder, 3);
-                    $same_holder = 0;
+                        $holder = $order->requisite->holder;
+                        $holder = explode(' ', $holder, 3);
+                        $same_holder = 0;
 
-                    if (count($holder) == 3) {
-                        list($holder_name, $holder_firstname, $holder_patronymic) = $holder;
-                        if ($order->lastname == $holder_name && $order->firstname == $holder_firstname && $order->patronymic == $holder_patronymic)
-                            $same_holder = 1;
+                        if (count($holder) == 3) {
+                            list($holder_name, $holder_firstname, $holder_patronymic) = $holder;
+                            if ($order->lastname == $holder_name && $order->firstname == $holder_firstname && $order->patronymic == $holder_patronymic)
+                                $same_holder = 1;
+                        }
+
+                        $this->design->assign('same_holder', $same_holder);
                     }
 
-                    $this->design->assign('same_holder', $same_holder);
+                    if (!empty($order->card_id)) {
+                        $card = $this->cards->get_card($order->card_id);
+                        $order->card_name = $card->name;
+                        $order->pan = $card->pan;
+                        $order->expdate = $card->expdate;
+                    }
 
                     $enough_scans = 0;
 
@@ -4070,6 +4079,24 @@ class OfflineOrderController extends Controller
                 'asp_id' => $order->asp
             ));
         }
+    }
+
+    private function action_cards_change()
+    {
+        $card_id = $this->request->post('card_id');
+        $cards_name = $this->request->post('cards_name');
+        $pan = $this->request->post('pan');
+        $expdate = $this->request->post('expdate');
+
+        $card =
+            [
+                'name' => $cards_name,
+                'pan' => $pan,
+                'expdate' => $expdate
+            ];
+
+        $this->cards->update_card($card_id, $card);
+        exit;
     }
 
 }
