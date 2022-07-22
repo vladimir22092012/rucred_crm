@@ -8,8 +8,11 @@ class AspRegistrController extends Controller
 
         if ($this->request->get('sort', 'string')) {
             $filter['sort'] = $this->request->get('sort', 'string');
-            $this->design->assign('sort', $filter['sort']);
+        }else{
+            $filter['sort'] = 'id desc';
         }
+
+        $this->design->assign('sort', $filter['sort']);
 
         $codes = $this->AspCodes->get_codes($filter);
 

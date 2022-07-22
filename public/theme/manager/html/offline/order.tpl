@@ -266,7 +266,7 @@
                                 } else {
                                     Swal.fire({
                                         title: 'Произошла ошибка',
-                                        text: resp.error
+                                        text: resp['error']
                                     })
                                 }
                             }

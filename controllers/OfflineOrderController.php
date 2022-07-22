@@ -251,14 +251,14 @@ class OfflineOrderController extends Controller
 
                     $client_status = 'Повтор';
 
-                    if(count($old_orders) > 1){
-                        foreach ($old_orders as $old_order){
-                            if(in_array($old_order->status, [5,7]))
+                    if (count($old_orders) > 1) {
+                        foreach ($old_orders as $old_order) {
+                            if (in_array($old_order->status, [5, 7]))
                                 $client_status = 'ПК';
                         }
                     }
 
-                    if(count($old_orders) == 1)
+                    if (count($old_orders) == 1)
                         $client_status = 'Новая';
 
                     $this->design->assign('client_status', $client_status);
@@ -858,21 +858,21 @@ class OfflineOrderController extends Controller
         $count_photos = 0;
         $count_approved_photos = 0;
 
-        foreach ($photos as $photo){
-            if(in_array($photo->type, ['Паспорт: разворот', 'Паспорт: регистрация', 'Селфи с паспортом'])){
+        foreach ($photos as $photo) {
+            if (in_array($photo->type, ['Паспорт: разворот', 'Паспорт: регистрация', 'Селфи с паспортом'])) {
                 $count_photos++;
 
-                if($photo->status != 0)
+                if ($photo->status != 0)
                     $count_approved_photos++;
             }
         }
 
-        if($count_photos < 3){
+        if ($count_photos < 3) {
             echo json_encode(['error' => 'Не забудьте добавить фото документов и селфи с паспортом!']);
             exit;
         }
 
-        if($count_approved_photos < 3){
+        if ($count_approved_photos < 3) {
             echo json_encode(['error' => 'Не забудьте подтвердить фото клиента!']);
             exit;
         }
@@ -3960,9 +3960,22 @@ class OfflineOrderController extends Controller
 
         $this->YaDiskCron->add($cron);
 
-        echo '<pre>';
-        print_r($this->Soap1c->send_payment($payment));
-        exit;
+        $send_loan = $this->Soap1c->send_loan($order_id);
+
+        if (!isset($send_loan->return) || $send_loan->return != 'OK') {
+            echo json_encode(['error' => 'Ошибка отправки заявки в 1с']);
+            die();
+        }
+
+        $send_payment = $this->Soap1c->send_payment($payment);
+
+        if (!isset($send_payment->return) || $send_payment->return != 'OK') {
+            echo json_encode(['error' => 'Ошибка отправки платежки в 1с']);
+            die();
+        }
+
+        echo json_encode(['success' => 1]);
+        die();
     }
 
     private
