@@ -258,11 +258,13 @@
                             success: function (resp) {
                                 if (resp['error']) {
                                     Swal.fire({
-                                        title: resp['error']
+                                        title: resp['error'],
+                                        confirmButtonText: 'ОК'
                                     });
                                 } else {
                                     Swal.fire({
-                                        title: 'Деньги успешно отправлены'
+                                        title: 'Деньги успешно отправлены',
+                                        confirmButtonText: 'ОК'
                                     });
                                     setInterval(function () {
                                         location.reload();

@@ -3964,18 +3964,18 @@ class OfflineOrderController extends Controller
 
         if (!isset($send_loan->return) || $send_loan->return != 'OK') {
             echo json_encode(['error' => 'Ошибка отправки заявки в 1с']);
-            die();
+            exit;
         }
 
         $send_payment = $this->Soap1c->send_payment($payment);
 
         if (!isset($send_payment->return) || $send_payment->return != 'OK') {
             echo json_encode(['error' => 'Ошибка отправки платежки в 1с']);
-            die();
+            exit;
         }
 
         echo json_encode(['success' => 1]);
-        die();
+        exit;
     }
 
     private
