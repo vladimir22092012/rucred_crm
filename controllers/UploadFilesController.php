@@ -1,8 +1,7 @@
 <?php
 
 error_reporting(-1);
-ini_set('display_errors', 'On');
-phpinfo();
+ini_set('display_errors', 'Off');
 
 class UploadFilesController extends Controller
 
@@ -28,11 +27,6 @@ class UploadFilesController extends Controller
     private function add()
     {
         if ($file = $this->request->files('file')) {
-
-            var_dump($file);
-            var_dump($_FILES);
-            echo json_encode(['error' => 1, 'message' => 'Неверный формат файла']);
-            exit;
 
             $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
             $user_id = $this->request->post('user_id');
