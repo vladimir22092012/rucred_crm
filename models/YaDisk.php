@@ -290,7 +290,7 @@ class YaDisk extends Core
     {
 
         if ($upload_scans == 1)
-            $resource->upload($this->root_dir . '/files/users/' . $order->user_id . '/' . $document->name, true);
+            $resource->upload($this->root_dir . 'files/users/' . $order->user_id . '/' . $document->name, true);
         else {
 
             foreach ($document->params as $param_name => $param_value) {
@@ -461,8 +461,8 @@ class YaDisk extends Core
 
             $tpl = $this->design->fetch('pdf/' . $document->template);
             $this->pdf->create($tpl, $document->name, $document->template, $download = false, $file_name);
-            $resource->upload($this->root_dir . '/files/users/' . $file_name . '.pdf', true);
-            unlink($this->root_dir. '/files/users/' . $file_name . '.pdf');
+            $resource->upload($this->root_dir . 'files/users/' . $file_name . '.pdf', true);
+            unlink($this->root_dir. 'files/users/' . $file_name . '.pdf');
         }
     }
 
