@@ -46,6 +46,13 @@ class NeworderController extends Controller
                 }
             }
 
+            if(!empty($order->card_id)){
+                $card = $this->cards->get_card($order->card_id);
+                $order->card_name = $card->name;
+                $order->pan = $card->pan;
+                $order->expdate = $card->expdate;
+            }
+
             if (!empty($order->passport_serial)) {
                 $passport_serial = explode(' ', $order->passport_serial);
                 $order->passport_serial = $passport_serial[0];
@@ -169,14 +176,29 @@ class NeworderController extends Controller
 
         $user['patronymic'] = trim($this->request->post('patronymic'));
 
+        $payout_type = $this->request->post('payout_type');
         $requisite = $this->request->post('requisite');
 
-        $requisite['holder'] = $requisite['holder']['lastname'] . ' ' . $requisite['holder']['firstname'] . ' ' . $requisite['holder']['patronymic'];
-        $requisite['holder'] = trim($requisite['holder']);
+        if($payout_type == 'bank'){
 
-        if (empty($requisite['name']) || empty($requisite['bik']) || empty($requisite['number']) || empty($requisite['holder']) || empty($requisite['correspondent_acc'])) {
-            response_json(['error' => 1, 'reason' => 'Заполните корректно реквизиты']);
-            exit;
+            $requisite['holder'] = $requisite['holder']['lastname'] . ' ' . $requisite['holder']['firstname'] . ' ' . $requisite['holder']['patronymic'];
+            $requisite['holder'] = trim($requisite['holder']);
+
+            if (empty($requisite['name']) || empty($requisite['bik']) || empty($requisite['number']) || empty($requisite['holder']) || empty($requisite['correspondent_acc'])) {
+                response_json(['error' => 1, 'reason' => 'Заполните корректно реквизиты']);
+                exit;
+            }
+        }
+
+        if($payout_type == 'card'){
+            $card_name = $this->request->post('card_name');
+            $pan = $this->request->post('pan');
+            $expdate = $this->request->post('expdate');
+
+            if (empty($card_name) || empty($pan) || empty($expdate)) {
+                response_json(['error' => 1, 'reason' => 'Заполните корректно данные по карте']);
+                exit;
+            }
         }
 
         $cards_bank_name = $this->request->post('cards_bank_name');
@@ -488,13 +510,49 @@ class NeworderController extends Controller
 
             $this->users->update_user($user_id, $user);
 
+            $card_id = $this->request->post('card_id');
 
-            if (empty($requisite['id'])) {
-                unset($requisite['id']);
-                $requisite['user_id'] = $user_id;
-                $requisite['id'] = $this->requisites->add_requisite($requisite);
-            } else {
-                $this->requisites->update_requisite($requisite['id'], $requisite);
+            if($payout_type == 'bank'){
+
+                if(!empty($card_id)){
+                    $this->Cards->delete_card($card_id);
+                    $card_id = null;
+                }
+
+                if (empty($requisite['id'])) {
+                    unset($requisite['id']);
+                    $requisite['user_id'] = $user_id;
+                    $requisite['id'] = $this->requisites->add_requisite($requisite);
+                } else {
+                    $this->requisites->update_requisite($requisite['id'], $requisite);
+                }
+            }
+
+            if($payout_type == 'card'){
+
+                if(!empty($requisite['id'])){
+                    $this->requisites->delete_requisite($requisite['id']);
+                    $requisite['id'] = null;
+                }
+
+                $card_name = $this->request->post('card_name');
+                $pan = $this->request->post('pan');
+                $expdate = $this->request->post('expdate');
+
+                $card =
+                    [
+                        'name' => $card_name,
+                        'user_id' => $user_id,
+                        'base_card' => 1,
+                        'pan' => $pan,
+                        'expdate' => $expdate
+                    ];
+
+                if(!empty($card_id)){
+                    $this->cards->update_card($card_id, $card);
+                }else{
+                    $card_id = $this->cards->add_card($card);
+                }
             }
 
             $settlements = $this->OrganisationSettlements->get_settlements();
@@ -509,6 +567,7 @@ class NeworderController extends Controller
                 'user_id' => $user_id,
                 'amount' => $amount,
                 'period' => $period,
+                'card_id' => $card_id,
                 'date' => date('Y-m-d H:i:s'),
                 'manager_id' => $this->manager->id,
                 'status' => ($draft == 1) ? 12 : 1,

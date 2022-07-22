@@ -315,10 +315,30 @@
                     }
                 });
             });
-            
+
             $(document).on('input', '.fio', function () {
                 let val = $(this).val().toUpperCase();
                 $(this).val(val);
+            });
+
+            $('select[name="settlement"]').on('change', function () {
+
+                if($(this).val() == 2){
+                    $('select[name="payout_type"]').show();
+
+                    if(order['card_id']){
+                        $('.requisits').hide();
+                        $('.cardes').show();
+                    }
+                    if(order['requisite_id']){
+                        $('.cardes').hide();
+                        $('.requisits').show();
+                    }
+                }else{
+                    $('select[name="payout_type"]').hide();
+                    $('.cardes').hide();
+                    $('.requisits').show();
+                }
             })
         });
     </script>
@@ -541,7 +561,9 @@
                                             />
                                             <input type="text" style="width: 180px; margin-left: 25px"
                                                    name="birth"
-                                                   class="form-control birth_date" {if $order->birth}value="{$order->birth|date}"{else}value="21.07.2004"{/if}>
+                                                   class="form-control birth_date"
+                                                   {if $order->birth}value="{$order->birth|date}"
+                                                   {else}value="21.07.2004"{/if}>
                                         </div>
                                         <br>
                                         <div class="phone_edit_form" style="width: 100%">
@@ -612,7 +634,8 @@
                                             <label class="control-label">Предыдущие ФИО</label>
                                             <label class="control-label" style="margin-left: 230px">Дата
                                                 изменения</label><br>
-                                            <input class="form-control prev_fio fio" style="width: 350px; margin-left: 25px"
+                                            <input class="form-control prev_fio fio"
+                                                   style="width: 350px; margin-left: 25px"
                                                    type="text" name="prev_fio" value="{$order->prev_fio}"
                                             />
                                             <input type="text" style="width: 180px; margin-left: 25px"
@@ -890,7 +913,8 @@
                                                     иждивенцев</label><br>
                                                 <input class="form-control" name="dependents"
                                                        style="width: 300px; margin-left: 25px"
-                                                       placeholder="необязательно" type="text" value="{$order->dependents}">
+                                                       placeholder="необязательно" type="text"
+                                                       value="{$order->dependents}">
                                             </div>
                                         </div>
                                         <br>
@@ -1022,63 +1046,6 @@
                                         <br>
                                         <hr style="width: 100%; size: 5px">
                                         <br>
-                                        <h4>Перечислить микрозайм по следующим реквизитам:</h4><br>
-                                        <div style="width: 100%; display: flex">
-                                            <input type="hidden" name="requisite[id]" value="{$order->requisite->id}"/>
-                                            <div style="display: flex; flex-direction: column">
-                                                <label class="control-label">Фамилия держателя счета</label>
-                                                <input class="form-control fio" style="width: 350px; margin-left: 30px"
-                                                       type="text" name="requisite[holder][lastname]"
-                                                       value="{$holder_lastname}"/>
-                                            </div>
-                                            <div style="display: flex; flex-direction: column">
-                                                <label class="control-label">Имя держателя счета</label>
-                                                <input class="form-control fio" style="width: 350px; margin-left: 30px"
-                                                       type="text" name="requisite[holder][firstname]"
-                                                       value="{$holder_firstname}"/>
-                                            </div>
-                                            <div style="display: flex; flex-direction: column">
-                                                <label class="control-label">Отчество держателя счета</label>
-                                                <input class="form-control fio" style="width: 350px; margin-left: 30px"
-                                                       type="text" name="requisite[holder][patronymic]"
-                                                       value="{$holder_patronymic}"/>
-                                            </div>
-                                        </div>
-                                        <br>
-                                        <div style="width: 100%; display: flex">
-                                            <div style="display: flex; flex-direction: column">
-                                                <label class="control-label">Номер счета</label>
-                                                <input class="form-control account_number"
-                                                       style="width: 300px; margin-left: 30px"
-                                                       type="text" name="requisite[number]"
-                                                       value="{$order->requisite->number}"/>
-                                            </div>
-                                            <div style="display: flex; flex-direction: column">
-                                                <label class="control-label">БИК
-                                                    банка</label>
-                                                <input class="form-control bik" style="width: 180px; margin-left: 30px"
-                                                       type="text" name="requisite[bik]"
-                                                       value="{$order->requisite->bik}"/>
-                                            </div>
-                                            <div style="display: flex; flex-direction: column">
-                                                <label class="control-label">Наименование
-                                                    банка</label>
-                                                <input class="form-control bank_name"
-                                                       style="width: 350px;margin-left: 30px"
-                                                       type="text" name="requisite[name]"
-                                                       value="{$order->requisite->name}"/>
-                                            </div>
-                                            <div style="display: flex; flex-direction: column">
-                                                <label class="control-label">Кор. счет</label>
-                                                <input class="form-control cor"
-                                                       style="width: 350px;margin-left: 30px"
-                                                       type="text" name="requisite[correspondent_acc]"
-                                                       value="{$order->requisite->correspondent_acc}"/>
-                                            </div>
-                                        </div>
-                                        <br>
-                                        <hr style="width: 100%; size: 5px">
-                                        <br>
                                         <h4>Перечислить микрозайм с банковского счета:</h4><br>
                                         <div style="width: 100%; display: flex">
                                             <select class="form-control" name="settlement"
@@ -1088,6 +1055,111 @@
                                                             {if $order->settlement_id == $settlement->id}selected{/if}>{$settlement->name}</option>
                                                 {/foreach}
                                             </select>
+                                            <select class="form-control" name="payout_type"
+                                                    style="width: 300px; margin-left: 25px; {if !empty($order->settlement_id) && $order->settlement_id ==3}display: none{/if}">
+                                                <option value="card" {if !empty($order->card_id)}selected{/if}>
+                                                    Банковская карта
+                                                </option>
+                                                <option value="bank"
+                                                        {if !empty($order->requisite_id) || empty($order->card_id) && empty($order->requisite_id)}selected{/if}>
+                                                    Расчетный счет
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <br>
+                                        <hr style="width: 100%; size: 5px">
+                                        <br>
+                                        <div class="requisits" {if !empty($order->card_id)}style="display: none"{/if}>
+                                            <h4>Перечислить микрозайм по следующим реквизитам:</h4><br>
+                                            <div style="width: 100%; display: flex">
+                                                <input type="hidden" name="requisite[id]"
+                                                       value="{$order->requisite_id}"/>
+                                                <div style="display: flex; flex-direction: column">
+                                                    <label class="control-label">Фамилия держателя счета</label>
+                                                    <input class="form-control fio"
+                                                           style="width: 350px; margin-left: 30px"
+                                                           type="text" name="requisite[holder][lastname]"
+                                                           value="{$holder_lastname}"/>
+                                                </div>
+                                                <div style="display: flex; flex-direction: column">
+                                                    <label class="control-label">Имя держателя счета</label>
+                                                    <input class="form-control fio"
+                                                           style="width: 350px; margin-left: 30px"
+                                                           type="text" name="requisite[holder][firstname]"
+                                                           value="{$holder_firstname}"/>
+                                                </div>
+                                                <div style="display: flex; flex-direction: column">
+                                                    <label class="control-label">Отчество держателя счета</label>
+                                                    <input class="form-control fio"
+                                                           style="width: 350px; margin-left: 30px"
+                                                           type="text" name="requisite[holder][patronymic]"
+                                                           value="{$holder_patronymic}"/>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div style="width: 100%; display: flex">
+                                                <div style="display: flex; flex-direction: column">
+                                                    <label class="control-label">Номер счета</label>
+                                                    <input class="form-control account_number"
+                                                           style="width: 300px; margin-left: 30px"
+                                                           type="text" name="requisite[number]"
+                                                           value="{$order->requisite->number}"/>
+                                                </div>
+                                                <div style="display: flex; flex-direction: column">
+                                                    <label class="control-label">БИК
+                                                        банка</label>
+                                                    <input class="form-control bik"
+                                                           style="width: 180px; margin-left: 30px"
+                                                           type="text" name="requisite[bik]"
+                                                           value="{$order->requisite->bik}"/>
+                                                </div>
+                                                <div style="display: flex; flex-direction: column">
+                                                    <label class="control-label">Наименование
+                                                        банка</label>
+                                                    <input class="form-control bank_name"
+                                                           style="width: 350px;margin-left: 30px"
+                                                           type="text" name="requisite[name]"
+                                                           value="{$order->requisite->name}"/>
+                                                </div>
+                                                <div style="display: flex; flex-direction: column">
+                                                    <label class="control-label">Кор. счет</label>
+                                                    <input class="form-control cor"
+                                                           style="width: 350px;margin-left: 30px"
+                                                           type="text" name="requisite[correspondent_acc]"
+                                                           value="{$order->requisite->correspondent_acc}"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="cardes"
+                                             {if !empty($order->requisite_id) || empty($order->card_id) && empty($order->requisite_id)}style="display: none"{/if}>
+                                            <h4>Перечислить микрозайм на карту:</h4><br>
+                                            <div style="width: 100%; display: flex">
+                                                <input type="hidden" name="card_id" value="{$order->card_id}">
+                                                <div style="display: flex; flex-direction: column">
+                                                    <label class="control-label">Держатель карты</label>
+                                                    <input class="form-control"
+                                                           style="width: 300px; margin-left: 30px"
+                                                           name="card_name"
+                                                           value="{$order->card_name}"
+                                                           type="text">
+                                                </div>
+                                                <div style="display: flex; flex-direction: column">
+                                                    <label class="control-label">Номер карты</label>
+                                                    <input class="form-control card_mask"
+                                                           style="width: 300px; margin-left: 30px"
+                                                           name="pan"
+                                                           value="{$order->pan}"
+                                                           type="text">
+                                                </div>
+                                                <div style="display: flex; flex-direction: column">
+                                                    <label class="control-label">Срок годности карты</label>
+                                                    <input class="form-control card_exp"
+                                                           style="width: 300px; margin-left: 30px"
+                                                           name="expdate"
+                                                           value="{$order->expdate}"
+                                                           type="text">
+                                                </div>
+                                            </div>
                                         </div>
                                         <br>
                                         <hr style="width: 100%; size: 5px">

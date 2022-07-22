@@ -312,6 +312,14 @@ $(function () {
         $(this).setCursorPosition(0);
     }).mask('999-999-999 99');
 
+    $('.card_mask').click(function () {
+        $(this).setCursorPosition(0);
+    }).mask('9999-9999-9999-9999');
+
+    $('.card_exp').click(function () {
+        $(this).setCursorPosition(0);
+    }).mask('99/9999');
+
     $('.inn').click(function () {
         $(this).setCursorPosition(0);
     }).mask('999999999999');
@@ -653,6 +661,11 @@ $(function () {
             }
         });
         $('input[name="check_same_users"]').val('1');
+    });
+
+    $('select[name="payout_type"]').on('change', function () {
+        $('.requisits').toggle();
+        $('.cardes').toggle();
     });
 
 });

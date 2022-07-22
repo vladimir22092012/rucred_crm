@@ -118,7 +118,7 @@ class Requisites extends Core
     {
 		$query = $this->db->placehold("
             DELETE FROM __bank_requisites WHERE id = ?
-        ", (int)$id);
+        ", $id);
         $this->db->query($query);
     }
 }
