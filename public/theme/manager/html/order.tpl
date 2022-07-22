@@ -965,7 +965,7 @@
                         method: 'POST',
                         data: form,
                         success: function () {
-                            location.reload();
+                            //location.reload();
                         }
                     });
                 });
@@ -974,7 +974,7 @@
                     method: 'POST',
                     data: form,
                     success: function () {
-                        location.reload();
+                        //location.reload();
                     }
                 });
             }
