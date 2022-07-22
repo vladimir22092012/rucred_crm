@@ -34,12 +34,10 @@ class Pdf extends Core
 
         $this->tcpdf->IncludeJS("print();");
 
-        ob_clean();
-
         if ($download) {
             $this->tcpdf->Output($download . '.pdf', 'D');
         } elseif ($yandex) {
-            $this->tcpdf->Output($this->config->root_url . '/files/users/' . $yandex . '.pdf', 'F');
+            $this->tcpdf->Output($_SERVER['DOCUMENT_ROOT']  . '/files/users/' . $yandex . '.pdf', 'F');
         } else {
             $this->tcpdf->Output($filename . '.pdf', 'I');
         }
