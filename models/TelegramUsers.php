@@ -32,7 +32,7 @@ class TelegramUsers extends Core
     public function get($user_id, $manager_flag = false)
     {
         if($manager_flag)
-            $this->db->placehold("AND is_manager = ?", $manager_flag);
+            $manager_flag = $this->db->placehold("AND is_manager = ?", $manager_flag);
 
         $query = $this->db->placehold("
         SELECT * 
@@ -40,6 +40,9 @@ class TelegramUsers extends Core
         WHERE user_id = ?
         $manager_flag
         ", $user_id);
+
+        var_dump($query);
+        exit;
 
         $this->db->query($query);
         $user = $this->db->result();
