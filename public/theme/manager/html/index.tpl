@@ -287,10 +287,6 @@
                                 <a class="" href="registr/" aria-expanded="false"><i
                                             class="mdi mdi-book-open-page-variant"></i><span class="hide-menu">Реестр сделок</span></a>
                             </li>
-                            <li {if in_array($module, ['RegistrController'])}class="active"{/if}>
-                                <a class="" href="registr?monthly='true'" aria-expanded="false"><i
-                                            class="mdi mdi-calendar"></i><span class="hide-menu">Сводные реестры</span></a>
-                            </li>
                             {if in_array($manager->role, ['admin', 'developer'])}
                                 <li {if in_array($module, ['AspRegistrController'])}class="active"{/if}>
                                     <a class="" href="/asp_registr" aria-expanded="false"><i
