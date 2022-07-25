@@ -32,7 +32,7 @@ class ViberUsers extends Core
     public function get($user_id, $manager_flag = false)
     {
         if ($manager_flag)
-            $this->db->placehold("AND is_manager = ?", $manager_flag);
+            $manager_flag = $this->db->placehold("AND is_manager = ?", $manager_flag);
 
         $query = $this->db->placehold("
         SELECT * 

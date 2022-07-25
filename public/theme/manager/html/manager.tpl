@@ -381,22 +381,33 @@
                 });
             });
 
-            $(document).on('click', '.telegram_hook', function () {
+            $(document).on('click', '.telegram_hook, .viber_hook', function () {
                 let user = $(this).attr('data-user');
                 let flag = 0;
+                let action = 'telegram_hook';
 
-                if($(this).is(':checked'))
+                if ($(this).is(':checked'))
                     flag = 1;
+
+                if($(this).hasClass('viber_hook'))
+                    action = 'viber_hook';
 
                 $.ajax({
                     method: 'POST',
+                    dataType: 'JSON',
                     data: {
-                        action: 'telegram_hook',
+                        action: action,
                         user: user,
                         flag: flag
                     },
-                    success: function () {
-                        $('.confirm_telegram').fadeIn();
+                    success: function (resp) {
+                        if (resp['info']){
+                            $('.confirm_telegram').fadeIn();
+
+                            setTimeout(function () {
+                                $('.confirm_telegram').fadeOut();
+                            }, 5000)
+                        }
                     }
                 })
             });
@@ -970,7 +981,10 @@
                                                     SMS-уведомления
                                                 </label></div>
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="viber_note"
+                                                <input class="form-check-input viber_hook"
+                                                       type="checkbox"
+                                                       name="viber_note"
+                                                       data-user="{$user->id}"
                                                        value="1" {if $user->viber_note == 1}checked{/if}>
                                                 <label class="form-check-label">
                                                     Viber
@@ -984,9 +998,10 @@
                                                 <label class="form-check-label">
                                                     Telegram
                                                 </label>
-                                                <div class="btn btn-outline-success confirm_telegram"
-                                                     style="margin-left: 20px; display: none">Подтвердить
-                                                </div>
+                                                <small class="confirm_telegram"
+                                                       style="margin-left: 20px; display: none; color: #aa0009">Вы еще
+                                                    не привязаны, вам отправлено смс с ссылкой
+                                                </small>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" name="whatsapp_note"

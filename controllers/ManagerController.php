@@ -53,6 +53,10 @@ class ManagerController extends Controller
                         $this->action_telegram_hook();
                         break;
 
+                    case 'viber_hook':
+                        $this->action_viber_hook();
+                        break;
+
                     case 'add_credentials':
                         $this->action_add_credentials();
                         break;
@@ -442,10 +446,48 @@ class ManagerController extends Controller
                 ];
 
             $this->TelegramUsers->add($user);
+            echo json_encode(['info' => 1]);
         }
 
         $this->managers->update_manager($manager_id, ['telegram_note' => $flag]);
 
+        exit;
+    }
+
+    private function action_viber_hook()
+    {
+        $manager_id = $this->request->post('user');
+        $flag = $this->request->post('flag');
+
+        $is_manager = 1;
+        $check_viber_hook = $this->ViberUsers->get($manager_id, $is_manager);
+
+        if(empty($check_viber_hook)){
+            $manager = $this->managers->get_manager($manager_id);
+            $user_token = md5(time());
+            $user_token = substr($user_token, 1, 10);
+
+            $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+            $mailService->send(
+                'rucred@ucase.live',
+                $manager->email,
+                'RuCred | Ссылка для привязки Viber',
+                'Ваша ссылка для привязки Viber:',
+                '<h1>https://re-aktiv.ru/redirect_api?user_id='.$manager_id.'</h1>'
+            );
+
+            $user =
+                [
+                    'user_id' => $manager_id,
+                    'token' => $user_token,
+                    'is_manager' => 1
+                ];
+
+            $this->ViberUsers->add($user);
+            echo json_encode(['info' => 1]);
+        }
+
+        $this->managers->update_manager($manager_id, ['viber_note' => $flag]);
         exit;
     }
 
