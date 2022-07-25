@@ -14,7 +14,11 @@ class Sms extends Core
     private $template_types = array(
         'collection' => 'Коллекшен',
         'order' => 'Выдача',
-        'smssales' => 'Продажа по смс'
+        'smssales' => 'Продажа по смс',
+        'docs' => 'Подписание документов',
+        'pay_link' => 'Ссылка для оплаты',
+        'accept_phone' => 'Подтверждение телефона',
+        'telegram' => 'Привязка телеграма'
     );
 
     public function __construct()
