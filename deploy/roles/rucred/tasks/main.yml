@@ -14,13 +14,8 @@
   when: code_upload.changed
   tags: deploy
 
-- name: Find user
-  shell: whoami
-  when: code_upload.changed
-  register: who
-
-- name: Install permissions on file user rucred-crm and group www-data "{{ who.stdout_line }}"
-  shell: chown "{{ who.stdout_line }}":www-data "{{ repo_path }}"/* -R
+- name: Install permissions on file user rucred-crm and group www-data
+  shell: chown "{{ lookup('env', 'USER') }}":www-data "{{ repo_path }}"/* -R
   when: code_upload.changed
   ignore_errors: yes
   tags: deploy
