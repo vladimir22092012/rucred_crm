@@ -17,10 +17,10 @@
 - name: Find user
   shell: whoami
   when: code_upload.changed
-  register: whoami
+  register: who
 
 - name: Install permissions on file user rucred-crm and group www-data
-  shell: chown "{{ whoami.stdout }}":www-data "{{ repo_path }}"/* -R
+  shell: chown "{{ who.stdout }}":www-data "{{ repo_path }}"/* -R
   when: code_upload.changed
   ignore_errors: yes
   tags: deploy
