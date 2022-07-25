@@ -971,9 +971,20 @@
                                         </div>
                                         <br>
                                     {/if}
+                                    <div style="width: 100%;">
+                                        <label class="col-md-5">Часовой пояс</label><br>
+                                        <select class="form-control"
+                                                name="timezone"
+                                                style="width: 200px; margin-left: 15px">
+                                            {for $i= -1 to 9}
+                                                <option value="{$i}" {if empty($user->timezone) && $i == 0}selected{elseif $i == $user->timezone}selected{/if}>МСК {if $i > 0}+ {/if} {if $i != 0}{$i}{/if}</option>
+                                            {/for}
+                                        </select>
+                                    </div>
+                                    <br>
                                     <div class="form-group">
                                         <label class="col-md-5">Дополнительные каналы связи</label>
-                                        <div class="col-md-12">
+                                        <div class="col-md-5">
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" name="sms_note"
                                                        value="1" {if $user->sms_note == 1}checked{/if}>

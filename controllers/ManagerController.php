@@ -76,6 +76,7 @@ class ManagerController extends Controller
                 $user->sms_note = $this->request->post('sms_note');
                 $user->viber_note = $this->request->post('viber_note');
                 $user->whatsapp_note = $this->request->post('whatsapp_note');
+                $user->timezone = $this->request->post('timezone');
 
                 $same_login = $this->Managers->check_same_login($user->login, $user_id);
 

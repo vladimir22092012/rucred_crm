@@ -714,6 +714,18 @@
                                                    type="text"/>
                                         </div>
                                         <br>
+                                        <br>
+                                        <div style="width: 100%;">
+                                            <label class="control-label">Часовой пояс</label><br>
+                                            <select class="form-control"
+                                                    name="timezone"
+                                                    style="width: 200px; margin-left: 25px">
+                                                {for $i= -1 to 9}
+                                                    <option value="{$i}" {if empty($order->timezone) && $i == 0}selected{elseif $i == $order->timezone}selected{/if}>МСК {if $i > 0}+ {/if} {if $i != 0}{$i}{/if}</option>
+                                                {/for}
+                                            </select>
+                                        </div>
+                                        <br>
                                         <h4>Семейное положение</h4><br>
                                         <div class="form-check" style="margin-left: 30px">
                                             <input class="form-check-input" type="radio" name="sex"

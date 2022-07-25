@@ -466,6 +466,8 @@ class NeworderController extends Controller
             exit;
         }
 
+        $user['timezone'] = $this->request->post('timezone');
+
         if (empty($user['group_id'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует группа']);
             exit;
