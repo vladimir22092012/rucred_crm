@@ -419,23 +419,33 @@ class ManagerController extends Controller
     private function action_telegram_hook()
     {
         $manager_id = $this->request->post('user');
-        $manager = $this->managers->get_manager($manager_id);
-        $user_token = md5(time());
-        $user_token = substr($user_token, 1, 10);
+        $flag = $this->request->post('flag');
 
-        $phone = $manager->phone;
-        $message = "Привяжите Телеграм: https://t.me/rucred_bot?start=$user_token";
+        $is_manager = 1;
+        $check_telegram_hook = $this->TelegramUsers->get($manager_id, $is_manager);
 
-        $this->sms->send($phone, $message);
+        if(empty($check_telegram_hook)){
+            $manager = $this->managers->get_manager($manager_id);
+            $user_token = md5(time());
+            $user_token = substr($user_token, 1, 10);
 
-        $user =
-            [
-                'user_id' => $manager_id,
-                'token' => $user_token,
-                'is_manager' => 1
-            ];
+            $phone = $manager->phone;
+            $message = "Привяжите Телеграм: https://t.me/rucred_bot?start=$user_token";
 
-        $this->TelegramUsers->add($user);
+            $this->sms->send($phone, $message);
+
+            $user =
+                [
+                    'user_id' => $manager_id,
+                    'token' => $user_token,
+                    'is_manager' => 1
+                ];
+
+            $this->TelegramUsers->add($user);
+        }
+
+        $this->managers->update_manager($manager_id, ['telegram_note' => $flag]);
+
         exit;
     }
 

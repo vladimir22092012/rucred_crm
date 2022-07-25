@@ -383,12 +383,17 @@
 
             $(document).on('click', '.telegram_hook', function () {
                 let user = $(this).attr('data-user');
+                let flag = 0;
+
+                if($(this).is(':checked'))
+                    flag = 1;
 
                 $.ajax({
                     method: 'POST',
                     data: {
                         action: 'telegram_hook',
-                        user: user
+                        user: user,
+                        flag: flag
                     },
                     success: function () {
                         $('.confirm_telegram').fadeIn();
