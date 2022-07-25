@@ -15,7 +15,7 @@
   tags: deploy
 
 - name: Find user
-  command: whoami
+  shell: whoami
   when: code_upload.changed
   register: whoami
 
