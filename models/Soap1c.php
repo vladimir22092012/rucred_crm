@@ -7,6 +7,8 @@ class Soap1c extends Core
     private $log = 1;
     private $log_dir = 'logs/';
     private $link;
+    private $login;
+    private $password;
 
     public function __construct()
     {
@@ -15,9 +17,17 @@ class Soap1c extends Core
         $onec_mode = $this->settings->onec_mode;
 
         if($onec_mode == 'test')
+        {
             $this->link = "http://141.101.178.136:63025/RKO-Test/ws/";
+            $this->login = '';
+            $this->password = '';
+        }
         else
+        {
             $this->link = "http://141.101.178.136:63025/RKO/ws/";
+            $this->login = 'Администратор';
+            $this->password = '';
+        }
     }
 
 
@@ -193,11 +203,17 @@ class Soap1c extends Core
 
     private function send_request($service, $method, $request, $log = 1, $logfile = 'soap.log')
     {
-
+        $params = array();
+        if (!empty($this->login) || !empty($this->password))
+        {
+            $params['login'] = $this->login;
+            $params['password'] = $this->password;
+        }
+        
         try {
             $service_url = $this->link . $service . ".1cws?wsdl";
 
-            $client = new SoapClient($service_url);
+            $client = new SoapClient($service_url, $params);
             $response = $client->__soapCall($method, array($request));
         } catch (Exception $fault) {
             $response = $fault;
