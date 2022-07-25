@@ -431,6 +431,7 @@ class ManagerController extends Controller
         $user =
             [
                 'user_id' => $manager_id,
+                'token' => $user_token,
                 'is_manager' => 1
             ];
 

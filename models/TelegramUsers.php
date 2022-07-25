@@ -19,9 +19,9 @@ class TelegramUsers extends Core
     {
         $query = $this->db->placehold("
         UPDATE s_telegram_users
-        SET ?%
+        SET chat_id = ?
         WHERE token = ?
-        ", $user, $user['token']);
+        ", $user['chat_id'], $user['token']);
 
         $this->db->query($query);
         $id = $this->db->insert_id();
