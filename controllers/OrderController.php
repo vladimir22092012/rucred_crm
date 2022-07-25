@@ -1038,6 +1038,13 @@ class OrderController extends Controller
                 $fetch
             );
 
+            $template = $this->sms->get_template(8);
+            $message = $template->template;
+            $this->sms->send(
+                $order->phone_mobile,
+                $message
+            );
+
             return ['success' => 1];
         } else {
             return $resp;
@@ -3770,6 +3777,14 @@ class OrderController extends Controller
 
         echo '<pre>';
         print_r($this->Soap1c->send_payment($payment));
+
+        $template = $this->sms->get_template(8);
+        $message = $template->template;
+        $this->sms->send(
+            $order->phone_mobile,
+            $message
+        );
+
         exit;
     }
 
@@ -3897,6 +3912,13 @@ class OrderController extends Controller
                 'manager_id' => $this->manager->id,
             ];
         $this->TicketMessages->add_message($message);
+
+        $template = $this->sms->get_template(7);
+        $message = $template->template;
+        $this->sms->send(
+            $order->phone_mobile,
+            $message
+        );
         exit;
     }
 

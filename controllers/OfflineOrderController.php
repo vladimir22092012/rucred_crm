@@ -1129,6 +1129,13 @@ class OfflineOrderController extends Controller
 
             $this->YaDiskCron->add($cron);
 
+            $template = $this->sms->get_template(8);
+            $message = $template->template;
+            $this->sms->send(
+                $order->phone_mobile,
+                $message
+            );
+
             return ['success' => 1];
         } else {
             return $resp;
@@ -3744,6 +3751,7 @@ class OfflineOrderController extends Controller
         $phone = $this->request->post('phone');
         $user_id = $this->request->post('user');
         $order_id = $this->request->post('order');
+        $restruct = $this->request->post('restruct');
 
         $docs = $this->Documents->get_documents(['order_id' => $order_id]);
 
@@ -3753,7 +3761,12 @@ class OfflineOrderController extends Controller
         }
 
         $code = random_int(1000, 9999);
-        $template = $this->sms->get_template(2);
+
+        if(!empty($restruct))
+            $template = $this->sms->get_template(6);
+        else
+            $template = $this->sms->get_template(2);
+
         $message = str_replace('$code', $code, $template->template);
         $response = $this->sms->send(
             $phone,
@@ -3983,6 +3996,13 @@ class OfflineOrderController extends Controller
             echo json_encode(['error' => 'Ошибка отправки платежки в 1с']);
             exit;
         }
+
+        $template = $this->sms->get_template(8);
+        $message = $template->template;
+        $this->sms->send(
+            $order->phone_mobile,
+            $message
+        );
 
         echo json_encode(['success' => 1]);
         exit;

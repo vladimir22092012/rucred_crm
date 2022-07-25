@@ -724,13 +724,14 @@
                 let phone = $(this).attr('data-phone');
                 let user = $(this).attr('data-user');
                 let order = $(this).attr('data-order');
+                let restruct = $(this).attr('data-restruct');
 
                 $('.confirm_asp').fadeIn();
                 $('.code_asp').fadeIn();
                 $(this).text('Отправить смс повторно');
 
 
-                send_asp(phone, user, order);
+                send_asp(phone, user, order, restruct);
             });
 
             $('.confirm_asp').on('click', function (e) {
@@ -877,7 +878,7 @@
             });
         }
 
-        function send_asp(phone, user, order) {
+        function send_asp(phone, user, order, restruct) {
 
             $.ajax({
                 method: 'POST',
@@ -886,7 +887,8 @@
                     action: 'send_asp_code',
                     phone: phone,
                     user: user,
-                    order: order
+                    order: order,
+                    restruct: restruct
                 },
                 success: function (resp) {
                     if (resp['error']) {
@@ -3242,6 +3244,7 @@
                                              id="send_asp"
                                              data-phone="{$order->phone_mobile}"
                                              data-order="{$order->order_id}"
+                                             data-restruct="1"
                                              style="margin-left: 15px; width: 370px"
                                              class="btn btn-primary send_asp_code">
                                             Отправить смс

@@ -841,6 +841,13 @@ class NeworderController extends Controller
 
                     $this->PaymentsSchedules->add($schedules);
 
+                    $template = $this->sms->get_template(7);
+                    $message = $template->template;
+                    $this->sms->send(
+                        $order->phone_mobile,
+                        $message
+                    );
+
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id.'?scroll=1']);
                     exit;
                 }
@@ -931,6 +938,13 @@ class NeworderController extends Controller
                                 $this->scorings->add_scoring($add_scoring);
                             }
                         }
+
+                        $template = $this->sms->get_template(7);
+                        $message = $template->template;
+                        $this->sms->send(
+                            $user->phone_mobile,
+                            $message
+                        );
 
                         response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' .$order_id.'?scroll=1']);
                     } catch (Exception $exception) {
