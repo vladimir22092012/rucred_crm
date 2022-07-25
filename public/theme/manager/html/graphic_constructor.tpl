@@ -1,4 +1,4 @@
-{$meta_title="Новая заявка" scope=parent}
+{$meta_title="Тест калькулятор" scope=parent}
 
 {capture name='page_scripts'}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -382,11 +382,10 @@
 
         <div class="row page-titles">
             <div class="col-md-6 col-8 align-self-center">
-                <h3 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i> Новая заявка</h3>
+                <h3 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i>Тест-калькулятор</h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
-                    <li class="breadcrumb-item"><a href="orders/offline">Заявки оффлайн</a></li>
-                    <li class="breadcrumb-item active">Новая заявка</li>
+                    <li class="breadcrumb-item active">Тест-калькулятор</li>
                 </ol>
             </div>
             <div class="col-md-6 col-4 align-self-center">
@@ -397,17 +396,9 @@
         <div class="row" id="order_wrapper">
             <div class="col-lg-12">
                 <div class="card card-outline-info">
-                    <div class="card-header">
-                        <h4 class="mb-0 text-white float-left">Заявка {$order->order_id}</h4>
-                        <small
-                                class="text-white float-right">{$offline_points[$manager->offline_point_id]->address}</small>
-                    </div>
                     <div class="card-body">
                         <div class="form-body">
                             <div class="row" style="width: 100%">
-                                <div class="price_info" style="width: 100%">
-                                    <h2>Off-line заявка</h2>
-                                </div>
                                 <br><br>
                                 <hr style="width: 100%; size: 5px">
                                 <form method="POST" id="forms" style="width: 100%">
