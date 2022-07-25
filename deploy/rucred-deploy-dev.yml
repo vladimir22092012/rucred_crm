@@ -1,0 +1,7 @@
+- hosts: dlmnt
+  vars:
+    temp_repo_path: "/home/rucred/deploy-folder"
+    repo_path: "/home/rucred/rucred-crm"
+  #remote_user: rucred-crm
+  roles:
+    - { role: rucred }
