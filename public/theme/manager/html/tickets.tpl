@@ -330,7 +330,7 @@
                                                                 <br>
                                                             {/if}
                                                         {/if}
-                                                        {if empty($ticket->ticket_id) || !empty($ticket->ticket_id) && $ticket->user_id != $manager->id}
+                                                        {if $ticket->new == 1}
                                                             <small class="blink ">Новый!</small>
                                                         {/if}
                                                     </td>

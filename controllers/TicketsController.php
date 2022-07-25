@@ -53,6 +53,13 @@ class TicketsController extends Controller
             $tickets = $this->Tickets->get_tickets($manager_role, $manager_id, $in_out, ['sort' => $sort]);
 
             foreach ($tickets as $key => $ticket) {
+
+                $ticket->new = 0;
+                $ticket_new = $this->TicketsNotes->get($ticket->id, $manager_id);
+
+                if(empty($ticket_new))
+                    $ticket->new = 1;
+
                 if ($ticket->executor != 0) {
                     $manager = $this->managers->get_manager($ticket->executor);
                     $ticket->executor = array();
