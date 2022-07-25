@@ -962,8 +962,12 @@ class NeworderController extends Controller
             echo json_encode(['error' => 'Вы не ввели номер телефона']);
             exit;
         }
+
         $code = random_int(1000, 9999);
-        $message = "Ваш код подтверждения телефона:  $code. Сообщите код андеррайтеру РуКреда";
+
+        $template = $this->sms->get_template(4);
+        $message = str_replace('$code', $code, $template->template);
+
         $response = $this->sms->send(
             $phone,
             $message
@@ -1304,7 +1308,9 @@ class NeworderController extends Controller
 
             switch ($type):
                 case 'telegram':
-                    $message = "Привяжите Телеграм: https://t.me/rucred_bot?start=$user_token";
+
+                    $template = $this->sms->get_template(5);
+                    $message = str_replace('$user_token', $user_token, $template->template);
                     $this->sms->send($phone, $message);
 
                     $user =

@@ -3753,7 +3753,8 @@ class OfflineOrderController extends Controller
         }
 
         $code = random_int(1000, 9999);
-        $message = "Ваш код для подписания документов: $code. Сообщите код андеррайтеру РуКреда";
+        $template = $this->sms->get_template(2);
+        $message = str_replace('$code', $code, $template->template);
         $response = $this->sms->send(
             $phone,
             $message
@@ -4024,9 +4025,8 @@ class OfflineOrderController extends Controller
         */
 
         $pay_link = $this->Best2pay->get_payment_link($sum, $contract->id);
-
-        $message = "Оплата доступна по ссылке: $pay_link";
-
+        $template = $this->sms->get_template(3);
+        $message = str_replace('$pay_link', $pay_link, $template->template);
         $this->sms->send($phone, $message);
         echo json_encode(['success' => 1]);
         exit;
