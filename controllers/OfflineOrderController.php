@@ -1109,15 +1109,17 @@ class OfflineOrderController extends Controller
                 $fetch
             );
 
-            $this->db->query("
-                SELECT id
-                FROM s_asp_codes
-                WHERE order_id = ?
-                ORDER BY id DESC
-                LIMIT 1
-                ", $order_id);
+            $asp_log =
+                [
+                    'user_id' => $order->user_id,
+                    'order_id' => $order->order_id,
+                    'created' => date('Y-m-d H:i:s'),
+                    'type' => 'rucred_sms',
+                    'recepient' => $order->phone_mobile,
+                    'manager_id' => $this->manager->id
+                ];
 
-            $asp_id = $this->db->result('id');
+            $asp_id = $this->AspCodes->add_code($asp_log);
 
             $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'second_pak' => 1]);
 
@@ -3825,19 +3827,6 @@ class OfflineOrderController extends Controller
             if (empty($restruct)) {
 
                 $asp_log['type'] = 'sms';
-
-                $this->AspCodes->add_code($asp_log);
-
-                $asp_log =
-                    [
-                        'user_id' => $user_id,
-                        'order_id' => $order_id,
-                        'code' => $code,
-                        'created' => date('Y-m-d H:i:s'),
-                        'type' => 'rucred_sms',
-                        'recepient' => $phone,
-                        'manager_id' => $this->manager->id
-                    ];
 
                 $this->AspCodes->add_code($asp_log);
 
