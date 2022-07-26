@@ -3945,6 +3945,7 @@ class OfflineOrderController extends Controller
         $order = $this->orders->get_order($order_id);
         $contract = $this->contracts->get_contract($order->contract_id);
         $requisits = $this->Requisites->get_requisites(['user_id' => $order->user_id]);
+        $order->probably_start_date = date('d.m.Y', strtotime($order->probably_start_date));
 
         $default_requisit = new stdClass();
 
