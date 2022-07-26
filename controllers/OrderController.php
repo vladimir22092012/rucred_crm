@@ -3770,13 +3770,26 @@ class OrderController extends Controller
         $payment->recepient = 9725055162;
         $payment->user_id = $order->user_id;
         $payment->number = '40701810300000000347';
-        $payment->description = 'Платежный агент по договору' . $order->uid;
+        $payment->description = "Оплата по договору микрозайма № $order->uid от $order->probably_start_date
+            // заемщик $order->lastname $order->firstname $order->patronymic ИНН $order->inn";
         $payment->user_acc_number = $default_requisit->number;
         $payment->user_bik = $default_requisit->bik;
         $payment->users_inn = $order->inn;
 
-        echo '<pre>';
-        print_r($this->Soap1c->send_payment($payment));
+        $cron =
+            [
+                'order_id' => $order_id,
+                'pak' => 'second_pak'
+            ];
+
+        $this->YaDiskCron->add($cron);
+
+        $send_payment = $this->Soap1c->send_payment($payment);
+
+        if (!isset($send_payment->return) || $send_payment->return != 'OK') {
+            echo json_encode(['error' => $send_payment]);
+            exit;
+        }
 
         $template = $this->sms->get_template(8);
         $message = $template->template;
@@ -3784,6 +3797,9 @@ class OrderController extends Controller
             $order->phone_mobile,
             $message
         );
+
+        echo json_encode(['success' => 1]);
+        exit;
 
         exit;
     }
