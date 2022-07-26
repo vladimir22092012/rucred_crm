@@ -40,16 +40,20 @@ class ViberNotificationsCron extends Core
                 $managers = $this->managers->get_managers(['group_id' => $ticket->group_id, 'role' => 'employer']);
             }
 
-            if (in_array($ticket->theme_id, [11, 13, 18, 23, 25, 26, 27, 28, 29, 30, 32, 33, 34, 35, 38])) {
-                $managers = $this->managers->get_managers(['group_id' => $ticket->group_id, 'role' => ['underwriter', 'middle']]);
+            if (in_array($ticket->theme_id, [11, 13, 18, 38])) {
+                $managers = $this->managers->get_managers(['group_id' => $ticket->group_id, 'role' => 'underwriter']);
             }
 
             if (in_array($ticket->theme_id, [12, 37])) {
                 $managers = $this->managers->get_managers(['group_id' => $ticket->group_id, 'role' => 'middle']);
             }
 
+            if (in_array($ticket->theme_id, [23, 25, 26, 34, 35])) {
+                $managers = $this->managers->get_managers(['group_id' => $ticket->group_id, 'role' => ['underwriter', 'middle']]);
+            }
+
             if (in_array($ticket->theme_id, [27, 28, 29, 30, 32, 33])) {
-                $managers = $this->managers->get_managers(['group_id' => $ticket->group_id, 'role' => 'admin']);
+                $managers = $this->managers->get_managers(['group_id' => $ticket->group_id, 'role' => ['underwriter', 'middle', 'admin']]);
             }
 
             foreach ($managers as $manager) {
