@@ -3754,6 +3754,7 @@ class OrderController extends Controller
     {
         $order_id = $this->request->post('order_id');
         $order = $this->orders->get_order($order_id);
+        $contract = $this->contracts->get_contract($order->order_id);
         $requisits = $this->Requisites->get_requisites(['user_id' => $order->user_id]);
 
         $default_requisit = new stdClass();
@@ -3770,7 +3771,7 @@ class OrderController extends Controller
         $payment->recepient = 9725055162;
         $payment->user_id = $order->user_id;
         $payment->number = '40701810300000000347';
-        $payment->description = "Оплата по договору микрозайма № $order->uid от $order->probably_start_date
+        $payment->description = "Оплата по договору микрозайма № $contract->number от $order->probably_start_date
             // заемщик $order->lastname $order->firstname $order->patronymic ИНН $order->inn";
         $payment->user_acc_number = $default_requisit->number;
         $payment->user_bik = $default_requisit->bik;
