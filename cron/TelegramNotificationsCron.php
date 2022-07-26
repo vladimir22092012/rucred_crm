@@ -24,8 +24,7 @@ class TelegramNotificationsCron extends Core
 
     private function run()
     {
-        $is_comlited = 0;
-        $crons = $this->NotificationsCron->gets($is_comlited);
+        $crons = $this->NotificationsCron->gets();
 
         foreach ($crons as $cron) {
             $ticket = $this->tickets->get_ticket($cron->ticket_id);
