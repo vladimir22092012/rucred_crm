@@ -27,20 +27,15 @@ class NotificationsCron extends Core
     public function gets($complited = false){
 
         $complited_flag = '';
-        $type_filter = '';
 
-        if($complited)
+        if($complited != false)
             $complited_flag = $this->db->placehold("AND is_complited = ?", $complited);
-
-        if($type)
-            $type_filter = $this->db->placehold("AND type_id = ?", $type);
 
         $query = $this->db->placehold("
         SELECT *
         FROM s_notifications_cron
         WHERE 1
         $complited_flag
-        $type_filter
         ");
 
         var_dump($query);
