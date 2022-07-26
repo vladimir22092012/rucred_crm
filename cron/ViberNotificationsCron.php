@@ -1,6 +1,8 @@
 <?php
 
-use App\Services\MailService;
+use Viber\Bot;
+use Viber\Api\Sender;
+use Viber\Client;
 
 error_reporting(-1);
 ini_set('display_errors', 'On');
@@ -9,9 +11,10 @@ chdir(dirname(__FILE__) . '/../');
 
 require __DIR__ . '/../vendor/autoload.php';
 
-
-class EmailNotificationsCron extends Core
+class ViberNotificationsCron extends Core
 {
+    protected $apy_key = '4f668e111aa7defb-b74d69004af9235c-371097ebb1cfa25e';
+
     public function __construct()
     {
         parent::__construct();
@@ -21,8 +24,15 @@ class EmailNotificationsCron extends Core
     private function run()
     {
         $is_comlited = 0;
-        $type_id = 2;
+        $type_id = 5;
         $crons = $this->NotificationsCron->gets($is_comlited, $type_id);
+
+        $botSender = new Sender([
+            'name' => 'Whois bot',
+            'avatar' => 'https://developers.viber.com/img/favicon.ico',
+        ]);
+
+        $bot = new Bot(['token' => $this->apy_key]);
 
         foreach ($crons as $cron) {
             $ticket = $this->tickets->get_ticket($cron->ticket_id);
@@ -43,18 +53,25 @@ class EmailNotificationsCron extends Core
                 $managers = $this->managers->get_managers(['group_id' => $ticket->group_id, 'role' => 'admin']);
             }
 
-
             foreach ($managers as $manager) {
-                $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
-                $mailService->send(
-                    'rucred@ucase.live',
-                    $manager->email,
-                    $ticket->head,
-                    $ticket->text
-                );
+                if($manager->viber_note == 1){
+                    $is_manager = 1;
+                    $viber_check = $this->ViberUsers->get($manager->id, $is_manager);
+
+                    if(!empty($telegram_check)){
+                        $bot->getClient()->sendMessage(
+                            (new \Viber\Api\Message\Text())
+                                ->setSender($botSender)
+                                ->setReceiver($viber_check->chat_id)
+                                ->setText($ticket->text)
+                        );
+                    }
+                }
             }
+
+            $this->NotificationsCron->update($cron->id, ['is_complited' => 1]);
         }
     }
 }
 
-new EmailNotificationsCron();
+new SmsNotificationsCron();

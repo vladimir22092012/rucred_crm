@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\MailService;
+use Telegram\Bot\Api;
 
 error_reporting(-1);
 ini_set('display_errors', 'On');
@@ -9,19 +9,23 @@ chdir(dirname(__FILE__) . '/../');
 
 require __DIR__ . '/../vendor/autoload.php';
 
-
-class EmailNotificationsCron extends Core
+class TelegramNotificationsCron extends Core
 {
+    protected $token = '5476378779:AAHQmPoqbPB0TW5S8zyo0Ey1abCLZ9hDGq8';
+    protected $telegram;
+
+
     public function __construct()
     {
         parent::__construct();
+        $this->telegram = new Api($this->token);
         $this->run();
     }
 
     private function run()
     {
         $is_comlited = 0;
-        $type_id = 2;
+        $type_id = 4;
         $crons = $this->NotificationsCron->gets($is_comlited, $type_id);
 
         foreach ($crons as $cron) {
@@ -43,18 +47,20 @@ class EmailNotificationsCron extends Core
                 $managers = $this->managers->get_managers(['group_id' => $ticket->group_id, 'role' => 'admin']);
             }
 
-
             foreach ($managers as $manager) {
-                $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
-                $mailService->send(
-                    'rucred@ucase.live',
-                    $manager->email,
-                    $ticket->head,
-                    $ticket->text
-                );
+                if($manager->telegram_note == 1){
+                    $is_manager = 1;
+                    $telegram_check = $this->TelegramUsers->get($manager->id, $is_manager);
+
+                    if(!empty($telegram_check)){
+                        $this->telegram->sendMessage([ 'chat_id' => $telegram_check->chat_id, 'text' => $ticket->text]);
+                    }
+                }
             }
+
+            $this->NotificationsCron->update($cron->id, ['is_complited' => 1]);
         }
     }
 }
 
-new EmailNotificationsCron();
+new SmsNotificationsCron();

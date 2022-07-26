@@ -33,9 +33,13 @@ class Managers extends Core
         $page = 1;
         $sort = 'id DESC';
         $employer_filter = '';
+        $group_id_filter = '';
 
         if(isset($filter['employer']))
             $employer_filter = $this->db->placehold("AND company_id = ?", (int)$filter['employer']);
+
+        if(isset($filter['group_id']))
+            $group_id_filter = $this->db->placehold("AND group_id = ?", $filter['group_id']);
 
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
@@ -177,6 +181,7 @@ class Managers extends Core
                 $keyword_filter
                 $collection_status_filter
                 $employer_filter
+                $group_id_filter
             ORDER BY $sort
             $sql_limit
         ");
