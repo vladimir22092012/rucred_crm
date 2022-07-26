@@ -4014,6 +4014,20 @@ class OfflineOrderController extends Controller
             $message
         );
 
+        $asp_log =
+            [
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'created' => date('Y-m-d H:i:s'),
+                'type' => 'rucred_sms',
+                'recepient' => $order->phone_mobile,
+                'manager_id' => $this->manager->id
+            ];
+
+        $asp_id = $this->AspCodes->add_code($asp_log);
+
+        $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'second_pak' => 1]);
+
         echo json_encode(['success' => 1]);
         exit;
     }
