@@ -3897,6 +3897,7 @@ class OfflineOrderController extends Controller
                 SELECT id
                 FROM s_asp_codes
                 WHERE order_id = ?
+                AND `type` = 'sms'
                 ORDER BY id DESC
                 LIMIT 1
                 ", $order_id);

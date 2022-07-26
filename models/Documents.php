@@ -224,14 +224,14 @@ class Documents extends Core
             $id_filter = $this->db->placehold("AND doc.id IN (?@)", array_map('intval', (array)$filter['id']));
         }
 
-        if(isset($params['first_pak']))
+        if(isset($filter['first_pak']))
             $first_pak = $this->db->placehold("AND `type` not in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
 
-        if(isset($params['second_pak']))
+        if(isset($filter['second_pak']))
             $second_pak = $this->db->placehold("AND `type` in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
 
-        if(isset($params['asp_flag']))
-            $asp_flag = $this->db->placehold("AND asp_id is not null");
+        if(isset($filter['asp_flag']))
+            $asp_flag = $this->db->placehold("AND asp_id = ?", $filter['asp_flag']);
 
         if(isset($filter['role_id'])){
             $permissions = $this->DocksPermissions->get_docktypes(['role_id' => $filter['role_id']]);

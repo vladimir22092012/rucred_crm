@@ -220,10 +220,6 @@
                                             <td style="display: flex">
                                                 <select class="form-control document_link">
                                                     {foreach $code->documents as $document}
-                                                        {if !in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR', 'DOP_GRAFIK', 'DOP_SOGLASHENIE'])
-                                                        && $code->rucred_stamp}
-                                                            {continue}
-                                                        {/if}
                                                         <option value="{$document->id}">
                                                             {$document->numeration} {$document->name}
                                                         </option>
