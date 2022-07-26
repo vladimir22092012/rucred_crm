@@ -831,11 +831,6 @@ class OrderController extends Controller
             exit;
         }
 
-        if (count($scans) < count($users_docs) || empty($order->sms)){
-            echo json_encode(['error' => 'Для одобрения заявки нужны все сканы либо пэп!']);
-            exit;
-        }
-
         if ($order->amount < $loan->min_amount && $order->amount > $loan->max_amount){
             echo json_encode(['error' => 'Проверьте сумму займа!']);
             exit;
