@@ -24,18 +24,12 @@ class NotificationsCron extends Core
         return $result;
 
     }
-    public function gets($complited = false){
-
-        $complited_flag = '';
-
-        if($complited != false)
-            $complited_flag = $this->db->placehold("AND is_complited = ?", $complited);
+    public function gets(){
 
         $query = $this->db->placehold("
         SELECT *
         FROM s_notifications_cron
-        WHERE 1
-        $complited_flag
+        WHERE is_complited = 0
         ");
 
         var_dump($query);
