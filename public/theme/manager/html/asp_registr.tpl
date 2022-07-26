@@ -201,9 +201,6 @@
                                     </thead>
                                     <tbody id="table-body" style="font-size: 14px">
                                     {foreach $codes as $code}
-                                        {if $code->type == 'rucred_sms'}
-                                            {continue}
-                                        {/if}
                                         <tr class="codes">
                                             <td>
                                                 {$code->uid}
@@ -223,57 +220,8 @@
                                             <td style="display: flex">
                                                 <select class="form-control document_link">
                                                     {foreach $code->documents as $document}
-                                                        <option value="{$document->id}">
-                                                            {$document->numeration} {$document->name}
-                                                        </option>
-                                                    {/foreach}
-                                                </select>
-                                                <a target="_blank" id="document_href"
-                                                   href="{$config->root_url}/document/{$code->documents[0]->id}">
-                                                    <div class="btn btn-outline-info" style="margin-left: 5px">
-                                                        Открыть
-                                                    </div>
-                                                </a>
-                                            </td>
-                                            <td class="code_type" id="{$code->type}">
-                                                {$code->type}
-                                            </td>
-                                            <td>
-                                                {$code->recepient}
-                                            </td>
-                                            <td>
-                                                {$code->code}
-                                            </td>
-                                            <td>
-                                                <a target="_blank"
-                                                   href="{$config->root_url}/offline_order/{$code->order_id}">
-                                                    {$code->order_id}</a>
-                                            </td>
-                                        </tr>
-                                        {if $code->rucred_stamp}
-                                            {if $code->type != 'rucred_sms'}
-                                                {continue}
-                                            {/if}
-                                        <tr class="codes">
-                                            <td>
-                                                {$code->uid}
-                                            </td>
-                                            <td>
-                                                {$code->created|date} {$code->created|time}
-                                            </td>
-                                            <td class="manager_id">
-                                                <a target="_blank"
-                                                   href="{$config->back_url}/manager/{$code->manager->id}">
-                                                    {$code->manager->name}
-                                                </a>
-                                            </td>
-                                            <td>
-                                                2
-                                            </td>
-                                            <td style="display: flex">
-                                                <select class="form-control document_link" style="width: 500px;">
-                                                    {foreach $code->documents as $document}
-                                                        {if !in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR', 'DOP_GRAFIK', 'DOP_SOGLASHENIE'])}
+                                                        {if !in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR', 'DOP_GRAFIK', 'DOP_SOGLASHENIE'])
+                                                        && $code->rucred_stamp}
                                                             {continue}
                                                         {/if}
                                                         <option value="{$document->id}">
@@ -303,7 +251,6 @@
                                                     {$code->order_id}</a>
                                             </td>
                                         </tr>
-                                        {/if}
                                     {/foreach}
                                     </tbody>
                                 </table>
