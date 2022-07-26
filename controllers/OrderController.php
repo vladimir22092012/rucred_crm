@@ -1023,6 +1023,8 @@ class OrderController extends Controller
 
             $asp_id = $this->AspCodes->add_code($asp_log);
 
+            var_dump($asp_log);
+
             $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'second_pak' => 1]);
 
             $cron =
