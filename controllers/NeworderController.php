@@ -850,6 +850,14 @@ class NeworderController extends Controller
                         $message
                     );
 
+                    $cron =
+                        [
+                            'ticket_id' => $ticket_id,
+                            'is_complited' => 0
+                        ];
+
+                    $this->NotificationsCron->add($cron);
+
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id.'?scroll=1']);
                     exit;
                 }
@@ -947,6 +955,14 @@ class NeworderController extends Controller
                             $user->phone_mobile,
                             $message
                         );
+
+                        $cron =
+                            [
+                                'ticket_id' => $ticket_id,
+                                'is_complited' => 0
+                            ];
+
+                        $this->NotificationsCron->add($cron);
 
                         response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' .$order_id.'?scroll=1']);
                     } catch (Exception $exception) {

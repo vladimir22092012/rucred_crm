@@ -18,8 +18,7 @@ class SmsNotificationsCron extends Core
     private function run()
     {
         $is_comlited = 0;
-        $type_id = 1;
-        $crons = $this->NotificationsCron->gets($is_comlited, $type_id);
+        $crons = $this->NotificationsCron->gets($is_comlited);
 
         foreach ($crons as $cron) {
             $ticket = $this->tickets->get_ticket($cron->ticket_id);

@@ -981,6 +981,14 @@ class OfflineOrderController extends Controller
             }
         }
 
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
+
         echo json_encode(['success' => 1]);
         exit;
 
@@ -1137,6 +1145,14 @@ class OfflineOrderController extends Controller
                 $order->phone_mobile,
                 $message
             );
+
+            $cron =
+                [
+                    'ticket_id' => $ticket_id,
+                    'is_complited' => 0
+                ];
+
+            $this->NotificationsCron->add($cron);
 
             return ['success' => 1];
         } else {
@@ -3068,7 +3084,16 @@ class OfflineOrderController extends Controller
                 'status' => 0
             ];
 
-        $this->Tickets->add_ticket($ticket);
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
+
         exit;
     }
 
