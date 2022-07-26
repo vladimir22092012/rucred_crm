@@ -201,6 +201,9 @@
                                     </thead>
                                     <tbody id="table-body" style="font-size: 14px">
                                     {foreach $codes as $code}
+                                        {if $code->type == 'rucred_sms'}
+                                            {continue}
+                                        {/if}
                                         <tr class="codes">
                                             <td>
                                                 {$code->uid}
@@ -248,6 +251,9 @@
                                             </td>
                                         </tr>
                                         {if $code->rucred_stamp}
+                                            {if $code->type != 'rucred_sms'}
+                                                {continue}
+                                            {/if}
                                         <tr class="codes">
                                             <td>
                                                 {$code->uid}
