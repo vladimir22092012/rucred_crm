@@ -3010,35 +3010,7 @@
                                                        value="{$order->contract_id}"/>
                                                 <input type="hidden" name="phone" class="js-contract-phone"
                                                        value="{$order->phone_mobile|escape}"/>
-                                                {if $enough_scans == 0}
-                                                    {if empty({$order->sms})}
-                                                        <div style="display: flex;">
-                                                            <input type="text" class="form-control code_asp"
-                                                                   style="display:none"
-                                                                   placeholder="SMS код"
-                                                                   value="{if $is_developer}{$contract->accept_code}{/if}"/>
-                                                            <small id="asp_success"
-                                                                   style="display: none; color: #009d07">
-                                                                Успешно!
-                                                            </small>
-                                                            <div class="btn btn-info confirm_asp" type="button"
-                                                                 data-user="{$order->user_id}"
-                                                                 data-order="{$order->order_id}"
-                                                                 style="margin-left: 15px; display:none"
-                                                                 data-phone="{$order->phone_mobile}">Подтвердить
-                                                            </div>
-                                                            <div type="button" data-user="{$order->user_id}"
-                                                                 id="send_asp"
-                                                                 data-phone="{$order->phone_mobile}"
-                                                                 data-order="{$order->order_id}"
-                                                                 style="margin-left: 15px; width: 370px"
-                                                                 class="btn btn-primary send_asp_code">
-                                                                Отправить смс
-                                                            </div>
-                                                        </div>
-                                                    {/if}
-                                                {/if}
-                                                <div style="{if empty($order->sms)}display: none;{else}display: flex; justify-content: space-between;{/if}">
+                                                <div style="display: flex; justify-content: space-between;">
                                                     <button
                                                             class="btn btn-success js-approve-order js-event-add-click"
                                                             data-event="12" data-user="{$order->user_id}"

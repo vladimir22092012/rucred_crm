@@ -21,7 +21,7 @@ class AspRegistrController extends Controller
             $code->manager =  $this->managers->get_manager($code->manager_id);
             $code->documents = $this->documents->get_documents(['order_id' => $code->order_id, 'asp_flag' => $code->id]);
 
-            if(empty($code->documents) || $code->code == 0)
+            if(empty($code->documents))
                 unset($codes[$key]);
         }
 
