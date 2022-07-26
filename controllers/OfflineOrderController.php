@@ -3985,6 +3985,7 @@ class OfflineOrderController extends Controller
         $this->YaDiskCron->add($cron);
 
         $send_loan = $this->Soap1c->send_loan($order_id);
+        echo json_encode(['error' => $send_loan]);
 
         if (!isset($send_loan->return) || $send_loan->return != 'OK') {
             echo json_encode(['error' => $send_loan]);
@@ -3992,6 +3993,7 @@ class OfflineOrderController extends Controller
         }
 
         $send_payment = $this->Soap1c->send_payment($payment);
+        echo json_encode(['error' => $send_loan]);
 
         if (!isset($send_payment->return) || $send_payment->return != 'OK') {
             echo json_encode(['error' => $send_payment]);

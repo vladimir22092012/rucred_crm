@@ -140,7 +140,7 @@
                                                     Подписант</a>
                                             {else}<a href="{url page=null sort='manager_id asc'}">Подписант</a>{/if}
                                         </th>
-                                        <th style="width: 70px;">Количество документов</th>
+                                        <th style="width: 70px;">Количество<br>док-тов</th>
                                         <th style="width: 350px;">Подписанные
                                             документы
                                         </th>
