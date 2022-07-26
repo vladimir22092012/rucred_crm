@@ -900,28 +900,6 @@ class OrderController extends Controller
             }
         }
 
-        $this->db->query("
-        SELECT id
-        FROM s_asp_codes
-        WHERE order_id = ?
-        ORDER BY id DESC
-        LIMIT 1
-        ", $order_id);
-        $asp_id = $this->db->result('id');
-
-        $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id]);
-
-        try{
-            $upload_scans = 0;
-
-            if(count($scans) == count($users_docs))
-                $upload_scans = 1;
-
-            $this->YaDisk->upload_orders_files($order_id, $upload_scans);
-        }catch (Exception $e){
-
-        }
-
         echo json_encode(['success' => 1]);
         exit;
 
@@ -1032,6 +1010,28 @@ class OrderController extends Controller
                 'Поздравляем!',
                 $fetch
             );
+
+            $asp_log =
+                [
+                    'user_id' => $order->user_id,
+                    'order_id' => $order->order_id,
+                    'created' => date('Y-m-d H:i:s'),
+                    'type' => 'rucred_sms',
+                    'recepient' => $order->phone_mobile,
+                    'manager_id' => $this->manager->id
+                ];
+
+            $asp_id = $this->AspCodes->add_code($asp_log);
+
+            $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'second_pak' => 1]);
+
+            $cron =
+                [
+                    'order_id' => $order_id,
+                    'pak' => 'second_pak'
+                ];
+
+            $this->YaDiskCron->add($cron);
 
             $template = $this->sms->get_template(8);
             $message = $template->template;
