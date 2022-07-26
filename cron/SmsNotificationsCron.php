@@ -17,8 +17,8 @@ class SmsNotificationsCron extends Core
 
     private function run()
     {
-        $is_comlited = 0;
-        $crons = $this->NotificationsCron->gets($is_comlited);
+        $is_complited = 0;
+        $crons = $this->NotificationsCron->gets($is_complited);
 
         if (!empty($crons)) {
             foreach ($crons as $cron) {

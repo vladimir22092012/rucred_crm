@@ -24,7 +24,7 @@ class NotificationsCron extends Core
         return $result;
 
     }
-    public function gets($complited = false, $type = false){
+    public function gets($complited = false){
 
         $complited_flag = '';
         $type_filter = '';
