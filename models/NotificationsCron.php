@@ -43,6 +43,9 @@ class NotificationsCron extends Core
         $type_filter
         ");
 
+        var_dump($query);
+        exit;
+
         $this->db->query($query);
 
         $results = $this->db->results();
