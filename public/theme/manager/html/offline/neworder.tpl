@@ -303,7 +303,16 @@
                                     $('.confirm_telegram').fadeOut();
                                     setTimeout(function () {
                                         $('.telegram_confirmed').fadeIn();
-                                    }, 500);
+                                    }, 1500);
+                                    break;
+
+                                case 'viber':
+                                    $('input[name="viber_same"]').fadeOut();
+                                    $('.viber_same_label').fadeOut();
+                                    $('.confirm_viber').fadeOut();
+                                    setTimeout(function () {
+                                        $('.viber_confirmed').fadeIn();
+                                    }, 1500);
                                     break;
                             }
                         } else {
@@ -780,7 +789,7 @@
                                                             <div class="col">
                                                                 <input style="width: 400px" class="form-control email"
                                                                        type="text" name="email"
-                                                                       placeholder="ivanov@mail.ru(необязательно)"
+                                                                       placeholder="ivanov@mail.ru"
                                                                        value="{$order->email}" autocomplete="off"/>
                                                                 <input type="hidden" name="email_confirmed"
                                                                        class="email_confirmed" value="false"/>
@@ -822,6 +831,8 @@
                                                        style="width: 450px; margin-left: 25px; {if isset($order) && $order->viber_num == $order->phone_mobile}display: none{/if}"
                                                        type="text" name="viber" value="{$order->viber_num}"
                                                        autocomplete="off">
+                                                <label style="margin-left: 25px; display: none"
+                                                       class="label label-success viber_confirmed">Cсылка для привязки отправлена</label>
                                                 <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
                                                        name="viber_same"
                                                        {if isset($order) && $order->viber_num == $order->phone_mobile}checked{/if}
@@ -858,7 +869,7 @@
                                                        type="text" name="telegram" value="{$order->telegram_num}"
                                                        autocomplete="off">
                                                 <label style="margin-left: 25px; display: none"
-                                                       class="label label-success telegram_confirmed">Подтвержден</label>
+                                                       class="label label-success telegram_confirmed">Cсылка для привязки отправлена</label>
                                                 <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
                                                        name="telegram_same"
                                                        {if isset($order) && $order->telegram_num == $order->phone_mobile}checked{/if}

@@ -32,7 +32,7 @@ class AspCodes extends Core
         if(!empty($code))
             $this->uniq_id();
         else
-            return $code;
+            return $uid;
     }
 
     public function get_code($param = array())
