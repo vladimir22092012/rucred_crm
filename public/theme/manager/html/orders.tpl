@@ -150,13 +150,9 @@
                                        class="btn btn-xs {if $filter_status==3}btn-danger{else}btn-outline-danger{/if}">Отказ</a>
                                     <a href="{if $filter_status==4}{url status=null page=null}{else}{url status=4 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==4}btn-inverse{else}btn-outline-inverse{/if}">Подписан</a>
-                                    <a href="{if $filter_status==5}{url status=null page=null}{else}{url status=5 page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status==5}btn-primary{else}btn-outline-primary{/if}">Выдан</a>
                                     <a href="{if $filter_status==6}{url status=null page=null}{else}{url status=6 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==6}btn-danger{else}btn-outline-danger{/if}">Не
                                         удалось выдать</a>
-                                    <a href="{if $filter_status==7}{url status=null page=null}{else}{url status=7 page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status==7}btn-inverse{else}btn-outline-inverse{/if}">Погашен</a>
                                     <a href="{if $filter_status==8}{url status=null page=null}{else}{url status=8 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==8}btn-danger{else}btn-outline-danger{/if}">Отказ
                                         клиента</a>

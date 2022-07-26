@@ -114,6 +114,8 @@ class OfflineOrdersController extends Controller
             }
         }
 
+        $filter['status'] = [0,1,4,6,8,9,14,15];
+
         $orders = array();
         foreach ($this->orders->get_orders($filter) as $order) {
             $order->number = str_pad($order->order_id, 5, '0', STR_PAD_LEFT);
