@@ -1,6 +1,7 @@
 <?php
 
 session_start();
+date_default_timezone_set('Europe/Moscow');
 
 $start_time = microtime(true);
 
