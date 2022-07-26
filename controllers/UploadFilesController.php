@@ -31,14 +31,14 @@ class UploadFilesController extends Controller
             $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
             $user_id = $this->request->post('user_id');
 
-            $format = substr($file['name'], -4);
+            $format = explode('.', $file['name']);
 
-            if(!in_array($format, ['.pdf', '.jpg', '.png'])){
+            if(!in_array($format[1], ['pdf', 'jpg', 'png', 'jpeg'])){
                 echo json_encode(['error' => 1, 'message' => 'Неверный формат файла']);
                 exit;
             }
 
-            if ($this->request->post('is_it_scans') == 'yes' && $format != '.pdf'){
+            if ($this->request->post('is_it_scans') == 'yes' && $format[1] != 'pdf'){
                 echo json_encode(['error' => 1, 'message' => 'Неверный формат файла']);
                 exit;
             }
