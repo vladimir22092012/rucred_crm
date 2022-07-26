@@ -32,9 +32,6 @@ class NotificationsCron extends Core
         WHERE is_complited = 0
         ");
 
-        var_dump($query);
-        exit;
-
         $this->db->query($query);
 
         $results = $this->db->results();
