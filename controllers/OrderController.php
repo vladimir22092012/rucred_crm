@@ -831,7 +831,7 @@ class OrderController extends Controller
             exit;
         }
 
-        if (count($scans) < count($users_docs) && empty($order->sms)){
+        if (count($scans) < count($users_docs) || empty($order->sms)){
             echo json_encode(['error' => 'Для одобрения заявки нужны все сканы либо пэп!']);
             exit;
         }
