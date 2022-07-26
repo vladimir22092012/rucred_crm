@@ -3943,11 +3943,8 @@ class OfflineOrderController extends Controller
     {
         $order_id = $this->request->post('order_id');
         $order = $this->orders->get_order($order_id);
-        $contract = $this->contracts->get_contract(['order_id' => $order->order_id]);
+        $contract = $this->contracts->get_contract($order->contract_id);
         $requisits = $this->Requisites->get_requisites(['user_id' => $order->user_id]);
-
-        var_dump($contract);
-        exit;
 
         $default_requisit = new stdClass();
 
