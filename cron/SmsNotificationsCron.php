@@ -45,6 +45,7 @@ class SmsNotificationsCron extends Core
 
                 foreach ($managers as $manager) {
                     if ($manager->sms_note == 1) {
+                        $manager->phone = preg_replace('![^0-9]+!', '', $manager->phone);
                         $message = $ticket->text;
                         $this->sms->send(
                             $manager->phone,
