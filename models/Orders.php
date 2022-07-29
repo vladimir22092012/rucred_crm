@@ -239,7 +239,7 @@ class Orders extends Core
                     $orders_source_filter = $this->db->placehold("AND o.order_source_id = 2");
                     break;
                 case 'crm':
-                    $orders_source_filter = $this->db->placehold("AND (o.order_source_id = 3");
+                    $orders_source_filter = $this->db->placehold("AND o.order_source_id = 3");
                     break;
             endswitch;
         }

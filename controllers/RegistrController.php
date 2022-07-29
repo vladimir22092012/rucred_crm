@@ -45,6 +45,13 @@ class RegistrController extends Controller
         $filter['page'] = $current_page;
         $filter['limit'] = $items_per_page;
 
+        $orders_source = $this->request->get('source');
+
+        if(!empty($orders_source)){
+            $filter['order_source'] = $orders_source;
+            $this->design->assign('filter_status', $orders_source);
+        }
+
         $orders = $this->orders->get_orders($filter);
 
         foreach ($orders as $order){

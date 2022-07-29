@@ -64,14 +64,25 @@
                     <div class="card-body">
                         <h4 class="card-title">Список заявок </h4>
 
-                        <div class="clearfix">
-                            <div class="js-filter-status mb-2 float-left">
+                        <div style="display: flex; justify-content: space-between">
+                            <div class="js-filter-status">
                                 <a href="{if $filter_status==5}{url status=null page=null}{else}{url status=5 page=null}{/if}"
                                    class="btn btn-xs {if $filter_status==5}btn-primary{else}btn-outline-primary{/if}">Выдан</a>
                                 <a href="{if $filter_status==7}{url status=null page=null}{else}{url status=7 page=null}{/if}"
                                    class="btn btn-xs {if $filter_status==7}btn-inverse{else}btn-outline-inverse{/if}">Погашен</a>
                                 {if $filter_status}
                                     <input type="hidden" value="{$filter_status}" id="filter_status"/>
+                                {/if}
+                            </div>
+                            <div class="js-filter-source">
+                                <a href="{if $filter_source=='client_site'}{url source=null page=null}{else}{url source='client_site' page=null}{/if}"
+                                   class="btn btn-xs {if $filter_source=='client_site'}btn-info{else}btn-outline-info{/if}">Клиентский сайт</a>
+                                <a href="{if $filter_source=='mobile'}{url source=null page=null}{else}{url source='mobile' page=null}{/if}"
+                                   class="btn btn-xs {if $filter_source=='mobile'}btn-warning{else}btn-outline-primary{/if}">Мобильное приложение</a>
+                                <a href="{if $filter_source=='crm'}{url source=null page=null}{else}{url source='crm' page=null}{/if}"
+                                   class="btn btn-xs {if $filter_source=='crm'}btn-success{else}btn-outline-success{/if}">Црм</a>
+                                {if $filter_client}
+                                    <input type="hidden" value="{$filter_source}" id="filter_source"/>
                                 {/if}
                             </div>
                         </div>
