@@ -1187,18 +1187,19 @@
 
                         <div class="form-body">
                             <div class="row">
-                                <div class="col-4 col-md-3 col-lg-2">
-                                    <h4 class="form-control-static">
-                                        {if $client_status == 'ПК'}
-                                            <span class="label label-success"
-                                                  title="Клиент уже имеет погашенные займы">ПК</span>
-                                        {elseif $client_status == 'Повтор'}
-                                            <span class="label label-warning"
-                                                  title="Клиент уже подавал ранее заявки">Повтор</span>
-                                        {elseif $client_status == 'Новая'}
-                                            <span class="label label-info" title="Новый клиент">Новая</span>
+                                <div class="col-4 col-md-3 col-lg-2" style="display: flex;">
+                                    <small>
+                                        {if $client_status == 'ПК'}<span class="label label-success">ПК</span>
+                                        {elseif $client_status == 'Повтор'}<span class="label label-warning">Повтор</span>
+                                        {elseif $client_status == 'Новая'}<span class="label label-info">Новая</span>
                                         {/if}
-                                    </h4>
+                                    </small>
+                                    <small style="margin-left: 25px">
+                                        {if $order->order_source_id == 1}<span class="label label-info">Клиентский сайт</span>
+                                        {elseif $order->order_source_id == 2}<span class="label label-primary">Мобильное приложение</span>
+                                        {elseif $order->order_source_id == 3}<span class="label label-success">Црм</span>
+                                        {/if}
+                                    </small>
                                 </div>
                                 <div class="col-8 col-md-3 col-lg-4">
                                     <h5 class="form-control-static float-left">

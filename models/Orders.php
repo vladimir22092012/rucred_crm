@@ -100,6 +100,7 @@ class Orders extends Core
                 u.subdivision_code,
                 u.passport_date,
                 u.passport_issued,
+                o.order_source_id,
                 u.snils,
                 u.inn,
                 u.regaddress_id,
