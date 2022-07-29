@@ -119,7 +119,7 @@ class OrdersController extends Controller
 
         if(!empty($orders_source)){
             $filter['order_source'] = $orders_source;
-            $this->design->assign('filter_status', $orders_source);
+            $this->design->assign('filter_source', $orders_source);
         }
 
         $orders = array();
