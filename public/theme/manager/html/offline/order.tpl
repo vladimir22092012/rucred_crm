@@ -1999,6 +1999,7 @@
                                                                     </a>
                                                                     <div class="order-image-actions"
                                                                          {if !in_array($order->status, [0, 1, 12, 14, 15]) || $file->type == 'document'}style="display: none"{/if}>
+                                                                        {if $manager->role != 'employer'}
                                                                         <div class="dropdown mr-1 show ">
                                                                             <button type="button"
                                                                                     class="btn {if $file->status==2}btn-success{elseif $file->status==3}btn-danger{else}btn-secondary{/if} dropdown-toggle"
@@ -2055,8 +2056,10 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
+                                                                        {/if}
                                                                     </div>
                                                                 </li>
+                                                                {if $manager->role != 'employer'}
                                                                 <select class="form-control photo_status"
                                                                         data-file="{$file->id}"
                                                                         name="photo_status">
@@ -2077,6 +2080,7 @@
                                                                         Селфи с паспортом
                                                                     </option>
                                                                 </select>
+                                                                {/if}
                                                             </div>
                                                         {/foreach}
                                                     </ul>

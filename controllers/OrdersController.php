@@ -81,11 +81,6 @@ class OrdersController extends Controller
             $this->design->assign('search', array_filter($search));
         }
 
-        if ($status = $this->request->get('status')) {
-            $filter['status'] = $status;
-            $this->design->assign('filter_status', $status);
-        }
-
         if ($filter_client = $this->request->get('client')) {
             $filter['client'] = $filter_client;
             $this->design->assign('filter_client', $filter_client);
@@ -111,7 +106,21 @@ class OrdersController extends Controller
             }
         }
 
-        $filter['status'] = [0,1,4,6,8,9,14,15];
+        $status = $this->request->get('status');
+
+        if(!empty($status)){
+            $filter['status'] = $status;
+            $this->design->assign('filter_status', $status);
+        }else{
+            $filter['status'] = [0,1,4,6,8,9,14,15];
+        }
+
+        $orders_source = $this->request->get('source');
+
+        if(!empty($orders_source)){
+            $filter['order_source'] = $orders_source;
+            $this->design->assign('filter_status', $status);
+        }
 
         $orders = array();
         foreach ($this->orders->get_orders($filter) as $order) {

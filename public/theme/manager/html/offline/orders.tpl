@@ -129,9 +129,9 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Список заявок </h4>
-                        <div class="clearfix">
+                        <div style="display: flex; justify-content: space-between;">
                             {if $manager->role == 'employer'}
-                                <div class="js-filter-status mb-2 float-left">
+                                <div class="js-filter-status">
                                     <a href="{if $filter_status=='new'}{url status=null page=null}{else}{url status='new' page=null}{/if}"
                                        class="btn btn-xs {if $filter_status=='new'}btn-warning{else}btn-outline-warning{/if}">Новая</a>
 
@@ -148,7 +148,7 @@
                                     {/if}
                                 </div>
                             {else}
-                                <div class="js-filter-status mb-2 float-left">
+                                <div class="js-filter-status">
                                     <a href="{if $filter_status=='new'}{url status=null page=null}{else}{url status='new' page=null}{/if}"
                                        class="btn btn-xs {if $filter_status=='new'}btn-warning{else}btn-outline-warning{/if}">Новая</a>
                                     <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 page=null}{/if}"
@@ -178,7 +178,7 @@
                                     {/if}
                                 </div>
                             {/if}
-                            <div class="float-right js-filter-client">
+                            <div>
                                 <a href="{if $filter_client=='new'}{url client=null page=null}{else}{url client='new' page=null}{/if}"
                                    class="btn btn-xs {if $filter_client=='new'}btn-info{else}btn-outline-info{/if}">Новая</a>
                                 <a href="{if $filter_client=='repeat'}{url client=null page=null}{else}{url client='repeat' page=null}{/if}"

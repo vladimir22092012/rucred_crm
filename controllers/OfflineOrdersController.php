@@ -114,7 +114,15 @@ class OfflineOrdersController extends Controller
             }
         }
 
-        $filter['status'] = [0,1,4,6,8,9,14,15];
+        $status = $this->request->get('status');
+
+        if(!empty($status)){
+            $filter['status'] = $status;
+            $this->design->assign('filter_status', $status);
+        }else{
+            $filter['status'] = [0,1,4,6,8,9,14,15];
+        }
+
 
         $orders = array();
         foreach ($this->orders->get_orders($filter) as $order) {

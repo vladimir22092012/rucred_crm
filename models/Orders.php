@@ -206,6 +206,7 @@ class Orders extends Core
         $sort = 'order_id DESC';
         $employer_filter = '';
         $settlements_filter = '';
+        $orders_source_filter = '';
 
         if (isset($filter['settlement_id']))
             $settlements_filter = $this->db->placehold("AND o.settlement_id = ?", $filter['settlement_id']);
@@ -227,6 +228,20 @@ class Orders extends Core
             $status_filter = $this->db->placehold("AND o.status IN (?@)", (array)$filter['status']);
         }else{
             $status_filter = $this->db->placehold("AND o.status != 12");
+        }
+
+        if (!empty($filter['order_source'])) {
+            switch ($filter['order_source']) :
+                case 'client_site':
+                    $orders_source_filter = $this->db->placehold("AND o.order_source_id = 1");
+                    break;
+                case 'mobile':
+                    $orders_source_filter = $this->db->placehold("AND o.order_source_id = 2");
+                    break;
+                case 'crm':
+                    $orders_source_filter = $this->db->placehold("AND (o.order_source_id = 3");
+                    break;
+            endswitch;
         }
 
         if (!empty($filter['client'])) {
@@ -455,6 +470,7 @@ class Orders extends Core
                 o.utm_medium,
                 o.utm_campaign,
                 o.utm_content,
+                o.order_source_id,
                 o.utm_term,
                 o.webmaster_id,
                 o.click_hash,
@@ -553,6 +569,7 @@ class Orders extends Core
                 $employer_filter
                 $manager_id_filter
                 $settlements_filter
+                $orders_source_filter
             ORDER BY $workout_sort $sort
             $sql_limit
         ");

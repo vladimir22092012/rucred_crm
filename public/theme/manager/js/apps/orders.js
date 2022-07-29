@@ -21,6 +21,7 @@ function OrdersApp()
         _init_daterange();
         
         _init_workout();
+        _init_filter_source();
         
 //        _init_open_image_popup();
         
@@ -337,6 +338,16 @@ console.log(resp);
             
             var _url = $(this).attr('href');
             
+            app.load(_url, false);
+        });
+    };
+
+    var _init_filter_source = function(){
+        $(document).on('click', '.js-filter-source a', function(e){
+            e.preventDefault();
+
+            var _url = $(this).attr('href');
+
             app.load(_url, false);
         });
     };

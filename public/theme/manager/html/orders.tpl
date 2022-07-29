@@ -120,9 +120,9 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Список заявок </h4>
-                        <div class="clearfix">
+                        <div style="display: flex; justify-content: space-between;">
                             {if $manager->role == 'employer'}
-                                <div class="js-filter-status mb-2 float-left">
+                                <div class="js-filter-status">
                                     <a href="{if $filter_status=='new'}{url status=null page=null}{else}{url status='new' page=null}{/if}"
                                        class="btn btn-xs {if $filter_status=='new'}btn-warning{else}btn-outline-warning{/if}">Новая</a>
 
@@ -139,7 +139,7 @@
                                     {/if}
                                 </div>
                             {else}
-                                <div class="js-filter-status mb-2 float-left">
+                                <div class="js-filter-status">
                                     <a href="{if $filter_status=='new'}{url status=null page=null}{else}{url status='new' page=null}{/if}"
                                        class="btn btn-xs {if $filter_status=='new'}btn-warning{else}btn-outline-warning{/if}">Новая</a>
                                     <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 page=null}{/if}"
@@ -169,7 +169,18 @@
                                     {/if}
                                 </div>
                             {/if}
-                            <div class="float-right js-filter-client">
+                            <div class="js-filter-source">
+                                <a href="{if $filter_source=='client_site'}{url source=null page=null}{else}{url source='client_site' page=null}{/if}"
+                                   class="btn btn-xs {if $filter_source=='client_site'}btn-info{else}btn-outline-info{/if}">Клиентский сайт</a>
+                                <a href="{if $filter_source=='mobile'}{url source=null page=null}{else}{url source='mobile' page=null}{/if}"
+                                   class="btn btn-xs {if $filter_source=='mobile'}btn-warning{else}btn-outline-primary{/if}">Мобильное приложение</a>
+                                <a href="{if $filter_source=='crm'}{url source=null page=null}{else}{url source='crm' page=null}{/if}"
+                                   class="btn btn-xs {if $filter_source=='crm'}btn-success{else}btn-outline-success{/if}">Црм</a>
+                                {if $filter_client}
+                                    <input type="hidden" value="{$filter_source}" id="filter_source"/>
+                                {/if}
+                            </div>
+                            <div class="js-filter-client">
                                 <a href="{if $filter_client=='new'}{url client=null page=null}{else}{url client='new' page=null}{/if}"
                                    class="btn btn-xs {if $filter_client=='new'}btn-info{else}btn-outline-info{/if}">Новая</a>
                                 <a href="{if $filter_client=='repeat'}{url client=null page=null}{else}{url client='repeat' page=null}{/if}"
@@ -303,6 +314,12 @@
                                                         <span class="label label-success">Р.Подтверждена</span>
                                                     {elseif $order->status == 15}
                                                         <span class="label label-danger">Р.Отклонена</span>
+                                                    {/if}
+                                                </small>
+                                                <small>
+                                                    {if $order->order_source_id == 1}<span class="label label-info">Клиентский сайт</span>
+                                                    {elseif $order->order_source_id == 2}<span class="label label-primary">Мобильное приложение</span>
+                                                    {elseif $order->order_source_id == 3}<span class="label label-success">Црм</span>
                                                     {/if}
                                                 </small>
                                                 {if $order->count_schedules > 1}

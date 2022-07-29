@@ -157,6 +157,12 @@
                                                     {elseif $order->status == 8}<span class="label label-danger">Отказ клиента</span>
                                                     {/if}
                                                 </small>
+                                                <small>
+                                                    {if $order->order_source_id == 1}<span class="label label-info">Клиентский сайт</span>
+                                                    {elseif $order->order_source_id == 2}<span class="label label-primary">Мобильное приложение</span>
+                                                    {elseif $order->order_source_id == 3}<span class="label label-success">Црм</span>
+                                                    {/if}
+                                                </small>
                                             </td>
                                             <td style="width: 70px;" class="jsgrid-cell">
                                                 {$order->date|date}
