@@ -475,7 +475,7 @@ class NeworderController extends Controller
 
 
         if (empty($user['user_id'])) {
-            $user['stage_registration'] = '7';
+            $user['stage_registration'] = '8';
             unset($user['user_id']);
 
             $last_personal_number = $this->users->last_personal_number();
