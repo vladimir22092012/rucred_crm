@@ -173,7 +173,7 @@
                                 <a href="{if $filter_source=='client_site'}{url source=null page=null}{else}{url source='client_site' page=null}{/if}"
                                    class="btn btn-xs {if $filter_source=='client_site'}btn-info{else}btn-outline-info{/if}">Клиентский сайт</a>
                                 <a href="{if $filter_source=='mobile'}{url source=null page=null}{else}{url source='mobile' page=null}{/if}"
-                                   class="btn btn-xs {if $filter_source=='mobile'}btn-warning{else}btn-outline-primary{/if}">Мобильное приложение</a>
+                                   class="btn btn-xs {if $filter_source=='mobile'}btn-primary{else}btn-outline-primary{/if}">Мобильное приложение</a>
                                 {if $filter_client}
                                     <input type="hidden" value="{$filter_source}" id="filter_source"/>
                                 {/if}
