@@ -12,11 +12,16 @@ class StatusPaymentCron extends Core
 
     private function check_status()
     {
+        /*
         $orders = $this->orders->get_orders(['status' => 4, 'settlement_id' => 3]);
 
         foreach ($orders as $order){
             $this->Soap1c->StatusPaymentOrder($order->order_id);
         }
+
+        */
+
+        var_dump($this->Soap1c->StatusPaymentOrder(141));
     }
 }
 
