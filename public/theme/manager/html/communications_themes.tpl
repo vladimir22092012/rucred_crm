@@ -157,7 +157,7 @@
                 </ol>
             </div>
             <div class="col-md-6 col-4 align-self-center">
-                {if !in_array($manager->role, ['employer', 'underwriter'])}
+                {if in_array($manager->role, ['developer', 'admin'])}
                     <button class="btn float-right hidden-sm-down btn-success add_theme">
                         <i class="mdi mdi-plus-circle"></i> Добавить
                     </button>
@@ -240,7 +240,7 @@
                                                                class="custom-checkbox" disabled {if $theme->need_response == 1}checked{/if}>
                                                     </div>
                                                 </td>
-                                                {if !in_array($manager->role,['employer', 'underwriter'])}
+                                                {if in_array($manager->role, ['developer', 'admin'])}
                                                     <td>
                                                         <div class="btn btn-outline-warning to_edit" id="{$theme->id}">
                                                             Редактировать

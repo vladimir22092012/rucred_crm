@@ -186,7 +186,7 @@
                                         <th>Позиция</th>
                                         <th>Код</th>
                                         <th colspan="2">Описание</th>
-                                        {if !in_array($manager->role, ['employer', 'underwriter'])}
+                                        {if in_array($manager->role, ['developer', 'admin'])}
                                             <th>
                                                 <span>Блокировка</span>
                                                 <div class="onoffswitch">
@@ -259,7 +259,7 @@
                                         <td>Комментарий</td>
                                         <td>Скан</td>
                                         <td></td>
-                                        <td>{if !in_array($manager->role, ['employer', 'underwriter'])}
+                                        <td>{if in_array($manager->role, ['developer', 'admin'])}
                                                 <input type="button" class="btn btn-outline-success add_document"
                                                        value="Добавить документ">
                                             {/if}
@@ -291,7 +291,7 @@
                                             <td>Номер корреспондентского счета</td>
                                             <td>БИК</td>
                                             <td align="center">По умолчанию</td>
-                                            <td>{if !in_array($manager->role, ['employer', 'underwriter'])}
+                                            <td>{if in_array($manager->role, ['developer', 'admin'])}
                                                     <input type="button" class="btn btn-outline-success add_settlement"
                                                            value="Добавить счет">
                                                 {/if}</td>
@@ -310,7 +310,7 @@
                                                             {if in_array($manager->role, ['employer', 'underwriter'])}disabled{/if}>
                                                 </td>
                                                 <td>
-                                                    {if !in_array($manager->role, ['employer', 'underwriter'])}
+                                                    {if in_array($manager->role, ['developer', 'admin'])}
                                                         <input type="button" data-settlement="{$settlement->id}"
                                                                class="btn btn-outline-warning update_settlement"
                                                                value="Ред">
@@ -332,7 +332,7 @@
                                         <td>Дата выплаты</td>
                                         <td>Контактная информация:</td>
                                         <td colspan="2">
-                                            {if !in_array($manager->role, ['employer', 'underwriter'])}
+                                            {if in_array($manager->role, ['developer', 'admin'])}
                                                 <button class="btn hidden-sm-down btn-outline-success add-company-modal">
                                                     <i class="mdi mdi-plus-circle"></i> Добавить филиал
                                                 </button>
@@ -352,7 +352,7 @@
                                             <td>{$branch->name}</td>
                                             <td>{$branch->payday}</td>
                                             <td>{$branch->fio} {$branch->phone}</td>
-                                            {if !in_array($manager->role, ['employer', 'underwriter'])}
+                                            {if in_array($manager->role, ['developer', 'admin'])}
                                                 <td>
                                                     {if $branch->number != '00'}
                                                         <input type="button" data-branch-id="{$branch->id}"

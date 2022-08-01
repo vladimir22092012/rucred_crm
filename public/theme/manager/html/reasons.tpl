@@ -39,7 +39,7 @@
                 </ol>
             </div>
             <div class="col-md-6 col-4 align-self-center">
-                {if !in_array($manager->role, ['employer', 'underwriter'])}
+                {if in_array($manager->role, ['developer', 'admin'])}
                 <button class="btn float-right hidden-sm-down btn-success js-open-add-modal">
                     <i class="mdi mdi-plus-circle"></i> Добавить
                 </button>
@@ -114,7 +114,7 @@
                                                 </div>
                                             </td>
                                             <td class="text-right">
-                                                {if !in_array($manager->role, ['employer', 'underwriter'])}
+                                                {if in_array($manager->role, ['admin', 'developer'])}
                                                 <div class="js-visible-view">
                                                     <a href="#" class="text-info js-edit-item" title="Редактировать"><i class=" fas fa-edit"></i></a>
                                                     <a href="#" class="text-danger js-delete-item" title="Удалить"><i class="far fa-trash-alt"></i></a>

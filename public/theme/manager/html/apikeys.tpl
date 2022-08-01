@@ -53,7 +53,7 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">Пароль (сектор 2516)</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[best2pay][2516]" value="{$apikeys['best2pay'][2516]}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[best2pay][2516]" value="{$apikeys['best2pay'][2516]}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -61,7 +61,7 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">Пароль (сектор 2241)</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[best2pay][2241]" value="{$apikeys['best2pay'][2241]}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[best2pay][2241]" value="{$apikeys['best2pay'][2241]}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -69,7 +69,7 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">Пароль (сектор 2242)</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[best2pay][2242]" value="{$apikeys['best2pay'][2242]}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[best2pay][2242]" value="{$apikeys['best2pay'][2242]}" placeholder=""{if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -77,7 +77,7 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">Пароль (сектор 2243)</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[best2pay][2243]" value="{$apikeys['best2pay'][2243]}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[best2pay][2243]" value="{$apikeys['best2pay'][2243]}" placeholder=""{if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -85,7 +85,7 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">Пароль (сектор 2244)</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[best2pay][2244]" value="{$apikeys['best2pay'][2244]}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[best2pay][2244]" value="{$apikeys['best2pay'][2244]}" placeholder=""{if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -103,13 +103,13 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">apiKey</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[zvonobot][apiKey]" value="{$apikeys['zvonobot']['apiKey']}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[zvonobot][apiKey]" value="{$apikeys['zvonobot']['apiKey']}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">outgoingPhone</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[zvonobot][outgoingPhone]" value="{$apikeys['zvonobot']['outgoingPhone']}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[zvonobot][outgoingPhone]" value="{$apikeys['zvonobot']['outgoingPhone']}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -119,13 +119,13 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">apiKey</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[zvonobot_yuk][apiKey]" value="{$apikeys['zvonobot_yuk']['apiKey']}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[zvonobot_yuk][apiKey]" value="{$apikeys['zvonobot_yuk']['apiKey']}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">outgoingPhone</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[zvonobot_yuk][outgoingPhone]" value="{$apikeys['zvonobot_yuk']['outgoingPhone']}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[zvonobot_yuk][outgoingPhone]" value="{$apikeys['zvonobot_yuk']['outgoingPhone']}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -144,13 +144,13 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">ck_API</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[cloudkassir][ck_API]" value="{$apikeys['cloudkassir']['ck_API']}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[cloudkassir][ck_API]" value="{$apikeys['cloudkassir']['ck_API']}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">ck_PublicId</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[cloudkassir][ck_PublicId]" value="{$apikeys['cloudkassir']['ck_PublicId']}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[cloudkassir][ck_PublicId]" value="{$apikeys['cloudkassir']['ck_PublicId']}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -158,7 +158,7 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">INN</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[cloudkassir][ck_INN]" value="{$apikeys['cloudkassir']['ck_INN']}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[cloudkassir][ck_INN]" value="{$apikeys['cloudkassir']['ck_INN']}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -175,7 +175,7 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">login</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[sms][login]" value="{$apikeys['sms']['login']}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[sms][login]" value="{$apikeys['sms']['login']}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -183,7 +183,7 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">password</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[sms][password]" value="{$apikeys['sms']['password']}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[sms][password]" value="{$apikeys['sms']['password']}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -191,7 +191,7 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">originator</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[sms][originator]" value="{$apikeys['sms']['originator']}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[sms][originator]" value="{$apikeys['sms']['originator']}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -199,7 +199,7 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">connect_id</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[sms][connect_id]" value="{$apikeys['sms']['connect_id']}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[sms][connect_id]" value="{$apikeys['sms']['connect_id']}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -217,7 +217,7 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">API-ключ</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[dadata][api_key]" value="{$apikeys['dadata']['api_key']}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[dadata][api_key]" value="{$apikeys['dadata']['api_key']}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -225,7 +225,7 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">Секретный ключ для стандартизации</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[dadata][secret_key]" value="{$apikeys['dadata']['secret_key']}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[dadata][secret_key]" value="{$apikeys['dadata']['secret_key']}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -243,7 +243,7 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">API ключ (Уникальный код вашей АТС)</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[mango][api_key]" value="{$apikeys['mango']['api_key']}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[mango][api_key]" value="{$apikeys['mango']['api_key']}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -251,7 +251,7 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">API соль (Ключ для создания подписи)</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[mango][api_salt]" value="{$apikeys['mango']['api_salt']}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[mango][api_salt]" value="{$apikeys['mango']['api_salt']}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -269,7 +269,7 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">API ключ</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[anticaptcha][api_key]" value="{$apikeys['anticaptcha']['api_key']}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[anticaptcha][api_key]" value="{$apikeys['anticaptcha']['api_key']}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -287,7 +287,7 @@
                             <div class="form-group mb-3">
                                 <label class=" col-form-label">API ключ</label>
                                 <div class="">
-                                    <input type="text" class="form-control" name="apikeys[fssp][api_key]" value="{$apikeys['fssp']['api_key']}" placeholder="">
+                                    <input type="text" class="form-control" name="apikeys[fssp][api_key]" value="{$apikeys['fssp']['api_key']}" placeholder="" {if !in_array($manager->role, ['developer', 'admin'])}disabled{/if}>
                                 </div>
                             </div>
                         </div>
@@ -296,12 +296,13 @@
                 </div>
             </div>
 
-
+            {if in_array($manager->role, ['developer', 'admin'])}
             <div class="col-12 grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-width="12">
                 <div class="form-actions">
                     <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Сохранить</button>
                 </div>
             </div>
+            {/if}
         </form>
         <!-- Row -->
         <!-- ============================================================== -->

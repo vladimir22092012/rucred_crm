@@ -118,7 +118,7 @@
                     <li class="breadcrumb-item active">Группы</li>
                 </ol>
             </div>
-            {if !in_array($manager->role,['employer', 'underwriter'])}
+            {if in_array($manager->role,['admin', 'developer'])}
                 <div class="col-md-6 col-4 align-self-center">
                     <button class="btn float-right hidden-sm-down btn-success add_group">
                         <i class="mdi mdi-plus-circle"></i> Добавить
@@ -161,7 +161,7 @@
                                                     <input type="button" class="btn btn-outline-danger cancel_edit"
                                                            value="Отменить">
                                                 </td>
-                                                {if !in_array($manager->role,['employer', 'underwriter'])}
+                                                {if in_array($manager->role,['admin', 'developer'])}
                                                     <td>
                                                         <div class="btn btn-outline-warning to_edit">
                                                             Редактировать
