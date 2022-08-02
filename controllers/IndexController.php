@@ -28,14 +28,8 @@ class IndexController extends Controller
 
 
         // Если не задан - берем из настроек
-        if (empty($module) && !empty($this->manager->role) && ($this->manager->role == 'collector' || $this->manager->role == 'chief_collector' || $this->manager->role == 'team_collector')) {
-            $module = 'CollectorContractsController';
-        } elseif (empty($module) && !empty($this->manager->role) && ($this->manager->role == 'exactor' || $this->manager->role == 'chief_exactor' || $this->manager->role == 'sudblock' || $this->manager->role == 'chief_sudblock')) {
-            $module = 'SudblockContractsController';
-        } elseif (empty($module) && !empty($this->manager->role) && ($this->manager->role == 'employer')) {
-            $module = 'RegistrController';
-        } elseif (empty($module)) {
-            $module = 'OfflineOrdersController';
+        if (empty($module)) {
+            $module = 'WelcomePageController';
         }
 
         if (class_exists($module)) {
