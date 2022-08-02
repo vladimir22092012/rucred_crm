@@ -127,7 +127,7 @@ class Soap1c extends Core
     public function send_payment($payment)
     {
         $item = new StdClass();
-        $item->OrderID = rand(1, 9999999999999);
+        $item->OrderID = $payment->order_id;
         $item->Дата = date('YmdHis', strtotime($payment->date));
         $item->Сумма = $payment->amount;
         $item->ИННПлательщика = $payment->recepient;
