@@ -8,16 +8,6 @@ chdir(dirname(__FILE__).'/../');
 
 require __DIR__ . '/../vendor/autoload.php';
 
-/**
- * Payment1cCron
- *
- * импортирует из 1с оплаты, которые были не в црм
- *
- * @author Ruslan Kopyl
- * @copyright 2021
- * @version $Id$
- * @access public
- */
 class Payment1c extends Core
 {
     public function __construct()
@@ -31,6 +21,11 @@ class Payment1c extends Core
         $date = date('YmdHis');
 
         $payments = $this->soap1c->getPayments($date);
+
+        echo '<pre>';
+        var_dump($payments);
+        exit;
+
         if (!empty($payments)) {
             foreach ($payments as $item) {
                 $pay_numbers = explode('-', $item->НомерОплаты);
@@ -128,4 +123,4 @@ class Payment1c extends Core
 
 }
 
-$cron = new Payment1c();
+new Payment1c();
