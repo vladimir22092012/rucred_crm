@@ -760,12 +760,23 @@
 
                 $.ajax({
                     method: 'POST',
+                    dataType: 'JSON',
                     data: {
                         action: 'create_pay_rdr',
                         order_id: order_id
                     },
-                    success: function () {
-
+                    success: function (resp) {
+                        if(resp['error']){
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'Ок'
+                            });
+                        }else{
+                            Swal.fire({
+                                title: "Платежный документ успешно отправлен",
+                                confirmButtonText: 'Ок'
+                            });
+                        }
                     }
                 })
             });
