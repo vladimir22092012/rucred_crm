@@ -672,6 +672,21 @@ class OfflineOrderController extends Controller
         $settlement = $this->OrganisationSettlements->get_settlement($order->settlement_id);
         $this->design->assign('settlement', $settlement);
 
+        if ($order->status == 4) {
+            $this->db->query("
+            SELECT *
+            FROM s_transactions
+            WHERE order_id = $order->order_id
+            AND reference = 'issuance'
+            AND reason_code = 0
+            ORDER BY id DESC
+            LIMIT 1
+            ");
+
+            $issuance_transaction = $this->db->result();
+            $this->design->assign('issuance_transaction', $issuance_transaction);
+        }
+
         $body = $this->design->fetch('offline/order.tpl');
 
         if ($this->request->get('ajax', 'integer')) {
@@ -3789,7 +3804,7 @@ class OfflineOrderController extends Controller
 
         $code = random_int(1000, 9999);
 
-        if(!empty($restruct))
+        if (!empty($restruct))
             $template = $this->sms->get_template(6);
         else
             $template = $this->sms->get_template(2);
