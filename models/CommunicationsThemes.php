@@ -32,10 +32,14 @@ class CommunicationsThemes extends Core
         $name_filter = '';
         $number_filter = '';
         $unique_filter = '';
+        $create_ticket_flag = 0;
         $sort = $filter['sort'];
 
         if(isset($filter['name']))
             $name_filter = $this->db->placehold("AND name = ?", $filter['name']);
+
+        if(isset($filter['create_ticket_flag']))
+            $create_ticket_flag = $this->db->placehold("AND id in (?@)", $filter['create_ticket_flag']);
 
         if(isset($filter['number']))
             $name_filter = $this->db->placehold("AND number = ?", $filter['number']);
@@ -50,6 +54,7 @@ class CommunicationsThemes extends Core
         $name_filter
         $number_filter
         $unique_filter
+        $create_ticket_flag
         ORDER BY $sort
         ");
 
