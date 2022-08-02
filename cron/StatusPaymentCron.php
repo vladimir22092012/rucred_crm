@@ -38,6 +38,16 @@ class StatusPaymentCron extends Core
                 if(isset($res->return) && $res->return == 'Оплачено'){
                     $this->transactions->update_transaction($transaction->id, ['reason_code' => 1]);
                     $this->orders->update_order($order->order_id, ['status' => 5]);
+
+                    $this->operations->add_operation(array(
+                        'contract_id' => $order->contract_id,
+                        'type' => 'P2P',
+                        'transaction_id' => $transaction->id,
+                        'user_id' => $order->user_id,
+                        'order_id' => $order->order_id,
+                        'amount' => $order->amount,
+                        'created' => date('Y-m-d H:i:s')
+                    ));
                 }
             }
         }
