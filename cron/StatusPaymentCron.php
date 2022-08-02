@@ -12,16 +12,29 @@ class StatusPaymentCron extends Core
 
     private function check_status()
     {
-        /*
         $orders = $this->orders->get_orders(['status' => 4, 'settlement_id' => 3]);
 
         foreach ($orders as $order){
-            $this->Soap1c->StatusPaymentOrder($order->order_id);
+
+            $this->db->query("
+            SELECT *
+            FROM s_transactions
+            WHERE order_id = $order->order_id
+            AND reference = 'issuance'
+            AND reason_code = 0
+            ORDER BY id DESC
+            LIMIT 1
+            ");
+
+            $transaction = $this->db->result();
+
+            if(!empty($transaction)){
+                $res = $this->Soap1c->StatusPaymentOrder($transaction->id);
+
+                if(isset($res->return) && $res->return == 'Оплачено')
+                    $this->transactions->update_transaction($transaction->id, ['reason_code' => 1]);
+            }
         }
-
-        */
-
-        var_dump($this->Soap1c->StatusPaymentOrder(5767995568400));
     }
 }
 

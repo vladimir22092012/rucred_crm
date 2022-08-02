@@ -3979,15 +3979,29 @@ class OfflineOrderController extends Controller
                 $default_requisit = $requisit;
         }
 
+        $description = "Оплата по договору микрозайма № $contract->number от $order->probably_start_date
+            // заемщик $order->lastname $order->firstname $order->patronymic ИНН $order->inn";
+
+        $transaction =
+            [
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'amount' => $order->amount * 100,
+                'description' => $description,
+                'reference' => 'issuance',
+                'created' => date('Y-m-d H:i:s')
+            ];
+
+        $transaction_id = $this->Transactions->add_transaction($transaction);
+
         $payment = new stdClass();
-        $payment->order_id = $order_id;
+        $payment->order_id = $transaction_id;
         $payment->date = date('Y-m-d H:i:s');
         $payment->amount = $order->amount;
         $payment->recepient = 9725055162;
         $payment->user_id = $order->user_id;
         $payment->number = '40701810300000000347';
-        $payment->description = "Оплата по договору микрозайма № $contract->number от $order->probably_start_date
-            // заемщик $order->lastname $order->firstname $order->patronymic ИНН $order->inn";
+        $payment->description = $description;
         $payment->user_acc_number = $default_requisit->number;
         $payment->user_bik = $default_requisit->bik;
         $payment->users_inn = $order->inn;
