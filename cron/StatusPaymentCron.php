@@ -28,12 +28,8 @@ class StatusPaymentCron extends Core
 
             $transaction = $this->db->result();
 
-            var_dump($transaction);
-
             if(!empty($transaction)){
                 $res = $this->Soap1c->StatusPaymentOrder($transaction->id);
-
-                var_dump($res);
 
                 if(isset($res->return) && $res->return == 'Оплачено'){
                     $this->transactions->update_transaction($transaction->id, ['reason_code' => 1]);
