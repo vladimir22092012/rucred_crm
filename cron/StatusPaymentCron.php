@@ -21,7 +21,7 @@ class StatusPaymentCron extends Core
 
         */
 
-        var_dump($this->Soap1c->StatusPaymentOrder(141));
+        var_dump($this->Soap1c->StatusPaymentOrder(5767995568400));
     }
 }
 
