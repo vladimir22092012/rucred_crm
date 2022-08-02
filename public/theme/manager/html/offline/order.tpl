@@ -760,11 +760,25 @@
 
                 $.ajax({
                     method: 'POST',
-                    dataType: 'JSON',
                     data: {
                         action: 'create_pay_rdr',
                         order_id: order_id
                     },
+                    success: function () {
+
+                    }
+                })
+            });
+
+            $('.send_payment').on('click', function (e) {
+                e.preventDefault();
+
+                let form = $(this).closest('form').serialize();
+
+                $.ajax({
+                    method: 'POST',
+                    data: form,
+                    dataType: 'JSON',
                     success: function (resp) {
                         if(resp['error']){
                             Swal.fire({
@@ -778,19 +792,6 @@
                             });
                         }
                     }
-                })
-            });
-
-            $('.send_payment').on('click', function (e) {
-                e.preventDefault();
-
-                let form = $(this).closest('form').serialize();
-
-                console.log(form);
-
-                $.ajax({
-                    method: 'POST',
-                    data: form
                 })
             });
 
