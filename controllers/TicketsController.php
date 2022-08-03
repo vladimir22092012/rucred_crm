@@ -78,7 +78,7 @@ class TicketsController extends Controller
                 $ticket->creator_company_name = $company->name;
             }
 
-            $themes = $this->CommunicationsThemes->gets(['sort' => 'id DESC', 'create_ticket_flag' => [41,42]]);
+            $themes = $this->CommunicationsThemes->gets(['sort' => 'id DESC', 'create_ticket' => [41,42]]);
             $this->design->assign('themes', $themes);
 
             $this->design->assign('tickets', $tickets);
