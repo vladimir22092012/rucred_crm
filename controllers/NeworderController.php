@@ -1169,6 +1169,8 @@ class NeworderController extends Controller
         if(!empty($get)){
             echo json_encode(['date' => $end_date->format('d.m.Y')]);
             exit;
+        }else{
+            return $end_date->format('d.m.Y');
         }
     }
 
