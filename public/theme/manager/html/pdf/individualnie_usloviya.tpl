@@ -594,8 +594,38 @@
             </td>
             <td style="width: 70%" align="left">С содержанием Общих условий получения и обслуживания микрозайма
                 Заёмщик ознакомлен и
-                согласен:<br><br>Подпись Заёмщика: _____________________ <img
-                        src="{$config->root_url}/theme/manager/html/pdf/i/warning.png" style="height: 12px;"><br><br>Общие
+                согласен:<br><br>{if !isset($code_asp->code)}
+                Подпись Заёмщика: _____________________ <img
+                    src="{$config->root_url}/theme/manager/html/pdf/i/warning.png" style="height: 12px;">
+                {else}
+                <table style="border: 0.25pt solid #002088; font-size: 9px">
+                    <tr>
+                        <td colspan="2"><strong>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ЦИФРОВОЙ ПОДПИСЬЮ</strong></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><hr></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><strong>Подписант:</strong> {$firstname} {$patronymic} {$lastname}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><strong>Дата подписания:</strong> {$code_asp->created|date} {$code_asp->created|time}(МСК)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><strong>ID подписания:</strong> {$code_asp->uid}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><strong>Код подтверждения:</strong> {$code_asp->code}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><hr></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Система ЭДО:</strong><br>Рестарт.Онлайн</td>
+                        <td><img src="{$config->root_url}/theme/manager/html/pdf/i/Vector.png" style="height: 25px"></td>
+                    </tr>
+                </table>
+                {/if}<br><br>Общие
                 условия Договора в печатном
                 варианте выдаются Заимодавцем по требованию Заёмщика<br>
             </td>
@@ -628,12 +658,12 @@
         <tr style="width: 100%;">
             <td style="width: 30%; background-color: #b3b2ab">2.17. Порядок предоставления микрозайма
             </td>
-            <td style="width: 70%" align="left">Микрозаём предоставляется Заёмщику не позднее {$probably_start_date|date} в
+            <td style="width: 70%" align="left">Микрозаём предоставляется Заёмщику не позднее {$created_date|date} в
                 безналичной форме, путём перечисления денежных средств:<br><br>☐ на расчётный счёт Заёмщика / реквизиты
                 банковской карты Заёмщика, указанные в п.7 Договора<br>☒ по реквизитам, указанным Заёмщиком в Заявлении
-                от {$probably_start_date|date} года о перечислении
+                от {$created_date|date} года о перечислении
                 заёмных денежных средств<br>☐ по реквизитам, указанным Заёмщиком в Заявлении
-                от {$probably_start_date|date} года о перечислении
+                от {$created_date|date} года о перечислении
                 заёмных денежных средств в счёт погашения задолженности на счёт третьего лица<br>
             </td>
         </tr>
