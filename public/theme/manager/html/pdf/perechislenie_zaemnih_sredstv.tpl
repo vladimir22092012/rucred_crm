@@ -73,25 +73,32 @@
         </tr>
     </table>
 {else}
-    <table style="color: #002688; font-style: italic; border: 0.25pt solid #002088; width: 50%"
-           cellpadding="1" cellspacing="5">
+    <table style="border: 0.25pt solid #002088; font-size: 8px; width: 50%"
+           cellpadding="1" cellspacing="6">
         <tr>
-            <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
+            <td colspan="2"><strong>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ЦИФРОВОЙ ПОДПИСЬЮ</strong></td>
         </tr>
         <tr>
-            <td>Подписант: {$firstname} {$patronymic} {$lastname}</td>
+            <td colspan="2"><hr></td>
         </tr>
         <tr>
-            <td>Дата подписания: {$code_asp->created|date} {$code_asp->created|time}(МСК)</td>
+            <td colspan="2"><strong>Подписант:</strong> {$firstname} {$patronymic} {$lastname}</td>
         </tr>
         <tr>
-            <td>ID подписания: {$code_asp->uid}</td>
+            <td colspan="2"><strong>Дата подписания:</strong> {$code_asp->created|date} {$code_asp->created|time}(МСК)</td>
         </tr>
         <tr>
-            <td>Код подтверждения: {$code_asp->code}</td>
+            <td colspan="2"><strong>ID подписания:</strong> {$code_asp->uid}</td>
         </tr>
         <tr>
-            <td>Система ЭДО: Рестарт.Онлайн</td>
+            <td colspan="2"><strong>Код подтверждения:</strong> {$code_asp->code}</td>
+        </tr>
+        <tr>
+            <td colspan="2"><hr></td>
+        </tr>
+        <tr>
+            <td><strong>Система ЭДО:</strong> Рестарт.Онлайн</td>
+            <td><img src="{$config->root_url}/theme/manager/html/pdf/i/Vector.png" style="height: 27px"></td>
         </tr>
     </table>
 {/if}

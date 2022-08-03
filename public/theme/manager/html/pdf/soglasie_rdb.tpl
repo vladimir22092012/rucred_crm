@@ -6,7 +6,6 @@
 </table>
 <div></div>
 <h3 align="left"><strong>СОГЛАСИЕ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ</strong></h3>
-<div></div>
 <div align="justify">Настоящим я, <strong>{$lastname|upper} {$firstname|upper} {$patronymic|upper} {$birth}</strong>
     года рождения, место
     рождения <strong>{$birth_place|upper}</strong>, паспорт
@@ -42,9 +41,9 @@
     772501001, БИК 044525666, юридический адрес 115093, город Москва, улица Дубининская, дом 86) на проведение процедуры
     упрощённой идентификации в соответствии с требованиями Федерального закона от 27.06.2011 г. № 161-ФЗ «О национальной
     платёжной системе» и Федерального закона от 07.08.2001 № 115-ФЗ «О противодействии легализации (отмыванию) доходов,
-    полученных преступным путём, и финансированию терроризма».<br><br>Данное согласие действует до достижения целей
+    полученных преступным путём, и финансированию терроризма».<br>Данное согласие действует до достижения целей
     обработки персональных данных или в течение срока хранения информации.<br><br>Данное согласие может быть отозвано в
-    любой момент по моему письменному заявлению.<br><br>Я подтверждаю, что, давая
+    любой момент по моему письменному заявлению.<br>Я подтверждаю, что, давая
     такое согласие, я действую по собственной воле и в своих интересах.
 </div>
 <div align="justify">Банк <strong>ПАО «РосДорБанк»</strong> является кредитной организацией, соответствующей требованиям
@@ -66,25 +65,32 @@
         </tr>
     </table>
 {else}
-    <table style="color: #002688; font-style: italic; border: 0.25pt solid #002088; width: 50%"
-           cellpadding="1" cellspacing="5">
+    <table style="border: 0.25pt solid #002088; width: 50%; font-size: 8px"
+           cellpadding="1" cellspacing="4">
         <tr>
-            <td>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ</td>
+            <td colspan="2"><strong>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ЦИФРОВОЙ ПОДПИСЬЮ</strong></td>
         </tr>
         <tr>
-            <td>Подписант: {$firstname} {$patronymic} {$lastname}</td>
+            <td colspan="2"><hr></td>
         </tr>
         <tr>
-            <td>Дата подписания: {$code_asp->created|date} {$code_asp->created|time}(МСК)</td>
+            <td colspan="2"><strong>Подписант:</strong> {$firstname} {$patronymic} {$lastname}</td>
         </tr>
         <tr>
-            <td>ID подписания: {$code_asp->uid}</td>
+            <td colspan="2"><strong>Дата подписания:</strong> {$code_asp->created|date} {$code_asp->created|time}(МСК)</td>
         </tr>
         <tr>
-            <td>Код подтверждения: {$code_asp->code}</td>
+            <td colspan="2"><strong>ID подписания:</strong> {$code_asp->uid}</td>
         </tr>
         <tr>
-            <td>Система ЭДО: Рестарт.Онлайн</td>
+            <td colspan="2"><strong>Код подтверждения:</strong> {$code_asp->code}</td>
+        </tr>
+        <tr>
+            <td colspan="2"><hr></td>
+        </tr>
+        <tr>
+            <td><strong>Система ЭДО:</strong> Рестарт.Онлайн</td>
+            <td><img src="{$config->root_url}/theme/manager/html/pdf/i/Vector.png" style="height: 25px"></td>
         </tr>
     </table>
 {/if}
