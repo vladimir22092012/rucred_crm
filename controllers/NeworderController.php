@@ -1166,8 +1166,10 @@ class NeworderController extends Controller
             }
         }
 
-        echo json_encode(['date' => $end_date->format('d.m.Y')]);
-        exit;
+        if(!empty($get)){
+            echo json_encode(['date' => $end_date->format('d.m.Y')]);
+            exit;
+        }
     }
 
     private function check_pay_date($date)
