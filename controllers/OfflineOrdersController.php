@@ -95,6 +95,15 @@ class OfflineOrdersController extends Controller
         $current_page = max(1, $current_page);
         $this->design->assign('current_page_num', $current_page);
 
+        $status = $this->request->get('status');
+
+        if(!empty($status)){
+            $filter['status'] = $status;
+            $this->design->assign('filter_status', $status);
+        }else{
+            $filter['status'] = [0,1,4,6,8,9,14,15];
+        }
+
         if ($this->request->get('drafts'))
             $filter['status'] = 12;
 
@@ -112,15 +121,6 @@ class OfflineOrdersController extends Controller
             foreach ($managers_company as $id => $name) {
                 $filter['employer'][] = $id;
             }
-        }
-
-        $status = $this->request->get('status');
-
-        if(!empty($status)){
-            $filter['status'] = $status;
-            $this->design->assign('filter_status', $status);
-        }else{
-            $filter['status'] = [0,1,4,6,8,9,14,15];
         }
 
 
