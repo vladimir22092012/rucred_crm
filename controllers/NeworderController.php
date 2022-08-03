@@ -577,6 +577,7 @@ class NeworderController extends Controller
                     && $settlement_id == 3
                     || $settlement_id == 2){
 
+                    $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date.'+1 days'));
                     $probably_end_date = $this->check_date($probably_start_date, $loan_type, $branche_id, $company_id);
                 }
             }
