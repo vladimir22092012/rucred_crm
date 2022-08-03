@@ -27,4 +27,4 @@ pipelines:
             - pip install ansible
             - apt-get update && apt-get install sshpass -y
             - export ANSIBLE_HOST_KEY_CHECKING=False
-            - echo "$vault" > deploy/vault && ansible-playbook -i deploy/inventory deploy/rucred-deploy.yml --vault-password-file deploy/vault
+            - echo "$vault" > deploy/vault && ansible-playbook -i deploy/inventory deploy/rucred-deploy.yml --vault-password-file deploy/vault -vv
