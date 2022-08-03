@@ -60,6 +60,11 @@ class TicketController extends Controller
             }
         }
 
+        if(!empty($ticket->order_id)){
+            $order = $this->orders->get_order($ticket->order_id);
+            $this->design->assign('offline', $order->offline);
+        }
+
         $messages = $this->TicketMessages->get_messages($ticket_id);
 
         $this->design->assign('messages', $messages);

@@ -137,7 +137,7 @@
                                                     <span class="text-white" style="width: 20%">{$ticket->head}</span>
                                                     {if !empty($ticket->order_id)}
                                                         <span class="text-white" style="width: 20%; margin-left: 50px">Номер заявки: <a
-                                                                    href="/offline_order/{$ticket->order_id}">{$ticket->order_id}</a></span>
+                                                                    href="{if $offline == 1}/offline_order/{else}/order/{/if}{$ticket->order_id}">{$ticket->order_id}</a></span>
                                                     {/if}
                                                     {if in_array($ticket->status, [0,1])}
                                                         <small class="label label-warning"
@@ -180,7 +180,7 @@
                                                             <div class="btn btn-info">
                                                                 <a target="_blank"
                                                                    style="text-decoration: none; color: #f8fff7;"
-                                                                   href="/offline_order/{$ticket->order_id}">Просмотреть
+                                                                   href="{if $offline == 1}/offline_order/{else}/order/{/if}{$ticket->order_id}">Просмотреть
                                                                     заявку</a>
                                                             </div>
                                                         </div>
