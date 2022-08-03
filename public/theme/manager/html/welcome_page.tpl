@@ -12,11 +12,6 @@
             setTimeout(function () {
                 $('#welcome').fadeIn(1500);
             }, 1000);
-
-            setTimeout(function () {
-                location.replace('/offline_orders');
-
-            }, 4000);
         });
     </script>
 {/capture}
