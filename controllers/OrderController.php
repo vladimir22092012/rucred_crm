@@ -646,6 +646,21 @@ class OrderController extends Controller
         $settlement = $this->OrganisationSettlements->get_settlement($order->settlement_id);
         $this->design->assign('settlement', $settlement);
 
+        if ($order->status == 4) {
+            $this->db->query("
+            SELECT *
+            FROM s_transactions
+            WHERE order_id = $order->order_id
+            AND reference = 'issuance'
+            AND reason_code = 0
+            ORDER BY id DESC
+            LIMIT 1
+            ");
+
+            $issuance_transaction = $this->db->result();
+            $this->design->assign('issuance_transaction', $issuance_transaction);
+        }
+
         $body = $this->design->fetch('order.tpl');
 
         if ($this->request->get('ajax', 'integer')) {
@@ -984,6 +999,14 @@ class OrderController extends Controller
                     'manager_id' => $this->manager->id,
                 ];
 
+            $cron =
+                [
+                    'ticket_id' => $ticket_id,
+                    'is_complited' => 0
+                ];
+
+            $this->NotificationsCron->add($cron);
+
             $this->TicketMessages->add_message($message);
 
             $this->design->assign('order', $order);
@@ -1022,8 +1045,6 @@ class OrderController extends Controller
                 ];
 
             $asp_id = $this->AspCodes->add_code($asp_log);
-
-            var_dump($asp_log);
 
             $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'second_pak' => 1]);
 
@@ -2943,7 +2964,16 @@ class OrderController extends Controller
                 'status' => 0
             ];
 
-        $this->Tickets->add_ticket($ticket);
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
+
         exit;
     }
 
@@ -3762,15 +3792,29 @@ class OrderController extends Controller
                 $default_requisit = $requisit;
         }
 
+        $description = "Оплата по договору микрозайма № $contract->number от $order->probably_start_date
+            // заемщик $order->lastname $order->firstname $order->patronymic ИНН $order->inn";
+
+        $transaction =
+            [
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'amount' => $order->amount * 100,
+                'description' => $description,
+                'reference' => 'issuance',
+                'created' => date('Y-m-d H:i:s')
+            ];
+
+        $transaction_id = $this->Transactions->add_transaction($transaction);
+
         $payment = new stdClass();
-        $payment->order_id = $order_id;
+        $payment->order_id = $transaction_id;
         $payment->date = date('Y-m-d H:i:s');
         $payment->amount = $order->amount;
         $payment->recepient = 9725055162;
         $payment->user_id = $order->user_id;
         $payment->number = '40701810300000000347';
-        $payment->description = "Оплата по договору микрозайма № $contract->number от $order->probably_start_date
-            // заемщик $order->lastname $order->firstname $order->patronymic ИНН $order->inn";
+        $payment->description = $description;
         $payment->user_acc_number = $default_requisit->number;
         $payment->user_bik = $default_requisit->bik;
         $payment->users_inn = $order->inn;
@@ -3785,7 +3829,7 @@ class OrderController extends Controller
 
         $send_payment = $this->Soap1c->send_payment($payment);
 
-        if (!isset($send_payment->return) || $send_payment->return != 'OK') {
+        if (!isset($send_payment->return) || $send_payment->return != 'ОК') {
             echo json_encode(['error' => $send_payment]);
             exit;
         }
@@ -3813,7 +3857,6 @@ class OrderController extends Controller
 
         echo json_encode(['success' => 1]);
         exit;
-
     }
 
     private function action_send_qr()
@@ -3940,6 +3983,14 @@ class OrderController extends Controller
                 'manager_id' => $this->manager->id,
             ];
         $this->TicketMessages->add_message($message);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
 
         $template = $this->sms->get_template(7);
         $message = $template->template;

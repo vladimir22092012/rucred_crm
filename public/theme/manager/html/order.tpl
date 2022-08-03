@@ -745,13 +745,29 @@
 
                 let form = $(this).closest('form').serialize();
 
-                console.log(form);
-
                 $.ajax({
                     method: 'POST',
-                    data: form
+                    data: form,
+                    dataType: 'JSON',
+                    success: function (resp) {
+                        if(resp['error']){
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'Ок'
+                            });
+                        }else{
+                            Swal.fire({
+                                title: "Платежный документ успешно отправлен",
+                                confirmButtonText: 'Ок'
+                            });
+
+                            $(this).fadeOut();
+                            $('#rdr_payment_sent').fadeIn();
+                        }
+                    }
                 })
             });
+
 
             $('.send_qr').on('click', function (e) {
                 e.preventDefault();
@@ -1380,15 +1396,27 @@
                                                 </form>
                                             {/if}
                                             {if $order->settlement_id == 3 && in_array($manager->role, ['middle', 'admin', 'developer'])}
-                                                <form id="send_payment_form">
-                                                    <input type="hidden" name="action" value="create_pay_rdr">
-                                                    <input type="hidden" name="order_id" value="{$order->order_id}">
-                                                    <div class="pt-1 pb-2">
-                                                        <div class="btn btn-info btn-lg btn-block send_payment">
-                                                            Подтвердить и создать платежный документ
+                                                {if empty($issuance_transaction)}
+                                                    <form id="send_payment_form">
+                                                        <input type="hidden" name="action" value="create_pay_rdr">
+                                                        <input type="hidden" name="order_id" value="{$order->order_id}">
+                                                        <div class="pt-1 pb-2">
+                                                            <div class="btn btn-info btn-lg btn-block send_payment">
+                                                                Подтвердить и создать платежный документ
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </form>
+                                                    </form>
+                                                {else}
+                                                    <form id="rdr_payment_sent">
+                                                        <div class="pt-1 pb-2">
+                                                            <div class="card card-warning">
+                                                                <div class="box text-center">
+                                                                    <h4 class="text-white">Платежный документ отправлен</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                {/if}
                                             {/if}
                                         {/if}
                                         {if $order->status == 5}
