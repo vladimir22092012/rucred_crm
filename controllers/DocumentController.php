@@ -16,6 +16,11 @@ class DocumentController extends Controller
             $this->design->assign($param_name, $param_value);
         }
 
+        $order = $this->orders->get_order($document->params->order_id);
+        $this->design->assign('created_date', $order->date);
+
+
+
         $settlement = $this->OrganisationSettlements->get_settlement($document->params->settlement_id);
         $order = $this->orders->get_order($document->params->order_id);
         $contracts = $this->contracts->get_contracts(['order_id' => $document->params->order_id]);
@@ -182,6 +187,7 @@ class DocumentController extends Controller
         $this->design->assign('$period_days', $period_days);
 
         $tpl = $this->design->fetch('pdf/' . $document->template);
+
 
         if ($this->request->get('action') == 'download_file') {
             $fio = $document->params->lastname . ' ' . mb_substr($document->params->firstname, 0, 1) . mb_substr($document->params->patronymic, 0, 1);
