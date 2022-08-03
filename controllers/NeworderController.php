@@ -566,6 +566,21 @@ class NeworderController extends Controller
                 }
             }
 
+            $probably_start_date = date('Y-m-d H:i:s', strtotime($this->request->post('start_date')));
+            $probably_end_date = date('Y-m-d H:i:s', strtotime($this->request->post('end_date')));
+            $branche_id = (int)$this->request->post('branch');
+            $company_id = (int)$this->request->post('company');
+
+            if($payout_type == 'bank'){
+                if(date('H') > 14
+                    && date('Y-m-d') >= date('Y-m-d', strtotime($probably_start_date))
+                    && $settlement_id == 3
+                    || $settlement_id == 2){
+
+                    $probably_end_date = $this->check_date($probably_start_date, $loan_type, $branche_id, $company_id);
+                }
+            }
+
             $order = array(
                 'user_id' => $user_id,
                 'amount' => $amount,
@@ -578,12 +593,12 @@ class NeworderController extends Controller
                 'charge' => $charge,
                 'insure' => $insure,
                 'loan_type' => (int)$loan_type,
-                'probably_return_date' => date('Y-m-d H:i:s', strtotime($this->request->post('end_date'))),
-                'probably_start_date' => date('Y-m-d H:i:s', strtotime($this->request->post('start_date'))),
+                'probably_return_date' => $probably_start_date,
+                'probably_start_date' => $probably_end_date,
                 'probably_return_sum' => (int)preg_replace("/[^,.0-9]/", '', $this->request->post('probably_return_sum')),
                 'group_id' => (int)$this->request->post('group'),
-                'branche_id' => (int)$this->request->post('branch'),
-                'company_id' => (int)$this->request->post('company'),
+                'branche_id' => $branche_id,
+                'company_id' => $company_id,
                 'settlement_id' => (int)$this->request->post('settlement'),
                 'requisite_id' => $requisite['id'],
             );
@@ -620,8 +635,8 @@ class NeworderController extends Controller
             }
 
             $rest_sum = $order['amount'];
-            $start_date = date('Y-m-d', strtotime($order['probably_start_date']));
-            $end_date = new DateTime(date('Y-m-' . $first_pay_day, strtotime($order['probably_return_date'])));
+            $start_date = $probably_start_date;
+            $end_date = new DateTime(date('Y-m-' . $first_pay_day, strtotime($probably_end_date)));
             $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
             $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date)));
 
@@ -775,8 +790,6 @@ class NeworderController extends Controller
 
             $company = $this->Companies->get_company($order['company_id']);
             $group = $this->Groups->get_group($order['group_id']);
-
-            $loan_type_number = ($loan_type < 10) ? '0' . $loan_type : $loan_type;
 
             if (isset($user['personal_number'])) {
                 $personal_number = $user['personal_number'];
@@ -1098,12 +1111,17 @@ class NeworderController extends Controller
         exit;
     }
 
-    private function check_date()
+    private function check_date($start_date = null, $loan_id = null, $branche_id = null, $company_id = null)
     {
-        $start_date = $this->request->get('start_date');
-        $loan_id = $this->request->get('loan_id');
-        $branche_id = $this->request->get('branche_id');
-        $company_id = $this->request->get('company_id');
+
+        $get = $this->request->get('start_date');
+
+        if(!empty($get)){
+            $start_date = $this->request->get('start_date');
+            $loan_id = $this->request->get('loan_id');
+            $branche_id = $this->request->get('branche_id');
+            $company_id = $this->request->get('company_id');
+        }
 
         if (empty($branche_id) || in_array($branche_id, ['none', null, 0])) {
             $branches = $this->Branches->get_branches(['company_id' => $company_id]);
