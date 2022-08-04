@@ -40,6 +40,48 @@
     положении, доходах, задолженности; <br>- сведения о занимаемых ранее должностях и стаже работы, воинской
     обязанности, воинском учёте; <br>- копии вышеперечисленных и иных документов.
 </div>
+<div>
+
+</div>
+{if !isset($code_asp->code)}
+    <table style="width: 100%; page-break-after: always;" border="1" cellpadding="8">
+        <tr style="width: 100%">
+            <td style="width: 25%; height: 30px" align="center"><span style="color: #b3b2ab">ПОДПИСЬ</span></td>
+            <td style="width: 50%" align="center"><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></td>
+            <td style="width: 25%" align="center"><span style="color: #b3b2ab">ДАТА ПОДПИСАНИЯ</span></td>
+        </tr>
+    </table>
+{else}
+    <table style="border: 0.25pt solid #002088; font-size: 8px; width: 50%; page-break-after: always;"
+           cellpadding="1" cellspacing="3">
+        <tr>
+            <td colspan="2"><strong>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ЦИФРОВОЙ ПОДПИСЬЮ</strong></td>
+        </tr>
+        <tr>
+            <td colspan="2"><hr></td>
+        </tr>
+        <tr>
+            <td colspan="2"><strong>Подписант:</strong> {$firstname} {$patronymic} {$lastname}</td>
+        </tr>
+        <tr>
+            <td colspan="2"><strong>Дата подписания:</strong> {$code_asp->created|date} {$code_asp->created|time}(МСК)</td>
+        </tr>
+        <tr>
+            <td colspan="2"><strong>ID подписания:</strong> {$code_asp->uid}</td>
+        </tr>
+        <tr>
+            <td colspan="2"><strong>Код подтверждения:</strong> {$code_asp->code}</td>
+        </tr>
+        <tr>
+            <td colspan="2"><hr></td>
+        </tr>
+        <tr>
+            <td><strong>Система ЭДО:</strong> Рестарт.Онлайн</td>
+            <td><img src="{$config->root_url}/theme/manager/html/pdf/i/Vector.png" style="height: 27px"></td>
+        </tr>
+    </table>
+{/if}
+
 <div style="font-size: 9px"><u>Цель обработки персональных данных:</u><br>- обеспечение соблюдения требований
     законодательства Российской Федерации;<br>- заключение Договора микрозайма с ООО МКК «Русское кредитное общество» и
     последующего его исполнения<br>
@@ -60,6 +102,9 @@
         дней.
     </div>
 </div>
+<div>
+    <br><br><br><br><br><br><br><br><br>
+</div>
 {if !isset($code_asp->code)}
     <table style="width: 100%;" border="1" cellpadding="8">
         <tr style="width: 100%">
@@ -70,7 +115,7 @@
     </table>
 {else}
     <table style="border: 0.25pt solid #002088; font-size: 8px; width: 50%"
-           cellpadding="1" cellspacing="6">
+           cellpadding="1" cellspacing="3">
         <tr>
             <td colspan="2"><strong>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ЦИФРОВОЙ ПОДПИСЬЮ</strong></td>
         </tr>

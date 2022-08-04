@@ -36,7 +36,6 @@
 </div>
 <div>
     <br><br><br><br><br><br><br><br><br><br><br><br><br>
-    <br><br><br><br><br><br><br><br><br><br><br><br>
 </div>
 {if !isset($code_asp->code)}
     <table style="width: 100%;" border="1" cellpadding="8">
