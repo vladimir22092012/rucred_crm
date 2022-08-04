@@ -225,10 +225,10 @@ class Documents extends Core
         }
 
         if(isset($filter['first_pak']))
-            $first_pak = $this->db->placehold("AND `type` not in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
+            $first_pak = $this->db->placehold("AND doc.`type` not in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
 
         if(isset($filter['second_pak']))
-            $second_pak = $this->db->placehold("AND `type` in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
+            $second_pak = $this->db->placehold("AND doc.`type` in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
 
         if(isset($filter['asp_flag']))
             $asp_flag = $this->db->placehold("AND asp_id = ?", $filter['asp_flag']);
@@ -349,9 +349,6 @@ class Documents extends Core
             $sort 
             $sql_limit
         ");
-
-        var_dump($query);
-        exit;
 
         $this->db->query($query);
         if ($results = $this->db->results()) {
