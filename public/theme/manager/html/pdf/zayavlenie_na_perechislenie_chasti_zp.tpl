@@ -11,7 +11,7 @@
         В СЧЁТ ОБСЛУЖИВАНИЯ МИКРОЗАЙМА
     </strong></h3>
 <div></div>
-<div align="justify">Настоящим я, <strong>{$lastname|upper} {$firstname|upper} {$patronymic|upper} {$birth}</strong>
+<div align="justify">Я, <strong>{$lastname|upper} {$firstname|upper} {$patronymic|upper} {$birth}</strong>
     года рождения, место
     рождения <strong>{$birth_place|upper}</strong>, паспорт
     серия <strong>{$passport_serial} № {$passport_number} выдан {$passport_issued} {$passport_date|date}</strong> года,
