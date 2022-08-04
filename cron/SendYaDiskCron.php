@@ -36,7 +36,7 @@ class SendYaDiskCron extends Core
             }
 
             $query = $this->db->placehold("
-                SELECT `type`
+                SELECT *
                 FROM s_scans
                 WHERE order_id = ?
                 $type
