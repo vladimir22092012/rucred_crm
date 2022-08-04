@@ -20,11 +20,11 @@
     </tr>
     <tr style="width: 100%">
         <td style="width: 60%"></td>
-        <td style="width: 40%">зарегистрированный по адресу: <strong>{$regadress->adressfull}</strong></td>
+        <td style="width: 40%">зарегистрированного по адресу: <strong>{$regadress->adressfull}</strong></td>
     </tr>
     <tr style="width: 100%">
         <td style="width: 60%"></td>
-        <td style="width: 40%">фактически проживающий: <strong>{$faktadress->adressfull}</strong></td>
+        <td style="width: 40%">фактически проживающего: <strong>{$faktadress->adressfull}</strong></td>
     </tr>
 </table>
 <div><br><br></div>
@@ -50,7 +50,7 @@
     </tr>
     <tr>
         <td style="width: 30%">Назначение платежа:</td>
-        <td style="width: 70%">Выдача по договору микрозайма № <strong>{$uid}</strong> от <strong>{$date|date}</strong>
+        <td style="width: 70%">Выдача средств по договору микрозайма № <strong>{$uid}</strong> от <strong>{$date|date}</strong>
             // заемщик <strong>{$lastname|upper} {$firstname|upper} {$patronymic|upper}</strong> ИНН <strong>{$inn}</strong>
         </td>
     </tr>

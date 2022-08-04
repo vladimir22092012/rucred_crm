@@ -158,7 +158,7 @@
     </tr>
     <tr style="width: 100%;">
         <td style="width: 30%; background-color: #b3b2ab">1.5. КПП</td>
-        <td style="width: 70%">772501001</td>
+        <td style="width: 70%">772701001</td>
     </tr>
     <tr style="width: 100%;">
         <td style="width: 30%; background-color: #b3b2ab">1.6. Юридический адрес:</td>
@@ -834,7 +834,7 @@
                 ставка по микрозайму в день: <strong>{$percent|number_format:3:',':' '}%
                     ({$percents_per_day_str_part_one|upper} {if $percents_per_day_str_part_two|upper} ЦЕЛЫХ И {$percents_per_day_str_part_two|upper} СОТЫХ ПРОЦЕНТА{/if})</strong><br>(04) Полная
                 стоимость микрозайма в валюте
-                микрозайма: <br><strong>{$payment_schedule['result']['all_loan_percents_pay']|number_format:2:',':' '}</strong>
+                микрозайма: <br><strong>{$payment_schedule['result']['all_loan_percents_pay']|number_format:0:',':' '}</strong>
                 (<strong>{$all_percents_string_part_one|upper}</strong>)
                 рублей
                 <strong>{if $all_percents_string_part_two}{$all_percents_string_part_two}{else}00{/if}</strong>
@@ -844,7 +844,7 @@
                     ({$percents_per_year|upper} {if $second_part_percents|upper} ЦЕЛЫХ И {$second_part_percents|upper} ТЫСЯЧНЫХ ПРОЦЕНТОВ{/if})</strong>
                 годовых<br>(06) Общая сумма процентов за период пользования
                 микрозаймом:
-                <br><strong>{$payment_schedule['result']['all_loan_percents_pay']|number_format:2:',':' '}</strong>
+                <br><strong>{$payment_schedule['result']['all_loan_percents_pay']|number_format:0:',':' '}</strong>
                 (<strong>{$all_percents_string_part_one|upper}</strong>)
                 рублей
                 <strong>{if $all_percents_string_part_two}{$all_percents_string_part_two}{else}00{/if}</strong>
@@ -1161,7 +1161,7 @@
     </tr>
     <br>
     <tr>
-        <td style="width: 45%">КПП 772501001</td>
+        <td style="width: 45%">КПП 772701001</td>
         <td style="width: 10%"></td>
         <td style="width: 45%"></td>
     </tr>

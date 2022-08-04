@@ -188,7 +188,7 @@
     </tr>
     <br>
     <tr>
-        <td style="width: 45%">КПП 772501001</td>
+        <td style="width: 45%">КПП 772701001</td>
         <td style="width: 10%"></td>
         <td style="width: 45%"></td>
     </tr>

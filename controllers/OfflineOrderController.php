@@ -3074,8 +3074,7 @@ class OfflineOrderController extends Controller
         $this->db->query($query);
     }
 
-    private
-    function action_accept_by_employer()
+    private function action_accept_by_employer()
     {
         $order_id = (int)$this->request->post('order_id');
         $order = $this->orders->get_order($order_id);
@@ -3100,6 +3099,15 @@ class OfflineOrderController extends Controller
             ];
 
         $ticket_id = $this->Tickets->add_ticket($ticket);
+
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+
+        $this->TicketMessages->add_message($message);
 
         $cron =
             [
@@ -4053,9 +4061,105 @@ class OfflineOrderController extends Controller
                 'manager_id' => $this->manager->id
             ];
 
-        $asp_id = $this->AspCodes->add_code($asp_log);
+        $this->AspCodes->add_code($asp_log);
 
+        $communication_theme = $this->CommunicationsThemes->get(17);
+
+
+        $ticket = [
+            'creator' => $this->manager->id,
+            'creator_company' => 2,
+            'client_lastname' => $order->lastname,
+            'client_firstname' => $order->firstname,
+            'client_patronymic' => $order->patronymic,
+            'head' => $communication_theme->head,
+            'text' => $communication_theme->text,
+            'theme_id' => 17,
+            'company_id' => 2,
+            'group_id' => $order->group_id,
+            'order_id' => $order_id,
+            'status' => 0
+        ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+
+        $this->TicketMessages->add_message($message);
+
+        $this->design->assign('order', $order);
+        $documents = $this->documents->get_documents(['order_id' => $order->order_id]);
+        $docs_email = [];
+
+        $asp_id = $this->AspCodes->get_code(['order_id' => $order_id, 'type' => 'sms']);
         $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'second_pak' => 1]);
+
+        foreach ($documents as $document) {
+            if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR'])){
+                $docs_email[$document->type] = $document->id;
+            }
+        }
+
+        $individ_encrypt = $this->config->back_url . '/online_docs/' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['INDIVIDUALNIE_USLOVIA'] . ' ' . rand(1, 9999999999));
+        $graphic_encrypt = $this->config->back_url . '/online_docs/' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['GRAFIK_OBSL_MKR'] . ' ' . rand(1, 9999999999));
+
+        $this->design->assign('individ_encrypt', $individ_encrypt);
+        $this->design->assign('graphic_encrypt', $graphic_encrypt);
+
+        $contracts = $this->contracts->get_contracts(['order_id' => $order->order_id]);
+        $group = $this->groups->get_group($order->group_id);
+        $company = $this->companies->get_company($order->company_id);
+
+        if (!empty($contracts)) {
+            $count_contracts = count($contracts);
+            $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
+        } else {
+            $count_contracts = '01';
+        }
+
+        $loantype = $this->Loantypes->get_loantype($order->loan_type);
+
+        $uid = "$group->number$company->number $loantype->number $order->personal_number $count_contracts";
+        $this->design->assign('uid', $uid);
+
+        $fetch = $this->design->fetch('email/approved.tpl');
+
+        $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+        $mailResponse = $mailService->send(
+            'rucred@ucase.live',
+            $order->email,
+            'RuCred | Ваш займ успешно выдан',
+            'Поздравляем!',
+            $fetch
+        );
+
+        $cron =
+            [
+                'order_id' => $order_id,
+                'pak' => 'second_pak'
+            ];
+
+        $this->YaDiskCron->add($cron);
+
+        $template = $this->sms->get_template(8);
+        $message = $template->template;
+        $this->sms->send(
+            $order->phone_mobile,
+            $message
+        );
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
 
         echo json_encode(['success' => 1]);
         exit;

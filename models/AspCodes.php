@@ -56,6 +56,8 @@ class AspCodes extends Core
         FROM s_asp_codes
         WHERE 1
         $where
+        ORDER BY id DESC
+        LIMIT 1
         ");
 
         $this->db->query($query);
