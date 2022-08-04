@@ -129,18 +129,6 @@ class NeworderController extends Controller
     {
 
         $amount = preg_replace("/[^,.0-9]/", '', $this->request->post('amount'));
-        $start_date = new DateTime(date('Y-m-d', strtotime($this->request->post('start_date'))));
-
-        if ($this->request->post('end_date')) {
-            $end_date = date('Y-m-d', strtotime($this->request->post('end_date')));
-            $end_date = new DateTime(date('Y-m-d', strtotime($end_date)));
-            $period = date_diff($start_date, $end_date)->days;
-        } else {
-            $count_mounth = $this->request->post('date_to_select');
-            $end_date = clone $start_date;
-            $end_date = $end_date->add(new DateInterval('P' . $count_mounth . 'M'));
-            $period = date_diff($start_date, $end_date)->days;
-        }
 
         $percent = (float)$this->request->post('percent');
         $charge = (float)$this->request->post('charge');
@@ -151,7 +139,6 @@ class NeworderController extends Controller
         $this->design->assign('charge', $charge);
         $this->design->assign('peni', $peni);
         $this->design->assign('amount', $amount);
-        $this->design->assign('period', $period);
 
         $draft = ($this->request->post('draft')) ? 1 : 0;
 
@@ -566,7 +553,7 @@ class NeworderController extends Controller
                 }
             }
 
-            $probably_start_date = date('Y-m-d H:i:s', strtotime($this->request->post('start_date')));
+            $probably_start_date = date('Y-m-d 15:i:s', strtotime($this->request->post('start_date')));
             $probably_end_date = date('Y-m-d H:i:s', strtotime($this->request->post('end_date')));
             $branche_id = (int)$this->request->post('branch');
             $company_id = (int)$this->request->post('company');
@@ -581,6 +568,13 @@ class NeworderController extends Controller
                     $probably_end_date = $this->check_date($probably_start_date, $loan_type, $branche_id, $company_id);
                 }
             }
+
+            $start_date = new DateTime(date('Y-m-d', strtotime($probably_start_date)));
+            $end_date = new DateTime(date('Y-m-d', strtotime($probably_end_date)));
+            $period = date_diff($start_date, $end_date)->days;
+
+
+            $this->design->assign('period', $period);
 
             $order = array(
                 'user_id' => $user_id,

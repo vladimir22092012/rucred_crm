@@ -67,8 +67,8 @@ class DocumentController extends Controller
         $loan = $this->Loantypes->get_loantype($loan_id);
         $this->design->assign('loan', $loan);
 
-        $start_date = new DateTime(date('Y-m-d', strtotime($document->params->probably_start_date)));
-        $end_date = new DateTime(date('Y-m-10', strtotime($document->params->probably_return_date)));
+        $start_date = new DateTime(date('Y-m-d', strtotime($order->probably_start_date)));
+        $end_date = new DateTime(date('Y-m-10', strtotime($order->probably_return_date)));
 
         $period = date_diff($start_date, $end_date)->days;
 

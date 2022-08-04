@@ -593,11 +593,8 @@
             <td style="width: 30%; background-color: #b3b2ab">2.14. Согласие заёмщика с общими условиями договора
             </td>
             <td style="width: 70%" align="left">С содержанием Общих условий получения и обслуживания микрозайма
-                Заёмщик ознакомлен и
-                согласен:<br><br>{if !isset($code_asp->code)}
-                Подпись Заёмщика: _____________________ <img
-                    src="{$config->root_url}/theme/manager/html/pdf/i/warning.png" style="height: 12px;">
-                {else}
+                Заёмщик ознакомлен.<br><br>
+                {if isset($code_asp->code)}
                 <table style="border: 0.25pt solid #002088; font-size: 9px">
                     <tr>
                         <td colspan="2"><strong>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ЦИФРОВОЙ ПОДПИСЬЮ</strong></td>
@@ -658,7 +655,7 @@
         <tr style="width: 100%;">
             <td style="width: 30%; background-color: #b3b2ab">2.17. Порядок предоставления микрозайма
             </td>
-            <td style="width: 70%" align="left">Микрозаём предоставляется Заёмщику не позднее {$created_date|date} в
+            <td style="width: 70%" align="left">Микрозаём предоставляется Заёмщику не позднее {$probably_start_date|date} в
                 безналичной форме, путём перечисления денежных средств:<br><br>☐ на расчётный счёт Заёмщика / реквизиты
                 банковской карты Заёмщика, указанные в п.7 Договора<br>☒ по реквизитам, указанным Заёмщиком в Заявлении
                 от {$created_date|date} года о перечислении
