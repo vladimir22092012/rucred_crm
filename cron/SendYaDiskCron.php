@@ -45,7 +45,7 @@ class SendYaDiskCron extends Core
             $this->db->query($query);
             $scans = $this->db->results();
 
-            $users_docs = $this->Documents->get_documents(['order_id' => $cron->order_id, $cron->pak => 1]);
+            $users_docs = $this->documents->get_documents(['order_id' => $cron->order_id, $cron->pak => 1]);
 
             var_dump($users_docs);
             exit;
