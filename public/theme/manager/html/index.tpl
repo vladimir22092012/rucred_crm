@@ -72,7 +72,7 @@
 <!-- Main wrapper - style you can find in pages.scss -->
 <!-- ============================================================== -->
 
-
+{if isset($manager)}
 <div id="main-wrapper">
     <!-- ============================================================== -->
     <!-- Topbar header - style you can find in pages.scss -->
@@ -108,7 +108,6 @@
                                 class="nav-link sidebartoggler hidden-sm-down text-muted waves-effect waves-dark"
                                 href="javascript:void(0)"><i class="icon-arrow-left-circle"></i></a></li>
 
-                    {if isset($manager)}
                         {if in_array('notifications', $manager->permissions) || in_array('penalties', $manager->permissions)}
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-muted text-muted waves-effect waves-dark"
@@ -228,12 +227,12 @@
     <!-- ============================================================== -->
     <!-- Left Sidebar - style you can find in sidebar.scss  -->
     <!-- ============================================================== -->
+    {if isset($manager)}
     <aside class="left-sidebar">
         <!-- Sidebar scroll-->
         <div class="scroll-sidebar">
             <!-- Sidebar navigation-->
             <nav class="sidebar-nav">
-                {if isset($manager)}
                     <ul id="sidebarnav">
                         <li class="nav-small-cap">Коммуникации</li>
                         <li {if $in}class="active"{/if}>
