@@ -1142,8 +1142,9 @@ class OfflineOrderController extends Controller
                     'manager_id' => $this->manager->id
                 ];
 
-            $asp_id = $this->AspCodes->add_code($asp_log);
+            $this->AspCodes->add_code($asp_log);
 
+            $asp_id = $this->AspCodes->get_code(['order_id' => $order_id, 'type' => 'sms']);
             $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'second_pak' => 1]);
 
             $cron =
@@ -4129,7 +4130,7 @@ class OfflineOrderController extends Controller
         $fetch = $this->design->fetch('email/approved.tpl');
 
         $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
-        $mailResponse = $mailService->send(
+        $mailService->send(
             'rucred@ucase.live',
             $order->email,
             'RuCred | Ваш займ успешно выдан',
