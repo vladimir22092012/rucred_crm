@@ -50,8 +50,10 @@ class SendYaDiskCron extends Core
             try {
                 $upload_scans = 0;
 
-                if (count($scans) == count($users_docs))
-                    $upload_scans = 1;
+                if(!empty($scans)){
+                    if (count($scans) == count($users_docs))
+                        $upload_scans = 1;
+                }
 
                 $this->YaDisk->upload_orders_files($cron->order_id, $upload_scans, $pak[0]);
             } catch (Exception $e) {
