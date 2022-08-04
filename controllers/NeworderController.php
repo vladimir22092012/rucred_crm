@@ -1397,4 +1397,17 @@ class NeworderController extends Controller
         echo json_encode(['success' => 1, 'type' => $type]);
         exit;
     }
+
+    public function action_get_user(){
+
+        $user_id = $this->request->post('user_id');
+
+        $user = $this->users->get_user($user_id);
+        $passport_serial = explode(' ', $user->passport_serial);
+        $user->passport_series = $passport_serial[0];
+        $user->passport_number = $passport_serial[1];
+
+        echo json_encode($user);
+        exit;
+    }
 }

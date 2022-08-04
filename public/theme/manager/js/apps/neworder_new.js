@@ -644,12 +644,15 @@ $(function () {
                 }
 
                 $('.choose_user').on('click', function () {
-                    $('input[name="user_id"]').attr('value', $(this).attr('data-user'));
+                    let user_id = $(this).attr('data-user');
+
+                    $('input[name="user_id"]').attr('value', user_id);
 
                     $('#users_same').empty();
 
                     let html =
                         '<label class="control-label" style="color: #00a300">Пользователь выбран</label>';
+
 
                     $('#users_same').append(html);
 
@@ -657,6 +660,25 @@ $(function () {
                         $('#users_same').fadeOut();
                         $('#users_same').empty();
                     }, 2000);
+
+
+                    $.ajax({
+                        method: 'POST',
+                        dataType: 'JSON',
+                        data: {
+                            action: 'get_user',
+                            user_id: user_id
+                        },
+                        success: function (user) {
+                            $('input[name="passport_serial"]').val(user['passport_series']);
+                            $('input[name="passport_number"]').val(user['passport_number']);
+                            $('input[name="passport_issued"]').val(user['passport_issued']);
+                            $('input[name="subdivision_code"]').val(user['subdivision_code']);
+                            $('input[name="passport_date"]').val(user['passport_date']);
+                            $('input[name="snils"]').val(user['snils']);
+                            $('input[name="inn"]').val(user['inn']);
+                        }
+                    })
                 });
             }
         });
