@@ -593,36 +593,7 @@
             <td style="width: 30%; background-color: #b3b2ab">2.14. Согласие заёмщика с общими условиями договора
             </td>
             <td style="width: 70%" align="left">С содержанием Общих условий получения и обслуживания микрозайма
-                Заёмщик ознакомлен.<br><br>
-                {if isset($code_asp->code)}
-                <table style="border: 0.25pt solid #002088; font-size: 9px">
-                    <tr>
-                        <td colspan="2"><strong>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ЦИФРОВОЙ ПОДПИСЬЮ</strong></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><hr></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><strong>Подписант:</strong> {$firstname} {$patronymic} {$lastname}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><strong>Дата подписания:</strong> {$code_asp->created|date} {$code_asp->created|time}(МСК)</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><strong>ID подписания:</strong> {$code_asp->uid}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><strong>Код подтверждения:</strong> {$code_asp->code}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><hr></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Система ЭДО:</strong><br>Рестарт.Онлайн</td>
-                        <td><img src="{$config->root_url}/theme/manager/html/pdf/i/Vector.png" style="height: 25px"></td>
-                    </tr>
-                </table>
-                {/if}<br><br>Общие
+                Заёмщик ознакомлен.<br><br>Общие
                 условия Договора в печатном
                 варианте выдаются Заимодавцем по требованию Заёмщика<br>
             </td>
