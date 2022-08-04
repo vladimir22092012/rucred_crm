@@ -666,7 +666,7 @@
         </table>
     </footer>
 {else}
-    <table style="border: 0.25pt solid #002088; width: 50%; font-size: 9px"
+    <table style="border: 0.25pt solid #002088; width: 50%; font-size: 9px; page-break-after: always;"
            cellpadding="1" cellspacing="4">
         <tr>
             <td colspan="2"><strong>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ЦИФРОВОЙ ПОДПИСЬЮ</strong></td>
@@ -1058,23 +1058,8 @@
             {$passport_serial} {$passport_number} выдан {$passport_issued} {$passport_date|date} года
         </td>
     </tr>
-    <tr>
-        <td style="width: 45%"><u>фактический адрес местонахождения</u>
-            117449, город Москва, улица Винокурова, дом 3, этаж/комната 1/А, помещение I
-        </td>
-        <td style="width: 10%"></td>
-        <td style="width: 45%"><u>адрес регистрации</u>
-            {$regadress->adressfull}
-        </td>
-    </tr>
-    <tr>
-        <td style="width: 45%">ОГРН 121770033532</td>
-        <td style="width: 10%"></td>
-        <td style="width: 45%"><u>фактический адрес проживания</u>
-            {$faktadress->adressfull}
-        </td>
-    </tr>
 </table>
+<div></div>
 {if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
@@ -1095,8 +1080,8 @@
         </table>
     </footer>
     {else}
-    <table style="border: 0.25pt solid #002088; width: 50%; font-size: 9px"
-           cellpadding="1" cellspacing="4">
+    <table style="border: 0.25pt solid #002088; width: 50%; font-size: 9px; page-break-after: always;"
+           cellpadding="1" cellspacing="2">
         <tr>
             <td colspan="2"><strong>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ЦИФРОВОЙ ПОДПИСЬЮ</strong></td>
         </tr>
@@ -1125,6 +1110,22 @@
     </table>
 {/if}
 <table>
+    <tr>
+        <td style="width: 45%"><u>фактический адрес местонахождения</u>
+            117449, город Москва, улица Винокурова, дом 3, этаж/комната 1/А, помещение I
+        </td>
+        <td style="width: 10%"></td>
+        <td style="width: 45%"><u>адрес регистрации</u>
+            {$regadress->adressfull}
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 45%">ОГРН 121770033532</td>
+        <td style="width: 10%"></td>
+        <td style="width: 45%"><u>фактический адрес проживания</u>
+            {$faktadress->adressfull}
+        </td>
+    </tr>
     <tr>
         <td style="width: 45%">ИНН 9725055162</td>
         <td style="width: 10%"></td>

@@ -66,7 +66,7 @@
     </table>
 {else}
     <table style="border: 0.25pt solid #002088; width: 50%; font-size: 8px"
-           cellpadding="1" cellspacing="4">
+           cellpadding="1" cellspacing="2">
         <tr>
             <td colspan="2"><strong>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ЦИФРОВОЙ ПОДПИСЬЮ</strong></td>
         </tr>

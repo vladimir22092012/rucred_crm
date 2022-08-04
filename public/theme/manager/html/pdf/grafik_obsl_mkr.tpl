@@ -28,7 +28,6 @@
         </td>
     </tr>
 </table>
-<div></div>
 <div><h3>ГРАФИК ПЛАТЕЖЕЙ</h3></div>
 <hr>
 <div></div>
@@ -38,8 +37,7 @@
     <strong>{$subdivision_code}</strong>
 </div>
 <div></div>
-<table border="1" style="width: 100%; font-size: 8px;" cellpadding="4">
-
+<table border="1" style="width: 100%; font-size: 8px;" cellpadding="3">
     <tr style="width: 100%;">
         <td rowspan="3" style="background-color: #b3b2ab">Дата платежа</td>
         <td colspan="4" style="background-color: #b3b2ab">Платёж за расчётный период, руб.</td>
@@ -80,11 +78,10 @@
     </tr>
 </table>
 <div>
-    <br><br>
 </div>
 {if !isset($code_asp->code)}
     <footer>
-        <table style="width: 100%; font-size: 8px" border="1">
+        <table style="width: 100%; font-size: 8px; page-break-after: always;" border="1">
             <tr style="width: 100%">
                 <td style="width: 8%; height: 30px" align="center">
                     <div><strong style="color: #b3b2ab;padding-top: 2px">СТР. 1</strong></div>
@@ -102,8 +99,8 @@
         </table>
     </footer>
 {else}
-    <table style="border: 0.25pt solid #002088; font-size: 8px; width: 50%"
-           cellpadding="1" cellspacing="6">
+    <table style="border: 0.25pt solid #002088; font-size: 8px; width: 50%; page-break-after: always;"
+           cellpadding="1" cellspacing="2">
         <tr>
             <td colspan="2"><strong>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ЦИФРОВОЙ ПОДПИСЬЮ</strong></td>
         </tr>
@@ -131,7 +128,6 @@
         </tr>
     </table>
 {/if}
-<div style="page-break-after: always;"></div>
 <h3><strong>РЕКВИЗИТЫ И ПОДПИСИ СТОРОН</strong></h3><br>
 <hr style="width: 100%; size: 5px">
 <div>

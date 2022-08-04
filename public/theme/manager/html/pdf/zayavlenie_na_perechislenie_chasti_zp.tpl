@@ -41,7 +41,7 @@
     которого может привести к требованию досрочного погашения предоставленного микрозайма.
 </div>
 <div>
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <br><br><br><br><br><br><br><br><br><br><br><br>
 </div>
 
 {if !isset($code_asp->code)}
