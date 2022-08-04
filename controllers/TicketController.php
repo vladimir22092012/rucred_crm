@@ -43,7 +43,7 @@ class TicketController extends Controller
 
             $this->TicketsNotes->add($note);
 
-            if ($ticket->status == 0 && $need_response == 0) {
+            if ($ticket['status'] == 0 && $need_response == 0) {
                 $this->Tickets->update_ticket($ticket->id, ['status' => 2]);
             }
         }
