@@ -59,7 +59,7 @@ class TicketController extends Controller
 
         if (!empty($ticket->executor)) {
             $manager = $this->managers->get_manager($ticket->executor);
-            if ($this->manager->role == $manager->role && $this->manager->id != $manager->id) {
+            if ($this->manager->role == $manager->role && $this->manager->id != $ticket->executor) {
                 $can_take_it = 1;
                 $this->design->assign('can_take_it', $can_take_it);
             }
