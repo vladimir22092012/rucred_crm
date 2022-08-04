@@ -1,11 +1,10 @@
-<br><br><br><br>
+<br><br>
 <table>
     <tr style="width: 100%">
         <td style="width: 50%"><img src="{$config->root_url}/theme/manager/html/pdf/i/RKO.png" style="height: 80px">
         </td>
     </tr>
     <tr style="width: 100%">
-        <br>
         <td style="width: 100%" align="left"><strong>Общество с ограниченной ответственностью</strong></td>
     </tr>
     <tr style="width: 100%">
@@ -106,8 +105,8 @@
         </table>
     </footer>
 {else}
-    <table style="border: 0.25pt solid #002088; width: 50%; font-size: 9px"
-           cellpadding="1" cellspacing="4">
+    <table style="border: 0.25pt solid #002088; width: 50%; font-size: 8px; page-break-after: always;"
+           cellpadding="1" cellspacing="2">
         <tr>
             <td colspan="2"><strong>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ЦИФРОВОЙ ПОДПИСЬЮ</strong></td>
         </tr>
@@ -131,7 +130,7 @@
         </tr>
         <tr>
             <td><strong>Система ЭДО:</strong><br>Рестарт.Онлайн</td>
-            <td><img src="{$config->root_url}/theme/manager/html/pdf/i/Vector.png" style="height: 25px"></td>
+            <td><img src="{$config->root_url}/theme/manager/html/pdf/i/Vector.png" style="height: 20px"></td>
         </tr>
     </table>
 {/if}
@@ -338,8 +337,8 @@
         </table>
     </footer>
 {else}
-    <table style="border: 0.25pt solid #002088; width: 50%; font-size: 9px"
-           cellpadding="1" cellspacing="4">
+    <table style="border: 0.25pt solid #002088; width: 50%; font-size: 8px; page-break-after: always;"
+           cellpadding="1" cellspacing="2">
         <tr>
             <td colspan="2"><strong>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ЦИФРОВОЙ ПОДПИСЬЮ</strong></td>
         </tr>
