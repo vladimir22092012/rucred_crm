@@ -151,16 +151,4 @@ class Tickets extends Core
 
         return $this->db->query($query);
     }
-
-    public function close_neworder_ticket($order_id)
-    {
-
-        $query = $this->db->placehold("
-        UPDATE s_tickets
-        SET status = 6
-        WHERE order_id = ?
-        ", $order_id);
-
-        $this->db->query($query);
-    }
 }
