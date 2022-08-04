@@ -743,7 +743,7 @@ class NeworderController extends Controller
                     'all_rest_pay_sum' => 0.00
                 ];
 
-            $dates[0] = date('d.m.Y', strtotime($this->request->post('start_date')));
+            $dates[0] = date('d.m.Y', strtotime($probably_start_date));
             $payments[0] = -$amount;
 
             foreach ($payment_schedule as $date => $pay) {
