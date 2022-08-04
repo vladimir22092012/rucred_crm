@@ -553,7 +553,7 @@ class NeworderController extends Controller
                 }
             }
 
-            $probably_start_date = date('Y-m-d 15:i:s', strtotime($this->request->post('start_date')));
+            $probably_start_date = date('Y-m-d H:i:s', strtotime($this->request->post('start_date')));
             $probably_end_date = date('Y-m-d H:i:s', strtotime($this->request->post('end_date')));
             $branche_id = (int)$this->request->post('branch');
             $company_id = (int)$this->request->post('company');
