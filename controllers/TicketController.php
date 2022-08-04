@@ -28,8 +28,11 @@ class TicketController extends Controller
         }
 
         $ticket_id = (int)$this->request->get('id');
-
         $get_note = $this->TicketsNotes->get($ticket_id, $this->manager->id);
+        $ticket = $this->Tickets->get_ticket($ticket_id);
+
+        $need_response = $this->CommunicationsThemes->get($ticket->theme_id);
+        $this->design->assign('need_response', $need_response->need_response);
 
         if (empty($get_note)) {
             $note =
@@ -39,9 +42,11 @@ class TicketController extends Controller
                 ];
 
             $this->TicketsNotes->add($note);
-        }
 
-        $ticket = $this->Tickets->get_ticket($ticket_id);
+            if ($ticket->status == 0 && $need_response == 0) {
+                $this->Tickets->update_ticket($ticket->id, ['status' => 2]);
+            }
+        }
 
         if (in_array($ticket->theme_id, [12, 37]) && $this->manager->role == 'middle') {
             if (empty($ticket->executor)) {
@@ -49,18 +54,18 @@ class TicketController extends Controller
             }
         }
 
-        if($this->manager->role == 'employer' && $ticket->creator != $this->manager->id && empty($ticket->executor))
+        if ($this->manager->role == 'employer' && $ticket->creator != $this->manager->id && empty($ticket->executor))
             $this->Tickets->update_ticket($ticket_id, ['executor' => $this->manager->id]);
 
-        if(!empty($ticket->executor)){
+        if (!empty($ticket->executor)) {
             $manager = $this->managers->get_manager($ticket->executor);
-            if($this->manager->role == $manager->role && $this->manager->id != $manager->id){
+            if ($this->manager->role == $manager->role && $this->manager->id != $manager->id) {
                 $can_take_it = 1;
                 $this->design->assign('can_take_it', $can_take_it);
             }
         }
 
-        if(!empty($ticket->order_id)){
+        if (!empty($ticket->order_id)) {
             $order = $this->orders->get_order($ticket->order_id);
             $this->design->assign('offline', $order->offline);
         }
@@ -74,9 +79,6 @@ class TicketController extends Controller
             $size = number_format($size / 1048576, 2) . ' MB';
             $files->size = $size;
         }
-
-        $need_response = $this->CommunicationsThemes->get($ticket->theme_id);
-        $this->design->assign('need_response', $need_response->need_response);
 
         $this->design->assign('ticket', $ticket);
 
