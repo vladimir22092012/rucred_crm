@@ -3961,6 +3961,8 @@ class OrderController extends Controller
 
         $order = $this->orders->get_order($order_id);
 
+        $communication_theme = $this->CommunicationsThemes->get(8);
+
         $ticket =
             [
                 'creator' => $manager_id,
@@ -3968,8 +3970,9 @@ class OrderController extends Controller
                 'client_lastname' => $order->lastname,
                 'client_firstname' => $order->firstname,
                 'client_patronymic' => $order->patronymic,
-                'head' => 'Новая заявка',
-                'text' => 'Ознакомьтесь с новой заявкой и верифицируйте своего сотрудника и верифицируйте своего сотрудника',
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => 8,
                 'company_id' => $order->company_id,
                 'group_id' => $order->group_id,
                 'order_id' => $order_id,
@@ -3979,7 +3982,7 @@ class OrderController extends Controller
         $ticket_id = $this->Tickets->add_ticket($ticket);
         $message =
             [
-                'message' => 'Ознакомьтесь с новой заявкой и верифицируйте своего сотрудника',
+                'message' => $communication_theme->text,
                 'ticket_id' => $ticket_id,
                 'manager_id' => $this->manager->id,
             ];

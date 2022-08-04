@@ -25,7 +25,7 @@
 </div>
 <div align="justify">Я связи с заключением между мною и Обществом с ограниченной ответственностью Микрокредитная
     компания «Русское
-    кредитное общество» Договора микрозайма от <strong>{$probably_start_date|date}</strong> года №
+    кредитное общество» Договора микрозайма от <strong>{$created_date|date}</strong> года №
     <strong>{$uid}</strong> на сумму <strong>{$amount|number_format:0:',':' '} ({$amount_string|upper})</strong> рублей <strong>00</strong> копеек и сроком на
     <strong>{$loan->max_period}</strong> {$loan->max_period|plural:'месяц':'месяцев':'месяца'}, с целью
     соблюдения условий

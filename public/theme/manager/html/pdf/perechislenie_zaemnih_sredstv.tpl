@@ -34,7 +34,7 @@
 </div>
 <div style="width: 100%; font-size: 10px" align="justify"><span>Прошу причитающиеся мне заёмные денежные средства
         в размере  <strong>{$amount|number_format:0:',':' '}</strong> (<strong>{$amount_string}</strong>) рублей <strong>00</strong> копеек по Договору микрозайма № <strong>{$uid}</strong>,
-        заключённому <strong>{$probably_start_date|date}</strong> года с Обществом с ограниченной ответственностью Микрокредитная компания «Русское кредитное общество», перечислить по следующим реквизитам:
+        заключённому <strong>{$created_date|date}</strong> года с Обществом с ограниченной ответственностью Микрокредитная компания «Русское кредитное общество», перечислить по следующим реквизитам:
 </span><br>
 </div>
 <table border="1" cellpadding="5">
