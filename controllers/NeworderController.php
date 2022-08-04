@@ -3,7 +3,7 @@
 use App\Services\MailService;
 
 error_reporting(-1);
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'On');
 date_default_timezone_set('Europe/Moscow');
 
 class NeworderController extends Controller
@@ -588,7 +588,7 @@ class NeworderController extends Controller
                 'charge' => $charge,
                 'insure' => $insure,
                 'loan_type' => (int)$loan_type,
-                'probably_return_date' => $probably_end_date,
+                'probably_return_date' => $probably_end_date->format('Y-m-d'),
                 'probably_start_date' => $probably_start_date,
                 'probably_return_sum' => (int)preg_replace("/[^,.0-9]/", '', $this->request->post('probably_return_sum')),
                 'group_id' => (int)$this->request->post('group'),
