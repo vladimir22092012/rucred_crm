@@ -175,7 +175,7 @@
                                                 </h6>
                                                 {if !empty($ticket->order_id)}
                                                     <br>
-                                                    <div class="row pt-2 view-block" style="margin-left: 20px">
+                                                    <div class="row pt-2 view-block" style="margin-left: 3px">
                                                         <div class="col-md-12">
                                                             <div class="btn btn-info">
                                                                 <a target="_blank"
@@ -185,6 +185,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <br>
                                                 {/if}
                                                 {foreach $messages as $message}
                                                     <div class="row pt-2 view-block">
@@ -228,33 +229,35 @@
                                                     {/if}
                                                 {/foreach}
                                             </form>
-                                            <div style="display: flex; justify-content: flex-end">
-                                                {if $ticket->status == 0 && $manager->id != $ticket->creator || isset($can_take_it)}
-                                                    <div data-ticket="{$ticket->id}"
-                                                         class="btn btn-outline-success accept_ticket"
-                                                         id="accept_ticker">
-                                                        Назначить ответственным себя
-                                                    </div>
-                                                {/if}
-                                                {if in_array($manager->id, [$ticket->executor, $ticket->creator]) && $ticket->status != 6}
-                                                    <div style="margin-left: 5px" type="button"
-                                                         class="btn btn-outline-primary add_message">
-                                                        Ответить
-                                                    </div>
-                                                {/if}
-                                                {if $manager->id == $ticket->creator && $ticket->status != 6}
-                                                    <div style="margin-left: 5px" data-ticket="{$ticket->id}"
-                                                         class="btn btn-outline-dark close_ticket">
-                                                        Закрыть тикет
-                                                    </div>
-                                                {/if}
-                                                {if $manager->id == $ticket->creator && $ticket->status == 3}
-                                                    <div style="margin-left: 5px" data-ticket="{$ticket->id}"
-                                                         class="btn btn-outline-danger return_ticket">
-                                                        На доработку
-                                                    </div>
-                                                {/if}
-                                            </div>
+                                            {if $need_response == 1}
+                                                <div style="display: flex; justify-content: flex-end">
+                                                    {if $ticket->status == 0 && $manager->id != $ticket->creator || isset($can_take_it)}
+                                                        <div data-ticket="{$ticket->id}"
+                                                             class="btn btn-outline-success accept_ticket"
+                                                             id="accept_ticker">
+                                                            Назначить ответственным себя
+                                                        </div>
+                                                    {/if}
+                                                    {if in_array($manager->id, [$ticket->executor, $ticket->creator]) && $ticket->status != 6}
+                                                        <div style="margin-left: 5px" type="button"
+                                                             class="btn btn-outline-primary add_message">
+                                                            Ответить
+                                                        </div>
+                                                    {/if}
+                                                    {if $manager->id == $ticket->creator && $ticket->status != 6}
+                                                        <div style="margin-left: 5px" data-ticket="{$ticket->id}"
+                                                             class="btn btn-outline-dark close_ticket">
+                                                            Закрыть тикет
+                                                        </div>
+                                                    {/if}
+                                                    {if $manager->id == $ticket->creator && $ticket->status == 3}
+                                                        <div style="margin-left: 5px" data-ticket="{$ticket->id}"
+                                                             class="btn btn-outline-danger return_ticket">
+                                                            На доработку
+                                                        </div>
+                                                    {/if}
+                                                </div>
+                                            {/if}
                                         </div>
                                     </div>
                                 </div>

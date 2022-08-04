@@ -75,6 +75,9 @@ class TicketController extends Controller
             $files->size = $size;
         }
 
+        $need_response = $this->CommunicationsThemes->get($ticket->theme_id);
+        $this->design->assign('need_response', $need_response->need_response);
+
         $this->design->assign('ticket', $ticket);
 
         return $this->design->fetch('ticket.tpl');

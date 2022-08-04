@@ -40,4 +40,17 @@ class TicketsNotes extends Core
         return $id;
 
     }
+
+    public function gets($ticket_id){
+        $query = $this->db->placehold("
+        SELECT * 
+        FROM s_tickets_notifications
+        WHERE ticket_id = ?
+        ", $ticket_id);
+
+        $this->db->query($query);
+        $records = $this->db->results();
+
+        return $records;
+    }
 }

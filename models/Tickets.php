@@ -36,7 +36,7 @@ class Tickets extends Core
         $creator = '';
 
 
-        if(isset($sort['sort']))
+        if (isset($sort['sort']))
             $sort = $sort['sort'];
 
         if ($in_out == 'out') {
@@ -46,10 +46,10 @@ class Tickets extends Core
         if ($in_out == 'in') {
             $creator = $this->db->placehold("AND t.creator != ?", $manager_id);
             $out = $this->db->placehold("AND t.group_id = 2");
-            if(in_array($manager_role, ['underwriter', 'middle'])){
+            if (in_array($manager_role, ['underwriter', 'middle'])) {
                 $manager = $this->db->placehold("AND t.creator != ?", $manager_id);
 
-                if($manager_role == 'underwriter')
+                if ($manager_role == 'underwriter')
                     $theme = $this->db->placehold("AND t.theme_id not in (12, 37)");
             }
         }
@@ -99,6 +99,20 @@ class Tickets extends Core
                 $tickets[$key]->files = 1;
 
         }
+
+        return $tickets;
+    }
+
+    public function gets()
+    {
+        $query = $this->db->placehold("
+        SELECT *
+        FROM s_tickets
+        WHERE status != 6
+        ");
+
+        $this->db->query($query);
+        $tickets = $this->db->results();
 
         return $tickets;
     }
