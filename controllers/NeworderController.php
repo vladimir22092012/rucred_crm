@@ -588,7 +588,7 @@ class NeworderController extends Controller
                 'charge' => $charge,
                 'insure' => $insure,
                 'loan_type' => (int)$loan_type,
-                'probably_return_date' => $probably_end_date->format('Y-m-d'),
+                'probably_return_date' => date('Y-m-d', strtotime($probably_end_date)),
                 'probably_start_date' => $probably_start_date,
                 'probably_return_sum' => (int)preg_replace("/[^,.0-9]/", '', $this->request->post('probably_return_sum')),
                 'group_id' => (int)$this->request->post('group'),

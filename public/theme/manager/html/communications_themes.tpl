@@ -52,16 +52,22 @@
                         id: id
                     },
                     success: function (theme) {
+                        $('#edit_theme_form')[0].reset();
                         $('#modal_edit_theme').find('input[name="number"]').val(theme['number']);
                         $('#modal_edit_theme').find('textarea[name="name"]').val(theme['name']);
                         $('#modal_edit_theme').find('input[name="head"]').val(theme['head']);
                         $('#modal_edit_theme').find('textarea[name="text"]').val(theme['text']);
                         $('#modal_edit_theme').find('input[name="theme_id"]').val(theme['id']);
-                        if(theme['need_response'] == 1){
+                        if (theme['need_response'] == 1) {
                             $('#modal_edit_theme').find('input[name="need_response"]').prop('checked', true);
-                        }else{
+                        } else {
                             $('#modal_edit_theme').find('input[name="need_response"]').prop('checked', false);
                         }
+
+                        for(let permission of theme['manager_permissions']){
+                            $('#modal_edit_theme').find('.role-id-'+permission['role_id']).prop('checked', true);
+                        }
+
                         $('#modal_edit_theme').modal();
                     }
                 });
@@ -189,8 +195,7 @@
                                                     Номер</a>
                                             {else}<a href="{url page=null sort='number asc'}">Номер</a>{/if}
                                         </th>
-                                        <th
-                                                class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'name asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'name desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                        <th class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'name asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'name desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'name asc'}<a href="{url page=null sort='name desc'}">
                                                     Наименование</a>
                                             {else}<a href="{url page=null sort='name asc'}">Наименование</a>{/if}
@@ -207,19 +212,22 @@
                                                     Текст тикета</a>
                                             {else}<a href="{url page=null sort='text asc'}">Текст тикета</a>{/if}
                                         </th>
+                                        <th>Доступность для ролей</th>
                                         <th>Need response</th>
                                         <th></th>
                                     </tr>
                                     <tr class="jsgrid-filter-row">
                                         <td></td>
                                         <td></td>
-                                        <td style="width: 500px;" class="jsgrid-cell"><input type="text"
+                                        <td style="width: 300px;" class="jsgrid-cell"><input type="text"
                                                                                              class="form-control searchable">
                                         </td>
                                         <td class="jsgrid-cell"><input type="text" class="form-control searchable">
                                         </td>
-                                        <td class="jsgrid-cell"><input type="text" class="form-control searchable">
+                                        <td class="jsgrid-cell" style="width: 250px;"><input type="text"
+                                                                                             class="form-control searchable">
                                         </td>
+                                        <td></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
@@ -231,13 +239,29 @@
                                             <tr class="codes">
                                                 <td>{$theme->id}</td>
                                                 <td style="width: 60px">{$theme->number}</td>
-                                                <td style="width: 500px">{$theme->name}</td>
+                                                <td style="width: 300px">{$theme->name}</td>
                                                 <td>{$theme->head}</td>
-                                                <td>{$theme->text}</td>
+                                                <td style="width: 250px;">{$theme->text}</td>
+                                                <td>
+                                                    <div style="display: flex; flex-direction: column">
+                                                        {foreach $manager_roles as $role}
+                                                            <div style="display: flex;">
+                                                                <input type="checkbox" disabled
+                                                                        {foreach $theme->manager_permissions as $permissions}
+                                                                            {if $role->id == $permissions->role_id}
+                                                                                checked
+                                                                            {/if}
+                                                                        {/foreach}>
+                                                                <label style="margin-left: 10px">{$role->translate}</label>
+                                                            </div>
+                                                        {/foreach}
+                                                    </div>
+                                                </td>
                                                 <td>
                                                     <div class="form-group">
                                                         <input type="checkbox" name="need_response"
-                                                               class="custom-checkbox" disabled {if $theme->need_response == 1}checked{/if}>
+                                                               class="custom-checkbox" disabled
+                                                               {if $theme->need_response == 1}checked{/if}>
                                                     </div>
                                                 </td>
                                                 {if in_array($manager->role, ['developer', 'admin'])}
@@ -334,6 +358,15 @@
                     <div class="form-group">
                         <label for="name" class="control-label">Текст тикета:</label>
                         <textarea type="text" class="form-control" name="text"></textarea>
+                    </div>
+                    <div class="form-group" style="display: flex; flex-direction: column">
+                        <label class="control-label">Кто видит во входящих: </label>
+                        {foreach $manager_roles as $role}
+                            <div style="display: flex;">
+                                <input type="checkbox" class="role-id-{$role->id}" name="manager_permissions[][id]" value="{$role->id}">
+                                <label style="margin-left: 10px">{$role->translate}</label>
+                            </div>
+                        {/foreach}
                     </div>
                     <div class="form-group">
                         <label for="need_response" class="control-label">Need response:</label>
