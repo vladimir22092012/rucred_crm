@@ -132,7 +132,7 @@ class IndexController extends Controller
             AND creator != ?
             AND (executor = 0 OR executor is null)
             and status != 6
-            and theme_id not in (12, 37)
+            AND theme_id in (11, 13, 18, 23, 25, 26, 27, 28, 29, 30, 32, 33, 34, 35, 38)
             and not exists (SELECT *
             FROM s_tickets_notifications
             WHERE ticket_id = s_tickets.id
@@ -150,6 +150,7 @@ class IndexController extends Controller
             WHERE group_id = 2
             AND creator != ?
             and status != 6
+            AND theme_id in (12, 23, 25, 26, 27, 28, 29, 30, 32, 33, 34, 35, 37)
             and not exists (SELECT *
             FROM s_tickets_notifications
             WHERE ticket_id = s_tickets.id
@@ -159,6 +160,7 @@ class IndexController extends Controller
                 $this->db->query($query);
                 $count_in = $this->db->result('count');
             }
+
             if (in_array($this->manager->role, ['admin', 'developer'])) {
                 $query = $this->db->placehold("
             SELECT COUNT(*) as `count`

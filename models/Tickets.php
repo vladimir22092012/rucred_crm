@@ -50,7 +50,10 @@ class Tickets extends Core
                 $manager = $this->db->placehold("AND t.creator != ?", $manager_id);
 
                 if ($manager_role == 'underwriter')
-                    $theme = $this->db->placehold("AND t.theme_id not in (12, 37)");
+                    $theme = $this->db->placehold("AND t.theme_id in (11, 13, 18, 23, 25, 26, 27, 28, 29, 30, 32, 33, 34, 35, 38)");
+
+                if ($manager_role == 'middle')
+                    $theme = $this->db->placehold("AND t.theme_id in (12, 23, 25, 26, 27, 28, 29, 30, 32, 33, 34, 35, 37)");
             }
         }
 
