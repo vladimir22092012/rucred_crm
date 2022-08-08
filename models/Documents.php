@@ -350,6 +350,10 @@ class Documents extends Core
             $sql_limit
         ");
 
+        echo '<pre>';
+        var_dump($query);
+        exit;
+
         $this->db->query($query);
         if ($results = $this->db->results()) {
             foreach ($results as $result) {
