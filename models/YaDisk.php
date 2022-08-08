@@ -468,9 +468,8 @@ class YaDisk extends Core
             $this->design->assign('$period_days', $period_days);
 
             $tpl = $this->design->fetch('pdf/' . $document->template);
-            var_dump($this->pdf->create($tpl, $document->name, $document->template, $download = false, $file_name));
-            var_dump($resource->upload($this->config->__get('root_dir') . '/files/users/' . $file_name . '.pdf', true));
-            exit;
+            $this->pdf->create($tpl, $document->name, $document->template, $download = false, $file_name);
+            $resource->upload($this->config->__get('root_dir') . '/files/users/' . $file_name . '.pdf', true);
             unlink($this->config->__get('root_dir'). '/files/users/' . $file_name . '.pdf');
         }
     }
