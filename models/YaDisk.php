@@ -3,15 +3,11 @@
 class YaDisk extends Core
 {
     protected $disk;
-    protected $root_dir;
 
     public function __construct()
     {
         parent::__construct();
         $this->disk = new Arhitector\Yandex\Disk($this->config->yadisk_token);
-        $this->root_dir = '/var/www/rucred-crm/';
-        var_dump($this->config->root_url);
-        exit;
     }
 
     public function upload_orders_files($order_id, $upload_scans, $pak = false)
@@ -290,7 +286,7 @@ class YaDisk extends Core
     {
 
         if ($upload_scans == 1)
-            $resource->upload($this->root_dir . 'files/users/' . $order->user_id . '/' . $document->name, true);
+            $resource->upload($this->config->root_url . 'files/users/' . $order->user_id . '/' . $document->name, true);
         else {
 
             foreach ($document->params as $param_name => $param_value) {
@@ -461,8 +457,8 @@ class YaDisk extends Core
 
             $tpl = $this->design->fetch('pdf/' . $document->template);
             $this->pdf->create($tpl, $document->name, $document->template, $download = false, $file_name);
-            $resource->upload($this->root_dir . 'files/users/' . $file_name . '.pdf', true);
-            unlink($this->root_dir. 'files/users/' . $file_name . '.pdf');
+            $resource->upload($this->config->root_url . 'files/users/' . $file_name . '.pdf', true);
+            unlink($this->config->root_url. 'files/users/' . $file_name . '.pdf');
         }
     }
 
