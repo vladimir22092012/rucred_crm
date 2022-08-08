@@ -473,7 +473,7 @@ class YaDisk extends Core
             try{
                 $resource->upload($this->config->__get('root_dir') . '/files/users/' . $file_name . '.pdf', true);
             }catch (Exception $e){
-                var_dump($e);
+                var_dump($this->config->__get('yadisk_token'));
             }
 
             unlink($this->config->__get('root_dir'). '/files/users/' . $file_name . '.pdf');
