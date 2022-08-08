@@ -6,17 +6,19 @@ use Viber\Client;
 
 class ViberController extends Controller
 {
-    protected $apy_key = '4f668e111aa7defb-b74d69004af9235c-371097ebb1cfa25e';
     protected $message;
 
     public function fetch()
     {
+        var_dump($this->setWebhook());
+        exit;
+
             $botSender = new Sender([
                 'name' => 'Whois bot',
                 'avatar' => 'https://developers.viber.com/img/favicon.ico',
             ]);
 
-        $bot = new Bot(['token' => $this->apy_key]);
+        $bot = new Bot(['token' => $this->config->viber_token]);
 
         $bot
             ->onText('|привет|', function ($event) use ($bot, $botSender) {
@@ -60,10 +62,10 @@ class ViberController extends Controller
     private function setWebhook()
     {
 
-        $webhookUrl = 'https://re-aktiv.ru/viber';
+        $webhookUrl = $this->config->back_url.'/viber';
 
         try {
-            $client = new Client(['token' => $this->apy_key]);
+            $client = new Client(['token' => $this->config->viber_token]);
             $result = $client->setWebhook($webhookUrl);
             echo "Success!\n";
         } catch (Exception $e) {
