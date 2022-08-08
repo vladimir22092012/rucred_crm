@@ -12,11 +12,15 @@ class YaDisk extends Core
 
     public function upload_orders_files($order_id, $upload_scans, $pak = false)
     {
+
+        $filter = array();
+        $filter['order_id'] = $order_id;
+
         if ($pak) {
             if ($pak == 'first')
-                $pak['first_pak'] = 1;
+                $filter['first_pak'] = 1;
             else
-                $pak['second_pak'] = 1;
+                $filter['second_pak'] = 1;
         }
 
         $order = $this->orders->get_order($order_id);
@@ -31,12 +35,8 @@ class YaDisk extends Core
         if ($upload_scans == 1) {
             $upload_files = $this->Scans->get_scans_by_order_id($order_id, $pak);
         } else {
-            $upload_files = $this->Documents->get_documents(['order_id' => $order_id, $pak]);
+            $upload_files = $this->Documents->get_documents($filter);
         }
-
-        echo '<pre>';
-        var_dump($upload_files);
-        exit;
 
         foreach ($upload_files as $document) {
 

@@ -357,7 +357,7 @@ class Documents extends Core
             }
         }
 
-        return $query;
+        return $results;
     }
 
     public function count_documents($filter = array())
