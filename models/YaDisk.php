@@ -7,7 +7,7 @@ class YaDisk extends Core
     public function __construct()
     {
         parent::__construct();
-        $this->disk = new Arhitector\Yandex\Disk($this->config->yadisk_token);
+        $this->disk = new Arhitector\Yandex\Disk($this->config->__get('yadisk_token'));
     }
 
     public function upload_orders_files($order_id, $upload_scans, $pak = false)

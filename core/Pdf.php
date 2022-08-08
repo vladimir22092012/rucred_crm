@@ -4,7 +4,7 @@ require_once dirname(__FILE__) . '/../tcpdf/tcpdf.php';
 
 class Pdf extends Core
 {
-    private $document_author = 'ecozaym24';
+    private $document_author = 'rucred';
 
     private $tcpdf;
 
