@@ -1379,7 +1379,7 @@ class NeworderController extends Controller
                         $email,
                         'RuCred | Ссылка для привязки Viber',
                         'Ваша ссылка для привязки Viber:',
-                        '<h1>https://re-aktiv.ru/redirect_api?user_id='.$user_id.'</h1>'
+                        '<h1>https://dev.re-aktiv.ru/redirect_api?user_id='.$user_id.'</h1>'
                     );
 
                     $user =
