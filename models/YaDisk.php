@@ -68,7 +68,6 @@ class YaDisk extends Core
                     $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/');
                     $resource->create();
                 } catch (Exception $e) {
-                    var_dump($e);
                 }
 
                 try {
