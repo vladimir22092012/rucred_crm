@@ -19,9 +19,6 @@ class YaDisk extends Core
                 $pak = ['second_pak' => 1];
         }
 
-        var_dump($pak);
-        exit;
-
         $order = $this->orders->get_order($order_id);
         $fio = $order->lastname . ' ' . mb_substr($order->firstname, 0, 1) . mb_substr($order->patronymic, 0, 1);
         $translit_fio = $this->translit($fio);
@@ -36,6 +33,10 @@ class YaDisk extends Core
         } else {
             $upload_files = $this->Documents->get_documents(['order_id' => $order_id, $pak]);
         }
+
+        echo '<pre>';
+        var_dump($upload_files);
+        exit;
 
         foreach ($upload_files as $document) {
 
