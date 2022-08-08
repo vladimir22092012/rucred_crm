@@ -68,7 +68,7 @@ class YaDisk extends Core
                     $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/');
                     $resource->create();
                 } catch (Exception $e) {
-
+                    var_dump($e);
                 }
 
                 try {
@@ -473,7 +473,7 @@ class YaDisk extends Core
             try{
                 $resource->upload($this->config->__get('root_dir') . '/files/users/' . $file_name . '.pdf', true);
             }catch (Exception $e){
-                var_dump($this->config->__get('yadisk_token'));
+
             }
 
             unlink($this->config->__get('root_dir'). '/files/users/' . $file_name . '.pdf');
