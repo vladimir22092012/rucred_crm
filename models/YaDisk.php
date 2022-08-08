@@ -14,9 +14,9 @@ class YaDisk extends Core
     {
         if ($pak) {
             if ($pak == 'first')
-                $pak = ['first_pak' => 1];
+                $pak['first_pak'] = 1;
             else
-                $pak = ['second_pak' => 1];
+                $pak['second_pak'] = 1;
         }
 
         $order = $this->orders->get_order($order_id);
