@@ -1360,7 +1360,7 @@ class NeworderController extends Controller
 
                     $template = $this->sms->get_template(5);
                     $message = str_replace('$user_token', $user_token, $template->template);
-                    $this->sms->send($phone, $message);
+                    var_dump($this->sms->send($phone, $message));
 
                     $user =
                         [
