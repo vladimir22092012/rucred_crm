@@ -2,16 +2,16 @@
 
 class YaDisk extends Core
 {
-    protected $token;
     protected $disk;
     protected $root_dir;
 
     public function __construct()
     {
         parent::__construct();
-        $this->token = 'AQAAAABcOalaAADLWxIYdswB4kYFjIrgW6xGURU';
-        $this->disk = new Arhitector\Yandex\Disk($this->token);
-        $this->root_dir = '/home/rucred-crm/rucred-crm/';
+        $this->disk = new Arhitector\Yandex\Disk($this->config->yadisk_token);
+        $this->root_dir = '/var/www/rucred-crm/';
+        var_dump($this->config->root_url);
+        exit;
     }
 
     public function upload_orders_files($order_id, $upload_scans, $pak = false)
