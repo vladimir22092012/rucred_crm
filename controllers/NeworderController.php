@@ -583,7 +583,7 @@ class NeworderController extends Controller
                 'card_id' => $card_id,
                 'date' => date('Y-m-d H:i:s'),
                 'manager_id' => $this->manager->id,
-                'status' => ($draft == 1) ? 12 : 1,
+                'status' => ($draft == 1) ? 12 : 0,
                 'offline' => 1,
                 'charge' => $charge,
                 'insure' => $insure,

@@ -232,6 +232,14 @@ class OfflineOrderController extends Controller
                     return $this->action_cards_change();
                     break;
 
+                case 'accept_order_by_underwriter':
+                    $this->action_accept_order_by_underwriter();
+                    break;
+
+                case 'accept_approve_by_under':
+                    $this->action_accept_approve_by_under();
+                    break;
+
 
             endswitch;
 
@@ -933,7 +941,7 @@ class OfflineOrderController extends Controller
         }
 
         $update = array(
-            'status' => 4,
+            'status' => 10,
             'manager_id' => $this->manager->id,
             'approve_date' => date('Y-m-d H:i:s'),
         );
@@ -955,32 +963,6 @@ class OfflineOrderController extends Controller
         ));
 
         $this->contracts->update_contract($order->contract_id, ['status' => 1]);
-        $communication_theme = $this->CommunicationsThemes->get(12);
-
-        $ticket =
-            [
-                'creator' => $this->manager->id,
-                'creator_company' => 2,
-                'client_lastname' => $order->lastname,
-                'client_firstname' => $order->firstname,
-                'client_patronymic' => $order->patronymic,
-                'head' => $communication_theme->head,
-                'text' => $communication_theme->text,
-                'theme_id' => 12,
-                'company_id' => 3,
-                'group_id' => 2,
-                'order_id' => $order_id,
-                'status' => 1
-            ];
-
-        $ticket_id = $this->Tickets->add_ticket($ticket);
-        $message =
-            [
-                'message' => $communication_theme->text,
-                'ticket_id' => $ticket_id,
-                'manager_id' => $this->manager->id,
-            ];
-        $this->TicketMessages->add_message($message);
 
         $scoring_types = $this->scorings->get_types();
         foreach ($scoring_types as $scoring_type) {
@@ -995,14 +977,6 @@ class OfflineOrderController extends Controller
                 $this->scorings->add_scoring($add_scoring);
             }
         }
-
-        $cron =
-            [
-                'ticket_id' => $ticket_id,
-                'is_complited' => 0
-            ];
-
-        $this->NotificationsCron->add($cron);
 
         echo json_encode(['success' => 1]);
         exit;
@@ -2828,8 +2802,7 @@ class OfflineOrderController extends Controller
         }
     }
 
-    public
-    function action_repay()
+    public function action_repay()
     {
         $contract_id = $this->request->post('contract_id', 'integer');
 
@@ -2871,8 +2844,7 @@ class OfflineOrderController extends Controller
         }
     }
 
-    private
-    function send_sms_action()
+    private function send_sms_action()
     {
         $yuk = $this->request->post('yuk', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -4100,7 +4072,7 @@ class OfflineOrderController extends Controller
         $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id->id, 'second_pak' => 1]);
 
         foreach ($documents as $document) {
-            if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR'])){
+            if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR'])) {
                 $docs_email[$document->type] = $document->id;
             }
         }
@@ -4273,6 +4245,104 @@ class OfflineOrderController extends Controller
             ];
 
         $this->cards->update_card($card_id, $card);
+        exit;
+    }
+
+    private function action_accept_order_by_underwriter()
+    {
+        $order_id = $this->request->post('order_id');
+        $manager_id = $this->request->post('manager_id');
+
+        $this->orders->update_order($order_id, ['status' => 1]);
+
+        $order = $this->orders->get_order($order_id);
+
+        $communication_theme = $this->CommunicationsThemes->get(8);
+
+        $ticket =
+            [
+                'creator' => $manager_id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => 8,
+                'company_id' => $order->company_id,
+                'group_id' => $order->group_id,
+                'order_id' => $order_id,
+                'status' => 0
+            ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+        $this->TicketMessages->add_message($message);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
+
+        $template = $this->sms->get_template(7);
+        $message = $template->template;
+        $this->sms->send(
+            $order->phone_mobile,
+            $message
+        );
+        exit;
+    }
+
+    private function action_accept_approve_by_under()
+    {
+        $order_id = $this->request->post('order_id');
+        $manager_id = $this->request->post('manager_id');
+        $order = $this->orders->get_order($order_id);
+
+        $communication_theme = $this->CommunicationsThemes->get(12);
+
+        $ticket =
+            [
+                'creator' => $manager_id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => 12,
+                'company_id' => 3,
+                'group_id' => 2,
+                'order_id' => $order_id,
+                'status' => 1
+            ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+        $this->TicketMessages->add_message($message);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
+
+        $this->orders->update_order($order_id, ['status' => 10]);
         exit;
     }
 
