@@ -1778,25 +1778,27 @@
                                                             </div>
                                                         {/if}
                                                     {/if}
-                                                    <div class="col-12"
-                                                         style="{if empty($order->sms) && $enough_scans == 0}display: none;{/if}">
-                                                        <button
-                                                                class="btn btn-success btn-block js-approve-order js-event-add-click"
-                                                                data-event="12" data-user="{$order->user_id}"
-                                                                data-order="{$order->order_id}"
-                                                                data-manager="{$manager->id}">
-                                                            <span>Принять</span>
-                                                        </button>
-                                                        <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
-                                                                data-event="13" data-user="{$order->user_id}"
-                                                                data-order="{$order->order_id}"
-                                                                data-manager="{$manager->id}">
-                                                            <span>Отклонить</span>
-                                                        </button>
-                                                    </div>
                                                 </div>
                                             </form>
                                         </div>
+                                    {/if}
+                                    {if $order->status == 2 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
+                                    <div class="col-12"
+                                         style="{if empty($order->sms) && $enough_scans == 0}display: none;{/if}">
+                                        <button
+                                                class="btn btn-success btn-block js-approve-order js-event-add-click"
+                                                data-event="12" data-user="{$order->user_id}"
+                                                data-order="{$order->order_id}"
+                                                data-manager="{$manager->id}">
+                                            <span>Принять</span>
+                                        </button>
+                                        <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
+                                                data-event="13" data-user="{$order->user_id}"
+                                                data-order="{$order->order_id}"
+                                                data-manager="{$manager->id}">
+                                            <span>Отклонить</span>
+                                        </button>
+                                    </div>
                                     {/if}
                                     {if !empty({$order->sms})}
                                         <div><br>
