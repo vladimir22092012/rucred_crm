@@ -1280,7 +1280,7 @@
                                     {if in_array($order->status, [0,1,2,4,9,10,14,13,15])}
                                         <small style="margin-left: 25px; margin-top: 0;">
                                         <span class="badge badge-secondary warning_asp"
-                                                {if in_array($order->status, [1])}
+                                                {if in_array($order->status, [0,1])}
                                                     data-tooltip="Заведение заявки и подготовка документов (подписание + фото паспортов)"
                                                 {/if}
                                                 {if in_array($order->status, [2])}
@@ -1297,7 +1297,7 @@
                                                 {/if}
                                         >
                                             Этап:
-                                            {if in_array($order->status, [1])}
+                                            {if in_array($order->status, [0,1])}
                                                 1
                                             {/if}
                                             {if in_array($order->status, [2])}
