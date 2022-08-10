@@ -97,10 +97,10 @@ class CommunicationsThemesController extends Controller
                     'need_response' => $need_response
                 ];
             $this->CommunicationsThemes->update($id, $theme);
+            $this->ManagersCommunicationsIn->delete($id);
+            $this->ManagersCommunicationsOut->delete($id);
 
             if(!empty($manager_permissions_in)){
-
-                $this->ManagersCommunicationsIn->delete($id);
                 foreach ($manager_permissions_in as $permission){
                     $permission = ['role_id' => $permission['id'], 'theme_id' => $id];
                     $this->ManagersCommunicationsIn->add($permission);
@@ -108,8 +108,6 @@ class CommunicationsThemesController extends Controller
             }
 
             if(!empty($manager_permissions_out)){
-
-                $this->ManagersCommunicationsOut->delete($id);
                 foreach ($manager_permissions_out as $permission){
                     $permission = ['role_id' => $permission['id'], 'theme_id' => $id];
                     $this->ManagersCommunicationsOut->add($permission);
