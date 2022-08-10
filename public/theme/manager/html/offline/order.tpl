@@ -1281,7 +1281,7 @@
                                                 {/if}
                                         >
                                             Этап:
-                                            {if in_array($order->status, [0,1])}
+                                            {if in_array($order->status, [0])}
                                                 1
                                             {/if}
                                             {if in_array($order->status, [1])}
