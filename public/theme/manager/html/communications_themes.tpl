@@ -64,12 +64,12 @@
                             $('#modal_edit_theme').find('input[name="need_response"]').prop('checked', false);
                         }
 
-                        for(let permission of theme['manager_permissions_in']){
-                            $('#modal_edit_theme').find('.role-id-in-'+permission['role_id']).prop('checked', true);
+                        for (let permission of theme['manager_permissions_in']) {
+                            $('#modal_edit_theme').find('.role-id-in-' + permission['role_id']).prop('checked', true);
                         }
 
-                        for(let permission of theme['manager_permissions_out']){
-                            $('#modal_edit_theme').find('.role-id-out-'+permission['role_id']).prop('checked', true);
+                        for (let permission of theme['manager_permissions_out']) {
+                            $('#modal_edit_theme').find('.role-id-out-' + permission['role_id']).prop('checked', true);
                         }
 
                         $('#modal_edit_theme').modal();
@@ -249,40 +249,45 @@
                                                 <td style="width: 250px;">{$theme->text}</td>
                                                 <td>
                                                     <div style="display: flex; flex-direction: column">
+                                                        {$permiss = 0}
                                                         {foreach $manager_roles as $role}
                                                             <div style="display: flex;">
-                                                                <input type="checkbox" disabled
-                                                                        {foreach $theme->manager_permissions_in as $permissions}
-                                                                            {if $role->id == $permissions->role_id}
-                                                                                checked
-                                                                            {/if}
-                                                                        {/foreach}>
-                                                                <label style="margin-left: 10px">{$role->translate}</label>
+                                                                {foreach $theme->manager_permissions_in as $permissions}
+                                                                    {if $role->id == $permissions->role_id}
+                                                                        <label class="label label-megna">{$role->translate}</label>
+                                                                        {$permiss = $permiss + 1}
+                                                                    {/if}
+                                                                {/foreach}
                                                             </div>
                                                         {/foreach}
                                                     </div>
+                                                    {if $permiss == 0}
+                                                        <label class="badge badge-danger">SYS</label>
+                                                    {/if}
                                                 </td>
                                                 <td>
                                                     <div style="display: flex; flex-direction: column">
+                                                        {$permiss = 0}
                                                         {foreach $manager_roles as $role}
                                                             <div style="display: flex;">
-                                                                <input type="checkbox" disabled
-                                                                        {foreach $theme->manager_permissions_out as $permissions}
+                                                                {foreach $theme->manager_permissions_out as $permissions}
                                                                     {if $role->id == $permissions->role_id}
-                                                                        checked
+                                                                        <label class="badge badge-secondary">{$role->translate}</label>
+                                                                        {$permiss = $permiss + 1}
                                                                     {/if}
-                                                                        {/foreach}>
-                                                                <label style="margin-left: 10px">{$role->translate}</label>
+                                                                {/foreach}
                                                             </div>
                                                         {/foreach}
                                                     </div>
+                                                    {if $permiss == 0}
+                                                        <label class="badge badge-danger">SYS</label>
+                                                    {/if}
                                                 </td>
                                                 <td>
-                                                    <div class="form-group">
-                                                        <input type="checkbox" name="need_response"
-                                                               class="custom-checkbox" disabled
-                                                               {if $theme->need_response == 1}checked{/if}>
-                                                    </div>
+                                                    {if $theme->need_response == 0}
+                                                        <i class="fa fa-info" style="color: #0b97c4"
+                                                           aria-hidden="true"></i>
+                                                    {/if}
                                                 </td>
                                                 {if in_array($manager->role, ['developer', 'admin'])}
                                                     <td>
@@ -384,7 +389,8 @@
                             <label class="control-label">Получатель: </label>
                             {foreach $manager_roles as $role}
                                 <div style="display: flex;">
-                                    <input type="checkbox" class="role-id-in-{$role->id}" name="manager_permissions_in[][id]" value="{$role->id}">
+                                    <input type="checkbox" class="role-id-in-{$role->id}"
+                                           name="manager_permissions_in[][id]" value="{$role->id}">
                                     <label style="margin-left: 10px">{$role->translate}</label>
                                 </div>
                             {/foreach}
@@ -393,7 +399,8 @@
                             <label class="control-label">Отправитель: </label>
                             {foreach $manager_roles as $role}
                                 <div style="display: flex;">
-                                    <input type="checkbox" class="role-id-out-{$role->id}" name="manager_permissions_out[][id]" value="{$role->id}">
+                                    <input type="checkbox" class="role-id-out-{$role->id}"
+                                           name="manager_permissions_out[][id]" value="{$role->id}">
                                     <label style="margin-left: 10px">{$role->translate}</label>
                                 </div>
                             {/foreach}
