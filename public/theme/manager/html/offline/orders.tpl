@@ -164,6 +164,8 @@
                                     <a href="{if $filter_status==8}{url status=null page=null}{else}{url status=8 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==8}btn-danger{else}btn-outline-danger{/if}">Отказ
                                         клиента</a>
+                                    <a href="{if $filter_status==10}{url status=null page=null}{else}{url status=10 page=null}{/if}"
+                                       class="btn btn-xs {if $filter_status==10}btn-success{else}btn-outline-success{/if}">А.Одобрена</a>
                                     <a href="{if $filter_status==14}{url status=null page=null}{else}{url status=14 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==14}btn-success{else}btn-outline-success{/if}">Р.Подтверждена</a>
                                     <a href="{if $filter_status==13}{url status=null page=null}{else}{url status=13 page=null}{/if}"
@@ -305,6 +307,8 @@
                                                         <span class="label label-danger">Отказ клиента</span>
                                                     {elseif $order->status == 9}
                                                         <span class="label label-primary">Выдан</span>
+                                                    {elseif $order->status == 10}
+                                                        <span class="label label-success">А.Одобрена</span>
                                                     {elseif $order->status == 14}
                                                         <span class="label label-success">Р.Подтверждена</span>
                                                     {elseif $order->status == 13}
