@@ -1240,7 +1240,7 @@
 
                         <div class="form-body">
                             <div class="row">
-                                <div class="col-4 col-md-3 col-lg-2" style="display: flex;">
+                                <div class="col-4 col-md-3 col-lg-3" style="display: flex;">
                                     <small>
                                         {if $client_status == 'ПК'}
                                             <span class="label label-success">ПК</span>
@@ -1259,8 +1259,28 @@
                                             <span class="label label-success">Црм</span>
                                         {/if}
                                     </small>
+                                    {if in_array($order->status, [0,1,4,9,10,14,15])}
+                                    <small style="margin-left: 25px; margin-top: 0;">
+                                        <span class="badge badge-secondary">
+                                            Этап:
+                                            {if in_array($order->status, [0,1])}
+                                                1
+                                            {/if}
+                                            {if in_array($order->status, [4])}
+                                                2
+                                            {/if}
+                                            {if in_array($order->status, [14])}
+                                                3
+                                            {/if}
+                                            {if in_array($order->status, [10])}
+                                                4
+                                            {/if}
+                                            из 4
+                                        </span>
+                                    </small>
+                                    {/if}
                                 </div>
-                                <div class="col-8 col-md-3 col-lg-4">
+                                <div class="col-8 col-md-3 col-lg-3">
                                     <h5 class="form-control-static float-left">
                                         Дата заявки: {$order->date|date} {$order->date|time}
                                     </h5>
