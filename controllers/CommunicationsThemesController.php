@@ -25,7 +25,8 @@ class CommunicationsThemesController extends Controller
         $themes = $this->CommunicationsThemes->gets(['sort' => $sort]);
 
         foreach ($themes as $theme){
-            $theme->manager_permissions = $this->ManagersPermissionsCommunications->get($theme->id);
+            $theme->manager_permissions_in = $this->ManagersCommunicationsIn->get($theme->id);
+            $theme->manager_permissions_out = $this->ManagersCommunicationsOut->get($theme->id);
         }
 
 
@@ -74,7 +75,8 @@ class CommunicationsThemesController extends Controller
         $text = $this->request->post('text');
         $need_response = $this->request->post('need_response');
         $id = $this->request->post('theme_id');
-        $manager_permissions = $this->request->post('manager_permissions');
+        $manager_permissions_in = $this->request->post('manager_permissions_in');
+        $manager_permissions_out = $this->request->post('manager_permissions_out');
 
         $name_check = $this->CommunicationsThemes->gets(['name' => $name, 'id' => $id]);
         $number_check = $this->CommunicationsThemes->gets(['number' => $number, 'id' => $id]);
@@ -96,12 +98,21 @@ class CommunicationsThemesController extends Controller
                 ];
             $this->CommunicationsThemes->update($id, $theme);
 
-            if(!empty($manager_permissions)){
+            if(!empty($manager_permissions_in)){
 
-                $this->ManagersPermissionsCommunications->delete($id);
-                foreach ($manager_permissions as $permission){
+                $this->ManagersCommunicationsIn->delete($id);
+                foreach ($manager_permissions_in as $permission){
                     $permission = ['role_id' => $permission['id'], 'theme_id' => $id];
-                    $this->ManagersPermissionsCommunications->add($permission);
+                    $this->ManagersCommunicationsIn->add($permission);
+                }
+            }
+
+            if(!empty($manager_permissions_out)){
+
+                $this->ManagersCommunicationsOut->delete($id);
+                foreach ($manager_permissions_out as $permission){
+                    $permission = ['role_id' => $permission['id'], 'theme_id' => $id];
+                    $this->ManagersCommunicationsOut->add($permission);
                 }
             }
 
@@ -124,7 +135,8 @@ class CommunicationsThemesController extends Controller
     {
         $id = $this->request->post('id');
         $theme = $this->CommunicationsThemes->get($id);
-        $theme->manager_permissions = $this->ManagersPermissionsCommunications->get($theme->id);
+        $theme->manager_permissions_in = $this->ManagersCommunicationsIn->get($theme->id);
+        $theme->manager_permissions_out = $this->ManagersCommunicationsOut->get($theme->id);
         echo json_encode($theme);
         exit;
     }

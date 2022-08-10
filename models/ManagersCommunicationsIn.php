@@ -1,11 +1,11 @@
 <?php
 
-class ManagersPermissionsCommunications extends Core
+class ManagersCommunicationsIn extends Core
 {
     public function add($permission)
     {
         $query = $this->db->placehold("
-        INSERT INTO s_managers_communications_permissions
+        INSERT INTO s_managers_communications_in
         SET ?%
         ", $permission);
 
@@ -18,7 +18,7 @@ class ManagersPermissionsCommunications extends Core
     public function update($id, $permission)
     {
         $query = $this->db->placehold("
-        UPDATE s_managers_communications_permissions
+        UPDATE s_managers_communications_in
         SET ?%
         WHERE theme_id = ?
         ", $permission, $id);
@@ -30,7 +30,7 @@ class ManagersPermissionsCommunications extends Core
 
         $query = $this->db->placehold("
         SELECT * 
-        FROM s_managers_communications_permissions
+        FROM s_managers_communications_in
         where theme_id = ?
         ", $theme_id);
 
@@ -43,7 +43,7 @@ class ManagersPermissionsCommunications extends Core
     public function delete($id)
     {
         $query = $this->db->placehold("
-        DELETE FROM s_managers_communications_permissions
+        DELETE FROM s_managers_communications_in
         WHERE theme_id = ?
         ", $id);
 

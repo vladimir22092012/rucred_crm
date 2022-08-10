@@ -64,8 +64,12 @@
                             $('#modal_edit_theme').find('input[name="need_response"]').prop('checked', false);
                         }
 
-                        for(let permission of theme['manager_permissions']){
-                            $('#modal_edit_theme').find('.role-id-'+permission['role_id']).prop('checked', true);
+                        for(let permission of theme['manager_permissions_in']){
+                            $('#modal_edit_theme').find('.role-id-in-'+permission['role_id']).prop('checked', true);
+                        }
+
+                        for(let permission of theme['manager_permissions_out']){
+                            $('#modal_edit_theme').find('.role-id-out-'+permission['role_id']).prop('checked', true);
                         }
 
                         $('#modal_edit_theme').modal();
@@ -212,7 +216,8 @@
                                                     Текст тикета</a>
                                             {else}<a href="{url page=null sort='text asc'}">Текст тикета</a>{/if}
                                         </th>
-                                        <th>Доступность для ролей</th>
+                                        <th>Получатель</th>
+                                        <th>Отправитель</th>
                                         <th>Need response</th>
                                         <th></th>
                                     </tr>
@@ -247,10 +252,25 @@
                                                         {foreach $manager_roles as $role}
                                                             <div style="display: flex;">
                                                                 <input type="checkbox" disabled
-                                                                        {foreach $theme->manager_permissions as $permissions}
+                                                                        {foreach $theme->manager_permissions_in as $permissions}
                                                                             {if $role->id == $permissions->role_id}
                                                                                 checked
                                                                             {/if}
+                                                                        {/foreach}>
+                                                                <label style="margin-left: 10px">{$role->translate}</label>
+                                                            </div>
+                                                        {/foreach}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div style="display: flex; flex-direction: column">
+                                                        {foreach $manager_roles as $role}
+                                                            <div style="display: flex;">
+                                                                <input type="checkbox" disabled
+                                                                        {foreach $theme->manager_permissions_out as $permissions}
+                                                                    {if $role->id == $permissions->role_id}
+                                                                        checked
+                                                                    {/if}
                                                                         {/foreach}>
                                                                 <label style="margin-left: 10px">{$role->translate}</label>
                                                             </div>
@@ -359,14 +379,25 @@
                         <label for="name" class="control-label">Текст тикета:</label>
                         <textarea type="text" class="form-control" name="text"></textarea>
                     </div>
-                    <div class="form-group" style="display: flex; flex-direction: column">
-                        <label class="control-label">Кто видит во входящих: </label>
-                        {foreach $manager_roles as $role}
-                            <div style="display: flex;">
-                                <input type="checkbox" class="role-id-{$role->id}" name="manager_permissions[][id]" value="{$role->id}">
-                                <label style="margin-left: 10px">{$role->translate}</label>
-                            </div>
-                        {/foreach}
+                    <div style="display: flex; justify-content: space-between">
+                        <div class="form-group" style="display: flex; flex-direction: column">
+                            <label class="control-label">Получатель: </label>
+                            {foreach $manager_roles as $role}
+                                <div style="display: flex;">
+                                    <input type="checkbox" class="role-id-in-{$role->id}" name="manager_permissions_in[][id]" value="{$role->id}">
+                                    <label style="margin-left: 10px">{$role->translate}</label>
+                                </div>
+                            {/foreach}
+                        </div>
+                        <div class="form-group" style="display: flex; flex-direction: column">
+                            <label class="control-label">Отправитель: </label>
+                            {foreach $manager_roles as $role}
+                                <div style="display: flex;">
+                                    <input type="checkbox" class="role-id-out-{$role->id}" name="manager_permissions_out[][id]" value="{$role->id}">
+                                    <label style="margin-left: 10px">{$role->translate}</label>
+                                </div>
+                            {/foreach}
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="need_response" class="control-label">Need response:</label>
