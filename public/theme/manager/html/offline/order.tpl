@@ -340,6 +340,22 @@
                 });
             });
 
+            $('.question-order').on('click', function (e) {
+                e.preventDefault();
+                let order_id = $(this).attr('data-order');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'question_by_employer',
+                        order_id: order_id
+                    },
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            });
+
             $('.reject-order').on('click', function (e) {
                 e.preventDefault();
                 let order_id = $(this).attr('data-order');
@@ -1261,7 +1277,7 @@
                                             <span class="label label-success">Црм</span>
                                         {/if}
                                     </small>
-                                    {if in_array($order->status, [0,1,4,9,10,14,15])}
+                                    {if in_array($order->status, [0,1,4,9,10,14,13,15])}
                                         <small style="margin-left: 25px; margin-top: 0;">
                                         <span class="badge badge-secondary warning_asp"
                                                 {if in_array($order->status, [0,1])}
@@ -1273,7 +1289,7 @@
                                                 {if in_array($order->status, [4])}
                                                     data-tooltip="Одобрение заёмщика работодателем"
                                                 {/if}
-                                                {if in_array($order->status, [14])}
+                                                {if in_array($order->status, [13,14])}
                                                     data-tooltip="Проверка заявки андеррайтером после работодателя"
                                                 {/if}
                                                 {if in_array($order->status, [10])}
@@ -1290,7 +1306,7 @@
                                             {if in_array($order->status, [4])}
                                                 3
                                             {/if}
-                                            {if in_array($order->status, [14])}
+                                            {if in_array($order->status, [13,14])}
                                                 4
                                             {/if}
                                             {if in_array($order->status, [10])}
@@ -1485,6 +1501,27 @@
                                                 </div>
                                             </div>
                                         {/if}
+                                        {if $order->status == 0}
+                                            <div class="card card-primary">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Новая</h4>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 1}
+                                            <div class="card card-success">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Принята</h4>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 13}
+                                            <div class="card card-warning">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Р.Нецелесообразно</h4>
+                                                </div>
+                                            </div>
+                                        {/if}
                                         {if in_array($order->status, [4, 10, 14])}
                                             <div class="card card-primary">
                                                 <div class="box text-center">
@@ -1493,7 +1530,7 @@
                                                 </div>
                                             </div>
                                         {/if}
-                                        {if $order->status == 14 && in_array($manager->role, ['underwriter', 'admin', 'developer'])}
+                                        {if in_array($order->status, [13,14])&& in_array($manager->role, ['underwriter', 'admin', 'developer'])}
                                             <div>
                                                 <button class="btn btn-success btn-block approve_by_under"
                                                         data-order="{$order->order_id}"
@@ -1686,14 +1723,21 @@
                                                         data-tooltip="Подтвердите нахождение сотрудника в данной организации"
                                                         data-order="{$order->order_id}" data-manager="{$manager->id}">
                                                     <i class="fas fa-check-circle"></i>
-                                                    <span>Подтвердить сотрудника</span>
+                                                    <span>Подтверждаю сотрудника,<br>заём может быть выдан</span>
+                                                </button>
+                                                <button class="btn btn-warning btn-block question-order warning_asp"
+                                                        data-user="{$order->user_id}"
+                                                        data-tooltip="Подтвердите нахождение сотрудника в данной организации"
+                                                        data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                    <span>Подтверждаю сотрудника, выдача займа нецелесообразна</span>
                                                 </button>
                                                 <button class="btn btn-danger btn-block reject-order warning_asp"
                                                         data-user="{$order->user_id}"
                                                         data-tooltip="Подтвердите нахождение сотрудника в данной организации"
                                                         data-order="{$order->order_id}" data-manager="{$manager->id}">
                                                     <i class="fas fa-times-circle"></i>
-                                                    <span>Отклонить сотрудника</span>
+                                                    <span>Нет такого сотрудника</span>
                                                 </button>
                                             </div>
                                         {else}
@@ -1704,20 +1748,6 @@
                                                 </div>
                                             </div>
                                         {/if}
-                                    {/if}
-                                    {if $order->status == 0}
-                                        <div class="card card-primary">
-                                            <div class="box text-center">
-                                                <h4 class="text-white">Новая</h4>
-                                            </div>
-                                        </div>
-                                    {/if}
-                                    {if $order->status == 1}
-                                        <div class="card card-success">
-                                            <div class="box text-center">
-                                                <h4 class="text-white">Принята</h4>
-                                            </div>
-                                        </div>
                                     {/if}
                                     {if $order->status == 0 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
                                         <button class="btn btn-success btn-block accept_order_by_underwriter"
@@ -1748,7 +1778,8 @@
                                                             </div>
                                                         {/if}
                                                     {/if}
-                                                    <div class="col-12" style="{if empty($order->sms) && $enough_scans == 0}display: none;{/if}">
+                                                    <div class="col-12"
+                                                         style="{if empty($order->sms) && $enough_scans == 0}display: none;{/if}">
                                                         <button
                                                                 class="btn btn-success btn-block js-approve-order js-event-add-click"
                                                                 data-event="12" data-user="{$order->user_id}"
@@ -1768,8 +1799,7 @@
                                         </div>
                                     {/if}
                                     {if !empty({$order->sms})}
-                                        <br>
-                                        <div>
+                                        <div><br>
                                             <div class="text-center">
                                                 <h4>Код ПЭП: {$order->sms}</h4>
                                             </div>

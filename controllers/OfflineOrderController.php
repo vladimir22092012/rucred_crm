@@ -28,6 +28,10 @@ class OfflineOrderController extends Controller
                     $this->action_reject_by_employer();
                     break;
 
+                case 'question_by_employer':
+                    $this->action_question_by_employer();
+                    break;
+
                 case 'change_photo_status':
                     $this->action_change_photo_status();
                     break;
@@ -3092,11 +3096,17 @@ class OfflineOrderController extends Controller
         exit;
     }
 
-    private
-    function action_reject_by_employer()
+    private function action_reject_by_employer()
     {
         $order_id = (int)$this->request->post('order_id');
         $this->orders->update_order($order_id, ['status' => 15]);
+        exit;
+    }
+
+    private function action_question_by_employer()
+    {
+        $order_id = (int)$this->request->post('order_id');
+        $this->orders->update_order($order_id, ['status' => 13]);
         exit;
     }
 
