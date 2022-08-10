@@ -1280,10 +1280,10 @@
                                     {if in_array($order->status, [0,1,4,9,10,14,13,15])}
                                         <small style="margin-left: 25px; margin-top: 0;">
                                         <span class="badge badge-secondary warning_asp"
-                                                {if in_array($order->status, [0,1])}
+                                                {if in_array($order->status, [1])}
                                                     data-tooltip="Заведение заявки и подготовка документов (подписание + фото паспортов)"
                                                 {/if}
-                                                {if in_array($order->status, [1])}
+                                                {if in_array($order->status, [2])}
                                                     data-tooltip="Одобрение заявки андеррайтером и принятие в работу"
                                                 {/if}
                                                 {if in_array($order->status, [4])}
@@ -1297,10 +1297,10 @@
                                                 {/if}
                                         >
                                             Этап:
-                                            {if in_array($order->status, [0])}
+                                            {if in_array($order->status, [1])}
                                                 1
                                             {/if}
-                                            {if in_array($order->status, [1])}
+                                            {if in_array($order->status, [2])}
                                                 2
                                             {/if}
                                             {if in_array($order->status, [4])}
@@ -1497,7 +1497,7 @@
                                         {if $order->status == 2}
                                             <div class="card card-success mb-1">
                                                 <div class="box text-center">
-                                                    <h3 class="text-white mb-0">Одобрена</h3>
+                                                    <h3 class="text-white mb-0">А.Подготовлена</h3>
                                                 </div>
                                             </div>
                                         {/if}
@@ -1757,7 +1757,7 @@
                                             <span>Принять в работу</span>
                                         </button>
                                     {/if}
-                                    {if $order->status == 1 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
+                                    {if $order->status == 2 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
                                         <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
                                             <form class=" pt-1 js-confirm-contract">
                                                 <div class="input-group" style="display: flex;">

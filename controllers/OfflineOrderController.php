@@ -3910,7 +3910,7 @@ class OfflineOrderController extends Controller
                     ];
 
                 $contract_id = $this->Contracts->add_contract($contract);
-                $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
+                $this->orders->update_order($order->order_id, ['contract_id' => $contract_id, 'status' => 2]);
 
                 $this->db->query("
                 SELECT id

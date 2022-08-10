@@ -153,7 +153,7 @@
                                     <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==1}btn-info{else}btn-outline-info{/if}">Принята</a>
                                     <a href="{if $filter_status==2}{url status=null page=null}{else}{url status=2 page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status==2}btn-success{else}btn-outline-success{/if}">Одобрена</a>
+                                       class="btn btn-xs {if $filter_status==2}btn-success{else}btn-outline-success{/if}">А.Подготовлена</a>
                                     <a href="{if $filter_status==3}{url status=null page=null}{else}{url status=3 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==3}btn-danger{else}btn-outline-danger{/if}">Отказ</a>
                                     <a href="{if $filter_status==4}{url status=null page=null}{else}{url status=4 page=null}{/if}"
@@ -290,7 +290,7 @@
                                                     {elseif $order->status == 1}
                                                         <span class="label label-info">Принята</span>
                                                     {elseif $order->status == 2}
-                                                        <span class="label label-success">Одобрена</span>
+                                                        <span class="label label-success">А.Подготовлена</span>
                                                     {elseif $order->status == 3}
                                                         <span class="label label-danger">Отказ</span>
                                                     {elseif $order->status == 4}
