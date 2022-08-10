@@ -1757,7 +1757,7 @@
                                             <span>Принять в работу</span>
                                         </button>
                                     {/if}
-                                    {if $order->status == 2 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
+                                    {if $order->status == 1 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
                                         <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
                                             <form class=" pt-1 js-confirm-contract">
                                                 <div class="input-group" style="display: flex;">
