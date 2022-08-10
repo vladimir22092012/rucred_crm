@@ -866,7 +866,7 @@ class NeworderController extends Controller
 
                     $this->NotificationsCron->add($cron);
 
-                    response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id.'?scroll=1']);
+                    response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                     exit;
                 }
             } else {
@@ -972,7 +972,7 @@ class NeworderController extends Controller
 
                         $this->NotificationsCron->add($cron);
 
-                        response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' .$order_id.'?scroll=1']);
+                        response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' .$order_id]);
                     } catch (Exception $exception) {
                         response_json(['error' => 1, 'reason' => 'Создать заявку не удалось']);
                     }

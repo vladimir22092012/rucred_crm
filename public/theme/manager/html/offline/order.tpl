@@ -721,6 +721,8 @@
             $('.send_asp_code').on('click', function (e) {
                 e.preventDefault();
 
+                $('#sms_confirm_modal').modal();
+
                 let phone = $(this).attr('data-phone');
                 let user = $(this).attr('data-user');
                 let order = $(this).attr('data-order');
@@ -728,7 +730,7 @@
 
                 $('.confirm_asp').fadeIn();
                 $('.code_asp').fadeIn();
-                $(this).text('Отправить смс повторно');
+                $('.send_asp_code').text('Отправить смс повторно');
 
 
                 send_asp(phone, user, order, restruct);
@@ -1260,24 +1262,43 @@
                                         {/if}
                                     </small>
                                     {if in_array($order->status, [0,1,4,9,10,14,15])}
-                                    <small style="margin-left: 25px; margin-top: 0;">
-                                        <span class="badge badge-secondary">
+                                        <small style="margin-left: 25px; margin-top: 0;">
+                                        <span class="badge badge-secondary warning_asp"
+                                                {if in_array($order->status, [0,1])}
+                                                    data-tooltip="Заведение заявки и подготовка документов (подписание + фото паспортов)"
+                                                {/if}
+                                                {if in_array($order->status, [1])}
+                                                    data-tooltip="Одобрение заявки андеррайтером и принятие в работу"
+                                                {/if}
+                                                {if in_array($order->status, [4])}
+                                                    data-tooltip="Одобрение заёмщика работодателем"
+                                                {/if}
+                                                {if in_array($order->status, [14])}
+                                                    data-tooltip="Проверка заявки андеррайтером после работодателя"
+                                                {/if}
+                                                {if in_array($order->status, [10])}
+                                                    data-tooltip="Одобрение сделки миддлом и перечисление средств"
+                                                {/if}
+                                        >
                                             Этап:
                                             {if in_array($order->status, [0,1])}
                                                 1
                                             {/if}
-                                            {if in_array($order->status, [4])}
+                                            {if in_array($order->status, [1])}
                                                 2
                                             {/if}
-                                            {if in_array($order->status, [14])}
+                                            {if in_array($order->status, [4])}
                                                 3
                                             {/if}
-                                            {if in_array($order->status, [10])}
+                                            {if in_array($order->status, [14])}
                                                 4
                                             {/if}
-                                            из 4
+                                            {if in_array($order->status, [10])}
+                                                5
+                                            {/if}
+                                            из 5
                                         </span>
-                                    </small>
+                                        </small>
                                     {/if}
                                 </div>
                                 <div class="col-8 col-md-3 col-lg-3">
@@ -1461,13 +1482,6 @@
                                             <div class="card card-success mb-1">
                                                 <div class="box text-center">
                                                     <h3 class="text-white mb-0">Одобрена</h3>
-                                                </div>
-                                            </div>
-                                        {/if}
-                                        {if !empty({$order->sms})}
-                                            <div class="card card-text mb-1" style="width: 100%!important;">
-                                                <div class="box text-center">
-                                                    <h4>Код ПЭП: {$order->sms}</h4>
                                                 </div>
                                             </div>
                                         {/if}
@@ -1712,6 +1726,94 @@
                                             <i class="fas fa-check-circle"></i>
                                             <span>Принять в работу</span>
                                         </button>
+                                    {/if}
+                                    {if $order->status == 1 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
+                                        <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
+                                            <form class=" pt-1 js-confirm-contract">
+                                                <div class="input-group" style="display: flex;">
+                                                    <input type="hidden" name="contract_id" class="js-contract-id"
+                                                           value="{$order->contract_id}"/>
+                                                    <input type="hidden" name="phone" class="js-contract-phone"
+                                                           value="{$order->phone_mobile|escape}"/>
+                                                    {if $enough_scans == 0}
+                                                        {if empty({$order->sms})}
+                                                            <div class="col-md-12">
+                                                                <button data-user="{$order->user_id}"
+                                                                        id="send_asp"
+                                                                        data-phone="{$order->phone_mobile}"
+                                                                        data-order="{$order->order_id}"
+                                                                        class="btn btn-primary btn-block send_asp_code">
+                                                                    Отправить смс
+                                                                </button>
+                                                            </div>
+                                                        {/if}
+                                                    {/if}
+                                                    <div class="col-12" style="{if empty($order->sms) && $enough_scans == 0}display: none;{/if}">
+                                                        <button
+                                                                class="btn btn-success btn-block js-approve-order js-event-add-click"
+                                                                data-event="12" data-user="{$order->user_id}"
+                                                                data-order="{$order->order_id}"
+                                                                data-manager="{$manager->id}">
+                                                            <span>Принять</span>
+                                                        </button>
+                                                        <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
+                                                                data-event="13" data-user="{$order->user_id}"
+                                                                data-order="{$order->order_id}"
+                                                                data-manager="{$manager->id}">
+                                                            <span>Отклонить</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    {/if}
+                                    {if !empty({$order->sms})}
+                                        <br>
+                                        <div>
+                                            <div class="text-center">
+                                                <h4>Код ПЭП: {$order->sms}</h4>
+                                            </div>
+                                        </div>
+                                    {/if}
+                                    {if $asp_restruct == 1 && $need_confirm_restruct == 0}
+                                        <div style="display: flex;">
+                                            <input type="text" class="form-control code_asp"
+                                                   style="display:none"
+                                                   placeholder="SMS код"
+                                                   value="{if $is_developer}{$contract->accept_code}{/if}"/>
+                                            <small id="asp_success"
+                                                   style="display: none; color: #009d07">
+                                                Успешно!
+                                            </small>
+                                            <div class="btn btn-info confirm_asp" type="button"
+                                                 data-user="{$order->user_id}"
+                                                 data-order="{$order->order_id}"
+                                                 data-restruct="1"
+                                                 style="margin-left: 15px; display:none"
+                                                 data-phone="{$order->phone_mobile}">Подтвердить
+                                            </div>
+                                            <div type="button" data-user="{$order->user_id}"
+                                                 id="send_asp"
+                                                 data-phone="{$order->phone_mobile}"
+                                                 data-order="{$order->order_id}"
+                                                 data-restruct="1"
+                                                 style="margin-left: 15px; width: 370px"
+                                                 class="btn btn-primary send_asp_code">
+                                                Отправить смс
+                                            </div>
+                                        </div>
+                                    {/if}
+                                    {if $need_confirm_restruct == 1 && in_array($manager->role, ['admin', 'middle', 'developer'])}
+                                        <div data-order="{$order->order_id}"
+                                             style="margin-left: 15px;"
+                                             class="btn btn-success confirm_restruct">
+                                            Подтвердить реструктуризацию
+                                        </div>
+                                        <div data-order="{$order->order_id}"
+                                             style="margin-left: 15px;"
+                                             class="btn btn-danger cancell_restruct">
+                                            Отменить реструктуризацию
+                                        </div>
                                     {/if}
                                 </div>
                             </div>
@@ -3295,105 +3397,6 @@
                                     </div>
                                 </div>
                                 <!-- -->
-                                {if $order->status == 1 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
-                                    <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
-                                        <br>
-                                        <form class=" pt-1 js-confirm-contract">
-                                            <div class="input-group" style="display: flex;">
-                                                <input type="hidden" name="contract_id" class="js-contract-id"
-                                                       value="{$order->contract_id}"/>
-                                                <input type="hidden" name="phone" class="js-contract-phone"
-                                                       value="{$order->phone_mobile|escape}"/>
-                                                {if $enough_scans == 0}
-                                                    {if empty({$order->sms})}
-                                                        <div style="display: flex;">
-                                                            <input type="text" class="form-control code_asp"
-                                                                   style="display:none"
-                                                                   placeholder="SMS код"
-                                                                   value="{if $is_developer}{$contract->accept_code}{/if}"/>
-                                                            <small id="asp_success"
-                                                                   style="display: none; color: #009d07">
-                                                                Успешно!
-                                                            </small>
-                                                            <div class="btn btn-info confirm_asp" type="button"
-                                                                 data-user="{$order->user_id}"
-                                                                 data-order="{$order->order_id}"
-                                                                 style="margin-left: 15px; display:none"
-                                                                 data-phone="{$order->phone_mobile}">Подтвердить
-                                                            </div>
-                                                            <div type="button" data-user="{$order->user_id}"
-                                                                 id="send_asp"
-                                                                 data-phone="{$order->phone_mobile}"
-                                                                 data-order="{$order->order_id}"
-                                                                 style="margin-left: 15px; width: 370px"
-                                                                 class="btn btn-primary send_asp_code">
-                                                                Отправить смс
-                                                            </div>
-                                                        </div>
-                                                    {/if}
-                                                {/if}
-                                                <div style="{if empty($order->sms) && $enough_scans == 0}display: none;{else}display: flex; justify-content: space-between;{/if}">
-                                                    <button
-                                                            class="btn btn-success js-approve-order js-event-add-click"
-                                                            data-event="12" data-user="{$order->user_id}"
-                                                            style="margin-left: 15px"
-
-                                                            data-order="{$order->order_id}"
-                                                            data-manager="{$manager->id}">
-                                                        <span>Принять</span>
-                                                    </button>
-                                                    <button class="btn btn-danger js-reject-order js-event-add-click"
-                                                            data-event="13" data-user="{$order->user_id}"
-                                                            style="margin-left: 15px"
-                                                            data-order="{$order->order_id}"
-                                                            data-manager="{$manager->id}">
-                                                        <span>Отклонить</span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                {/if}
-                                {if $asp_restruct == 1 && $need_confirm_restruct == 0}
-                                    <div style="display: flex;">
-                                        <input type="text" class="form-control code_asp"
-                                               style="display:none"
-                                               placeholder="SMS код"
-                                               value="{if $is_developer}{$contract->accept_code}{/if}"/>
-                                        <small id="asp_success"
-                                               style="display: none; color: #009d07">
-                                            Успешно!
-                                        </small>
-                                        <div class="btn btn-info confirm_asp" type="button"
-                                             data-user="{$order->user_id}"
-                                             data-order="{$order->order_id}"
-                                             data-restruct="1"
-                                             style="margin-left: 15px; display:none"
-                                             data-phone="{$order->phone_mobile}">Подтвердить
-                                        </div>
-                                        <div type="button" data-user="{$order->user_id}"
-                                             id="send_asp"
-                                             data-phone="{$order->phone_mobile}"
-                                             data-order="{$order->order_id}"
-                                             data-restruct="1"
-                                             style="margin-left: 15px; width: 370px"
-                                             class="btn btn-primary send_asp_code">
-                                            Отправить смс
-                                        </div>
-                                    </div>
-                                {/if}
-                                {if $need_confirm_restruct == 1 && in_array($manager->role, ['admin', 'middle', 'developer'])}
-                                    <div data-order="{$order->order_id}"
-                                         style="margin-left: 15px;"
-                                         class="btn btn-success confirm_restruct">
-                                        Подтвердить реструктуризацию
-                                    </div>
-                                    <div data-order="{$order->order_id}"
-                                         style="margin-left: 15px;"
-                                         class="btn btn-danger cancell_restruct">
-                                        Отменить реструктуризацию
-                                    </div>
-                                {/if}
                             </div>
                             <br>
                             {if $manager->role != 'employer' && !in_array($order->status, ['4','5','6','7','8'])}
@@ -4165,11 +4168,8 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 </div>
                 <div class="modal-body">
-
-
                     <div class="card">
                         <div class="card-body">
-
                             <div class="tab-content tabcontent-border p-3" id="myTabContent">
                                 <div role="tabpanel" class="tab-pane fade active show" id="waiting_reason"
                                      aria-labelledby="home-tab">
@@ -4253,6 +4253,71 @@
                             <input type="button" class="btn btn-success float-right do_restruct" value="Сохранить">
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="add_group_modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Добавить группу</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert" style="display:none"></div>
+                    <form method="POST" id="add_group">
+                        <input type="hidden" name="action" value="add_group">
+                        <div class="form-group">
+                            <label for="name" class="control-label">Наименование группы</label>
+                            <input type="text" class="form-control" name="name" id="name" value=""/>
+                        </div>
+                        <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
+                        <input type="button" class="btn btn-success action_add_group" value="Сохранить">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="sms_confirm_modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Подтвердить смс</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert" style="display:none"></div>
+                    <div style="display: flex;" class="col-md-12">
+                        <input type="text" class="form-control code_asp"
+                               style="display:none"
+                               placeholder="SMS код"
+                               value="{if $is_developer}{$contract->accept_code}{/if}"/>
+                        <small id="asp_success"
+                               style="display: none; color: #009d07">
+                            Успешно!
+                        </small>
+                        <button class="btn btn-info confirm_asp" type="button"
+                                data-user="{$order->user_id}"
+                                data-order="{$order->order_id}"
+                                style="margin-left: 15px; display:none"
+                                data-phone="{$order->phone_mobile}">Подтвердить
+                        </button>
+                    </div>
+                    <br>
+                    <div class="col-md-12">
+                        <button data-user="{$order->user_id}"
+                                id="send_asp"
+                                data-phone="{$order->phone_mobile}"
+                                data-order="{$order->order_id}"
+                                class="btn btn-primary btn-block send_asp_code">
+                            Отправить смс
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

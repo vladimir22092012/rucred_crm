@@ -101,7 +101,7 @@ class OfflineOrdersController extends Controller
             $filter['status'] = $status;
             $this->design->assign('filter_status', $status);
         }else{
-            $filter['status'] = [0,1,4,6,8,9,14,15];
+            $filter['status'] = [0,1,4,6,8,9,14,15,10];
         }
 
         if ($this->request->get('drafts'))

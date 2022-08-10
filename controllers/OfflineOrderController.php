@@ -941,7 +941,7 @@ class OfflineOrderController extends Controller
         }
 
         $update = array(
-            'status' => 10,
+            'status' => 4,
             'manager_id' => $this->manager->id,
             'approve_date' => date('Y-m-d H:i:s'),
         );
