@@ -159,7 +159,7 @@
                 });
             });
 
-            $('.edit_password').click(function (e) {
+            $(document).on('click', '.edit_password', function (e) {
                 e.preventDefault();
 
                 $(this).hide();
@@ -173,38 +173,44 @@
                     $('.edit_password').show();
                     $('.show_password').show();
                 });
+            });
 
-                $('.accept_edit').click(function (e) {
-                    e.preventDefault();
+            $('.save_new_password').click(function (e) {
+                e.preventDefault();
 
-                    let user_id = $(this).attr('data-user');
-                    let old_password = $('input[class="form-control old_password"]').val();
-                    let new_password = $('input[class="form-control new_password"]').val();
-                    let new_password_confirmation = $('input[class="form-control new_password_confirmation"]').val();
+                let user_id = $(this).attr('data-user');
+                let old_password = $('input[class="form-control old_password"]').val();
+                let new_password = $('input[class="form-control new_password"]').val();
+                let new_password_confirmation = $('input[class="form-control new_password_confirmation"]').val();
 
-                    if (new_password === new_password_confirmation) {
-                        $.ajax({
-                            method: 'POST',
-                            data: {
-                                action: 'edit_password',
-                                user_id: user_id,
-                                old_password: old_password,
-                                new_password: new_password,
-                            },
-                            success: function (resp) {
-                                if (resp == 'error') {
-                                    Swal.fire({
-                                        title: 'Такой номер уже зарегистрирован',
-                                        confirmButtonText: 'ОК'
-                                    });
-                                }
-                                else {
-                                    location.reload();
-                                }
+                if (new_password === new_password_confirmation) {
+                    $.ajax({
+                        method: 'POST',
+                        dataType: 'JSON',
+                        data: {
+                            action: 'edit_password',
+                            user_id: user_id,
+                            old_password: old_password,
+                            new_password: new_password,
+                        },
+                        success: function (resp) {
+                            if (resp == 'error') {
+                                Swal.fire({
+                                    title: 'Не верно введен старый пароль',
+                                    confirmButtonText: 'ОК'
+                                });
                             }
-                        })
-                    }
-                });
+                            else {
+                                location.reload();
+                            }
+                        }
+                    })
+                } else {
+                    Swal.fire({
+                        title: 'Не верно введен подтверждающий пароль',
+                        confirmButtonText: 'ОК'
+                    });
+                }
             });
 
             $('.js-block-button').click(function (e) {
@@ -548,7 +554,7 @@
 
                 $.ajax({
                     method: 'POST',
-                    data:{
+                    data: {
                         action: 'sms_note_flag',
                         value: value,
                         user_id: user_id
@@ -865,9 +871,11 @@
                                         </div>
                                     {else}
                                         <div class="col-12">
-                                            <h5 class="form-control-static">Пароль <a href="#" data-user="{$client->id}"
-                                                                                      class="text-info edit_password"><i
-                                                            class="fas fa-edit"></i></a></h5>
+                                            <h5 class="form-control-static">Пароль
+                                                <a href="#" class="text-info edit_password">
+                                                    <i class="fas fa-edit" data-user="{$client->id}"></i>
+                                                </a>
+                                            </h5>
                                             <div class="show_password">*********</div>
                                             <br>
                                             <div class="password_edit_form" style="display: none">
@@ -898,7 +906,7 @@
                                                 <div>
                                                     <input type="button"
                                                            data-user="{$user->id}"
-                                                           class="btn btn-success accept_edit"
+                                                           class="btn btn-success save_new_password"
                                                            value="Сохранить">
                                                     <input type="button"
                                                            class="btn btn-danger cancel_edit"
@@ -1064,7 +1072,8 @@
                                         <div class="col-12">
                                             <h5 class="form-control-static">Телефон <a href="#"
                                                                                        data-user="{$client->id}"
-                                                                                       class="text-info edit_phone"></a></h5>
+                                                                                       class="text-info edit_phone"></a>
+                                            </h5>
                                             <div class="show_phone">{$user->phone|default: "Телефон не введён"}</div>
                                             <div class="phone_edit_form" style="display: none">
                                                 <div class="mb-3">
@@ -1105,7 +1114,8 @@
                                         <label class="col-md-5">Часовой пояс</label><br>
                                         <select class="form-control"
                                                 name="timezone"
-                                                style="width: 200px; margin-left: 15px" {if !in_array($manager->role, ['admin', 'developer '])}disabled{/if}>
+                                                style="width: 200px; margin-left: 15px"
+                                                {if !in_array($manager->role, ['admin', 'developer '])}disabled{/if}>
                                             {for $i= -1 to 9}
                                                 <option value="{$i}"
                                                         {if empty($user->timezone) && $i == 0}selected{elseif $i == $user->timezone}selected{/if}>
