@@ -194,7 +194,7 @@
                             new_password: new_password,
                         },
                         success: function (resp) {
-                            if (resp == 'error') {
+                            if (resp['error']) {
                                 Swal.fire({
                                     title: 'Не верно введен старый пароль',
                                     confirmButtonText: 'ОК'
