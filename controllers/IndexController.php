@@ -107,78 +107,6 @@ class IndexController extends Controller
         }
 
         if (isset($this->manager->role)) {
-            /*
-            if ($this->manager->role == 'employer') {
-
-                $query = $this->db->placehold("
-            SELECT COUNT(*) as `count`
-            FROM s_tickets
-            WHERE group_id = ?
-            AND creator != ?
-            and status != 6
-            and not exists (SELECT *
-            FROM s_tickets_notifications
-            WHERE ticket_id = s_tickets.id
-            AND user_id = ?)
-            ", $this->manager->group_id, $this->manager->id, $this->manager->id);
-
-                $this->db->query($query);
-                $count_in = $this->db->result('count');
-            }
-            if ($this->manager->role == 'underwriter') {
-                $query = $this->db->placehold("
-            SELECT COUNT(*) as `count`
-            FROM s_tickets
-            WHERE group_id = 2
-            AND creator != ?
-            AND (executor = 0 OR executor is null)
-            and status != 6
-            AND theme_id in (11, 13, 18, 23, 25, 26, 27, 28, 29, 30, 32, 33, 34, 35, 38)
-            and not exists (SELECT *
-            FROM s_tickets_notifications
-            WHERE ticket_id = s_tickets.id
-            AND user_id = ?)
-            ", $this->manager->id, $this->manager->id);
-
-                $this->db->query($query);
-                $count_in = $this->db->result('count');
-            }
-
-            if ($this->manager->role == 'middle') {
-                $query = $this->db->placehold("
-            SELECT COUNT(*) as `count`
-            FROM s_tickets
-            WHERE group_id = 2
-            AND creator != ?
-            and status != 6
-            AND theme_id in (12, 23, 25, 26, 27, 28, 29, 30, 32, 33, 34, 35, 37)
-            and not exists (SELECT *
-            FROM s_tickets_notifications
-            WHERE ticket_id = s_tickets.id
-            AND user_id = ?)
-            ", $this->manager->id, $this->manager->id);
-
-                $this->db->query($query);
-                $count_in = $this->db->result('count');
-            }
-
-            if (in_array($this->manager->role, ['admin', 'developer'])) {
-                $query = $this->db->placehold("
-            SELECT COUNT(*) as `count`
-            FROM s_tickets
-            WHERE status != 6
-            AND creator != ?
-            and not exists (SELECT *
-            FROM s_tickets_notifications
-            WHERE ticket_id = s_tickets.id
-            AND user_id = ?)
-            ", $this->manager->id, $this->manager->id);
-
-                $this->db->query($query);
-                $count_in = $this->db->result('count');
-            }
-
-            */
 
             $role_id = $this->ManagerRoles->gets($this->manager->role);
             $themes_permissions = $this->ManagersCommunicationsIn->gets($role_id);
@@ -187,9 +115,10 @@ class IndexController extends Controller
                 $themes_id[] = (int)$permission->theme_id;
             }
 
-            $themes_id = implode(',', $themes_id);
+            if(!empty($themes_id)){
+                $themes_id = implode(',', $themes_id);
 
-            $query = $this->db->placehold("
+                $query = $this->db->placehold("
             SELECT COUNT(*) as `count`
             FROM s_tickets
             WHERE creator != ?
@@ -201,8 +130,9 @@ class IndexController extends Controller
             AND user_id = ?)
             ", $this->manager->id, $this->manager->id);
 
-            $this->db->query($query);
-            $count_in = $this->db->result('count');
+                $this->db->query($query);
+                $count_in = $this->db->result('count');
+            }
 
             $query = $this->db->placehold("
             SELECT COUNT(*) as `count`
