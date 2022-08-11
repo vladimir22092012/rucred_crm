@@ -1536,14 +1536,14 @@
                                                         data-order="{$order->order_id}"
                                                         data-manager="{$manager->id}">
                                                     <i class="fas fa-check-circle"></i>
-                                                    <span>Одобрить заявку</span>
+                                                    <span>Одобрить заявку и передать Миддлу</span>
                                                 </button>
                                                 <button class="btn btn-danger btn-block reject_by_under"
                                                         data-user="{$order->user_id}"
                                                         data-order="{$order->order_id}"
                                                         data-manager="{$manager->id}">
                                                     <i class="fas fa-times-circle"></i>
-                                                    <span>Отклонить заявку</span>
+                                                    <span>Отказать в рассмотрении</span>
                                                 </button>
                                             </div>
                                         {/if}
@@ -1554,7 +1554,12 @@
                                                         <button class="btn btn-info btn-lg btn-block send_money"
                                                                 data-order="{$order->order_id}">
                                                             <i class="fas fa-hospital-symbol"></i>
-                                                            <span>Подтвердить и отправить деньги</span>
+                                                            <span>Одобрить заявку и выплатить средства</span>
+                                                        </button>
+                                                        <button class="btn btn-danger btn-lg btn-block"
+                                                                data-order="{$order->order_id}">
+                                                            <i class="fas fa-hospital-symbol"></i>
+                                                            <span>Отказать в предоставлении займа</span>
                                                         </button>
                                                     </div>
                                                 </form>
@@ -1566,9 +1571,13 @@
                                                         <input type="hidden" name="order_id" value="{$order->order_id}">
                                                         <div class="pt-1 pb-2">
                                                             <div class="btn btn-info btn-lg btn-block send_payment">
-                                                                Подтвердить и создать платежный документ
+                                                                Одобрить заявку и выплатить средства
                                                             </div>
                                                         </div>
+                                                        <button class="btn btn-danger btn-lg btn-block"
+                                                                data-order="{$order->order_id}">
+                                                            <span>Отказать в предоставлении займа</span>
+                                                        </button>
                                                     </form>
                                                 {else}
                                                     <form id="rdr_payment_sent">
@@ -1773,7 +1782,7 @@
                                                                         data-phone="{$order->phone_mobile}"
                                                                         data-order="{$order->order_id}"
                                                                         class="btn btn-primary btn-block send_asp_code">
-                                                                    Отправить смс
+                                                                    Подписать документы у Заёмщика
                                                                 </button>
                                                             </div>
                                                         {/if}
@@ -1790,13 +1799,13 @@
                                                 data-event="12" data-user="{$order->user_id}"
                                                 data-order="{$order->order_id}"
                                                 data-manager="{$manager->id}">
-                                            <span>Принять</span>
+                                            <span>Принять в работу и передать Работодателю</span>
                                         </button>
                                         <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
                                                 data-event="13" data-user="{$order->user_id}"
                                                 data-order="{$order->order_id}"
                                                 data-manager="{$manager->id}">
-                                            <span>Отклонить</span>
+                                            <span>Отказать без передачи Работодателю</span>
                                         </button>
                                     </div>
                                     {/if}
