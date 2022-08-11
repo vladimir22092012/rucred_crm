@@ -45,16 +45,16 @@ class Tickets extends Core
 
         if ($in_out == 'in') {
             $creator = $this->db->placehold("AND t.creator != ?", $manager_id);
-            $out = $this->db->placehold("AND t.group_id = 2");
-            if (in_array($manager_role, ['underwriter', 'middle'])) {
-                $manager = $this->db->placehold("AND t.creator != ?", $manager_id);
 
-                if ($manager_role == 'underwriter')
-                    $theme = $this->db->placehold("AND t.theme_id in (11, 13, 18, 23, 25, 26, 27, 28, 29, 30, 32, 33, 34, 35, 38)");
+            $role_id = $this->ManagerRoles->gets($manager_role);
+            $themes_permissions = $this->ManagersCommunicationsIn->gets($role_id);
 
-                if ($manager_role == 'middle')
-                    $theme = $this->db->placehold("AND t.theme_id in (12, 23, 25, 26, 27, 28, 29, 30, 32, 33, 34, 35, 37)");
+            foreach ($themes_permissions as $permission){
+                $themes_id[] = (int)$permission->theme_id;
             }
+
+            $themes_id = implode(',', $themes_id);
+            $theme = $this->db->placehold("AND theme_id in ($themes_id)");
         }
 
         if ($manager_role == 'employer' && $in_out == 'in') {

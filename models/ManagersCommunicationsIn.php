@@ -40,6 +40,20 @@ class ManagersCommunicationsIn extends Core
         return $result;
     }
 
+    public function gets($role_id){
+
+        $query = $this->db->placehold("
+        SELECT theme_id
+        FROM s_managers_communications_in
+        where role_id = ?
+        ", $role_id);
+
+        $this->db->query($query);
+        $results = $this->db->results();
+
+        return $results;
+    }
+
     public function delete($id)
     {
         $query = $this->db->placehold("

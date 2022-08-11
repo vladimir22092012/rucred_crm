@@ -107,6 +107,7 @@ class IndexController extends Controller
         }
 
         if (isset($this->manager->role)) {
+            /*
             if ($this->manager->role == 'employer') {
 
                 $query = $this->db->placehold("
@@ -176,6 +177,32 @@ class IndexController extends Controller
                 $this->db->query($query);
                 $count_in = $this->db->result('count');
             }
+
+            */
+
+            $role_id = $this->ManagerRoles->gets($this->manager->role);
+            $themes_permissions = $this->ManagersCommunicationsIn->gets($role_id);
+
+            foreach ($themes_permissions as $permission){
+                $themes_id[] = (int)$permission->theme_id;
+            }
+
+            $themes_id = implode(',', $themes_id);
+
+            $query = $this->db->placehold("
+            SELECT COUNT(*) as `count`
+            FROM s_tickets
+            WHERE creator != ?
+            and status != 6
+            and theme_id in ($themes_id)
+            and not exists (SELECT *
+            FROM s_tickets_notifications
+            WHERE ticket_id = s_tickets.id
+            AND user_id = ?)
+            ", $this->manager->id, $this->manager->id);
+
+            $this->db->query($query);
+            $count_in = $this->db->result('count');
 
             $query = $this->db->placehold("
             SELECT COUNT(*) as `count`
