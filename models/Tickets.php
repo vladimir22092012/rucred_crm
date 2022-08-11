@@ -53,8 +53,12 @@ class Tickets extends Core
                 $themes_id[] = (int)$permission->theme_id;
             }
 
-            $themes_id = implode(',', $themes_id);
-            $theme = $this->db->placehold("AND theme_id in ($themes_id)");
+            if(!empty($themes_id)){
+                $themes_id = implode(',', $themes_id);
+                $theme = $this->db->placehold("AND theme_id in ($themes_id)");
+            }else{
+                $theme = $this->db->placehold("AND theme_id = 0");
+            }
         }
 
         if ($manager_role == 'employer' && $in_out == 'in') {
