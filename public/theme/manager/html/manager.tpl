@@ -539,7 +539,22 @@
                         }
                     }
                 });
-            })
+            });
+
+            $('.sms_hook').on('click', function () {
+                let value = $(this).val();
+                let user_id = $(this).attr('data-user');
+                value = (value == 0) ? 1 : 0;
+
+                $.ajax({
+                    method: 'POST',
+                    data:{
+                        action: 'sms_note_flag',
+                        value: value,
+                        user_id: user_id
+                    }
+                })
+            });
         });
     </script>
     <script>
@@ -1103,8 +1118,12 @@
                                         <label class="col-md-5">Дополнительные каналы связи</label>
                                         <div class="col-md-5">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="sms_note"
-                                                       value="1" {if $user->sms_note == 1}checked{/if}>
+                                                <input class="form-check-input sms_hook"
+                                                       type="checkbox"
+                                                       name="sms_note"
+                                                       data-user="{$user->id}"
+                                                       value="{if $user->sms_note == 1}1{else}0{/if}"
+                                                       {if $user->sms_note == 1}checked{/if}>
                                                 <label class="form-check-label">
                                                     SMS-уведомления
                                                 </label></div>
@@ -1131,12 +1150,6 @@
                                                     не привязаны, вам отправлено смс с ссылкой
                                                 </small>
                                             </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="whatsapp_note"
-                                                       value="1" {if $user->whatsapp_note == 1}checked{/if}>
-                                                <label class="form-check-label">
-                                                    Whatsapp
-                                                </label></div>
                                         </div>
                                     </div>
                                     <div class="jsgrid-grid-body">

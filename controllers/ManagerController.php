@@ -4,6 +4,7 @@ use App\Services\MailService;
 
 error_reporting(-1);
 ini_set('display_errors', 'Off');
+
 class ManagerController extends Controller
 {
     public function fetch()
@@ -75,8 +76,8 @@ class ManagerController extends Controller
                         $this->action_linkin_phone();
                         break;
 
-                    case 'confirm_linkin_phone':
-                        $this->action_confirm_linkin_phone();
+                    case 'sms_note_flag':
+                        $this->action_sms_note_flag();
                         break;
                 endswitch;
             } else {
@@ -614,6 +615,15 @@ class ManagerController extends Controller
         }
 
         echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_sms_note_flag()
+    {
+        $flag = $this->request->post('value');
+        $manager_id = $this->request->post('user_id');
+
+        $this->managers->update_manager($manager_id, ['sms_note' => $flag]);
         exit;
     }
 }
