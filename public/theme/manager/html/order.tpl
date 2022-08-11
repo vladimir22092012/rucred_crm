@@ -311,6 +311,22 @@
                 });
             });
 
+            $('.question-order').on('click', function (e) {
+                e.preventDefault();
+                let order_id = $(this).attr('data-order');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'question_by_employer',
+                        order_id: order_id
+                    },
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            });
+
             $('.reject-order').on('click', function (e) {
                 e.preventDefault();
                 let order_id = $(this).attr('data-order');
@@ -799,6 +815,25 @@
                 })
             });
 
+            $('.approve_by_under').on('click', function (e) {
+                e.preventDefault();
+
+                let order_id = $(this).attr('data-order');
+                let manager_id = $(this).attr('data-manager');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'accept_approve_by_under',
+                        order_id: order_id,
+                        manager_id: manager_id
+                    },
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            });
+
             $(document).on('click', '.test_ya', function () {
                 $.ajax({
                     method: 'POST',
@@ -1165,7 +1200,7 @@
 
                         <div class="form-body">
                             <div class="row">
-                                <div class="col-4 col-md-3 col-lg-2" style="display: flex;">
+                                <div class="col-4 col-md-3 col-lg-3" style="display: flex;">
                                     <small>
                                         {if $client_status == 'ПК'}<span class="label label-success">ПК</span>
                                         {elseif $client_status == 'Повтор'}<span class="label label-warning">Повтор</span>
@@ -1178,8 +1213,47 @@
                                         {elseif $order->order_source_id == 3}<span class="label label-success">Црм</span>
                                         {/if}
                                     </small>
+                                    {if in_array($order->status, [0,1,2,4,9,10,14,13,15])}
+                                        <small style="margin-left: 25px; margin-top: 0;">
+                                        <span class="badge badge-secondary warning_asp"
+                                                {if in_array($order->status, [0,1])}
+                                                    data-tooltip="Заведение заявки и подготовка документов (подписание + фото паспортов)"
+                                                {/if}
+                                                {if in_array($order->status, [2])}
+                                                    data-tooltip="Одобрение заявки андеррайтером и принятие в работу"
+                                                {/if}
+                                                {if in_array($order->status, [4])}
+                                                    data-tooltip="Одобрение заёмщика работодателем"
+                                                {/if}
+                                                {if in_array($order->status, [13,14])}
+                                                    data-tooltip="Проверка заявки андеррайтером после работодателя"
+                                                {/if}
+                                                {if in_array($order->status, [10])}
+                                                    data-tooltip="Одобрение сделки миддлом и перечисление средств"
+                                                {/if}
+                                        >
+                                            Этап:
+                                            {if in_array($order->status, [0,1])}
+                                                1
+                                            {/if}
+                                            {if in_array($order->status, [2])}
+                                                2
+                                            {/if}
+                                            {if in_array($order->status, [4])}
+                                                3
+                                            {/if}
+                                            {if in_array($order->status, [13,14])}
+                                                4
+                                            {/if}
+                                            {if in_array($order->status, [10])}
+                                                5
+                                            {/if}
+                                            из 5
+                                        </span>
+                                        </small>
+                                    {/if}
                                 </div>
-                                <div class="col-8 col-md-3 col-lg-4">
+                                <div class="col-8 col-md-3 col-lg-3">
                                     <h5 class="form-control-static float-left">
                                         Дата заявки: {$order->date|date} {$order->date|time}
                                     </h5>
@@ -1359,31 +1433,57 @@
                                         {if $order->status == 2}
                                             <div class="card card-success mb-1">
                                                 <div class="box text-center">
-                                                    <h3 class="text-white mb-0">Одобрена</h3>
+                                                    <h3 class="text-white mb-0">А.Подготовлена</h3>
                                                 </div>
                                             </div>
                                         {/if}
-                                        {if $order->status == 14}
-                                            <div class="card card-success mb-1">
-                                                <div class="box text-center">
-                                                    <h4 class="text-white mb-0">Р.Подтверждена</h4>
-                                                </div>
-                                            </div>
-                                        {/if}
-                                        {if !empty({$order->sms})}
-                                            <div class="card card-text mb-1" style="width: 100%!important;">
-                                                <div class="box text-center">
-                                                    <h4>Код ПЭП: {$order->sms}</h4>
-                                                </div>
-                                            </div>
-                                        {/if}
-                                        {if $order->status == 4}
+                                        {if $order->status == 0}
                                             <div class="card card-primary">
                                                 <div class="box text-center">
-                                                    <h4 class="text-white">Подписан</h4>
+                                                    <h4 class="text-white">Новая</h4>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 1}
+                                            <div class="card card-success">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Принята</h4>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 13}
+                                            <div class="card card-warning">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Р.Нецелесообразно</h4>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if in_array($order->status, [4, 10, 14])}
+                                            <div class="card card-primary">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Подписан со стороны клиента</h4>
                                                     <h6>Договор {$contract->number}</h6>
                                                 </div>
                                             </div>
+                                        {/if}
+                                        {if in_array($order->status, [13,14])&& in_array($manager->role, ['underwriter', 'admin', 'developer'])}
+                                            <div>
+                                                <button class="btn btn-success btn-block approve_by_under"
+                                                        data-order="{$order->order_id}"
+                                                        data-manager="{$manager->id}">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Одобрить заявку</span>
+                                                </button>
+                                                <button class="btn btn-danger btn-block reject_by_under"
+                                                        data-user="{$order->user_id}"
+                                                        data-order="{$order->order_id}"
+                                                        data-manager="{$manager->id}">
+                                                    <i class="fas fa-times-circle"></i>
+                                                    <span>Отклонить заявку</span>
+                                                </button>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 10}
                                             {if $order->settlement_id == 2 && in_array($manager->role, ['middle', 'admin', 'developer'])}
                                                 <form class=" pt-1 js-confirm-contract">
                                                     <div class="pt-1 pb-2">
@@ -1411,7 +1511,8 @@
                                                         <div class="pt-1 pb-2">
                                                             <div class="card card-warning">
                                                                 <div class="box text-center">
-                                                                    <h4 class="text-white">Платежный документ отправлен</h4>
+                                                                    <h4 class="text-white">Платежный документ
+                                                                        отправлен</h4>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1551,21 +1652,28 @@
                                             <h4 class="text-danger mb-0">АСП: {$contract->accept_code}</h4>
                                         {/if}
                                     </div>
-                                    {if $order->status == 1}
+                                    {if $order->status == 4}
                                         {if in_array($manager->role, ['developer', 'admin', 'middle', 'employer'])}
                                             <div>
                                                 <button class="btn btn-success btn-block accept-order warning_asp"
                                                         data-tooltip="Подтвердите нахождение сотрудника в данной организации"
                                                         data-order="{$order->order_id}" data-manager="{$manager->id}">
                                                     <i class="fas fa-check-circle"></i>
-                                                    <span>Подтвердить сотрудника</span>
+                                                    <span>Подтверждаю сотрудника,<br>заём может быть выдан</span>
+                                                </button>
+                                                <button class="btn btn-warning btn-block question-order warning_asp"
+                                                        data-user="{$order->user_id}"
+                                                        data-tooltip="Подтвердите нахождение сотрудника в данной организации"
+                                                        data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                    <span>Подтверждаю сотрудника, выдача займа нецелесообразна</span>
                                                 </button>
                                                 <button class="btn btn-danger btn-block reject-order warning_asp"
                                                         data-user="{$order->user_id}"
                                                         data-tooltip="Подтвердите нахождение сотрудника в данной организации"
                                                         data-order="{$order->order_id}" data-manager="{$manager->id}">
                                                     <i class="fas fa-times-circle"></i>
-                                                    <span>Отклонить сотрудника</span>
+                                                    <span>Нет такого сотрудника</span>
                                                 </button>
                                             </div>
                                         {else}
@@ -1577,13 +1685,77 @@
                                             </div>
                                         {/if}
                                     {/if}
-                                    {if $order->status == 0 && in_array($manager->role, ['developer', 'admin', 'underwriter', 'middle'])}
+                                    {if $order->status == 0 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
                                         <button class="btn btn-success btn-block accept_online_order"
                                                 data-event="12" data-user="{$order->user_id}"
                                                 data-order="{$order->order_id}" data-manager="{$manager->id}">
                                             <i class="fas fa-check-circle"></i>
                                             <span>Принять в работу</span>
                                         </button>
+                                    {/if}
+                                    {if $order->status == 2 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
+                                        <div class="col-12">
+                                            <button
+                                                    class="btn btn-success btn-block js-approve-order js-event-add-click"
+                                                    data-event="12" data-user="{$order->user_id}"
+                                                    data-order="{$order->order_id}"
+                                                    data-manager="{$manager->id}">
+                                                <span>Принять</span>
+                                            </button>
+                                            <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
+                                                    data-event="13" data-user="{$order->user_id}"
+                                                    data-order="{$order->order_id}"
+                                                    data-manager="{$manager->id}">
+                                                <span>Отклонить</span>
+                                            </button>
+                                        </div>
+                                    {/if}
+                                    {if !empty({$order->sms})}
+                                        <div><br>
+                                            <div class="text-center">
+                                                <h4>Код ПЭП: {$order->sms}</h4>
+                                            </div>
+                                        </div>
+                                    {/if}
+                                    {if $asp_restruct == 1 && $need_confirm_restruct == 0}
+                                        <div style="display: flex;">
+                                            <input type="text" class="form-control code_asp"
+                                                   style="display:none"
+                                                   placeholder="SMS код"
+                                                   value="{if $is_developer}{$contract->accept_code}{/if}"/>
+                                            <small id="asp_success"
+                                                   style="display: none; color: #009d07">
+                                                Успешно!
+                                            </small>
+                                            <div class="btn btn-info confirm_asp" type="button"
+                                                 data-user="{$order->user_id}"
+                                                 data-order="{$order->order_id}"
+                                                 data-restruct="1"
+                                                 style="margin-left: 15px; display:none"
+                                                 data-phone="{$order->phone_mobile}">Подтвердить
+                                            </div>
+                                            <div type="button" data-user="{$order->user_id}"
+                                                 id="send_asp"
+                                                 data-phone="{$order->phone_mobile}"
+                                                 data-order="{$order->order_id}"
+                                                 data-restruct="1"
+                                                 style="margin-left: 15px; width: 370px"
+                                                 class="btn btn-primary send_asp_code">
+                                                Отправить смс
+                                            </div>
+                                        </div>
+                                    {/if}
+                                    {if $need_confirm_restruct == 1 && in_array($manager->role, ['admin', 'middle', 'developer'])}
+                                        <div data-order="{$order->order_id}"
+                                             style="margin-left: 15px;"
+                                             class="btn btn-success confirm_restruct">
+                                            Подтвердить реструктуризацию
+                                        </div>
+                                        <div data-order="{$order->order_id}"
+                                             style="margin-left: 15px;"
+                                             class="btn btn-danger cancell_restruct">
+                                            Отменить реструктуризацию
+                                        </div>
                                     {/if}
                                 </div>
                             </div>
@@ -3013,80 +3185,6 @@
                                     </div>
                                 </form>
                                 <!-- -->
-                                <div style="display: flex; width: 100%; justify-content: space-between">
-                                    {if in_array($order->status, [0,1,12,14,15])}
-                                        <form method="POST" style="width: 50%; margin-left: 15px"
-                                              enctype="multipart/form-data">
-                                            {if $manager->role != 'employer'}
-                                                <div class="form_file_item">
-                                                    <input type="file" name="new_file" class="new_file" id="new_file"
-                                                           data-user="{$order->user_id}" value="" style="display:none"/>
-                                                    <label for="new_file" class="btn btn-large btn-primary">
-                                                        <i class="fa fa-plus-circle"></i>
-                                                        <span>Добавить фото</span>
-                                                    </label>
-                                                </div>
-                                            {/if}
-                                        </form>
-                                    {/if}
-                                </div>
-                                {if $order->status == 14 && in_array($manager->role, ['developer', 'admin', 'underwriter', 'middle'])}
-                                    <div class="js-approve-reject-block">
-                                        <br>
-                                        <form class=" pt-1 js-confirm-contract">
-                                            <div class="input-group" style="display: flex;">
-                                                <input type="hidden" name="contract_id" class="js-contract-id"
-                                                       value="{$order->contract_id}"/>
-                                                <input type="hidden" name="phone" class="js-contract-phone"
-                                                       value="{$order->phone_mobile|escape}"/>
-                                                <div style="display: flex; justify-content: space-between;">
-                                                    <button
-                                                            class="btn btn-success js-approve-order js-event-add-click"
-                                                            data-event="12" data-user="{$order->user_id}"
-                                                            style="margin-left: 15px"
-                                                            data-order="{$order->order_id}"
-                                                            data-manager="{$manager->id}">
-                                                        <span>Одобрить</span>
-                                                    </button>
-                                                    <button class="btn btn-danger js-reject-order js-event-add-click"
-                                                            data-event="13" data-user="{$order->user_id}"
-                                                            style="margin-left: 15px"
-                                                            data-order="{$order->order_id}"
-                                                            data-manager="{$manager->id}">
-                                                        <span>Отказать</span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                {/if}
-                                {if $asp_restruct == 1}
-                                    <div style="display: flex;">
-                                        <input type="text" class="form-control code_asp"
-                                               style="display:none"
-                                               placeholder="SMS код"
-                                               value="{if $is_developer}{$contract->accept_code}{/if}"/>
-                                        <small id="asp_success"
-                                               style="display: none; color: #009d07">
-                                            Успешно!
-                                        </small>
-                                        <div class="btn btn-info confirm_asp" type="button"
-                                             data-user="{$order->user_id}"
-                                             data-order="{$order->order_id}"
-                                             data-restruct="1"
-                                             style="margin-left: 15px; display:none"
-                                             data-phone="{$order->phone_mobile}">Подтвердить
-                                        </div>
-                                        <div type="button" data-user="{$order->user_id}"
-                                             id="send_asp"
-                                             data-phone="{$order->phone_mobile}"
-                                             data-order="{$order->order_id}"
-                                             style="margin-left: 15px; width: 370px"
-                                             class="btn btn-primary send_asp_code">
-                                            Отправить смс
-                                        </div>
-                                    </div>
-                                {/if}
                             </div>
                             <br>
                             {if $manager->role != 'employer' && !in_array($order->status, ['4','5','6','7','8'])}
@@ -3094,8 +3192,6 @@
                                      data-order="{$order->order_id}" style="margin-left: 20px">
                                     Удалить заявку
                                 </div>
-                                <br>
-                                <br>
                             {/if}
                         </div>
 

@@ -28,6 +28,14 @@ class OrderController extends Controller
                     $this->action_reject_by_employer();
                     break;
 
+                case 'question_by_employer':
+                    $this->action_question_by_employer();
+                    break;
+
+                case 'accept_approve_by_under':
+                    $this->action_accept_approve_by_under();
+                    break;
+
                 case 'change_photo_status':
                     $this->action_change_photo_status();
                     break;
@@ -3001,6 +3009,13 @@ class OrderController extends Controller
         exit;
     }
 
+    private function action_question_by_employer()
+    {
+        $order_id = (int)$this->request->post('order_id');
+        $this->orders->update_order($order_id, ['status' => 13]);
+        exit;
+    }
+
     private function action_edit_personal_number()
     {
         $user_id = (int)$this->request->post('user_id');
@@ -4069,7 +4084,7 @@ class OrderController extends Controller
         $order_id = $this->request->post('order_id');
         $manager_id = $this->request->post('manager_id');
 
-        $this->orders->update_order($order_id, ['status' => 1]);
+        $this->orders->update_order($order_id, ['status' => 2]);
 
         $order = $this->orders->get_order($order_id);
 
@@ -4114,6 +4129,51 @@ class OrderController extends Controller
             $order->phone_mobile,
             $message
         );
+        exit;
+    }
+
+    private function action_accept_approve_by_under()
+    {
+        $order_id = $this->request->post('order_id');
+        $manager_id = $this->request->post('manager_id');
+        $order = $this->orders->get_order($order_id);
+
+        $communication_theme = $this->CommunicationsThemes->get(12);
+
+        $ticket =
+            [
+                'creator' => $manager_id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => 12,
+                'company_id' => 3,
+                'group_id' => 2,
+                'order_id' => $order_id,
+                'status' => 1
+            ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+        $this->TicketMessages->add_message($message);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
+
+        $this->orders->update_order($order_id, ['status' => 10]);
         exit;
     }
 
