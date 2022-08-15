@@ -982,6 +982,47 @@ class OfflineOrderController extends Controller
             }
         }
 
+        $communication_theme = $this->CommunicationsThemes->get(8);
+
+        $ticket =
+            [
+                'creator' => $this->manager->id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => 8,
+                'company_id' => $order->company_id,
+                'group_id' => $order->group_id,
+                'order_id' => $order_id,
+                'status' => 0
+            ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+        $this->TicketMessages->add_message($message);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
+
+        $template = $this->sms->get_template(7);
+        $message = $template->template;
+        $this->sms->send(
+            $order->phone_mobile,
+            $message);
+
         echo json_encode(['success' => 1]);
         exit;
 
@@ -1147,6 +1188,8 @@ class OfflineOrderController extends Controller
                 ];
 
             $this->NotificationsCron->add($cron);
+
+            $this->tickets->update_by_theme_id(12, ['status' => 4], $order_id);
 
             return ['success' => 1];
         } else {
@@ -3093,6 +3136,8 @@ class OfflineOrderController extends Controller
 
         $this->NotificationsCron->add($cron);
 
+        $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
+
         exit;
     }
 
@@ -3100,6 +3145,7 @@ class OfflineOrderController extends Controller
     {
         $order_id = (int)$this->request->post('order_id');
         $this->orders->update_order($order_id, ['status' => 15]);
+        $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
         exit;
     }
 
@@ -3107,6 +3153,44 @@ class OfflineOrderController extends Controller
     {
         $order_id = (int)$this->request->post('order_id');
         $this->orders->update_order($order_id, ['status' => 13]);
+        $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
+
+        $communication_theme = $this->CommunicationsThemes->get(11);
+
+        $ticket =
+            [
+                'creator' => $this->manager->id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => 11,
+                'company_id' => $order->company_id,
+                'group_id' => 2,
+                'order_id' => $order_id,
+                'status' => 0
+            ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+
+        $this->TicketMessages->add_message($message);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
         exit;
     }
 
@@ -4143,6 +4227,8 @@ class OfflineOrderController extends Controller
 
         $this->NotificationsCron->add($cron);
 
+        $this->tickets->update_by_theme_id(12, ['status' => 4], $order_id);
+
         echo json_encode(['success' => 1]);
         exit;
     }
@@ -4261,53 +4347,9 @@ class OfflineOrderController extends Controller
     private function action_accept_order_by_underwriter()
     {
         $order_id = $this->request->post('order_id');
-        $manager_id = $this->request->post('manager_id');
-
         $this->orders->update_order($order_id, ['status' => 1]);
+        $this->tickets->update_by_theme_id(18, ['status' => 4], $order_id);
 
-        $order = $this->orders->get_order($order_id);
-
-        $communication_theme = $this->CommunicationsThemes->get(8);
-
-        $ticket =
-            [
-                'creator' => $manager_id,
-                'creator_company' => 2,
-                'client_lastname' => $order->lastname,
-                'client_firstname' => $order->firstname,
-                'client_patronymic' => $order->patronymic,
-                'head' => $communication_theme->head,
-                'text' => $communication_theme->text,
-                'theme_id' => 8,
-                'company_id' => $order->company_id,
-                'group_id' => $order->group_id,
-                'order_id' => $order_id,
-                'status' => 0
-            ];
-
-        $ticket_id = $this->Tickets->add_ticket($ticket);
-        $message =
-            [
-                'message' => $communication_theme->text,
-                'ticket_id' => $ticket_id,
-                'manager_id' => $this->manager->id,
-            ];
-        $this->TicketMessages->add_message($message);
-
-        $cron =
-            [
-                'ticket_id' => $ticket_id,
-                'is_complited' => 0
-            ];
-
-        $this->NotificationsCron->add($cron);
-
-        $template = $this->sms->get_template(7);
-        $message = $template->template;
-        $this->sms->send(
-            $order->phone_mobile,
-            $message
-        );
         exit;
     }
 
@@ -4353,6 +4395,7 @@ class OfflineOrderController extends Controller
         $this->NotificationsCron->add($cron);
 
         $this->orders->update_order($order_id, ['status' => 10]);
+        $this->tickets->update_by_theme_id(11, ['status' => 4], $order_id);
         exit;
     }
 

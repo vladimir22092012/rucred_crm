@@ -141,27 +141,17 @@
                                                     {/if}
                                                     {if in_array($ticket->status, [0,1])}
                                                         <small class="label label-warning"
-                                                               style="margin-left: 50px; width: 7%">Новый
+                                                               style="margin-left: 50px; width: 7%">К принятию
                                                         </small>
                                                     {/if}
                                                     {if $ticket->status == 2}
                                                         <small class="label label-primary"
-                                                               style="margin-left: 50px; width: 7%">Принят
-                                                        </small>
-                                                    {/if}
-                                                    {if $ticket->status == 3}
-                                                        <small class="label label-primary"
-                                                               style="margin-left: 50px; width: 7%">На проверку
+                                                               style="margin-left: 50px; width: 7%">Принят/В работе
                                                         </small>
                                                     {/if}
                                                     {if $ticket->status == 4}
                                                         <small class="label label-success"
                                                                style="margin-left: 50px; width: 7%">Исполнено
-                                                        </small>
-                                                    {/if}
-                                                    {if $ticket->status == 5}
-                                                        <small class="label label-danger"
-                                                               style="margin-left: 50px; width: 7%">На доработку
                                                         </small>
                                                     {/if}
                                                     {if $ticket->status == 6}
@@ -242,18 +232,6 @@
                                                         <div style="margin-left: 5px" type="button"
                                                              class="btn btn-outline-primary add_message">
                                                             Ответить
-                                                        </div>
-                                                    {/if}
-                                                    {if $manager->id == $ticket->creator && $ticket->status != 6}
-                                                        <div style="margin-left: 5px" data-ticket="{$ticket->id}"
-                                                             class="btn btn-outline-dark close_ticket">
-                                                            Закрыть тикет
-                                                        </div>
-                                                    {/if}
-                                                    {if $manager->id == $ticket->creator && $ticket->status == 3}
-                                                        <div style="margin-left: 5px" data-ticket="{$ticket->id}"
-                                                             class="btn btn-outline-danger return_ticket">
-                                                            На доработку
                                                         </div>
                                                     {/if}
                                                 </div>

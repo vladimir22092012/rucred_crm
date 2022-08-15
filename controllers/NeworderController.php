@@ -810,7 +810,7 @@ class NeworderController extends Controller
                 } else {
 
                     $order = $this->orders->get_order($order_id);
-                    $communication_theme = $this->CommunicationsThemes->get(8);
+                    $communication_theme = $this->CommunicationsThemes->get(18);
 
                     $ticket =
                         [

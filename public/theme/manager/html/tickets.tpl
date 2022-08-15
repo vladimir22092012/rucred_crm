@@ -198,22 +198,12 @@
                         {if !$archive}
                             <div class="clearfix">
                                 <div class="js-filter-status mb-2 float-left">
-                                    <a href="{if $filter_status=='new'}{url status=null page=null}{else}{url status='new' page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status=='new'}btn-warning{else}btn-outline-warning{/if}">Новая</a>
-
-                                    <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status==1}btn-info{else}btn-outline-info{/if}">Принята</a>
-
+                                    <a href="{if $filter_status==0}{url status=null page=null}{else}{url status=0 page=null}{/if}"
+                                       class="btn btn-xs {if $filter_status===0}btn-warning{else}btn-outline-warning{/if}">К принятию</a>
                                     <a href="{if $filter_status==2}{url status=null page=null}{else}{url status=2 page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status==2}btn-success{else}btn-outline-primary{/if}">На
-                                        проверку</a>
-
-                                    <a href="{if $filter_status==3}{url status=null page=null}{else}{url status=3 page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status==3}btn-danger{else}btn-outline-success{/if}">Исполнено</a>
-
+                                       class="btn btn-xs {if $filter_status==1}btn-info{else}btn-outline-info{/if}">Принят/В работе</a>
                                     <a href="{if $filter_status==4}{url status=null page=null}{else}{url status=4 page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status==4}btn-danger{else}btn-outline-danger{/if}">На
-                                        доработку</a>
+                                       class="btn btn-xs {if $filter_status==4}btn-danger{else}btn-outline-success{/if}">Исполнено</a>
                                     {if $filter_status}
                                         <input type="hidden" value="{$filter_status}" id="filter_status"/>
                                     {/if}
@@ -310,23 +300,15 @@
                                                         <a href="/ticket/{$ticket->id}/">{$ticket->id}</a><br>
                                                         {if !$archive}
                                                             {if in_array($ticket->status, [0,1])}
-                                                                <small class="label label-warning">Новый</small>
+                                                                <small class="label label-warning">К принятию</small>
                                                                 <br>
                                                             {/if}
                                                             {if $ticket->status == 2}
-                                                                <small class="label label-info">Принят</small>
-                                                                <br>
-                                                            {/if}
-                                                            {if $ticket->status == 3}
-                                                                <small class="label label-primary">На проверку</small>
+                                                                <small class="label label-info">Принят/В работе</small>
                                                                 <br>
                                                             {/if}
                                                             {if $ticket->status == 4}
                                                                 <small class="label label-success">Исполнено</small>
-                                                                <br>
-                                                            {/if}
-                                                            {if $ticket->status == 5}
-                                                                <small class="label label-danger">На доработку</small>
                                                                 <br>
                                                             {/if}
                                                         {/if}
