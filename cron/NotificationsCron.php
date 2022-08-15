@@ -141,4 +141,4 @@ class NotificationsCron extends Core
     }
 }
 
-new SmsNotificationsCron();
+new NotificationsCron();
