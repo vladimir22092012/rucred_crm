@@ -13,7 +13,7 @@ chdir(dirname(__FILE__) . '/../');
 
 require __DIR__ . '/../vendor/autoload.php';
 
-class NotificationsCron extends Core
+class NotificationsCronRun extends Core
 {
     protected $telegram;
 
@@ -27,10 +27,6 @@ class NotificationsCron extends Core
     private function run()
     {
         $crons = $this->NotificationsCron->gets();
-
-        echo '<pre>';
-        var_dump($ticket);
-        exit;
 
         foreach ($crons as $cron) {
             $ticket = $this->tickets->get_ticket($cron->ticket_id);
