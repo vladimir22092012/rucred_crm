@@ -446,7 +446,8 @@ class ManagerController extends Controller
             $user_token = substr($user_token, 1, 10);
 
             $phone = $manager->phone;
-            $message = "Привяжите Телеграм: https://t.me/rucred_bot?start=$user_token";
+            $template = $this->sms->get_template(5);
+            $message = str_replace('$user_token', $user_token, $template->template);
 
             $this->sms->send($phone, $message);
 
@@ -485,7 +486,7 @@ class ManagerController extends Controller
                 $manager->email,
                 'RuCred | Ссылка для привязки Viber',
                 'Ваша ссылка для привязки Viber:',
-                '<h1>https://re-aktiv.ru/redirect_api?user_id=' . $manager_id . '</h1>'
+                '<h1>https://dev.re-aktiv.ru/redirect_api?user_id=' . $manager_id . '</h1>'
             );
 
             $user =
