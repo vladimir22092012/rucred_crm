@@ -52,7 +52,7 @@ class TicketController extends Controller
             && $ticket->creator != $this->manager->id
             && empty($ticket->executor)
             && $need_response->need_response == 1)
-            $this->Tickets->update_ticket($ticket_id, ['executor' => $this->manager->id]);
+            $this->Tickets->update_ticket($ticket_id, ['executor' => $this->manager->id, 'status' => 2]);
 
         if (!empty($ticket->executor)) {
             $manager = $this->managers->get_manager($ticket->executor);
