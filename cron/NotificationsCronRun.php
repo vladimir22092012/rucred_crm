@@ -93,7 +93,7 @@ class NotificationsCronRun extends Core
         $telegram = new Api($this->config->telegram_token);
         $telegram_check = $this->TelegramUsers->get($manager_id, $is_manager);
 
-        if (!empty($telegram_check)) {
+        if (!empty($telegram_check) && !empty($telegram_check->chat_id)) {
             $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $ticket->text]);
         }
     }
@@ -108,7 +108,7 @@ class NotificationsCronRun extends Core
         ]);
         $viber_check = $this->ViberUsers->get($manager_id, $is_manager);
 
-        if (!empty($telegram_check)) {
+        if (!empty($telegram_check) && !empty($viber_check->chat_id)) {
             $bot->getClient()->sendMessage(
                 (new \Viber\Api\Message\Text())
                     ->setSender($botSender)
