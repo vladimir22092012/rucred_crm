@@ -472,8 +472,39 @@ class NeworderController extends Controller
 
             if ($user['user_id'] = $this->users->add_user($user)) {
                 $user['regaddress_id'] = $this->Addresses->add_address($regaddress);
-
                 $user['faktaddress_id'] = $this->Addresses->add_address($faktaddress);
+
+                if(!empty($user['sms_not']) && $user['sms_not'] == 1){
+                    $preferred =
+                        [
+                            'user_id' => $user['user_id'],
+                            'contact_type_id' => 1
+                        ];
+                    $this->UserContactPreferred->add($preferred);
+                }
+                if(!empty($user['sms_not']) && $user['email_not'] == 1){
+                    $preferred =
+                        [
+                            'user_id' => $user['user_id'],
+                            'contact_type_id' => 2
+                        ];
+                    $this->UserContactPreferred->add($preferred);
+                }
+                if(!empty($user['sms_not']) && $user['massanger_not'] == 1){
+                    $preferred =
+                        [
+                            'user_id' => $user['user_id'],
+                            'contact_type_id' => 4
+                        ];
+                    $this->UserContactPreferred->add($preferred);
+
+                    $preferred =
+                        [
+                            'user_id' => $user['user_id'],
+                            'contact_type_id' => 3
+                        ];
+                    $this->UserContactPreferred->add($preferred);
+                }
             } else {
                 $this->design->assign('error', 'Не удалось создать клиента');
             }
@@ -499,6 +530,38 @@ class NeworderController extends Controller
                 $user['faktaddress_id'] = $this->Addresses->add_address($faktaddress);
 
             $this->users->update_user($user_id, $user);
+
+            if(!empty($user['sms_not']) && $user['sms_not'] == 1){
+                $preferred =
+                    [
+                        'user_id' => $user_id,
+                        'contact_type_id' => 1
+                    ];
+                $this->UserContactPreferred->add($preferred);
+            }
+            if(!empty($user['sms_not']) && $user['email_not'] == 1){
+                $preferred =
+                    [
+                        'user_id' => $user_id,
+                        'contact_type_id' => 2
+                    ];
+                $this->UserContactPreferred->add($preferred);
+            }
+            if(!empty($user['sms_not']) && $user['massanger_not'] == 1){
+                $preferred =
+                    [
+                        'user_id' => $user_id,
+                        'contact_type_id' => 4
+                    ];
+                $this->UserContactPreferred->add($preferred);
+
+                $preferred =
+                    [
+                        'user_id' => $user_id,
+                        'contact_type_id' => 3
+                    ];
+                $this->UserContactPreferred->add($preferred);
+            }
 
             $card_id = $this->request->post('card_id');
 

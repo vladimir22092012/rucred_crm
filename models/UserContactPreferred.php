@@ -14,4 +14,13 @@ class UserContactPreferred extends Core
 
         return $results;
     }
+
+    public function add($preferred)
+    {
+        $query = $this->db->placehold("
+            INSERT INTO s_user_contact_preferred 
+            SET ?%
+        ", $preferred);
+        $this->db->query($query);
+    }
 }
