@@ -28,12 +28,12 @@ class NotificationsCron extends Core
     {
         $crons = $this->NotificationsCron->gets();
 
+        echo '<pre>';
+        var_dump($ticket);
+        exit;
+
         foreach ($crons as $cron) {
             $ticket = $this->tickets->get_ticket($cron->ticket_id);
-
-            echo '<pre>';
-            var_dump($ticket);
-            exit;
 
             if (in_array($ticket->theme_id, [8, 17, 20, 22, 24, 31])) {
                 $managers = $this->managers->get_managers(['group_id' => $ticket->group_id, 'role' => 'employer']);
