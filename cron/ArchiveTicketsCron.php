@@ -37,7 +37,7 @@ class ArchiveTicketsCron extends Core
                     }
                 }
 
-                if ($need_response == 1 && $ticket->status == 4) {
+                if ($need_response->need_response == 1 && $ticket->status == 4) {
                     $archive = 1;
                 }
 
