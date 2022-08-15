@@ -141,4 +141,4 @@ class NotificationsCronRun extends Core
     }
 }
 
-new NotificationsCron();
+new NotificationsCronRun();
