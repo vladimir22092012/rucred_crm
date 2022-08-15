@@ -94,6 +94,7 @@ class NotificationsCronRun extends Core
         $telegram_check = $this->TelegramUsers->get($manager_id, $is_manager);
 
         if (!empty($telegram_check) && !empty($telegram_check->chat_id)) {
+            var_dump($telegram_check->chat_id);
             $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $ticket->text]);
         }
     }
