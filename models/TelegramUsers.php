@@ -41,8 +41,6 @@ class TelegramUsers extends Core
         $manager_flag
         ", $user_id);
 
-        var_dump($query);
-
         $this->db->query($query);
         $user = $this->db->result();
 
