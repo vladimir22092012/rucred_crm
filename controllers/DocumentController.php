@@ -24,6 +24,11 @@ class DocumentController extends Controller
         $settlement = $this->OrganisationSettlements->get_settlement($document->params->settlement_id);
         $order = $this->orders->get_order($document->params->order_id);
         $contracts = $this->contracts->get_contracts(['order_id' => $document->params->order_id]);
+        try {
+            $group = $this->groups->get_group($order->group_id);
+        } catch (\Throwable $th) {
+            $group = '00'; //заглушка, нигде не отображается в реальных документах
+        }
         $group = $this->groups->get_group($order->group_id);
         $company = $this->companies->get_company($order->company_id);
 
@@ -74,7 +79,29 @@ class DocumentController extends Controller
 
         $this->design->assign('period', $period);
 
-        $payment_schedule = json_decode($document->params->payment_schedule['schedule'], true);
+       if (isset($document->params->payment_schedule['schedule'])) {
+            $payment_schedule = json_decode($document->params->payment_schedule['schedule'], true);
+        } else {
+            //Заглушка от ошибок для первого документа (в нем отсутствуют эти данные)
+            $payment_schedule = [
+                "09.12.2022" => [
+                    "pay_sum" => 0,
+                    "loan_percents_pay" => 0,
+                    "loan_body_pay" => 0,
+                    "comission_pay" => 0,
+                    "rest_pay" => 0
+                ],
+                "result" => [
+                    "all_sum_pay" => 0.1,
+                    "all_loan_percents_pay" => 0.1,
+                    "all_loan_body_pay" => 0,
+                    "all_comission_pay" => 0,
+                    "all_rest_pay_sum" => 0
+                ]
+            ];
+        }
+
+
 
         uksort(
             $payment_schedule,
@@ -135,7 +162,12 @@ class DocumentController extends Controller
         $this->design->assign('first_part_all_sum_pay', $first_part_all_sum_pay);
 
 
-        $percents_per_year = $document->params->payment_schedule['psk'];
+
+        if (isset($document->params->payment_schedule['psk'])) {
+            $percents_per_year = $document->params->payment_schedule['psk'];
+        } else {
+            $percents_per_year = 1; //заглушка
+        }
         $percents = $percents_per_year;
 
         $percents = number_format($percents, 3, ',', ' ');
