@@ -629,13 +629,15 @@ class NeworderController extends Controller
             $company_id = (int)$this->request->post('company');
 
             if ($payout_type == 'bank') {
-                if (date('H') > 14
-                    && date('Y-m-d') >= date('Y-m-d', strtotime($probably_start_date))
-                    && $settlement_id == 3
-                    || $settlement_id == 2) {
 
-                    $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
-                    $probably_end_date = $this->check_date($probably_start_date, $loan_type, $branche_id, $company_id);
+                if(date('Y-m-d') >= date('Y-m-d', strtotime($probably_start_date))){
+                    if (date('H') > 14
+                        && $settlement_id == 3
+                        || $settlement_id == 2) {
+
+                        $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
+                        $probably_end_date = $this->check_date($probably_start_date, $loan_type, $branche_id, $company_id);
+                    }
                 }
             }
 
