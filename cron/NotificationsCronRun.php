@@ -85,7 +85,10 @@ class NotificationsCronRun extends Core
             'name' => 'Whois bot',
             'avatar' => 'https://developers.viber.com/img/favicon.ico',
         ]);
+
         $viber_check = $this->ViberUsers->get($manager_id, $is_manager);
+
+        var_dump($viber_check);
 
         if (!empty($telegram_check) && !empty($viber_check->chat_id)) {
             $bot->getClient()->sendMessage(
