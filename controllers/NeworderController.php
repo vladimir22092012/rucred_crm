@@ -964,7 +964,7 @@ class NeworderController extends Controller
                     try {
                         $user = $this->users->get_user($order['user_id']);
 
-                        $communication_theme = $this->CommunicationsThemes->get(8);
+                        $communication_theme = $this->CommunicationsThemes->get(18);
 
                         $ticket =
                             [
