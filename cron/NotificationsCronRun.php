@@ -21,7 +21,15 @@ class NotificationsCronRun extends Core
     public function __construct()
     {
         parent::__construct();
-        $this->run();
+        $template = $this->sms->get_template(7);
+        $telegram = new Api($this->config->telegram_token);
+        $telegram_check = $this->TelegramUsers->get(22629, 0);
+
+        if (!empty($telegram_check)) {
+            $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $template->template]);
+        }
+
+        //$this->run();
     }
 
     private function run()
@@ -110,18 +118,6 @@ class NotificationsCronRun extends Core
         $this->sms->send(
             $phone,
             $message
-        );
-    }
-
-    private function mail_note($order, $ticket)
-    {
-        $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
-        $mailService->send(
-            'rucred@ucase.live',
-            $order->email,
-            'RuCred | Уведомление',
-            "$ticket->head",
-            "<h2>$ticket->text</h2>"
         );
     }
 }
