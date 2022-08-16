@@ -486,7 +486,7 @@ class ManagerController extends Controller
                 $manager->email,
                 'RuCred | Ссылка для привязки Viber',
                 'Ваша ссылка для привязки Viber:',
-                '<h1>https://dev.re-aktiv.ru/redirect_api?user_id=' . $manager_id . '</h1>'
+                '<h1>'.$this->config->back_url.'/redirect_api?user_id=' . $manager_id . '</h1>'
             );
 
             $user =
