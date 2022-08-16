@@ -41,7 +41,7 @@ class ViberController extends Controller
                         (new \Viber\Api\Message\Text())
                             ->setSender($botSender)
                             ->setReceiver($event->getSender()->getId())
-                            ->setText("Такой пользователь уже зарегистрирован")
+                            ->setText("$user")
                     );
                 } else {
                     $bot->getClient()->sendMessage(
