@@ -4,7 +4,6 @@ use Telegram\Bot\Api;
 use Viber\Bot;
 use Viber\Api\Sender;
 use Viber\Client;
-use App\Services\MailService;
 
 error_reporting(-1);
 ini_set('display_errors', 'On');
@@ -21,17 +20,7 @@ class NotificationsCronRun extends Core
     public function __construct()
     {
         parent::__construct();
-        $template = $this->sms->get_template(7);
-        $telegram = new Api($this->config->telegram_token);
-        $telegram_check = $this->TelegramUsers->get(22629, 0);
-
-        var_dump($telegram_check);
-
-        if (!empty($telegram_check)) {
-            var_dump($telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $template->template]));
-        }
-
-        //$this->run();
+        $this->run();
     }
 
     private function run()
