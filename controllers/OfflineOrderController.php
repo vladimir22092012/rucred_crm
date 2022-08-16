@@ -2614,8 +2614,7 @@ class OfflineOrderController extends Controller
         $this->design->assign('order', $order);
     }
 
-    private
-    function action_images()
+    private function action_images()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
