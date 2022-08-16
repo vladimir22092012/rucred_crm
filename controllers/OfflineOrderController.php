@@ -3151,6 +3151,7 @@ class OfflineOrderController extends Controller
     private function action_question_by_employer()
     {
         $order_id = (int)$this->request->post('order_id');
+        $order = $this->orders->get_order($order_id);
         $this->orders->update_order($order_id, ['status' => 13]);
         $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
 
