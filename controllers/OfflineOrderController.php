@@ -2677,22 +2677,8 @@ class OfflineOrderController extends Controller
 
         $files = $this->users->get_files(array('user_id' => $user_id));
 
-        //Отправляемв 1с
-        $need_send = array();
-        $files_dir = str_replace('https://', 'http://', $this->config->front_url . '/files/users/');
-        foreach ($files as $f) {
-            if ($f->sent_1c == 0 && $f->status == 2) {
-                $need_send_item = new StdClass();
-                $need_send_item->id = $f->id;
-                $need_send_item->user_id = $f->user_id;
-                $need_send_item->type = $f->type;
-                $need_send_item->url = $files_dir . $f->name;
-
-                $need_send[] = $need_send_item;
-            }
-        }
-
         $this->design->assign('files', $files);
+        exit;
     }
 
     private
