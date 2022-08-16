@@ -25,7 +25,8 @@ class Documents extends Core
         'PERECHISLENIE_ZAEMN_SREDSTV' => 'perechislenie_zaemnih_sredstv.tpl',
         'DOP_SOGLASHENIE' => 'dop_soglashenie.tpl',
         'DOP_GRAFIK' => 'dop_grafik.tpl',
-        'OBSHIE_USLOVIYA' => 'obshie_uslovia.tpl'
+        'OBSHIE_USLOVIYA' => 'obshie_uslovia.tpl',
+        'SOGLASIE_NA_OBR_PERS_DANNIH_OBL'       => 'pre_soglasie_na_obr_pers_dannih.tpl'
     );
 
 
@@ -44,6 +45,7 @@ class Documents extends Core
         'DOP_SOGLASHENIE' => 'Дополнительное соглашение к Индивидуальным условиям договора микрозайма',
         'DOP_GRAFIK' => 'График платежей по микрозайму (после реструктуризации)',
         'OBSHIE_USLOVIYA' => 'Справка по основным условиям микрозайма',
+        'SOGLASIE_NA_OBR_PERS_DANNIH_OBL'       => 'Облегчённое согласие на обработку персональных данных'
     );
 
     private $client_visible = array(
@@ -69,6 +71,7 @@ class Documents extends Core
         'SOGLASIE_RUKRED_RABOTODATEL' => 0,
         'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP' => 0,
         'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR' => 0,
+        'SOGLASIE_NA_OBR_PERS_DANNIH_OBL'       => 1,
 
         'IND_USLOVIYA_NL' => 1,
         'POLIS_STRAHOVANIYA' => 1,
