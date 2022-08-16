@@ -4349,6 +4349,8 @@ class OfflineOrderController extends Controller
 
         $users_docs = $this->Documents->get_documents(['order_id' => $order_id]);
 
+        $order = $this->orders->get_order($order_id);
+
         $this->db->query("
         SELECT *
         FROM s_files
