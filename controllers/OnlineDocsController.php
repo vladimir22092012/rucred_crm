@@ -9,9 +9,6 @@ class OnlineDocsController extends Controller
 {
     public function fetch()
     {
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($document);echo '</pre><hr />';
-
-
         $link = Encryption::decryption($this->request->get('id'));
         $link = explode(' ', $link);
         $id = $link[1];

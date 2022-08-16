@@ -923,12 +923,10 @@
                                                 <select class="form-control groups" name="groups"
                                                         data-user="{$user->id}">
                                                     <option value="none" selected>Выберите из списка</option>
-                                                    {if !empty($groups)}
                                                         {foreach $groups as $group}
                                                             <option value="{$group->id}"
                                                                     {if $user->group_id == $group->id}selected{/if}>{$group->name}</option>
                                                         {/foreach}
-                                                    {/if}
                                                 </select>
                                             </div>
                                         </div>
