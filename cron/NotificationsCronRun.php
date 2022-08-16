@@ -20,27 +20,7 @@ class NotificationsCronRun extends Core
     public function __construct()
     {
         parent::__construct();
-        //$this->run();
-
-        $template = $this->sms->get_template(7);
-
-        $bot = new Bot(['token' => $this->config->viber_token]);
-
-        $botSender = new Sender([
-            'name' => 'Whois bot',
-            'avatar' => 'https://developers.viber.com/img/favicon.ico',
-        ]);
-        $viber_check = $this->ViberUsers->get(22629, 0);
-
-        if (!empty($viber_check)) {
-            var_dump(123);
-            var_dump($bot->getClient()->sendMessage(
-                (new \Viber\Api\Message\Text())
-                    ->setSender($botSender)
-                    ->setReceiver($viber_check->chat_id)
-                    ->setText($template->template)
-            ));
-        }
+        $this->run();
     }
 
     private function run()
@@ -91,7 +71,7 @@ class NotificationsCronRun extends Core
         $telegram = new Api($this->config->telegram_token);
         $telegram_check = $this->TelegramUsers->get($manager_id, $is_manager);
 
-        if (!empty($telegram_check) && !empty($telegram_check->chat_id)) {
+        if (!empty($telegram_check)) {
             $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $ticket->text]);
         }
     }
@@ -107,7 +87,7 @@ class NotificationsCronRun extends Core
 
         $viber_check = $this->ViberUsers->get($manager_id, $is_manager);
 
-        if (!empty($telegram_check) && !empty($viber_check->chat_id)) {
+        if (!empty($viber_check)) {
 
             try{
                 $bot->getClient()->sendMessage(

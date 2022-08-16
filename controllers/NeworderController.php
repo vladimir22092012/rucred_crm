@@ -966,7 +966,7 @@ class NeworderController extends Controller
                                     ]);
                                     $viber_check = $this->ViberUsers->get($order->user_id, 0);
 
-                                    if (!empty($telegram_check)) {
+                                    if (!empty($viber_check)) {
                                         $bot->getClient()->sendMessage(
                                             (new \Viber\Api\Message\Text())
                                                 ->setSender($botSender)
@@ -1125,7 +1125,7 @@ class NeworderController extends Controller
                                         ]);
                                         $viber_check = $this->ViberUsers->get($user->id, 0);
 
-                                        if (!empty($telegram_check)) {
+                                        if (!empty($viber_check)) {
                                             $bot->getClient()->sendMessage(
                                                 (new \Viber\Api\Message\Text())
                                                     ->setSender($botSender)
