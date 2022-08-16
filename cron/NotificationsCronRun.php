@@ -32,7 +32,7 @@ class NotificationsCronRun extends Core
         ]);
         $viber_check = $this->ViberUsers->get(22629, 0);
 
-        if (!empty($telegram_check)) {
+        if (!empty($viber_check)) {
             var_dump(123);
             var_dump($bot->getClient()->sendMessage(
                 (new \Viber\Api\Message\Text())
