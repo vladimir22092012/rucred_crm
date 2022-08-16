@@ -478,6 +478,8 @@ class NeworderController extends Controller
                 $user['regaddress_id'] = $this->Addresses->add_address($regaddress);
                 $user['faktaddress_id'] = $this->Addresses->add_address($faktaddress);
 
+                $this->UserContactPreferred->delete($user['user_id']);
+
                 if (!empty($user['sms_not']) && $user['sms_not'] == 1) {
                     $preferred =
                         [
@@ -486,7 +488,7 @@ class NeworderController extends Controller
                         ];
                     $this->UserContactPreferred->add($preferred);
                 }
-                if (!empty($user['sms_not']) && $user['email_not'] == 1) {
+                if (!empty($user['email_not']) && $user['email_not'] == 1) {
                     $preferred =
                         [
                             'user_id' => $user['user_id'],
@@ -494,7 +496,7 @@ class NeworderController extends Controller
                         ];
                     $this->UserContactPreferred->add($preferred);
                 }
-                if (!empty($user['sms_not']) && $user['massanger_not'] == 1) {
+                if (!empty($user['massanger_not']) && $user['massanger_not'] == 1) {
                     $preferred =
                         [
                             'user_id' => $user['user_id'],
@@ -534,6 +536,7 @@ class NeworderController extends Controller
                 $user['faktaddress_id'] = $this->Addresses->add_address($faktaddress);
 
             $this->users->update_user($user_id, $user);
+            $this->UserContactPreferred->delete($user_id);
 
             if (!empty($user['sms_not']) && $user['sms_not'] == 1) {
                 $preferred =
