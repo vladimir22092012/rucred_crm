@@ -50,27 +50,6 @@ class NotificationsCronRun extends Core
             if (in_array($ticket->theme_id, [27, 28, 29, 30, 32, 33])) {
                 $managers = $this->managers->get_managers(['group_id' => $ticket->group_id, 'role' => ['underwriter', 'middle', 'admin']]);
             }
-            if (in_array($ticket->theme_id, [14, 21, 36, 39])) {
-                $users_preferred = $this->UserContactPreferred->gets();
-                $order = $this->orders->get_order($ticket->order_id);
-
-                foreach ($users_preferred as $user){
-                    if($order->user_id == $user->user_id){
-                        if($user->contact_type_id == 1 && !empty($order->phone_mobile)){
-                            $this->sms_note($order->phone_mobile, $ticket);
-                        }
-                        if($user->contact_type_id == 2 && !empty($order->email)){
-                            $this->mail_note($order, $ticket);
-                        }
-                        if($user->contact_type_id == 3){
-                            $this->telegram_note($order->user_id, $ticket, 0);
-                        }
-                        if($user->contact_type_id == 4){
-                            $this->viber_note($order->user_id, $ticket, 0);
-                        }
-                    }
-                }
-            }
 
             foreach ($managers as $manager) {
                 if ($manager->telegram_note == 1) {
