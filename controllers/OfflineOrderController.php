@@ -741,8 +741,7 @@ class OfflineOrderController extends Controller
         return array('success' => 1, 'contact_status' => $contact_status);
     }
 
-    private
-    function confirm_contract_action()
+    private function confirm_contract_action()
     {
         $contract_id = $this->request->post('contract_id', 'integer');
         $code = $this->request->post('code', 'integer');
@@ -4347,6 +4346,38 @@ class OfflineOrderController extends Controller
     private function action_accept_order_by_underwriter()
     {
         $order_id = $this->request->post('order_id');
+
+        $users_docs = $this->Documents->get_documents(['order_id' => $order_id]);
+
+        $this->db->query("
+        SELECT *
+        FROM s_files
+        WHERE user_id = ?
+        ", $order->user_id);
+
+        $photos = $this->db->results();
+        $count_photos = 0;
+        $count_approved_photos = 0;
+
+        foreach ($photos as $photo) {
+            if (in_array($photo->type, ['Паспорт: разворот', 'Паспорт: регистрация', 'Селфи с паспортом'])) {
+                $count_photos++;
+
+                if ($photo->status != 0)
+                    $count_approved_photos++;
+            }
+        }
+
+        if ($count_photos < 3) {
+            echo json_encode(['error' => 'Не забудьте добавить фото документов и селфи с паспортом!']);
+            exit;
+        }
+
+        if (empty($users_docs)) {
+            echo json_encode(['error' => 'Не сформированы документы!']);
+            exit;
+        }
+
         $this->orders->update_order($order_id, ['status' => 1]);
         $this->tickets->update_by_theme_id(18, ['status' => 4], $order_id);
 

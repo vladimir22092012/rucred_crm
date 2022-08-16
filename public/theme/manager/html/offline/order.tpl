@@ -903,13 +903,21 @@
 
                 $.ajax({
                     method: 'POST',
+                    dataType: 'JSON',
                     data: {
                         action: 'accept_order_by_underwriter',
                         order_id: order_id,
                         manager_id: manager_id
                     },
-                    success: function () {
-                        location.reload();
+                    success: function (resp) {
+                        if(resp['error']){
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'Ок'
+                            });
+                        }else{
+                            location.reload();
+                        }
                     }
                 });
             });
