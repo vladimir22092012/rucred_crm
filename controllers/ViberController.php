@@ -35,6 +35,7 @@ class ViberController extends Controller
 
                 $chat_id = $event->getSender()->getId();
                 $user = $this->ViberUsers->get_user_by_chat_id($chat_id);
+                $user = json_encode($user);
 
                 if (!empty($user)) {
                     $bot->getClient()->sendMessage(
