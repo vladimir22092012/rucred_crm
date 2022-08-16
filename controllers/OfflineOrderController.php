@@ -3091,6 +3091,7 @@ class OfflineOrderController extends Controller
         ", (string)$type, (int)$file_id);
 
         $this->db->query($query);
+        exit;
     }
 
     private function action_accept_by_employer()
