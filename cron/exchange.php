@@ -32,7 +32,7 @@ class ExchangeCron extends Core
             SELECT id
             FROM __orders
             WHERE sent_1c = 0
-            AND status IN (4, 5, 7)
+            AND status IN (4, 5, 7, 10)
             ORDER BY date DESC
             LIMIT ?
         ", $order_limit);
