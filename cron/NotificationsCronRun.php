@@ -88,15 +88,18 @@ class NotificationsCronRun extends Core
 
         $viber_check = $this->ViberUsers->get($manager_id, $is_manager);
 
-        var_dump($viber_check);
-
         if (!empty($telegram_check) && !empty($viber_check->chat_id)) {
-            $bot->getClient()->sendMessage(
-                (new \Viber\Api\Message\Text())
-                    ->setSender($botSender)
-                    ->setReceiver($viber_check->chat_id)
-                    ->setText($ticket->text)
-            );
+
+            try{
+                $bot->getClient()->sendMessage(
+                    (new \Viber\Api\Message\Text())
+                        ->setSender($botSender)
+                        ->setReceiver($viber_check->chat_id)
+                        ->setText($ticket->text)
+                );
+            }catch (Exception $e){
+                var_dump($e);
+            }
         }
     }
 
