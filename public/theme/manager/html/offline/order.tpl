@@ -1817,7 +1817,7 @@
                                         </button>
                                     </div>
                                     {/if}
-                                    {if !empty({$order->sms})}
+                                    {if !empty({$order->sms}) && $manager->role != 'employer'}
                                         <div><br>
                                             <div class="text-center">
                                                 <h4>Код ПЭП: {$order->sms}</h4>
