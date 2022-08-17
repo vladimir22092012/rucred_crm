@@ -2,6 +2,7 @@
   vars:
     temp_repo_path: "/home/rucred-crm/deploy-folder"
     repo_path: "/home/rucred-crm/rucred-crm"
+    branch: "master"
   #remote_user: rucred-crm
   roles:
     - { role: rucred }
