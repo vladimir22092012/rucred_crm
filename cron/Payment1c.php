@@ -18,7 +18,7 @@ class Payment1c extends Core
 
     private function run()
     {
-        $date = date('YmdHis');
+        $date = date('YmdHis', strtotime(''));
 
         $payments = $this->soap1c->getPayments($date);
 

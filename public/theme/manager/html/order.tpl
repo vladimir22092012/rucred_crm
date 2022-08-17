@@ -865,13 +865,21 @@
 
                 $.ajax({
                     method: 'POST',
+                    dataType: 'JSON',
                     data: {
                         action: 'accept_online_order',
                         order_id: order_id,
                         manager_id: manager_id
                     },
-                    success: function () {
-                        location.reload();
+                    success: function (resp) {
+                        if(resp['error']){
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'Ок'
+                            });
+                        }else{
+                            location.reload();
+                        }
                     }
                 });
             })

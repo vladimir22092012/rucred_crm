@@ -4082,53 +4082,43 @@ class OrderController extends Controller
     private function action_accept_online_order()
     {
         $order_id = $this->request->post('order_id');
-        $manager_id = $this->request->post('manager_id');
 
-        $this->orders->update_order($order_id, ['status' => 2]);
+        $users_docs = $this->Documents->get_documents(['order_id' => $order_id]);
 
         $order = $this->orders->get_order($order_id);
 
-        $communication_theme = $this->CommunicationsThemes->get(8);
+        $this->db->query("
+        SELECT *
+        FROM s_files
+        WHERE user_id = ?
+        ", $order->user_id);
 
-        $ticket =
-            [
-                'creator' => $manager_id,
-                'creator_company' => 2,
-                'client_lastname' => $order->lastname,
-                'client_firstname' => $order->firstname,
-                'client_patronymic' => $order->patronymic,
-                'head' => $communication_theme->head,
-                'text' => $communication_theme->text,
-                'theme_id' => 8,
-                'company_id' => $order->company_id,
-                'group_id' => $order->group_id,
-                'order_id' => $order_id,
-                'status' => 0
-            ];
+        $photos = $this->db->results();
+        $count_photos = 0;
+        $count_approved_photos = 0;
 
-        $ticket_id = $this->Tickets->add_ticket($ticket);
-        $message =
-            [
-                'message' => $communication_theme->text,
-                'ticket_id' => $ticket_id,
-                'manager_id' => $this->manager->id,
-            ];
-        $this->TicketMessages->add_message($message);
+        foreach ($photos as $photo) {
+            if (in_array($photo->type, ['Паспорт: разворот', 'Паспорт: регистрация', 'Селфи с паспортом'])) {
+                $count_photos++;
 
-        $cron =
-            [
-                'ticket_id' => $ticket_id,
-                'is_complited' => 0
-            ];
+                if ($photo->status != 0)
+                    $count_approved_photos++;
+            }
+        }
 
-        $this->NotificationsCron->add($cron);
+        if ($count_photos < 3) {
+            echo json_encode(['error' => 'Не забудьте добавить фото документов и селфи с паспортом!']);
+            exit;
+        }
 
-        $template = $this->sms->get_template(7);
-        $message = $template->template;
-        $this->sms->send(
-            $order->phone_mobile,
-            $message
-        );
+        if (empty($users_docs)) {
+            echo json_encode(['error' => 'Не сформированы документы!']);
+            exit;
+        }
+
+        $this->orders->update_order($order_id, ['status' => 1]);
+        $this->tickets->update_by_theme_id(18, ['status' => 4], $order_id);
+
         exit;
     }
 
