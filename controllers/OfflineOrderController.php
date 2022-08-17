@@ -684,7 +684,7 @@ class OfflineOrderController extends Controller
         $settlement = $this->OrganisationSettlements->get_settlement($order->settlement_id);
         $this->design->assign('settlement', $settlement);
 
-        if ($order->status == 4) {
+        if ($order->status == 10) {
             $this->db->query("
             SELECT *
             FROM s_transactions
