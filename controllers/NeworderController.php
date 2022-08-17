@@ -1562,6 +1562,8 @@ class NeworderController extends Controller
                         '<h1>'.$this->config->back_url.'/redirect_api?user_id=' . $user_id . '</h1>'
                     );
 
+                    var_dump($mailResponse);
+
                     $user =
                         [
                             'user_id' => $user_id,
