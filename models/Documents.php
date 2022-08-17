@@ -455,6 +455,7 @@ class Documents extends Core
 
         $first_pak = '';
         $second_pak = '';
+        $set = '';
 
         if(isset($params['first_pak']))
             $first_pak = $this->db->placehold("AND `type` not in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
@@ -462,13 +463,19 @@ class Documents extends Core
         if(isset($params['second_pak']))
             $second_pak = $this->db->placehold("AND `type` in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
 
+        if(isset($params['asp_id']))
+            $set = $this->db->placehold("asp_id = ?", $params['asp_id']);
+
+        if(isset($params['rucred_asp_id']))
+            $set = $this->db->placehold("rucred_asp_id = ?", $params['rucred_asp_id']);
+
         $query = $this->db->placehold("
             UPDATE __documents 
-            SET asp_id = ? 
+            SET $set 
             WHERE order_id = ?
             $first_pak
             $second_pak
-        ", $params['asp_id'], $params['order_id']);
+        ", $params['order_id']);
 
         $this->db->query($query);
     }
