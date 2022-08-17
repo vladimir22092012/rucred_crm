@@ -708,6 +708,7 @@ class NeworderController extends Controller
             $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date)));
 
             $percent_per_month = (($order['percent'] / 100) * 365) / 12;
+            $percent_per_month = round($percent_per_month, 7);
             $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
             $annoouitet_pay = round($annoouitet_pay, '2');
 
