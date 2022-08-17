@@ -1563,6 +1563,7 @@ class NeworderController extends Controller
                     );
 
                     var_dump($mailResponse);
+                    exit;
 
                     $user =
                         [
