@@ -566,7 +566,7 @@
                                             <label class="control-label" style="margin-left: 240px">Дата
                                                 рождения</label><br>
                                             <input class="form-control" style="width: 350px; margin-left: 25px"
-                                                   type="text" name="birth_place" value="{$order->birth_place}"
+                                                   type="text" name="birth_place" value="{$order->birth|date}"
                                             />
                                             <input type="text" style="width: 180px; margin-left: 25px"
                                                    name="birth"
