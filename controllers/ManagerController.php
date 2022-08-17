@@ -142,12 +142,14 @@ class ManagerController extends Controller
                         foreach ($companies as $company) {
                             $record =
                                 [
-                                    'manager_id' => $user_id,
+                                    'manager_id' => $user->id,
                                     'company_id' => $company['company_id']
                                 ];
                             $this->ManagersEmployers->add_record($record);
                         }
+
                         $this->design->assign('message_success', 'added');
+                        $to_manager = $user->id;
                     } else {
                         $user->id = $this->managers->update_manager($user_id, $user);
                         $this->ManagersEmployers->delete_records($user_id);
@@ -246,6 +248,11 @@ class ManagerController extends Controller
             }
         }
         $this->design->assign('managers_credentials', $managers_credentials);
+
+        if(isset($to_manager)){
+            header('Location: '.$this->config->back_url.'manager/'.$to_manager);
+            exit;
+        }
 
         if ($this->request->get('main')) {
             $lk = true;
