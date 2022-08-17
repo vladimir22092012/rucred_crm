@@ -24,13 +24,21 @@ class DocumentController extends Controller
         $settlement = $this->OrganisationSettlements->get_settlement($document->params->settlement_id);
         $order = $this->orders->get_order($document->params->order_id);
         $contracts = $this->contracts->get_contracts(['order_id' => $document->params->order_id]);
+        //заглушка для документов с неполными данными
+        $isPlug = false;
         try {
             $group = $this->groups->get_group($order->group_id);
         } catch (\Throwable $th) {
             $group = '00'; //заглушка, нигде не отображается в реальных документах
+            $isPlug = true;
         }
-        $group = $this->groups->get_group($order->group_id);
-        $company = $this->companies->get_company($order->company_id);
+
+        try {
+            $company = $this->companies->get_company($order->company_id);
+        } catch (\Throwable $th) {
+            $company = '00'; //заглушка, нигде не отображается в реальных документах
+            $isPlug = true;
+        }
 
         if (!empty($contracts)) {
             $count_contracts = count($contracts);
@@ -41,7 +49,12 @@ class DocumentController extends Controller
 
         $loantype = $this->Loantypes->get_loantype($order->loan_type);
 
-        $uid = "$group->number$company->number $loantype->number $order->personal_number $count_contracts";
+        if ($isPlug) {
+            $uid = "0";
+        } else {
+            $uid = "$group->number$company->number $loantype->number $order->personal_number $count_contracts";
+        }
+
         $this->design->assign('uid', $uid);
 
 
@@ -57,7 +70,13 @@ class DocumentController extends Controller
         $requisite = end($requisite);
         $this->design->assign('requisite', $requisite);
 
-        $company = $this->Companies->get_company($document->params->company_id);
+        if (is_null($document->params->company_id)) {
+            $company = "0";
+        } else {
+            $company = $this->Companies->get_company($document->params->company_id);
+        }
+
+        
         $this->design->assign('company', $company);
 
         if(!empty($document->asp_id)){
@@ -143,9 +162,15 @@ class DocumentController extends Controller
         $this->design->assign('all_percents_string_part_two', $all_percents_string_part_two);
         $this->design->assign('all_percents_string', $all_percents_string);
 
-        $percents_per_day_str = explode('.', $document->params->percent);
-        $percents_per_day_str_part_one = $this->num2str($percents_per_day_str[0]);
-        $percents_per_day_str_part_two = $this->num2str($percents_per_day_str[1]);
+        if (is_null($document->params->percent)) {
+            $percents_per_day_str_part_one = 0;
+            $percents_per_day_str_part_two = 0;
+        } else {
+            $percents_per_day_str = explode('.', $document->params->percent);
+            $percents_per_day_str_part_one = $this->num2str($percents_per_day_str[0]);
+            $percents_per_day_str_part_two = $this->num2str($percents_per_day_str[1]);
+        }
+        
 
         $this->design->assign('percents_per_day_str_part_one', $percents_per_day_str_part_one);
         $this->design->assign('percents_per_day_str_part_two', $percents_per_day_str_part_two);
