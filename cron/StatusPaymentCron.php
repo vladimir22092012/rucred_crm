@@ -12,7 +12,7 @@ class StatusPaymentCron extends Core
 
     private function check_status()
     {
-        $orders = $this->orders->get_orders(['status' => 4, 'settlement_id' => 3]);
+        $orders = $this->orders->get_orders(['status' => 10, 'settlement_id' => 3]);
 
         foreach ($orders as $order){
 
