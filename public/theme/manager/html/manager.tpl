@@ -956,7 +956,7 @@
                                                        class="form-control"
                                                        style="width: 500px; margin-left: 15px"
                                                        placeholder="Например: test@mail.ru">
-                                                <input type="hidden" name="email_linked" value="0">
+                                                <input type="hidden" name="email_linked" value="">
                                                 <label style="margin: 10px 25px; height: 20px; {if empty($user->email_confirmed)}display: none{/if}"
                                                        class="badge badge-success email_confirmed">Email
                                                     подтвержден</label>
@@ -1042,7 +1042,7 @@
                                                        class="form-control" autocomplete="off"
                                                        style="width: 500px; margin-left: 15px"
                                                        placeholder="Например: 71112223333">
-                                                <input type="hidden" name="phone_linked" value="0">
+                                                <input type="hidden" name="phone_linked">
                                                 <label style="margin: 10px 25px; height: 20px; {if empty($user->phone_confirmed)}display: none{/if}"
                                                        class="badge badge-success phone_confirmed">Телефон
                                                     подтвержден</label>

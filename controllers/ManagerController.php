@@ -76,6 +76,10 @@ class ManagerController extends Controller
                         $this->action_linkin_phone();
                         break;
 
+                    case 'confirm_linkin_phone':
+                        $this->action_confirm_linkin_phone();
+                        break;
+
                     case 'sms_note_flag':
                         $this->action_sms_note_flag();
                         break;
