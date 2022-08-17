@@ -44,6 +44,44 @@ class StatusPaymentCron extends Core
                         'amount' => $order->amount,
                         'created' => date('Y-m-d H:i:s')
                     ));
+
+                    $communication_theme = $this->CommunicationsThemes->get(17);
+
+
+                    $ticket = [
+                        'creator' => $this->manager->id,
+                        'creator_company' => 2,
+                        'client_lastname' => $order->lastname,
+                        'client_firstname' => $order->firstname,
+                        'client_patronymic' => $order->patronymic,
+                        'head' => $communication_theme->head,
+                        'text' => $communication_theme->text,
+                        'theme_id' => 17,
+                        'company_id' => 2,
+                        'group_id' => $order->group_id,
+                        'order_id' => $order->order_id,
+                        'status' => 0
+                    ];
+
+                    $ticket_id = $this->Tickets->add_ticket($ticket);
+
+                    $message =
+                        [
+                            'message' => $communication_theme->text,
+                            'ticket_id' => $ticket_id,
+                            'manager_id' => $this->manager->id,
+                        ];
+
+                    $this->TicketMessages->add_message($message);
+
+                    $cron =
+                        [
+                            'ticket_id' => $ticket_id,
+                            'is_complited' => 0
+                        ];
+
+                    $this->NotificationsCron->add($cron);
+
                 }
             }
         }

@@ -1530,11 +1530,42 @@
                                                 </div>
                                             </div>
                                         {/if}
-                                        {if in_array($order->status, [4, 10, 14])}
+                                        {if in_array($order->status, [4])}
                                             <div class="card card-primary">
                                                 <div class="box text-center">
                                                     <h4 class="text-white">Подписан со стороны клиента</h4>
                                                     <h6>Договор {$contract->number}</h6>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 7}
+                                            <div class="card card-primary">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Погашен</h4>
+                                                    <h6>Договор #{$contract->number}</h6>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 8}
+                                            <div class="card card-danger">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Отказ клиента</h4>
+                                                    <small title="Причина отказа">
+                                                        <i>{$reject_reasons[$order->reason_id]->admin_name}</i></small>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 14}
+                                            <div class="card card-success">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Р.Подтверждена</h4>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 15}
+                                            <div class="card card-danger">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Р.Отклонена</h4>
                                                 </div>
                                             </div>
                                         {/if}
@@ -1703,30 +1734,6 @@
                                                     </button>
                                                 {/if}
                                             {/if}
-                                        {/if}
-                                        {if $order->status == 7}
-                                            <div class="card card-primary">
-                                                <div class="box text-center">
-                                                    <h4 class="text-white">Погашен</h4>
-                                                    <h6>Договор #{$contract->number}</h6>
-                                                </div>
-                                            </div>
-                                        {/if}
-                                        {if $order->status == 8}
-                                            <div class="card card-danger">
-                                                <div class="box text-center">
-                                                    <h4 class="text-white">Отказ клиента</h4>
-                                                    <small title="Причина отказа">
-                                                        <i>{$reject_reasons[$order->reason_id]->admin_name}</i></small>
-                                                </div>
-                                            </div>
-                                        {/if}
-                                        {if $order->status == 15}
-                                            <div class="card card-danger">
-                                                <div class="box text-center">
-                                                    <h4 class="text-white">Р.Отклонена</h4>
-                                                </div>
-                                            </div>
                                         {/if}
 
                                         {if $contract->accept_code}
@@ -2899,7 +2906,7 @@
                                                                            value="Скан">
                                                                 </a>
                                                             {/if}
-                                                            {if in_array($order->status, ['0','1'])}
+                                                            {if in_array($order->status, ['0','1','2'])}
                                                                 {if $manager->role != 'employer'}
                                                                     <button type="button"
                                                                             class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
