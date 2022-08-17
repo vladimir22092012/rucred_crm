@@ -926,7 +926,7 @@ class NeworderController extends Controller
 
                     $this->PaymentsSchedules->add($schedules);
 
-                    $user_preferred = $this->UserContactPreferred->get($order->user_id);
+                    $user_preferred = $this->UserContactPreferred->get($user_id);
 
                     if (!empty($user_preferred)) {
                         $template = $this->sms->get_template(7);
