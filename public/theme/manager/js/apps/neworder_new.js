@@ -690,4 +690,8 @@ $(function () {
         $('.cardes').toggle();
     });
 
+    $('input[name="sms_not"]').on('click', function (e) {
+        e.preventDefault();
+    })
+
 });
