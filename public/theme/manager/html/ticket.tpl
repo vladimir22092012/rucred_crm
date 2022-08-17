@@ -221,7 +221,7 @@
                                             </form>
                                             {if $need_response == 1}
                                                 <div style="display: flex; justify-content: flex-end">
-                                                    {if $manager->id != $ticket->executor || !empty($can_take_it)}
+                                                    {if !empty($ticket->executor) && $manager->id != $ticket->executor || !empty($can_take_it)}
                                                         <div data-ticket="{$ticket->id}"
                                                              class="btn btn-outline-success accept_ticket"
                                                              id="accept_ticker">
