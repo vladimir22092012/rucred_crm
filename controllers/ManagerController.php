@@ -103,6 +103,12 @@ class ManagerController extends Controller
                 $user->email_confirmed = $this->request->post('email_linked');
                 $user->phone_confirmed = $this->request->post('phone_linked');
 
+                if(empty($user->email_confirmed))
+                    unset($user->email_confirmed);
+
+                if(empty($user->phone_confirmed))
+                    unset($user->phone_confirmed);
+
                 $same_login = $this->Managers->check_same_login($user->login, $user_id);
 
                 $user->group_id = ($this->request->post('groups')) ? (int)$this->request->post('groups') : 0;
@@ -595,10 +601,12 @@ class ManagerController extends Controller
             $message
         );
 
-        $this->db->query('
+        $query = $this->db->placehold("
         INSERT INTO s_sms_messages
         SET phone = ?, code = ?, created = ?
-        ', $phone, $code, date('Y-m-d H:i:s'));
+        ", $phone, $code, date('Y-m-d H:i:s'));
+
+        $this->db->query($query);
 
         echo json_encode(['success' => 1]);
         exit;

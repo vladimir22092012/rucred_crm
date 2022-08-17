@@ -277,7 +277,7 @@ class Managers extends Core
 
         $query = $this->db->placehold("
             UPDATE __managers SET ?% WHERE id = ?
-        ", (array)$manager, (int)$id);
+        ", $manager, (int)$id);
         $this->db->query($query);
 
         return $id;
