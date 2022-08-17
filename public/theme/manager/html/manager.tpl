@@ -407,11 +407,18 @@
                         flag: flag
                     },
                     success: function (resp) {
-                        if (resp['info']) {
+                        if(action == 'telegram_hook'){
                             $('.confirm_telegram').fadeIn();
 
                             setTimeout(function () {
                                 $('.confirm_telegram').fadeOut();
+                            }, 5000)
+                        }
+                        if(action == 'viber_hook'){
+                            $('.confirm_viber').fadeIn();
+
+                            setTimeout(function () {
+                                $('.confirm_viber').fadeOut();
                             }, 5000)
                         }
                     }
@@ -924,10 +931,10 @@
                                                 <select class="form-control groups" name="groups"
                                                         data-user="{$user->id}">
                                                     <option value="none" selected>Выберите из списка</option>
-                                                        {foreach $groups as $group}
-                                                            <option value="{$group->id}"
-                                                                    {if $user->group_id == $group->id}selected{/if}>{$group->name}</option>
-                                                        {/foreach}
+                                                    {foreach $groups as $group}
+                                                        <option value="{$group->id}"
+                                                                {if $user->group_id == $group->id}selected{/if}>{$group->name}</option>
+                                                    {/foreach}
                                                 </select>
                                             </div>
                                         </div>
@@ -1145,6 +1152,10 @@
                                                 <label class="form-check-label">
                                                     Viber
                                                 </label>
+                                                <small class="confirm_viber"
+                                                       style="margin-left: 20px; display: none; color: #aa0009">Вы еще
+                                                    не привязаны, вам отправлена ссылка на почту
+                                                </small>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input telegram_hook" type="checkbox"
