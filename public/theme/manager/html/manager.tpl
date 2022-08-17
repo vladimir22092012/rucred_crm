@@ -551,6 +551,7 @@
                 let value = $(this).val();
                 let user_id = $(this).attr('data-user');
                 value = (value == 0) ? 1 : 0;
+                $(this).val(value);
 
                 $.ajax({
                     method: 'POST',
