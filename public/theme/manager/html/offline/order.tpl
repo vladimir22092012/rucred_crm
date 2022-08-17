@@ -3186,8 +3186,10 @@
                                             <form class="mb-3 border js-order-item-form">
                                                 <h6 class="card-header text-white">
                                                     <span>Расчетный счет</span>
+                                                    {if in_array($order->status, ['0','1'])}
                                                     <span class="float-right"><a class="text-white cors-edit" href=""><i
                                                                     class=" fas fa-edit"></i></a></span>
+                                                    {/if}
                                                 </h6>
                                                 {if $same_holder == 1}
                                                     <input type="hidden" name="action" value="cors_change"/>
