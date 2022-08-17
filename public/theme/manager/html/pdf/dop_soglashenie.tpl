@@ -201,7 +201,7 @@
                 )</strong>
             годовых<br>(06) Общая сумма процентов за период пользования
             микрозаймом:
-            <br><strong>{$payment_schedule['result']['all_loan_percents_pay']|number_format:0:',':' '}</strong>
+            <br><strong>{$all_percents_string[0]|number_format:0:',':' '}</strong>
             (<strong>{$all_percents_string_part_one|upper}</strong>)
             рублей
             <strong>{if $all_percents_string_part_two}{$all_percents_string_part_two}{else}00{/if}</strong>

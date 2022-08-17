@@ -141,6 +141,7 @@ class DocumentController extends Controller
 
         $all_percents_string_part_two = str_pad($all_percents_string[1], '2', '0', STR_PAD_RIGHT);
         $this->design->assign('all_percents_string_part_two', $all_percents_string_part_two);
+        $this->design->assign('all_percents_string', $all_percents_string);
 
         $percents_per_day_str = explode('.', $document->params->percent);
         $percents_per_day_str_part_one = $this->num2str($percents_per_day_str[0]);
