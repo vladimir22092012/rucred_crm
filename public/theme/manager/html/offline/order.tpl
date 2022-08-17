@@ -2739,7 +2739,7 @@
 
                                             <h6 class="card-header">
                                                 <span class="text-white">Информация о работодателе</span>
-                                                {if !in_array($order->status, ['4','5','6','7','8'])}
+                                                {if in_array($order->status, ['0','1'])}
                                                     <span class="float-right">
                                                     <a href="javascript:void(0);"
                                                        class="text-white"
@@ -2840,7 +2840,7 @@
 
                                             <h6 class="card-header">
                                                 <span class="text-white">Документы</span>
-                                                {if !in_array($order->status, ['4','5','6','7','8'])}
+                                                {if in_array($order->status, [0,1])}
                                                     {if $manager->role != 'employer'}
                                                         <input style="margin-left: 30px" type="button"
                                                                class="btn btn-primary get-docs"
@@ -2899,7 +2899,7 @@
                                                                            value="Скан">
                                                                 </a>
                                                             {/if}
-                                                            {if !in_array($order->status, ['4','5','6','7','8'])}
+                                                            {if in_array($order->status, ['0','1'])}
                                                                 {if $manager->role != 'employer'}
                                                                     <button type="button"
                                                                             class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
@@ -3448,7 +3448,7 @@
                                 <!-- -->
                             </div>
                             <br>
-                            {if $manager->role != 'employer' && !in_array($order->status, ['4','5','6','7','8'])}
+                            {if $manager->role != 'employer' && in_array($order->status, ['0','1'])}
                                 <div type="button" class="btn btn-outline-danger delete_order"
                                      data-order="{$order->order_id}" style="margin-left: 20px">
                                     Удалить заявку
