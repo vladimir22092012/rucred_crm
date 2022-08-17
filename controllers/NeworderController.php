@@ -630,7 +630,7 @@ class NeworderController extends Controller
 
             if ($payout_type == 'bank') {
 
-                if(date('Y-m-d') >= date('Y-m-d', strtotime($probably_start_date))){
+                if (date('Y-m-d') >= date('Y-m-d', strtotime($probably_start_date))) {
                     if (date('H') > 14
                         && $settlement_id == 3
                         || $settlement_id == 2) {
@@ -1531,51 +1531,43 @@ class NeworderController extends Controller
             $user_id = $this->users->getNextid();
         }
 
-        $user_telegram = $this->TelegramUsers->get($user_id, 0);
+        switch ($type):
+            case 'telegram':
 
-        if (empty($user_telegram)) {
+                $template = $this->sms->get_template(5);
+                $message = str_replace('$user_token', $user_token, $template->template);
+                $this->sms->send($phone, $message);
 
-            switch ($type):
-                case 'telegram':
+                $user =
+                    [
+                        'user_id' => $user_id,
+                        'token' => $user_token,
+                        'is_manager' => 0
+                    ];
 
-                    $template = $this->sms->get_template(5);
-                    $message = str_replace('$user_token', $user_token, $template->template);
-                    $this->sms->send($phone, $message);
+                $this->TelegramUsers->add($user);
+                break;
 
-                    $user =
-                        [
-                            'user_id' => $user_id,
-                            'token' => $user_token,
-                            'is_manager' => 0
-                        ];
+            case 'viber':
+                $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+                $mailResponse = $mailService->send(
+                    'rucred@ucase.live',
+                    $email,
+                    'RuCred | Ссылка для привязки Viber',
+                    'Ваша ссылка для привязки Viber:',
+                    '<h1>' . $this->config->back_url . '/redirect_api?user_id=' . $user_id . '</h1>'
+                );
 
-                    $this->TelegramUsers->add($user);
-                    break;
+                $user =
+                    [
+                        'user_id' => $user_id,
+                        'token' => $user_token,
+                        'is_manager' => 0
+                    ];
 
-                case 'viber':
-                    $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
-                    $mailResponse = $mailService->send(
-                        'rucred@ucase.live',
-                        $email,
-                        'RuCred | Ссылка для привязки Viber',
-                        'Ваша ссылка для привязки Viber:',
-                        '<h1>'.$this->config->back_url.'/redirect_api?user_id=' . $user_id . '</h1>'
-                    );
-
-                    var_dump($mailResponse);
-                    exit;
-
-                    $user =
-                        [
-                            'user_id' => $user_id,
-                            'token' => $user_token,
-                            'is_manager' => 0
-                        ];
-
-                    $this->ViberUsers->add($user);
-                    break;
-            endswitch;
-        }
+                $this->ViberUsers->add($user);
+                break;
+        endswitch;
 
         echo json_encode(['success' => 1, 'type' => $type]);
         exit;
