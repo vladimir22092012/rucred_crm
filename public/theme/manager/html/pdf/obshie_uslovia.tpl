@@ -25,7 +25,7 @@
                 <tr>
                     <td>
                         <span>Номер и дата договора микрозайма:</span><br>
-                        <span><strong>№ {$uid} от {$probably_start_date|date}</strong></span>
+                        <span><strong>№ {$uid} от {$date|date}</strong></span>
                     </td>
                 </tr>
             </table>
@@ -59,7 +59,7 @@
     </tr>
     <tr>
         <td style="40%"><strong>3.</strong> Дата предоставления микрозайма</td>
-        <td style="60%"><strong>{$date|date}</strong> года</td>
+        <td style="60%"><strong>{$probably_start_date|date}</strong> года</td>
     </tr>
     <tr>
         <td style="40%"><strong>4.</strong> Срок микрозайма</td>
