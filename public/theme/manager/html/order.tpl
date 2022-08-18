@@ -1900,7 +1900,22 @@
                                                             </div>
                                                         </div>
                                                     {/if}
-
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label class="control-label col-md-4">ФИО:</label>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$order->lastname} {$order->firstname} {$order->patronymic}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label class="control-label col-md-4">Телефон:</label>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$order->phone_mobile}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <div class="col-md-12">
                                                         <div class="form-group row m-0">
                                                             <label class="control-label col-md-4">Email:</label>
