@@ -5,7 +5,7 @@
   ansible.builtin.git:
     repo: git@bitbucket.org:rukred/rucred-crm.git
     dest: "{{ temp_repo_path }}"
-    version: master
+    version: "{{ branch }}"
   register: code_upload
   tags: deploy
 
@@ -16,7 +16,7 @@
 
 - name: Install permissions on file user rucred-crm and group www-data
   #shell: chown "{{ lookup('env', 'USER') }}":www-data "{{ repo_path }}"/* -R
-  cd "{{ repo_path }}"; chown "{{ lookup('env', 'USER') }}":www-data $(ls | grep -v files | grep -v logs | grep -v compiled)
+  shell: cd "{{ repo_path }}"; chown "{{ lookup('env', 'USER') }}":www-data $(ls | grep -v files | grep -v logs | grep -v compiled)
   when: code_upload.changed
   ignore_errors: yes
   tags: deploy
