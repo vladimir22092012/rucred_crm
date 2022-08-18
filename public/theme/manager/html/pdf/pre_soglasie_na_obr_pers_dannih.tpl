@@ -7,7 +7,7 @@
 <div></div>
 <h3 align="left"><strong>СОГЛАСИЕ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ</strong></h3>
 <div></div>
-<div align="justify">Я, <strong>{$lastname|upper} {$firstname|upper} {$patronymic|upper} {$birth|date}</strong>
+<div align="justify">Я, <strong>{$lastname|upper} {$firstname|upper} {$patronymic|upper} {$birth|date_format:'%d.%m.%Y'}</strong>
     года рождения, место
     рождения <strong>{$birth_place|upper}</strong>, телефон: <strong>{$phone}</strong>
 </div>

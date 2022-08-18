@@ -63,7 +63,7 @@
     Саморегулируемой организации «Микрофинансирование и Развитие» (СРО «МиР», ОГРН 1137799014055) за №77001218 от
     29.09.2021 года, именуемое в дальнейшем «Заимодавец», в лице Генерального директора Лоскутова Алексея Викторовича,
     действующего на основании Устава, с одной стороны и гражданин (-ка) Российской Федерации
-    <strong>{$birth|date}</strong> года
+    <strong>{$birth|date_format:'%d.%m.%Y'}</strong> года
     рождения, место рождения <strong>{$birth_place}</strong>, паспорт серия <strong>{$passport_serial}</strong> №
     <strong>{$passport_number}</strong> выдан <strong>{$passport_issued}</strong> года
     <strong>{$passport_date|date}</strong>, код подразделения <strong>{$subdivision_code}</strong>,
