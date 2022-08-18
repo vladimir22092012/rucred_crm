@@ -708,6 +708,8 @@
             $('.send_asp_code').on('click', function (e) {
                 e.preventDefault();
 
+                $('#sms_confirm_modal').modal();
+
                 let phone = $(this).attr('data-phone');
                 let user = $(this).attr('data-user');
                 let order = $(this).attr('data-order');
@@ -1466,11 +1468,42 @@
                                                 </div>
                                             </div>
                                         {/if}
-                                        {if in_array($order->status, [4, 10, 14])}
+                                        {if in_array($order->status, [4])}
                                             <div class="card card-primary">
                                                 <div class="box text-center">
                                                     <h4 class="text-white">Подписан со стороны клиента</h4>
                                                     <h6>Договор {$contract->number}</h6>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 7}
+                                            <div class="card card-primary">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Погашен</h4>
+                                                    <h6>Договор #{$contract->number}</h6>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 8}
+                                            <div class="card card-danger">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Отказ клиента</h4>
+                                                    <small title="Причина отказа">
+                                                        <i>{$reject_reasons[$order->reason_id]->admin_name}</i></small>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 14}
+                                            <div class="card card-success">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Р.Подтверждена</h4>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 15}
+                                            <div class="card card-danger">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Р.Отклонена</h4>
                                                 </div>
                                             </div>
                                         {/if}
@@ -1631,31 +1664,6 @@
                                                 {/if}
                                             {/if}
                                         {/if}
-                                        {if $order->status == 7}
-                                            <div class="card card-primary">
-                                                <div class="box text-center">
-                                                    <h4 class="text-white">Погашен</h4>
-                                                    <h6>Договор #{$contract->number}</h6>
-                                                </div>
-                                            </div>
-                                        {/if}
-                                        {if $order->status == 8}
-                                            <div class="card card-danger">
-                                                <div class="box text-center">
-                                                    <h4 class="text-white">Отказ клиента</h4>
-                                                    <small title="Причина отказа">
-                                                        <i>{$reject_reasons[$order->reason_id]->admin_name}</i></small>
-                                                </div>
-                                            </div>
-                                        {/if}
-                                        {if $order->status == 15}
-                                            <div class="card card-danger">
-                                                <div class="box text-center">
-                                                    <h4 class="text-white">Р.Отклонена</h4>
-                                                </div>
-                                            </div>
-                                        {/if}
-
                                         {if $contract->accept_code}
                                             <h4 class="text-danger mb-0">АСП: {$contract->accept_code}</h4>
                                         {/if}
@@ -1701,20 +1709,44 @@
                                             <span>Принять в работу</span>
                                         </button>
                                     {/if}
+                                    {if $order->status == 1 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
+                                        <div class="js-approve-reject-block">
+                                            <form class=" pt-1 js-confirm-contract">
+                                                <div class="input-group" style="display: flex;">
+                                                    <input type="hidden" name="contract_id" class="js-contract-id"
+                                                           value="{$order->contract_id}"/>
+                                                    <input type="hidden" name="phone" class="js-contract-phone"
+                                                           value="{$order->phone_mobile|escape}"/>
+                                                        {if empty({$order->sms})}
+                                                            <div class="col-md-12">
+                                                                <button data-user="{$order->user_id}"
+                                                                        id="send_asp"
+                                                                        data-phone="{$order->phone_mobile}"
+                                                                        data-order="{$order->order_id}"
+                                                                        class="btn btn-primary btn-block send_asp_code">
+                                                                    Подписать документы у Заёмщика
+                                                                </button>
+                                                            </div>
+                                                        {/if}
+                                                </div>
+                                            </form>
+                                        </div>
+                                    {/if}
                                     {if $order->status == 2 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
-                                        <div class="col-12">
+                                        <div class="col-12"
+                                             style="{if empty($order->sms) && $enough_scans == 0}display: none;{/if}">
                                             <button
                                                     class="btn btn-success btn-block js-approve-order js-event-add-click"
                                                     data-event="12" data-user="{$order->user_id}"
                                                     data-order="{$order->order_id}"
                                                     data-manager="{$manager->id}">
-                                                <span>Принять</span>
+                                                <span>Принять в работу и передать Работодателю</span>
                                             </button>
                                             <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
                                                     data-event="13" data-user="{$order->user_id}"
                                                     data-order="{$order->order_id}"
                                                     data-manager="{$manager->id}">
-                                                <span>Отклонить</span>
+                                                <span>Отказать без передачи Работодателю</span>
                                             </button>
                                         </div>
                                     {/if}
@@ -4049,6 +4081,47 @@
                             <input type="button" class="btn btn-success float-right do_restruct" value="Сохранить">
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="sms_confirm_modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Подтвердить смс</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert" style="display:none"></div>
+                    <div style="display: flex;" class="col-md-12">
+                        <input type="text" class="form-control code_asp"
+                               style="display:none"
+                               placeholder="SMS код"
+                               value="{if $is_developer}{$contract->accept_code}{/if}"/>
+                        <small id="asp_success"
+                               style="display: none; color: #009d07">
+                            Успешно!
+                        </small>
+                        <button class="btn btn-info confirm_asp" type="button"
+                                data-user="{$order->user_id}"
+                                data-order="{$order->order_id}"
+                                style="margin-left: 15px; display:none"
+                                data-phone="{$order->phone_mobile}">Подтвердить
+                        </button>
+                    </div>
+                    <br>
+                    <div class="col-md-12">
+                        <button data-user="{$order->user_id}"
+                                id="send_asp"
+                                data-phone="{$order->phone_mobile}"
+                                data-order="{$order->order_id}"
+                                class="btn btn-primary btn-block send_asp_code">
+                            Отправить смс
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
