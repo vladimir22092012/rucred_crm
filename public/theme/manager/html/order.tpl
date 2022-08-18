@@ -2467,7 +2467,7 @@
 
                                             <h6 class="card-header">
                                                 <span class="text-white">Дополнительная информация</span>
-                                                <span class="float-right">
+                                                <!-- <span class="float-right">
                                                             {penalty_button penalty_block='work'}
                                                     <a href="javascript:void(0);"
                                                        class="text-white float-right js-edit-form js-event-add-click"
@@ -2475,7 +2475,8 @@
                                                        data-order="{$order->order_id}"
                                                        data-user="{$order->user_id}"><i
                                                                 class=" fas fa-edit"></i></a>
-                                                        </span>
+                                                </span>
+                                                 -->
                                             </h6>
 
                                             <div class="row m-0 pt-2 view-block {if $work_error}hide{/if}">
@@ -2996,10 +2997,10 @@
                                         <form class="mb-4 border">
                                             <h6 class="card-header text-white">
                                                 <span>ИНН</span>
-                                                <span class="float-right">
+                                                <!-- <span class="float-right">
                                                                 <a href="" class="text-white inn-edit"><i
                                                                             class=" fas fa-edit"></i></a>
-                                                        </span>
+                                                </span> -->
                                             </h6>
                                             <div class="row view-block p-2 inn-front">
                                                 <div class="col-md-12">
@@ -3029,10 +3030,10 @@
                                         <form class="mb-4 border">
                                             <h6 class="card-header text-white">
                                                 <span>СНИЛС</span>
-                                                <span class="float-right">
+                                                <!-- <span class="float-right">
                                                                 <a href="" class="text-white snils-edit"><i
                                                                             class=" fas fa-edit"></i></a>
-                                                        </span>
+                                                </span> -->
                                             </h6>
                                             <div class="row view-block p-2 snils-front">
                                                 <div class="col-md-12">
@@ -3061,8 +3062,9 @@
                                         <form class="mb-3 border js-order-item-form">
                                             <h6 class="card-header text-white">
                                                 <span>Расчетный счет</span>
-                                                <span class="float-right"><a class="text-white cors-edit" href=""><i
-                                                                class=" fas fa-edit"></i></a></span>
+                                                <!-- <span class="float-right"><a class="text-white cors-edit" href=""><i
+                                                                class=" fas fa-edit"></i></a>
+                                                </span> -->
                                             </h6>
                                             {if $same_holder == 1}
                                                 <input type="hidden" name="action" value="cors_change"/>
