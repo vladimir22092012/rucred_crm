@@ -7,7 +7,7 @@
     </tr>
     <tr style="width: 100%">
         <td style="width: 60%"></td>
-        <td style="width: 40%">от Заемщика <strong>{$lastname} {$firstname} {$patronymic}</strong></td>
+        <td style="width: 40%">от заемщика <strong>{$lastname} {$firstname} {$patronymic}</strong></td>
     </tr>
     <tr style="width: 100%">
         <td style="width: 60%"></td>
