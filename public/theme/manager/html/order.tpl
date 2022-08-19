@@ -779,7 +779,7 @@
                                 confirmButtonText: 'Ок'
                             });
 
-                            $(this).fadeOut();
+                            $('#send_payment_form').fadeOut();
                             $('#rdr_payment_sent').fadeIn();
                         }
                     }
@@ -1535,18 +1535,18 @@
                                                             </div>
                                                         </div>
                                                     </form>
-                                                {else}
-                                                    <form id="rdr_payment_sent">
-                                                        <div class="pt-1 pb-2">
-                                                            <div class="card card-warning">
-                                                                <div class="box text-center">
-                                                                    <h4 class="text-white">Платежный документ
-                                                                        отправлен</h4>
-                                                                </div>
+                                                {/if}
+                                                <form id="rdr_payment_sent"
+                                                      {if empty($issuance_transaction)}style="display: none;" {/if}>
+                                                    <div class="pt-1 pb-2">
+                                                        <div class="card card-warning">
+                                                            <div class="box text-center">
+                                                                <h4 class="text-white">Платежный документ
+                                                                    отправлен</h4>
                                                             </div>
                                                         </div>
-                                                    </form>
-                                                {/if}
+                                                    </div>
+                                                </form>
                                             {/if}
                                         {/if}
                                         {if $order->status == 5}
@@ -2987,7 +2987,7 @@
                                             <h6 class="card-header text-white">
                                                 <span>ИНН</span>
                                                 {if $manager->role != 'employer' && in_array($order->status, [0, 1])}
-                                                <span class="float-right">
+                                                    <span class="float-right">
                                                                 <a href="" class="text-white inn-edit"><i
                                                                             class=" fas fa-edit"></i></a>
                                                 </span>
@@ -3022,7 +3022,7 @@
                                             <h6 class="card-header text-white">
                                                 <span>СНИЛС</span>
                                                 {if $manager->role != 'employer' && in_array($order->status, [0, 1])}
-                                                <span class="float-right">
+                                                    <span class="float-right">
                                                                 <a href="" class="text-white snils-edit"><i
                                                                             class=" fas fa-edit"></i></a>
                                                 </span>
@@ -3056,9 +3056,10 @@
                                             <h6 class="card-header text-white">
                                                 <span>Расчетный счет</span>
                                                 {if $manager->role != 'employer' && in_array($order->status, [0, 1])}
-                                                <span class="float-right"><a class="text-white cors-edit" href=""><i
-                                                                class=" fas fa-edit"></i></a>
-                                                </span>{/if}
+                                                    <span class="float-right"><a class="text-white cors-edit" href=""><i
+                                                                    class=" fas fa-edit"></i></a>
+                                                </span>
+                                                {/if}
                                             </h6>
                                             {if $same_holder == 1}
                                                 <input type="hidden" name="action" value="cors_change"/>
