@@ -1697,29 +1697,6 @@
                                             <span>Принять в работу</span>
                                         </button>
                                     {/if}
-                                    {if $order->status == 1 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
-                                        <div class="js-approve-reject-block">
-                                            <form class=" pt-1 js-confirm-contract">
-                                                <div class="input-group" style="display: flex;">
-                                                    <input type="hidden" name="contract_id" class="js-contract-id"
-                                                           value="{$order->contract_id}"/>
-                                                    <input type="hidden" name="phone" class="js-contract-phone"
-                                                           value="{$order->phone_mobile|escape}"/>
-                                                    {if empty({$order->sms})}
-                                                        <div class="col-md-12">
-                                                            <button data-user="{$order->user_id}"
-                                                                    id="send_asp"
-                                                                    data-phone="{$order->phone_mobile}"
-                                                                    data-order="{$order->order_id}"
-                                                                    class="btn btn-primary btn-block send_asp_code">
-                                                                Подписать документы у Заёмщика
-                                                            </button>
-                                                        </div>
-                                                    {/if}
-                                                </div>
-                                            </form>
-                                        </div>
-                                    {/if}
                                     {if $order->status == 2 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
                                         <div class="col-12">
                                             <button
@@ -2776,6 +2753,7 @@
                                                                         class="btn btn-outline-warning print_doc"
                                                                         value="Распечатать"></a>
                                                         </div>
+                                                        {*
                                                         <div class="btn-group"
                                                              style="margin-left: 10px; height: 35px">
                                                             {if $document->scan}
@@ -2810,6 +2788,7 @@
                                                                 {/if}
                                                             {/if}
                                                         </div>
+                                                        *}
                                                     </div>
                                                     <hr style="width: 100%; size: 2px">
                                                 {/foreach}
