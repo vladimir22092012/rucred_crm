@@ -3441,7 +3441,7 @@
                                 <!-- -->
                             </div>
                             <br>
-                            {if $manager->role != 'employer' && in_array($order->status, ['0','1'])}
+                            {if $manager->role != 'employer' && in_array($order->status, [0,1,2])}
                                 <div type="button" class="btn btn-outline-danger delete_order"
                                      data-order="{$order->order_id}" style="margin-left: 20px">
                                     Удалить заявку
