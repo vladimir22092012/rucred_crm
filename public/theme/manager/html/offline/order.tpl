@@ -809,7 +809,7 @@
                                 confirmButtonText: 'Ок'
                             });
 
-                            $(this).fadeOut();
+                            $('#send_payment_form').fadeOut();
                             $('#rdr_payment_sent').fadeIn();
                         }
                     }
@@ -1597,18 +1597,17 @@
                                                             <span>Отказать в предоставлении займа</span>
                                                         </button>
                                                     </form>
-                                                {else}
-                                                    <form id="rdr_payment_sent">
-                                                        <div class="pt-1 pb-2">
-                                                            <div class="card card-warning">
-                                                                <div class="box text-center">
-                                                                    <h4 class="text-white">Платежный документ
-                                                                        отправлен</h4>
-                                                                </div>
+                                                {/if}
+                                                <form id="rdr_payment_sent" {if empty($issuance_transaction)}style="display: none;" {/if}>
+                                                    <div class="pt-1 pb-2">
+                                                        <div class="card card-warning">
+                                                            <div class="box text-center">
+                                                                <h4 class="text-white">Платежный документ
+                                                                    отправлен</h4>
                                                             </div>
                                                         </div>
-                                                    </form>
-                                                {/if}
+                                                    </div>
+                                                </form>
                                             {/if}
                                         {/if}
                                         {if $order->status == 5}
