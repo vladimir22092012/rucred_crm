@@ -55,7 +55,7 @@ class StatusPaymentCron extends Core
 
 
                     $ticket = [
-                        'creator' => $this->manager->id,
+                        'creator' => $order->manager_id,
                         'creator_company' => 2,
                         'client_lastname' => $order->lastname,
                         'client_firstname' => $order->firstname,
@@ -75,7 +75,7 @@ class StatusPaymentCron extends Core
                         [
                             'message' => $communication_theme->text,
                             'ticket_id' => $ticket_id,
-                            'manager_id' => $this->manager->id,
+                            'manager_id' => $order->manager_id,
                         ];
 
                     $this->TicketMessages->add_message($message);
