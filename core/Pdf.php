@@ -23,7 +23,7 @@ class Pdf extends Core
         $this->tcpdf->SetAutoPageBreak(TRUE, 0);
 
         // set font
-        $this->tcpdf->SetFont('dejavusans', '', 9);
+        //$this->tcpdf->SetFont('dejavusans', '', 9);
 
         $this->tcpdf->SetPrintHeader(false);
         $this->tcpdf->SetPrintFooter(false);
@@ -34,21 +34,12 @@ class Pdf extends Core
 
         //$this->tcpdf->IncludeJS("print();");
 
-        ob_clean();
-        ob_flush();
-
         if ($download) {
             $this->tcpdf->Output($download . '.pdf', 'D');
-            ob_end_flush();
-            ob_end_clean();
         } elseif ($yandex) {
             $this->tcpdf->Output($this->config->__get('root_dir')  . '/files/users/' . $yandex . '.pdf', 'F');
-            ob_end_flush();
-            ob_end_clean();
         } else {
             $this->tcpdf->Output($filename . '.pdf', 'I');
-            ob_end_flush();
-            ob_end_clean();
         }
     }
 }
