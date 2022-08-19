@@ -34,9 +34,6 @@ class Pdf extends Core
 
         //$this->tcpdf->IncludeJS("print();");
 
-        var_dump($filename);
-        exit;
-
         if ($download) {
             $this->tcpdf->Output($download . '.pdf', 'D');
         } elseif ($yandex) {
