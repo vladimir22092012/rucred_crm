@@ -10,6 +10,10 @@ class OnlineDocsController extends Controller
     public function fetch()
     {
         $link = Encryption::decryption($this->request->get('id'));
+
+        var_dump($link);
+        exit;
+
         $link = explode(' ', $link);
         $id = $link[1];
         $document = $this->documents->get_document($id);
