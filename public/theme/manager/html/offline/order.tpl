@@ -421,6 +421,7 @@
 
                     $.ajax({
                         method: 'POST',
+                        dataType: 'JSON',
                         data: {
                             action: 'edit_personal_number',
                             user_id: user_id,
@@ -428,9 +429,9 @@
                             order_id: order_id
                         },
                         success: function (resp) {
-                            if (resp == 'error') {
+                            if (resp['error']) {
                                 Swal.fire({
-                                    title: 'Такой номер уже зарегистрирован',
+                                    title: resp['error'],
                                     confirmButtonText: 'ОК'
                                 });
                             }

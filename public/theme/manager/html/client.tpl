@@ -77,15 +77,16 @@
 
                     $.ajax({
                         method: 'POST',
+                        dataType: 'JSON',
                         data: {
                             action: 'edit_personal_number',
                             user_id: user_id,
                             number: number
                         },
                         success: function (resp) {
-                            if (resp == 'error') {
+                            if (resp['error']) {
                                 Swal.fire({
-                                    title: 'Такой номер уже зарегистрирован',
+                                    title: resp['error'],
                                     confirmButtonText: 'ОК'
                                 });
                             }

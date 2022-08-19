@@ -3224,12 +3224,17 @@ class OfflineOrderController extends Controller
         $user_id = (int)$this->request->post('user_id');
         $number = (int)$this->request->post('number');
 
+        if(strlen($number) > 6){
+            echo json_encode(['error' => 'Номер не может быть более 6 символов']);
+            exit;
+        }
+
         $number = str_pad($number, 6, 0, STR_PAD_LEFT);
 
         $check = $this->users->check_busy_number($number);
 
         if ($check && $check != 0) {
-            echo 'error';
+            echo json_encode(['error' => 'Такой номер уже есть']);
             exit;
         } else {
 
