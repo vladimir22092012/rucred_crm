@@ -172,6 +172,7 @@ class ManagerController extends Controller
                             $this->ManagersEmployers->add_record($record);
                         }
                         $this->design->assign('message_success', 'updated');
+                        $to_manager = $user->id;
                     }
                     $user = $this->managers->get_manager($user->id);
                 }
