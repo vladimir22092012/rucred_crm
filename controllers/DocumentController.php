@@ -1,5 +1,7 @@
 <?php
 
+exit(123);
+
 error_reporting(-1);
 ini_set('display_errors', 'On');
 
@@ -9,9 +11,6 @@ class DocumentController extends Controller
     {
 
         $id = $this->request->get('id');
-
-        var_dump($id);
-        exit;
 
         $document = $this->documents->get_document($id);
 
