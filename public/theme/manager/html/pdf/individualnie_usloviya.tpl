@@ -67,7 +67,7 @@
     29.09.2021 года, именуемое в
     дальнейшем «Заимодавец», в лице Генерального директора Лоскутова Алексея Викторовича, действующего на основании
     Устава, с одной стороны и гражданин (-ка) Российской
-    Федерации <strong>{$lastname|upper} {$firstname|upper} {$patronymic|upper} {$birth}</strong> года рождения, место
+    Федерации <strong>{$lastname|upper} {$firstname|upper} {$patronymic|upper} {$birth|date_format:'%d.%m.%Y'}</strong> года рождения, место
     рождения <strong>{$birth_place|upper}</strong>, паспорт
     серия <strong>{$passport_serial} № {$passport_number} выдан {$passport_issued} {$passport_date|date}</strong> года,
     код
