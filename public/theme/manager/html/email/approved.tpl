@@ -38,7 +38,7 @@
         <br>
         <div align="left">
             <a target="_blank" style="text-decoration: none; color: white"
-               href="https://rucred.andr-dev.ru/auth"><img
+               href="https://xn--80aj6acdgc.xn--80asehdb/auth"><img
                         src="https://ie.wampi.ru/2022/07/13/lk.png"></a>
         </div>
         <br><br>
