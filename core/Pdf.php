@@ -41,6 +41,5 @@ class Pdf extends Core
         } else {
             $this->tcpdf->Output($filename . '.pdf', 'I');
         }
-        exit;
     }
 }
