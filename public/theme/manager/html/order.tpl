@@ -1519,7 +1519,12 @@
                                                         <button class="btn btn-info btn-lg btn-block send_money"
                                                                 data-order="{$order->order_id}">
                                                             <i class="fas fa-hospital-symbol"></i>
-                                                            <span>Подтвердить и отправить деньги</span>
+                                                            <span>Одобрить заявку и выплатить средства</span>
+                                                        </button>
+                                                        <button class="btn btn-danger btn-lg btn-block"
+                                                                data-order="{$order->order_id}">
+                                                            <i class="fas fa-hospital-symbol"></i>
+                                                            <span>Отказать в предоставлении займа</span>
                                                         </button>
                                                     </div>
                                                 </form>
@@ -1531,9 +1536,13 @@
                                                         <input type="hidden" name="order_id" value="{$order->order_id}">
                                                         <div class="pt-1 pb-2">
                                                             <div class="btn btn-info btn-lg btn-block send_payment">
-                                                                Подтвердить и создать платежный документ
+                                                                Одобрить заявку и выплатить средства
                                                             </div>
                                                         </div>
+                                                        <button class="btn btn-danger btn-lg btn-block"
+                                                                data-order="{$order->order_id}">
+                                                            <span>Отказать в предоставлении займа</span>
+                                                        </button>
                                                     </form>
                                                 {/if}
                                                 <form id="rdr_payment_sent"
