@@ -1122,7 +1122,9 @@ class OrderController extends Controller
                     'manager_id' => $this->manager->id
                 ];
 
-            $this->AspCodes->add_code($asp_log);
+            $asp_id = $this->AspCodes->add_code($asp_log);
+
+            $this->documents->update_asp(['order_id' => $order_id, 'rucred_asp_id' => $asp_id, 'second_pak' => 1]);
 
             $asp_id = $this->AspCodes->get_code(['order_id' => $order_id, 'type' => 'sms']);
             $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id->id, 'second_pak' => 1]);
@@ -3976,7 +3978,9 @@ class OrderController extends Controller
                 'manager_id' => $this->manager->id
             ];
 
-        $this->AspCodes->add_code($asp_log);
+        $asp_id = $this->AspCodes->add_code($asp_log);
+
+        $this->documents->update_asp(['order_id' => $order_id, 'rucred_asp_id' => $asp_id, 'second_pak' => 1]);
 
         $this->design->assign('order', $order);
         $documents = $this->documents->get_documents(['order_id' => $order->order_id]);
