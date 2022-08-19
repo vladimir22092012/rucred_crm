@@ -4132,10 +4132,12 @@ class OfflineOrderController extends Controller
 
         $send_payment = $this->Soap1c->send_payment($payment);
 
+        /*
         if (!isset($send_payment->return) || $send_payment->return != 'ОК') {
             echo json_encode(['error' => $send_payment]);
             exit;
         }
+        */
 
         $asp_log =
             [
