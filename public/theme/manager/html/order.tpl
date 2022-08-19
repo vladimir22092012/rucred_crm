@@ -1192,7 +1192,7 @@
                     № {$order->group_number} {$order->company_number} {$order->personal_number}</h4>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
-                    <li class="breadcrumb-item"><a href="offline_orders">Заявки</a></li>
+                    <li class="breadcrumb-item"><a href="orders">Заявки</a></li>
                     <li class="breadcrumb-item active">Заявка
                         № {$order->group_number} {$order->company_number} {$order->personal_number}</li>
                 </ol>
