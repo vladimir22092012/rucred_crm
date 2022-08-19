@@ -237,7 +237,7 @@
                                 confirmButtonText: 'ОК'
                             });
                         } else {
-                            //window.location.replace(response.redirect);
+                            window.location.replace(response.redirect);
                         }
                     }
                 })
