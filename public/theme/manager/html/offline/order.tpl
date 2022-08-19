@@ -910,12 +910,12 @@
                         manager_id: manager_id
                     },
                     success: function (resp) {
-                        if(resp['error']){
+                        if (resp['error']) {
                             Swal.fire({
                                 title: resp['error'],
                                 confirmButtonText: 'Ок'
                             });
-                        }else{
+                        } else {
                             location.reload();
                         }
                     }
@@ -1243,7 +1243,7 @@
     <!-- ============================================================== -->
     <div class="container-fluid">
         <div class="row page-titles">
-            <div class="col-md-6 col-8 align-self-center">
+            <div class="col-md-3 col-8 align-self-center">
                 <h4 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i> Заявка
                     № {$order->uid}</h4>
                 <ol class="breadcrumb">
@@ -1253,10 +1253,29 @@
                         № {$order->uid}</li>
                 </ol>
             </div>
-            <div class="col-md-6 col-4 align-self-center">
-
-            </div>
         </div>
+        {if in_array($order->status, [0,1,2,4,9,10,14,13,15])}
+                <div style="display: flex; margin-left: 5px">
+                    <small class="badge badge-{if in_array($order->status, [0,1])}success{else}secondary{/if}">Заведение
+                        заявки и подготовка документов (подписание + фото паспортов)
+                    </small>
+                    <small class="badge badge-{if in_array($order->status, [2])}success{else}secondary{/if}"
+                           style="margin-left: 5px">Одобрение заявки андеррайтером и принятие в работу
+                    </small>
+                    <small class="badge badge-{if in_array($order->status, [4])}success{else}secondary{/if}"
+                           style="margin-left: 5px">Одобрение заёмщика работодателем
+                    </small>
+                </div>
+                <div style="display: flex; margin-top: 10px">
+                    <small class="badge badge-{if in_array($order->status, [13,14])}success{else}secondary{/if}"
+                           style="margin-left: 5px">Проверка заявки андеррайтером после работодателя
+                    </small>
+                    <small class="badge badge-{if in_array($order->status, [10])}success{else}secondary{/if}"
+                           style="margin-left: 5px">Одобрение сделки миддлом и перечисление средств
+                    </small>
+                </div>
+            <br>
+        {/if}
 
         <div class="row" id="order_wrapper">
             <div class="col-lg-12">
@@ -1285,45 +1304,6 @@
                                             <span class="label label-success">Црм</span>
                                         {/if}
                                     </small>
-                                    {if in_array($order->status, [0,1,2,4,9,10,14,13,15])}
-                                        <small style="margin-left: 25px; margin-top: 0;">
-                                        <span class="badge badge-secondary warning_asp"
-                                                {if in_array($order->status, [0,1])}
-                                                    data-tooltip="Заведение заявки и подготовка документов (подписание + фото паспортов)"
-                                                {/if}
-                                                {if in_array($order->status, [2])}
-                                                    data-tooltip="Одобрение заявки андеррайтером и принятие в работу"
-                                                {/if}
-                                                {if in_array($order->status, [4])}
-                                                    data-tooltip="Одобрение заёмщика работодателем"
-                                                {/if}
-                                                {if in_array($order->status, [13,14])}
-                                                    data-tooltip="Проверка заявки андеррайтером после работодателя"
-                                                {/if}
-                                                {if in_array($order->status, [10])}
-                                                    data-tooltip="Одобрение сделки миддлом и перечисление средств"
-                                                {/if}
-                                        >
-                                            Этап:
-                                            {if in_array($order->status, [0,1])}
-                                                1
-                                            {/if}
-                                            {if in_array($order->status, [2])}
-                                                2
-                                            {/if}
-                                            {if in_array($order->status, [4])}
-                                                3
-                                            {/if}
-                                            {if in_array($order->status, [13,14])}
-                                                4
-                                            {/if}
-                                            {if in_array($order->status, [10])}
-                                                5
-                                            {/if}
-                                            из 5
-                                        </span>
-                                        </small>
-                                    {/if}
                                 </div>
                                 <div class="col-8 col-md-3 col-lg-3">
                                     <h5 class="form-control-static float-left">
@@ -1392,11 +1372,11 @@
                                             <h4>
                                                 <span class="phone_mobile_format">{$order->phone_mobile}</span>
                                             </h4>
-                                            <a href="javascript:void(0);"
+                                            {if in_array($order->status, [0, 1])}<a href="javascript:void(0);"
                                                class="text-info js-edit-form edit-amount js-event-add-click"
                                                data-event="30" data-manager="{$manager->id}"
                                                data-order="{$order->order_id}" data-user="{$order->user_id}"><i
-                                                        class=" fas fa-edit"></i></a>
+                                                        class=" fas fa-edit"></i></a>{/if}
                                         </div>
 
                                         <div class="edit-block hide">
@@ -1452,13 +1432,12 @@
                                                 <h6>Дата выдачи</h6>
                                                 <h4 class="text-primary probably_start_date">{$order->probably_start_date|date}</h4>
                                             </div>
-                                            {if $order->status != 9}
+                                            {if in_array($order->status, [0, 1])}
                                                 <a href="javascript:void(0);"
                                                    class="text-info js-edit-form edit-amount js-event-add-click"
                                                    data-event="31" data-manager="{$manager->id}"
                                                    data-order="{$order->order_id}" data-user="{$order->user_id}"><i
                                                             class=" fas fa-edit"></i></a>
-                                                </h4>
                                             {/if}
                                         </div>
 
@@ -1807,22 +1786,22 @@
                                         </div>
                                     {/if}
                                     {if $order->status == 2 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
-                                    <div class="col-12"
-                                         style="{if empty($order->sms) && $enough_scans == 0}display: none;{/if}">
-                                        <button
-                                                class="btn btn-success btn-block js-approve-order js-event-add-click"
-                                                data-event="12" data-user="{$order->user_id}"
-                                                data-order="{$order->order_id}"
-                                                data-manager="{$manager->id}">
-                                            <span>Принять в работу и передать Работодателю</span>
-                                        </button>
-                                        <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
-                                                data-event="13" data-user="{$order->user_id}"
-                                                data-order="{$order->order_id}"
-                                                data-manager="{$manager->id}">
-                                            <span>Отказать без передачи Работодателю</span>
-                                        </button>
-                                    </div>
+                                        <div class="col-12"
+                                             style="{if empty($order->sms) && $enough_scans == 0}display: none;{/if}">
+                                            <button
+                                                    class="btn btn-success btn-block js-approve-order js-event-add-click"
+                                                    data-event="12" data-user="{$order->user_id}"
+                                                    data-order="{$order->order_id}"
+                                                    data-manager="{$manager->id}">
+                                                <span>Принять в работу и передать Работодателю</span>
+                                            </button>
+                                            <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
+                                                    data-event="13" data-user="{$order->user_id}"
+                                                    data-order="{$order->order_id}"
+                                                    data-manager="{$manager->id}">
+                                                <span>Отказать без передачи Работодателю</span>
+                                            </button>
+                                        </div>
                                     {/if}
                                     {if !empty({$order->sms}) && $manager->role != 'employer'}
                                         <div><br>
@@ -1952,15 +1931,15 @@
                                                 <input type="hidden" name="user_id" value="{$order->user_id}"/>
 
                                                 <h6 class="card-header card-success">
-                                                    <span class="text-white ">Контакты</span>
+                                                    <span class="text-white ">Общая информация</span>
                                                     <span class="float-right">
                                                             {penalty_button penalty_block='personal'}
-                                                        <a href="javascript:void(0);"
+                                                        {if in_array($order->status, [0, 1])}<a href="javascript:void(0);"
                                                            class=" text-white js-edit-form js-event-add-click"
                                                            data-event="32" data-manager="{$manager->id}"
                                                            data-order="{$order->order_id}"
                                                            data-user="{$order->user_id}"><i
-                                                                    class=" fas fa-edit"></i></a></h4>
+                                                                    class=" fas fa-edit"></i></a>{/if}
                                                         </span>
                                                 </h6>
 
@@ -2283,7 +2262,7 @@
                                                                              alt="" class="img-responsive" style=""/>
                                                                     </a>
                                                                     <div class="order-image-actions"
-                                                                         {if !in_array($order->status, [0, 1, 12, 14, 15]) || $file->type == 'document'}style="display: none"{/if}>
+                                                                         {if !in_array($order->status, [0, 1]) || $file->type == 'document'}style="display: none"{/if}>
                                                                         {if $manager->role != 'employer'}
                                                                             <div class="dropdown mr-1 show ">
                                                                                 <button type="button"
@@ -2344,7 +2323,7 @@
                                                                         {/if}
                                                                     </div>
                                                                 </li>
-                                                                {if $manager->role != 'employer'}
+                                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1])}
                                                                     <select class="form-control photo_status"
                                                                             data-file="{$file->id}"
                                                                             name="photo_status">
@@ -2453,7 +2432,7 @@
                                                                 Подписать документы о реструктуризации</a>
                                                         </div>
                                                     {/if}
-                                                    {if in_array($order->status, [0,1,12,14])}
+                                                    {if in_array($order->status, [0,1])}
                                                         <input style="margin-left: 30px" type="button"
                                                                data-schedule="{$payment_schedule->id}"
                                                                class="btn btn-warning reform"
@@ -3128,8 +3107,10 @@
                                             <h6 class="card-header text-white">
                                                 <span>ИНН</span>
                                                 <span class="float-right">
+                                                    {if in_array($order->status, [0, 1])}
                                                                 <a href="" class="text-white inn-edit"><i
                                                                             class=" fas fa-edit"></i></a>
+                                                    {/if}
                                                         </span>
                                             </h6>
                                             <div class="row view-block p-2 inn-front">
@@ -3161,8 +3142,10 @@
                                             <h6 class="card-header text-white">
                                                 <span>СНИЛС</span>
                                                 <span class="float-right">
+                                                    {if in_array($order->status, [0, 1])}
                                                                 <a href="" class="text-white snils-edit"><i
                                                                             class=" fas fa-edit"></i></a>
+                                                    {/if}
                                                         </span>
                                             </h6>
                                             <div class="row view-block p-2 snils-front">
@@ -3194,8 +3177,9 @@
                                                 <h6 class="card-header text-white">
                                                     <span>Расчетный счет</span>
                                                     {if in_array($order->status, ['0','1'])}
-                                                    <span class="float-right"><a class="text-white cors-edit" href=""><i
-                                                                    class=" fas fa-edit"></i></a></span>
+                                                        <span class="float-right"><a class="text-white cors-edit"
+                                                                                     href=""><i
+                                                                        class=" fas fa-edit"></i></a></span>
                                                     {/if}
                                                 </h6>
                                                 {if $same_holder == 1}

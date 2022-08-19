@@ -381,7 +381,7 @@
                                                 <input type="hidden" name="user_id" value="{$client->id}"/>
 
                                                 <h5 class="card-header">
-                                                    <span class="text-white ">Контакты</span>
+                                                    <span class="text-white ">Общая информация</span>
                                                     {if $manager->role != 'employer'}
                                                         <a href="javascript:void(0);"
                                                            class="float-right text-white js-edit-form"><i

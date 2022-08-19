@@ -3219,12 +3219,12 @@ class OfflineOrderController extends Controller
         exit;
     }
 
-    private
-    function action_edit_personal_number()
+    private function action_edit_personal_number()
     {
         $user_id = (int)$this->request->post('user_id');
-        $order_id = (int)$this->request->post('order_id');
         $number = (int)$this->request->post('number');
+
+        $number = str_pad($number, 6, 0, STR_PAD_LEFT);
 
         $check = $this->users->check_busy_number($number);
 
@@ -3234,20 +3234,23 @@ class OfflineOrderController extends Controller
         } else {
 
             $query = $this->db->placehold("
-            SELECT uid
+            SELECT id, uid
             FROM s_orders
-            WHERE id = $order_id
+            WHERE user_id = $user_id
             ");
 
             $this->db->query($query);
-            $uid = $this->db->result('uid');
+            $orders = $this->db->results();
 
-            $uid = explode(' ', $uid);
-            $uid[3] = (string)$number;
-            $uid = implode(' ', $uid);
+            foreach ($orders as $order) {
+                $uid = explode(' ', $order->uid);
+                $uid[1] = (string)$number;
+                $uid = implode(' ', $uid);
+
+                $this->orders->update_order($order->id, ['uid' => $uid]);
+            }
 
             $this->users->update_user($user_id, ['personal_number' => $number]);
-            $this->orders->update_order($order_id, ['uid' => $uid]);
             exit;
         }
     }

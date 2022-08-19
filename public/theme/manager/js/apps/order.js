@@ -401,14 +401,14 @@ function OrderApp() {
             }
 
             Swal.fire({
-                title: 'Одобрить выдачу кредита?',
+                title: 'Принять в работу и передать Работодателю?',
                 text: "",
                 type: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                cancelButtonText: 'Отменить',
-                confirmButtonText: 'Да, одобрить'
+                cancelButtonText: 'Нет',
+                confirmButtonText: 'Да'
             }).then((result) => {
                 if (result.value) {
                     $.ajax({
