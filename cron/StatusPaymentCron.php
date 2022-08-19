@@ -1,5 +1,10 @@
 <?php
 
+use Telegram\Bot\Api;
+use Viber\Bot;
+use Viber\Api\Sender;
+use Viber\Client;
+
 require __DIR__ . '/../vendor/autoload.php';
 
 class StatusPaymentCron extends Core
@@ -81,6 +86,65 @@ class StatusPaymentCron extends Core
                         ];
 
                     $this->NotificationsCron->add($cron);
+
+                    $user_preferred = $this->UserContactPreferred->get($order->user_id);
+
+                    if (!empty($user_preferred)) {
+                        $template = $this->sms->get_template(8);
+
+                        foreach ($user_preferred as $preferred) {
+                            switch ($preferred->contact_type_id):
+
+                                case 1:
+                                    $message = $template->template;
+                                    $this->sms->send(
+                                        $order->phone_mobile,
+                                        $message
+                                    );
+                                    break;
+
+                                case 2:
+                                    $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+                                    $mailService->send(
+                                        'rucred@ucase.live',
+                                        $order->email,
+                                        'RuCred | Уведомление',
+                                        "$template->template",
+                                        "<h2>$template->template</h2>"
+                                    );
+                                    break;
+
+                                case 3:
+                                    $telegram = new Api($this->config->telegram_token);
+                                    $telegram_check = $this->TelegramUsers->get($order->user_id, 0);
+
+                                    if (!empty($telegram_check)) {
+                                        $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $template->template]);
+                                    }
+                                    break;
+
+                                case 4:
+                                    $bot = new Bot(['token' => $this->config->viber_token]);
+
+                                    $botSender = new Sender([
+                                        'name' => 'Whois bot',
+                                        'avatar' => 'https://developers.viber.com/img/favicon.ico',
+                                    ]);
+                                    $viber_check = $this->ViberUsers->get($order->user_id, 0);
+
+                                    if (!empty($viber_check)) {
+                                        $bot->getClient()->sendMessage(
+                                            (new \Viber\Api\Message\Text())
+                                                ->setSender($botSender)
+                                                ->setReceiver($viber_check->chat_id)
+                                                ->setText($template->template)
+                                        );
+                                    }
+                                    break;
+
+                            endswitch;
+                        }
+                    }
 
                 }
             }
