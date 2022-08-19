@@ -39,7 +39,6 @@ class Pdf extends Core
         } elseif ($yandex) {
             $this->tcpdf->Output($this->config->__get('root_dir')  . '/files/users/' . $yandex . '.pdf', 'F');
         } else {
-            header('Content-Disposition: attachment;; filename="' . $filename . '.pdf'.'"');
             $this->tcpdf->Output($filename . '.pdf', 'I');
         }
     }
