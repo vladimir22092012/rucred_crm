@@ -343,10 +343,10 @@ class TCPDF_STATIC {
 	 * @public static
 	 */
 	public static function sendOutputData($data, $length) {
-		/*if (!isset($_SERVER['HTTP_ACCEPT_ENCODING']) OR empty($_SERVER['HTTP_ACCEPT_ENCODING'])) {
+		if (!isset($_SERVER['HTTP_ACCEPT_ENCODING']) OR empty($_SERVER['HTTP_ACCEPT_ENCODING'])) {
 			// the content length may vary if the server is using compression
 			header('Content-Length: '.$length);
-		}*/
+		}
 		echo $data;
 	}
 
