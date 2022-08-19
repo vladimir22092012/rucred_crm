@@ -1319,8 +1319,8 @@
                                 <div class="col-12 col-md-3 col-lg-3">
                                     <h5 class="form-control-static">Номер
                                         клиента: <span class="show_personal_number">{$client->personal_number}</span>
-                                        <a href="" data-user="{$client->id}" class="text-info edit_personal_number">
-                                            <i class="fas fa-edit"></i></a>
+                                        {if in_array($order->status, [0, 1])}<a href="" data-user="{$client->id}" class="text-info edit_personal_number">
+                                            <i class="fas fa-edit"></i></a>{/if}
                                     </h5>
                                     <input type="text" class="form-control number_edit_form number"
                                            style="width: 80px; display: none"

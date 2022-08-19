@@ -1825,8 +1825,7 @@ class OfflineOrderController extends Controller
         $this->design->assign('order', $order);
     }
 
-    private
-    function fio_action()
+    private function fio_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
