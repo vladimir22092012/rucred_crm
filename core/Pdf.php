@@ -36,10 +36,13 @@ class Pdf extends Core
 
         if ($download) {
             $this->tcpdf->Output($download . '.pdf', 'D');
+            exit;
         } elseif ($yandex) {
             $this->tcpdf->Output($this->config->__get('root_dir')  . '/files/users/' . $yandex . '.pdf', 'F');
+            exit;
         } else {
             $this->tcpdf->Output($filename . '.pdf', 'I');
+            exit;
         }
     }
 }
