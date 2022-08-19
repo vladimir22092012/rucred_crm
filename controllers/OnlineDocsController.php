@@ -11,9 +11,6 @@ class OnlineDocsController extends Controller
     {
         $link = Encryption::decryption($this->request->get('id'));
 
-        var_dump($link);
-        exit;
-
         $link = explode(' ', $link);
         $id = $link[1];
         $document = $this->documents->get_document($id);
@@ -316,6 +313,10 @@ class OnlineDocsController extends Controller
 
             $this->pdf->create($tpl, $document->name, $document->template, $download);
         } else {
+
+            var_dump($document->name);
+            exit;
+
             $this->pdf->create($tpl, $document->name, $document->template);
         }
     }
