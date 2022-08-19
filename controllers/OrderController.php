@@ -836,17 +836,6 @@ class OrderController extends Controller
 
         $loan = $this->Loantypes->get_loantype($order->loan_type);
 
-        $query = $this->db->placehold("
-        SELECT `type`
-        FROM s_scans
-        WHERE user_id = ?
-        AND order_id = ?
-        AND `type` != 'ndfl'
-        ", (int)$order->user_id, (int)$order->order_id);
-
-        $this->db->query($query);
-        $scans = $this->db->results();
-
         $users_docs = $this->Documents->get_documents(['order_id' => $order_id]);
 
         if (empty($users_docs)){
