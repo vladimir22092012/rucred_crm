@@ -313,10 +313,6 @@ class OnlineDocsController extends Controller
 
             $this->pdf->create($tpl, $document->name, $document->template, $download);
         } else {
-
-            var_dump($document->name);
-            exit;
-
             $this->pdf->create($tpl, $document->name, $document->template);
         }
     }
