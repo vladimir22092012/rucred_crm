@@ -1,5 +1,9 @@
 <?php
 
+use Telegram\Bot\Api;
+use Viber\Bot;
+use Viber\Api\Sender;
+use Viber\Client;
 use App\Services\MailService;
 use App\Services\Encryption;
 
