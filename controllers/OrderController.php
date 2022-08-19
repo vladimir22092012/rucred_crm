@@ -4115,6 +4115,10 @@ class OrderController extends Controller
             echo json_encode(['error' => 'Не сформированы документы!']);
             exit;
         }
+        if ($count_approved_photos < 3) {
+            echo json_encode(['error' => 'Не забудьте подтвердить фото клиента!']);
+            exit;
+        }
 
         $this->orders->update_order($order_id, ['status' => 1]);
         $this->tickets->update_by_theme_id(18, ['status' => 4], $order_id);
