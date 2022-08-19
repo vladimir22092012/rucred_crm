@@ -1,9 +1,7 @@
 <?php
 
-exit(123);
-
 error_reporting(-1);
-ini_set('display_errors', 'On');
+ini_set('display_errors', 'Off');
 
 class DocumentController extends Controller
 {
