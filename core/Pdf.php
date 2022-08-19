@@ -1,5 +1,7 @@
 <?php
 
+ob_start();
+
 require_once dirname(__FILE__) . '/../tcpdf/tcpdf.php';
 
 class Pdf extends Core
@@ -33,6 +35,8 @@ class Pdf extends Core
         $this->tcpdf->writeHTML($template, true, false, true, false, '');
 
         //$this->tcpdf->IncludeJS("print();");
+
+        ob_end_clean();
 
         if ($download) {
             $this->tcpdf->Output($download . '.pdf', 'D');
