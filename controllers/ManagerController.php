@@ -261,7 +261,7 @@ class ManagerController extends Controller
         $this->design->assign('managers_credentials', $managers_credentials);
 
         if(isset($to_manager)){
-            header('Location: '.$this->config->back_url.'manager/'.$to_manager);
+            header('Location: '.$this->config->back_url.'/manager/'.$to_manager);
             exit;
         }
 
