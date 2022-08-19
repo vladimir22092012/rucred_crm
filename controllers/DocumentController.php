@@ -1,15 +1,18 @@
 <?php
 
 error_reporting(-1);
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'On');
 
 class DocumentController extends Controller
 {
     public function fetch()
     {
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($document);echo '</pre><hr />';
 
         $id = $this->request->get('id');
+
+        var_dump($id);
+        exit;
+
         $document = $this->documents->get_document($id);
 
         foreach ($document->params as $param_name => $param_value) {
