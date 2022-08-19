@@ -1,7 +1,5 @@
 <?php
 
-ob_start();
-
 require_once dirname(__FILE__) . '/../tcpdf/tcpdf.php';
 
 class Pdf extends Core
@@ -43,6 +41,6 @@ class Pdf extends Core
         } else {
             $this->tcpdf->Output($filename . '.pdf', 'I');
         }
-        ob_end_flush();
+        exit;
     }
 }
