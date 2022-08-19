@@ -4,6 +4,7 @@ use Telegram\Bot\Api;
 use Viber\Bot;
 use Viber\Api\Sender;
 use Viber\Client;
+use App\Services\MailService;
 
 require __DIR__ . '/../vendor/autoload.php';
 
