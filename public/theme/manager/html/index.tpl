@@ -359,6 +359,10 @@
                                 <li {if in_array($module, ['SettingsController'])}class="active"{/if}><a
                                             href="settings/"><i class="mdi mdi-settings"></i>Общие</a></li>
                             {/if}
+                            {if in_array($manager->role, ['developer', 'admin'])}
+                                <li {if in_array($module, ['DeleteUsersController'])}class="active"{/if}>
+                                    <a href="delete_users/"><i class="mdi mdi-account-location"></i>Удаление тестовых клиентов</a></li>
+                            {/if}
                             {if $manager->role != 'underwriter'}
                                 <li {if in_array($module, ['ScoringsController'])}class="active"{/if}>
                                     <a href="scorings/"><i class="mdi mdi-tooltip"></i>СПР</a></li>
