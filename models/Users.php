@@ -26,7 +26,8 @@ class Users extends Core
         return $id;
     }
 
-    public function getNextid(){
+    public function getNextid()
+    {
 
         $query = $this->db->placehold("
                 SELECT id
@@ -137,7 +138,7 @@ class Users extends Core
         $id_filter = '';
 
 
-        if($id)
+        if ($id)
             $id_filter = $this->db->placehold("AND id != ?", $id);
 
         $query = $this->db->placehold("
@@ -157,7 +158,7 @@ class Users extends Core
             SELECT lastname, firstname, patronymic, personal_number
             FROM __users
             WHERE lastname LIKE ?
-        ", $lastname.'%');
+        ", $lastname . '%');
         $this->db->query($query);
         $result = $this->db->results();
         return $result;
@@ -555,7 +556,7 @@ class Users extends Core
     {
         $id_filter = '';
 
-        if($id)
+        if ($id)
             $id_filter = $this->db->placehold("AND id != ?", $id);
 
         $query = $this->db->placehold("
@@ -573,7 +574,7 @@ class Users extends Core
     {
         $id_filter = '';
 
-        if($id)
+        if ($id)
             $id_filter = $this->db->placehold("AND id != ?", $id);
 
         $query = $this->db->placehold("
@@ -648,5 +649,20 @@ class Users extends Core
         $results = $this->db->results();
 
         return $results;
+    }
+
+    public function get_users_by_phone($phone)
+    {
+        $query = $this->db->placehold("
+            SELECT *
+            FROM s_users
+            WHERE phone_mobile = ?
+        ", $phone);
+
+        $this->db->query($query);
+
+        $result = $this->db->results();
+
+        return $result;
     }
 }

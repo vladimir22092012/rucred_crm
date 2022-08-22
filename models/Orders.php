@@ -766,4 +766,10 @@ class Orders extends Core
         $this->db->query($query);
         return $id;
     }
+
+    public function delete_orders_by_user_id($user_id)
+    {
+        $query = $this->db->placehold("DELETE FROM __orders WHERE user_id = ?", $user_id);
+        $this->db->query($query);
+    }
 }

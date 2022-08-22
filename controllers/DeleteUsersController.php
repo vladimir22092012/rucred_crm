@@ -26,19 +26,21 @@ class DeleteUsersController extends Controller
             exit;
         }else{
 
-            $user = $this->users->get_user_by_phone($phone);
+            $users = $this->users->get_users_by_phone($phone);
 
-            $query = $this->db->placehold("
-            DELETE us, os
-            FROM s_users us
-            LEFT JOIN s_orders os ON us.id = os.user_id
-            WHERE us.id = ?
-            ", $user->id);
+            if(!empty($users)){
+                echo json_encode(['error' => 'Такого юзера нет']);
+                exit;
+            }else{
 
-            $this->db->query($query);
+                foreach ($users as $user){
+                    $this->orders->delete_orders_by_user_id($user->id);
+                    $this->users->delete_user($user->id);
+                }
 
-            echo json_encode(['success' => 1]);
-            exit;
+                echo json_encode(['success' => 1]);
+                exit;
+            }
         }
     }
 }
