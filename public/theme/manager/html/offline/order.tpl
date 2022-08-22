@@ -417,7 +417,6 @@
 
                     let user_id = $(this).attr('data-user');
                     let number = $('input[class="form-control number_edit_form number"]').val();
-                    let order_id = {{$order->order_id}};
 
                     $.ajax({
                         method: 'POST',
@@ -425,8 +424,7 @@
                         data: {
                             action: 'edit_personal_number',
                             user_id: user_id,
-                            number: number,
-                            order_id: order_id
+                            number: number
                         },
                         success: function (resp) {
                             if (resp['error']) {

@@ -1085,6 +1085,7 @@ class ClientController extends Controller
             }
 
             $this->users->update_user($user_id, ['personal_number' => $number]);
+            echo json_encode(['success' => 1]);
             exit;
         }
     }
