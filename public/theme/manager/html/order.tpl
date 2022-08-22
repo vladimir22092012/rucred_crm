@@ -1261,7 +1261,7 @@
                                 <div class="col-12 col-md-3 col-lg-3">
                                     <h5 class="form-control-static">Номер
                                         клиента: <span class="show_personal_number">{$client->personal_number}</span>
-                                        {if in_array($order->status, [0, 1])}<a href="" data-user="{$client->id}"
+                                        {if in_array($order->status, [0, 1, 2])}<a href="" data-user="{$client->id}"
                                                                                 class="text-info edit_personal_number">
                                                 <i class="fas fa-edit"></i></a>{/if}
                                     </h5>
@@ -1316,7 +1316,7 @@
                                             <h4>
                                                 <span class="phone_mobile_format">{$order->phone_mobile}</span>
                                             </h4>
-                                            {if in_array($order->status, [0, 1])}<a href="javascript:void(0);"
+                                            {if in_array($order->status, [0, 1, 2])}<a href="javascript:void(0);"
                                                                                     class="text-info js-edit-form edit-amount js-event-add-click"
                                                                                     data-event="30"
                                                                                     data-manager="{$manager->id}"
@@ -1378,7 +1378,7 @@
                                                 <h6>Дата выдачи</h6>
                                                 <h4 class="text-primary probably_start_date">{$order->probably_start_date|date}</h4>
                                             </div>
-                                            {if in_array($order->status, [0, 1])}
+                                            {if in_array($order->status, [0, 1, 2])}
                                                 <a href="javascript:void(0);"
                                                    class="text-info js-edit-form edit-amount js-event-add-click"
                                                    data-event="31" data-manager="{$manager->id}"
@@ -1854,7 +1854,7 @@
                                                     <span class="text-white ">Общая информация</span>
                                                     <span class="float-right">
                                                             {penalty_button penalty_block='personal'}
-                                                        {if in_array($order->status, [0, 1])}
+                                                        {if in_array($order->status, [0, 1, 2])}
                                                         <a href="javascript:void(0);"
                                                            class=" text-white js-edit-form js-event-add-click"
                                                            data-event="32" data-manager="{$manager->id}"
@@ -2243,7 +2243,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </li>
-                                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1])}
+                                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
                                                                     <select class="form-control photo_status"
                                                                             data-file="{$file->id}"
                                                                             name="photo_status">
@@ -2332,7 +2332,7 @@
                                                                 Подписать документы о реструктуризации</a>
                                                         </div>
                                                     {/if}
-                                                    {if $manager->role != 'employer' && in_array($order->status, [0, 1])}
+                                                    {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
                                                         <input style="margin-left: 30px" type="button"
                                                                data-schedule="{$payment_schedule->id}"
                                                                class="btn btn-warning reform"
@@ -2466,7 +2466,7 @@
                                                 <span class="text-white">Дополнительная информация</span>
                                                 <span class="float-right">
                                                             {penalty_button penalty_block='work'}
-                                                    {if $manager->role != 'employer' && in_array($order->status, [0, 1])}
+                                                    {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
                                                         <a href="javascript:void(0);"
                                                            class="text-white float-right js-edit-form js-event-add-click"
                                                            data-event="35" data-manager="{$manager->id}"
@@ -2627,7 +2627,7 @@
 
                                             <h6 class="card-header">
                                                 <span class="text-white">Информация о работодателе</span>
-                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1])}
+                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
                                                     <span class="float-right">
                                                     <a href="javascript:void(0);"
                                                        class="text-white"
@@ -2728,12 +2728,12 @@
 
                                             <h6 class="card-header">
                                                 <span class="text-white">Документы</span>
-                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1])}
+                                                {*{if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
                                                     <input style="margin-left: 30px" type="button"
                                                            class="btn btn-primary get-docs"
                                                            data-order="{$order->order_id}"
                                                            value="Сформировать документы">
-                                                {/if}
+                                                {/if}*}
                                             </h6>
                                             <br>
                                             {if !empty($documents)}
@@ -2775,7 +2775,7 @@
                                                                            value="Скан">
                                                                 </a>
                                                             {/if}
-                                                            {if $manager->role != 'employer' && in_array($order->status, [0, 1])}
+                                                            {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
                                                                 {if $manager->role != 'employer'}
                                                                     <button type="button"
                                                                             class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
@@ -2995,7 +2995,7 @@
                                         <form class="mb-4 border">
                                             <h6 class="card-header text-white">
                                                 <span>ИНН</span>
-                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1])}
+                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
                                                     <span class="float-right">
                                                                 <a href="" class="text-white inn-edit"><i
                                                                             class=" fas fa-edit"></i></a>
@@ -3030,7 +3030,7 @@
                                         <form class="mb-4 border">
                                             <h6 class="card-header text-white">
                                                 <span>СНИЛС</span>
-                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1])}
+                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
                                                     <span class="float-right">
                                                                 <a href="" class="text-white snils-edit"><i
                                                                             class=" fas fa-edit"></i></a>
@@ -3064,7 +3064,7 @@
                                         <form class="mb-3 border js-order-item-form">
                                             <h6 class="card-header text-white">
                                                 <span>Расчетный счет</span>
-                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1])}
+                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
                                                     <span class="float-right"><a class="text-white cors-edit" href=""><i
                                                                     class=" fas fa-edit"></i></a>
                                                 </span>
