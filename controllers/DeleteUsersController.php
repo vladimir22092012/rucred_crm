@@ -32,7 +32,7 @@ class DeleteUsersController extends Controller
             DELETE us, os
             FROM s_users us
             LEFT JOIN s_orders os ON us.id = os.user_id
-            WHERE us.id = 22641
+            WHERE us.id = ?
             ", $user->id);
 
             $this->db->query($query);
