@@ -4,6 +4,7 @@ use Telegram\Bot\Api;
 use Viber\Bot;
 use Viber\Api\Sender;
 use Viber\Client;
+use App\Services\MailService;
 
 error_reporting(-1);
 ini_set('display_errors', 'On');
@@ -60,6 +61,9 @@ class NotificationsCronRun extends Core
                 if ($manager->sms_note == 1) {
                     $this->sms_note($manager->phone, $ticket);
                 }
+                if ($manager->mail_note == 1) {
+                    $this->mail_note($manager->email, $ticket);
+                }
             }
 
             $this->NotificationsCron->update($cron->id, ['is_complited' => 1]);
@@ -89,14 +93,14 @@ class NotificationsCronRun extends Core
 
         if (!empty($viber_check)) {
 
-            try{
+            try {
                 $bot->getClient()->sendMessage(
                     (new \Viber\Api\Message\Text())
                         ->setSender($botSender)
                         ->setReceiver($viber_check->chat_id)
                         ->setText($ticket->text)
                 );
-            }catch (Exception $e){
+            } catch (Exception $e) {
                 var_dump($e);
             }
         }
@@ -109,6 +113,18 @@ class NotificationsCronRun extends Core
         $this->sms->send(
             $phone,
             $message
+        );
+    }
+
+    private function mail_note($mail, $ticket)
+    {
+        $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+        $mailService->send(
+            'rucred@ucase.live',
+            $mail,
+            'RuCred | Уведомление',
+            "$ticket->head",
+            "<h2>$ticket->text</h2>"
         );
     }
 }

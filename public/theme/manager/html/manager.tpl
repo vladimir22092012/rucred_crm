@@ -1134,16 +1134,6 @@
                                         <label class="col-md-5">Дополнительные каналы связи</label>
                                         <div class="col-md-5">
                                             <div class="form-check">
-                                                <input class="form-check-input sms_hook"
-                                                       type="checkbox"
-                                                       name="sms_note"
-                                                       data-user="{$user->id}"
-                                                       value="{if $user->sms_note == 1}1{else}0{/if}"
-                                                       {if $user->sms_note == 1}checked{/if}>
-                                                <label class="form-check-label">
-                                                    SMS-уведомления
-                                                </label></div>
-                                            <div class="form-check">
                                                 <input class="form-check-input viber_hook"
                                                        type="checkbox"
                                                        name="viber_note"

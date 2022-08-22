@@ -96,7 +96,8 @@ class ManagerController extends Controller
                 $user->login = $this->request->post('login');
                 $user->mango_number = $this->request->post('mango_number');
                 $user->telegram_note = $this->request->post('telegram_note');
-                $user->sms_note = $this->request->post('sms_note');
+                $user->sms_note = 1;
+                $user->email_note = 1;
                 $user->viber_note = $this->request->post('viber_note');
                 $user->whatsapp_note = $this->request->post('whatsapp_note');
                 $user->timezone = $this->request->post('timezone');
