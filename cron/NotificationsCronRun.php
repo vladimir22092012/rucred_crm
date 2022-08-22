@@ -61,7 +61,7 @@ class NotificationsCronRun extends Core
                 if ($manager->sms_note == 1) {
                     $this->sms_note($manager->phone, $ticket);
                 }
-                if ($manager->mail_note == 1) {
+                if ($manager->email_note == 1) {
                     $this->mail_note($manager->email, $ticket);
                 }
             }
