@@ -749,6 +749,9 @@
                 $('.code_asp').fadeIn();
                 $('.send_asp_code').text('Отправить смс повторно');
 
+                if(restruct == 1)
+                    $('.confirm_asp').attr('data_restruct', 1);
+
 
                 send_asp(phone, user, order, restruct);
             });
@@ -1812,21 +1815,6 @@
                                     {/if}
                                     {if $asp_restruct == 1 && $need_confirm_restruct == 0}
                                         <div style="display: flex;">
-                                            <input type="text" class="form-control code_asp"
-                                                   style="display:none"
-                                                   placeholder="SMS код"
-                                                   value="{if $is_developer}{$contract->accept_code}{/if}"/>
-                                            <small id="asp_success"
-                                                   style="display: none; color: #009d07">
-                                                Успешно!
-                                            </small>
-                                            <div class="btn btn-info confirm_asp" type="button"
-                                                 data-user="{$order->user_id}"
-                                                 data-order="{$order->order_id}"
-                                                 data-restruct="1"
-                                                 style="margin-left: 15px; display:none"
-                                                 data-phone="{$order->phone_mobile}">Подтвердить
-                                            </div>
                                             <div type="button" data-user="{$order->user_id}"
                                                  id="send_asp"
                                                  data-phone="{$order->phone_mobile}"
