@@ -35,6 +35,7 @@ class DeleteUsersController extends Controller
 
                 foreach ($users as $user){
                     $this->orders->delete_orders_by_user_id($user->id);
+                    $this->contracts->delete_contracts_by_user_id($user->id);
                     $this->users->delete_user($user->id);
                 }
 
