@@ -887,11 +887,11 @@ class OrderController extends Controller
                 'client_patronymic' => $order->patronymic,
                 'head' => $communication_theme->head,
                 'text' => $communication_theme->text,
-                'theme_id' => 12,
-                'company_id' => 3,
-                'group_id' => 2,
+                'theme_id' => $communication_theme->id,
+                'company_id' => $order->company_id,
+                'group_id' => $order->group_id,
                 'order_id' => $order_id,
-                'status' => 1
+                'status' => 0
             ];
 
         $ticket_id = $this->Tickets->add_ticket($ticket);
@@ -1052,7 +1052,7 @@ class OrderController extends Controller
                 'client_patronymic' => $order->patronymic,
                 'head' => $communication_theme->head,
                 'text' => $communication_theme->text,
-                'theme_id' => 17,
+                'theme_id' => $communication_theme->id,
                 'company_id' => 2,
                 'group_id' => $order->group_id,
                 'order_id' => $order_id,
@@ -3032,7 +3032,7 @@ class OrderController extends Controller
                 'client_patronymic' => $order->patronymic,
                 'head' => $communication_theme->head,
                 'text' => $communication_theme->text,
-                'theme_id' => 11,
+                'theme_id' => $communication_theme->id,
                 'company_id' => $order->company_id,
                 'group_id' => 2,
                 'order_id' => $order_id,
@@ -3088,7 +3088,7 @@ class OrderController extends Controller
                 'client_patronymic' => $order->patronymic,
                 'head' => $communication_theme->head,
                 'text' => $communication_theme->text,
-                'theme_id' => 11,
+                'theme_id' => $communication_theme->id,
                 'company_id' => $order->company_id,
                 'group_id' => 2,
                 'order_id' => $order_id,
@@ -4198,11 +4198,11 @@ class OrderController extends Controller
                 'client_patronymic' => $order->patronymic,
                 'head' => $communication_theme->head,
                 'text' => $communication_theme->text,
-                'theme_id' => 12,
+                'theme_id' => $communication_theme->id,
                 'company_id' => 3,
                 'group_id' => 2,
                 'order_id' => $order_id,
-                'status' => 1
+                'status' => 0
             ];
 
         $ticket_id = $this->Tickets->add_ticket($ticket);
