@@ -28,7 +28,7 @@ class DeleteUsersController extends Controller
 
             $users = $this->users->get_users_by_phone($phone);
 
-            if(!empty($users)){
+            if(empty($users)){
                 echo json_encode(['error' => 'Такого юзера нет']);
                 exit;
             }else{
