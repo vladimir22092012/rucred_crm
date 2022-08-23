@@ -168,4 +168,14 @@ class Tickets extends Core
 
         $this->db->query($query);
     }
+
+    public function delete_by_order($order_id)
+    {
+        $query = $this->db->placehold("
+        DELETE FROM s_tickets
+        WHERE order_id = ?
+        ", $order_id);
+
+        $this->db->query($query);
+    }
 }

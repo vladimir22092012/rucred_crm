@@ -34,9 +34,14 @@ class DeleteUsersController extends Controller
             }else{
 
                 foreach ($users as $user){
+                    $orders = $this->orders->get_orders(['user_id' => $user->id]);
                     $this->orders->delete_orders_by_user_id($user->id);
                     $this->contracts->delete_contracts_by_user_id($user->id);
                     $this->users->delete_user($user->id);
+
+                    foreach ($orders as $order){
+                        $this->tickets->delete_by_order($order->order_id);
+                    }
                 }
 
                 echo json_encode(['success' => 1]);
