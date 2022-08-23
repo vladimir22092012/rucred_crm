@@ -32,6 +32,9 @@ class CreatePayments extends Core
 
         $contracts = $this->contracts->get_contracts(['return_date_from' => $date_from, 'return_date_to' => $date_to]);
 
+        var_dump($contracts);
+        exit;
+
         if (!empty($contracts)) {
 
             $spreadsheet = new Spreadsheet();
