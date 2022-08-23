@@ -159,7 +159,7 @@
                 });
             });
 
-            $('.edit_password').click(function (e) {
+            $(document).on('click', '.edit_password', function (e) {
                 e.preventDefault();
 
                 $(this).hide();
@@ -173,38 +173,44 @@
                     $('.edit_password').show();
                     $('.show_password').show();
                 });
+            });
 
-                $('.accept_edit').click(function (e) {
-                    e.preventDefault();
+            $('.save_new_password').click(function (e) {
+                e.preventDefault();
 
-                    let user_id = $(this).attr('data-user');
-                    let old_password = $('input[class="form-control old_password"]').val();
-                    let new_password = $('input[class="form-control new_password"]').val();
-                    let new_password_confirmation = $('input[class="form-control new_password_confirmation"]').val();
+                let user_id = $(this).attr('data-user');
+                let old_password = $('input[class="form-control old_password"]').val();
+                let new_password = $('input[class="form-control new_password"]').val();
+                let new_password_confirmation = $('input[class="form-control new_password_confirmation"]').val();
 
-                    if (new_password === new_password_confirmation) {
-                        $.ajax({
-                            method: 'POST',
-                            data: {
-                                action: 'edit_password',
-                                user_id: user_id,
-                                old_password: old_password,
-                                new_password: new_password,
-                            },
-                            success: function (resp) {
-                                if (resp == 'error') {
-                                    Swal.fire({
-                                        title: 'Такой номер уже зарегистрирован',
-                                        confirmButtonText: 'ОК'
-                                    });
-                                }
-                                else {
-                                    location.reload();
-                                }
+                if (new_password === new_password_confirmation) {
+                    $.ajax({
+                        method: 'POST',
+                        dataType: 'JSON',
+                        data: {
+                            action: 'edit_password',
+                            user_id: user_id,
+                            old_password: old_password,
+                            new_password: new_password,
+                        },
+                        success: function (resp) {
+                            if (resp['error']) {
+                                Swal.fire({
+                                    title: 'Не верно введен старый пароль',
+                                    confirmButtonText: 'ОК'
+                                });
                             }
-                        })
-                    }
-                });
+                            else {
+                                location.reload();
+                            }
+                        }
+                    })
+                } else {
+                    Swal.fire({
+                        title: 'Не верно введен подтверждающий пароль',
+                        confirmButtonText: 'ОК'
+                    });
+                }
             });
 
             $('.js-block-button').click(function (e) {
@@ -389,7 +395,7 @@
                 if ($(this).is(':checked'))
                     flag = 1;
 
-                if($(this).hasClass('viber_hook'))
+                if ($(this).hasClass('viber_hook'))
                     action = 'viber_hook';
 
                 $.ajax({
@@ -401,11 +407,18 @@
                         flag: flag
                     },
                     success: function (resp) {
-                        if (resp['info']){
+                        if(action == 'telegram_hook'){
                             $('.confirm_telegram').fadeIn();
 
                             setTimeout(function () {
                                 $('.confirm_telegram').fadeOut();
+                            }, 5000)
+                        }
+                        if(action == 'viber_hook'){
+                            $('.confirm_viber').fadeIn();
+
+                            setTimeout(function () {
+                                $('.confirm_viber').fadeOut();
                             }, 5000)
                         }
                     }
@@ -453,7 +466,109 @@
                         location.reload();
                     }
                 })
-            })
+            });
+
+            $('.linkin_email').on('click', function () {
+                let email = $('input[name="email"]').val();
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'linkin_email',
+                        email: email
+                    },
+                    success: function () {
+                        $('.confirm_link_block').fadeIn('slow');
+                    }
+                });
+            });
+
+            $('.comfirm_link_email').on('click', function () {
+                let code = $('input[name="confirm_link_code"]').val();
+                let email = $('input[name="email"]').val();
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'confirm_linkin_email',
+                        code: code,
+                        email: email
+                    },
+                    success: function (resp) {
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: 'Неверный код',
+                                confirmButtonText: 'ОК'
+                            });
+                        } else {
+                            $('.linkin_email').fadeOut('slow');
+                            $('.confirm_link_block').fadeOut('slow');
+                            $('.email_confirmed').fadeIn('slow');
+                            $('input[name="email_linked"]').val(1);
+                        }
+                    }
+                });
+            });
+
+            $('.linkin_phone').on('click', function () {
+                let phone = $('input[name="phone"]').val();
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'linkin_phone',
+                        phone: phone
+                    },
+                    success: function () {
+                        $('.confirm_phone_block').fadeIn('slow');
+                    }
+                });
+            });
+
+            $('.confirm_link_phone').on('click', function () {
+                let code = $('.confirm_phone_code').val();
+                let phone = $('input[name="phone"]').val();
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'confirm_linkin_phone',
+                        code: code,
+                        phone: phone
+                    },
+                    success: function (resp) {
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: 'Неверный код',
+                                confirmButtonText: 'ОК'
+                            });
+                        } else {
+                            $('.linkin_phone').fadeOut('slow');
+                            $('.confirm_phone_block').fadeOut('slow');
+                            $('.phone_confirmed').fadeIn('slow');
+                            $('input[name="phone_linked"]').val(1);
+                        }
+                    }
+                });
+            });
+
+            $('.sms_hook').on('click', function () {
+                let value = $(this).val();
+                let user_id = $(this).attr('data-user');
+                value = (value == 0) ? 1 : 0;
+                $(this).val(value);
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'sms_note_flag',
+                        value: value,
+                        user_id: user_id
+                    }
+                })
+            });
         });
     </script>
     <script>
@@ -744,29 +859,9 @@
                                     {else}
                                         <div class="col-12">
                                             <h5 class="form-control-static">Логин
-                                                <a href="#" data-user="{$client->id}" class="text-info ">
-                                                    <i class="fas fa-edit edit_login"></i>
-                                                </a>
+                                                <a href="#" data-user="{$client->id}" class="text-info "></a>
                                             </h5>
                                             <div class="show_login">{$user->login}</div>
-                                        </div>
-                                        <div class="login_edit_form" style="display: none">
-                                            <div class="col-12">
-                                                <label>Новый логин</label>
-                                                <div>
-                                                    <input name="new_login" value="" class="form-control new_login">
-                                                </div>
-                                            </div>
-                                            <br>
-                                            <div class="col-12">
-                                                <input type="button"
-                                                       data-user="{$user->id}"
-                                                       class="btn btn-success save_login"
-                                                       value="Сохранить">
-                                                <input type="button"
-                                                       class="btn btn-danger cancel_login"
-                                                       value="Отмена">
-                                            </div>
                                         </div>
                                         <br>
                                     {/if}
@@ -784,9 +879,11 @@
                                         </div>
                                     {else}
                                         <div class="col-12">
-                                            <h5 class="form-control-static">Пароль <a href="#" data-user="{$client->id}"
-                                                                                      class="text-info edit_password"><i
-                                                            class="fas fa-edit"></i></a></h5>
+                                            <h5 class="form-control-static">Пароль
+                                                <a href="#" class="text-info edit_password">
+                                                    <i class="fas fa-edit" data-user="{$client->id}"></i>
+                                                </a>
+                                            </h5>
                                             <div class="show_password">*********</div>
                                             <br>
                                             <div class="password_edit_form" style="display: none">
@@ -817,11 +914,12 @@
                                                 <div>
                                                     <input type="button"
                                                            data-user="{$user->id}"
-                                                           class="btn btn-success accept_edit"
+                                                           class="btn btn-success save_new_password"
                                                            value="Сохранить">
                                                     <input type="button"
                                                            class="btn btn-danger cancel_edit"
                                                            value="Отмена">
+                                                    <br><br>
                                                 </div>
                                             </div>
                                         </div>
@@ -833,10 +931,10 @@
                                                 <select class="form-control groups" name="groups"
                                                         data-user="{$user->id}">
                                                     <option value="none" selected>Выберите из списка</option>
-                                                        {foreach $groups as $group}
-                                                            <option value="{$group->id}"
-                                                                    {if $user->group_id == $group->id}selected{/if}>{$group->name}</option>
-                                                        {/foreach}
+                                                    {foreach $groups as $group}
+                                                        <option value="{$group->id}"
+                                                                {if $user->group_id == $group->id}selected{/if}>{$group->name}</option>
+                                                    {/foreach}
                                                 </select>
                                             </div>
                                         </div>
@@ -861,9 +959,34 @@
                                     {if in_array($manager->role, ['admin', 'developer'])}
                                         <div class="form-group">
                                             <label class="col-md-5">Email</label>
-                                            <div class="col-md-12">
+                                            <div style="display: flex">
                                                 <input type="text" name="email" value="{$user->email|default: ""}"
-                                                       class="form-control">
+                                                       class="form-control"
+                                                       style="width: 500px; margin-left: 15px"
+                                                       placeholder="Например: test@mail.ru">
+                                                <input type="hidden" name="email_linked" value="">
+                                                <label style="margin: 10px 25px; height: 20px; {if empty($user->email_confirmed)}display: none{/if}"
+                                                       class="badge badge-success email_confirmed">Email
+                                                    подтвержден</label>
+                                                {if empty($user->email_confirmed)}
+                                                    <div class="btn btn-outline-primary linkin_email"
+                                                         style="margin-left: 15px">
+                                                        Привязать
+                                                    </div>
+                                                {/if}
+                                                <div class="input-group confirm_link_block"
+                                                     style="width: 400px; display: none">
+                                                    <input type="text" class="form-control"
+                                                           name="confirm_link_code"
+                                                           style="margin-left: 15px"
+                                                           placeholder="Введите код из email">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-primary comfirm_link_email"
+                                                                type="button" data-user="{$user->id}">
+                                                            Подтвердить
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     {else}
@@ -922,17 +1045,41 @@
                                     {if in_array($manager->role, ['admin', 'developer'])}
                                         <div class="form-group">
                                             <label class="col-md-5">Телефон</label>
-                                            <div class="col-md-12">
+                                            <div style="display: flex">
                                                 <input type="text" name="phone" value="{$user->phone|default: ""}"
-                                                       class="form-control form-control-line" autocomplete="off">
+                                                       class="form-control" autocomplete="off"
+                                                       style="width: 500px; margin-left: 15px"
+                                                       placeholder="Например: 71112223333">
+                                                <input type="hidden" name="phone_linked">
+                                                <label style="margin: 10px 25px; height: 20px; {if empty($user->phone_confirmed)}display: none{/if}"
+                                                       class="badge badge-success phone_confirmed">Телефон
+                                                    подтвержден</label>
+                                                {if empty($user->phone_confirmed)}
+                                                    <div class="btn btn-outline-primary linkin_phone"
+                                                         style="margin-left: 15px">
+                                                        Привязать
+                                                    </div>
+                                                {/if}
+                                                <div class="input-group confirm_phone_block"
+                                                     style="width: 400px; display: none">
+                                                    <input type="text" class="form-control confirm_phone_code"
+                                                           style="margin-left: 15px"
+                                                           placeholder="Введите код из смс">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-primary confirm_link_phone"
+                                                                type="button" data-user="{$user->id}">
+                                                            Подтвердить
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     {else}
                                         <div class="col-12">
                                             <h5 class="form-control-static">Телефон <a href="#"
                                                                                        data-user="{$client->id}"
-                                                                                       class="text-info edit_phone"><i
-                                                            class="fas fa-edit"></i></a></h5>
+                                                                                       class="text-info edit_phone"></a>
+                                            </h5>
                                             <div class="show_phone">{$user->phone|default: "Телефон не введён"}</div>
                                             <div class="phone_edit_form" style="display: none">
                                                 <div class="mb-3">
@@ -973,9 +1120,12 @@
                                         <label class="col-md-5">Часовой пояс</label><br>
                                         <select class="form-control"
                                                 name="timezone"
-                                                style="width: 200px; margin-left: 15px">
+                                                style="width: 200px; margin-left: 15px"
+                                                {if !in_array($manager->role, ['admin', 'developer '])}disabled{/if}>
                                             {for $i= -1 to 9}
-                                                <option value="{$i}" {if empty($user->timezone) && $i == 0}selected{elseif $i == $user->timezone}selected{/if}>МСК {if $i > 0}+ {/if} {if $i != 0}{$i}{/if}</option>
+                                                <option value="{$i}"
+                                                        {if empty($user->timezone) && $i == 0}selected{elseif $i == $user->timezone}selected{/if}>
+                                                    МСК {if $i > 0}+ {/if} {if $i != 0}{$i}{/if}</option>
                                             {/for}
                                         </select>
                                     </div>
@@ -983,12 +1133,6 @@
                                     <div class="form-group">
                                         <label class="col-md-5">Дополнительные каналы связи</label>
                                         <div class="col-md-5">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="sms_note"
-                                                       value="1" {if $user->sms_note == 1}checked{/if}>
-                                                <label class="form-check-label">
-                                                    SMS-уведомления
-                                                </label></div>
                                             <div class="form-check">
                                                 <input class="form-check-input viber_hook"
                                                        type="checkbox"
@@ -998,6 +1142,10 @@
                                                 <label class="form-check-label">
                                                     Viber
                                                 </label>
+                                                <small class="confirm_viber"
+                                                       style="margin-left: 20px; display: none; color: #aa0009">Вы еще
+                                                    не привязаны, вам отправлена ссылка на почту
+                                                </small>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input telegram_hook" type="checkbox"
@@ -1012,12 +1160,6 @@
                                                     не привязаны, вам отправлено смс с ссылкой
                                                 </small>
                                             </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="whatsapp_note"
-                                                       value="1" {if $user->whatsapp_note == 1}checked{/if}>
-                                                <label class="form-check-label">
-                                                    Whatsapp
-                                                </label></div>
                                         </div>
                                     </div>
                                     <div class="jsgrid-grid-body">
@@ -1030,7 +1172,9 @@
                                                 <th>Документ основание</th>
                                                 <th>Срок истечения полномочий</th>
                                                 <th>
-                                                    <div class="btn btn-outline-success add_credentials">+</div>
+                                                    {if in_array($manager->role, ['admin', 'developer '])}
+                                                        <div class="btn btn-outline-success add_credentials">+</div>
+                                                    {/if}
                                                 </th>
                                             </tr>
                                             </thead>
