@@ -1261,9 +1261,9 @@
                                 <div class="col-12 col-md-3 col-lg-3">
                                     <h5 class="form-control-static">Номер
                                         клиента: <span class="show_personal_number">{$client->personal_number}</span>
-                                        {if in_array($order->status, [0, 1, 2])}<a href="" data-user="{$client->id}"
+                                        {*<a href="" data-user="{$client->id}"
                                                                                 class="text-info edit_personal_number">
-                                                <i class="fas fa-edit"></i></a>{/if}
+                                                <i class="fas fa-edit"></i></a>*}
                                     </h5>
                                     <input type="text" class="form-control number_edit_form number"
                                            style="width: 80px; display: none"
@@ -1316,13 +1316,13 @@
                                             <h4>
                                                 <span class="phone_mobile_format">{$order->phone_mobile}</span>
                                             </h4>
-                                            {if in_array($order->status, [0, 1, 2])}<a href="javascript:void(0);"
+                                            {*<a href="javascript:void(0);"
                                                                                     class="text-info js-edit-form edit-amount js-event-add-click"
                                                                                     data-event="30"
                                                                                     data-manager="{$manager->id}"
                                                                                     data-order="{$order->order_id}"
                                                                                     data-user="{$order->user_id}"><i
-                                                        class=" fas fa-edit"></i></a>{/if}
+                                                        class=" fas fa-edit"></i></a>*}
                                         </div>
 
                                         <div class="edit-block hide">
@@ -1378,14 +1378,14 @@
                                                 <h6>Дата выдачи</h6>
                                                 <h4 class="text-primary probably_start_date">{$order->probably_start_date|date}</h4>
                                             </div>
-                                            {if in_array($order->status, [0, 1, 2])}
+                                            {*
                                                 <a href="javascript:void(0);"
                                                    class="text-info js-edit-form edit-amount js-event-add-click"
                                                    data-event="31" data-manager="{$manager->id}"
                                                    data-order="{$order->order_id}" data-user="{$order->user_id}"><i
                                                             class=" fas fa-edit"></i></a>
                                                 </h4>
-                                            {/if}
+                                            *}
                                         </div>
 
                                         <div class="row edit-block hide">
@@ -1854,13 +1854,13 @@
                                                     <span class="text-white ">Общая информация</span>
                                                     <span class="float-right">
                                                             {penalty_button penalty_block='personal'}
-                                                        {if in_array($order->status, [0, 1, 2])}
+                                                        {*
                                                         <a href="javascript:void(0);"
                                                            class=" text-white js-edit-form js-event-add-click"
                                                            data-event="32" data-manager="{$manager->id}"
                                                            data-order="{$order->order_id}"
                                                            data-user="{$order->user_id}"><i
-                                                                    class=" fas fa-edit"></i></a>{/if}
+                                                                    class=" fas fa-edit"></i></a>*}
                                                         </span>
                                                 </h6>
 
@@ -2184,7 +2184,7 @@
                                                                              alt="" class="img-responsive" style=""/>
                                                                     </a>
                                                                     <div class="order-image-actions"
-                                                                         {if !in_array($order->status, [0, 1, 12, 14, 15]) || $file->type == 'document'}style="display: none"{/if}>
+                                                                         {if !in_array($order->status, [0, 1, 2]) || $file->type == 'document'}style="display: none"{/if}>
                                                                         <div class="dropdown mr-1 show ">
                                                                             <button type="button"
                                                                                     class="btn {if $file->status==2}btn-success{elseif $file->status==3}btn-danger{else}btn-secondary{/if} dropdown-toggle"
@@ -2332,12 +2332,12 @@
                                                                 Подписать документы о реструктуризации</a>
                                                         </div>
                                                     {/if}
-                                                    {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
+                                                    {*
                                                         <input style="margin-left: 30px" type="button"
                                                                data-schedule="{$payment_schedule->id}"
                                                                class="btn btn-warning reform"
                                                                value="Редактировать">
-                                                    {/if}
+                                                    *}
                                                     {if $order->status != 5}
                                                         <input style="margin-left: 30px; display: none" type="button"
                                                                class="btn btn-primary accept_changes"
@@ -2466,14 +2466,14 @@
                                                 <span class="text-white">Дополнительная информация</span>
                                                 <span class="float-right">
                                                             {penalty_button penalty_block='work'}
-                                                    {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
+                                                    {*
                                                         <a href="javascript:void(0);"
                                                            class="text-white float-right js-edit-form js-event-add-click"
                                                            data-event="35" data-manager="{$manager->id}"
                                                            data-order="{$order->order_id}"
                                                            data-user="{$order->user_id}"><i
                                                                     class=" fas fa-edit"></i></a>
-                                                    {/if}
+                                                    *}
                                                 </span>
                                             </h6>
 
@@ -2627,14 +2627,14 @@
 
                                             <h6 class="card-header">
                                                 <span class="text-white">Информация о работодателе</span>
-                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
+                                                {*
                                                     <span class="float-right">
                                                     <a href="javascript:void(0);"
                                                        class="text-white"
                                                        data-user="{$order->user_id}">
                                                         <i class="fas fa-eraser"></i></a>
                                                         </span>
-                                                {/if}
+                                                *}
                                             </h6>
 
                                             <div class="row m-0 pt-2 view-block">
@@ -2995,12 +2995,12 @@
                                         <form class="mb-4 border">
                                             <h6 class="card-header text-white">
                                                 <span>ИНН</span>
-                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
+                                                {*
                                                     <span class="float-right">
                                                                 <a href="" class="text-white inn-edit"><i
                                                                             class=" fas fa-edit"></i></a>
                                                 </span>
-                                                {/if}
+                                                *}
                                             </h6>
                                             <div class="row view-block p-2 inn-front">
                                                 <div class="col-md-12">
@@ -3030,12 +3030,12 @@
                                         <form class="mb-4 border">
                                             <h6 class="card-header text-white">
                                                 <span>СНИЛС</span>
-                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
+                                                {*
                                                     <span class="float-right">
                                                                 <a href="" class="text-white snils-edit"><i
                                                                             class=" fas fa-edit"></i></a>
                                                 </span>
-                                                {/if}
+                                               *}
                                             </h6>
                                             <div class="row view-block p-2 snils-front">
                                                 <div class="col-md-12">
@@ -3064,11 +3064,11 @@
                                         <form class="mb-3 border js-order-item-form">
                                             <h6 class="card-header text-white">
                                                 <span>Расчетный счет</span>
-                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
+                                                {*
                                                     <span class="float-right"><a class="text-white cors-edit" href=""><i
                                                                     class=" fas fa-edit"></i></a>
                                                 </span>
-                                                {/if}
+                                                *}
                                             </h6>
                                             {if $same_holder == 1}
                                                 <input type="hidden" name="action" value="cors_change"/>
