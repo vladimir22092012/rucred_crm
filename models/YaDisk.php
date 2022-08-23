@@ -2,25 +2,25 @@
 
 class YaDisk extends Core
 {
-    protected $token;
     protected $disk;
-    protected $root_dir;
 
     public function __construct()
     {
         parent::__construct();
-        $this->token = 'AQAAAABcOalaAADLWxIYdswB4kYFjIrgW6xGURU';
-        $this->disk = new Arhitector\Yandex\Disk($this->token);
-        $this->root_dir = '/home/rucred-crm/rucred-crm/';
+        $this->disk = new Arhitector\Yandex\Disk($this->config->__get('yadisk_token'));
     }
 
     public function upload_orders_files($order_id, $upload_scans, $pak = false)
     {
+
+        $filter = array();
+        $filter['order_id'] = $order_id;
+
         if ($pak) {
             if ($pak == 'first')
-                $pak = ['first_pak' => 1];
+                $filter['first_pak'] = 1;
             else
-                $pak = ['second_pak' => 1];
+                $filter['second_pak'] = 1;
         }
 
         $order = $this->orders->get_order($order_id);
@@ -35,7 +35,7 @@ class YaDisk extends Core
         if ($upload_scans == 1) {
             $upload_files = $this->Scans->get_scans_by_order_id($order_id, $pak);
         } else {
-            $upload_files = $this->Documents->get_documents(['order_id' => $order_id, $pak]);
+            $upload_files = $this->Documents->get_documents($filter);
         }
 
         foreach ($upload_files as $document) {
@@ -68,7 +68,6 @@ class YaDisk extends Core
                     $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/');
                     $resource->create();
                 } catch (Exception $e) {
-
                 }
 
                 try {
@@ -290,15 +289,19 @@ class YaDisk extends Core
     {
 
         if ($upload_scans == 1)
-            $resource->upload($this->root_dir . 'files/users/' . $order->user_id . '/' . $document->name, true);
+            $resource->upload($this->config->__get('root_dir') . '/files/users/' . $order->user_id . '/' . $document->name, true);
         else {
 
             foreach ($document->params as $param_name => $param_value) {
                 $this->design->assign($param_name, $param_value);
             }
 
-            $settlement = $this->OrganisationSettlements->get_settlement($document->params->settlement_id);
+            $order = $this->orders->get_order($document->params->order_id);
+            $this->design->assign('created_date', $order->date);
 
+
+
+            $settlement = $this->OrganisationSettlements->get_settlement($document->params->settlement_id);
             $order = $this->orders->get_order($document->params->order_id);
             $contracts = $this->contracts->get_contracts(['order_id' => $document->params->order_id]);
             $group = $this->groups->get_group($order->group_id);
@@ -316,6 +319,7 @@ class YaDisk extends Core
             $uid = "$group->number$company->number $loantype->number $order->personal_number $count_contracts";
             $this->design->assign('uid', $uid);
 
+
             $this->design->assign('settlement', $settlement);
 
             $regadress = $this->Addresses->get_address($document->params->regaddress_id);
@@ -331,17 +335,20 @@ class YaDisk extends Core
             $company = $this->Companies->get_company($document->params->company_id);
             $this->design->assign('company', $company);
 
-            if (!empty($document->asp_id)) {
+            if(!empty($document->asp_id)){
                 $code_asp = $this->AspCodes->get_code(['id' => $document->asp_id]);
                 $this->design->assign('code_asp', $code_asp);
+
+                $rucred_asp = $this->AspCodes->get_code(['type' => 'rucred_sms', 'order_id' => $document->params->order_id]);
+                $this->design->assign('rucred_asp', $rucred_asp);
             }
 
             $loan_id = $document->params->loan_type;
             $loan = $this->Loantypes->get_loantype($loan_id);
             $this->design->assign('loan', $loan);
 
-            $start_date = new DateTime(date('Y-m-d', strtotime($document->params->probably_start_date)));
-            $end_date = new DateTime(date('Y-m-10', strtotime($document->params->probably_return_date)));
+            $start_date = new DateTime(date('Y-m-d', strtotime($order->probably_start_date)));
+            $end_date = new DateTime(date('Y-m-10', strtotime($order->probably_return_date)));
 
             $period = date_diff($start_date, $end_date)->days;
 
@@ -385,7 +392,7 @@ class YaDisk extends Core
             $all_percents_string = explode('.', $payment_schedule['result']['all_loan_percents_pay']);
             $all_percents_string_part_one = $this->num2str($all_percents_string[0]);
 
-            $all_percents_string_part_two = substr($all_percents_string[1], 0, 2);
+            $all_percents_string_part_two = str_pad($all_percents_string[1], '2', '0', STR_PAD_RIGHT);
             $this->design->assign('all_percents_string_part_two', $all_percents_string_part_two);
 
             $percents_per_day_str = explode('.', $document->params->percent);
@@ -461,8 +468,14 @@ class YaDisk extends Core
 
             $tpl = $this->design->fetch('pdf/' . $document->template);
             $this->pdf->create($tpl, $document->name, $document->template, $download = false, $file_name);
-            $resource->upload($this->root_dir . 'files/users/' . $file_name . '.pdf', true);
-            unlink($this->root_dir. 'files/users/' . $file_name . '.pdf');
+
+            try{
+                $resource->upload($this->config->__get('root_dir') . '/files/users/' . $file_name . '.pdf', true);
+            }catch (Exception $e){
+
+            }
+
+            unlink($this->config->__get('root_dir'). '/files/users/' . $file_name . '.pdf');
         }
     }
 

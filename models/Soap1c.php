@@ -2,6 +2,10 @@
 ini_set("soap.wsdl_cache_enabled", 0);
 ini_set('default_socket_timeout', '300');
 
+error_reporting(-1);
+ini_set('display_errors', 'Off');
+date_default_timezone_set('Europe/Moscow');
+
 class Soap1c extends Core
 {
     private $log = 1;
@@ -171,7 +175,7 @@ class Soap1c extends Core
 
         $result = $this->send_request('CRM_WebService', 'PaymentArray', $item);
 
-        return empty($result->return) ? [] : json_decode($result->return);
+        return $result;
     }
 
     /**

@@ -26,7 +26,7 @@ class ArchiveTicketsCron extends Core
             $ticket_created = new DateTime($created);
             $archive = 0;
 
-            if ($ticket_created > $now && date_diff($now, $ticket_created)->days >= 2) {
+            if ($ticket_created < $now && date_diff($now, $ticket_created)->days >= 2) {
                 $need_response = $this->CommunicationsThemes->get($ticket->theme_id);
 
                 if (empty($need_response)) {
@@ -37,7 +37,7 @@ class ArchiveTicketsCron extends Core
                     }
                 }
 
-                if ($need_response == 1 && $ticket->status == 4) {
+                if ($need_response->need_response == 1 && $ticket->status == 4) {
                     $archive = 1;
                 }
 

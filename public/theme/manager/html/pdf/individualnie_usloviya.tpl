@@ -40,7 +40,7 @@
         </td>
         <td style="width: 36%;" align="center">
             <div>Полная стоимость микрозайма в валюте микрозайма
-                <strong>{$payment_schedule['result']['all_loan_percents_pay']|number_format:0:',':' '}</strong>
+                <strong>{$all_percents_string[0]|number_format:0:',':' '}</strong>
                 (<strong>{$all_percents_string_part_one|upper}</strong>)
                 рублей
                 <strong>{if $all_percents_string_part_two}{$all_percents_string_part_two}{else}00{/if}</strong>
@@ -67,7 +67,7 @@
     29.09.2021 года, именуемое в
     дальнейшем «Заимодавец», в лице Генерального директора Лоскутова Алексея Викторовича, действующего на основании
     Устава, с одной стороны и гражданин (-ка) Российской
-    Федерации <strong>{$lastname|upper} {$firstname|upper} {$patronymic|upper} {$birth}</strong> года рождения, место
+    Федерации <strong>{$lastname|upper} {$firstname|upper} {$patronymic|upper} {$birth|date_format:'%d.%m.%Y'}</strong> года рождения, место
     рождения <strong>{$birth_place|upper}</strong>, паспорт
     серия <strong>{$passport_serial} № {$passport_number} выдан {$passport_issued} {$passport_date|date}</strong> года,
     код
@@ -804,7 +804,7 @@
                 ставка по микрозайму в день: <strong>{$percent|number_format:3:',':' '}%
                     ({$percents_per_day_str_part_one|upper} {if $percents_per_day_str_part_two|upper} ЦЕЛЫХ И {$percents_per_day_str_part_two|upper} СОТЫХ ПРОЦЕНТА{/if})</strong><br>(04) Полная
                 стоимость микрозайма в валюте
-                микрозайма: <br><strong>{$payment_schedule['result']['all_loan_percents_pay']|number_format:0:',':' '}</strong>
+                микрозайма: <br><strong>{$all_percents_string[0]|number_format:0:',':' '}</strong>
                 (<strong>{$all_percents_string_part_one|upper}</strong>)
                 рублей
                 <strong>{if $all_percents_string_part_two}{$all_percents_string_part_two}{else}00{/if}</strong>
@@ -814,7 +814,7 @@
                     ({$percents_per_year|upper} {if $second_part_percents|upper} ЦЕЛЫХ И {$second_part_percents|upper} ТЫСЯЧНЫХ ПРОЦЕНТОВ{/if})</strong>
                 годовых<br>(06) Общая сумма процентов за период пользования
                 микрозаймом:
-                <br><strong>{$payment_schedule['result']['all_loan_percents_pay']|number_format:0:',':' '}</strong>
+                <br><strong>{$all_percents_string[0]|number_format:0:',':' '}</strong>
                 (<strong>{$all_percents_string_part_one|upper}</strong>)
                 рублей
                 <strong>{if $all_percents_string_part_two}{$all_percents_string_part_two}{else}00{/if}</strong>

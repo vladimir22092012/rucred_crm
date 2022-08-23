@@ -1,5 +1,9 @@
 <?php
 
+use Telegram\Bot\Api;
+use Viber\Bot;
+use Viber\Api\Sender;
+use Viber\Client;
 use App\Services\MailService;
 use App\Services\Encryption;
 
@@ -26,6 +30,14 @@ class OrderController extends Controller
 
                 case 'reject_by_employer':
                     $this->action_reject_by_employer();
+                    break;
+
+                case 'question_by_employer':
+                    $this->action_question_by_employer();
+                    break;
+
+                case 'accept_approve_by_under':
+                    $this->action_accept_approve_by_under();
                     break;
 
                 case 'change_photo_status':
@@ -828,17 +840,6 @@ class OrderController extends Controller
 
         $loan = $this->Loantypes->get_loantype($order->loan_type);
 
-        $query = $this->db->placehold("
-        SELECT `type`
-        FROM s_scans
-        WHERE user_id = ?
-        AND order_id = ?
-        AND `type` != 'ndfl'
-        ", (int)$order->user_id, (int)$order->order_id);
-
-        $this->db->query($query);
-        $scans = $this->db->results();
-
         $users_docs = $this->Documents->get_documents(['order_id' => $order_id]);
 
         if (empty($users_docs)){
@@ -874,7 +875,8 @@ class OrderController extends Controller
         ));
 
         $this->contracts->update_contract($order->contract_id, ['status' => 1]);
-        $communication_theme = $this->CommunicationsThemes->get(12);
+
+        $communication_theme = $this->CommunicationsThemes->get(8);
 
         $ticket =
             [
@@ -885,11 +887,11 @@ class OrderController extends Controller
                 'client_patronymic' => $order->patronymic,
                 'head' => $communication_theme->head,
                 'text' => $communication_theme->text,
-                'theme_id' => 12,
-                'company_id' => 3,
-                'group_id' => 2,
+                'theme_id' => $communication_theme->id,
+                'company_id' => $order->company_id,
+                'group_id' => $order->group_id,
                 'order_id' => $order_id,
-                'status' => 1
+                'status' => 0
             ];
 
         $ticket_id = $this->Tickets->add_ticket($ticket);
@@ -900,6 +902,14 @@ class OrderController extends Controller
                 'manager_id' => $this->manager->id,
             ];
         $this->TicketMessages->add_message($message);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
 
         $scoring_types = $this->scorings->get_types();
         foreach ($scoring_types as $scoring_type) {
@@ -912,6 +922,65 @@ class OrderController extends Controller
                     'start_date' => date('Y-m-d H:i:s'),
                 );
                 $this->scorings->add_scoring($add_scoring);
+            }
+        }
+
+        $user_preferred = $this->UserContactPreferred->get($order->user_id);
+
+        if (!empty($user_preferred)) {
+            $template = $this->sms->get_template(7);
+
+            foreach ($user_preferred as $preferred) {
+                switch ($preferred->contact_type_id):
+
+                    case 1:
+                        $message = $template->template;
+                        $this->sms->send(
+                            $order->phone_mobile,
+                            $message
+                        );
+                        break;
+
+                    case 2:
+                        $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+                        $mailService->send(
+                            'rucred@ucase.live',
+                            $order->email,
+                            'RuCred | Уведомление',
+                            "$template->template",
+                            "<h2>$template->template</h2>"
+                        );
+                        break;
+
+                    case 3:
+                        $telegram = new Api($this->config->telegram_token);
+                        $telegram_check = $this->TelegramUsers->get($order->user_id, 0);
+
+                        if (!empty($telegram_check)) {
+                            $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $template->template]);
+                        }
+                        break;
+
+                    case 4:
+                        $bot = new Bot(['token' => $this->config->viber_token]);
+
+                        $botSender = new Sender([
+                            'name' => 'Whois bot',
+                            'avatar' => 'https://developers.viber.com/img/favicon.ico',
+                        ]);
+                        $viber_check = $this->ViberUsers->get($order->user_id, 0);
+
+                        if (!empty($viber_check)) {
+                            $bot->getClient()->sendMessage(
+                                (new \Viber\Api\Message\Text())
+                                    ->setSender($botSender)
+                                    ->setReceiver($viber_check->chat_id)
+                                    ->setText($template->template)
+                            );
+                        }
+                        break;
+
+                endswitch;
             }
         }
 
@@ -983,7 +1052,7 @@ class OrderController extends Controller
                 'client_patronymic' => $order->patronymic,
                 'head' => $communication_theme->head,
                 'text' => $communication_theme->text,
-                'theme_id' => 17,
+                'theme_id' => $communication_theme->id,
                 'company_id' => 2,
                 'group_id' => $order->group_id,
                 'order_id' => $order_id,
@@ -1053,7 +1122,9 @@ class OrderController extends Controller
                     'manager_id' => $this->manager->id
                 ];
 
-            $this->AspCodes->add_code($asp_log);
+            $asp_id = $this->AspCodes->add_code($asp_log);
+
+            $this->documents->update_asp(['order_id' => $order_id, 'rucred_asp_id' => $asp_id, 'second_pak' => 1]);
 
             $asp_id = $this->AspCodes->get_code(['order_id' => $order_id, 'type' => 'sms']);
             $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id->id, 'second_pak' => 1]);
@@ -1066,20 +1137,7 @@ class OrderController extends Controller
 
             $this->YaDiskCron->add($cron);
 
-            $template = $this->sms->get_template(8);
-            $message = $template->template;
-            $this->sms->send(
-                $order->phone_mobile,
-                $message
-            );
-
-            $cron =
-                [
-                    'ticket_id' => $ticket_id,
-                    'is_complited' => 0
-                ];
-
-            $this->NotificationsCron->add($cron);
+            $this->tickets->update_by_theme_id(12, ['status' => 4], $order_id);
 
             return ['success' => 1];
         } else {
@@ -2974,7 +3032,7 @@ class OrderController extends Controller
                 'client_patronymic' => $order->patronymic,
                 'head' => $communication_theme->head,
                 'text' => $communication_theme->text,
-                'theme_id' => 11,
+                'theme_id' => $communication_theme->id,
                 'company_id' => $order->company_id,
                 'group_id' => 2,
                 'order_id' => $order_id,
@@ -2983,6 +3041,15 @@ class OrderController extends Controller
 
         $ticket_id = $this->Tickets->add_ticket($ticket);
 
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+
+        $this->TicketMessages->add_message($message);
+
         $cron =
             [
                 'ticket_id' => $ticket_id,
@@ -2990,6 +3057,7 @@ class OrderController extends Controller
             ];
 
         $this->NotificationsCron->add($cron);
+        $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
 
         exit;
     }
@@ -2998,6 +3066,53 @@ class OrderController extends Controller
     {
         $order_id = (int)$this->request->post('order_id');
         $this->orders->update_order($order_id, ['status' => 15]);
+        $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
+        exit;
+    }
+
+    private function action_question_by_employer()
+    {
+        $order_id = (int)$this->request->post('order_id');
+        $order = $this->orders->get_order($order_id);
+        $this->orders->update_order($order_id, ['status' => 13]);
+        $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
+
+        $communication_theme = $this->CommunicationsThemes->get(11);
+
+        $ticket =
+            [
+                'creator' => $this->manager->id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => $communication_theme->id,
+                'company_id' => $order->company_id,
+                'group_id' => 2,
+                'order_id' => $order_id,
+                'status' => 0
+            ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+
+        $this->TicketMessages->add_message($message);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
         exit;
     }
 
@@ -3786,7 +3901,7 @@ class OrderController extends Controller
                     ];
 
                 $contract_id = $this->Contracts->add_contract($contract);
-                $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
+                $this->orders->update_order($order->order_id, ['contract_id' => $contract_id, 'status' => 2]);
             }
 
             echo json_encode(['success' => 1]);
@@ -3844,19 +3959,14 @@ class OrderController extends Controller
 
         $this->YaDiskCron->add($cron);
 
-        $send_payment = $this->Soap1c->send_payment($payment);
+        $this->Soap1c->send_payment($payment);
 
+        /*
         if (!isset($send_payment->return) || $send_payment->return != 'ОК') {
             echo json_encode(['error' => $send_payment]);
             exit;
         }
-
-        $template = $this->sms->get_template(8);
-        $message = $template->template;
-        $this->sms->send(
-            $order->phone_mobile,
-            $message
-        );
+        */
 
         $asp_log =
             [
@@ -3868,36 +3978,9 @@ class OrderController extends Controller
                 'manager_id' => $this->manager->id
             ];
 
-        $this->AspCodes->add_code($asp_log);
+        $asp_id = $this->AspCodes->add_code($asp_log);
 
-        $communication_theme = $this->CommunicationsThemes->get(17);
-
-
-        $ticket = [
-            'creator' => $this->manager->id,
-            'creator_company' => 2,
-            'client_lastname' => $order->lastname,
-            'client_firstname' => $order->firstname,
-            'client_patronymic' => $order->patronymic,
-            'head' => $communication_theme->head,
-            'text' => $communication_theme->text,
-            'theme_id' => 17,
-            'company_id' => 2,
-            'group_id' => $order->group_id,
-            'order_id' => $order_id,
-            'status' => 0
-        ];
-
-        $ticket_id = $this->Tickets->add_ticket($ticket);
-
-        $message =
-            [
-                'message' => $communication_theme->text,
-                'ticket_id' => $ticket_id,
-                'manager_id' => $this->manager->id,
-            ];
-
-        $this->TicketMessages->add_message($message);
+        $this->documents->update_asp(['order_id' => $order_id, 'rucred_asp_id' => $asp_id, 'second_pak' => 1]);
 
         $this->design->assign('order', $order);
         $documents = $this->documents->get_documents(['order_id' => $order->order_id]);
@@ -3912,8 +3995,8 @@ class OrderController extends Controller
             }
         }
 
-        $individ_encrypt = $this->config->back_url . '/online_docs/' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['INDIVIDUALNIE_USLOVIA'] . ' ' . rand(1, 9999999999));
-        $graphic_encrypt = $this->config->back_url . '/online_docs/' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['GRAFIK_OBSL_MKR'] . ' ' . rand(1, 9999999999));
+        $individ_encrypt = $this->config->back_url . '/online_docs?id=' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['INDIVIDUALNIE_USLOVIA'] . ' ' . rand(1, 9999999999));
+        $graphic_encrypt = $this->config->back_url . '/online_docs?id=' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['GRAFIK_OBSL_MKR'] . ' ' . rand(1, 9999999999));
 
         $this->design->assign('individ_encrypt', $individ_encrypt);
         $this->design->assign('graphic_encrypt', $graphic_encrypt);
@@ -3952,21 +4035,7 @@ class OrderController extends Controller
             ];
 
         $this->YaDiskCron->add($cron);
-
-        $template = $this->sms->get_template(8);
-        $message = $template->template;
-        $this->sms->send(
-            $order->phone_mobile,
-            $message
-        );
-
-        $cron =
-            [
-                'ticket_id' => $ticket_id,
-                'is_complited' => 0
-            ];
-
-        $this->NotificationsCron->add($cron);
+        $this->tickets->update_by_theme_id(12, ['status' => 4], $order_id);
 
         echo json_encode(['success' => 1]);
         exit;
@@ -4067,13 +4136,58 @@ class OrderController extends Controller
     private function action_accept_online_order()
     {
         $order_id = $this->request->post('order_id');
-        $manager_id = $this->request->post('manager_id');
 
-        $this->orders->update_order($order_id, ['status' => 1]);
+        $users_docs = $this->Documents->get_documents(['order_id' => $order_id]);
 
         $order = $this->orders->get_order($order_id);
 
-        $communication_theme = $this->CommunicationsThemes->get(8);
+        $this->db->query("
+        SELECT *
+        FROM s_files
+        WHERE user_id = ?
+        ", $order->user_id);
+
+        $photos = $this->db->results();
+        $count_photos = 0;
+        $count_approved_photos = 0;
+
+        foreach ($photos as $photo) {
+            if (in_array($photo->type, ['Паспорт: разворот', 'Паспорт: регистрация', 'Селфи с паспортом'])) {
+                $count_photos++;
+
+                if ($photo->status != 0)
+                    $count_approved_photos++;
+            }
+        }
+
+        if ($count_photos < 3) {
+            echo json_encode(['error' => 'Не забудьте добавить фото документов и селфи с паспортом!']);
+            exit;
+        }
+
+        if (empty($users_docs)) {
+            echo json_encode(['error' => 'Не сформированы документы!']);
+            exit;
+        }
+        if ($count_approved_photos < 3) {
+            echo json_encode(['error' => 'Не забудьте подтвердить фото клиента!']);
+            exit;
+        }
+
+        $this->orders->update_order($order_id, ['status' => 2]);
+        $this->tickets->update_by_theme_id(18, ['status' => 4], $order_id);
+
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_accept_approve_by_under()
+    {
+        $order_id = $this->request->post('order_id');
+        $manager_id = $this->request->post('manager_id');
+        $order = $this->orders->get_order($order_id);
+
+        $communication_theme = $this->CommunicationsThemes->get(12);
 
         $ticket =
             [
@@ -4084,9 +4198,9 @@ class OrderController extends Controller
                 'client_patronymic' => $order->patronymic,
                 'head' => $communication_theme->head,
                 'text' => $communication_theme->text,
-                'theme_id' => 8,
-                'company_id' => $order->company_id,
-                'group_id' => $order->group_id,
+                'theme_id' => $communication_theme->id,
+                'company_id' => 3,
+                'group_id' => 2,
                 'order_id' => $order_id,
                 'status' => 0
             ];
@@ -4108,12 +4222,8 @@ class OrderController extends Controller
 
         $this->NotificationsCron->add($cron);
 
-        $template = $this->sms->get_template(7);
-        $message = $template->template;
-        $this->sms->send(
-            $order->phone_mobile,
-            $message
-        );
+        $this->orders->update_order($order_id, ['status' => 10]);
+        $this->tickets->update_by_theme_id(11, ['status' => 4], $order_id);
         exit;
     }
 

@@ -211,14 +211,14 @@
                                             {if $code->type == 'rucred_sms'}
                                                 <td class="user_id" id="{$code->user->id}">
                                                     <a target="_blank"
-                                                       href="{$config->back_url}manager/{$code->manager->id}">
+                                                       href="{$config->back_url}/manager/{$code->manager->id}">
                                                         {$code->manager->name}
                                                     </a>
                                                 </td>
                                             {else}
                                                 <td class="user_id" id="{$code->user->id}">
                                                     <a target="_blank"
-                                                       href="{$config->back_url}client/{$code->user->id}">
+                                                       href="{$config->back_url}/client/{$code->user->id}">
                                                         {$code->user->lastname} {$code->user->firstname} {$code->user->patronymic}
                                                     </a>
                                                 </td>

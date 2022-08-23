@@ -1,7 +1,7 @@
 <?php
 
 error_reporting(-1);
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'On');
 
 use App\Services\Encryption;
 
@@ -10,6 +10,7 @@ class OnlineDocsController extends Controller
     public function fetch()
     {
         $link = Encryption::decryption($this->request->get('id'));
+
         $link = explode(' ', $link);
         $id = $link[1];
         $document = $this->documents->get_document($id);
@@ -18,11 +19,28 @@ class OnlineDocsController extends Controller
             $this->design->assign($param_name, $param_value);
         }
 
+        $order = $this->orders->get_order($document->params->order_id);
+        $this->design->assign('created_date', $order->date);
+
+
         $settlement = $this->OrganisationSettlements->get_settlement($document->params->settlement_id);
         $order = $this->orders->get_order($document->params->order_id);
         $contracts = $this->contracts->get_contracts(['order_id' => $document->params->order_id]);
-        $group = $this->groups->get_group($order->group_id);
-        $company = $this->companies->get_company($order->company_id);
+        //заглушка для документов с неполными данными
+        $isPlug = false;
+        try {
+            $group = $this->groups->get_group($order->group_id);
+        } catch (\Throwable $th) {
+            $group = '00'; //заглушка, нигде не отображается в реальных документах
+            $isPlug = true;
+        }
+
+        try {
+            $company = $this->companies->get_company($order->company_id);
+        } catch (\Throwable $th) {
+            $company = '00'; //заглушка, нигде не отображается в реальных документах
+            $isPlug = true;
+        }
 
         if (!empty($contracts)) {
             $count_contracts = count($contracts);
@@ -33,7 +51,12 @@ class OnlineDocsController extends Controller
 
         $loantype = $this->Loantypes->get_loantype($order->loan_type);
 
-        $uid = "$group->number$company->number $loantype->number $order->personal_number $count_contracts";
+        if ($isPlug) {
+            $uid = "0";
+        } else {
+            $uid = "$group->number$company->number $loantype->number $order->personal_number $count_contracts";
+        }
+
         $this->design->assign('uid', $uid);
 
 
@@ -49,26 +72,56 @@ class OnlineDocsController extends Controller
         $requisite = end($requisite);
         $this->design->assign('requisite', $requisite);
 
-        $company = $this->Companies->get_company($document->params->company_id);
+        if (is_null($document->params->company_id)) {
+            $company = "0";
+        } else {
+            $company = $this->Companies->get_company($document->params->company_id);
+        }
+
+
         $this->design->assign('company', $company);
 
-        if(!empty($document->asp_id)){
+        if (!empty($document->asp_id)) {
             $code_asp = $this->AspCodes->get_code(['id' => $document->asp_id]);
             $this->design->assign('code_asp', $code_asp);
+
+            $rucred_asp = $this->AspCodes->get_code(['type' => 'rucred_sms', 'order_id' => $document->params->order_id]);
+            $this->design->assign('rucred_asp', $rucred_asp);
         }
 
         $loan_id = $document->params->loan_type;
         $loan = $this->Loantypes->get_loantype($loan_id);
         $this->design->assign('loan', $loan);
 
-        $start_date = new DateTime(date('Y-m-d', strtotime($document->params->probably_start_date)));
-        $end_date = new DateTime(date('Y-m-10', strtotime($document->params->probably_return_date)));
+        $start_date = new DateTime(date('Y-m-d', strtotime($order->probably_start_date)));
+        $end_date = new DateTime(date('Y-m-10', strtotime($order->probably_return_date)));
 
         $period = date_diff($start_date, $end_date)->days;
 
         $this->design->assign('period', $period);
 
-        $payment_schedule = json_decode($document->params->payment_schedule['schedule'], true);
+        if (isset($document->params->payment_schedule['schedule'])) {
+            $payment_schedule = json_decode($document->params->payment_schedule['schedule'], true);
+        } else {
+            //Заглушка от ошибок для первого документа (в нем отсутствуют эти данные)
+            $payment_schedule = [
+                "09.12.2022" => [
+                    "pay_sum" => 0,
+                    "loan_percents_pay" => 0,
+                    "loan_body_pay" => 0,
+                    "comission_pay" => 0,
+                    "rest_pay" => 0
+                ],
+                "result" => [
+                    "all_sum_pay" => 0.1,
+                    "all_loan_percents_pay" => 0.1,
+                    "all_loan_body_pay" => 0,
+                    "all_comission_pay" => 0,
+                    "all_rest_pay_sum" => 0
+                ]
+            ];
+        }
+
 
         uksort(
             $payment_schedule,
@@ -108,10 +161,17 @@ class OnlineDocsController extends Controller
 
         $all_percents_string_part_two = str_pad($all_percents_string[1], '2', '0', STR_PAD_RIGHT);
         $this->design->assign('all_percents_string_part_two', $all_percents_string_part_two);
+        $this->design->assign('all_percents_string', $all_percents_string);
 
-        $percents_per_day_str = explode('.', $document->params->percent);
-        $percents_per_day_str_part_one = $this->num2str($percents_per_day_str[0]);
-        $percents_per_day_str_part_two = $this->num2str($percents_per_day_str[1]);
+        if (is_null($document->params->percent)) {
+            $percents_per_day_str_part_one = 0;
+            $percents_per_day_str_part_two = 0;
+        } else {
+            $percents_per_day_str = explode('.', $document->params->percent);
+            $percents_per_day_str_part_one = $this->num2str($percents_per_day_str[0]);
+            $percents_per_day_str_part_two = $this->num2str($percents_per_day_str[1]);
+        }
+
 
         $this->design->assign('percents_per_day_str_part_one', $percents_per_day_str_part_one);
         $this->design->assign('percents_per_day_str_part_two', $percents_per_day_str_part_two);
@@ -129,7 +189,11 @@ class OnlineDocsController extends Controller
         $this->design->assign('first_part_all_sum_pay', $first_part_all_sum_pay);
 
 
-        $percents_per_year = $document->params->payment_schedule['psk'];
+        if (isset($document->params->payment_schedule['psk'])) {
+            $percents_per_year = $document->params->payment_schedule['psk'];
+        } else {
+            $percents_per_year = 1; //заглушка
+        }
         $percents = $percents_per_year;
 
         $percents = number_format($percents, 3, ',', ' ');
@@ -181,6 +245,7 @@ class OnlineDocsController extends Controller
         $this->design->assign('$period_days', $period_days);
 
         $tpl = $this->design->fetch('pdf/' . $document->template);
+
 
         if ($this->request->get('action') == 'download_file') {
             $fio = $document->params->lastname . ' ' . mb_substr($document->params->firstname, 0, 1) . mb_substr($document->params->patronymic, 0, 1);

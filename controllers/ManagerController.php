@@ -2,6 +2,9 @@
 
 use App\Services\MailService;
 
+error_reporting(-1);
+ini_set('display_errors', 'Off');
+
 class ManagerController extends Controller
 {
     public function fetch()
@@ -60,6 +63,26 @@ class ManagerController extends Controller
                     case 'add_credentials':
                         $this->action_add_credentials();
                         break;
+
+                    case 'linkin_email':
+                        $this->action_linkin_email();
+                        break;
+
+                    case 'confirm_linkin_email':
+                        $this->action_confirm_linkin_email();
+                        break;
+
+                    case 'linkin_phone':
+                        $this->action_linkin_phone();
+                        break;
+
+                    case 'confirm_linkin_phone':
+                        $this->action_confirm_linkin_phone();
+                        break;
+
+                    case 'sms_note_flag':
+                        $this->action_sms_note_flag();
+                        break;
                 endswitch;
             } else {
                 $user = new StdClass();
@@ -73,10 +96,19 @@ class ManagerController extends Controller
                 $user->login = $this->request->post('login');
                 $user->mango_number = $this->request->post('mango_number');
                 $user->telegram_note = $this->request->post('telegram_note');
-                $user->sms_note = $this->request->post('sms_note');
+                $user->sms_note = 1;
+                $user->email_note = 1;
                 $user->viber_note = $this->request->post('viber_note');
                 $user->whatsapp_note = $this->request->post('whatsapp_note');
                 $user->timezone = $this->request->post('timezone');
+                $user->email_confirmed = $this->request->post('email_linked');
+                $user->phone_confirmed = $this->request->post('phone_linked');
+
+                if(empty($user->email_confirmed))
+                    unset($user->email_confirmed);
+
+                if(empty($user->phone_confirmed))
+                    unset($user->phone_confirmed);
 
                 $same_login = $this->Managers->check_same_login($user->login, $user_id);
 
@@ -121,12 +153,14 @@ class ManagerController extends Controller
                         foreach ($companies as $company) {
                             $record =
                                 [
-                                    'manager_id' => $user_id,
+                                    'manager_id' => $user->id,
                                     'company_id' => $company['company_id']
                                 ];
                             $this->ManagersEmployers->add_record($record);
                         }
+
                         $this->design->assign('message_success', 'added');
+                        $to_manager = $user->id;
                     } else {
                         $user->id = $this->managers->update_manager($user_id, $user);
                         $this->ManagersEmployers->delete_records($user_id);
@@ -139,6 +173,7 @@ class ManagerController extends Controller
                             $this->ManagersEmployers->add_record($record);
                         }
                         $this->design->assign('message_success', 'updated');
+                        $to_manager = $user->id;
                     }
                     $user = $this->managers->get_manager($user->id);
                 }
@@ -213,18 +248,23 @@ class ManagerController extends Controller
 
         $managers_credentials = $this->ManagersCredentials->gets(['manager_id' => $id]);
 
-        if(!empty($managers_credentials)){
-            foreach ($managers_credentials as $credential){
+        if (!empty($managers_credentials)) {
+            foreach ($managers_credentials as $credential) {
                 $company = $this->companies->get_company($credential->company_id);
                 $credential->company_name = $company->name;
 
-                if($credential->type == 'permanently')
+                if ($credential->type == 'permanently')
                     $credential->type = 'Постоянный';
                 else
                     $credential->type = 'Временный по доверенности';
             }
         }
         $this->design->assign('managers_credentials', $managers_credentials);
+
+        if(isset($to_manager)){
+            header('Location: '.$this->config->back_url.'/manager/'.$to_manager);
+            exit;
+        }
 
         if ($this->request->get('main')) {
             $lk = true;
@@ -250,28 +290,18 @@ class ManagerController extends Controller
         $user_id = $this->request->post('user_id');
         $html = '';
 
-        if (!empty($user_id)) {
+        if (!empty($user_id) && $this->manager->id != $user_id)
             $managers_company = $this->ManagersEmployers->get_records($user_id);
 
-            foreach ($companies as $company) {
-                $html .= '<div class="form-group">';
-                $html .= '<input type="checkbox" class="custom-checkbox"';
-                $html .= 'name="companies[][company_id]"';
-                $html .= "value='$company->id'";
-                $html .= (isset($managers_company[$company->id])) ? 'checked> ' : '> ';
-                $html .= '<label>' . $company->name . '</label>';
-                $html .= '</div>';
-
-            }
-        } else {
-
-            $html .= '<label for="date_doc" class="control-label">Компания:</label>';
-            $html .= '<select class="form-control" id="company_select" name="company">';
+        foreach ($companies as $company) {
             $html .= '<div class="form-group">';
-            foreach ($companies as $company) {
-                $html .= "<option value='$company->id'>$company->name</option>";
-            }
-            $html .= '</select>';
+            $html .= '<input type="checkbox" class="custom-checkbox"';
+            $html .= 'name="companies[][company_id]"';
+            $html .= "value='$company->id'";
+            $html .= (isset($managers_company[$company->id])) ? 'checked> ' : '> ';
+            $html .= '<label>' . $company->name . '</label>';
+            $html .= '</div>';
+
         }
 
         echo $html;
@@ -284,7 +314,7 @@ class ManagerController extends Controller
         $user_id = $this->request->post('user_id');
         $code = random_int(1000, 9999);
 
-        $result = $this->db->query('
+        $this->db->query('
         INSERT INTO s_email_messages
         SET user_id = ?, email = ?, code = ?, created = ?
         ', $user_id, $email, $code, date('Y-m-d H:i:s'));
@@ -429,13 +459,14 @@ class ManagerController extends Controller
         $is_manager = 1;
         $check_telegram_hook = $this->TelegramUsers->get($manager_id, $is_manager);
 
-        if(empty($check_telegram_hook)){
+        if (empty($check_telegram_hook)) {
             $manager = $this->managers->get_manager($manager_id);
             $user_token = md5(time());
             $user_token = substr($user_token, 1, 10);
 
             $phone = $manager->phone;
-            $message = "Привяжите Телеграм: https://t.me/rucred_bot?start=$user_token";
+            $template = $this->sms->get_template(5);
+            $message = str_replace('$user_token', $user_token, $template->template);
 
             $this->sms->send($phone, $message);
 
@@ -463,7 +494,7 @@ class ManagerController extends Controller
         $is_manager = 1;
         $check_viber_hook = $this->ViberUsers->get($manager_id, $is_manager);
 
-        if(empty($check_viber_hook)){
+        if (empty($check_viber_hook)) {
             $manager = $this->managers->get_manager($manager_id);
             $user_token = md5(time());
             $user_token = substr($user_token, 1, 10);
@@ -474,7 +505,7 @@ class ManagerController extends Controller
                 $manager->email,
                 'RuCred | Ссылка для привязки Viber',
                 'Ваша ссылка для привязки Viber:',
-                '<h1>https://re-aktiv.ru/redirect_api?user_id='.$manager_id.'</h1>'
+                '<h1>'.$this->config->back_url.'/redirect_api?user_id=' . $manager_id . '</h1>'
             );
 
             $user =
@@ -509,6 +540,112 @@ class ManagerController extends Controller
             ];
 
         $this->ManagersCredentials->add($credentials);
+        exit;
+    }
+
+    private function action_linkin_email()
+    {
+        $email = $this->request->post('email');
+
+        $code = random_int(1000, 9999);
+
+        $this->db->query('
+        INSERT INTO s_email_messages
+        SET email = ?, code = ?, created = ?
+        ', $email, $code, date('Y-m-d H:i:s'));
+
+        $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+        $mailService->send(
+            'rucred@ucase.live',
+            $email,
+            'RuCred | Ваш проверочный код для смены почты',
+            'Введите этот код в поле для проверки почты: ' . $code,
+            '<h1>Введите этот код в поле для проверки почты:</h1>' . "<h2>$code</h2>"
+        );
+
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_confirm_linkin_email()
+    {
+        $code = $this->request->post('code');
+        $email = $this->request->post('email');
+
+        $this->db->query("
+        SELECT code, created
+        FROM s_email_messages
+        WHERE email = ?
+        AND code = ?
+        ORDER BY created DESC
+        LIMIT 1
+        ", $email, $code);
+
+        $result = $this->db->result();
+
+        if (empty($result)) {
+            echo json_encode(['error' => 1]);
+            exit;
+        }
+
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_linkin_phone()
+    {
+        $phone = $this->request->post('phone');
+        $code = random_int(1000, 9999);
+
+        $message = "Подтвердите Ваш номер телефона. Код подтверждения: " . $code;
+        $this->sms->send(
+            $phone,
+            $message
+        );
+
+        $query = $this->db->placehold("
+        INSERT INTO s_sms_messages
+        SET phone = ?, code = ?, created = ?
+        ", $phone, $code, date('Y-m-d H:i:s'));
+
+        $this->db->query($query);
+
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_confirm_linkin_phone()
+    {
+        $phone = $this->request->post('phone');
+        $code = $this->request->post('code');
+
+        $query = $this->db->placehold("
+        SELECT *
+        FROM s_sms_messages
+        WHERE phone = ?
+        AND code = ?
+        ORDER BY id DESC
+        LIMIT 1
+        ", $phone, $code);
+
+        $this->db->query($query);
+
+        $result = $this->db->result();
+        if (empty($result)) {
+            echo json_encode(['error' => 1]);
+            exit;
+        }
+
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_sms_note_flag()
+    {
+        $flag = $this->request->post('value');
+        $manager_id = $this->request->post('user_id');
+
+        $this->managers->update_manager($manager_id, ['sms_note' => $flag]);
         exit;
     }
 }

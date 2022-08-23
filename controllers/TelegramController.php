@@ -4,11 +4,9 @@ use Telegram\Bot\Api;
 
 class TelegramController extends Controller
 {
-    protected $token = '5476378779:AAHQmPoqbPB0TW5S8zyo0Ey1abCLZ9hDGq8';
-
     public function fetch()
     {
-        $telegram = new Api($this->token);
+        $telegram = new Api($this->config->telegram_token);
 
         $result = $telegram->getWebhookUpdates();
         http_response_code(200);

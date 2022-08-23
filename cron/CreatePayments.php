@@ -164,14 +164,43 @@ class CreatePayments extends Core
                 $company = $this->Companies->get_company($order->company_id);
                 $fio = "$order->lastname $order->firstname $order->patronymic";
 
-                $payment_schedule = json_decode($order->payment_schedule, true);
-                $payment_schedule = end($payment_schedule);
-                $date = date('Y-m-d');
+                $schedules = $this->PaymentsSchedules->gets($contract->order_id);
 
-                foreach ($payment_schedule as $payday => $payment) {
+                if (count($schedules) > 1) {
+
+                    foreach ($schedules as $key => $schedule) {
+                        $schedule->schedule = json_decode($schedule->schedule, true);
+
+                        uksort($schedule->schedule,
+                            function ($a, $b) {
+
+                                if ($a == $b)
+                                    return 0;
+
+                                return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+                            });
+
+                        if ($schedule->actual == 1)
+                            $payment_schedule = end($schedules);
+                    }
+                } else {
+                    $payment_schedule = end($schedules);
+                    $payment_schedule->schedule = json_decode($payment_schedule->schedule, true);
+
+                    uksort($payment_schedule->schedule,
+                        function ($a, $b) {
+
+                            if ($a == $b)
+                                return 0;
+
+                            return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+                        });
+                }
+
+                foreach ($payment_schedule->schedule as $payday => $payment) {
                     if ($payday != 'result') {
                         $payday = date('Y-m-d', strtotime($payday));
-                        if ($payday > $date) {
+                        if ($payday > date('Y-m-d')) {
                             $next_payment = $payment;
                             break;
                         }

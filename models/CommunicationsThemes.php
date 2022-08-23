@@ -33,7 +33,11 @@ class CommunicationsThemes extends Core
         $number_filter = '';
         $unique_filter = '';
         $create_ticket = '';
-        $sort = $filter['sort'];
+
+        if(isset($filter['sort']))
+            $sort = $filter['sort'];
+        else
+            $sort = 'id asc';
 
         if(isset($filter['name']))
             $name_filter = $this->db->placehold("AND name = ?", $filter['name']);

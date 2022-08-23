@@ -1,9 +1,13 @@
 <?php
 
+use Telegram\Bot\Api;
+use Viber\Bot;
+use Viber\Api\Sender;
+use Viber\Client;
 use App\Services\MailService;
 
 error_reporting(-1);
-ini_set('display_errors', 'On');
+ini_set('display_errors', 'Off');
 date_default_timezone_set('Europe/Moscow');
 
 class NeworderController extends Controller
@@ -46,7 +50,7 @@ class NeworderController extends Controller
                 }
             }
 
-            if(!empty($order->card_id)){
+            if (!empty($order->card_id)) {
                 $card = $this->cards->get_card($order->card_id);
                 $order->card_name = $card->name;
                 $order->pan = $card->pan;
@@ -167,7 +171,7 @@ class NeworderController extends Controller
         $requisite = $this->request->post('requisite');
         $settlement_id = (int)$this->request->post('settlement');
 
-        if($payout_type == 'bank' || $settlement_id == 3){
+        if ($payout_type == 'bank' || $settlement_id == 3) {
 
             $requisite['holder'] = $requisite['holder']['lastname'] . ' ' . $requisite['holder']['firstname'] . ' ' . $requisite['holder']['patronymic'];
             $requisite['holder'] = trim($requisite['holder']);
@@ -178,7 +182,7 @@ class NeworderController extends Controller
             }
         }
 
-        if($payout_type == 'card'){
+        if ($payout_type == 'card') {
             $card_name = $this->request->post('card_name');
             $pan = $this->request->post('pan');
             $expdate = $this->request->post('expdate');
@@ -249,12 +253,12 @@ class NeworderController extends Controller
 
                 if (!empty($card['cards_limit'])) {
                     $max = 0.05 * $card['cards_limit'];
-                }else{
+                } else {
                     $max = 0;
                 }
                 if (!empty($card['cards_rest_sum'])) {
                     $min = 0.1 * $card['cards_rest_sum'];
-                }else{
+                } else {
                     $min = 0;
                 }
 
@@ -303,7 +307,7 @@ class NeworderController extends Controller
         $user['phone_mobile'] = preg_replace('/[^0-9]/', '', $user['phone_mobile']);
         $user['dependents'] = $this->request->post('dependents');
 
-        if(empty($user['dependents']))
+        if (empty($user['dependents']))
             unset($user['dependents']);
 
         if (empty($user['phone_mobile'])) {
@@ -472,8 +476,41 @@ class NeworderController extends Controller
 
             if ($user['user_id'] = $this->users->add_user($user)) {
                 $user['regaddress_id'] = $this->Addresses->add_address($regaddress);
-
                 $user['faktaddress_id'] = $this->Addresses->add_address($faktaddress);
+
+                $this->UserContactPreferred->delete($user['user_id']);
+
+                if (!empty($user['sms_not']) && $user['sms_not'] == 1) {
+                    $preferred =
+                        [
+                            'user_id' => $user['user_id'],
+                            'contact_type_id' => 1
+                        ];
+                    $this->UserContactPreferred->add($preferred);
+                }
+                if (!empty($user['email_not']) && $user['email_not'] == 1) {
+                    $preferred =
+                        [
+                            'user_id' => $user['user_id'],
+                            'contact_type_id' => 2
+                        ];
+                    $this->UserContactPreferred->add($preferred);
+                }
+                if (!empty($user['massanger_not']) && $user['massanger_not'] == 1) {
+                    $preferred =
+                        [
+                            'user_id' => $user['user_id'],
+                            'contact_type_id' => 4
+                        ];
+                    $this->UserContactPreferred->add($preferred);
+
+                    $preferred =
+                        [
+                            'user_id' => $user['user_id'],
+                            'contact_type_id' => 3
+                        ];
+                    $this->UserContactPreferred->add($preferred);
+                }
             } else {
                 $this->design->assign('error', 'Не удалось создать клиента');
             }
@@ -499,12 +536,45 @@ class NeworderController extends Controller
                 $user['faktaddress_id'] = $this->Addresses->add_address($faktaddress);
 
             $this->users->update_user($user_id, $user);
+            $this->UserContactPreferred->delete($user_id);
+
+            if (!empty($user['sms_not']) && $user['sms_not'] == 1) {
+                $preferred =
+                    [
+                        'user_id' => $user_id,
+                        'contact_type_id' => 1
+                    ];
+                $this->UserContactPreferred->add($preferred);
+            }
+            if (!empty($user['sms_not']) && $user['email_not'] == 1) {
+                $preferred =
+                    [
+                        'user_id' => $user_id,
+                        'contact_type_id' => 2
+                    ];
+                $this->UserContactPreferred->add($preferred);
+            }
+            if (!empty($user['sms_not']) && $user['massanger_not'] == 1) {
+                $preferred =
+                    [
+                        'user_id' => $user_id,
+                        'contact_type_id' => 4
+                    ];
+                $this->UserContactPreferred->add($preferred);
+
+                $preferred =
+                    [
+                        'user_id' => $user_id,
+                        'contact_type_id' => 3
+                    ];
+                $this->UserContactPreferred->add($preferred);
+            }
 
             $card_id = $this->request->post('card_id');
 
-            if($payout_type == 'bank' || $settlement_id == 3){
+            if ($payout_type == 'bank' || $settlement_id == 3) {
 
-                if(!empty($card_id)){
+                if (!empty($card_id)) {
                     $this->Cards->delete_card($card_id);
                     $card_id = null;
                 }
@@ -518,9 +588,9 @@ class NeworderController extends Controller
                 }
             }
 
-            if($payout_type == 'card'){
+            if ($payout_type == 'card') {
 
-                if(!empty($requisite['id'])){
+                if (!empty($requisite['id'])) {
                     $this->requisites->delete_requisite($requisite['id']);
                     $requisite['id'] = null;
                 }
@@ -538,9 +608,9 @@ class NeworderController extends Controller
                         'expdate' => $expdate
                     ];
 
-                if(!empty($card_id)){
+                if (!empty($card_id)) {
                     $this->cards->update_card($card_id, $card);
-                }else{
+                } else {
                     $card_id = $this->cards->add_card($card);
                 }
             }
@@ -558,14 +628,16 @@ class NeworderController extends Controller
             $branche_id = (int)$this->request->post('branch');
             $company_id = (int)$this->request->post('company');
 
-            if($payout_type == 'bank'){
-                if(date('H') > 14
-                    && date('Y-m-d') >= date('Y-m-d', strtotime($probably_start_date))
-                    && $settlement_id == 3
-                    || $settlement_id == 2){
+            if ($payout_type == 'bank') {
 
-                    $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date.'+1 days'));
-                    $probably_end_date = $this->check_date($probably_start_date, $loan_type, $branche_id, $company_id);
+                if (date('Y-m-d') >= date('Y-m-d', strtotime($probably_start_date))) {
+                    if (date('H') > 14
+                        && $settlement_id == 3
+                        || $settlement_id == 2) {
+
+                        $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
+                        $probably_end_date = $this->check_date($probably_start_date, $loan_type, $branche_id, $company_id);
+                    }
                 }
             }
 
@@ -583,12 +655,12 @@ class NeworderController extends Controller
                 'card_id' => $card_id,
                 'date' => date('Y-m-d H:i:s'),
                 'manager_id' => $this->manager->id,
-                'status' => ($draft == 1) ? 12 : 1,
+                'status' => ($draft == 1) ? 12 : 0,
                 'offline' => 1,
                 'charge' => $charge,
                 'insure' => $insure,
                 'loan_type' => (int)$loan_type,
-                'probably_return_date' => $probably_end_date->format('Y-m-d'),
+                'probably_return_date' => date('Y-m-d', strtotime($probably_end_date)),
                 'probably_start_date' => $probably_start_date,
                 'probably_return_sum' => (int)preg_replace("/[^,.0-9]/", '', $this->request->post('probably_return_sum')),
                 'group_id' => (int)$this->request->post('group'),
@@ -636,6 +708,7 @@ class NeworderController extends Controller
             $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date)));
 
             $percent_per_month = (($order['percent'] / 100) * 365) / 12;
+            $percent_per_month = round($percent_per_month, 7);
             $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
             $annoouitet_pay = round($annoouitet_pay, '2');
 
@@ -671,12 +744,14 @@ class NeworderController extends Controller
                 if (date_diff($first_pay, $issuance_date)->days <= $loan->min_period) {
                     $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($first_pay, $issuance_date)->days;
                     $percents_pay = $sum_pay;
+                    $body_pay = 0.00;
                 }
                 if (date_diff($first_pay, $issuance_date)->days > $loan->min_period && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
                     $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($first_pay, $issuance_date)->days);
 
-                    $sum_pay = $annoouitet_pay - $minus_percents;
-                    $percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
+                    $sum_pay = $annoouitet_pay - round($minus_percents, 2);
+                    $percents_pay = ($rest_sum * $percent_per_month) - round($minus_percents, 2);
+                    $percents_pay = round($percents_pay, 2, PHP_ROUND_HALF_DOWN);
                     $body_pay = $sum_pay - $percents_pay;
                 }
                 if (date_diff($first_pay, $issuance_date)->days >= $count_days_this_month) {
@@ -770,7 +845,7 @@ class NeworderController extends Controller
 
             $psk = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
 
-            $month_pay = $amount * ((1 / $loan->max_period) + (($psk/ 100) / 12));
+            $month_pay = $amount * ((1 / $loan->max_period) + (($psk / 100) / 12));
 
             $all_sum_credits += $month_pay;
 
@@ -810,7 +885,7 @@ class NeworderController extends Controller
                 } else {
 
                     $order = $this->orders->get_order($order_id);
-                    $communication_theme = $this->CommunicationsThemes->get(8);
+                    $communication_theme = $this->CommunicationsThemes->get(18);
 
                     $ticket =
                         [
@@ -821,7 +896,7 @@ class NeworderController extends Controller
                             'client_patronymic' => $order->patronymic,
                             'head' => $communication_theme->head,
                             'text' => $communication_theme->text,
-                            'theme_id' => 8,
+                            'theme_id' => 18,
                             'company_id' => 2,
                             'group_id' => $order->group_id,
                             'order_id' => $order_id,
@@ -851,12 +926,65 @@ class NeworderController extends Controller
 
                     $this->PaymentsSchedules->add($schedules);
 
-                    $template = $this->sms->get_template(7);
-                    $message = $template->template;
-                    $this->sms->send(
-                        $order->phone_mobile,
-                        $message
-                    );
+                    $user_preferred = $this->UserContactPreferred->get($user_id);
+
+                    if (!empty($user_preferred)) {
+                        $template = $this->sms->get_template(7);
+
+                        foreach ($user_preferred as $preferred) {
+                            switch ($preferred->contact_type_id):
+
+                                case 1:
+                                    $message = $template->template;
+                                    $this->sms->send(
+                                        $order->phone_mobile,
+                                        $message
+                                    );
+                                    break;
+
+                                case 2:
+                                    $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+                                    $mailService->send(
+                                        'rucred@ucase.live',
+                                        $order->email,
+                                        'RuCred | Уведомление',
+                                        "$template->template",
+                                        "<h2>$template->template</h2>"
+                                    );
+                                    break;
+
+                                case 3:
+                                    $telegram = new Api($this->config->telegram_token);
+                                    $telegram_check = $this->TelegramUsers->get($order->user_id, 0);
+
+                                    if (!empty($telegram_check)) {
+                                        $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $template->template]);
+                                    }
+                                    break;
+
+                                case 4:
+                                    $bot = new Bot(['token' => $this->config->viber_token]);
+
+                                    $botSender = new Sender([
+                                        'name' => 'Whois bot',
+                                        'avatar' => 'https://developers.viber.com/img/favicon.ico',
+                                    ]);
+                                    $viber_check = $this->ViberUsers->get($order->user_id, 0);
+
+                                    if (!empty($viber_check)) {
+                                        $bot->getClient()->sendMessage(
+                                            (new \Viber\Api\Message\Text())
+                                                ->setSender($botSender)
+                                                ->setReceiver($viber_check->chat_id)
+                                                ->setText($template->template)
+                                        );
+                                    }
+                                    break;
+
+                            endswitch;
+                        }
+                    }
+
 
                     $cron =
                         [
@@ -866,7 +994,7 @@ class NeworderController extends Controller
 
                     $this->NotificationsCron->add($cron);
 
-                    response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id.'?scroll=1']);
+                    response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                     exit;
                 }
             } else {
@@ -898,10 +1026,9 @@ class NeworderController extends Controller
 
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/neworder/draft/' . $order_id]);
                 } else {
-                    try {
                         $user = $this->users->get_user($order['user_id']);
 
-                        $communication_theme = $this->CommunicationsThemes->get(8);
+                        $communication_theme = $this->CommunicationsThemes->get(18);
 
                         $ticket =
                             [
@@ -912,7 +1039,7 @@ class NeworderController extends Controller
                                 'client_patronymic' => $user->patronymic,
                                 'head' => $communication_theme->head,
                                 'text' => $communication_theme->text,
-                                'theme_id' => 8,
+                                'theme_id' => 18,
                                 'company_id' => 2,
                                 'group_id' => $user->group_id,
                                 'order_id' => $order_id,
@@ -957,12 +1084,64 @@ class NeworderController extends Controller
                             }
                         }
 
-                        $template = $this->sms->get_template(7);
-                        $message = $template->template;
-                        $this->sms->send(
-                            $user->phone_mobile,
-                            $message
-                        );
+                        $user_preferred = $this->UserContactPreferred->get($user->id);
+
+                        if (!empty($user_preferred)) {
+                            $template = $this->sms->get_template(7);
+
+                            foreach ($user_preferred as $preferred) {
+                                switch ($preferred->contact_type_id):
+
+                                    case 1:
+                                        $message = $template->template;
+                                        $this->sms->send(
+                                            $user->phone_mobile,
+                                            $message
+                                        );
+                                        break;
+
+                                    case 2:
+                                        $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+                                        $mailService->send(
+                                            'rucred@ucase.live',
+                                            $user->email,
+                                            'RuCred | Уведомление',
+                                            "$template->template",
+                                            "<h2>$template->template</h2>"
+                                        );
+                                        break;
+
+                                    case 3:
+                                        $telegram = new Api($this->config->telegram_token);
+                                        $telegram_check = $this->TelegramUsers->get($user->id, 0);
+
+                                        if (!empty($telegram_check)) {
+                                            $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $template->template]);
+                                        }
+                                        break;
+
+                                    case 4:
+                                        $bot = new Bot(['token' => $this->config->viber_token]);
+
+                                        $botSender = new Sender([
+                                            'name' => 'Whois bot',
+                                            'avatar' => 'https://developers.viber.com/img/favicon.ico',
+                                        ]);
+                                        $viber_check = $this->ViberUsers->get($user->id, 0);
+
+                                        if (!empty($viber_check)) {
+                                            $bot->getClient()->sendMessage(
+                                                (new \Viber\Api\Message\Text())
+                                                    ->setSender($botSender)
+                                                    ->setReceiver($viber_check->chat_id)
+                                                    ->setText($template->template)
+                                            );
+                                        }
+                                        break;
+
+                                endswitch;
+                            }
+                        }
 
                         $cron =
                             [
@@ -972,10 +1151,7 @@ class NeworderController extends Controller
 
                         $this->NotificationsCron->add($cron);
 
-                        response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' .$order_id.'?scroll=1']);
-                    } catch (Exception $exception) {
-                        response_json(['error' => 1, 'reason' => 'Создать заявку не удалось']);
-                    }
+                        response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                 }
             }
         }
@@ -1111,7 +1287,7 @@ class NeworderController extends Controller
 
         $get = $this->request->get('start_date');
 
-        if(!empty($get)){
+        if (!empty($get)) {
             $start_date = $this->request->get('start_date');
             $loan_id = $this->request->get('loan_id');
             $branche_id = $this->request->get('branche_id');
@@ -1160,10 +1336,10 @@ class NeworderController extends Controller
             }
         }
 
-        if(!empty($get)){
+        if (!empty($get)) {
             echo json_encode(['date' => $end_date->format('d.m.Y')]);
             exit;
-        }else{
+        } else {
             return $end_date->format('d.m.Y');
         }
     }
@@ -1192,7 +1368,7 @@ class NeworderController extends Controller
         $date_from = date('Y-m-d', strtotime($this->request->post('date_from')));
         $date_to = date('Y-m-d', strtotime($this->request->post('date_to')));
         $branch_id = $this->request->post('branch_id');
-        $company_id= $this->request->post('company_id');
+        $company_id = $this->request->post('company_id');
         $percent = $this->request->post('percents');
 
         $loan = $this->Loantypes->get_loantype($loan_id);
@@ -1351,54 +1527,50 @@ class NeworderController extends Controller
             $user_id = $this->users->getNextid();
         }
 
-        $user_telegram = $this->TelegramUsers->get($user_id, 0);
+        switch ($type):
+            case 'telegram':
 
-        if (empty($user_telegram)) {
+                $template = $this->sms->get_template(5);
+                $message = str_replace('$user_token', $user_token, $template->template);
+                $this->sms->send($phone, $message);
 
-            switch ($type):
-                case 'telegram':
+                $user =
+                    [
+                        'user_id' => $user_id,
+                        'token' => $user_token,
+                        'is_manager' => 0
+                    ];
 
-                    $template = $this->sms->get_template(5);
-                    $message = str_replace('$user_token', $user_token, $template->template);
-                    $this->sms->send($phone, $message);
+                $this->TelegramUsers->add($user);
+                break;
 
-                    $user =
-                        [
-                            'user_id' => $user_id,
-                            'token' => $user_token,
-                            'is_manager' => 0
-                        ];
+            case 'viber':
+                $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+                $mailResponse = $mailService->send(
+                    'rucred@ucase.live',
+                    $email,
+                    'RuCred | Ссылка для привязки Viber',
+                    'Ваша ссылка для привязки Viber:',
+                    '<h1>' . $this->config->back_url . '/redirect_api?user_id=' . $user_id . '</h1>'
+                );
 
-                    $this->TelegramUsers->add($user);
-                    break;
+                $user =
+                    [
+                        'user_id' => $user_id,
+                        'token' => $user_token,
+                        'is_manager' => 0
+                    ];
 
-                case 'viber':
-                    $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
-                    $mailResponse = $mailService->send(
-                        'rucred@ucase.live',
-                        $email,
-                        'RuCred | Ссылка для привязки Viber',
-                        'Ваша ссылка для привязки Viber:',
-                        '<h1>https://re-aktiv.ru/redirect_api?user_id='.$user_id.'</h1>'
-                    );
-
-                    $user =
-                        [
-                            'user_id' => $user_id,
-                            'token' => $user_token,
-                            'is_manager' => 0
-                        ];
-
-                    $this->ViberUsers->add($user);
-                    break;
-            endswitch;
-        }
+                $this->ViberUsers->add($user);
+                break;
+        endswitch;
 
         echo json_encode(['success' => 1, 'type' => $type]);
         exit;
     }
 
-    public function action_get_user(){
+    public function action_get_user()
+    {
 
         $user_id = $this->request->post('user_id');
 

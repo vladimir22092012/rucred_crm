@@ -1,10 +1,14 @@
 <?php
 
+use Telegram\Bot\Api;
+use Viber\Bot;
+use Viber\Api\Sender;
+use Viber\Client;
 use App\Services\MailService;
 use App\Services\Encryption;
 
 error_reporting(-1);
-ini_set('display_errors', 'On');
+ini_set('display_errors', 'Off');
 
 class OfflineOrderController extends Controller
 {
@@ -26,6 +30,10 @@ class OfflineOrderController extends Controller
 
                 case 'reject_by_employer':
                     $this->action_reject_by_employer();
+                    break;
+
+                case 'question_by_employer':
+                    $this->action_question_by_employer();
                     break;
 
                 case 'change_photo_status':
@@ -230,6 +238,14 @@ class OfflineOrderController extends Controller
 
                 case 'cards_change':
                     return $this->action_cards_change();
+                    break;
+
+                case 'accept_order_by_underwriter':
+                    $this->action_accept_order_by_underwriter();
+                    break;
+
+                case 'accept_approve_by_under':
+                    $this->action_accept_approve_by_under();
                     break;
 
 
@@ -672,7 +688,7 @@ class OfflineOrderController extends Controller
         $settlement = $this->OrganisationSettlements->get_settlement($order->settlement_id);
         $this->design->assign('settlement', $settlement);
 
-        if ($order->status == 4) {
+        if ($order->status == 10) {
             $this->db->query("
             SELECT *
             FROM s_transactions
@@ -729,8 +745,7 @@ class OfflineOrderController extends Controller
         return array('success' => 1, 'contact_status' => $contact_status);
     }
 
-    private
-    function confirm_contract_action()
+    private function confirm_contract_action()
     {
         $contract_id = $this->request->post('contract_id', 'integer');
         $code = $this->request->post('code', 'integer');
@@ -955,32 +970,6 @@ class OfflineOrderController extends Controller
         ));
 
         $this->contracts->update_contract($order->contract_id, ['status' => 1]);
-        $communication_theme = $this->CommunicationsThemes->get(12);
-
-        $ticket =
-            [
-                'creator' => $this->manager->id,
-                'creator_company' => 2,
-                'client_lastname' => $order->lastname,
-                'client_firstname' => $order->firstname,
-                'client_patronymic' => $order->patronymic,
-                'head' => $communication_theme->head,
-                'text' => $communication_theme->text,
-                'theme_id' => 12,
-                'company_id' => 3,
-                'group_id' => 2,
-                'order_id' => $order_id,
-                'status' => 1
-            ];
-
-        $ticket_id = $this->Tickets->add_ticket($ticket);
-        $message =
-            [
-                'message' => $communication_theme->text,
-                'ticket_id' => $ticket_id,
-                'manager_id' => $this->manager->id,
-            ];
-        $this->TicketMessages->add_message($message);
 
         $scoring_types = $this->scorings->get_types();
         foreach ($scoring_types as $scoring_type) {
@@ -996,6 +985,33 @@ class OfflineOrderController extends Controller
             }
         }
 
+        $communication_theme = $this->CommunicationsThemes->get(8);
+
+        $ticket =
+            [
+                'creator' => $this->manager->id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => $communication_theme->id,
+                'company_id' => $order->company_id,
+                'group_id' => $order->group_id,
+                'order_id' => $order_id,
+                'status' => 0
+            ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+        $this->TicketMessages->add_message($message);
+
         $cron =
             [
                 'ticket_id' => $ticket_id,
@@ -1004,9 +1020,67 @@ class OfflineOrderController extends Controller
 
         $this->NotificationsCron->add($cron);
 
+        $user_preferred = $this->UserContactPreferred->get($order->user_id);
+
+        if (!empty($user_preferred)) {
+            $template = $this->sms->get_template(7);
+
+            foreach ($user_preferred as $preferred) {
+                switch ($preferred->contact_type_id):
+
+                    case 1:
+                        $message = $template->template;
+                        $this->sms->send(
+                            $order->phone_mobile,
+                            $message
+                        );
+                        break;
+
+                    case 2:
+                        $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+                        $mailService->send(
+                            'rucred@ucase.live',
+                            $order->email,
+                            'RuCred | Уведомление',
+                            "$template->template",
+                            "<h2>$template->template</h2>"
+                        );
+                        break;
+
+                    case 3:
+                        $telegram = new Api($this->config->telegram_token);
+                        $telegram_check = $this->TelegramUsers->get($order->user_id, 0);
+
+                        if (!empty($telegram_check)) {
+                            $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $template->template]);
+                        }
+                        break;
+
+                    case 4:
+                        $bot = new Bot(['token' => $this->config->viber_token]);
+
+                        $botSender = new Sender([
+                            'name' => 'Whois bot',
+                            'avatar' => 'https://developers.viber.com/img/favicon.ico',
+                        ]);
+                        $viber_check = $this->ViberUsers->get($order->user_id, 0);
+
+                        if (!empty($viber_check)) {
+                            $bot->getClient()->sendMessage(
+                                (new \Viber\Api\Message\Text())
+                                    ->setSender($botSender)
+                                    ->setReceiver($viber_check->chat_id)
+                                    ->setText($template->template)
+                            );
+                        }
+                        break;
+
+                endswitch;
+            }
+        }
+
         echo json_encode(['success' => 1]);
         exit;
-
     }
 
     /**
@@ -1072,7 +1146,7 @@ class OfflineOrderController extends Controller
                 'client_patronymic' => $order->patronymic,
                 'head' => $communication_theme->head,
                 'text' => $communication_theme->text,
-                'theme_id' => 17,
+                'theme_id' => $communication_theme->id,
                 'company_id' => 2,
                 'group_id' => $order->group_id,
                 'order_id' => $order_id,
@@ -1142,7 +1216,9 @@ class OfflineOrderController extends Controller
                     'manager_id' => $this->manager->id
                 ];
 
-            $this->AspCodes->add_code($asp_log);
+            $asp_id = $this->AspCodes->add_code($asp_log);
+
+            $this->documents->update_asp(['order_id' => $order_id, 'rucred_asp_id' => $asp_id, 'second_pak' => 1]);
 
             $asp_id = $this->AspCodes->get_code(['order_id' => $order_id, 'type' => 'sms']);
             $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id->id, 'second_pak' => 1]);
@@ -1155,24 +1231,13 @@ class OfflineOrderController extends Controller
 
             $this->YaDiskCron->add($cron);
 
-            $template = $this->sms->get_template(8);
-            $message = $template->template;
-            $this->sms->send(
-                $order->phone_mobile,
-                $message
-            );
+            $this->tickets->update_by_theme_id(12, ['status' => 4], $order_id);
 
-            $cron =
-                [
-                    'ticket_id' => $ticket_id,
-                    'is_complited' => 0
-                ];
-
-            $this->NotificationsCron->add($cron);
-
-            return ['success' => 1];
+            echo json_encode(['success' => 1]);
+            exit;
         } else {
-            return $resp;
+            echo json_encode(['error' => $resp]);
+            exit;
         }
 
     }
@@ -1762,8 +1827,7 @@ class OfflineOrderController extends Controller
         $this->design->assign('order', $order);
     }
 
-    private
-    function fio_action()
+    private function fio_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -2594,8 +2658,7 @@ class OfflineOrderController extends Controller
         $this->design->assign('order', $order);
     }
 
-    private
-    function action_images()
+    private function action_images()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -2658,22 +2721,8 @@ class OfflineOrderController extends Controller
 
         $files = $this->users->get_files(array('user_id' => $user_id));
 
-        //Отправляемв 1с
-        $need_send = array();
-        $files_dir = str_replace('https://', 'http://', $this->config->front_url . '/files/users/');
-        foreach ($files as $f) {
-            if ($f->sent_1c == 0 && $f->status == 2) {
-                $need_send_item = new StdClass();
-                $need_send_item->id = $f->id;
-                $need_send_item->user_id = $f->user_id;
-                $need_send_item->type = $f->type;
-                $need_send_item->url = $files_dir . $f->name;
-
-                $need_send[] = $need_send_item;
-            }
-        }
-
         $this->design->assign('files', $files);
+        exit;
     }
 
     private
@@ -2828,8 +2877,7 @@ class OfflineOrderController extends Controller
         }
     }
 
-    public
-    function action_repay()
+    public function action_repay()
     {
         $contract_id = $this->request->post('contract_id', 'integer');
 
@@ -2871,8 +2919,7 @@ class OfflineOrderController extends Controller
         }
     }
 
-    private
-    function send_sms_action()
+    private function send_sms_action()
     {
         $yuk = $this->request->post('yuk', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -3073,6 +3120,7 @@ class OfflineOrderController extends Controller
         ", (string)$type, (int)$file_id);
 
         $this->db->query($query);
+        exit;
     }
 
     private function action_accept_by_employer()
@@ -3091,7 +3139,7 @@ class OfflineOrderController extends Controller
                 'client_patronymic' => $order->patronymic,
                 'head' => $communication_theme->head,
                 'text' => $communication_theme->text,
-                'theme_id' => 11,
+                'theme_id' => $communication_theme->id,
                 'company_id' => $order->company_id,
                 'group_id' => 2,
                 'order_id' => $order_id,
@@ -3117,46 +3165,103 @@ class OfflineOrderController extends Controller
 
         $this->NotificationsCron->add($cron);
 
+        $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
+
         exit;
     }
 
-    private
-    function action_reject_by_employer()
+    private function action_reject_by_employer()
     {
         $order_id = (int)$this->request->post('order_id');
         $this->orders->update_order($order_id, ['status' => 15]);
+        $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
         exit;
     }
 
-    private
-    function action_edit_personal_number()
+    private function action_question_by_employer()
+    {
+        $order_id = (int)$this->request->post('order_id');
+        $order = $this->orders->get_order($order_id);
+        $this->orders->update_order($order_id, ['status' => 13]);
+        $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
+
+        $communication_theme = $this->CommunicationsThemes->get(11);
+
+        $ticket =
+            [
+                'creator' => $this->manager->id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => $communication_theme->id,
+                'company_id' => $order->company_id,
+                'group_id' => 2,
+                'order_id' => $order_id,
+                'status' => 0
+            ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+
+        $this->TicketMessages->add_message($message);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
+        exit;
+    }
+
+    private function action_edit_personal_number()
     {
         $user_id = (int)$this->request->post('user_id');
-        $order_id = (int)$this->request->post('order_id');
         $number = (int)$this->request->post('number');
+
+        if(strlen($number) > 6){
+            echo json_encode(['error' => 'Номер не может быть более 6 символов']);
+            exit;
+        }
+
+        $number = str_pad($number, 6, 0, STR_PAD_LEFT);
 
         $check = $this->users->check_busy_number($number);
 
         if ($check && $check != 0) {
-            echo 'error';
+            echo json_encode(['error' => 'Такой номер уже есть']);
             exit;
         } else {
 
             $query = $this->db->placehold("
-            SELECT uid
+            SELECT id, uid
             FROM s_orders
-            WHERE id = $order_id
+            WHERE user_id = $user_id
             ");
 
             $this->db->query($query);
-            $uid = $this->db->result('uid');
+            $orders = $this->db->results();
 
-            $uid = explode(' ', $uid);
-            $uid[3] = (string)$number;
-            $uid = implode(' ', $uid);
+            foreach ($orders as $order) {
+                $uid = explode(' ', $order->uid);
+                $uid[1] = (string)$number;
+                $uid = implode(' ', $uid);
+
+                $this->orders->update_order($order->id, ['uid' => $uid]);
+            }
 
             $this->users->update_user($user_id, ['personal_number' => $number]);
-            $this->orders->update_order($order_id, ['uid' => $uid]);
+            echo json_encode(['success' => 1]);
             exit;
         }
     }
@@ -3794,8 +3899,7 @@ class OfflineOrderController extends Controller
 
     }
 
-    private
-    function action_send_asp_code()
+    private function action_send_asp_code()
     {
 
         $phone = $this->request->post('phone');
@@ -3928,7 +4032,7 @@ class OfflineOrderController extends Controller
                     ];
 
                 $contract_id = $this->Contracts->add_contract($contract);
-                $this->orders->update_order($order->order_id, ['contract_id' => $contract_id]);
+                $this->orders->update_order($order->order_id, ['contract_id' => $contract_id, 'status' => 2]);
 
                 $this->db->query("
                 SELECT id
@@ -4039,17 +4143,12 @@ class OfflineOrderController extends Controller
 
         $send_payment = $this->Soap1c->send_payment($payment);
 
+        /*
         if (!isset($send_payment->return) || $send_payment->return != 'ОК') {
             echo json_encode(['error' => $send_payment]);
             exit;
         }
-
-        $template = $this->sms->get_template(8);
-        $message = $template->template;
-        $this->sms->send(
-            $order->phone_mobile,
-            $message
-        );
+        */
 
         $asp_log =
             [
@@ -4061,36 +4160,10 @@ class OfflineOrderController extends Controller
                 'manager_id' => $this->manager->id
             ];
 
-        $this->AspCodes->add_code($asp_log);
+        $asp_id = $this->AspCodes->add_code($asp_log);
 
-        $communication_theme = $this->CommunicationsThemes->get(17);
+        $this->documents->update_asp(['order_id' => $order_id, 'rucred_asp_id' => $asp_id, 'second_pak' => 1]);
 
-
-        $ticket = [
-            'creator' => $this->manager->id,
-            'creator_company' => 2,
-            'client_lastname' => $order->lastname,
-            'client_firstname' => $order->firstname,
-            'client_patronymic' => $order->patronymic,
-            'head' => $communication_theme->head,
-            'text' => $communication_theme->text,
-            'theme_id' => 17,
-            'company_id' => 2,
-            'group_id' => $order->group_id,
-            'order_id' => $order_id,
-            'status' => 0
-        ];
-
-        $ticket_id = $this->Tickets->add_ticket($ticket);
-
-        $message =
-            [
-                'message' => $communication_theme->text,
-                'ticket_id' => $ticket_id,
-                'manager_id' => $this->manager->id,
-            ];
-
-        $this->TicketMessages->add_message($message);
 
         $this->design->assign('order', $order);
         $documents = $this->documents->get_documents(['order_id' => $order->order_id]);
@@ -4100,13 +4173,13 @@ class OfflineOrderController extends Controller
         $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id->id, 'second_pak' => 1]);
 
         foreach ($documents as $document) {
-            if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR'])){
+            if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR'])) {
                 $docs_email[$document->type] = $document->id;
             }
         }
 
-        $individ_encrypt = $this->config->back_url . '/online_docs/' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['INDIVIDUALNIE_USLOVIA'] . ' ' . rand(1, 9999999999));
-        $graphic_encrypt = $this->config->back_url . '/online_docs/' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['GRAFIK_OBSL_MKR'] . ' ' . rand(1, 9999999999));
+        $individ_encrypt = $this->config->back_url . '/online_docs?id=' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['INDIVIDUALNIE_USLOVIA'] . ' ' . rand(1, 9999999999));
+        $graphic_encrypt = $this->config->back_url . '/online_docs?id=' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['GRAFIK_OBSL_MKR'] . ' ' . rand(1, 9999999999));
 
         $this->design->assign('individ_encrypt', $individ_encrypt);
         $this->design->assign('graphic_encrypt', $graphic_encrypt);
@@ -4146,31 +4219,18 @@ class OfflineOrderController extends Controller
 
         $this->YaDiskCron->add($cron);
 
-        $template = $this->sms->get_template(8);
-        $message = $template->template;
-        $this->sms->send(
-            $order->phone_mobile,
-            $message
-        );
-
-        $cron =
-            [
-                'ticket_id' => $ticket_id,
-                'is_complited' => 0
-            ];
-
-        $this->NotificationsCron->add($cron);
+        $this->tickets->update_by_theme_id(12, ['status' => 4], $order_id);
 
         echo json_encode(['success' => 1]);
         exit;
     }
 
-    private
-    function action_send_qr()
+    private function action_send_qr()
     {
         $order_id = $this->request->post('order_id');
         $phone = $this->request->post('phone');
         $contract = $this->contracts->get_order_contract($order_id);
+        $order = $this->orders->get_order($order_id);
 
         $payment_schedule = (array)$this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
         $payment_schedule = json_decode($payment_schedule['schedule'], true);
@@ -4202,9 +4262,67 @@ class OfflineOrderController extends Controller
         */
 
         $pay_link = $this->Best2pay->get_payment_link($sum, $contract->id);
-        $template = $this->sms->get_template(3);
-        $message = str_replace('$pay_link', $pay_link, $template->template);
-        $this->sms->send($phone, $message);
+
+        $user_preferred = $this->UserContactPreferred->get($order->user_id);
+
+        if (!empty($user_preferred)) {
+            $template = $this->sms->get_template(3);
+            $template->template = str_replace('$pay_link', $pay_link, $template->template);
+
+            foreach ($user_preferred as $preferred) {
+                switch ($preferred->contact_type_id):
+
+                    case 1:
+                        $message = $template->template;
+                        $this->sms->send(
+                            $phone,
+                            $message
+                        );
+                        break;
+
+                    case 2:
+                        $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+                        $mailService->send(
+                            'rucred@ucase.live',
+                            $order->email,
+                            'RuCred | Уведомление',
+                            "$template->template",
+                            "<h2>$template->template</h2>"
+                        );
+                        break;
+
+                    case 3:
+                        $telegram = new Api($this->config->telegram_token);
+                        $telegram_check = $this->TelegramUsers->get($order->user_id, 0);
+
+                        if (!empty($telegram_check)) {
+                            $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $template->template]);
+                        }
+                        break;
+
+                    case 4:
+                        $bot = new Bot(['token' => $this->config->viber_token]);
+
+                        $botSender = new Sender([
+                            'name' => 'Whois bot',
+                            'avatar' => 'https://developers.viber.com/img/favicon.ico',
+                        ]);
+                        $viber_check = $this->ViberUsers->get($order->user_id, 0);
+
+                        if (!empty($viber_check)) {
+                            $bot->getClient()->sendMessage(
+                                (new \Viber\Api\Message\Text())
+                                    ->setSender($botSender)
+                                    ->setReceiver($viber_check->chat_id)
+                                    ->setText($template->template)
+                            );
+                        }
+                        break;
+
+                endswitch;
+            }
+        }
+
         echo json_encode(['success' => 1]);
         exit;
     }
@@ -4273,6 +4391,99 @@ class OfflineOrderController extends Controller
             ];
 
         $this->cards->update_card($card_id, $card);
+        exit;
+    }
+
+    private function action_accept_order_by_underwriter()
+    {
+        $order_id = $this->request->post('order_id');
+
+        $users_docs = $this->Documents->get_documents(['order_id' => $order_id]);
+
+        $order = $this->orders->get_order($order_id);
+
+        $this->db->query("
+        SELECT *
+        FROM s_files
+        WHERE user_id = ?
+        ", $order->user_id);
+
+        $photos = $this->db->results();
+        $count_photos = 0;
+        $count_approved_photos = 0;
+
+        foreach ($photos as $photo) {
+            if (in_array($photo->type, ['Паспорт: разворот', 'Паспорт: регистрация', 'Селфи с паспортом'])) {
+                $count_photos++;
+
+                if ($photo->status != 0)
+                    $count_approved_photos++;
+            }
+        }
+
+        if ($count_photos < 3) {
+            echo json_encode(['error' => 'Не забудьте добавить фото документов и селфи с паспортом!']);
+            exit;
+        }
+
+        if (empty($users_docs)) {
+            echo json_encode(['error' => 'Не сформированы документы!']);
+            exit;
+        }
+        if ($count_approved_photos < 3) {
+            echo json_encode(['error' => 'Не забудьте подтвердить фото клиента!']);
+            exit;
+        }
+
+        $this->orders->update_order($order_id, ['status' => 1]);
+        $this->tickets->update_by_theme_id(18, ['status' => 4], $order_id);
+
+        exit;
+    }
+
+    private function action_accept_approve_by_under()
+    {
+        $order_id = $this->request->post('order_id');
+        $manager_id = $this->request->post('manager_id');
+        $order = $this->orders->get_order($order_id);
+
+        $communication_theme = $this->CommunicationsThemes->get(12);
+
+        $ticket =
+            [
+                'creator' => $manager_id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => $communication_theme->id,
+                'company_id' => 3,
+                'group_id' => 2,
+                'order_id' => $order_id,
+                'status' => 0
+            ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+        $this->TicketMessages->add_message($message);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
+
+        $this->orders->update_order($order_id, ['status' => 10]);
+        $this->tickets->update_by_theme_id(11, ['status' => 4], $order_id);
         exit;
     }
 

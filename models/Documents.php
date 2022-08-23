@@ -220,6 +220,7 @@ class Documents extends Core
         $limit = 1000;
         $page = 1;
         $search_list = '';
+        $rucred_asp = '';
         $sort = $this->db->placehold("ORDER BY doc.id");
 
 
@@ -235,6 +236,9 @@ class Documents extends Core
 
         if(isset($filter['asp_flag']))
             $asp_flag = $this->db->placehold("AND asp_id = ?", $filter['asp_flag']);
+
+        if(isset($filter['rucred_asp']))
+            $rucred_asp = $this->db->placehold("AND rucred_asp_id = ?", $filter['rucred_asp']);
 
         if(isset($filter['role_id'])){
             $permissions = $this->DocksPermissions->get_docktypes(['role_id' => $filter['role_id']]);
@@ -348,6 +352,7 @@ class Documents extends Core
  	            $first_pak
                 $second_pak
                 $asp_flag
+                $rucred_asp
  	            AND doc.`type` != 'ndfl'
             $sort 
             $sql_limit
@@ -455,6 +460,7 @@ class Documents extends Core
 
         $first_pak = '';
         $second_pak = '';
+        $set = '';
 
         if(isset($params['first_pak']))
             $first_pak = $this->db->placehold("AND `type` not in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
@@ -462,13 +468,19 @@ class Documents extends Core
         if(isset($params['second_pak']))
             $second_pak = $this->db->placehold("AND `type` in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
 
+        if(isset($params['asp_id']))
+            $set = $this->db->placehold("asp_id = ?", $params['asp_id']);
+
+        if(isset($params['rucred_asp_id']))
+            $set = $this->db->placehold("rucred_asp_id = ?", $params['rucred_asp_id']);
+
         $query = $this->db->placehold("
             UPDATE __documents 
-            SET asp_id = ? 
+            SET $set 
             WHERE order_id = ?
             $first_pak
             $second_pak
-        ", $params['asp_id'], $params['order_id']);
+        ", $params['order_id']);
 
         $this->db->query($query);
     }

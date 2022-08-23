@@ -127,7 +127,7 @@
                                        class="btn btn-xs {if $filter_status=='new'}btn-warning{else}btn-outline-warning{/if}">Новая</a>
 
                                     <a href="{if $filter_status==13}{url status=null page=null}{else}{url status=13 page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status==13}btn-info{else}btn-outline-info{/if}">Р.Принята</a>
+                                       class="btn btn-xs {if $filter_status==13}btn-warning{else}btn-outline-warning{/if}">Р.Нецелесообразно</a>
 
                                     <a href="{if $filter_status==14}{url status=null page=null}{else}{url status=14 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==14}btn-success{else}btn-outline-success{/if}">Р.Подтверждена</a>
@@ -145,7 +145,7 @@
                                     <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==1}btn-info{else}btn-outline-info{/if}">Принята</a>
                                     <a href="{if $filter_status==2}{url status=null page=null}{else}{url status=2 page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status==2}btn-success{else}btn-outline-success{/if}">Одобрена</a>
+                                       class="btn btn-xs {if $filter_status==2}btn-success{else}btn-outline-success{/if}">А.Подготовлена</a>
                                     <a href="{if $filter_status==3}{url status=null page=null}{else}{url status=3 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==3}btn-danger{else}btn-outline-danger{/if}">Отказ</a>
                                     <a href="{if $filter_status==4}{url status=null page=null}{else}{url status=4 page=null}{/if}"
@@ -156,12 +156,12 @@
                                     <a href="{if $filter_status==8}{url status=null page=null}{else}{url status=8 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==8}btn-danger{else}btn-outline-danger{/if}">Отказ
                                         клиента</a>
+                                    <a href="{if $filter_status==10}{url status=null page=null}{else}{url status=10 page=null}{/if}"
+                                       class="btn btn-xs {if $filter_status==10}btn-success{else}btn-outline-success{/if}">А.Одобрена</a>
                                     <a href="{if $filter_status==13}{url status=null page=null}{else}{url status=13 page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status==13}btn-info{else}btn-outline-info{/if}">Р.Принята</a>
-
+                                       class="btn btn-xs {if $filter_status==13}btn-warning{else}btn-outline-warning{/if}">Р.Нецелесообразно</a>
                                     <a href="{if $filter_status==14}{url status=null page=null}{else}{url status=14 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==14}btn-success{else}btn-outline-success{/if}">Р.Подтверждена</a>
-
                                     <a href="{if $filter_status==15}{url status=null page=null}{else}{url status=15 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==15}btn-danger{else}btn-outline-danger{/if}">Р.Отклонена</a>
                                     {if $filter_status}
@@ -171,9 +171,11 @@
                             {/if}
                             <div class="js-filter-source">
                                 <a href="{if $filter_source=='client_site'}{url source=null page=null}{else}{url source='client_site' page=null}{/if}"
-                                   class="btn btn-xs {if $filter_source=='client_site'}btn-info{else}btn-outline-info{/if}">Клиентский сайт</a>
+                                   class="btn btn-xs {if $filter_source=='client_site'}btn-info{else}btn-outline-info{/if}">Клиентский
+                                    сайт</a>
                                 <a href="{if $filter_source=='mobile'}{url source=null page=null}{else}{url source='mobile' page=null}{/if}"
-                                   class="btn btn-xs {if $filter_source=='mobile'}btn-primary{else}btn-outline-primary{/if}">Мобильное приложение</a>
+                                   class="btn btn-xs {if $filter_source=='mobile'}btn-primary{else}btn-outline-primary{/if}">Мобильное
+                                    приложение</a>
                                 {if $filter_client}
                                     <input type="hidden" value="{$filter_source}" id="filter_source"/>
                                 {/if}
@@ -293,7 +295,7 @@
                                                     {elseif $order->status == 1}
                                                         <span class="label label-info">Принята</span>
                                                     {elseif $order->status == 2}
-                                                        <span class="label label-success">Одобрена</span>
+                                                        <span class="label label-success">А.Подготовлена</span>
                                                     {elseif $order->status == 3}
                                                         <span class="label label-danger">Отказ</span>
                                                     {elseif $order->status == 4}
@@ -308,16 +310,23 @@
                                                         <span class="label label-danger">Отказ клиента</span>
                                                     {elseif $order->status == 9}
                                                         <span class="label label-primary">Выдан</span>
+                                                    {elseif $order->status == 10}
+                                                        <span class="label label-success">А.Одобрена</span>
                                                     {elseif $order->status == 14}
                                                         <span class="label label-success">Р.Подтверждена</span>
+                                                    {elseif $order->status == 13}
+                                                        <span class="label label-warning">Р.Нецелесообразно</span>
                                                     {elseif $order->status == 15}
                                                         <span class="label label-danger">Р.Отклонена</span>
                                                     {/if}
                                                 </small>
                                                 <small>
-                                                    {if $order->order_source_id == 1}<span class="label label-info">Клиентский сайт</span>
-                                                    {elseif $order->order_source_id == 2}<span class="label label-primary">Мобильное приложение</span>
-                                                    {elseif $order->order_source_id == 3}<span class="label label-success">Црм</span>
+                                                    {if $order->order_source_id == 1}
+                                                        <span class="label label-info">Клиентский сайт</span>
+                                                    {elseif $order->order_source_id == 2}
+                                                        <span class="label label-primary">Мобильное приложение</span>
+                                                    {elseif $order->order_source_id == 3}
+                                                        <span class="label label-success">Црм</span>
                                                     {/if}
                                                 </small>
                                                 {if $order->count_schedules > 1}

@@ -43,19 +43,16 @@ class TicketController extends Controller
 
             $this->TicketsNotes->add($note);
 
-            if ($ticket->status == 0 && $need_response == 0) {
+            if ($ticket->status == 0 && $need_response->need_response == 0) {
                 $this->Tickets->update_ticket($ticket->id, ['status' => 2]);
             }
         }
 
-        if (in_array($ticket->theme_id, [12, 37]) && $this->manager->role == 'middle') {
-            if (empty($ticket->executor)) {
-                $this->Tickets->update_ticket($ticket_id, ['executor' => $this->manager->id]);
-            }
-        }
-
-        if ($this->manager->role == 'employer' && $ticket->creator != $this->manager->id && empty($ticket->executor))
-            $this->Tickets->update_ticket($ticket_id, ['executor' => $this->manager->id]);
+        if (in_array($this->manager->role, ['employer', 'underwriter', 'middle'])
+            && $ticket->creator != $this->manager->id
+            && empty($ticket->executor)
+            && $need_response->need_response == 1)
+            $this->Tickets->update_ticket($ticket_id, ['executor' => $this->manager->id, 'status' => 2]);
 
         if (!empty($ticket->executor)) {
             $manager = $this->managers->get_manager($ticket->executor);

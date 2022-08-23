@@ -63,7 +63,7 @@
     Саморегулируемой организации «Микрофинансирование и Развитие» (СРО «МиР», ОГРН 1137799014055) за №77001218 от
     29.09.2021 года, именуемое в дальнейшем «Заимодавец», в лице Генерального директора Лоскутова Алексея Викторовича,
     действующего на основании Устава, с одной стороны и гражданин (-ка) Российской Федерации
-    <strong>{$birth|date}</strong> года
+    <strong>{$birth|date_format:'%d.%m.%Y'}</strong> года
     рождения, место рождения <strong>{$birth_place}</strong>, паспорт серия <strong>{$passport_serial}</strong> №
     <strong>{$passport_number}</strong> выдан <strong>{$passport_issued}</strong> года
     <strong>{$passport_date|date}</strong>, код подразделения <strong>{$subdivision_code}</strong>,
@@ -201,7 +201,7 @@
                 )</strong>
             годовых<br>(06) Общая сумма процентов за период пользования
             микрозаймом:
-            <br><strong>{$payment_schedule['result']['all_loan_percents_pay']|number_format:0:',':' '}</strong>
+            <br><strong>{$all_percents_string[0]|number_format:0:',':' '}</strong>
             (<strong>{$all_percents_string_part_one|upper}</strong>)
             рублей
             <strong>{if $all_percents_string_part_two}{$all_percents_string_part_two}{else}00{/if}</strong>

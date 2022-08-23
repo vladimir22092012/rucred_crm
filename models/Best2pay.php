@@ -169,10 +169,6 @@ Sector ID: 9285 ООО МКК "Русское кредитное обществ�
             return ['error' => 'Не найдена заявка '.$order_id];
         }
         
-        if ($order->status != 4) {
-            return ['error' => 'Заявка не находится в статусе подписана'];
-        }
-        
         if (!($contract = $this->contracts->get_contract($order->contract_id))) {
             return ['error' => 'Не найден договор '.$order->contract_id];
         }

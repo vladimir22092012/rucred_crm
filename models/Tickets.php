@@ -4,12 +4,10 @@ class Tickets extends Core
 {
     protected $status =
         [
-            0 => 'Новая заявка',
+            0 => 'К принятию',
             1 => 'Направленный тикет',
-            2 => 'Принят',
-            3 => 'На проверку',
+            2 => 'Принят/В работе',
             4 => 'Исполнено',
-            5 => 'На доработку',
             6 => 'Закрыт'
         ];
 
@@ -45,12 +43,19 @@ class Tickets extends Core
 
         if ($in_out == 'in') {
             $creator = $this->db->placehold("AND t.creator != ?", $manager_id);
-            $out = $this->db->placehold("AND t.group_id = 2");
-            if (in_array($manager_role, ['underwriter', 'middle'])) {
-                $manager = $this->db->placehold("AND t.creator != ?", $manager_id);
 
-                if ($manager_role == 'underwriter')
-                    $theme = $this->db->placehold("AND t.theme_id not in (12, 37)");
+            $role_id = $this->ManagerRoles->gets($manager_role);
+            $themes_permissions = $this->ManagersCommunicationsIn->gets($role_id);
+
+            foreach ($themes_permissions as $permission) {
+                $themes_id[] = (int)$permission->theme_id;
+            }
+
+            if (!empty($themes_id)) {
+                $themes_id = implode(',', $themes_id);
+                $theme = $this->db->placehold("AND theme_id in ($themes_id)");
+            } else {
+                $theme = $this->db->placehold("AND theme_id = 0");
             }
         }
 
@@ -150,5 +155,27 @@ class Tickets extends Core
         ", $ticket, $id);
 
         return $this->db->query($query);
+    }
+
+    public function update_by_theme_id($theme_id, $params, $order_id)
+    {
+        $query = $this->db->placehold("
+        UPDATE s_tickets
+        SET ?%
+        WHERE theme_id = ?
+        AND order_id = ?
+        ", $params, $theme_id, $order_id);
+
+        $this->db->query($query);
+    }
+
+    public function delete_by_order($order_id)
+    {
+        $query = $this->db->placehold("
+        DELETE FROM s_tickets
+        WHERE order_id = ?
+        ", $order_id);
+
+        $this->db->query($query);
     }
 }

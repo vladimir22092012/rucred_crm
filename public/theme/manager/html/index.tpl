@@ -336,9 +336,9 @@
                                 <a href="loantypes"><i class="mdi mdi-magnet"></i>Продукты</a></li>
                             {if in_array($manager->role, ['developer', 'admin'])}
                                 <li {if in_array($module, ['WhitelistController'])}class="active"{/if}>
-                                    <a href="/whitelist"><i class="mdi mdi-tooltip"></i>Blacklist</a></li>
+                                    <a href="/whitelist"><i class="mdi mdi-tooltip"></i>Whitelist</a></li>
                                 <li {if in_array($module, ['BlacklistController'])}class="active"{/if}>
-                                    <a href="/blacklist"><i class="mdi mdi-tooltip"></i>Whitelist</a></li>
+                                    <a href="/blacklist"><i class="mdi mdi-tooltip"></i>Blacklist</a></li>
                             {/if}
                             {if $manager->role != 'employer'}
                                 <li {if in_array($module, ['CommunicationsThemesController'])}class="active"{/if}>
@@ -358,6 +358,10 @@
                             {if !in_array($manager->role, ['employer', 'underwriter'])}
                                 <li {if in_array($module, ['SettingsController'])}class="active"{/if}><a
                                             href="settings/"><i class="mdi mdi-settings"></i>Общие</a></li>
+                            {/if}
+                            {if in_array($manager->role, ['developer', 'admin'])}
+                                <li {if in_array($module, ['DeleteUsersController'])}class="active"{/if}>
+                                    <a href="delete_users/"><i class="mdi mdi-account-location"></i>Удаление тестовых клиентов</a></li>
                             {/if}
                             {if $manager->role != 'underwriter'}
                                 <li {if in_array($module, ['ScoringsController'])}class="active"{/if}>

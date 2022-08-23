@@ -7610,6 +7610,7 @@ class TCPDF {
 			// write the document to a temporary folder
 			$tempdoc = TCPDF_STATIC::getObjFilename('doc', $this->file_id);
 			$f = TCPDF_STATIC::fopenLocal($tempdoc, 'wb');
+
 			if (!$f) {
 				$this->Error('Unable to create temporary file: '.$tempdoc);
 			}

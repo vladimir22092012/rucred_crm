@@ -311,6 +311,22 @@
                 });
             });
 
+            $('.question-order').on('click', function (e) {
+                e.preventDefault();
+                let order_id = $(this).attr('data-order');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'question_by_employer',
+                        order_id: order_id
+                    },
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            });
+
             $('.reject-order').on('click', function (e) {
                 e.preventDefault();
                 let order_id = $(this).attr('data-order');
@@ -692,6 +708,8 @@
             $('.send_asp_code').on('click', function (e) {
                 e.preventDefault();
 
+                $('#sms_confirm_modal').modal();
+
                 let phone = $(this).attr('data-phone');
                 let user = $(this).attr('data-user');
                 let order = $(this).attr('data-order');
@@ -750,18 +768,18 @@
                     data: form,
                     dataType: 'JSON',
                     success: function (resp) {
-                        if(resp['error']){
+                        if (resp['error']) {
                             Swal.fire({
                                 title: resp['error'],
                                 confirmButtonText: 'Ок'
                             });
-                        }else{
+                        } else {
                             Swal.fire({
                                 title: "Платежный документ успешно отправлен",
                                 confirmButtonText: 'Ок'
                             });
 
-                            $(this).fadeOut();
+                            $('#send_payment_form').fadeOut();
                             $('#rdr_payment_sent').fadeIn();
                         }
                     }
@@ -784,12 +802,12 @@
                         phone: phone
                     },
                     success: function (resp) {
-                        if(resp['success']){
+                        if (resp['success']) {
                             Swal.fire({
                                 title: 'Ссылка на оплату успешно отправлена',
                                 confirmButtonText: 'Ок'
                             });
-                        }else{
+                        } else {
                             Swal.fire({
                                 title: 'Произошла ошибка',
                                 confirmButtonText: 'Ок'
@@ -797,6 +815,25 @@
                         }
                     }
                 })
+            });
+
+            $('.approve_by_under').on('click', function (e) {
+                e.preventDefault();
+
+                let order_id = $(this).attr('data-order');
+                let manager_id = $(this).attr('data-manager');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'accept_approve_by_under',
+                        order_id: order_id,
+                        manager_id: manager_id
+                    },
+                    success: function () {
+                        location.reload();
+                    }
+                });
             });
 
             $(document).on('click', '.test_ya', function () {
@@ -818,7 +855,7 @@
                 }, 600);
             });
 
-            $('.phone_mobile_format').text(function(i, text) {
+            $('.phone_mobile_format').text(function (i, text) {
                 return text.replace(/(\d)(\d\d\d)(\d\d\d)(\d\d)(\d\d)/, '+$1 ($2) $3-$4-$5');
             });
 
@@ -830,13 +867,21 @@
 
                 $.ajax({
                     method: 'POST',
+                    dataType: 'JSON',
                     data: {
                         action: 'accept_online_order',
                         order_id: order_id,
                         manager_id: manager_id
                     },
-                    success: function () {
-                        location.reload();
+                    success: function (resp) {
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'Ок'
+                            });
+                        } else {
+                            location.reload();
+                        }
                     }
                 });
             })
@@ -1147,16 +1192,34 @@
                     № {$order->group_number} {$order->company_number} {$order->personal_number}</h4>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
-                    <li class="breadcrumb-item"><a href="offline_orders">Заявки</a></li>
+                    <li class="breadcrumb-item"><a href="orders">Заявки</a></li>
                     <li class="breadcrumb-item active">Заявка
                         № {$order->group_number} {$order->company_number} {$order->personal_number}</li>
                 </ol>
             </div>
-            <div class="col-md-6 col-4 align-self-center">
-
-            </div>
         </div>
-
+        {if in_array($order->status, [0,1,2,4,9,10,14,13,15])}
+            <div style="display: flex; margin-left: 5px">
+                <small class="badge badge-{if in_array($order->status, [0,1])}success{else}secondary{/if}">Заведение
+                    заявки и подготовка документов (подписание + фото паспортов)
+                </small>
+                <small class="badge badge-{if in_array($order->status, [2])}success{else}secondary{/if}"
+                       style="margin-left: 5px">Одобрение заявки андеррайтером и принятие в работу
+                </small>
+                <small class="badge badge-{if in_array($order->status, [4])}success{else}secondary{/if}"
+                       style="margin-left: 5px">Одобрение заёмщика работодателем
+                </small>
+            </div>
+            <div style="display: flex; margin-top: 10px">
+                <small class="badge badge-{if in_array($order->status, [13,14])}success{else}secondary{/if}"
+                       style="margin-left: 5px">Проверка заявки андеррайтером после работодателя
+                </small>
+                <small class="badge badge-{if in_array($order->status, [10])}success{else}secondary{/if}"
+                       style="margin-left: 5px">Одобрение сделки миддлом и перечисление средств
+                </small>
+            </div>
+            <br>
+        {/if}
         <div class="row" id="order_wrapper">
             <div class="col-lg-12">
                 <div class="card card-outline-info">
@@ -1165,21 +1228,27 @@
 
                         <div class="form-body">
                             <div class="row">
-                                <div class="col-4 col-md-3 col-lg-2" style="display: flex;">
+                                <div class="col-4 col-md-3 col-lg-3" style="display: flex;">
                                     <small>
-                                        {if $client_status == 'ПК'}<span class="label label-success">ПК</span>
-                                        {elseif $client_status == 'Повтор'}<span class="label label-warning">Повтор</span>
-                                        {elseif $client_status == 'Новая'}<span class="label label-info">Новая</span>
+                                        {if $client_status == 'ПК'}
+                                            <span class="label label-success">ПК</span>
+                                        {elseif $client_status == 'Повтор'}
+                                            <span class="label label-warning">Повтор</span>
+                                        {elseif $client_status == 'Новая'}
+                                            <span class="label label-info">Новая</span>
                                         {/if}
                                     </small>
                                     <small style="margin-left: 25px">
-                                        {if $order->order_source_id == 1}<span class="label label-info">Клиентский сайт</span>
-                                        {elseif $order->order_source_id == 2}<span class="label label-primary">Мобильное приложение</span>
-                                        {elseif $order->order_source_id == 3}<span class="label label-success">Црм</span>
+                                        {if $order->order_source_id == 1}
+                                            <span class="label label-info">Клиентский сайт</span>
+                                        {elseif $order->order_source_id == 2}
+                                            <span class="label label-primary">Мобильное приложение</span>
+                                        {elseif $order->order_source_id == 3}
+                                            <span class="label label-success">Црм</span>
                                         {/if}
                                     </small>
                                 </div>
-                                <div class="col-8 col-md-3 col-lg-4">
+                                <div class="col-8 col-md-3 col-lg-3">
                                     <h5 class="form-control-static float-left">
                                         Дата заявки: {$order->date|date} {$order->date|time}
                                     </h5>
@@ -1192,8 +1261,9 @@
                                 <div class="col-12 col-md-3 col-lg-3">
                                     <h5 class="form-control-static">Номер
                                         клиента: <span class="show_personal_number">{$client->personal_number}</span>
-                                        <a href="" data-user="{$client->id}" class="text-info edit_personal_number">
-                                            <i class="fas fa-edit"></i></a>
+                                        {*<a href="" data-user="{$client->id}"
+                                                                                class="text-info edit_personal_number">
+                                                <i class="fas fa-edit"></i></a>*}
                                     </h5>
                                     <input type="text" class="form-control number_edit_form number"
                                            style="width: 80px; display: none"
@@ -1246,11 +1316,13 @@
                                             <h4>
                                                 <span class="phone_mobile_format">{$order->phone_mobile}</span>
                                             </h4>
-                                            <a href="javascript:void(0);"
-                                               class="text-info js-edit-form edit-amount js-event-add-click"
-                                               data-event="30" data-manager="{$manager->id}"
-                                               data-order="{$order->order_id}" data-user="{$order->user_id}"><i
-                                                        class=" fas fa-edit"></i></a>
+                                            {*<a href="javascript:void(0);"
+                                                                                    class="text-info js-edit-form edit-amount js-event-add-click"
+                                                                                    data-event="30"
+                                                                                    data-manager="{$manager->id}"
+                                                                                    data-order="{$order->order_id}"
+                                                                                    data-user="{$order->user_id}"><i
+                                                        class=" fas fa-edit"></i></a>*}
                                         </div>
 
                                         <div class="edit-block hide">
@@ -1306,14 +1378,14 @@
                                                 <h6>Дата выдачи</h6>
                                                 <h4 class="text-primary probably_start_date">{$order->probably_start_date|date}</h4>
                                             </div>
-                                            {if $order->status != 9}
+                                            {*
                                                 <a href="javascript:void(0);"
                                                    class="text-info js-edit-form edit-amount js-event-add-click"
                                                    data-event="31" data-manager="{$manager->id}"
                                                    data-order="{$order->order_id}" data-user="{$order->user_id}"><i
                                                             class=" fas fa-edit"></i></a>
                                                 </h4>
-                                            {/if}
+                                            *}
                                         </div>
 
                                         <div class="row edit-block hide">
@@ -1359,38 +1431,100 @@
                                         {if $order->status == 2}
                                             <div class="card card-success mb-1">
                                                 <div class="box text-center">
-                                                    <h3 class="text-white mb-0">Одобрена</h3>
+                                                    <h3 class="text-white mb-0">А.Подготовлена</h3>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 0}
+                                            <div class="card card-primary">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Новая</h4>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 1}
+                                            <div class="card card-success">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Принята</h4>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 13}
+                                            <div class="card card-warning">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Р.Нецелесообразно</h4>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if in_array($order->status, [4])}
+                                            <div class="card card-primary">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Подписан со стороны клиента</h4>
+                                                    <h6>Договор {$contract->number}</h6>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 7}
+                                            <div class="card card-primary">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Погашен</h4>
+                                                    <h6>Договор #{$contract->number}</h6>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 8}
+                                            <div class="card card-danger">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Отказ клиента</h4>
+                                                    <small title="Причина отказа">
+                                                        <i>{$reject_reasons[$order->reason_id]->admin_name}</i></small>
                                                 </div>
                                             </div>
                                         {/if}
                                         {if $order->status == 14}
-                                            <div class="card card-success mb-1">
+                                            <div class="card card-success">
                                                 <div class="box text-center">
-                                                    <h4 class="text-white mb-0">Р.Подтверждена</h4>
+                                                    <h4 class="text-white">Р.Подтверждена</h4>
                                                 </div>
                                             </div>
                                         {/if}
-                                        {if !empty({$order->sms})}
-                                            <div class="card card-text mb-1" style="width: 100%!important;">
+                                        {if $order->status == 15}
+                                            <div class="card card-danger">
                                                 <div class="box text-center">
-                                                    <h4>Код ПЭП: {$order->sms}</h4>
+                                                    <h4 class="text-white">Р.Отклонена</h4>
                                                 </div>
                                             </div>
                                         {/if}
-                                        {if $order->status == 4}
-                                            <div class="card card-primary">
-                                                <div class="box text-center">
-                                                    <h4 class="text-white">Подписан</h4>
-                                                    <h6>Договор {$contract->number}</h6>
-                                                </div>
+                                        {if in_array($order->status, [13,14])&& in_array($manager->role, ['underwriter', 'admin', 'developer'])}
+                                            <div>
+                                                <button class="btn btn-success btn-block approve_by_under"
+                                                        data-order="{$order->order_id}"
+                                                        data-manager="{$manager->id}">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Одобрить заявку</span>
+                                                </button>
+                                                <button class="btn btn-danger btn-block reject_by_under"
+                                                        data-user="{$order->user_id}"
+                                                        data-order="{$order->order_id}"
+                                                        data-manager="{$manager->id}">
+                                                    <i class="fas fa-times-circle"></i>
+                                                    <span>Отклонить заявку</span>
+                                                </button>
                                             </div>
+                                        {/if}
+                                        {if $order->status == 10}
                                             {if $order->settlement_id == 2 && in_array($manager->role, ['middle', 'admin', 'developer'])}
                                                 <form class=" pt-1 js-confirm-contract">
                                                     <div class="pt-1 pb-2">
                                                         <button class="btn btn-info btn-lg btn-block send_money"
                                                                 data-order="{$order->order_id}">
                                                             <i class="fas fa-hospital-symbol"></i>
-                                                            <span>Подтвердить и отправить деньги</span>
+                                                            <span>Одобрить заявку и выплатить средства</span>
+                                                        </button>
+                                                        <button class="btn btn-danger btn-lg btn-block"
+                                                                data-order="{$order->order_id}">
+                                                            <i class="fas fa-hospital-symbol"></i>
+                                                            <span>Отказать в предоставлении займа</span>
                                                         </button>
                                                     </div>
                                                 </form>
@@ -1402,21 +1536,26 @@
                                                         <input type="hidden" name="order_id" value="{$order->order_id}">
                                                         <div class="pt-1 pb-2">
                                                             <div class="btn btn-info btn-lg btn-block send_payment">
-                                                                Подтвердить и создать платежный документ
+                                                                Одобрить заявку и выплатить средства
                                                             </div>
                                                         </div>
-                                                    </form>
-                                                {else}
-                                                    <form id="rdr_payment_sent">
-                                                        <div class="pt-1 pb-2">
-                                                            <div class="card card-warning">
-                                                                <div class="box text-center">
-                                                                    <h4 class="text-white">Платежный документ отправлен</h4>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                        <button class="btn btn-danger btn-lg btn-block"
+                                                                data-order="{$order->order_id}">
+                                                            <span>Отказать в предоставлении займа</span>
+                                                        </button>
                                                     </form>
                                                 {/if}
+                                                <form id="rdr_payment_sent"
+                                                      {if empty($issuance_transaction)}style="display: none;" {/if}>
+                                                    <div class="pt-1 pb-2">
+                                                        <div class="card card-warning">
+                                                            <div class="box text-center">
+                                                                <h4 class="text-white">Платежный документ
+                                                                    отправлен</h4>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
                                             {/if}
                                         {/if}
                                         {if $order->status == 5}
@@ -1522,50 +1661,32 @@
                                                 {/if}
                                             {/if}
                                         {/if}
-                                        {if $order->status == 7}
-                                            <div class="card card-primary">
-                                                <div class="box text-center">
-                                                    <h4 class="text-white">Погашен</h4>
-                                                    <h6>Договор #{$contract->number}</h6>
-                                                </div>
-                                            </div>
-                                        {/if}
-                                        {if $order->status == 8}
-                                            <div class="card card-danger">
-                                                <div class="box text-center">
-                                                    <h4 class="text-white">Отказ клиента</h4>
-                                                    <small title="Причина отказа">
-                                                        <i>{$reject_reasons[$order->reason_id]->admin_name}</i></small>
-                                                </div>
-                                            </div>
-                                        {/if}
-                                        {if $order->status == 15}
-                                            <div class="card card-danger">
-                                                <div class="box text-center">
-                                                    <h4 class="text-white">Р.Отклонена</h4>
-                                                </div>
-                                            </div>
-                                        {/if}
-
                                         {if $contract->accept_code}
                                             <h4 class="text-danger mb-0">АСП: {$contract->accept_code}</h4>
                                         {/if}
                                     </div>
-                                    {if $order->status == 1}
+                                    {if $order->status == 4}
                                         {if in_array($manager->role, ['developer', 'admin', 'middle', 'employer'])}
                                             <div>
                                                 <button class="btn btn-success btn-block accept-order warning_asp"
                                                         data-tooltip="Подтвердите нахождение сотрудника в данной организации"
                                                         data-order="{$order->order_id}" data-manager="{$manager->id}">
                                                     <i class="fas fa-check-circle"></i>
-                                                    <span>Подтвердить сотрудника</span>
+                                                    <span>Подтверждаю сотрудника,<br>заём может быть выдан</span>
+                                                </button>
+                                                <button class="btn btn-warning btn-block question-order warning_asp"
+                                                        data-user="{$order->user_id}"
+                                                        data-tooltip="Подтвердите нахождение сотрудника в данной организации"
+                                                        data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                    <span>Подтверждаю сотрудника, выдача займа нецелесообразна</span>
                                                 </button>
                                                 <button class="btn btn-danger btn-block reject-order warning_asp"
                                                         data-user="{$order->user_id}"
                                                         data-tooltip="Подтвердите нахождение сотрудника в данной организации"
                                                         data-order="{$order->order_id}" data-manager="{$manager->id}">
                                                     <i class="fas fa-times-circle"></i>
-                                                    <span>Отклонить сотрудника</span>
+                                                    <span>Нет такого сотрудника</span>
                                                 </button>
                                             </div>
                                         {else}
@@ -1577,13 +1698,77 @@
                                             </div>
                                         {/if}
                                     {/if}
-                                    {if $order->status == 0 && in_array($manager->role, ['developer', 'admin', 'underwriter', 'middle'])}
+                                    {if $order->status == 0 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
                                         <button class="btn btn-success btn-block accept_online_order"
                                                 data-event="12" data-user="{$order->user_id}"
                                                 data-order="{$order->order_id}" data-manager="{$manager->id}">
                                             <i class="fas fa-check-circle"></i>
                                             <span>Принять в работу</span>
                                         </button>
+                                    {/if}
+                                    {if $order->status == 2 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
+                                        <div class="col-12">
+                                            <button
+                                                    class="btn btn-success btn-block js-approve-order js-event-add-click"
+                                                    data-event="12" data-user="{$order->user_id}"
+                                                    data-order="{$order->order_id}"
+                                                    data-manager="{$manager->id}">
+                                                <span>Принять в работу и передать Работодателю</span>
+                                            </button>
+                                            <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
+                                                    data-event="13" data-user="{$order->user_id}"
+                                                    data-order="{$order->order_id}"
+                                                    data-manager="{$manager->id}">
+                                                <span>Отказать без передачи Работодателю</span>
+                                            </button>
+                                        </div>
+                                    {/if}
+                                    {if !empty({$order->sms})}
+                                        <div><br>
+                                            <div class="text-center">
+                                                <h4>Код ПЭП: {$order->sms}</h4>
+                                            </div>
+                                        </div>
+                                    {/if}
+                                    {if $asp_restruct == 1 && $need_confirm_restruct == 0}
+                                        <div style="display: flex;">
+                                            <input type="text" class="form-control code_asp"
+                                                   style="display:none"
+                                                   placeholder="SMS код"
+                                                   value="{if $is_developer}{$contract->accept_code}{/if}"/>
+                                            <small id="asp_success"
+                                                   style="display: none; color: #009d07">
+                                                Успешно!
+                                            </small>
+                                            <div class="btn btn-info confirm_asp" type="button"
+                                                 data-user="{$order->user_id}"
+                                                 data-order="{$order->order_id}"
+                                                 data-restruct="1"
+                                                 style="margin-left: 15px; display:none"
+                                                 data-phone="{$order->phone_mobile}">Подтвердить
+                                            </div>
+                                            <div type="button" data-user="{$order->user_id}"
+                                                 id="send_asp"
+                                                 data-phone="{$order->phone_mobile}"
+                                                 data-order="{$order->order_id}"
+                                                 data-restruct="1"
+                                                 style="margin-left: 15px; width: 370px"
+                                                 class="btn btn-primary send_asp_code">
+                                                Отправить смс
+                                            </div>
+                                        </div>
+                                    {/if}
+                                    {if $need_confirm_restruct == 1 && in_array($manager->role, ['admin', 'middle', 'developer'])}
+                                        <div data-order="{$order->order_id}"
+                                             style="margin-left: 15px;"
+                                             class="btn btn-success confirm_restruct">
+                                            Подтвердить реструктуризацию
+                                        </div>
+                                        <div data-order="{$order->order_id}"
+                                             style="margin-left: 15px;"
+                                             class="btn btn-danger cancell_restruct">
+                                            Отменить реструктуризацию
+                                        </div>
                                     {/if}
                                 </div>
                             </div>
@@ -1666,15 +1851,16 @@
                                                 <input type="hidden" name="user_id" value="{$order->user_id}"/>
 
                                                 <h6 class="card-header card-success">
-                                                    <span class="text-white ">Контакты</span>
+                                                    <span class="text-white ">Общая информация</span>
                                                     <span class="float-right">
                                                             {penalty_button penalty_block='personal'}
+                                                        {*
                                                         <a href="javascript:void(0);"
                                                            class=" text-white js-edit-form js-event-add-click"
                                                            data-event="32" data-manager="{$manager->id}"
                                                            data-order="{$order->order_id}"
                                                            data-user="{$order->user_id}"><i
-                                                                    class=" fas fa-edit"></i></a></h4>
+                                                                    class=" fas fa-edit"></i></a>*}
                                                         </span>
                                                 </h6>
 
@@ -1688,7 +1874,22 @@
                                                             </div>
                                                         </div>
                                                     {/if}
-
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label class="control-label col-md-4">ФИО:</label>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$order->lastname} {$order->firstname} {$order->patronymic}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label class="control-label col-md-4">Телефон:</label>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$order->phone_mobile}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <div class="col-md-12">
                                                         <div class="form-group row m-0">
                                                             <label class="control-label col-md-4">Email:</label>
@@ -1928,6 +2129,178 @@
                                                 </div>
                                             </form>
                                             <!-- / Контакты-->
+                                            <form action="{url}"
+                                                  class="border js-order-item-form mb-3 {if $penalties['images'] && $penalties['images']->status!=3}card-outline-danger{/if}"
+                                                  id="images_form">
+
+                                                <input type="hidden" name="action" value="images"/>
+                                                <input type="hidden" name="order_id" value="{$order->order_id}"/>
+                                                <input type="hidden" name="user_id" value="{$order->user_id}"/>
+
+                                                <h6 class="card-header">
+                                                    <span class="text-white">Фото</span>
+                                                    <span class="float-right">
+                                                    {penalty_button penalty_block='images'}
+                                                </span>
+                                                </h6>
+
+                                                <div class="row p-2 view-block {if $socials_error}hide{/if}">
+                                                    <ul class="col-md-12 list-inline"
+                                                        style="display: flex; justify-content: left">
+                                                        {foreach $files as $file}
+                                                            {if $file->status == 0}
+                                                                {$item_class="border-warning"}
+                                                                {$ribbon_class="ribbon-warning"}
+                                                                {$ribbon_icon="fas fa-question"}
+                                                            {elseif $file->status == 1}
+                                                                {$item_class="border-primary"}
+                                                                {$ribbon_class="ribbon-primary"}
+                                                                {$ribbon_icon="fas fa-clock"}
+                                                            {elseif $file->status == 2}
+                                                                {$item_class="border-success border border-bg"}
+                                                                {$ribbon_class="ribbon-success"}
+                                                                {$ribbon_icon="fa fa-check-circle"}
+                                                            {elseif $file->status == 3}
+                                                                {$item_class="border-danger border"}
+                                                                {$ribbon_class="ribbon-danger"}
+                                                                {$ribbon_icon="fas fa-times-circle"}
+                                                            {elseif $file->status == 4}
+                                                                {$item_class="border-info border"}
+                                                                {$ribbon_class="ribbon-info"}
+                                                                {$ribbon_icon="fab fa-cloudversify"}
+                                                            {/if}
+                                                            <div style="display: flex; flex-direction: column; margin-left: 15px">
+                                                                <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
+                                                                    <a class="image-popup-fit-width js-event-add-click"
+                                                                       href="javascript:void(0);"
+                                                                       onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$file->name}');"
+                                                                       data-event="50" data-manager="{$manager->id}"
+                                                                       data-order="{$order->order_id}"
+                                                                       data-user="{$order->user_id}">
+                                                                        <div class="ribbon ribbon-corner {$ribbon_class}">
+                                                                            <i
+                                                                                    class="{$ribbon_icon}"></i></div>
+                                                                        <img src="{$config->back_url}/files/users/{$order->user_id}/{$file->name}"
+                                                                             alt="" class="img-responsive" style=""/>
+                                                                    </a>
+                                                                    <div class="order-image-actions"
+                                                                         {if !in_array($order->status, [0, 1, 2]) || $file->type == 'document'}style="display: none"{/if}>
+                                                                        <div class="dropdown mr-1 show ">
+                                                                            <button type="button"
+                                                                                    class="btn {if $file->status==2}btn-success{elseif $file->status==3}btn-danger{else}btn-secondary{/if} dropdown-toggle"
+                                                                                    id="dropdownMenuOffset"
+                                                                                    data-toggle="dropdown"
+                                                                                    aria-haspopup="true"
+                                                                                    aria-expanded="true">
+                                                                                {if $file->status == 2}Принят
+                                                                                {elseif $file->status == 3}Отклонен
+                                                                                {else}Статус
+                                                                                {/if}
+                                                                            </button>
+                                                                            <div class="dropdown-menu"
+                                                                                 aria-labelledby="dropdownMenuOffset"
+                                                                                 x-placement="bottom-start">
+                                                                                <div class="p-1 dropdown-item">
+                                                                                    <button
+                                                                                            class="btn btn-sm btn-block btn-outline-success js-image-accept js-event-add-click"
+                                                                                            data-event="51"
+                                                                                            data-manager="{$manager->id}"
+                                                                                            data-order="{$order->order_id}"
+                                                                                            data-user="{$order->user_id}"
+                                                                                            data-id="{$file->id}"
+                                                                                            type="button">
+                                                                                        <i class="fas fa-check-circle"></i>
+                                                                                        <span>Принять</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div class="p-1 dropdown-item">
+                                                                                    <button
+                                                                                            class="btn btn-sm btn-block btn-outline-danger js-image-reject js-event-add-click"
+                                                                                            data-event="52"
+                                                                                            data-manager="{$manager->id}"
+                                                                                            data-order="{$order->order_id}"
+                                                                                            data-user="{$order->user_id}"
+                                                                                            data-id="{$file->id}"
+                                                                                            type="button">
+                                                                                        <i class="fas fa-times-circle"></i>
+                                                                                        <span>Отклонить</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div class="p-1 pt-3 dropdown-item">
+                                                                                    <button
+                                                                                            class="btn btn-sm btn-block btn-danger js-image-remove js-event-add-click"
+                                                                                            data-event="53"
+                                                                                            data-manager="{$manager->id}"
+                                                                                            data-order="{$order->order_id}"
+                                                                                            data-user="{$order->user_id}"
+                                                                                            data-id="{$file->id}"
+                                                                                            type="button">
+                                                                                        <i class="fas fa-trash"></i>
+                                                                                        <span>Удалить</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
+                                                                    <select class="form-control photo_status"
+                                                                            data-file="{$file->id}"
+                                                                            name="photo_status">
+                                                                        <option value="1"
+                                                                                {if $file->type == 'document'}selected{/if}>
+                                                                            Выберите тип документа
+                                                                        </option>
+                                                                        <option value="2"
+                                                                                {if $file->type == 'Паспорт: разворот'}selected{/if}>
+                                                                            Паспорт: разворот
+                                                                        </option>
+                                                                        <option value="3"
+                                                                                {if $file->type == 'Паспорт: регистрация'}selected{/if}>
+                                                                            Паспорт: регистрация
+                                                                        </option>
+                                                                        <option value="4"
+                                                                                {if $file->type == 'Селфи с паспортом'}selected{/if}>
+                                                                            Селфи с паспортом
+                                                                        </option>
+                                                                    </select>
+                                                                {/if}
+                                                            </div>
+                                                        {/foreach}
+                                                    </ul>
+                                                </div>
+
+                                                <div class="row edit-block {if !$images_error}hide{/if}">
+                                                    {foreach $files as $file}
+                                                        <div class="col-md-4 col-lg-3 col-xlg-3">
+                                                            <div class="card card-body">
+                                                                <div class="row">
+                                                                    <div class="col-md-6 col-lg-8">
+                                                                        <div class="form-group">
+                                                                            <label class="control-label">Статус</label>
+                                                                            <input type="text" class="js-file-status"
+                                                                                   id="status_{$file->id}"
+                                                                                   name="status[{$file->id}]"
+                                                                                   value="{$file->status}"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {/foreach}
+                                                    <div class="col-md-12">
+                                                        <div class="form-actions">
+                                                            <button type="submit" class="btn btn-success"><i
+                                                                        class="fa fa-check"></i> Сохранить
+                                                            </button>
+                                                            <button type="button"
+                                                                    class="btn btn-inverse js-cancel-edit">
+                                                                Отмена
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
 
 
                                             <!-- Данные о работе -->
@@ -1959,12 +2332,12 @@
                                                                 Подписать документы о реструктуризации</a>
                                                         </div>
                                                     {/if}
-                                                    {if in_array($order->status, [0,1,12,14])}
+                                                    {*
                                                         <input style="margin-left: 30px" type="button"
                                                                data-schedule="{$payment_schedule->id}"
                                                                class="btn btn-warning reform"
                                                                value="Редактировать">
-                                                    {/if}
+                                                    *}
                                                     {if $order->status != 5}
                                                         <input style="margin-left: 30px; display: none" type="button"
                                                                class="btn btn-primary accept_changes"
@@ -2093,13 +2466,15 @@
                                                 <span class="text-white">Дополнительная информация</span>
                                                 <span class="float-right">
                                                             {penalty_button penalty_block='work'}
-                                                    <a href="javascript:void(0);"
-                                                       class="text-white float-right js-edit-form js-event-add-click"
-                                                       data-event="35" data-manager="{$manager->id}"
-                                                       data-order="{$order->order_id}"
-                                                       data-user="{$order->user_id}"><i
-                                                                class=" fas fa-edit"></i></a>
-                                                        </span>
+                                                    {*
+                                                        <a href="javascript:void(0);"
+                                                           class="text-white float-right js-edit-form js-event-add-click"
+                                                           data-event="35" data-manager="{$manager->id}"
+                                                           data-order="{$order->order_id}"
+                                                           data-user="{$order->user_id}"><i
+                                                                    class=" fas fa-edit"></i></a>
+                                                    *}
+                                                </span>
                                             </h6>
 
                                             <div class="row m-0 pt-2 view-block {if $work_error}hide{/if}">
@@ -2252,14 +2627,14 @@
 
                                             <h6 class="card-header">
                                                 <span class="text-white">Информация о работодателе</span>
-                                                {if !in_array($order->status, ['4','5','6','7','8'])}
+                                                {*
                                                     <span class="float-right">
                                                     <a href="javascript:void(0);"
                                                        class="text-white"
                                                        data-user="{$order->user_id}">
                                                         <i class="fas fa-eraser"></i></a>
                                                         </span>
-                                                {/if}
+                                                *}
                                             </h6>
 
                                             <div class="row m-0 pt-2 view-block">
@@ -2353,14 +2728,12 @@
 
                                             <h6 class="card-header">
                                                 <span class="text-white">Документы</span>
-                                                {if !in_array($order->status, ['4','5','6','7','8'])}
-                                                    {if $manager->role != 'employer'}
-                                                        <input style="margin-left: 30px" type="button"
-                                                               class="btn btn-primary get-docs"
-                                                               data-order="{$order->order_id}"
-                                                               value="Сформировать документы">
-                                                    {/if}
-                                                {/if}
+                                                {*{if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
+                                                    <input style="margin-left: 30px" type="button"
+                                                           class="btn btn-primary get-docs"
+                                                           data-order="{$order->order_id}"
+                                                           value="Сформировать документы">
+                                                {/if}*}
                                             </h6>
                                             <br>
                                             {if !empty($documents)}
@@ -2389,6 +2762,7 @@
                                                                         class="btn btn-outline-warning print_doc"
                                                                         value="Распечатать"></a>
                                                         </div>
+                                                        {*
                                                         <div class="btn-group"
                                                              style="margin-left: 10px; height: 35px">
                                                             {if $document->scan}
@@ -2401,7 +2775,7 @@
                                                                            value="Скан">
                                                                 </a>
                                                             {/if}
-                                                            {if !in_array($order->status, ['4','5','6','7','8'])}
+                                                            {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
                                                                 {if $manager->role != 'employer'}
                                                                     <button type="button"
                                                                             class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
@@ -2423,6 +2797,7 @@
                                                                 {/if}
                                                             {/if}
                                                         </div>
+                                                        *}
                                                     </div>
                                                     <hr style="width: 100%; size: 2px">
                                                 {/foreach}
@@ -2620,10 +2995,12 @@
                                         <form class="mb-4 border">
                                             <h6 class="card-header text-white">
                                                 <span>ИНН</span>
-                                                <span class="float-right">
+                                                {*
+                                                    <span class="float-right">
                                                                 <a href="" class="text-white inn-edit"><i
                                                                             class=" fas fa-edit"></i></a>
-                                                        </span>
+                                                </span>
+                                                *}
                                             </h6>
                                             <div class="row view-block p-2 inn-front">
                                                 <div class="col-md-12">
@@ -2653,10 +3030,12 @@
                                         <form class="mb-4 border">
                                             <h6 class="card-header text-white">
                                                 <span>СНИЛС</span>
-                                                <span class="float-right">
+                                                {*
+                                                    <span class="float-right">
                                                                 <a href="" class="text-white snils-edit"><i
                                                                             class=" fas fa-edit"></i></a>
-                                                        </span>
+                                                </span>
+                                               *}
                                             </h6>
                                             <div class="row view-block p-2 snils-front">
                                                 <div class="col-md-12">
@@ -2685,8 +3064,11 @@
                                         <form class="mb-3 border js-order-item-form">
                                             <h6 class="card-header text-white">
                                                 <span>Расчетный счет</span>
-                                                <span class="float-right"><a class="text-white cors-edit" href=""><i
-                                                                class=" fas fa-edit"></i></a></span>
+                                                {*
+                                                    <span class="float-right"><a class="text-white cors-edit" href=""><i
+                                                                    class=" fas fa-edit"></i></a>
+                                                </span>
+                                                *}
                                             </h6>
                                             {if $same_holder == 1}
                                                 <input type="hidden" name="action" value="cors_change"/>
@@ -2843,259 +3225,16 @@
                                                 </div>
                                             </div>
                                         </form>
-
                                     </div>
                                 </div>
                                 <!-- -->
-
-                                <form action="{url}"
-                                      class="border js-order-item-form mb-3 {if $penalties['images'] && $penalties['images']->status!=3}card-outline-danger{/if}"
-                                      id="images_form">
-
-                                    <input type="hidden" name="action" value="images"/>
-                                    <input type="hidden" name="order_id" value="{$order->order_id}"/>
-                                    <input type="hidden" name="user_id" value="{$order->user_id}"/>
-
-                                    <h6 class="card-header">
-                                        <span class="text-white">Фото</span>
-                                        <span class="float-right">
-                                                    {penalty_button penalty_block='images'}
-                                                </span>
-                                    </h6>
-
-                                    <div class="row p-2 view-block {if $socials_error}hide{/if}">
-                                        <ul class="col-md-12 list-inline" style="display: flex; justify-content: left">
-                                            {foreach $files as $file}
-                                                {if $file->status == 0}
-                                                    {$item_class="border-warning"}
-                                                    {$ribbon_class="ribbon-warning"}
-                                                    {$ribbon_icon="fas fa-question"}
-                                                {elseif $file->status == 1}
-                                                    {$item_class="border-primary"}
-                                                    {$ribbon_class="ribbon-primary"}
-                                                    {$ribbon_icon="fas fa-clock"}
-                                                {elseif $file->status == 2}
-                                                    {$item_class="border-success border border-bg"}
-                                                    {$ribbon_class="ribbon-success"}
-                                                    {$ribbon_icon="fa fa-check-circle"}
-                                                {elseif $file->status == 3}
-                                                    {$item_class="border-danger border"}
-                                                    {$ribbon_class="ribbon-danger"}
-                                                    {$ribbon_icon="fas fa-times-circle"}
-                                                {elseif $file->status == 4}
-                                                    {$item_class="border-info border"}
-                                                    {$ribbon_class="ribbon-info"}
-                                                    {$ribbon_icon="fab fa-cloudversify"}
-                                                {/if}
-                                                <div style="display: flex; flex-direction: column; margin-left: 15px">
-                                                    <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
-                                                        <a class="image-popup-fit-width js-event-add-click"
-                                                           href="javascript:void(0);"
-                                                           onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$file->name}');"
-                                                           data-event="50" data-manager="{$manager->id}"
-                                                           data-order="{$order->order_id}"
-                                                           data-user="{$order->user_id}">
-                                                            <div class="ribbon ribbon-corner {$ribbon_class}"><i
-                                                                        class="{$ribbon_icon}"></i></div>
-                                                            <img src="{$config->back_url}/files/users/{$order->user_id}/{$file->name}"
-                                                                 alt="" class="img-responsive" style=""/>
-                                                        </a>
-                                                        <div class="order-image-actions"
-                                                             {if !in_array($order->status, [0, 1, 12, 14, 15]) || $file->type == 'document'}style="display: none"{/if}>
-                                                            <div class="dropdown mr-1 show ">
-                                                                <button type="button"
-                                                                        class="btn {if $file->status==2}btn-success{elseif $file->status==3}btn-danger{else}btn-secondary{/if} dropdown-toggle"
-                                                                        id="dropdownMenuOffset"
-                                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                                        aria-expanded="true">
-                                                                    {if $file->status == 2}Принят
-                                                                    {elseif $file->status == 3}Отклонен
-                                                                    {else}Статус
-                                                                    {/if}
-                                                                </button>
-                                                                <div class="dropdown-menu"
-                                                                     aria-labelledby="dropdownMenuOffset"
-                                                                     x-placement="bottom-start">
-                                                                    <div class="p-1 dropdown-item">
-                                                                        <button
-                                                                                class="btn btn-sm btn-block btn-outline-success js-image-accept js-event-add-click"
-                                                                                data-event="51"
-                                                                                data-manager="{$manager->id}"
-                                                                                data-order="{$order->order_id}"
-                                                                                data-user="{$order->user_id}"
-                                                                                data-id="{$file->id}"
-                                                                                type="button">
-                                                                            <i class="fas fa-check-circle"></i>
-                                                                            <span>Принять</span>
-                                                                        </button>
-                                                                    </div>
-                                                                    <div class="p-1 dropdown-item">
-                                                                        <button
-                                                                                class="btn btn-sm btn-block btn-outline-danger js-image-reject js-event-add-click"
-                                                                                data-event="52"
-                                                                                data-manager="{$manager->id}"
-                                                                                data-order="{$order->order_id}"
-                                                                                data-user="{$order->user_id}"
-                                                                                data-id="{$file->id}"
-                                                                                type="button">
-                                                                            <i class="fas fa-times-circle"></i>
-                                                                            <span>Отклонить</span>
-                                                                        </button>
-                                                                    </div>
-                                                                    <div class="p-1 pt-3 dropdown-item">
-                                                                        <button
-                                                                                class="btn btn-sm btn-block btn-danger js-image-remove js-event-add-click"
-                                                                                data-event="53"
-                                                                                data-manager="{$manager->id}"
-                                                                                data-order="{$order->order_id}"
-                                                                                data-user="{$order->user_id}"
-                                                                                data-id="{$file->id}"
-                                                                                type="button">
-                                                                            <i class="fas fa-trash"></i>
-                                                                            <span>Удалить</span>
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <select class="form-control photo_status" data-file="{$file->id}"
-                                                            name="photo_status">
-                                                        <option value="1" {if $file->type == 'document'}selected{/if}>
-                                                            Выберите тип документа
-                                                        </option>
-                                                        <option value="2"
-                                                                {if $file->type == 'Паспорт: разворот'}selected{/if}>
-                                                            Паспорт: разворот
-                                                        </option>
-                                                        <option value="3"
-                                                                {if $file->type == 'Паспорт: регистрация'}selected{/if}>
-                                                            Паспорт: регистрация
-                                                        </option>
-                                                        <option value="4"
-                                                                {if $file->type == 'Селфи с паспортом'}selected{/if}>
-                                                            Селфи с паспортом
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                            {/foreach}
-                                        </ul>
-                                    </div>
-
-                                    <div class="row edit-block {if !$images_error}hide{/if}">
-                                        {foreach $files as $file}
-                                            <div class="col-md-4 col-lg-3 col-xlg-3">
-                                                <div class="card card-body">
-                                                    <div class="row">
-                                                        <div class="col-md-6 col-lg-8">
-                                                            <div class="form-group">
-                                                                <label class="control-label">Статус</label>
-                                                                <input type="text" class="js-file-status"
-                                                                       id="status_{$file->id}"
-                                                                       name="status[{$file->id}]"
-                                                                       value="{$file->status}"/>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        {/foreach}
-                                        <div class="col-md-12">
-                                            <div class="form-actions">
-                                                <button type="submit" class="btn btn-success"><i
-                                                            class="fa fa-check"></i> Сохранить
-                                                </button>
-                                                <button type="button" class="btn btn-inverse js-cancel-edit">
-                                                    Отмена
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                                <!-- -->
-                                <div style="display: flex; width: 100%; justify-content: space-between">
-                                    {if in_array($order->status, [0,1,12,14,15])}
-                                        <form method="POST" style="width: 50%; margin-left: 15px"
-                                              enctype="multipart/form-data">
-                                            {if $manager->role != 'employer'}
-                                                <div class="form_file_item">
-                                                    <input type="file" name="new_file" class="new_file" id="new_file"
-                                                           data-user="{$order->user_id}" value="" style="display:none"/>
-                                                    <label for="new_file" class="btn btn-large btn-primary">
-                                                        <i class="fa fa-plus-circle"></i>
-                                                        <span>Добавить фото</span>
-                                                    </label>
-                                                </div>
-                                            {/if}
-                                        </form>
-                                    {/if}
-                                </div>
-                                {if $order->status == 14 && in_array($manager->role, ['developer', 'admin', 'underwriter', 'middle'])}
-                                    <div class="js-approve-reject-block">
-                                        <br>
-                                        <form class=" pt-1 js-confirm-contract">
-                                            <div class="input-group" style="display: flex;">
-                                                <input type="hidden" name="contract_id" class="js-contract-id"
-                                                       value="{$order->contract_id}"/>
-                                                <input type="hidden" name="phone" class="js-contract-phone"
-                                                       value="{$order->phone_mobile|escape}"/>
-                                                <div style="display: flex; justify-content: space-between;">
-                                                    <button
-                                                            class="btn btn-success js-approve-order js-event-add-click"
-                                                            data-event="12" data-user="{$order->user_id}"
-                                                            style="margin-left: 15px"
-                                                            data-order="{$order->order_id}"
-                                                            data-manager="{$manager->id}">
-                                                        <span>Одобрить</span>
-                                                    </button>
-                                                    <button class="btn btn-danger js-reject-order js-event-add-click"
-                                                            data-event="13" data-user="{$order->user_id}"
-                                                            style="margin-left: 15px"
-                                                            data-order="{$order->order_id}"
-                                                            data-manager="{$manager->id}">
-                                                        <span>Отказать</span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                {/if}
-                                {if $asp_restruct == 1}
-                                    <div style="display: flex;">
-                                        <input type="text" class="form-control code_asp"
-                                               style="display:none"
-                                               placeholder="SMS код"
-                                               value="{if $is_developer}{$contract->accept_code}{/if}"/>
-                                        <small id="asp_success"
-                                               style="display: none; color: #009d07">
-                                            Успешно!
-                                        </small>
-                                        <div class="btn btn-info confirm_asp" type="button"
-                                             data-user="{$order->user_id}"
-                                             data-order="{$order->order_id}"
-                                             data-restruct="1"
-                                             style="margin-left: 15px; display:none"
-                                             data-phone="{$order->phone_mobile}">Подтвердить
-                                        </div>
-                                        <div type="button" data-user="{$order->user_id}"
-                                             id="send_asp"
-                                             data-phone="{$order->phone_mobile}"
-                                             data-order="{$order->order_id}"
-                                             style="margin-left: 15px; width: 370px"
-                                             class="btn btn-primary send_asp_code">
-                                            Отправить смс
-                                        </div>
-                                    </div>
-                                {/if}
                             </div>
                             <br>
-                            {if $manager->role != 'employer' && !in_array($order->status, ['4','5','6','7','8'])}
+                            {if $manager->role != 'employer' && in_array($order->status, [0,1,2])}
                                 <div type="button" class="btn btn-outline-danger delete_order"
                                      data-order="{$order->order_id}" style="margin-left: 20px">
                                     Удалить заявку
                                 </div>
-                                <br>
-                                <br>
                             {/if}
                         </div>
 
@@ -3947,6 +4086,47 @@
                             <input type="button" class="btn btn-success float-right do_restruct" value="Сохранить">
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="sms_confirm_modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Подтвердить смс</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert" style="display:none"></div>
+                    <div style="display: flex;" class="col-md-12">
+                        <input type="text" class="form-control code_asp"
+                               style="display:none"
+                               placeholder="SMS код"
+                               value="{if $is_developer}{$contract->accept_code}{/if}"/>
+                        <small id="asp_success"
+                               style="display: none; color: #009d07">
+                            Успешно!
+                        </small>
+                        <button class="btn btn-info confirm_asp" type="button"
+                                data-user="{$order->user_id}"
+                                data-order="{$order->order_id}"
+                                style="margin-left: 15px; display:none"
+                                data-phone="{$order->phone_mobile}">Подтвердить
+                        </button>
+                    </div>
+                    <br>
+                    <div class="col-md-12">
+                        <button data-user="{$order->user_id}"
+                                id="send_asp"
+                                data-phone="{$order->phone_mobile}"
+                                data-order="{$order->order_id}"
+                                class="btn btn-primary btn-block send_asp_code">
+                            Отправить смс
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -19,7 +19,7 @@
         </td>
         <td style="width: 36%;" align="center">
             <div>Полная стоимость микрозайма в валюте микрозайма
-                <strong>{$payment_schedule['result']['all_loan_percents_pay']|number_format:0:',':' '}</strong>
+                <strong>{$all_percents_string[0]|number_format:0:',':' '}</strong>
                 (<strong>{$all_percents_string_part_one|upper}</strong>)
                 рублей
                 <strong>{if $all_percents_string_part_two}{$all_percents_string_part_two}{else}00{/if}</strong>

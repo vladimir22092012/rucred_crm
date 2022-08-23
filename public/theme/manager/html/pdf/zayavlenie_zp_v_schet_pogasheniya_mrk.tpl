@@ -6,7 +6,7 @@
     </tr>
     <tr style="width: 100%">
         <td style="width: 60%"></td>
-        <td style="width: 40%">от <strong>{$lastname} {$firstname} {$patronymic}</strong></td>
+        <td style="width: 40%">от сотрудника <strong>{$lastname} {$firstname} {$patronymic}</strong></td>
     </tr>
     <tr style="width: 100%">
         <td style="width: 60%"></td>

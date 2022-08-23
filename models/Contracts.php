@@ -775,6 +775,12 @@ class Contracts extends Core
         $this->db->query($query);
     }
 
+    public function delete_contracts_by_user_id($user_id)
+    {
+        $query = $this->db->placehold("DELETE FROM __contracts WHERE user_id = ?", $user_id);
+        $this->db->query($query);
+    }
+
     public function conduct_transaction($transaction, $operation_xml)
     {
         $operation_reference = (string)$operation_xml->reference;

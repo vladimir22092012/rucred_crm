@@ -14,4 +14,18 @@ class ManagerRoles extends Core
 
         return $roles;
     }
+
+    public function gets($name)
+    {
+        $query = $this->db->placehold("
+        SELECT id
+        FROM s_managers_roles
+        WHERE `name` = ?
+        ", $name);
+
+        $this->db->query($query);
+        $id = $this->db->result('id');
+
+        return $id;
+    }
 }

@@ -5,13 +5,16 @@ class Orders extends Core
     private $statuses = array(
         0 => 'Новая',
         1 => 'Принята',
+        2 => 'А.Подтверждена',
         4 => 'Подписан',
         5 => 'Выдан',
         6 => 'Не удалось выдать',
         7 => 'Погашен',
         8 => 'Отказ клиента',
         9 => 'Выплачиваем',
+        10 => 'Одобрено андерайтером',
         12 => 'Черновик',
+        13 => 'Р.Нецелесообразно',
         14 => 'Р.Подтверждена',
         15 => 'Р.Отклонена',
         16 => 'Удалена'
@@ -762,5 +765,11 @@ class Orders extends Core
         $query = $this->db->placehold("DELETE FROM __orders WHERE id = ?", (int)$id);
         $this->db->query($query);
         return $id;
+    }
+
+    public function delete_orders_by_user_id($user_id)
+    {
+        $query = $this->db->placehold("DELETE FROM __orders WHERE user_id = ?", $user_id);
+        $this->db->query($query);
     }
 }

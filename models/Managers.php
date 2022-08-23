@@ -277,7 +277,7 @@ class Managers extends Core
 
         $query = $this->db->placehold("
             UPDATE __managers SET ?% WHERE id = ?
-        ", (array)$manager, (int)$id);
+        ", $manager, (int)$id);
         $this->db->query($query);
 
         return $id;
@@ -345,7 +345,7 @@ class Managers extends Core
 //            'add_penalty' => array('developer', 'admin', 'boss', 'quality_control', 'quality_control_plus'),
 //            'penalties' => array('developer', 'admin', 'boss', 'quality_control', 'quality_control_plus', 'user', 'big_user', 'cs_pc'),
 //            'collection_moving' => array('developer', 'admin', 'boss', 'quality_control', 'quality_control_plus', 'chief_collector', 'team_collector'),
-            'neworder' => array('developer', 'admin', 'underwriter', 'middle'),
+            'neworder' => array('developer', 'admin', 'underwriter'),
             'offline' => array('developer', 'admin', 'underwriter', 'employer', 'middle'),
             'offline_settings' => array('developer', 'admin', 'underwriter', 'middle')
         );

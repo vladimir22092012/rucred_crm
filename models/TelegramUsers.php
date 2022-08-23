@@ -31,7 +31,7 @@ class TelegramUsers extends Core
 
     public function get($user_id, $manager_flag = false)
     {
-        if($manager_flag)
+        if(in_array($manager_flag, [0,1]))
             $manager_flag = $this->db->placehold("AND is_manager = ?", $manager_flag);
 
         $query = $this->db->placehold("

@@ -7,9 +7,9 @@ class DocumentController extends Controller
 {
     public function fetch()
     {
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($document);echo '</pre><hr />';
 
         $id = $this->request->get('id');
+
         $document = $this->documents->get_document($id);
 
         foreach ($document->params as $param_name => $param_value) {
@@ -160,6 +160,7 @@ class DocumentController extends Controller
 
         $all_percents_string_part_two = str_pad($all_percents_string[1], '2', '0', STR_PAD_RIGHT);
         $this->design->assign('all_percents_string_part_two', $all_percents_string_part_two);
+        $this->design->assign('all_percents_string', $all_percents_string);
 
         if (is_null($document->params->percent)) {
             $percents_per_day_str_part_one = 0;
