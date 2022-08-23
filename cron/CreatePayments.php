@@ -164,7 +164,7 @@ class CreatePayments extends Core
                 $company = $this->Companies->get_company($order->company_id);
                 $fio = "$order->lastname $order->firstname $order->patronymic";
 
-                $schedules = $this->PaymentsSchedules->gets($order_id);
+                $schedules = $this->PaymentsSchedules->gets($contract->order_id);
 
                 if (count($schedules) > 1) {
 
