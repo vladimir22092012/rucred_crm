@@ -106,8 +106,6 @@ class Blacklist extends Core
     
     public function add_person($person)
     {
-        var_dump($person);
-        
         $query = $this->db->placehold("
             INSERT INTO __blacklist SET ?%
         ", (array)$person);
