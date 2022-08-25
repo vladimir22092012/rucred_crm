@@ -20,6 +20,7 @@ class Documents extends Core
         'SOGLASIE_RUKRED_RABOTODATEL' => 'soglasie_rabotadatelu.tpl',
         'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP' => 'zayavlenie_na_perechislenie_chasti_zp.tpl',
         'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR' => 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl',
+        'INDIVIDUALNIE_USLOVIA_ONL'                 => 'ind_usloviya_online.tpl',
         'INDIVIDUALNIE_USLOVIA' => 'individualnie_usloviya.tpl',
         'GRAFIK_OBSL_MKR' => 'grafik_obsl_mkr.tpl',
         'PERECHISLENIE_ZAEMN_SREDSTV' => 'perechislenie_zaemnih_sredstv.tpl',
@@ -45,7 +46,8 @@ class Documents extends Core
         'DOP_SOGLASHENIE' => 'Дополнительное соглашение к Индивидуальным условиям договора микрозайма',
         'DOP_GRAFIK' => 'График платежей по микрозайму (после реструктуризации)',
         'OBSHIE_USLOVIYA' => 'Справка по основным условиям микрозайма',
-        'SOGLASIE_NA_OBR_PERS_DANNIH_OBL'       => 'Облегчённое согласие на обработку персональных данных'
+        'SOGLASIE_NA_OBR_PERS_DANNIH_OBL'       => 'Облегчённое согласие на обработку персональных данных',
+        'INDIVIDUALNIE_USLOVIA_ONL' => 'Индивидуальные условия договора микрозайма'
     );
 
     private $client_visible = array(
@@ -53,6 +55,7 @@ class Documents extends Core
         'SOGLASIE_VZAIMODEYSTVIE' => 0,
         'OBSHIE_USLOVIYA' => 1,
         'DOP_SOGLASHENIE' => 1,
+        'INDIVIDUALNIE_USLOVIA_ONL' => 1,
         'SOGLASIE_MEGAFON' => 0,
         'SOGLASIE_SCORING' => 0,
         'SOGLASIE_SPISANIE' => 0,
