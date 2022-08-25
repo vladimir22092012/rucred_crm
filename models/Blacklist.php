@@ -4,8 +4,6 @@ class Blacklist extends Core
 {
     public function search($phone, $fio)
     {
-        $fio = mb_strtolower($fio, 'utf8');
-        
         $query = $this->db->placehold("
             SELECT id 
             FROM __blacklist

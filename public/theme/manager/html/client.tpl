@@ -7,25 +7,17 @@
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/movements.app.js"></script>
     <script>
         $(function () {
-            let phone_num = "{$client->phone_mobile}";
-            let firstname = "{$client->firstname}";
-            let lastname = "{$client->lastname}";
-            let patronymic = "{$client->patronymic}";
 
-            $.ajax({
-                url: "ajax/BlacklistCheck.php",
-                data: {
-                    phone_num: phone_num,
-                    firstname: firstname,
-                    lastname: lastname,
-                    patronymic: patronymic
-                },
-                method: 'POST',
-                success: function (suc) {
-                    if (suc == 1) {
-                        $('.form-check-input').attr('checked', 'checked');
+            $('#blacklist').on('click', function () {
+                let user_id = $(this).attr('data-user');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'blacklist',
+                        user_id: user_id
                     }
-                }
+                });
             });
 
             $(document).on('click', '.js-blocked-input', function () {
@@ -40,19 +32,6 @@
                     },
                     type: 'POST'
                 })
-            });
-
-            $(document).on('click', '.form-check-input', function () {
-                $.ajax({
-                    url: "ajax/BlacklistAddDelete.php",
-                    data: {
-                        phone_num: phone_num,
-                        firstname: firstname,
-                        lastname: lastname,
-                        patronymic: patronymic
-                    },
-                    method: 'POST'
-                });
             });
 
             $('.edit_personal_number').on('click', function (e) {
@@ -240,6 +219,13 @@
                 <div class="float-right">{$client->UID}</div>
             </div>
         </div>
+        {if $in_blacklist == 1}
+            <div class="col-md-4 col-12">
+                <ul class="alert alert-danger" style="list-style-type: none">
+                    <li>Клиент находится в черном списке</li>
+                </ul>
+            </div>
+        {/if}
 
 
         <div class="row" id="order_wrapper">
@@ -306,8 +292,9 @@
                                                                 class="text-danger">Заблокирован</strong></label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox mr-sm-2 mb-3">
-                                                    <input class="custom-control-input" id="blacklist" type="checkbox"
-                                                           value="1">
+                                                    <input data-user="{$client->id}" class="custom-control-input"
+                                                           id="blacklist" type="checkbox"
+                                                           {if $in_blacklist == 1}checked{/if}>
                                                     <label class="custom-control-label" for="blacklist">
                                                         Находится в ч/с
                                                     </label>
@@ -605,7 +592,8 @@
                                                 </div>
                                             </form>
                                             <!-- / Контакты-->
-                                            <form action="{url}" class="border js-order-item-form mb-3" id="images_form">
+                                            <form action="{url}" class="border js-order-item-form mb-3"
+                                                  id="images_form">
 
                                                 <input type="hidden" name="action" value="images"/>
                                                 <input type="hidden" name="user_id" value="{$client->id}"/>
@@ -636,7 +624,8 @@
                                                                 {$ribbon_icon="fas fa-times-circle"}
                                                             {/if}
                                                             <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
-                                                                <a class="image-popup-fit-width" href="javascript:void(0)"
+                                                                <a class="image-popup-fit-width"
+                                                                   href="javascript:void(0)"
                                                                    onclick="window.open('{$config->back_url}/files/users/{$client->id}/{$file->name}')">
                                                                     <div class="ribbon ribbon-corner {$ribbon_class}"><i
                                                                                 class="{$ribbon_icon}"></i></div>
@@ -647,8 +636,10 @@
                                                                     <div class="dropdown mr-1 show ">
                                                                         <button type="button"
                                                                                 class="btn {if $file->status==2}btn-success{elseif $file->status==3}btn-danger{else}btn-secondary{/if} dropdown-toggle"
-                                                                                id="dropdownMenuOffset" data-toggle="dropdown"
-                                                                                aria-haspopup="true" aria-expanded="true">
+                                                                                id="dropdownMenuOffset"
+                                                                                data-toggle="dropdown"
+                                                                                aria-haspopup="true"
+                                                                                aria-expanded="true">
                                                                             {if $file->status == 2}Принят
                                                                             {elseif $file->status == 3}Отклонен
                                                                             {else}Статус
@@ -659,14 +650,16 @@
                                                                              x-placement="bottom-start">
                                                                             <div class="p-1 dropdown-item">
                                                                                 <button class="btn btn-sm btn-block btn-success js-image-accept"
-                                                                                        data-id="{$file->id}" type="button">
+                                                                                        data-id="{$file->id}"
+                                                                                        type="button">
                                                                                     <i class="fas fa-check-circle"></i>
                                                                                     <span>Принят</span>
                                                                                 </button>
                                                                             </div>
                                                                             <div class="p-1 dropdown-item">
                                                                                 <button class="btn btn-sm btn-block btn-danger js-image-reject"
-                                                                                        data-id="{$file->id}" type="button">
+                                                                                        data-id="{$file->id}"
+                                                                                        type="button">
                                                                                     <i class="fas fa-times-circle"></i>
                                                                                     <span>Отклонен</span>
                                                                                 </button>
@@ -702,7 +695,8 @@
                                                             <button type="submit" class="btn btn-success"><i
                                                                         class="fa fa-check"></i> Сохранить
                                                             </button>
-                                                            <button type="button" class="btn btn-inverse js-cancel-edit">
+                                                            <button type="button"
+                                                                    class="btn btn-inverse js-cancel-edit">
                                                                 Отмена
                                                             </button>
                                                         </div>
@@ -1175,7 +1169,8 @@
                                                 <div class="row view-block p-2 snils-front">
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-0 row">
-                                                            <label class="control-label col-md-8 col-7 snils-number">{$client->pdn}%</label>
+                                                            <label class="control-label col-md-8 col-7 snils-number">{$client->pdn}
+                                                                %</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1187,7 +1182,8 @@
                                                 <div class="row view-block p-2 snils-front">
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-0 row">
-                                                            <label class="control-label col-md-8 col-7 snils-number">{$balances} рублей</label>
+                                                            <label class="control-label col-md-8 col-7 snils-number">{$balances}
+                                                                рублей</label>
                                                         </div>
                                                     </div>
                                                 </div>

@@ -77,6 +77,10 @@ class ClientController extends Controller
                     $this->action_delete_client();
                     break;
 
+                case 'blacklist':
+                    $this->action_blacklist();
+                    break;
+
             endswitch;
         } else {
             if (!($id = $this->request->get('id', 'integer'))) {
@@ -86,6 +90,18 @@ class ClientController extends Controller
             if (!($client = $this->users->get_user($id))) {
                 return false;
             }
+
+            $in_blacklist = 0;
+
+            $fio = "$client->lastname $client->firstname $client->patronymic";
+            $phone = $client->phone_mobile;
+
+            $blacklist_id = $this->blacklist->search($phone, $fio);
+
+            if(!empty($blacklist_id))
+                $in_blacklist = 1;
+
+            $this->design->assign('in_blacklist', $in_blacklist);
 
             $client->regaddress = $this->addresses->get_address($client->regaddress_id);
             $client->faktaddress = $this->addresses->get_address($client->faktaddress_id);
@@ -99,8 +115,8 @@ class ClientController extends Controller
 
             $managers_roles = $this->ManagerRoles->get();
 
-            foreach ($managers_roles as $role){
-                if($this->manager->role == $role->name)
+            foreach ($managers_roles as $role) {
+                if ($this->manager->role == $role->name)
                     $filter['role_id'] = $role->id;
             }
 
@@ -114,7 +130,7 @@ class ClientController extends Controller
                 foreach ($documents as $document) {
                     $order = $this->orders->get_order($document->order_id);
 
-                    if(empty($order)){
+                    if (empty($order)) {
                         unset($document);
                         continue;
                     }
@@ -238,8 +254,8 @@ class ClientController extends Controller
 
         $balances = 0;
 
-        if(!empty($contracts)){
-            foreach ($contracts as $contract){
+        if (!empty($contracts)) {
+            foreach ($contracts as $contract) {
                 $balances += $contract->overpay;
             }
         }
@@ -1054,7 +1070,7 @@ class ClientController extends Controller
         $user_id = (int)$this->request->post('user_id');
         $number = (int)$this->request->post('number');
 
-        if(strlen($number) > 6){
+        if (strlen($number) > 6) {
             echo json_encode(['error' => 'Номер не может быть более 6 символов']);
             exit;
         }
@@ -1142,6 +1158,31 @@ class ClientController extends Controller
         } else {
             echo json_encode(['success' => 'Пользователь успешно удален']);
         }
+        exit;
+    }
+
+    private function action_blacklist()
+    {
+        $user_id = $this->request->post('user_id');
+        $user = $this->users->get_user($user_id);
+
+        $fio = "$user->lastname $user->firstname $user->patronymic";
+        $phone = $user->phone_mobile;
+
+        $blacklist_id = $this->blacklist->search($phone, $fio);
+
+        if(!empty($blacklist_id))
+            $this->blacklist->delete_person($blacklist_id);
+        else{
+            $person =
+                [
+                    'fio' => $fio,
+                    'phone' => $phone
+                ];
+
+            $this->blacklist->add_person($person);
+        }
+
         exit;
     }
 }
