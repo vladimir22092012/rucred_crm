@@ -22,12 +22,19 @@ class ArchiveTicketsCron extends Core
         $now = new DateTime(date('Y-m-d'));
 
         foreach ($tickets as $ticket) {
+
+            if($ticket->id != 192)
+                continue;
+
             $created = date('Y-m-d', strtotime($ticket->created));
             $ticket_created = new DateTime($created);
             $archive = 0;
 
             if (date_diff($now, $ticket_created)->days >= 2) {
                 $need_response = $this->CommunicationsThemes->get($ticket->theme_id);
+
+                var_dump($need_response);
+                exit;
 
                 if (empty($need_response)) {
                     $notes = $this->TicketsNotes->gets($ticket->id);
