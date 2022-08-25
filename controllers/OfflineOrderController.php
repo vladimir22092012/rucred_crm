@@ -8,7 +8,7 @@ use App\Services\MailService;
 use App\Services\Encryption;
 
 error_reporting(-1);
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'On');
 
 class OfflineOrderController extends Controller
 {
