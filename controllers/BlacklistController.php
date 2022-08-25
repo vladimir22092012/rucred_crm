@@ -29,7 +29,7 @@ class BlacklistController extends Controller
                 $client=
                     [
                         'phone' => $active_sheet->getCell('A' . $row)->getValue(),
-                        'fio' => $active_sheet->getCell('B' . $row)->getValue()
+                        'fio' => strtoupper($active_sheet->getCell('B' . $row)->getValue())
                     ];
 
                 $this->Blacklist->add_person($client);
