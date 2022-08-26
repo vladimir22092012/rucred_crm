@@ -2552,12 +2552,13 @@
                                                 <span class="text-white">Дополнительная информация</span>
                                                 <span class="float-right">
                                                             {penalty_button penalty_block='work'}
+                                                    {if in_array($order->status, ['0','1'])}
                                                     <a href="javascript:void(0);"
                                                        class="text-white float-right js-edit-form js-event-add-click"
                                                        data-event="35" data-manager="{$manager->id}"
                                                        data-order="{$order->order_id}"
                                                        data-user="{$order->user_id}"><i
-                                                                class=" fas fa-edit"></i></a>
+                                                                class=" fas fa-edit"></i></a>{/if}
                                                         </span>
                                             </h6>
 
