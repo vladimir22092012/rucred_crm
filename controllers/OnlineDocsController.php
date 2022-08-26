@@ -15,7 +15,7 @@ class OnlineDocsController extends Controller
         $id = $link[1];
         $document = $this->documents->get_document($id);
 
-        var_dump($document);
+        var_dump($link);
         exit;
 
         foreach ($document->params as $param_name => $param_value) {
