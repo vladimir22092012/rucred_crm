@@ -468,8 +468,12 @@ class Documents extends Core
         if(isset($params['first_pak']))
             $first_pak = $this->db->placehold("AND `type` not in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
 
-        if(isset($params['second_pak']))
-            $second_pak = $this->db->placehold("AND `type` in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
+        if(isset($params['second_pak'])){
+            if(isset($params['online']))
+                $second_pak = $this->db->placehold("AND `type` in ('INDIVIDUALNIE_USLOVIA_ONL', 'GRAFIK_OBSL_MKR')");
+            else
+                $second_pak = $this->db->placehold("AND `type` in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
+        }
 
         if(isset($params['asp_id']))
             $set = $this->db->placehold("asp_id = ?", $params['asp_id']);
