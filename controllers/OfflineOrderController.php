@@ -3480,8 +3480,7 @@ class OfflineOrderController extends Controller
         $this->PaymentsSchedules->update($actual_schedule->id, ['psk' => $psk, 'schedule' => $schedule]);
     }
 
-    private
-    function check_pay_date($date)
+    private function check_pay_date($date)
     {
 
         for ($i = 0; $i <= 15; $i++) {

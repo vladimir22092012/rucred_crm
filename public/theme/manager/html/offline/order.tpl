@@ -3874,23 +3874,23 @@
                                                                                        value="ИТОГО:" disabled></td>
                                                                             <td><input type="text" class="form-control"
                                                                                        name="result[all_sum_pay]"
-                                                                                       value="{$schedule->schedule['result']->all_sum_pay|floatval|number_format:2:',':' '}"
+                                                                                       value="{$schedule->schedule['result']['all_sum_pay']|floatval|number_format:2:',':' '}"
                                                                                        readonly></td>
                                                                             <td><input type="text" class="form-control"
                                                                                        name="result[all_loan_body_pay]"
-                                                                                       value="{$schedule->schedule['result']->all_loan_body_pay|floatval|number_format:2:',':' '}"
+                                                                                       value="{$schedule->schedule['result']['all_loan_body_pay']|floatval|number_format:2:',':' '}"
                                                                                        readonly></td>
                                                                             <td><input type="text" class="form-control"
                                                                                        name="result[all_loan_percents_pay]"
-                                                                                       value="{$schedule->schedule['result']->all_loan_percents_pay|floatval|number_format:2:',':' '}"
+                                                                                       value="{$schedule->schedule['result']['all_loan_percents_pay']|floatval|number_format:2:',':' '}"
                                                                                        readonly></td>
                                                                             <td><input type="text" class="form-control"
                                                                                        name="result[all_comission_pay]"
-                                                                                       value="{$schedule->schedule['result']->all_comission_pay|floatval|number_format:2:',':' '}"
+                                                                                       value="{$schedule->schedule['result']['all_comission_pay']|floatval|number_format:2:',':' '}"
                                                                                        readonly></td>
                                                                             <td><input type="text" class="form-control"
                                                                                        name="result[all_rest_pay_sum]"
-                                                                                       value="{$schedule->schedule['result']->all_rest_pay_sum|floatval|number_format:2:',':' '}"
+                                                                                       value="{$schedule->schedule['result']['all_rest_pay_sum']|floatval|number_format:2:',':' '}"
                                                                                        readonly></td>
                                                                         </tr>
                                                                         </tbody>
