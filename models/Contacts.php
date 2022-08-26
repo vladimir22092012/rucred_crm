@@ -15,4 +15,14 @@ class Contacts extends Core
 
         return $results;
     }
+
+    public function delete($user_id)
+    {
+        $query = $this->db->placehold("
+        DELETE FROM s_contacts
+        WHERE user_id = ?
+        ", $user_id);
+
+        $this->db->query($query);
+    }
 }

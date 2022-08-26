@@ -4,8 +4,6 @@ class Blacklist extends Core
 {
     public function search($phone, $fio)
     {
-        $fio = mb_strtolower($fio, 'utf8');
-        
         $query = $this->db->placehold("
             SELECT id 
             FROM __blacklist
@@ -106,8 +104,6 @@ class Blacklist extends Core
     
     public function add_person($person)
     {
-        var_dump($person);
-        
         $query = $this->db->placehold("
             INSERT INTO __blacklist SET ?%
         ", (array)$person);

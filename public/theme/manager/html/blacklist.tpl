@@ -86,9 +86,21 @@
                     <li class="breadcrumb-item active">Blacklist</li>
                 </ol>
             </div>
-            <div class="col-md-6 col-4 align-self-center">
-            </div>
         </div>
+        {if isset($complete)}
+            <div class="col-md-2 col-4">
+                <ul class="alert alert-success" style="list-style-type: none">
+                    <li>{$complete}</li>
+                </ul>
+            </div>
+        {/if}
+        {if isset($error)}
+            <div class="col-md-2 col-4">
+                <ul class="alert alert-danger" style="list-style-type: none">
+                    <li>{$error}</li>
+                </ul>
+            </div>
+        {/if}
         <!-- ============================================================== -->
         <!-- End Bread crumb and right sidebar toggle -->
         <!-- ============================================================== -->
@@ -159,7 +171,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="alert alert-info">
-                                    Для загрузки используйте формат csv с разделителями "точка с запятой".
+                                    Для загрузки используйте формат csv с разделителями "точка с запятой", либо xls формат
                                     <br />
                                     В первой строке должны быть наименования ячеек (телефон, фио).
                                     <br />

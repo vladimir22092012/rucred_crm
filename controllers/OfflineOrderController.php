@@ -8,7 +8,7 @@ use App\Services\MailService;
 use App\Services\Encryption;
 
 error_reporting(-1);
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'On');
 
 class OfflineOrderController extends Controller
 {
@@ -3607,8 +3607,7 @@ class OfflineOrderController extends Controller
         exit;
     }
 
-    private
-    function action_do_restruct()
+    private function action_do_restruct()
     {
         $order_id = $this->request->post('order_id');
         $new_term = $this->request->post('new_term');
@@ -3635,7 +3634,6 @@ class OfflineOrderController extends Controller
         $new_shedule = array();
 
         $i = 0;
-        $od_sum = 0;
         $new_loan = $order->amount;
         $percent_pay = 0.00;
         $body_pay = 0.00;
@@ -3644,7 +3642,8 @@ class OfflineOrderController extends Controller
         foreach ($payment_schedule as $date => $schedule) {
 
             $date = date('d.m.Y', strtotime($date));
-            if ($pay_date < $date) {
+
+            if ($pay_date <= $date) {
                 if ($pay_amount < $schedule['pay_sum']) {
                     if ($pay_amount >= $schedule['loan_percents_pay']) {
                         $percent_pay = $schedule['loan_percents_pay'];
@@ -3671,7 +3670,6 @@ class OfflineOrderController extends Controller
                     $new_loan += $pay_amount;
                 }
                 if ($pay_amount == $schedule['pay_sum']) {
-                    $pay_amount = $schedule['pay_sum'];
                     $body_pay = $schedule['loan_body_pay'];
                     $percent_pay = $schedule['loan_percents_pay'];
                     $new_loan -= $schedule['loan_body_pay'];
