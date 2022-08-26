@@ -19,7 +19,7 @@ class Okb_scoring extends Core
         if ($scoring = $this->scorings->get_scoring($scoring_id)) {
             if ($order = $this->orders->get_order((int)$scoring->order_id)) {
                 if (!empty($order->company_id))
-                    $company = $this->companies->get_company($order->company_id);
+                    $company = $this->companies->get_company(2);
 
                 $data = array(
                     'firstname' => $order->firstname,
