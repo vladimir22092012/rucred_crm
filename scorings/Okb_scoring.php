@@ -30,7 +30,7 @@ class Okb_scoring extends Core
                     'companyName' => empty($company) ? 'не указана' : $company->name,
                     'passport_serial' => str_replace([' ', '-'], '', $order->passport_serial),
                     'passport_date' => $order->passport_date,
-                    'xml_string' => 1,
+                    'xml_strings' => 1,
                 );
                 if ($this->settings->okb_mode == 'test')
                     $data['is_test'] = 1;
