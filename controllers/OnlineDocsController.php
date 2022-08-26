@@ -15,6 +15,9 @@ class OnlineDocsController extends Controller
         $id = $link[1];
         $document = $this->documents->get_document($id);
 
+        var_dump($document);
+        exit;
+
         foreach ($document->params as $param_name => $param_value) {
             $this->design->assign($param_name, $param_value);
         }
