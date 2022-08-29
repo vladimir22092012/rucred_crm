@@ -1235,9 +1235,15 @@ class NeworderController extends Controller
         }
 
         if (empty($email)) {
-            echo json_encode(['error' => 1, 'reason' => 'Не введён email']);
+            echo json_encode(['error' => 'Не введён email']);
             exit;
         }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+            echo json_encode(['error' => 'Проверьте правильность заполнения поля']);
+            exit;
+        }
+
         $code = random_int(1000, 9999);
 
         $result = $this->db->query('
