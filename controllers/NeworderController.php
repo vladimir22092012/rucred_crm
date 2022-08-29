@@ -1026,132 +1026,132 @@ class NeworderController extends Controller
 
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/neworder/draft/' . $order_id]);
                 } else {
-                        $user = $this->users->get_user($order['user_id']);
+                    $user = $this->users->get_user($order['user_id']);
 
-                        $communication_theme = $this->CommunicationsThemes->get(18);
+                    $communication_theme = $this->CommunicationsThemes->get(18);
 
-                        $ticket =
-                            [
-                                'creator' => $this->manager->id,
-                                'creator_company' => 2,
-                                'client_lastname' => $user->lastname,
-                                'client_firstname' => $user->firstname,
-                                'client_patronymic' => $user->patronymic,
-                                'head' => $communication_theme->head,
-                                'text' => $communication_theme->text,
-                                'theme_id' => 18,
-                                'company_id' => 2,
-                                'group_id' => $user->group_id,
+                    $ticket =
+                        [
+                            'creator' => $this->manager->id,
+                            'creator_company' => 2,
+                            'client_lastname' => $user->lastname,
+                            'client_firstname' => $user->firstname,
+                            'client_patronymic' => $user->patronymic,
+                            'head' => $communication_theme->head,
+                            'text' => $communication_theme->text,
+                            'theme_id' => 18,
+                            'company_id' => 2,
+                            'group_id' => $user->group_id,
+                            'order_id' => $order_id,
+                            'status' => 0
+                        ];
+
+                    $ticket_id = $this->Tickets->add_ticket($ticket);
+                    $message =
+                        [
+                            'message' => $communication_theme->text,
+                            'ticket_id' => $ticket_id,
+                            'manager_id' => $this->manager->id,
+                        ];
+                    $this->TicketMessages->add_message($message);
+
+                    $schedules =
+                        [
+                            'user_id' => $user_id,
+                            'order_id' => $order_id,
+                            'created' => date('Y-m-d H:i:s'),
+                            'type' => 'first',
+                            'actual' => 1,
+                            'schedule' => $payment_schedule,
+                            'psk' => $psk,
+                            'comment' => 'Первый график'
+                        ];
+
+                    $this->PaymentsSchedules->add($schedules);
+
+                    // запускаем бесплатные скоринги
+                    $scoring_types = $this->scorings->get_types();
+                    foreach ($scoring_types as $scoring_type) {
+                        if (empty($scoring_type->is_paid)) {
+                            $add_scoring = array(
+                                'user_id' => $order['user_id'],
                                 'order_id' => $order_id,
-                                'status' => 0
-                            ];
-
-                        $ticket_id = $this->Tickets->add_ticket($ticket);
-                        $message =
-                            [
-                                'message' => $communication_theme->text,
-                                'ticket_id' => $ticket_id,
-                                'manager_id' => $this->manager->id,
-                            ];
-                        $this->TicketMessages->add_message($message);
-
-                        $schedules =
-                            [
-                                'user_id' => $user_id,
-                                'order_id' => $order_id,
-                                'created' => date('Y-m-d H:i:s'),
-                                'type' => 'first',
-                                'actual' => 1,
-                                'schedule' => $payment_schedule,
-                                'psk' => $psk,
-                                'comment' => 'Первый график'
-                            ];
-
-                        $this->PaymentsSchedules->add($schedules);
-
-                        // запускаем бесплатные скоринги
-                        $scoring_types = $this->scorings->get_types();
-                        foreach ($scoring_types as $scoring_type) {
-                            if (empty($scoring_type->is_paid)) {
-                                $add_scoring = array(
-                                    'user_id' => $order['user_id'],
-                                    'order_id' => $order_id,
-                                    'type' => $scoring_type->name,
-                                    'status' => 'new',
-                                    'start_date' => date('Y-m-d H:i:s'),
-                                );
-                                $this->scorings->add_scoring($add_scoring);
-                            }
+                                'type' => $scoring_type->name,
+                                'status' => 'new',
+                                'start_date' => date('Y-m-d H:i:s'),
+                            );
+                            $this->scorings->add_scoring($add_scoring);
                         }
+                    }
 
-                        $user_preferred = $this->UserContactPreferred->get($user->id);
+                    $user_preferred = $this->UserContactPreferred->get($user->id);
 
-                        if (!empty($user_preferred)) {
-                            $template = $this->sms->get_template(7);
+                    if (!empty($user_preferred)) {
+                        $template = $this->sms->get_template(7);
 
-                            foreach ($user_preferred as $preferred) {
-                                switch ($preferred->contact_type_id):
+                        foreach ($user_preferred as $preferred) {
+                            switch ($preferred->contact_type_id):
 
-                                    case 1:
-                                        $message = $template->template;
-                                        $this->sms->send(
-                                            $user->phone_mobile,
-                                            $message
+                                case 1:
+                                    $message = $template->template;
+                                    $this->sms->send(
+                                        $user->phone_mobile,
+                                        $message
+                                    );
+                                    break;
+
+                                case 2:
+                                    $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+                                    $mailService->send(
+                                        'rucred@ucase.live',
+                                        $user->email,
+                                        'RuCred | Уведомление',
+                                        "$template->template",
+                                        "<h2>$template->template</h2>"
+                                    );
+                                    break;
+
+                                case 3:
+                                    $telegram = new Api($this->config->telegram_token);
+                                    $telegram_check = $this->TelegramUsers->get($user->id, 0);
+
+                                    if (!empty($telegram_check)) {
+                                        $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $template->template]);
+                                    }
+                                    break;
+
+                                case 4:
+                                    $bot = new Bot(['token' => $this->config->viber_token]);
+
+                                    $botSender = new Sender([
+                                        'name' => 'Whois bot',
+                                        'avatar' => 'https://developers.viber.com/img/favicon.ico',
+                                    ]);
+                                    $viber_check = $this->ViberUsers->get($user->id, 0);
+
+                                    if (!empty($viber_check)) {
+                                        $bot->getClient()->sendMessage(
+                                            (new \Viber\Api\Message\Text())
+                                                ->setSender($botSender)
+                                                ->setReceiver($viber_check->chat_id)
+                                                ->setText($template->template)
                                         );
-                                        break;
+                                    }
+                                    break;
 
-                                    case 2:
-                                        $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
-                                        $mailService->send(
-                                            'rucred@ucase.live',
-                                            $user->email,
-                                            'RuCred | Уведомление',
-                                            "$template->template",
-                                            "<h2>$template->template</h2>"
-                                        );
-                                        break;
-
-                                    case 3:
-                                        $telegram = new Api($this->config->telegram_token);
-                                        $telegram_check = $this->TelegramUsers->get($user->id, 0);
-
-                                        if (!empty($telegram_check)) {
-                                            $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $template->template]);
-                                        }
-                                        break;
-
-                                    case 4:
-                                        $bot = new Bot(['token' => $this->config->viber_token]);
-
-                                        $botSender = new Sender([
-                                            'name' => 'Whois bot',
-                                            'avatar' => 'https://developers.viber.com/img/favicon.ico',
-                                        ]);
-                                        $viber_check = $this->ViberUsers->get($user->id, 0);
-
-                                        if (!empty($viber_check)) {
-                                            $bot->getClient()->sendMessage(
-                                                (new \Viber\Api\Message\Text())
-                                                    ->setSender($botSender)
-                                                    ->setReceiver($viber_check->chat_id)
-                                                    ->setText($template->template)
-                                            );
-                                        }
-                                        break;
-
-                                endswitch;
-                            }
+                            endswitch;
                         }
+                    }
 
-                        $cron =
-                            [
-                                'ticket_id' => $ticket_id,
-                                'is_complited' => 0
-                            ];
+                    $cron =
+                        [
+                            'ticket_id' => $ticket_id,
+                            'is_complited' => 0
+                        ];
 
-                        $this->NotificationsCron->add($cron);
+                    $this->NotificationsCron->add($cron);
 
-                        response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
+                    response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                 }
             }
         }
@@ -1210,11 +1210,13 @@ class NeworderController extends Controller
         LIMIT 1
         ", $phone, $code);
 
-        $results = $this->db->results();
-        if (empty($results)) {
+        $result = $this->db->result();
+
+        if (empty($result)) {
             echo json_encode(['error' => 1]);
             exit;
         }
+
         echo json_encode(['success' => 1]);
         exit;
     }
@@ -1239,7 +1241,7 @@ class NeworderController extends Controller
             exit;
         }
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             echo json_encode(['error' => 'Проверьте правильность заполнения поля']);
             exit;
         }
