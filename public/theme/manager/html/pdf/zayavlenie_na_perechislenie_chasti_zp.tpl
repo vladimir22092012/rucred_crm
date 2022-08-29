@@ -23,7 +23,7 @@
     <strong>{$snils}</strong> телефон: <strong>{$phone_mobile}</strong> адрес электронной почты:
     <strong>{$email|upper}</strong>
 </div>
-<div align="justify">Я связи с заключением между мною и Обществом с ограниченной ответственностью Микрокредитная
+<div align="justify">В связи с заключением между мною и Обществом с ограниченной ответственностью Микрокредитная
     компания «Русское
     кредитное общество» Договора микрозайма от <strong>{$created_date|date}</strong> года №
     <strong>{$uid}</strong> на сумму <strong>{$amount|number_format:0:',':' '} ({$amount_string|upper})</strong> рублей <strong>00</strong> копеек и сроком на

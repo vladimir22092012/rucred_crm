@@ -2552,12 +2552,13 @@
                                                 <span class="text-white">Дополнительная информация</span>
                                                 <span class="float-right">
                                                             {penalty_button penalty_block='work'}
+                                                    {if in_array($order->status, ['0','1'])}
                                                     <a href="javascript:void(0);"
                                                        class="text-white float-right js-edit-form js-event-add-click"
                                                        data-event="35" data-manager="{$manager->id}"
                                                        data-order="{$order->order_id}"
                                                        data-user="{$order->user_id}"><i
-                                                                class=" fas fa-edit"></i></a>
+                                                                class=" fas fa-edit"></i></a>{/if}
                                                         </span>
                                             </h6>
 
@@ -3873,23 +3874,23 @@
                                                                                        value="ИТОГО:" disabled></td>
                                                                             <td><input type="text" class="form-control"
                                                                                        name="result[all_sum_pay]"
-                                                                                       value="{$schedule->schedule['result']->all_sum_pay|floatval|number_format:2:',':' '}"
+                                                                                       value="{$schedule->schedule['result']['all_sum_pay']|floatval|number_format:2:',':' '}"
                                                                                        readonly></td>
                                                                             <td><input type="text" class="form-control"
                                                                                        name="result[all_loan_body_pay]"
-                                                                                       value="{$schedule->schedule['result']->all_loan_body_pay|floatval|number_format:2:',':' '}"
+                                                                                       value="{$schedule->schedule['result']['all_loan_body_pay']|floatval|number_format:2:',':' '}"
                                                                                        readonly></td>
                                                                             <td><input type="text" class="form-control"
                                                                                        name="result[all_loan_percents_pay]"
-                                                                                       value="{$schedule->schedule['result']->all_loan_percents_pay|floatval|number_format:2:',':' '}"
+                                                                                       value="{$schedule->schedule['result']['all_loan_percents_pay']|floatval|number_format:2:',':' '}"
                                                                                        readonly></td>
                                                                             <td><input type="text" class="form-control"
                                                                                        name="result[all_comission_pay]"
-                                                                                       value="{$schedule->schedule['result']->all_comission_pay|floatval|number_format:2:',':' '}"
+                                                                                       value="{$schedule->schedule['result']['all_comission_pay']|floatval|number_format:2:',':' '}"
                                                                                        readonly></td>
                                                                             <td><input type="text" class="form-control"
                                                                                        name="result[all_rest_pay_sum]"
-                                                                                       value="{$schedule->schedule['result']->all_rest_pay_sum|floatval|number_format:2:',':' '}"
+                                                                                       value="{$schedule->schedule['result']['all_rest_pay_sum']|floatval|number_format:2:',':' '}"
                                                                                        readonly></td>
                                                                         </tr>
                                                                         </tbody>

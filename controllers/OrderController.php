@@ -289,18 +289,6 @@ class OrderController extends Controller
 
                     $this->design->assign('same_holder', $same_holder);
 
-                    $enough_scans = 0;
-
-                    $query = $this->db->placehold("
-                    SELECT `type`
-                    FROM s_scans
-                    WHERE order_id = ?
-                    AND `type` != 'ndfl'
-                    ", (int)$order->order_id);
-
-                    $this->db->query($query);
-                    $scans = $this->db->results();
-
                     $managers_roles = $this->ManagerRoles->get();
 
                     foreach ($managers_roles as $role){
@@ -309,13 +297,6 @@ class OrderController extends Controller
                     }
 
                     $filter['order_id'] = $order_id;
-
-                    $users_docs = $this->Documents->get_documents($filter);
-
-                    if (count($scans) == count($users_docs))
-                        $enough_scans = 1;
-
-                    $this->design->assign('enough_scans', $enough_scans);
 
                     $client = $this->users->get_user($order->user_id);
                     $this->design->assign('client', $client);
@@ -571,11 +552,6 @@ class OrderController extends Controller
 
         $sms_templates = $this->sms->get_templates(array('type' => 'order'));
         $this->design->assign('sms_templates', $sms_templates);
-
-        if ($this->request->post('create_documents')) {
-            $order_id = $this->request->post('order_id');
-            $this->form_docs($order_id);
-        }
 
         $schedules = $this->PaymentsSchedules->gets($order_id);
 
@@ -1075,11 +1051,11 @@ class OrderController extends Controller
             $docs_email = [];
 
             foreach ($documents as $document) {
-                if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR']))
+                if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA_ONL', 'GRAFIK_OBSL_MKR']))
                     $docs_email[$document->type] = $document->id;
             }
 
-            $individ_encrypt = $this->config->back_url . '/online_docs/' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['INDIVIDUALNIE_USLOVIA'] . ' ' . rand(1, 9999999999));
+            $individ_encrypt = $this->config->back_url . '/online_docs/' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['INDIVIDUALNIE_USLOVIA_ONL'] . ' ' . rand(1, 9999999999));
             $graphic_encrypt = $this->config->back_url . '/online_docs/' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['GRAFIK_OBSL_MKR'] . ' ' . rand(1, 9999999999));
 
             $this->design->assign('individ_encrypt', $individ_encrypt);
@@ -1124,15 +1100,16 @@ class OrderController extends Controller
 
             $asp_id = $this->AspCodes->add_code($asp_log);
 
-            $this->documents->update_asp(['order_id' => $order_id, 'rucred_asp_id' => $asp_id, 'second_pak' => 1]);
+            $this->documents->update_asp(['order_id' => $order_id, 'rucred_asp_id' => $asp_id, 'second_pak' => 1, 'online' => 1]);
 
             $asp_id = $this->AspCodes->get_code(['order_id' => $order_id, 'type' => 'sms']);
-            $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id->id, 'second_pak' => 1]);
+            $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id->id, 'second_pak' => 1, 'online' => 1]);
 
             $cron =
                 [
                     'order_id' => $order_id,
-                    'pak' => 'second_pak'
+                    'pak' => 'second_pak',
+                    'online' => 1
                 ];
 
             $this->YaDiskCron->add($cron);
@@ -3954,7 +3931,8 @@ class OrderController extends Controller
         $cron =
             [
                 'order_id' => $order_id,
-                'pak' => 'second_pak'
+                'pak' => 'second_pak',
+                'online' => 1
             ];
 
         $this->YaDiskCron->add($cron);
@@ -3980,22 +3958,22 @@ class OrderController extends Controller
 
         $asp_id = $this->AspCodes->add_code($asp_log);
 
-        $this->documents->update_asp(['order_id' => $order_id, 'rucred_asp_id' => $asp_id, 'second_pak' => 1]);
+        $this->documents->update_asp(['order_id' => $order_id, 'rucred_asp_id' => $asp_id, 'second_pak' => 1, 'online' => 1]);
 
         $this->design->assign('order', $order);
         $documents = $this->documents->get_documents(['order_id' => $order->order_id]);
         $docs_email = [];
 
         $asp_id = $this->AspCodes->get_code(['order_id' => $order_id, 'type' => 'sms']);
-        $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id->id, 'second_pak' => 1]);
+        $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id->id, 'second_pak' => 1, 'online' => 1]);
 
         foreach ($documents as $document) {
-            if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR'])){
+            if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA_ONL', 'GRAFIK_OBSL_MKR'])){
                 $docs_email[$document->type] = $document->id;
             }
         }
 
-        $individ_encrypt = $this->config->back_url . '/online_docs?id=' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['INDIVIDUALNIE_USLOVIA'] . ' ' . rand(1, 9999999999));
+        $individ_encrypt = $this->config->back_url . '/online_docs?id=' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['INDIVIDUALNIE_USLOVIA_ONL'] . ' ' . rand(1, 9999999999));
         $graphic_encrypt = $this->config->back_url . '/online_docs?id=' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['GRAFIK_OBSL_MKR'] . ' ' . rand(1, 9999999999));
 
         $this->design->assign('individ_encrypt', $individ_encrypt);

@@ -152,7 +152,7 @@
                                     {foreach $orders as $order}
                                         <tr class="jsgrid-row js-order-row {if $manager->role == 'quality_control' && $order->quality_workout}workout-row{/if}">
                                             <td style="width: 70px;" class="jsgrid-cell">
-                                                <a href="offline_order/{$order->order_id}">{$order->uid} ({$order->number})</a>
+                                                <a href="{if $order->offline == 1}offline_order{/if}order/{$order->order_id}">{$order->uid} ({$order->number})</a>
                                                 {if $order->contract}
                                                     <div>
                                                     <small>{$order->contract->number}</small></div>{/if}
