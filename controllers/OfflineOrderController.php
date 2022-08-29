@@ -681,9 +681,17 @@ class OfflineOrderController extends Controller
             }
         }
 
+        $sort_docs = [];
+
+        foreach ($documents as $document) {
+            $key = date('Y-m-d', strtotime($document->created));
+
+            $sort_docs[$key][] = $document;
+        }
+
         $this->design->assign('need_confirm_restruct', $need_confirm_restruct);
         $this->design->assign('asp_restruct', $asp_restruct);
-        $this->design->assign('documents', $documents);
+        $this->design->assign('sort_docs', $sort_docs);
 
         $settlement = $this->OrganisationSettlements->get_settlement($order->settlement_id);
         $this->design->assign('settlement', $settlement);
@@ -734,8 +742,7 @@ class OfflineOrderController extends Controller
         return array('success' => 1, 'contact_status' => $contact_status);
     }
 
-    private
-    function action_workout()
+    private function action_workout()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $workout = $this->request->post('workout', 'integer');
@@ -3229,7 +3236,7 @@ class OfflineOrderController extends Controller
         $user_id = (int)$this->request->post('user_id');
         $number = (int)$this->request->post('number');
 
-        if(strlen($number) > 6){
+        if (strlen($number) > 6) {
             echo json_encode(['error' => 'Номер не может быть более 6 символов']);
             exit;
         }

@@ -10,7 +10,12 @@ class DocumentController extends Controller
 
         $id = $this->request->get('id');
 
+        var_dump($id);
+
         $document = $this->documents->get_document($id);
+
+        var_dump($document);
+        exit;
 
         foreach ($document->params as $param_name => $param_value) {
             $this->design->assign($param_name, $param_value);
@@ -19,7 +24,8 @@ class DocumentController extends Controller
         $order = $this->orders->get_order($document->params->order_id);
         $this->design->assign('created_date', $order->date);
 
-
+        $phone = preg_replace('/(\d)(\d\d\d)(\d\d\d)(\d\d)(\d\d)/', '+$1 ($2) $3-$4-$5', $order->phone_mobile);
+        $this->design->assign('phone_mobile', $phone);
 
         $settlement = $this->OrganisationSettlements->get_settlement($document->params->settlement_id);
         $order = $this->orders->get_order($document->params->order_id);

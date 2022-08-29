@@ -747,7 +747,7 @@
                 $('.code_asp').fadeIn();
                 $('.send_asp_code').text('Отправить смс повторно');
 
-                if(restruct == 1)
+                if (restruct == 1)
                     $('.confirm_asp').attr('data_restruct', 1);
 
 
@@ -1257,25 +1257,25 @@
             </div>
         </div>
         {if in_array($order->status, [0,1,2,4,9,10,14,13,15])}
-                <div style="display: flex; margin-left: 5px">
-                    <small class="badge badge-{if in_array($order->status, [0,1])}success{else}secondary{/if}">Заведение
-                        заявки и подготовка документов (подписание + фото паспортов)
-                    </small>
-                    <small class="badge badge-{if in_array($order->status, [2])}success{else}secondary{/if}"
-                           style="margin-left: 5px">Одобрение заявки андеррайтером и принятие в работу
-                    </small>
-                    <small class="badge badge-{if in_array($order->status, [4])}success{else}secondary{/if}"
-                           style="margin-left: 5px">Одобрение заёмщика работодателем
-                    </small>
-                </div>
-                <div style="display: flex; margin-top: 10px">
-                    <small class="badge badge-{if in_array($order->status, [13,14])}success{else}secondary{/if}"
-                           style="margin-left: 5px">Проверка заявки андеррайтером после работодателя
-                    </small>
-                    <small class="badge badge-{if in_array($order->status, [10])}success{else}secondary{/if}"
-                           style="margin-left: 5px">Одобрение сделки миддлом и перечисление средств
-                    </small>
-                </div>
+            <div style="display: flex; margin-left: 5px">
+                <small class="badge badge-{if in_array($order->status, [0,1])}success{else}secondary{/if}">Заведение
+                    заявки и подготовка документов (подписание + фото паспортов)
+                </small>
+                <small class="badge badge-{if in_array($order->status, [2])}success{else}secondary{/if}"
+                       style="margin-left: 5px">Одобрение заявки андеррайтером и принятие в работу
+                </small>
+                <small class="badge badge-{if in_array($order->status, [4])}success{else}secondary{/if}"
+                       style="margin-left: 5px">Одобрение заёмщика работодателем
+                </small>
+            </div>
+            <div style="display: flex; margin-top: 10px">
+                <small class="badge badge-{if in_array($order->status, [13,14])}success{else}secondary{/if}"
+                       style="margin-left: 5px">Проверка заявки андеррайтером после работодателя
+                </small>
+                <small class="badge badge-{if in_array($order->status, [10])}success{else}secondary{/if}"
+                       style="margin-left: 5px">Одобрение сделки миддлом и перечисление средств
+                </small>
+            </div>
             <br>
         {/if}
 
@@ -1320,8 +1320,9 @@
                                 <div class="col-12 col-md-3 col-lg-3">
                                     <h5 class="form-control-static">Номер
                                         клиента: <span class="show_personal_number">{$client->personal_number}</span>
-                                        {if in_array($order->status, [0, 1])}<a href="" data-user="{$client->id}" class="text-info edit_personal_number">
-                                            <i class="fas fa-edit"></i></a>{/if}
+                                        {if in_array($order->status, [0, 1])}<a href="" data-user="{$client->id}"
+                                                                                class="text-info edit_personal_number">
+                                                <i class="fas fa-edit"></i></a>{/if}
                                     </h5>
                                     <input type="text" class="form-control number_edit_form number"
                                            style="width: 80px; display: none"
@@ -1375,9 +1376,11 @@
                                                 <span class="phone_mobile_format">{$order->phone_mobile}</span>
                                             </h4>
                                             {if in_array($order->status, [0, 1])}<a href="javascript:void(0);"
-                                               class="text-info js-edit-form edit-amount js-event-add-click"
-                                               data-event="30" data-manager="{$manager->id}"
-                                               data-order="{$order->order_id}" data-user="{$order->user_id}"><i
+                                                                                    class="text-info js-edit-form edit-amount js-event-add-click"
+                                                                                    data-event="30"
+                                                                                    data-manager="{$manager->id}"
+                                                                                    data-order="{$order->order_id}"
+                                                                                    data-user="{$order->user_id}"><i
                                                         class=" fas fa-edit"></i></a>{/if}
                                         </div>
 
@@ -1600,7 +1603,8 @@
                                                         </button>
                                                     </form>
                                                 {/if}
-                                                <form id="rdr_payment_sent" {if empty($issuance_transaction)}style="display: none;" {/if}>
+                                                <form id="rdr_payment_sent"
+                                                      {if empty($issuance_transaction)}style="display: none;" {/if}>
                                                     <div class="pt-1 pb-2">
                                                         <div class="card card-warning">
                                                             <div class="box text-center">
@@ -1920,11 +1924,12 @@
                                                     <span class="text-white ">Общая информация</span>
                                                     <span class="float-right">
                                                             {penalty_button penalty_block='personal'}
-                                                        {if in_array($order->status, [0, 1])}<a href="javascript:void(0);"
-                                                           class=" text-white js-edit-form js-event-add-click"
-                                                           data-event="32" data-manager="{$manager->id}"
-                                                           data-order="{$order->order_id}"
-                                                           data-user="{$order->user_id}"><i
+                                                        {if in_array($order->status, [0, 1])}<a
+                                                            href="javascript:void(0);"
+                                                            class=" text-white js-edit-form js-event-add-click"
+                                                            data-event="32" data-manager="{$manager->id}"
+                                                            data-order="{$order->order_id}"
+                                                            data-user="{$order->user_id}"><i
                                                                     class=" fas fa-edit"></i></a>{/if}
                                                         </span>
                                                 </h6>
@@ -2823,79 +2828,90 @@
                                                 {/if}
                                             </h6>
                                             <br>
-                                            {if !empty($documents)}
-                                                {foreach $documents as $document}
-                                                    <div style="width: 100%!important; height: 50px; margin-left: 5px; display: flex; vertical-align: middle;"
-                                                         id="{$document->id}">
-                                                        <div class="form-group"
-                                                             style="width: 10px!important; margin-left: 5px">
-                                                            <label class="control-label">{$document->numeration}</label>
-                                                        </div>
-                                                        <div class="form-group"
-                                                             style="width: 40%!important; margin-left: 50px">
-                                                            <label class="control-label">{$document->name}</label>
-                                                        </div>
-                                                        {if in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR'])}
-                                                            <span style="height: 20px; margin-left: 10px; {if empty($order->sms)}display: none{/if}"
-                                                                  data-tooltip="Этот документ нельзя подписать АСП кодом"
-                                                                  class="badge badge-danger warning_asp warning">&#33;</span>
-                                                        {else}
-                                                            {if !empty($order->sms)}
-                                                                <div style="margin-left: 20px" class="margin_show">
+                                            {if !empty($sort_docs)}
+                                                {foreach $sort_docs as $date => $documents}
+                                                    <div style="width: 100%!important; margin-left: 15px; display: flex; vertical-align: middle;">
+                                                        <strong>{$date|date}</strong>
+                                                    </div>
+                                                    <hr style="width: 100%; size: 2px">
+                                                    {foreach $documents as $document}
+                                                        <div style="width: 100%!important; height: 50px; margin-left: 5px; display: flex; vertical-align: middle;"
+                                                             id="{$document->id}">
+                                                            <div class="form-group"
+                                                                 style="width: 10px!important; margin-left: 5px">
+                                                                <label class="control-label">{$document->numeration}</label>
+                                                            </div>
+                                                            <div class="form-group"
+                                                                 style="width: 40%!important; margin-left: 50px">
+                                                                <label class="control-label">{$document->name}</label>
+                                                            </div>
+                                                            {if in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR'])}
+                                                                <span style="height: 20px; margin-left: 10px; {if empty($order->sms)}display: none{/if}"
+                                                                      data-tooltip="Этот документ нельзя подписать АСП кодом"
+                                                                      class="badge badge-danger warning_asp warning">&#33;</span>
+                                                            {else}
+                                                                {if !empty($order->sms)}
+                                                                    <div style="margin-left: 20px" class="margin_show">
 
-                                                                </div>
-                                                            {/if}
-                                                        {/if}
-                                                        <div style="margin-left: 10px">
-                                                            <a target="_blank"
-                                                               href="{$config->back_url}/document?id={$document->id}&action=download_file"><input
-                                                                        type="button"
-                                                                        class="btn btn-outline-success download_doc"
-                                                                        value="Сохранить"></a>
-                                                        </div>
-                                                        <div style="margin-left: 10px">
-                                                            <a target="_blank"
-                                                               href="{$config->back_url}/document/{$document->id}"><input
-                                                                        type="button"
-                                                                        class="btn btn-outline-warning print_doc"
-                                                                        value="Распечатать"></a>
-                                                        </div>
-                                                        <div class="btn-group"
-                                                             style="margin-left: 10px; height: 35px">
-                                                            {if $document->scan}
-                                                                <a target="_blank"
-                                                                   style="text-decoration: none!important;"
-                                                                   href="javascript:void(0);"
-                                                                   onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}');">
-                                                                    <input type="button"
-                                                                           class="btn btn-outline-info {$scan->type}"
-                                                                           value="Скан">
-                                                                </a>
-                                                            {/if}
-                                                            {if in_array($order->status, ['0','1','2'])}
-                                                                {if $manager->role != 'employer'}
-                                                                    <button type="button"
-                                                                            class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
-                                                                            data-toggle="dropdown" aria-haspopup="true"
-                                                                            aria-expanded="false">
-                                                                        <span class="sr-only">Toggle Dropdown</span>
-                                                                    </button>
-                                                                    <div class="dropdown-menu">
-                                                                        <input type="file" name="new_scan"
-                                                                               id="{$document->template}"
-                                                                               class="new_scan"
-                                                                               data-user="{$order->user_id}"
-                                                                               data-order="{$order->order_id}"
-                                                                               value="" style="display:none" multiple/>
-                                                                        <label for="{$document->template}"
-                                                                               class="dropdown-item">Приложить
-                                                                            скан</label>
                                                                     </div>
                                                                 {/if}
                                                             {/if}
+                                                            <div style="margin-left: 10px">
+                                                                <a target="_blank"
+                                                                   href="{$config->back_url}/document?id={$document->id}&action=download_file"><input
+                                                                            type="button"
+                                                                            class="btn btn-outline-success download_doc"
+                                                                            value="Сохранить"></a>
+                                                            </div>
+                                                            {if !$document->scan}
+                                                            <div style="margin-left: 10px">
+                                                                <a target="_blank"
+                                                                   href="{$config->back_url}/document/{$document->id}"><input
+                                                                            type="button"
+                                                                            class="btn btn-outline-warning print_doc"
+                                                                            value="Распечатать"></a>
+                                                            </div>
+                                                            {/if}
+                                                            <div class="btn-group"
+                                                                 style="margin-left: 10px; height: 35px">
+                                                                {if $document->scan}
+                                                                    <a target="_blank"
+                                                                       style="text-decoration: none!important;"
+                                                                       href="javascript:void(0);"
+                                                                       onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}');">
+                                                                        <input type="button"
+                                                                               class="btn btn-outline-info {$scan->type}"
+                                                                               value="Скан">
+                                                                    </a>
+                                                                {/if}
+                                                                {if in_array($order->status, ['0','1','2'])}
+                                                                    {if $manager->role != 'employer'}
+                                                                        <button type="button"
+                                                                                class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
+                                                                                data-toggle="dropdown"
+                                                                                aria-haspopup="true"
+                                                                                aria-expanded="false"
+                                                                                style="margin-left: 1px">
+                                                                            <span class="sr-only">Toggle Dropdown</span>
+                                                                        </button>
+                                                                        <div class="dropdown-menu">
+                                                                            <input type="file" name="new_scan"
+                                                                                   id="{$document->template}"
+                                                                                   class="new_scan"
+                                                                                   data-user="{$order->user_id}"
+                                                                                   data-order="{$order->order_id}"
+                                                                                   value="" style="display:none;"
+                                                                                   multiple/>
+                                                                            <label for="{$document->template}"
+                                                                                   class="dropdown-item">Приложить
+                                                                                скан</label>
+                                                                        </div>
+                                                                    {/if}
+                                                                {/if}
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <hr style="width: 100%; size: 2px">
+                                                        <hr style="width: 100%; size: 2px">
+                                                    {/foreach}
                                                 {/foreach}
                                                 {*
                                                 <div
@@ -3095,8 +3111,8 @@
                                                 <span>ИНН</span>
                                                 <span class="float-right">
                                                     {if in_array($order->status, [0, 1])}
-                                                                <a href="" class="text-white inn-edit"><i
-                                                                            class=" fas fa-edit"></i></a>
+                                                        <a href="" class="text-white inn-edit"><i
+                                                                    class=" fas fa-edit"></i></a>
                                                     {/if}
                                                         </span>
                                             </h6>
@@ -3130,8 +3146,8 @@
                                                 <span>СНИЛС</span>
                                                 <span class="float-right">
                                                     {if in_array($order->status, [0, 1])}
-                                                                <a href="" class="text-white snils-edit"><i
-                                                                            class=" fas fa-edit"></i></a>
+                                                        <a href="" class="text-white snils-edit"><i
+                                                                    class=" fas fa-edit"></i></a>
                                                     {/if}
                                                         </span>
                                             </h6>
