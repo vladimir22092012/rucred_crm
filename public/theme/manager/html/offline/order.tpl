@@ -27,9 +27,9 @@
                 e.preventDefault();
 
                 let order_id = $(this).attr('data-order');
-                let documents = {{json_encode($documents)}};
+                let pakDocuments = {{json_encode($documents)}};
 
-                if (documents.length > 0) {
+                if (pakDocuments !== null) {
                     Swal.fire({
                         title: 'Формирование документов приведет к удалению всех сканов',
                         showCancelButton: true,
