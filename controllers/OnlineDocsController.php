@@ -9,10 +9,11 @@ class OnlineDocsController extends Controller
 {
     public function fetch()
     {
-        $link = Encryption::decryption($this->request->get('id'));
-
+        $link = str_replace('Dw ', 'Dw+', $this->request->get('id'));
+        $link = Encryption::decryption($link);
         $link = explode(' ', $link);
         $id = $link[1];
+
         $document = $this->documents->get_document($id);
 
         foreach ($document->params as $param_name => $param_value) {
