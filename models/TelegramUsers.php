@@ -46,4 +46,15 @@ class TelegramUsers extends Core
 
         return $user;
     }
+
+    public function delete($userId, $isManager)
+    {
+        $query = $this->db->placehold("
+        DELETE FROM s_telegram_users
+        WHERE user_id = ?
+        AND is_manager = ?
+        ", $userId, $isManager);
+
+        $this->db->query($query);
+    }
 }

@@ -618,6 +618,7 @@ class ManagerController extends Controller
     {
         $phone = $this->request->post('phone');
         $code = $this->request->post('code');
+        $userId = $this->request->post('userId');
 
         $query = $this->db->placehold("
         SELECT *
@@ -635,6 +636,11 @@ class ManagerController extends Controller
             echo json_encode(['error' => 1]);
             exit;
         }
+
+        $this->TelegramUsers->delete($userId, 1);
+        $this->ViberUsers->delete($userId, 1);
+
+        $this->managers->update_manager($userId, ['telegram_note' => 0, 'viber_note' => 0]);
 
         echo json_encode(['success' => 1]);
         exit;

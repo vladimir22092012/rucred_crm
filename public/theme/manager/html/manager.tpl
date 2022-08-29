@@ -529,6 +529,7 @@
             $('.confirm_link_phone').on('click', function () {
                 let code = $('.confirm_phone_code').val();
                 let phone = $('input[name="phone"]').val();
+                let userId = $(this).attr('data-user');
 
                 $.ajax({
                     method: 'POST',
@@ -536,7 +537,8 @@
                     data: {
                         action: 'confirm_linkin_phone',
                         code: code,
-                        phone: phone
+                        phone: phone,
+                        userId: userId
                     },
                     success: function (resp) {
                         if (resp['error']) {
