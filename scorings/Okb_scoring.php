@@ -31,6 +31,7 @@ class Okb_scoring extends Core
                     'passport_serial' => str_replace([' ', '-'], '', $order->passport_serial),
                     'passport_date' => $order->passport_date,
                     'xml_string' => 1,
+                    'request_code' => 40,
                 );
                 if ($this->settings->okb_mode == 'test')
                     $data['is_test'] = 1;
@@ -58,6 +59,7 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($xml_resp_data, $xml_resp->dat
                     'passport_serial' => str_replace([' ', '-'], '', $order->passport_serial),
                     'passport_date' => $order->passport_date,
                     'xml_string' => 0,
+                    'request_code' => 40,
                 );
                 if ($this->settings->okb_mode == 'test')
                     $data['is_test'] = 1;
