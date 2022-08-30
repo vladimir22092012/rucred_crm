@@ -2864,26 +2864,28 @@
                                                                             value="Сохранить"></a>
                                                             </div>
                                                             {if !$document->scan}
-                                                            <div style="margin-left: 10px">
-                                                                <a target="_blank"
-                                                                   href="{$config->back_url}/document/{$document->id}"><input
-                                                                            type="button"
-                                                                            class="btn btn-outline-warning print_doc"
-                                                                            value="Распечатать"></a>
-                                                            </div>
+                                                                <div style="margin-left: 10px">
+                                                                    <a target="_blank"
+                                                                       href="{$config->back_url}/document/{$document->id}"><input
+                                                                                type="button"
+                                                                                class="btn btn-outline-warning print_doc"
+                                                                                value="Распечатать"></a>
+                                                                </div>
                                                             {/if}
-                                                            <div class="btn-group"
-                                                                 style="margin-left: 10px; height: 35px">
-                                                                {if $document->scan}
+                                                            {if $document->scan}
+                                                                <div style="margin-left: 10px">
                                                                     <a target="_blank"
                                                                        style="text-decoration: none!important;"
                                                                        href="javascript:void(0);"
                                                                        onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}');">
                                                                         <input type="button"
                                                                                class="btn btn-outline-warning {$scan->type}"
-                                                                               value="Скан">
+                                                                               value="Распечатать">
                                                                     </a>
-                                                                {/if}
+                                                                </div>
+                                                            {/if}
+                                                            <div class="btn-group"
+                                                                 style="margin-left: 10px; height: 35px">
                                                                 {if in_array($order->status, ['0','1','2'])}
                                                                     {if $manager->role != 'employer'}
                                                                         <button type="button"
