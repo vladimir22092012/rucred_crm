@@ -14,9 +14,6 @@ class DocumentController extends Controller
 
         $document = $this->documents->get_document($id);
 
-        var_dump($document);
-        exit;
-
         foreach ($document->params as $param_name => $param_value) {
             $this->design->assign($param_name, $param_value);
         }
