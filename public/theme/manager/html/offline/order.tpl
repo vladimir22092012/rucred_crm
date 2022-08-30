@@ -2880,7 +2880,7 @@
                                                                        href="javascript:void(0);"
                                                                        onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}');">
                                                                         <input type="button"
-                                                                               class="btn btn-outline-info {$scan->type}"
+                                                                               class="btn btn-outline-warning {$scan->type}"
                                                                                value="Скан">
                                                                     </a>
                                                                 {/if}
