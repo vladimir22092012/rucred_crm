@@ -1226,6 +1226,8 @@ class NeworderController extends Controller
         $email = $this->request->post('email');
         $user_id = $this->request->post('user_id');
 
+        $email = preg_match('/^[A-Za-z0-9_-]+@[A-Z0-9_-]+.+[A-Z]/i', $email);
+
         if (empty($user_id))
             $user_id = false;
 
@@ -1241,7 +1243,7 @@ class NeworderController extends Controller
             exit;
         }
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if ($email == 0) {
             echo json_encode(['error' => 'Проверьте правильность заполнения поля']);
             exit;
         }
