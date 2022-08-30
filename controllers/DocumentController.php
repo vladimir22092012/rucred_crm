@@ -10,8 +10,6 @@ class DocumentController extends Controller
 
         $id = $this->request->get('id');
 
-        var_dump($id);
-
         $document = $this->documents->get_document($id);
 
         foreach ($document->params as $param_name => $param_value) {
