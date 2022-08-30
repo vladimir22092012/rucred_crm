@@ -407,14 +407,14 @@
                         flag: flag
                     },
                     success: function (resp) {
-                        if(action == 'telegram_hook'){
+                        if (action == 'telegram_hook') {
                             $('.confirm_telegram').fadeIn();
 
                             setTimeout(function () {
                                 $('.confirm_telegram').fadeOut();
                             }, 5000)
                         }
-                        if(action == 'viber_hook'){
+                        if (action == 'viber_hook') {
                             $('.confirm_viber').fadeIn();
 
                             setTimeout(function () {
@@ -470,6 +470,7 @@
 
             $('.linkin_email').on('click', function () {
                 let email = $('input[name="email"]').val();
+                $(this).fadeOut();
 
                 $.ajax({
                     method: 'POST',
@@ -513,6 +514,7 @@
 
             $('.linkin_phone').on('click', function () {
                 let phone = $('input[name="phone"]').val();
+                $(this).fadeOut();
 
                 $.ajax({
                     method: 'POST',
@@ -970,12 +972,14 @@
                                                 <label style="margin: 10px 25px; height: 20px; {if empty($user->email_confirmed)}display: none{/if}"
                                                        class="badge badge-success email_confirmed">Email
                                                     подтвержден</label>
-                                                {if empty($user->email_confirmed)}
-                                                    <div class="btn btn-outline-primary linkin_email"
-                                                         style="margin-left: 15px">
+                                                <div class="btn btn-outline-primary linkin_email"
+                                                     style="margin-left: 15px">
+                                                    {if empty($user->email_confirmed)}
                                                         Привязать
-                                                    </div>
-                                                {/if}
+                                                    {else}
+                                                        Привязать заново
+                                                    {/if}
+                                                </div>
                                                 <div class="input-group confirm_link_block"
                                                      style="width: 400px; display: none">
                                                     <input type="text" class="form-control"
@@ -1056,12 +1060,14 @@
                                                 <label style="margin: 10px 25px; height: 20px; {if empty($user->phone_confirmed)}display: none{/if}"
                                                        class="badge badge-success phone_confirmed">Телефон
                                                     подтвержден</label>
-                                                {if empty($user->phone_confirmed)}
-                                                    <div class="btn btn-outline-primary linkin_phone"
-                                                         style="margin-left: 15px">
+                                                <div class="btn btn-outline-primary linkin_phone"
+                                                     style="margin-left: 15px">
+                                                    {if empty($user->phone_confirmed)}
                                                         Привязать
-                                                    </div>
-                                                {/if}
+                                                    {else}
+                                                        Привязать заново
+                                                    {/if}
+                                                </div>
                                                 <div class="input-group confirm_phone_block"
                                                      style="width: 400px; display: none">
                                                     <input type="text" class="form-control confirm_phone_code"
