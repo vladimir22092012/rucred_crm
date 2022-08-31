@@ -4006,13 +4006,6 @@ class OrderController extends Controller
             $fetch
         );
 
-        $cron =
-            [
-                'order_id' => $order_id,
-                'pak' => 'second_pak'
-            ];
-
-        $this->YaDiskCron->add($cron);
         $this->tickets->update_by_theme_id(12, ['status' => 4], $order_id);
 
         echo json_encode(['success' => 1]);
