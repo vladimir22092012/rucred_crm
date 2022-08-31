@@ -514,7 +514,7 @@ console.log(resp);
                             }
                             else
                             {
-                                app.update_page();
+                                location.reload();
                             }
                         },
                     })
