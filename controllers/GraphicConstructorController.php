@@ -181,13 +181,15 @@ class GraphicConstructorController extends Controller
             $paydate->add(new DateInterval('P1M'));
         } else {
             $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
-            $first_pay = new DateTime(date('Y-m-' . $first_pay_day, strtotime($start_date . '+1 month')));
+            $first_pay = new DateTime(date('Y-m-' . $first_pay_day, strtotime($start_date)));
+            $first_pay->add(new DateInterval('P1M'));
             $count_days_this_month = date('t', strtotime($issuance_date->format('Y-m-d')));
             $paydate = $this->check_pay_date($first_pay);
 
             if (date_diff($first_pay, $issuance_date)->days <= $loan->min_period) {
                 $sum_pay = ($percent / 100) * $amount * date_diff($first_pay, $issuance_date)->days;
                 $percents_pay = $sum_pay;
+                $body_pay = 0.00;
             }
             if (date_diff($first_pay, $issuance_date)->days > $loan->min_period && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
                 $minus_percents = ($percent / 100) * $amount * ($count_days_this_month - date_diff($first_pay, $issuance_date)->days);
@@ -254,8 +256,13 @@ class GraphicConstructorController extends Controller
                 'all_rest_pay_sum' => 0.00
             ];
 
+        $dates[0] = date('d.m.Y', strtotime($date_from));
+        $payments[0] = -$amount;
+
         foreach ($payment_schedule as $date => $pay) {
             if ($date != 'result') {
+                $payments[] = round($pay['pay_sum'], '2');
+                $dates[] = date('d.m.Y', strtotime($date));
                 $payment_schedule['result']['all_sum_pay'] += round($pay['pay_sum'], '2');
                 $payment_schedule['result']['all_loan_percents_pay'] += round($pay['loan_percents_pay'], '2');
                 $payment_schedule['result']['all_loan_body_pay'] += round($pay['loan_body_pay'], 2);
@@ -263,6 +270,24 @@ class GraphicConstructorController extends Controller
                 $payment_schedule['result']['all_rest_pay_sum'] = 0.00;
             }
         }
+
+        foreach ($dates as $date) {
+            $date = new DateTime(date('Y-m-d H:i:s', strtotime($date)));
+
+            $new_dates[] = mktime(
+                $date->format('H'),
+                $date->format('i'),
+                $date->format('s'),
+                $date->format('m'),
+                $date->format('d'),
+                $date->format('Y')
+            );
+        }
+
+        $xirr = round($this->Financial->XIRR($payments, $new_dates) * 100, 3);
+        $xirr /= 100;
+
+        $psk = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
 
         uksort($payment_schedule,
             function ($a, $b) {
@@ -315,6 +340,7 @@ class GraphicConstructorController extends Controller
         $percent_sum = number_format($payment_schedule['result']['all_loan_percents_pay'], 2, ',', ' ');
         $comission_sum = number_format((float)$payment_schedule['result']['all_comission_pay'], 2, ',', ' ');
         $rest_sum = number_format($payment_schedule['result']['all_rest_pay_sum'], 2, ',', ' ');
+        $psk = number_format($psk, 3, ',', ' ');
 
         $payment_schedule_html .= "<tr>";
         $payment_schedule_html .= "<td><input type='text' class='form-control daterange' value='ИТОГО' disabled></td>";
@@ -324,6 +350,11 @@ class GraphicConstructorController extends Controller
         $payment_schedule_html .= "<td><input type='text' class='form-control' value='$comission_sum' disabled></td>";
         $payment_schedule_html .= "<td><input type='text' class='form-control' value='$rest_sum' disabled></td>";
         $payment_schedule_html .= "</tr>";
+
+        $payment_schedule_html .= "<tr>";
+        $payment_schedule_html .= "<td><input type='text' class='form-control daterange' value='ПСК' disabled></td>";
+        $payment_schedule_html .= "<td><input type='text' class='form-control' value='$psk' disabled></td>";
+        $payment_schedule_html .= "</td>";
 
         $payment_schedule_html .= '</tbody>
                                     </table>';
