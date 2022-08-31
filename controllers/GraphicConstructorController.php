@@ -154,7 +154,7 @@ class GraphicConstructorController extends Controller
 
         $percent_per_month = (($percent / 100) * 365) / 12;
         $annoouitet_pay = $amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
-        $annoouitet_pay = round($annoouitet_pay, '2');
+        $annoouitet_pay = round($annoouitet_pay, 2);
 
         if (date('d', strtotime($start_date)) < $first_pay_day) {
             if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < $loan->free_period) {
@@ -231,7 +231,7 @@ class GraphicConstructorController extends Controller
                     $loan_percents_pay = $annoouitet_pay - $loan_body_pay;
                     $rest_sum = 0.00;
                 } else {
-                    $loan_percents_pay = round($rest_sum * $percent_per_month, 2);
+                    $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
                     $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
                     $rest_sum = round($rest_sum - $loan_body_pay, 2);
                 }

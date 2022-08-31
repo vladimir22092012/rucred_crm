@@ -737,7 +737,8 @@ class NeworderController extends Controller
                 $paydate->add(new DateInterval('P1M'));
             } else {
                 $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
-                $first_pay = new DateTime(date('Y-m-' . $first_pay_day, strtotime($start_date . '+1 month')));
+                $first_pay = new DateTime(date('Y-m-' . $first_pay_day, strtotime($start_date)));
+                $first_pay->add(new DateInterval('P1M'));
                 $count_days_this_month = date('t', strtotime($issuance_date->format('Y-m-d')));
                 $paydate = $this->check_pay_date($first_pay);
 
@@ -787,7 +788,7 @@ class NeworderController extends Controller
                         $loan_percents_pay = $annoouitet_pay - $loan_body_pay;
                         $rest_sum = 0.00;
                     } else {
-                        $loan_percents_pay = round($rest_sum * $percent_per_month, 2);
+                        $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
                         $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
                         $rest_sum = round($rest_sum - $loan_body_pay, 2);
                     }
