@@ -207,6 +207,21 @@ class Documents extends Core
         return $result;
     }
 
+    public function get_document_by_hash($hash)
+    {
+        $query = $this->db->placehold("
+            SELECT * 
+            FROM __documents
+            WHERE hash = ?
+        ", $hash);
+        $this->db->query($query);
+        if ($result = $this->db->result()) {
+            $result->params = unserialize($result->params);
+        }
+
+        return $result;
+    }
+
     public function get_documents($filter = array())
     {
         $id_filter = '';
