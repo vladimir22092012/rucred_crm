@@ -877,81 +877,6 @@ class OfflineOrderController extends Controller
 
         $order = $this->orders->get_order((int)$order_id);
 
-        $loan = $this->Loantypes->get_loantype($order->loan_type);
-
-        $query = $this->db->placehold("
-        SELECT `type`
-        FROM s_scans
-        WHERE user_id = ?
-        AND order_id = ?
-        AND `type` != 'ndfl'
-        ", (int)$order->user_id, (int)$order->order_id);
-
-        $this->db->query($query);
-        $scans = $this->db->results();
-
-        $users_docs = $this->Documents->get_documents(['order_id' => $order_id]);
-
-        $this->db->query("
-        SELECT *
-        FROM s_files
-        WHERE user_id = ?
-        ", $order->user_id);
-
-        $photos = $this->db->results();
-        $count_photos = 0;
-        $count_approved_photos = 0;
-
-        foreach ($photos as $photo) {
-            if (in_array($photo->type, ['Паспорт: разворот', 'Паспорт: регистрация', 'Селфи с паспортом'])) {
-                $count_photos++;
-
-                if ($photo->status != 0)
-                    $count_approved_photos++;
-            }
-        }
-
-        if ($count_photos < 3) {
-            echo json_encode(['error' => 'Не забудьте добавить фото документов и селфи с паспортом!']);
-            exit;
-        }
-
-        if ($count_approved_photos < 3) {
-            echo json_encode(['error' => 'Не забудьте подтвердить фото клиента!']);
-            exit;
-        }
-
-        if (empty($users_docs)) {
-            echo json_encode(['error' => 'Не сформированы документы!']);
-            exit;
-        }
-
-        if (!empty($order->sms)) {
-            $count_scans_without_asp = 0;
-
-            foreach ($scans as $scan) {
-                foreach ($users_docs as $doc) {
-                    if ($doc->template == $scan->type && in_array($scan->type, ['soglasie_rukred_rabotadatel.tpl', 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl']))
-                        $count_scans_without_asp++;
-                }
-            }
-
-            if ($count_scans_without_asp < 2) {
-                echo json_encode(['error' => 'Проверьте сканы для форм 03.03 и 03.04']);
-                exit;
-            }
-        }
-
-        if (count($scans) < count($users_docs) && empty($order->sms)) {
-            echo json_encode(['error' => 'Для одобрения заявки нужны все сканы либо пэп!']);
-            exit;
-        }
-
-        if ($order->amount < $loan->min_amount && $order->amount > $loan->max_amount) {
-            echo json_encode(['error' => 'Проверьте сумму займа!']);
-            exit;
-        }
-
         $update = array(
             'status' => 4,
             'manager_id' => $this->manager->id,
@@ -4034,7 +3959,6 @@ class OfflineOrderController extends Controller
                     ];
 
                 $contract_id = $this->Contracts->add_contract($contract);
-                $this->orders->update_order($order->order_id, ['contract_id' => $contract_id, 'status' => 2]);
 
                 $this->db->query("
                 SELECT id
@@ -4056,6 +3980,9 @@ class OfflineOrderController extends Controller
                     ];
 
                 $this->YaDiskCron->add($cron);
+
+                $this->orders->update_order($order->order_id, ['status' => 1, 'contract_id' => $contract_id,]);
+                $this->tickets->update_by_theme_id(18, ['status' => 4], $order->order_id);
 
 
                 echo json_encode(['success' => 1]);
@@ -4437,8 +4364,29 @@ class OfflineOrderController extends Controller
             exit;
         }
 
-        $this->orders->update_order($order_id, ['status' => 1]);
-        $this->tickets->update_by_theme_id(18, ['status' => 4], $order_id);
+        $query = $this->db->placehold("
+        SELECT `type`
+        FROM s_scans
+        WHERE user_id = ?
+        AND order_id = ?
+        ", (int)$order->user_id, (int)$order->order_id);
+
+        $this->db->query($query);
+        $scans = $this->db->results();
+
+        $count_scans_without_asp = 0;
+
+        foreach ($scans as $scan) {
+            foreach ($users_docs as $doc) {
+                if ($doc->template == $scan->type && in_array($scan->type, ['soglasie_rukred_rabotadatel.tpl', 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl']))
+                    $count_scans_without_asp++;
+            }
+        }
+
+        if ($count_scans_without_asp < 2) {
+            echo json_encode(['error' => 'Проверьте сканы для форм 03.03 и 03.04']);
+            exit;
+        }
 
         echo json_encode(['success' => 1]);
         exit;

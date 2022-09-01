@@ -733,27 +733,6 @@
                 location.reload();
             });
 
-            $('.send_asp_code').on('click', function (e) {
-                e.preventDefault();
-
-                $('#sms_confirm_modal').modal();
-
-                let phone = $(this).attr('data-phone');
-                let user = $(this).attr('data-user');
-                let order = $(this).attr('data-order');
-                let restruct = $(this).attr('data-restruct');
-
-                $('.confirm_asp').fadeIn();
-                $('.code_asp').fadeIn();
-                $('.send_asp_code').text('Отправить смс повторно');
-
-                if (restruct == 1)
-                    $('.confirm_asp').attr('data_restruct', 1);
-
-
-                send_asp(phone, user, order, restruct);
-            });
-
             $('.confirm_asp').on('click', function (e) {
                 e.preventDefault();
 
@@ -918,7 +897,22 @@
                                 confirmButtonText: 'Ок'
                             });
                         } else {
-                            location.reload();
+                            $('#sms_confirm_modal').modal();
+
+                            let phone = $('.accept_order_by_underwriter').attr('data-phone');
+                            let user = $('.accept_order_by_underwriter').attr('data-user');
+                            let order = $('.accept_order_by_underwriter').attr('data-order');
+                            let restruct = $('.accept_order_by_underwriter').attr('data-restruct');
+
+                            $('.confirm_asp').fadeIn();
+                            $('.code_asp').fadeIn();
+                            $('.send_asp_code').text('Отправить смс повторно');
+
+                            if (restruct == 1)
+                                $('.confirm_asp').attr('data_restruct', 1);
+
+
+                            send_asp(phone, user, order, restruct);
                         }
                     }
                 });
@@ -1759,13 +1753,14 @@
                                     {/if}
                                     {if $order->status == 0 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
                                         <button class="btn btn-success btn-block accept_order_by_underwriter"
-                                                data-event="12" data-user="{$order->user_id}"
+                                                data-phone="{$order->phone_mobile}" data-event="12" data-user="{$order->user_id}"
                                                 data-order="{$order->order_id}" data-manager="{$manager->id}">
                                             <i class="fas fa-check-circle"></i>
                                             <span>Принять в работу</span>
                                         </button>
                                     {/if}
-                                    {if $order->status == 1 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
+                                    {*
+                                    {if $order->status == 0 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
                                         <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
                                             <form class=" pt-1 js-confirm-contract">
                                                 <div class="input-group" style="display: flex;">
@@ -1789,8 +1784,8 @@
                                                 </div>
                                             </form>
                                         </div>
-                                    {/if}
-                                    {if $order->status == 2 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
+                                    {/if} *}
+                                    {if $order->status == 1 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
                                         <div class="col-12"
                                              style="{if empty($order->sms) && $enough_scans == 0}display: none;{/if}">
                                             <button
@@ -2879,7 +2874,7 @@
                                                                        href="javascript:void(0);"
                                                                        onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}');">
                                                                         <input type="button"
-                                                                               class="btn btn-outline-warning {$scan->type}"
+                                                                               class="btn btn-outline-info {$scan->type}"
                                                                                value="Распечатать">
                                                                     </a>
                                                                 </div>
