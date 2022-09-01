@@ -308,7 +308,7 @@
                                                     {elseif $order->status == 9}
                                                         <span class="label label-primary">Выдан</span>
                                                     {elseif $order->status == 10}
-                                                        <span class="label label-success">А.Одобрена</span>
+                                                        <span class="label label-success">Отправлено</span>
                                                     {elseif $order->status == 14}
                                                         <span class="label label-success">Р.Подтверждена</span>
                                                     {elseif $order->status == 13}
