@@ -2851,13 +2851,26 @@
                                                                     </div>
                                                                 {/if}
                                                             {/if}
-                                                            <div style="margin-left: 10px">
-                                                                <a target="_blank"
-                                                                   href="{$config->back_url}/document?id={$document->id}&action=download_file"><input
-                                                                            type="button"
-                                                                            class="btn btn-outline-success download_doc"
-                                                                            value="Сохранить"></a>
-                                                            </div>
+                                                            {if $document->scan}
+                                                                <div style="margin-left: 10px">
+                                                                    <a target="_blank"
+                                                                       style="text-decoration: none!important;"
+                                                                       href="javascript:void(0);"
+                                                                       onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}');" download>
+                                                                        <input type="button"
+                                                                               class="btn btn-outline-success {$scan->type}"
+                                                                               value="Сохранить">
+                                                                    </a>
+                                                                </div>
+                                                                {else}
+                                                                <div style="margin-left: 10px">
+                                                                    <a target="_blank"
+                                                                       href="{$config->back_url}/document?id={$document->id}&action=download_file"><input
+                                                                                type="button"
+                                                                                class="btn btn-outline-success download_doc"
+                                                                                value="Сохранить"></a>
+                                                                </div>
+                                                            {/if}
                                                             {if !$document->scan}
                                                                 <div style="margin-left: 10px">
                                                                     <a target="_blank"
