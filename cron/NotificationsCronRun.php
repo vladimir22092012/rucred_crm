@@ -76,11 +76,15 @@ class NotificationsCronRun extends Core
 
     private function telegram_note($manager_id, $ticket, $is_manager)
     {
-        $telegram = new Api($this->config->telegram_token);
-        $telegram_check = $this->TelegramUsers->get($manager_id, $is_manager);
+        try{
+            $telegram = new Api($this->config->telegram_token);
+            $telegram_check = $this->TelegramUsers->get($manager_id, $is_manager);
 
-        if (!empty($telegram_check)) {
-            $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $ticket->text]);
+            if (!empty($telegram_check)) {
+                $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $ticket->text]);
+            }
+        }catch (Exception $e){
+
         }
     }
 
