@@ -2859,7 +2859,7 @@
                                                                            href="{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}"
                                                                            download>
                                                                             <input type="button"
-                                                                                   class="btn btn-outline-success"
+                                                                                   class="btn btn-outline-info"
                                                                                    value="Сохранить">
                                                                         </a>
                                                                     </div>
