@@ -148,6 +148,11 @@ class StatusPaymentCron extends Core
                     }
 
                 }
+                else{
+                    echo '<pre>';
+                    var_dump($res);
+                    exit;
+                }
             }
         }
     }
