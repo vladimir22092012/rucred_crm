@@ -719,12 +719,13 @@ class NeworderController extends Controller
                     $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2);
                     $body_pay = $sum_pay - $loan_percents_pay;
                     $paydate->add(new DateInterval('P1M'));
-                    $paydate = $this->check_pay_date($paydate);
                 } else {
                     $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
                     $loan_percents_pay = $sum_pay;
                     $body_pay = 0;
                 }
+
+                $paydate = $this->check_pay_date($paydate);
 
                 $payment_schedule[$paydate->format('d.m.Y')] =
                     [

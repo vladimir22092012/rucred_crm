@@ -163,12 +163,13 @@ class GraphicConstructorController extends Controller
                 $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2);
                 $body_pay = $sum_pay - $loan_percents_pay;
                 $paydate->add(new DateInterval('P1M'));
-                $paydate = $this->check_pay_date($paydate);
             } else {
                 $sum_pay = ($percent / 100) * $amount * date_diff($paydate, $issuance_date)->days;
                 $loan_percents_pay = $sum_pay;
                 $body_pay = 0;
             }
+
+            $paydate = $this->check_pay_date($paydate);
 
             $payment_schedule[$paydate->format('d.m.Y')] =
                 [
@@ -178,6 +179,7 @@ class GraphicConstructorController extends Controller
                     'comission_pay' => 0.00,
                     'rest_pay' => $rest_sum -= $body_pay
                 ];
+
             $paydate->add(new DateInterval('P1M'));
         } else {
             $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
