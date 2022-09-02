@@ -1315,7 +1315,7 @@
                                     <h5 class="form-control-static">Номер
                                         клиента: <span class="show_personal_number">{$client->personal_number}</span>
                                         {if in_array($order->status, [0])}<a href="" data-user="{$client->id}"
-                                                                                class="text-info edit_personal_number">
+                                                                             class="text-info edit_personal_number">
                                                 <i class="fas fa-edit"></i></a>{/if}
                                     </h5>
                                     <input type="text" class="form-control number_edit_form number"
@@ -1370,11 +1370,11 @@
                                                 <span class="phone_mobile_format">{$order->phone_mobile}</span>
                                             </h4>
                                             {if in_array($order->status, [0])}<a href="javascript:void(0);"
-                                                                                    class="text-info js-edit-form edit-amount js-event-add-click"
-                                                                                    data-event="30"
-                                                                                    data-manager="{$manager->id}"
-                                                                                    data-order="{$order->order_id}"
-                                                                                    data-user="{$order->user_id}"><i
+                                                                                 class="text-info js-edit-form edit-amount js-event-add-click"
+                                                                                 data-event="30"
+                                                                                 data-manager="{$manager->id}"
+                                                                                 data-order="{$order->order_id}"
+                                                                                 data-user="{$order->user_id}"><i
                                                         class=" fas fa-edit"></i></a>{/if}
                                         </div>
 
@@ -2851,17 +2851,47 @@
                                                                     </div>
                                                                 {/if}
                                                             {/if}
-                                                            {if $document->scan}
-                                                                <div style="margin-left: 10px">
-                                                                    <a target="_blank"
-                                                                       style="text-decoration: none!important;"
-                                                                       href="{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}"
-                                                                       download>
-                                                                        <input type="button"
-                                                                               class="btn btn-outline-success"
-                                                                               value="Сохранить">
-                                                                    </a>
-                                                                </div>
+                                                            {if in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR'])}
+                                                                {if $document->scan}
+                                                                    <div style="margin-left: 10px">
+                                                                        <a target="_blank"
+                                                                           style="text-decoration: none!important;"
+                                                                           href="{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}"
+                                                                           download>
+                                                                            <input type="button"
+                                                                                   class="btn btn-outline-success"
+                                                                                   value="Сохранить">
+                                                                        </a>
+                                                                    </div>
+                                                                {else}
+                                                                    <div style="margin-left: 10px">
+                                                                        <a target="_blank"
+                                                                           href="{$config->back_url}/document?id={$document->id}&action=download_file"><input
+                                                                                    type="button"
+                                                                                    class="btn btn-outline-success download_doc"
+                                                                                    value="Сохранить"></a>
+                                                                    </div>
+                                                                {/if}
+                                                                {if !$document->scan}
+                                                                    <div style="margin-left: 10px">
+                                                                        <a target="_blank"
+                                                                           href="{$config->back_url}/document/{$document->id}"><input
+                                                                                    type="button"
+                                                                                    class="btn btn-outline-info print_doc"
+                                                                                    value="Распечатать"></a>
+                                                                    </div>
+                                                                {else}
+                                                                    <div style="margin-left: 10px">
+                                                                        <a target="_blank"
+                                                                           style="text-decoration: none!important;"
+                                                                           href="javascript:void(0);"
+                                                                           onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}');">
+                                                                            <input type="button"
+                                                                                   class="btn btn-outline-info {$scan->type}"
+                                                                                   value="Распечатать">
+                                                                        </a>
+                                                                    </div>
+                                                                {/if}
                                                             {else}
                                                                 <div style="margin-left: 10px">
                                                                     <a target="_blank"
@@ -2870,26 +2900,12 @@
                                                                                 class="btn btn-outline-success download_doc"
                                                                                 value="Сохранить"></a>
                                                                 </div>
-                                                            {/if}
-                                                            {if !$document->scan}
                                                                 <div style="margin-left: 10px">
                                                                     <a target="_blank"
                                                                        href="{$config->back_url}/document/{$document->id}"><input
                                                                                 type="button"
                                                                                 class="btn btn-outline-warning print_doc"
                                                                                 value="Распечатать"></a>
-                                                                </div>
-                                                            {/if}
-                                                            {if $document->scan}
-                                                                <div style="margin-left: 10px">
-                                                                    <a target="_blank"
-                                                                       style="text-decoration: none!important;"
-                                                                       href="javascript:void(0);"
-                                                                       onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}');">
-                                                                        <input type="button"
-                                                                               class="btn btn-outline-info {$scan->type}"
-                                                                               value="Распечатать">
-                                                                    </a>
                                                                 </div>
                                                             {/if}
                                                             <div class="btn-group"
