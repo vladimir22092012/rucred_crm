@@ -30,25 +30,29 @@ class NotificationsCronRun extends Core
 
         foreach ($crons as $cron) {
             $ticket = $this->tickets->get_ticket($cron->ticket_id);
+            $managers_permissions = $this->ManagersCommunicationsIn->get($ticket->theme_id);
 
-            if (in_array($ticket->theme_id, [8, 17, 20, 22, 24, 31])) {
-                $managers = $this->managers->get_managers(['group_id' => $ticket->group_id, 'role' => 'employer']);
-            }
+            if (!empty($managers_permissions)) {
+                $roles_id = [];
 
-            if (in_array($ticket->theme_id, [11, 13, 18, 38])) {
-                $managers = $this->managers->get_managers(['group_id' => $ticket->group_id, 'role' => 'underwriter']);
-            }
+                foreach ($managers_permissions as $permission) {
+                    $roles_id[] = $permission->role_id;
+                }
 
-            if (in_array($ticket->theme_id, [12, 37])) {
-                $managers = $this->managers->get_managers(['group_id' => $ticket->group_id, 'role' => 'middle']);
-            }
+                $roles_name = [];
+                $roles = $this->ManagerRoles->get();
 
-            if (in_array($ticket->theme_id, [23, 25, 26, 34, 35])) {
-                $managers = $this->managers->get_managers(['group_id' => $ticket->group_id, 'role' => ['underwriter', 'middle']]);
-            }
+                foreach ($roles as $role) {
+                    foreach ($roles_id as $id) {
+                        if ($role->id == $id)
+                            $roles_name[] = $role->name;
+                    }
+                }
 
-            if (in_array($ticket->theme_id, [27, 28, 29, 30, 32, 33])) {
-                $managers = $this->managers->get_managers(['group_id' => $ticket->group_id, 'role' => ['underwriter', 'middle', 'admin']]);
+                $managers = $this->managers->get_managers(['role' => $roles_name]);
+
+            } else {
+                exit;
             }
 
             foreach ($managers as $manager) {
