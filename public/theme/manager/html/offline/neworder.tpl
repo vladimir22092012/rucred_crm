@@ -885,7 +885,7 @@
                                                 <label class="telegram_same_label">Совпадает с номером
                                                     мобильного</label>
                                                 <div style="margin-left: 20px" class="btn btn-success confirm_telegram"
-                                                     data-user="{$user->id}">
+                                                     data-user="{$order->user_id}">
                                                     Подтвердить
                                                 </div>
                                                 <br><br>
