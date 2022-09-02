@@ -1100,11 +1100,11 @@ class OfflineOrderController extends Controller
 
             foreach ($documents as $document) {
                 if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR']))
-                    $docs_email[$document->type] = $document->id;
+                    $docs_email[$document->type] = $document->hash;
             }
 
-            $individ_encrypt = $this->config->back_url . '/online_docs/' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['INDIVIDUALNIE_USLOVIA'] . ' ' . rand(1, 9999999999));
-            $graphic_encrypt = $this->config->back_url . '/online_docs/' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['GRAFIK_OBSL_MKR'] . ' ' . rand(1, 9999999999));
+            $individ_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['INDIVIDUALNIE_USLOVIA'];
+            $graphic_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['GRAFIK_OBSL_MKR'];
 
             $this->design->assign('individ_encrypt', $individ_encrypt);
             $this->design->assign('graphic_encrypt', $graphic_encrypt);
@@ -4109,12 +4109,12 @@ class OfflineOrderController extends Controller
 
         foreach ($documents as $document) {
             if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR'])) {
-                $docs_email[$document->type] = $document->id;
+                $docs_email[$document->type] = $document->hash;
             }
         }
 
-        $individ_encrypt = $this->config->back_url . '/online_docs?id=' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['INDIVIDUALNIE_USLOVIA'] . ' ' . rand(1, 9999999999));
-        $graphic_encrypt = $this->config->back_url . '/online_docs?id=' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['GRAFIK_OBSL_MKR'] . ' ' . rand(1, 9999999999));
+        $individ_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['INDIVIDUALNIE_USLOVIA'];
+        $graphic_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['GRAFIK_OBSL_MKR'];
 
         $this->design->assign('individ_encrypt', $individ_encrypt);
         $this->design->assign('graphic_encrypt', $graphic_encrypt);
@@ -4262,8 +4262,7 @@ class OfflineOrderController extends Controller
         exit;
     }
 
-    private
-    function form_docs($order_id, $delete_scans = 1, $asp_id = false)
+    private function form_docs($order_id, $delete_scans = 1, $asp_id = false)
     {
 
         if ($delete_scans == 1)
@@ -4306,7 +4305,8 @@ class OfflineOrderController extends Controller
                 'type' => $type,
                 'params' => $order,
                 'numeration' => (string)$key,
-                'asp_id' => $order->asp
+                'asp_id' => $order->asp,
+                'hash' => sha1(rand(11111, 99999))
             ));
         }
     }

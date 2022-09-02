@@ -1055,8 +1055,8 @@ class OrderController extends Controller
                     $docs_email[$document->type] = $document->id;
             }
 
-            $individ_encrypt = $this->config->back_url . '/online_docs/' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['INDIVIDUALNIE_USLOVIA_ONL'] . ' ' . rand(1, 9999999999));
-            $graphic_encrypt = $this->config->back_url . '/online_docs/' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['GRAFIK_OBSL_MKR'] . ' ' . rand(1, 9999999999));
+            $individ_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['INDIVIDUALNIE_USLOVIA'];
+            $graphic_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['GRAFIK_OBSL_MKR'];
 
             $this->design->assign('individ_encrypt', $individ_encrypt);
             $this->design->assign('graphic_encrypt', $graphic_encrypt);
@@ -3978,8 +3978,8 @@ class OrderController extends Controller
             }
         }
 
-        $individ_encrypt = $this->config->back_url . '/online_docs?id=' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['INDIVIDUALNIE_USLOVIA_ONL'] . ' ' . rand(1, 9999999999));
-        $graphic_encrypt = $this->config->back_url . '/online_docs?id=' . Encryption::encryption(rand(1, 9999999999) . ' ' . $docs_email['GRAFIK_OBSL_MKR'] . ' ' . rand(1, 9999999999));
+        $individ_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['INDIVIDUALNIE_USLOVIA'];
+        $graphic_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['GRAFIK_OBSL_MKR'];
 
         $this->design->assign('individ_encrypt', $individ_encrypt);
         $this->design->assign('graphic_encrypt', $graphic_encrypt);
