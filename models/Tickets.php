@@ -122,6 +122,20 @@ class Tickets extends Core
         return $tickets;
     }
 
+    public function get_by_order_id($order_id)
+    {
+        $query = $this->db->placehold("
+        SELECT *
+        FROM s_tickets
+        WHERE order_id = ?
+        ", $order_id);
+
+        $this->db->query($query);
+        $tickets = $this->db->results();
+
+        return $tickets;
+    }
+
     public function get_ticket($id)
     {
         $query = $this->db->placehold("

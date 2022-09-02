@@ -56,4 +56,13 @@ class NotificationsCron extends Core
 
         $this->db->query($query);
     }
+
+    public function delete_by_ticket_id($ticket_id){
+        $query = $this->db->placehold("
+        DELETE FROM s_notifications_cron
+        WHERE ticket_id = ?
+        ", $ticket_id);
+
+        $this->db->query($query);
+    }
 }
