@@ -55,6 +55,9 @@ class NotificationsCronRun extends Core
                 exit;
             }
 
+            var_dump($managers);
+            exit;
+
             foreach ($managers as $manager) {
                 if ($manager->telegram_note == 1) {
                     $this->telegram_note($manager->id, $ticket, 1);
