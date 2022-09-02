@@ -20,7 +20,7 @@ class StatusPaymentCron extends Core
     {
         $orders = $this->orders->get_orders(['status' => 10, 'settlement_id' => 3]);
 
-        foreach ($orders as $order){
+        foreach ($orders as $order) {
 
             $this->db->query("
             SELECT *
@@ -34,10 +34,10 @@ class StatusPaymentCron extends Core
 
             $transaction = $this->db->result();
 
-            if(!empty($transaction)){
+            if (!empty($transaction)) {
                 $res = $this->Soap1c->StatusPaymentOrder($transaction->id);
 
-                if(isset($res->return) && $res->return == 'Оплачено'){
+                if (isset($res->return) && $res->return == 'Оплачено') {
                     $this->transactions->update_transaction($transaction->id, ['reason_code' => 1]);
                     $this->orders->update_order($order->order_id, ['status' => 5]);
 
@@ -94,24 +94,13 @@ class StatusPaymentCron extends Core
                         $template = $this->sms->get_template(8);
 
                         foreach ($user_preferred as $preferred) {
-                            switch ($preferred->contact_type_id):
+                            switch ($preferred->contact_type_id) {
 
                                 case 1:
                                     $message = $template->template;
                                     $this->sms->send(
                                         $order->phone_mobile,
                                         $message
-                                    );
-                                    break;
-
-                                case 2:
-                                    $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
-                                    $mailService->send(
-                                        'rucred@ucase.live',
-                                        $order->email,
-                                        'RuCred | Уведомление',
-                                        "$template->template",
-                                        "<h2>$template->template</h2>"
                                     );
                                     break;
 
@@ -142,13 +131,11 @@ class StatusPaymentCron extends Core
                                         );
                                     }
                                     break;
-
-                            endswitch;
+                            }
                         }
                     }
 
-                }
-                else{
+                } else {
                     echo '<pre>';
                     var_dump($res);
                     exit;
