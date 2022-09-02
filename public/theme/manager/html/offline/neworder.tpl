@@ -807,7 +807,7 @@
                                                                            placeholder="Код из письма">
                                                                     <div class="input-group-append">
                                                                         <button class="btn btn-primary accept_edit_email_with_code"
-                                                                                type="button" data-user="{$user->id}">
+                                                                                type="button" data-user="{$order->user_id}">
                                                                             Подтвердить
                                                                         </button>
                                                                     </div>
@@ -842,7 +842,7 @@
                                                        value="1">
                                                 <label class="viber_same_label">Совпадает с номером мобильного</label>
                                                 <div style="margin-left: 20px" class="btn btn-success confirm_viber"
-                                                     data-user="{$user->id}">Подтвердить
+                                                     data-user="{$order->user_id}">Подтвердить
                                                 </div>
                                                 <br><br>
                                             </div>
