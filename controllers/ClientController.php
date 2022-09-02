@@ -1154,7 +1154,7 @@ class ClientController extends Controller
         $check_orders = $this->orders->get_orders(['user_id' => $user_id]);
 
         if (!empty($check_orders)) {
-            echo json_encode(['error' => 'У клиента есть заявки']);
+            echo json_encode(['error' => 'Клиент был отправлен в 1с']);
         } else {
             echo json_encode(['success' => 'Пользователь успешно удален']);
         }
