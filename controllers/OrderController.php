@@ -3894,6 +3894,11 @@ class OrderController extends Controller
         $requisits = $this->Requisites->get_requisites(['user_id' => $order->user_id]);
         $order->probably_start_date = date('d.m.Y', strtotime($order->probably_start_date));
 
+        if($order->sent_1c != 2){
+            echo json_encode(['error' => 'Заявка еще не была отправлена в 1с']);
+            exit;
+        }
+
         $default_requisit = new stdClass();
 
         foreach ($requisits as $requisit) {
