@@ -47,6 +47,7 @@ class Orders extends Core
                 o.status_1c,
                 o.utm_source,
                 o.utm_medium,
+                o.sent_1c,
                 o.utm_campaign,
                 o.utm_content,
                 o.utm_term,
