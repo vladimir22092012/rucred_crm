@@ -28,6 +28,15 @@ class NeworderController extends Controller
 
             $order = $this->orders->get_order($order_id);
 
+            $telegram_confirmed = $this->TelegramUsers->get($order->user_id, 0);
+            $viber_confirmed    = $this->ViberUsers->get($order->user_id, 0);
+
+            if(!empty($telegram_confirmed))
+                $this->design->assign('telegram_confirmed', '1');
+
+            if(!empty($viber_confirmed))
+                $this->design->assign('viber_confirmed', '1');
+
             if (!empty($order->faktaddress_id)) {
                 $Faktaddressfull = $this->Addresses->get_address($order->faktaddress_id);
                 $this->design->assign('Faktaddressfull', $Faktaddressfull);

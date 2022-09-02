@@ -825,6 +825,11 @@
                                                 <img class="icon_messag"
                                                      src="https://img.icons8.com/ios-glyphs/344/viber.png" width="30"
                                                      height="30">
+                                                {if isset($viber_confirmed)}
+                                                    <small class="badge badge-success">
+                                                        Привязан
+                                                    </small>
+                                                {/if}
                                                 <input class="form-control phone_num viber_same"
                                                        style="width: 450px; margin-left: 25px; {if isset($order) && $order->viber_num == $order->phone_mobile}display: none{/if}"
                                                        type="text" name="viber" value="{$order->viber_num}"
@@ -862,6 +867,11 @@
                                                      src="https://img.icons8.com/color/344/telegram-app--v1.png"
                                                      width="30"
                                                      height="30">
+                                                {if isset($telegram_confirmed)}
+                                                    <small class="badge badge-success">
+                                                        Привязан
+                                                    </small>
+                                                {/if}
                                                 <input class="form-control phone_num telegram_same"
                                                        style="width: 450px; margin-left: 25px; {if isset($order) && $order->telegram_num == $order->phone_mobile}display: none{/if}"
                                                        type="text" name="telegram" value="{$order->telegram_num}"
