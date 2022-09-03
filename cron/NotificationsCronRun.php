@@ -25,32 +25,33 @@ class NotificationsCronRun extends Core
     {
         $crons = $this->NotificationsCron->gets();
 
+        if (empty($crons))
+            die();
+
         foreach ($crons as $cron) {
             $ticket = $this->tickets->get_ticket($cron->ticket_id);
             $managers_permissions = $this->ManagersCommunicationsIn->get($ticket->theme_id);
 
-            if (!empty($managers_permissions)) {
-                $roles_id = [];
+            if (empty($managers_permissions))
+                continue;
 
-                foreach ($managers_permissions as $permission) {
-                    $roles_id[] = $permission->role_id;
-                }
+            $roles_id = [];
 
-                $roles_name = [];
-                $roles = $this->ManagerRoles->get();
-
-                foreach ($roles as $role) {
-                    foreach ($roles_id as $id) {
-                        if ($role->id == $id)
-                            $roles_name[] = $role->name;
-                    }
-                }
-
-                $managers = $this->managers->get_managers(['role' => $roles_name]);
-
-            } else {
-                exit;
+            foreach ($managers_permissions as $permission) {
+                $roles_id[] = $permission->role_id;
             }
+
+            $roles_name = [];
+            $roles = $this->ManagerRoles->get();
+
+            foreach ($roles as $role) {
+                foreach ($roles_id as $id) {
+                    if ($role->id == $id)
+                        $roles_name[] = $role->name;
+                }
+            }
+
+            $managers = $this->managers->get_managers(['role' => $roles_name]);
 
             foreach ($managers as $manager) {
                 if ($manager->telegram_note == 1) {
@@ -73,14 +74,14 @@ class NotificationsCronRun extends Core
 
     private function telegram_note($manager_id, $ticket, $is_manager)
     {
-        try{
+        try {
             $telegram = new Api($this->config->telegram_token);
             $telegram_check = $this->TelegramUsers->get($manager_id, $is_manager);
 
             if (!empty($telegram_check)) {
                 $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $ticket->text]);
             }
-        }catch (Exception $e){
+        } catch (Exception $e) {
 
         }
     }
