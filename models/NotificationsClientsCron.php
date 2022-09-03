@@ -26,4 +26,14 @@ class NotificationsClientsCron extends Core
 
         $this->db->query($query);
     }
+
+    public function update($id, $cron){
+        $query = $this->db->placehold("
+        UPDATE s_notifications_clients_cron
+        SET ?%
+        WHERE id = ?
+        ", $cron, $id);
+
+        $this->db->query($query);
+    }
 }
