@@ -3059,8 +3059,48 @@ class OfflineOrderController extends Controller
     private function action_reject_by_employer()
     {
         $order_id = (int)$this->request->post('order_id');
+        $order = $this->orders->get_order($order_id);
         $this->orders->update_order($order_id, ['status' => 15]);
         $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
+
+        $communication_theme = $this->CommunicationsThemes->get(11);
+
+        $ticket =
+            [
+                'creator' => $this->manager->id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => $communication_theme->id,
+                'company_id' => $order->company_id,
+                'group_id' => 2,
+                'order_id' => $order_id,
+                'status' => 0
+            ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+
+        $this->TicketMessages->add_message($message);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
+
+
         exit;
     }
 
