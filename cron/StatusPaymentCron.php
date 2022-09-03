@@ -88,52 +88,13 @@ class StatusPaymentCron extends Core
 
                     $this->NotificationsCron->add($cron);
 
-                    $user_preferred = $this->UserContactPreferred->get($order->user_id);
+                    $cron =
+                        [
+                            'template_id' => 8,
+                            'user_id' => $order->user_id,
+                        ];
 
-                    if (!empty($user_preferred)) {
-                        $template = $this->sms->get_template(8);
-
-                        foreach ($user_preferred as $preferred) {
-                            switch ($preferred->contact_type_id) {
-
-                                case 1:
-                                    $message = $template->template;
-                                    $this->sms->send(
-                                        $order->phone_mobile,
-                                        $message
-                                    );
-                                    break;
-
-                                case 3:
-                                    $telegram = new Api($this->config->telegram_token);
-                                    $telegram_check = $this->TelegramUsers->get($order->user_id, 0);
-
-                                    if (!empty($telegram_check)) {
-                                        $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $template->template]);
-                                    }
-                                    break;
-
-                                case 4:
-                                    $bot = new Bot(['token' => $this->config->viber_token]);
-
-                                    $botSender = new Sender([
-                                        'name' => 'Whois bot',
-                                        'avatar' => 'https://developers.viber.com/img/favicon.ico',
-                                    ]);
-                                    $viber_check = $this->ViberUsers->get($order->user_id, 0);
-
-                                    if (!empty($viber_check)) {
-                                        $bot->getClient()->sendMessage(
-                                            (new \Viber\Api\Message\Text())
-                                                ->setSender($botSender)
-                                                ->setReceiver($viber_check->chat_id)
-                                                ->setText($template->template)
-                                        );
-                                    }
-                                    break;
-                            }
-                        }
-                    }
+                    $this->NotificationsClientsCron->add($cron);
 
                 } else {
                     echo '<pre>';

@@ -16,4 +16,14 @@ class NotificationsClientsCron extends Core
 
         return $results;
     }
+
+    public function add($cron)
+    {
+        $query = $this->db->placehold("
+        INSERT INTO s_notifications_clients_cron
+        SET ?%
+        ", $cron);
+
+        $this->db->query($query);
+    }
 }
