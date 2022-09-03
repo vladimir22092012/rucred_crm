@@ -157,7 +157,8 @@ class Documents extends Core
             'params' => $data['params'],
             'created' => date('Y-m-d H:i:s'),
             'numeration' => $data['numeration'],
-            'asp_id' => $data['asp_id']
+            'asp_id' => $data['asp_id'],
+            'hash' => $data['hash']
         );
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($created);echo '</pre><hr />';
         $id = $this->add_document($created);
