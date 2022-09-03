@@ -907,8 +907,6 @@ class NeworderController extends Controller
                     exit;
                 } else {
 
-                    $this->add_first_ticket($order_id, $user_id);
-
                     $schedules =
                         [
                             'user_id' => $user_id,
@@ -956,9 +954,6 @@ class NeworderController extends Controller
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/neworder/draft/' . $order_id]);
                 } else {
                     $user = $this->users->get_user($order['user_id']);
-
-                    $this->add_first_ticket($order_id, $user_id);
-
 
                     $schedules =
                         [
@@ -1429,44 +1424,5 @@ class NeworderController extends Controller
 
         echo json_encode($user);
         exit;
-    }
-
-    private function add_first_ticket($order_id, $user_id)
-    {
-        $communication_theme = $this->CommunicationsThemes->get(18);
-        $user = $this->users->get_user($user_id);
-
-        $ticket =
-            [
-                'creator' => $this->manager->id,
-                'creator_company' => 2,
-                'client_lastname' => $user->lastname,
-                'client_firstname' => $user->firstname,
-                'client_patronymic' => $user->patronymic,
-                'head' => $communication_theme->head,
-                'text' => $communication_theme->text,
-                'theme_id' => 18,
-                'company_id' => 2,
-                'group_id' => $user->group_id,
-                'order_id' => $order_id,
-                'status' => 0
-            ];
-
-        $ticket_id = $this->Tickets->add_ticket($ticket);
-        $message =
-            [
-                'message' => $communication_theme->text,
-                'ticket_id' => $ticket_id,
-                'manager_id' => $this->manager->id,
-            ];
-        $this->TicketMessages->add_message($message);
-
-        $cron =
-            [
-                'ticket_id' => $ticket_id,
-                'is_complited' => 0
-            ];
-
-        $this->NotificationsCron->add($cron);
     }
 }
