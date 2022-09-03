@@ -15,9 +15,6 @@ require __DIR__ . '/../vendor/autoload.php';
 
 class NotificationsCronRun extends Core
 {
-    protected $telegram;
-
-
     public function __construct()
     {
         parent::__construct();
