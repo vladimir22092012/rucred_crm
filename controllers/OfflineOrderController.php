@@ -3272,7 +3272,7 @@ class OfflineOrderController extends Controller
         $annoouitet_pay = round($annoouitet_pay, '2');
 
         if (date('d', strtotime($start_date)) < $first_pay_day) {
-            if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days < $loan->free_period) {
+            if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days <= $loan->free_period) {
                 $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days, 2);
                 $sum_pay = $annoouitet_pay + $plus_loan_percents;
                 $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2);
