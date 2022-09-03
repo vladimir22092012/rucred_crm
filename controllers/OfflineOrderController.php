@@ -1112,6 +1112,14 @@ class OfflineOrderController extends Controller
 
             $this->tickets->update_by_theme_id(12, ['status' => 4], $order_id);
 
+            $cron =
+                [
+                    'template_id' => 8,
+                    'user_id' => $order->user_id,
+                ];
+
+            $this->NotificationsClientsCron->add($cron);
+
             echo json_encode(['success' => 1]);
             exit;
         } else {
