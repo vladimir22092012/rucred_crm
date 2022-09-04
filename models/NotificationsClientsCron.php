@@ -7,7 +7,7 @@ class NotificationsClientsCron extends Core
         $query = $this->db->placehold("
         SELECT *
         FROM s_notifications_clients_cron
-        WHERE is_complited = 0
+        WHERE is_completed = 0
         ");
 
         $this->db->query($query);
