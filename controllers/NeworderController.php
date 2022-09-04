@@ -7,7 +7,7 @@ use Viber\Client;
 use App\Services\MailService;
 
 error_reporting(-1);
-ini_set('display_errors', 'On');
+ini_set('display_errors', 'Off');
 date_default_timezone_set('Europe/Moscow');
 
 class NeworderController extends Controller
@@ -733,7 +733,7 @@ class NeworderController extends Controller
             $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
             $annoouitet_pay = round($annoouitet_pay, '2');
 
-            if (date('d', strtotime($start_date)) < $first_pay_day) {
+            if (date('d', strtotime($start_date->format('Y-m-d'))) < $first_pay_day) {
                 if (date_diff($this->check_pay_date($paydate), $start_date)->days <= $loan->free_period) {
 
                     $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days, 2);
