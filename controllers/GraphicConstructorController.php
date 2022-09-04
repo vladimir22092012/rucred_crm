@@ -147,26 +147,27 @@ class GraphicConstructorController extends Controller
         }
 
         $rest_sum = $amount;
-        $start_date = date('Y-m-d', strtotime($date_from));
+        $start_date = new DateTime(date('Y-m-d', strtotime($date_from)));
         $end_date = new DateTime(date('Y-m-' . $first_pay_day, strtotime($date_to)));
-        $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
-        $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date)));
+        $paydate = new DateTime($start_date->format('Y-m-'. $first_pay_day));
 
         $percent_per_month = (($percent / 100) * 365) / 12;
         $annoouitet_pay = $amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
         $annoouitet_pay = round($annoouitet_pay, 2);
 
-        if (date('d', strtotime($start_date)) < $first_pay_day) {
-            if ($issuance_date > $start_date && date_diff($paydate, $issuance_date)->days <= $loan->free_period) {
-                $plus_loan_percents = round(($percent / 100) * $amount * date_diff($paydate, $issuance_date)->days, 2);
+        if ($start_date->format('d') < $first_pay_day) {
+            if (date_diff($this->check_pay_date($paydate), $start_date)->days <= $loan->free_period) {
+
+                $plus_loan_percents = round(($percent / 100) * $amount * date_diff($paydate, $start_date)->days, 2);
                 $sum_pay = $annoouitet_pay + $plus_loan_percents;
                 $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2);
                 $body_pay = $sum_pay - $loan_percents_pay;
                 $paydate->add(new DateInterval('P1M'));
                 $paydate = $this->check_pay_date($paydate);
+
             } else {
                 $paydate = $this->check_pay_date($paydate);
-                $sum_pay = ($percent / 100) * $amount * date_diff($paydate, $issuance_date)->days;
+                $sum_pay = ($percent / 100) * $amount * date_diff($paydate, $start_date)->days;
                 $loan_percents_pay = $sum_pay;
                 $body_pay = 0;
             }
