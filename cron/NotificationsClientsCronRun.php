@@ -6,7 +6,7 @@ use Viber\Api\Sender;
 use App\Services\MailService;
 
 error_reporting(-1);
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'On');
 chdir(dirname(__FILE__) . '/../');
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -87,7 +87,7 @@ class NotificationsClientsCronRun extends Core
                 }
             }
 
-            $this->NotificationsClientsCron->update($cron->id, ['is_completed' => 1]);
+            var_dump($this->NotificationsClientsCron->update($cron->id, ['is_completed' => 1]));
         }
     }
 }

@@ -3652,7 +3652,6 @@ class OfflineOrderController extends Controller
 
         foreach ($daterange as $date) {
             $percent_per_month = (($order->percent / 100) * 365) / 12;
-            $percent_per_month = round($percent_per_month, 7);
             $annoouitet_pay = $new_loan * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$new_term)));
             $annoouitet_pay = round($annoouitet_pay, '2');
 
@@ -3664,14 +3663,14 @@ class OfflineOrderController extends Controller
                 $rest_sum = 0.00;
             } else {
                 if (isset($plus_percents)) {
-                    $loan_percents_pay = round($rest_sum * $percent_per_month, 2);
+                    $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
                     $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
                     $loan_percents_pay += $plus_percents;
                     $annoouitet_pay += $plus_percents;
                     $rest_sum = round($rest_sum - $loan_body_pay, 2);
                     unset($plus_percents);
                 } else {
-                    $loan_percents_pay = round($rest_sum * $percent_per_month, 2);
+                    $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
                     $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
                     $rest_sum = round($rest_sum - $loan_body_pay, 2);
                 }
@@ -3800,6 +3799,8 @@ class OfflineOrderController extends Controller
 
             $this->PaymentsSchedules->add($order->payment_schedule);
 
+            /*
+
 
             $order->restruct_date = date('Y-m-d');
             $order->probably_return_date = $end_date->format('Y-m-d');
@@ -3819,6 +3820,8 @@ class OfflineOrderController extends Controller
                 'params' => $order,
                 'numeration' => '04.04.1'
             ));
+
+            */
 
             $this->users->update_user($order->user_id, ['balance_blocked' => 1]);
             exit;
