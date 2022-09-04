@@ -61,10 +61,10 @@ class NotificationsCronRun extends Core
                     $this->viber_note($manager->id, $ticket, 1);
                 }
                 if ($manager->sms_note == 1) {
-                    $this->sms_note($manager->phone, $ticket);
+                    $this->sms_note($manager->id, $manager->phone, $ticket);
                 }
                 if ($manager->email_note == 1) {
-                    $this->mail_note($manager->email, $ticket);
+                    $this->mail_note($manager->id, $manager->email, $ticket);
                 }
             }
 
@@ -80,6 +80,16 @@ class NotificationsCronRun extends Core
 
             if (!empty($telegram_check)) {
                 $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $ticket->text]);
+
+                $log =
+                    [
+                        'user_id'    => $manager_id,
+                        'is_manager' => 1,
+                        'type_id'    => 3,
+                        'text'       => $ticket->text
+                    ];
+
+                $this->NotificationsLogs->add($log);
             }
         } catch (Exception $e) {
 
@@ -106,13 +116,24 @@ class NotificationsCronRun extends Core
                         ->setReceiver($viber_check->chat_id)
                         ->setText($ticket->text)
                 );
+
+                $log =
+                    [
+                        'user_id'    => $manager_id,
+                        'is_manager' => 1,
+                        'type_id'    => 4,
+                        'text'       => $ticket->text
+                    ];
+
+                $this->NotificationsLogs->add($log);
+
             } catch (Exception $e) {
                 var_dump($e);
             }
         }
     }
 
-    private function sms_note($phone, $ticket)
+    private function sms_note($manager_id, $phone, $ticket)
     {
         $phone = preg_replace('![^0-9]+!', '', $phone);
         $message = $ticket->text;
@@ -120,9 +141,19 @@ class NotificationsCronRun extends Core
             $phone,
             $message
         );
+
+        $log =
+            [
+                'user_id'    => $manager_id,
+                'is_manager' => 1,
+                'type_id'    => 1,
+                'text'       => $ticket->text
+            ];
+
+        $this->NotificationsLogs->add($log);
     }
 
-    private function mail_note($mail, $ticket)
+    private function mail_note($manager_id, $mail, $ticket)
     {
         $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
         $mailService->send(
@@ -132,6 +163,16 @@ class NotificationsCronRun extends Core
             "$ticket->head",
             "<h2>$ticket->text</h2>"
         );
+
+        $log =
+            [
+                'user_id'    => $manager_id,
+                'is_manager' => 1,
+                'type_id'    => 2,
+                'text'       => $ticket->text
+            ];
+
+        $this->NotificationsLogs->add($log);
     }
 }
 

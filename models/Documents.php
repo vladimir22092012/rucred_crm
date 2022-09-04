@@ -351,6 +351,7 @@ class Documents extends Core
             doc.ready,
             doc.asp_id,
             doc.pre_asp_id,
+            doc.hash,
             us.lastname,
             us.firstname,
             us.patronymic,

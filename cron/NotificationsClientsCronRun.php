@@ -44,6 +44,17 @@ class NotificationsClientsCronRun extends Core
                             $user->phone_mobile,
                             $message
                         );
+
+                        $log =
+                            [
+                                'user_id'    => $cron->user_id,
+                                'is_manager' => 0,
+                                'type_id'    => 1,
+                                'text'       => $message
+                            ];
+
+                        $this->NotificationsLogs->add($log);
+
                         break;
 
                     case 2:
@@ -55,6 +66,17 @@ class NotificationsClientsCronRun extends Core
                             "$template->template",
                             "<h2>$template->template</h2>"
                         );
+
+                        $log =
+                            [
+                                'user_id'    => $cron->user_id,
+                                'is_manager' => 0,
+                                'type_id'    => 2,
+                                'text'       => $template->template
+                            ];
+
+                        $this->NotificationsLogs->add($log);
+
                         break;
 
                     case 3:
@@ -63,6 +85,16 @@ class NotificationsClientsCronRun extends Core
 
                         if (!empty($telegram_check)) {
                             $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $template->template]);
+
+                            $log =
+                                [
+                                    'user_id'    => $cron->user_id,
+                                    'is_manager' => 0,
+                                    'type_id'    => 3,
+                                    'text'       => $template->template
+                                ];
+
+                            $this->NotificationsLogs->add($log);
                         }
                         break;
 
@@ -82,6 +114,16 @@ class NotificationsClientsCronRun extends Core
                                     ->setReceiver($viber_check->chat_id)
                                     ->setText($template->template)
                             );
+
+                            $log =
+                                [
+                                    'user_id'    => $cron->user_id,
+                                    'is_manager' => 0,
+                                    'type_id'    => 4,
+                                    'text'       => $template->template
+                                ];
+
+                            $this->NotificationsLogs->add($log);
                         }
                         break;
                 }
