@@ -87,7 +87,7 @@ class NotificationsClientsCronRun extends Core
                 }
             }
 
-            var_dump($this->NotificationsClientsCron->update($cron->id, ['is_completed' => 1]));
+            $this->NotificationsClientsCron->update($cron->id, ['is_completed' => 1]);
         }
     }
 }

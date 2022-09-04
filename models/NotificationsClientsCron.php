@@ -34,8 +34,6 @@ class NotificationsClientsCron extends Core
         WHERE id = ?
         ", $cron, $id);
 
-        var_dump($query);
-
         $this->db->query($query);
     }
 }
