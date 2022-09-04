@@ -1376,7 +1376,7 @@ class NeworderController extends Controller
 
                 $template = $this->sms->get_template(5);
                 $message = str_replace('$user_token', $user_token, $template->template);
-                $this->sms->send($phone, $message);
+                $resp = json_encode($this->sms->send($phone, $message));
 
                 $user =
                     [
@@ -1386,6 +1386,18 @@ class NeworderController extends Controller
                     ];
 
                 $this->TelegramUsers->add($user);
+
+                $log =
+                    [
+                        'user_id'    => $user_id,
+                        'is_manager' => 0,
+                        'type_id'    => 1,
+                        'resp'       => $resp,
+                        'text'       => $message
+                    ];
+
+                $this->NotificationsLogs->add($log);
+
                 break;
 
             case 'viber':
@@ -1406,6 +1418,19 @@ class NeworderController extends Controller
                     ];
 
                 $this->ViberUsers->add($user);
+
+                $log =
+                    [
+                        'user_id'    => $user_id,
+                        'is_manager' => 0,
+                        'type_id'    => 2,
+                        'resp'       => json_encode($mailResponse),
+                        'text'       => $this->config->back_url . '/redirect_api?user_id=' . $user_id
+                    ];
+
+                $this->NotificationsLogs->add($log);
+
+
                 break;
         endswitch;
 

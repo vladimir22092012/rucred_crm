@@ -477,7 +477,7 @@ class ManagerController extends Controller
             $template = $this->sms->get_template(5);
             $message = str_replace('$user_token', $user_token, $template->template);
 
-            $this->sms->send($phone, $message);
+            $resp = $this->sms->send($phone, $message);
 
             $user =
                 [
@@ -487,6 +487,18 @@ class ManagerController extends Controller
                 ];
 
             $this->TelegramUsers->add($user);
+
+            $log =
+                [
+                    'user_id'    => $manager_id,
+                    'is_manager' => 1,
+                    'type_id'    => 1,
+                    'resp'       => json_encode($resp),
+                    'text'       => $message
+                ];
+
+            $this->NotificationsLogs->add($log);
+
             echo json_encode(['info' => 1]);
         }
 
@@ -509,7 +521,7 @@ class ManagerController extends Controller
             $user_token = substr($user_token, 1, 10);
 
             $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
-            $mailService->send(
+            $resp = $mailService->send(
                 'rucred@ucase.live',
                 $manager->email,
                 'RuCred | Ссылка для привязки Viber',
@@ -525,6 +537,18 @@ class ManagerController extends Controller
                 ];
 
             $this->ViberUsers->add($user);
+
+            $log =
+                [
+                    'user_id'    => $manager_id,
+                    'is_manager' => 1,
+                    'type_id'    => 1,
+                    'resp'       => json_encode($resp),
+                    'text'       => $this->config->back_url.'/redirect_api?user_id=' . $manager_id
+                ];
+
+            $this->NotificationsLogs->add($log);
+
             echo json_encode(['info' => 1]);
         }
 
