@@ -247,8 +247,6 @@
                 let attr = $(this).attr('name');
                 let phone = $('input[name="phone"]').val();
 
-                console.log(phone);
-
                 $('.' + attr + '').toggle();
 
                 if ($(this).is(':checked')) {
@@ -315,6 +313,7 @@
                                     }, 1500);
                                     break;
                             }
+                            $('input[name="user_id"]').val(resp['user_id'])
                         } else {
                             Swal.fire({
                                 title: 'Произошла ошибка',

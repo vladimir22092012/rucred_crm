@@ -363,12 +363,6 @@ class NeworderController extends Controller
             exit;
         }
 
-        $user['push_not'] = (int)$this->request->post('push_not');
-        $user['sms_not'] = (int)$this->request->post('sms_not');
-        $user['email_not'] = (int)$this->request->post('email_not');
-        $user['massanger_not'] = (int)$this->request->post('massanger_not');
-
-
         $passport_serial = (string)$this->request->post('passport_serial');
         $passport_number = (string)$this->request->post('passport_number');
 
@@ -1368,7 +1362,7 @@ class NeworderController extends Controller
         $user_token = substr($user_token, 1, 10);
 
         if (empty($user_id)) {
-            $user_id = $this->users->getNextid();
+            $user_id = $this->users->add_user(['created' => date('Y-m-d H:i:s')]);
         }
 
         switch ($type):
@@ -1434,7 +1428,7 @@ class NeworderController extends Controller
                 break;
         endswitch;
 
-        echo json_encode(['success' => 1, 'type' => $type]);
+        echo json_encode(['success' => 1, 'type' => $type, 'user_id' => $user_id]);
         exit;
     }
 
