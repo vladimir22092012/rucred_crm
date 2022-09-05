@@ -260,7 +260,7 @@
 
             $(document).on('click', '.confirm_telegram, .confirm_viber', function (e) {
 
-                let user_id = $('input[name="user_id"]').attr('data-user');
+                let user_id = $('input[name="user_id"]').val();
                 let type = '';
                 let same_flag = 0;
                 let phone = $(this).parent().find('.phone_num').val();
