@@ -1097,7 +1097,7 @@ class NeworderController extends Controller
             '<h1>Сообщите код андеррайтеру РуКреда: </h1>' . "<h2>$code</h2>"
         );
 
-        echo json_encode(['success' => 1]);
+        echo json_encode(['success' => $mailResponse]);
         exit;
     }
 
