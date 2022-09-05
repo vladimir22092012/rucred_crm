@@ -313,7 +313,7 @@
                                     }, 1500);
                                     break;
                             }
-                            $('input[name="user_id"]').val(resp['user_id'])
+                            $('input[name="user_id"]').attr('value', resp['user_id'])
                         } else {
                             Swal.fire({
                                 title: 'Произошла ошибка',
