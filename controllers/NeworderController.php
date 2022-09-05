@@ -311,6 +311,11 @@ class NeworderController extends Controller
         $user['foreign_relative'] = (int)$this->request->post('foreign_relative');
         $user['fio_relative'] = $this->request->post('fio_relative');
 
+        $user['push_not'] = (int)$this->request->post('push_not');
+        $user['sms_not'] = (int)$this->request->post('sms_not');
+        $user['email_not'] = (int)$this->request->post('email_not');
+        $user['massanger_not'] = (int)$this->request->post('massanger_not');
+
 
         $user['phone_mobile'] = trim((string)$this->request->post('phone'));
         $user['phone_mobile'] = preg_replace('/[^0-9]/', '', $user['phone_mobile']);
