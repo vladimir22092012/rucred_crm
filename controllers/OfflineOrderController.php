@@ -24,6 +24,10 @@ class OfflineOrderController extends Controller
                     $this->change_manager_action();
                     break;
 
+                case 'form_restruct_docs':
+                    $this->action_form_restruct_docs();
+                    break;
+
                 case 'accept_by_employer':
                     $this->action_accept_by_employer();
                     break;
@@ -2971,8 +2975,8 @@ class OfflineOrderController extends Controller
 
         $all_sum_credits = 0;
         $sum_credits_pay = 0;
-        $credits_story   = json_decode($user['credits_story']);
-        $cards_story     = json_decode($user['cards_story']);
+        $credits_story = json_decode($user['credits_story']);
+        $cards_story = json_decode($user['cards_story']);
 
         if (!empty($credits_story)) {
             foreach ($credits_story as $credit) {
@@ -3325,9 +3329,9 @@ class OfflineOrderController extends Controller
                 $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2);
                 $body_pay = $sum_pay - $loan_percents_pay;
                 $paydate->add(new DateInterval('P1M'));
-                $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-'.$first_pay_day)));
+                $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
             } else {
-                $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-'.$first_pay_day)));
+                $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
                 $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $issuance_date)->days;
                 $loan_percents_pay = $sum_pay;
                 $body_pay = 0;
@@ -3454,8 +3458,8 @@ class OfflineOrderController extends Controller
 
         $all_sum_credits = 0;
         $sum_credits_pay = 0;
-        $credits_story   = json_decode($user['credits_story']);
-        $cards_story     = json_decode($user['cards_story']);
+        $credits_story = json_decode($user['credits_story']);
+        $cards_story = json_decode($user['cards_story']);
 
         if (!empty($credits_story)) {
             foreach ($credits_story as $credit) {
@@ -3639,6 +3643,7 @@ class OfflineOrderController extends Controller
         $pay_date = date('d.m.Y', strtotime($this->request->post('pay_date')));
         $order = $this->orders->get_order($order_id);
         $order->new_term = $new_term;
+        $loan = $this->loantypes->get_loantype($order->loan_type);
 
         $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
         $payment_schedule = json_decode($payment_schedule->schedule, true);
@@ -3876,6 +3881,52 @@ class OfflineOrderController extends Controller
 
         } else {
 
+            $all_sum_credits = 0;
+            $sum_credits_pay = 0;
+            $credits_story = json_decode($user['credits_story']);
+            $cards_story = json_decode($user['cards_story']);
+
+            if (!empty($credits_story)) {
+                foreach ($credits_story as $credit) {
+                    $credit->credits_month_pay = preg_replace("/[^,.0-9]/", '', $credit->credits_month_pay);
+                    if (!empty($credit->credits_month_pay))
+                        $sum_credits_pay += $credit->credits_month_pay;
+                }
+
+                $all_sum_credits += $sum_credits_pay;
+            }
+
+            if (!empty($cards_story)) {
+                foreach ($cards_story as $card) {
+                    $card->cards_rest_sum = preg_replace("/[^,.0-9]/", '', $card->cards_rest_sum);
+                    $card->cards_limit = preg_replace("/[^,.0-9]/", '', $card->cards_limit);
+
+                    if (!empty($card->cards_limit)) {
+                        $max = 0.05 * $card->cards_limit;
+                    } else {
+                        $max = 0;
+                    }
+                    if (!empty($card->cards_rest_sum)) {
+                        $min = 0.1 * $card->cards_rest_sum;
+                    } else {
+                        $min = 0;
+                    }
+
+                    $all_sum_credits += min($max, $min);
+                }
+            }
+
+            $month_pay = $order->amount * ((1 / $loan->max_period) + (($psk / 100) / 12));
+
+            $all_sum_credits += $month_pay;
+
+            if ($all_sum_credits != 0)
+                $pdn = round(($all_sum_credits / $user['income']) * 100, 2);
+            else
+                $pdn = 0;
+
+            $this->users->update_user($order->user_id, ['pdn' => $pdn, 'balance_blocked' => 1]);
+
             $this->PaymentsSchedules->updates($order->order_id, ['actual' => 0]);
 
             $order->payment_schedule =
@@ -3888,36 +3939,15 @@ class OfflineOrderController extends Controller
                     'actual' => 1,
                     'schedule' => json_encode($new_shedule),
                     'psk' => $psk,
+                    'pdn' => $pdn,
                     'comment' => $comment
                 ];
 
             $this->PaymentsSchedules->add($order->payment_schedule);
 
-            /*
-
-
             $order->restruct_date = date('Y-m-d');
             $order->probably_return_date = $end_date->format('Y-m-d');
 
-            $this->documents->create_document(array(
-                'user_id' => $order->user_id,
-                'order_id' => $order->order_id,
-                'type' => 'DOP_SOGLASHENIE',
-                'params' => $order,
-                'numeration' => '04.03.3'
-            ));
-
-            $this->documents->create_document(array(
-                'user_id' => $order->user_id,
-                'order_id' => $order->order_id,
-                'type' => 'DOP_GRAFIK',
-                'params' => $order,
-                'numeration' => '04.04.1'
-            ));
-
-            */
-
-            $this->users->update_user($order->user_id, ['balance_blocked' => 1]);
             exit;
         }
 
@@ -4085,15 +4115,24 @@ class OfflineOrderController extends Controller
                 echo json_encode(['success' => 1]);
                 exit;
             } else {
-                $asp_log['type'] = 'restruct_sms';
                 $asp_id = $this->AspCodes->add_code($asp_log);
-
-                $order_id = $this->request->post('order_id');
                 $documents = $this->documents->get_documents(['order_id' => $order_id]);
+
+                $asp_log =
+                    [
+                        'user_id' => $order->user_id,
+                        'order_id' => $order->order_id,
+                        'created' => date('Y-m-d H:i:s'),
+                        'type' => 'rucred_sms',
+                        'recepient' => $order->phone_mobile,
+                        'manager_id' => $this->manager->id
+                    ];
+
+                $rucred_asp_id = $this->AspCodes->add_code($asp_log);
 
                 foreach ($documents as $document) {
                     if (in_array($document->type, ['DOP_GRAFIK', 'DOP_SOGLASHENIE']) && empty($document->asp_id)) {
-                        $this->documents->update_document($document->id, ['pre_asp_id' => $asp_id]);
+                        $this->documents->update_document($document->id, ['asp_id' => $asp_id, 'rucred_asp_id' => $rucred_asp_id]);
                     }
                 }
 
@@ -4525,6 +4564,31 @@ class OfflineOrderController extends Controller
             ];
 
         $this->NotificationsCron->add($cron);
+    }
+
+    private function action_form_restruct_docs()
+    {
+        $order_id = $this->request->post('order_id');
+
+        $order = $this->orders->get_order($order_id);
+
+        $order->payment_schedule = (array)$this->PaymentsSchedules->get(['actual' => 1, 'order_id' => $order_id]);
+
+        $this->documents->create_document(array(
+            'user_id' => $order->user_id,
+            'order_id' => $order->order_id,
+            'type' => 'DOP_SOGLASHENIE',
+            'params' => $order,
+            'numeration' => '04.03.3'
+        ));
+
+        $this->documents->create_document(array(
+            'user_id' => $order->user_id,
+            'order_id' => $order->order_id,
+            'type' => 'DOP_GRAFIK',
+            'params' => $order,
+            'numeration' => '04.04.1'
+        ));
     }
 
 }
