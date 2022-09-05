@@ -726,7 +726,7 @@ class NeworderController extends Controller
             $rest_sum = $order['amount'];
             $end_date = new DateTime(date('Y-m-' . $first_pay_day, strtotime($probably_end_date)));
             $start_date = new DateTime(date('Y-m-d', strtotime($probably_start_date)));
-            $paydate = new DateTime($start_date->format('Y-m-'. $first_pay_day));
+            $paydate = new DateTime($start_date->format('Y-m-' . $first_pay_day));
 
             $percent_per_month = (($order['percent'] / 100) * 365) / 12;
             $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
@@ -740,10 +740,10 @@ class NeworderController extends Controller
                     $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2);
                     $body_pay = $sum_pay - $loan_percents_pay;
                     $paydate->add(new DateInterval('P1M'));
-                    $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-'.$first_pay_day)));
+                    $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
 
                 } else {
-                    $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-'.$first_pay_day)));
+                    $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
                     $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days;
                     $loan_percents_pay = $sum_pay;
                     $body_pay = 0;
@@ -894,10 +894,13 @@ class NeworderController extends Controller
 
             if (isset($user_id)) {
                 $user = $this->users->get_user($user_id);
+                if (empty($user->personal_number))
+                    $user->personal_number = $this->users->last_personal_number();
+
                 $personal_number = $user->personal_number;
             }
 
-            $order['uid'] = "$group->number$company->number ".$personal_number;
+            $order['uid'] = "$group->number$company->number " . $personal_number;
 
             if (($this->request->get('order_id'))) {
                 $order_id = $this->request->get('order_id');
@@ -1391,11 +1394,11 @@ class NeworderController extends Controller
 
                 $log =
                     [
-                        'user_id'    => $user_id,
+                        'user_id' => $user_id,
                         'is_manager' => 0,
-                        'type_id'    => 1,
-                        'resp'       => $resp,
-                        'text'       => $message
+                        'type_id' => 1,
+                        'resp' => $resp,
+                        'text' => $message
                     ];
 
                 $this->NotificationsLogs->add($log);
@@ -1423,11 +1426,11 @@ class NeworderController extends Controller
 
                 $log =
                     [
-                        'user_id'    => $user_id,
+                        'user_id' => $user_id,
                         'is_manager' => 0,
-                        'type_id'    => 2,
-                        'resp'       => json_encode($mailResponse),
-                        'text'       => $this->config->back_url . '/redirect_api?user_id=' . $user_id
+                        'type_id' => 2,
+                        'resp' => json_encode($mailResponse),
+                        'text' => $this->config->back_url . '/redirect_api?user_id=' . $user_id
                     ];
 
                 $this->NotificationsLogs->add($log);
