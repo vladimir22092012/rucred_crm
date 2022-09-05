@@ -888,15 +888,16 @@ class NeworderController extends Controller
                 $last_personal_number = $this->users->last_personal_number();
 
                 $user['personal_number'] = $last_personal_number + 1;
+                $personal_number = $user['personal_number'];
                 $user['original'] = 1;
             }
 
             if (isset($user_id)) {
                 $user = $this->users->get_user($user_id);
-                $user['personal_number'] = $user->personal_number;
+                $personal_number = $user->personal_number;
             }
 
-            $order['uid'] = "$group->number$company->number ".$user['personal_number'];
+            $order['uid'] = "$group->number$company->number ".$personal_number;
 
             if (($this->request->get('order_id'))) {
                 $order_id = $this->request->get('order_id');
