@@ -893,6 +893,8 @@ class NeworderController extends Controller
                 if (!empty($user->personal_number)) {
                     $personal_number = $user->personal_number;
                 }
+
+                $this->users->update_user($user_id, ['personal_number' => $personal_number]);
             }
 
             $order['uid'] = "$group->number$company->number " . $personal_number;
