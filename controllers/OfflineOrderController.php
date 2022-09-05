@@ -2903,8 +2903,7 @@ class OfflineOrderController extends Controller
         $this->requisites->update_requisite($requisite['id'], $requisite);
     }
 
-    private
-    function action_edit_schedule()
+    private function action_edit_schedule()
     {
 
         $date = $this->request->post('date');
@@ -2916,6 +2915,9 @@ class OfflineOrderController extends Controller
         $rest_pay = $this->request->post('rest_pay');
         $order_id = $this->request->post('order_id');
         $order = $this->orders->get_order($order_id);
+        $user = $this->users->get_user($order->user_id);
+        $user = (array)$user;
+        $loan = $this->loantypes->get_loantype($order->loan_type);
 
         $results['result'] = $this->request->post('result');
 
@@ -2966,6 +2968,52 @@ class OfflineOrderController extends Controller
         $xirr /= 100;
 
         $psk = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
+
+        $all_sum_credits = 0;
+        $sum_credits_pay = 0;
+        $credits_story   = json_decode($user['credits_story']);
+        $cards_story     = json_decode($user['cards_story']);
+
+        if (!empty($credits_story)) {
+            foreach ($credits_story as $credit) {
+                $credit->credits_month_pay = preg_replace("/[^,.0-9]/", '', $credit->credits_month_pay);
+                if (!empty($credit->credits_month_pay))
+                    $sum_credits_pay += $credit->credits_month_pay;
+            }
+
+            $all_sum_credits += $sum_credits_pay;
+        }
+
+        if (!empty($cards_story)) {
+            foreach ($cards_story as $card) {
+                $card->cards_rest_sum = preg_replace("/[^,.0-9]/", '', $card->cards_rest_sum);
+                $card->cards_limit = preg_replace("/[^,.0-9]/", '', $card->cards_limit);
+
+                if (!empty($card->cards_limit)) {
+                    $max = 0.05 * $card->cards_limit;
+                } else {
+                    $max = 0;
+                }
+                if (!empty($card->cards_rest_sum)) {
+                    $min = 0.1 * $card->cards_rest_sum;
+                } else {
+                    $min = 0;
+                }
+
+                $all_sum_credits += min($max, $min);
+            }
+        }
+
+        $month_pay = $order->amount * ((1 / $loan->max_period) + (($psk / 100) / 12));
+
+        $all_sum_credits += $month_pay;
+
+        if ($all_sum_credits != 0)
+            $pdn = round(($all_sum_credits / $user['income']) * 100, 2);
+        else
+            $pdn = 0;
+
+        $this->users->update_user($user['id'], ['pdn' => $pdn]);
 
         $update =
             [
