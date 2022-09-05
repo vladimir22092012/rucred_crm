@@ -884,20 +884,17 @@ class NeworderController extends Controller
             $company = $this->Companies->get_company($order['company_id']);
             $group = $this->Groups->get_group($order['group_id']);
 
-            if (!isset($user['personal_number'])) {
-                $last_personal_number = $this->users->last_personal_number();
-
-                $user['personal_number'] = $last_personal_number + 1;
-                $personal_number = $user['personal_number'];
-                $user['original'] = 1;
-            }
-
             if (isset($user_id)) {
                 $user = $this->users->get_user($user_id);
-                if (empty($user->personal_number))
-                    $user->personal_number = $this->users->last_personal_number();
-
-                $personal_number = $user->personal_number;
+                if (empty($user->personal_number)){
+                    $last_personal_number = $this->users->last_personal_number();
+                    $personal_number = $last_personal_number + 1;
+                }else{
+                    $personal_number = $user->personal_number;
+                }
+            }else{
+                $last_personal_number = $this->users->last_personal_number();
+                $personal_number = $last_personal_number + 1;
             }
 
             $order['uid'] = "$group->number$company->number " . $personal_number;
