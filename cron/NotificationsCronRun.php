@@ -30,6 +30,11 @@ class NotificationsCronRun extends Core
 
         foreach ($crons as $cron) {
             $ticket = $this->tickets->get_ticket($cron->ticket_id);
+
+            if(empty($ticket))
+                continue;
+
+
             $managers_permissions = $this->ManagersCommunicationsIn->get($ticket->theme_id);
 
             if (empty($managers_permissions))

@@ -147,6 +147,9 @@ class Tickets extends Core
         $this->db->query($query);
         $ticket = $this->db->result();
 
+        if(empty($ticket))
+            return null;
+
         $query = $this->db->placehold("
         SELECT *
         FROM s_tickets_docs
