@@ -324,6 +324,11 @@ class NeworderController extends Controller
         if (empty($user['dependents']))
             unset($user['dependents']);
 
+        if(is_float($user['dependents'])){
+            response_json(['error' => 1, 'reason' => 'Некорректное кол-во иждивенцев']);
+            exit;
+        }
+
         if (empty($user['phone_mobile'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует номер телефона']);
             exit;
@@ -356,6 +361,21 @@ class NeworderController extends Controller
         $user['email'] = trim((string)$this->request->post('email'));
         $user['gender'] = trim((string)$this->request->post('gender'));
         $user['birth'] = trim((string)$this->request->post('birth'));
+
+        $now_date = new DateTime(date('Y-m-d'));
+        $birth_date = new DateTime(date('Y-m-d', strtotime($user['birth'])));
+
+        if($user['birth'] > date('Y-m-d')){
+            response_json(['error' => 1, 'reason' => 'Некорректная дата рождения']);
+            exit;
+        }else
+        {
+            if(date_diff($now_date, $birth_date)->days < 18){
+                response_json(['error' => 1, 'reason' => 'Не должно быть меньше 18 лет']);
+                exit;
+            }
+        }
+
         $user['birth_place'] = trim((string)$this->request->post('birth_place'));
 
         if (empty($user['birth_place'])) {
@@ -387,11 +407,26 @@ class NeworderController extends Controller
         }
 
         $user['passport_date'] = (string)$this->request->post('passport_date');
+
+        $now_date = new DateTime(date('Y-m-d'));
+        $passport_date = new DateTime(date('Y-m-d', strtotime($user['passport_date'])));
+
+        if($user['passport_date'] > date('Y-m-d') || date_diff($now_date, $passport_date)->days < 31){
+            response_json(['error' => 1, 'reason' => 'Некорректная дата выдачи паспорта']);
+            exit;
+        }
+
         $user['passport_issued'] = (string)$this->request->post('passport_issued');
         $user['subdivision_code'] = (string)$this->request->post('subdivision_code');
 
         if (empty($user['passport_serial']) || empty($user['passport_date']) || empty($user['passport_issued']) || empty($user['subdivision_code'])) {
             response_json(['error' => 1, 'reason' => 'Заполните паспортные данные']);
+            exit;
+        }
+
+        if(strlen($user['subdivision_code'] > 6) && strlen($user['subdivision_code'] < 6))
+        {
+            response_json(['error' => 1, 'reason' => 'Некорректный код подразделения']);
             exit;
         }
 
