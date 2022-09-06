@@ -35,6 +35,9 @@ class NotificationsClientsCronRun extends Core
             $template = $this->sms->get_template($cron->template_id);
             $user = $this->users->get_user($cron->user_id);
 
+            if(empty($user))
+                continue;
+
             foreach ($user_preferred as $preferred) {
                 switch ($preferred->contact_type_id) {
 
