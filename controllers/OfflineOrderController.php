@@ -621,10 +621,10 @@ class OfflineOrderController extends Controller
                         return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
                     });
 
-                if ($schedule->actual == 1){
+                if ($schedule->actual == 1) {
                     $payment_schedule = end($schedules);
 
-                    if($schedule->type = 'restruct' && $schedule->is_confirmed == 0)
+                    if ($schedule->type = 'restruct' && $schedule->is_confirmed == 0)
                         $need_form_restruct_docs = 1;
                 }
             }
@@ -4247,7 +4247,6 @@ class OfflineOrderController extends Controller
     private function action_send_qr()
     {
         $order_id = $this->request->post('order_id');
-        $phone = $this->request->post('phone');
         $contract = $this->contracts->get_order_contract($order_id);
         $order = $this->orders->get_order($order_id);
 
@@ -4273,22 +4272,67 @@ class OfflineOrderController extends Controller
             $sum = $rub + $kop;
         }
 
-        /*
-
-        $resp = $this->QrGenerateApi->get_qr($sum, 600);
-        $pay_link = $resp->results->qr_link;
-
-        */
-
         $pay_link = $this->Best2pay->get_payment_link($sum, $contract->id);
 
-        $cron =
-            [
-                'template_id' => 3,
-                'user_id' => $order->user_id,
-            ];
+        $user_preferred = $this->UserContactPreferred->get($order->user_id);
 
-        $this->NotificationsClientsCron->add($cron);
+        if (empty($user_preferred))
+            exit;
+
+        $template = $this->sms->get_template(3);
+        $template->template = str_replace('$pay_link', $pay_link, $template->template);
+
+        foreach ($user_preferred as $preferred) {
+            switch ($preferred->contact_type_id) {
+
+                case 1:
+                    $message = $template->template;
+                    $this->sms->send(
+                        $order->phone_mobile,
+                        $message
+                    );
+                    break;
+
+                case 2:
+                    $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
+                    $mailService->send(
+                        'rucred@ucase.live',
+                        $order->email,
+                        'RuCred | Уведомление',
+                        "$template->template",
+                        "<h2>$template->template</h2>"
+                    );
+                    break;
+
+                case 3:
+                    $telegram = new Api($this->config->telegram_token);
+                    $telegram_check = $this->TelegramUsers->get($order->user_id, 0);
+
+                    if (!empty($telegram_check)) {
+                        $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $template->template]);
+                    }
+                    break;
+
+                case 4:
+                    $bot = new Bot(['token' => $this->config->viber_token]);
+
+                    $botSender = new Sender([
+                        'name' => 'Whois bot',
+                        'avatar' => 'https://developers.viber.com/img/favicon.ico',
+                    ]);
+                    $viber_check = $this->ViberUsers->get($order->user_id, 0);
+
+                    if (!empty($viber_check)) {
+                        $bot->getClient()->sendMessage(
+                            (new \Viber\Api\Message\Text())
+                                ->setSender($botSender)
+                                ->setReceiver($viber_check->chat_id)
+                                ->setText($template->template)
+                        );
+                    }
+                    break;
+            }
+        }
 
         echo json_encode(['success' => 1]);
         exit;
