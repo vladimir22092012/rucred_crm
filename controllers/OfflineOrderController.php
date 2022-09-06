@@ -4108,21 +4108,9 @@ class OfflineOrderController extends Controller
                 $asp_id = $this->AspCodes->add_code($asp_log);
                 $documents = $this->documents->get_documents(['order_id' => $order_id]);
 
-                $asp_log =
-                    [
-                        'user_id' => $order->user_id,
-                        'order_id' => $order->order_id,
-                        'created' => date('Y-m-d H:i:s'),
-                        'type' => 'rucred_sms',
-                        'recepient' => $order->phone_mobile,
-                        'manager_id' => $this->manager->id
-                    ];
-
-                $rucred_asp_id = $this->AspCodes->add_code($asp_log);
-
                 foreach ($documents as $document) {
                     if (in_array($document->type, ['DOP_GRAFIK', 'DOP_SOGLASHENIE']) && empty($document->asp_id)) {
-                        $this->documents->update_document($document->id, ['asp_id' => $asp_id, 'rucred_asp_id' => $rucred_asp_id]);
+                        $this->documents->update_document($document->id, ['asp_id' => $asp_id]);
                     }
                 }
 
@@ -4137,14 +4125,28 @@ class OfflineOrderController extends Controller
     private function action_confirm_restruct()
     {
         $order_id = $this->request->post('order_id');
+        $order = $this->orders->get_order($order_id);
         $documents = $this->documents->get_documents(['order_id' => $order_id]);
 
+        $asp_log =
+            [
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'created' => date('Y-m-d H:i:s'),
+                'type' => 'rucred_sms',
+                'recepient' => $order->phone_mobile,
+                'manager_id' => $this->manager->id
+            ];
+
+        $rucred_asp_id = $this->AspCodes->add_code($asp_log);
+
         foreach ($documents as $document) {
-            if (in_array($document->type, ['DOP_GRAFIK', 'DOP_SOGLASHENIE']) && empty($document->asp_id)) {
-                $this->documents->update_document($document->id, ['asp_id' => $document->pre_asp_id]);
+            if (in_array($document->type, ['DOP_GRAFIK', 'DOP_SOGLASHENIE']) && empty($document->rucred_asp_id)) {
+                $this->documents->update_document($document->id, ['rucred_asp_id' => $rucred_asp_id]);
             }
         }
 
+        $this->orders->update_order($order_id, ['status' => 19]);
         exit;
     }
 

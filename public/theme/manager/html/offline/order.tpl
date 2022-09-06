@@ -1695,12 +1695,12 @@
                                                 {/if}
                                                 {if $order->status == 18}
                                                     <div>
-                                                        <button class="btn btn-success btn-block"
+                                                        <button class="btn btn-success btn-block confirm_restruct"
                                                                 data-order="{$order->order_id}"
                                                                 data-manager="{$manager->id}">
                                                             <span>Одобрить реструктуризацию</span>
                                                         </button>
-                                                        <button class="btn btn-danger btn-block"
+                                                        <button class="btn btn-danger btn-block cancell_restruct"
                                                                 data-user="{$order->user_id}"
                                                                 data-order="{$order->order_id}"
                                                                 data-manager="{$manager->id}">
@@ -1845,18 +1845,6 @@
                                             <div class="text-center">
                                                 <h4>Код ПЭП: {$order->sms}</h4>
                                             </div>
-                                        </div>
-                                    {/if}
-                                    {if $need_confirm_restruct == 1 && in_array($manager->role, ['admin', 'middle', 'developer'])}
-                                        <div data-order="{$order->order_id}"
-                                             style="margin-left: 15px;"
-                                             class="btn btn-success confirm_restruct">
-                                            Подтвердить реструктуризацию
-                                        </div>
-                                        <div data-order="{$order->order_id}"
-                                             style="margin-left: 15px;"
-                                             class="btn btn-danger cancell_restruct">
-                                            Отменить реструктуризацию
                                         </div>
                                     {/if}
                                 </div>
