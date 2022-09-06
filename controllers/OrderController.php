@@ -24,6 +24,10 @@ class OrderController extends Controller
                     $this->change_manager_action();
                     break;
 
+                case 'form_restruct_docs':
+                    $this->action_form_restruct_docs();
+                    break;
+
                 case 'accept_by_employer':
                     $this->action_accept_by_employer();
                     break;
@@ -3476,6 +3480,7 @@ class OrderController extends Controller
         $pay_date = date('d.m.Y', strtotime($this->request->post('pay_date')));
         $order = $this->orders->get_order($order_id);
         $order->new_term = $new_term;
+        $loan = $this->loantypes->get_loantype($order->loan_type);
 
         $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
         $payment_schedule = json_decode($payment_schedule->schedule, true);
@@ -3494,7 +3499,6 @@ class OrderController extends Controller
         $new_shedule = array();
 
         $i = 0;
-        $od_sum = 0;
         $new_loan = $order->amount;
         $percent_pay = 0.00;
         $body_pay = 0.00;
@@ -3503,7 +3507,8 @@ class OrderController extends Controller
         foreach ($payment_schedule as $date => $schedule) {
 
             $date = date('d.m.Y', strtotime($date));
-            if ($pay_date < $date) {
+
+            if ($pay_date <= $date) {
                 if ($pay_amount < $schedule['pay_sum']) {
                     if ($pay_amount >= $schedule['loan_percents_pay']) {
                         $percent_pay = $schedule['loan_percents_pay'];
@@ -3530,7 +3535,6 @@ class OrderController extends Controller
                     $new_loan += $pay_amount;
                 }
                 if ($pay_amount == $schedule['pay_sum']) {
-                    $pay_amount = $schedule['pay_sum'];
                     $body_pay = $schedule['loan_body_pay'];
                     $percent_pay = $schedule['loan_percents_pay'];
                     $new_loan -= $schedule['loan_body_pay'];
@@ -3538,7 +3542,7 @@ class OrderController extends Controller
 
                 $new_shedule[$date] =
                     [
-                        'pay_sum' => $body_pay+$percent_pay,
+                        'pay_sum' => $body_pay + $percent_pay,
                         'loan_body_pay' => $body_pay,
                         'loan_percents_pay' => $percent_pay,
                         'comission_pay' => $comission_pay,
@@ -3584,7 +3588,6 @@ class OrderController extends Controller
 
         foreach ($daterange as $date) {
             $percent_per_month = (($order->percent / 100) * 365) / 12;
-            $percent_per_month = round($percent_per_month, 7);
             $annoouitet_pay = $new_loan * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$new_term)));
             $annoouitet_pay = round($annoouitet_pay, '2');
 
@@ -3596,14 +3599,14 @@ class OrderController extends Controller
                 $rest_sum = 0.00;
             } else {
                 if (isset($plus_percents)) {
-                    $loan_percents_pay = round($rest_sum * $percent_per_month, 2);
+                    $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
                     $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
                     $loan_percents_pay += $plus_percents;
                     $annoouitet_pay += $plus_percents;
                     $rest_sum = round($rest_sum - $loan_body_pay, 2);
                     unset($plus_percents);
                 } else {
-                    $loan_percents_pay = round($rest_sum * $percent_per_month, 2);
+                    $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
                     $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
                     $rest_sum = round($rest_sum - $loan_body_pay, 2);
                 }
@@ -3715,7 +3718,55 @@ class OrderController extends Controller
 
         } else {
 
+            $all_sum_credits = 0;
+            $sum_credits_pay = 0;
+            $credits_story = json_decode($user['credits_story']);
+            $cards_story = json_decode($user['cards_story']);
+
+            if (!empty($credits_story)) {
+                foreach ($credits_story as $credit) {
+                    $credit->credits_month_pay = preg_replace("/[^,.0-9]/", '', $credit->credits_month_pay);
+                    if (!empty($credit->credits_month_pay))
+                        $sum_credits_pay += $credit->credits_month_pay;
+                }
+
+                $all_sum_credits += $sum_credits_pay;
+            }
+
+            if (!empty($cards_story)) {
+                foreach ($cards_story as $card) {
+                    $card->cards_rest_sum = preg_replace("/[^,.0-9]/", '', $card->cards_rest_sum);
+                    $card->cards_limit = preg_replace("/[^,.0-9]/", '', $card->cards_limit);
+
+                    if (!empty($card->cards_limit)) {
+                        $max = 0.05 * $card->cards_limit;
+                    } else {
+                        $max = 0;
+                    }
+                    if (!empty($card->cards_rest_sum)) {
+                        $min = 0.1 * $card->cards_rest_sum;
+                    } else {
+                        $min = 0;
+                    }
+
+                    $all_sum_credits += min($max, $min);
+                }
+            }
+
+            $month_pay = $order->amount * ((1 / $loan->max_period) + (($psk / 100) / 12));
+
+            $all_sum_credits += $month_pay;
+
+            if ($all_sum_credits != 0)
+                $pdn = round(($all_sum_credits / $user['income']) * 100, 2);
+            else
+                $pdn = 0;
+
+            $this->users->update_user($order->user_id, ['pdn' => $pdn, 'balance_blocked' => 1]);
+
             $this->PaymentsSchedules->updates($order->order_id, ['actual' => 0]);
+
+            $this->contracts->update_contract($order->contract_id, ['status' => 10]);
 
             $order->payment_schedule =
                 [
@@ -3727,32 +3778,15 @@ class OrderController extends Controller
                     'actual' => 1,
                     'schedule' => json_encode($new_shedule),
                     'psk' => $psk,
+                    'pdn' => $pdn,
                     'comment' => $comment
                 ];
 
             $this->PaymentsSchedules->add($order->payment_schedule);
 
-
             $order->restruct_date = date('Y-m-d');
             $order->probably_return_date = $end_date->format('Y-m-d');
 
-            $this->documents->create_document(array(
-                'user_id' => $order->user_id,
-                'order_id' => $order->order_id,
-                'type' => 'DOP_SOGLASHENIE',
-                'params' => $order,
-                'numeration' => '04.03.3'
-            ));
-
-            $this->documents->create_document(array(
-                'user_id' => $order->user_id,
-                'order_id' => $order->order_id,
-                'type' => 'DOP_GRAFIK',
-                'params' => $order,
-                'numeration' => '04.04.1'
-            ));
-
-            $this->users->update_user($order->user_id, ['balance_blocked' => 1]);
             exit;
         }
 
@@ -4260,6 +4294,31 @@ class OrderController extends Controller
         $this->orders->update_order($order_id, ['status' => 10]);
         $this->tickets->update_by_theme_id(11, ['status' => 4], $order_id);
         exit;
+    }
+
+    private function action_form_restruct_docs()
+    {
+        $order_id = $this->request->post('order_id');
+
+        $order = $this->orders->get_order($order_id);
+
+        $order->payment_schedule = (array)$this->PaymentsSchedules->get(['actual' => 1, 'order_id' => $order_id]);
+
+        $this->documents->create_document(array(
+            'user_id' => $order->user_id,
+            'order_id' => $order->order_id,
+            'type' => 'DOP_SOGLASHENIE',
+            'params' => $order,
+            'numeration' => '04.03.3'
+        ));
+
+        $this->documents->create_document(array(
+            'user_id' => $order->user_id,
+            'order_id' => $order->order_id,
+            'type' => 'DOP_GRAFIK',
+            'params' => $order,
+            'numeration' => '04.04.1'
+        ));
     }
 
 }

@@ -12,7 +12,7 @@ class Contracts extends Core
         6 => 'Не удалось выдать займ',
         7 => 'Цессия',
         8 => 'Отменен',
-        9 => 'Идет выплата',
+        9 => 'Идет выплата'
     );
     
     private $collection_statuses = array(

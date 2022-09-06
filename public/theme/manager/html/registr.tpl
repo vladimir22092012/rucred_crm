@@ -70,6 +70,12 @@
                                    class="btn btn-xs {if $filter_status==5}btn-primary{else}btn-outline-primary{/if}">Выдан</a>
                                 <a href="{if $filter_status==7}{url status=null page=null}{else}{url status=7 page=null}{/if}"
                                    class="btn btn-xs {if $filter_status==7}btn-inverse{else}btn-outline-inverse{/if}">Погашен</a>
+                                <a href="{if $filter_status==17}{url status=null page=null}{else}{url status=17 page=null}{/if}"
+                                   class="btn btn-xs {if $filter_status==17}btn-info{else}btn-outline-info{/if}">Рестр.Запрошена</a>
+                                <a href="{if $filter_status==18}{url status=null page=null}{else}{url status=18 page=null}{/if}"
+                                   class="btn btn-xs {if $filter_status==18}btn-success{else}btn-outline-success{/if}">Рестр.Подготовлена</a>
+                                <a href="{if $filter_status==19}{url status=null page=null}{else}{url status=19 page=null}{/if}"
+                                   class="btn btn-xs {if $filter_status==19}btn-danger{else}btn-outline-danger{/if}">Реструктуризирован</a>
                                 {if $filter_status}
                                     <input type="hidden" value="{$filter_status}" id="filter_status"/>
                                 {/if}
@@ -166,12 +172,15 @@
                                                     {elseif $order->status == 6}<span class="label label-danger">Не удалось выдать</span>
                                                     {elseif $order->status == 7}<span class="label label-inverse">Погашен</span>
                                                     {elseif $order->status == 8}<span class="label label-danger">Отказ клиента</span>
+                                                    {elseif $order->status == 17}<span class="label label-info">Рестр.Запрошена</span>
+                                                    {elseif $order->status == 18}<span class="label label-success">Рестр.Подготовлена</span>
+                                                    {elseif $order->status == 19}<span class="label label-danger">Реструктуризирован</span>
                                                     {/if}
                                                 </small>
                                                 <small>
                                                     {if $order->order_source_id == 1}<span class="label label-info">Клиентский сайт</span>
                                                     {elseif $order->order_source_id == 2}<span class="label label-primary">Мобильное приложение</span>
-                                                    {elseif $order->order_source_id == 3}<span class="label label-success">Црм</span>
+                                                    {elseif $order->offline == 1}<span class="label label-success">Црм</span>
                                                     {/if}
                                                 </small>
                                             </td>

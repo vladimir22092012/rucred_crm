@@ -3925,9 +3925,9 @@ class OfflineOrderController extends Controller
             else
                 $pdn = 0;
 
-            $this->users->update_user($order->user_id, ['pdn' => $pdn, 'balance_blocked' => 1]);
+            $this->users->update_user($order->user_id, ['balance_blocked' => 1]);
 
-            $this->PaymentsSchedules->updates($order->order_id, ['actual' => 0]);
+            $this->PaymentsSchedules->updates($order->order_id, ['actual' => 0, 'status' => 17]);
 
             $order->payment_schedule =
                 [
@@ -3944,10 +3944,6 @@ class OfflineOrderController extends Controller
                 ];
 
             $this->PaymentsSchedules->add($order->payment_schedule);
-
-            $order->restruct_date = date('Y-m-d');
-            $order->probably_return_date = $end_date->format('Y-m-d');
-
             exit;
         }
 

@@ -1730,34 +1730,6 @@
                                             </div>
                                         </div>
                                     {/if}
-                                    {if $asp_restruct == 1 && $need_confirm_restruct == 0}
-                                        <div style="display: flex;">
-                                            <input type="text" class="form-control code_asp"
-                                                   style="display:none"
-                                                   placeholder="SMS код"
-                                                   value="{if $is_developer}{$contract->accept_code}{/if}"/>
-                                            <small id="asp_success"
-                                                   style="display: none; color: #009d07">
-                                                Успешно!
-                                            </small>
-                                            <div class="btn btn-info confirm_asp" type="button"
-                                                 data-user="{$order->user_id}"
-                                                 data-order="{$order->order_id}"
-                                                 data-restruct="1"
-                                                 style="margin-left: 15px; display:none"
-                                                 data-phone="{$order->phone_mobile}">Подтвердить
-                                            </div>
-                                            <div type="button" data-user="{$order->user_id}"
-                                                 id="send_asp"
-                                                 data-phone="{$order->phone_mobile}"
-                                                 data-order="{$order->order_id}"
-                                                 data-restruct="1"
-                                                 style="margin-left: 15px; width: 370px"
-                                                 class="btn btn-primary send_asp_code">
-                                                Отправить смс
-                                            </div>
-                                        </div>
-                                    {/if}
                                     {if $need_confirm_restruct == 1 && in_array($manager->role, ['admin', 'middle', 'developer'])}
                                         <div data-order="{$order->order_id}"
                                              style="margin-left: 15px;"
@@ -2323,8 +2295,13 @@
                                                         <input style="margin-left: 30px; display: none" type="button"
                                                                class="btn btn-danger cancel_restruct"
                                                                value="Отменить">
+                                                        <div style="margin-left: 30px; {if $asp_restruct == 1}display: none{/if}"
+                                                             data-order="{$order->order_id}"
+                                                             class="btn btn-primary form_restruct_docs">Закрепить график
+                                                            и сформировать документы для реструктуризации
+                                                        </div>
                                                     {/if}
-                                                    {if $asp_restruct == 1}
+                                                    {if $asp_restruct == 10}
                                                         <div class="btn btn-primary"
                                                              style="margin-left: 15px">
                                                             <a href="#send_asp"

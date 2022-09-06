@@ -9,7 +9,7 @@ class RegistrController extends Controller
         $items_per_page = 20;
 
         $filter = array();
-        $filter['status'] = [5,7];
+        $filter['status'] = [5, 7, 17, 18, 19];
 
         if ($search = $this->request->get('search')) {
             $filter['search'] = array_filter($search);
@@ -29,16 +29,16 @@ class RegistrController extends Controller
         $current_page = max(1, $current_page);
         $this->design->assign('current_page_num', $current_page);
 
-        if($this->manager->role == 'employer'){
+        if ($this->manager->role == 'employer') {
             $managers_company = $this->ManagersEmployers->get_records($this->manager->id);
-            foreach ($managers_company as $id => $name){
+            foreach ($managers_company as $id => $name) {
                 $filter['employer'][] = $id;
             }
         }
 
         $orders_count = $this->orders->count_orders($filter);
 
-        $pages_num = ceil($orders_count/$items_per_page);
+        $pages_num = ceil($orders_count / $items_per_page);
         $this->design->assign('total_pages_num', $pages_num);
         $this->design->assign('total_orders_count', $orders_count);
 
@@ -47,28 +47,28 @@ class RegistrController extends Controller
 
         $orders_source = $this->request->get('source');
 
-        if(!empty($orders_source)){
+        if (!empty($orders_source)) {
             $filter['order_source'] = $orders_source;
             $this->design->assign('filter_status', $orders_source);
         }
 
         $orders = $this->orders->get_orders($filter);
 
-        foreach ($orders as $order){
+        foreach ($orders as $order) {
             $order->number = str_pad($order->order_id, 5, '0', STR_PAD_LEFT);
 
             $old_orders = $this->orders->get_orders(['user_id' => $order->user_id]);
 
             $order->client_status = 'Повтор';
 
-            if(count($old_orders) > 1){
-                foreach ($old_orders as $old_order){
-                    if(in_array($old_order->status, [5,7]))
+            if (count($old_orders) > 1) {
+                foreach ($old_orders as $old_order) {
+                    if (in_array($old_order->status, [5, 7]))
                         $order->client_status = 'ПК';
                 }
             }
 
-            if(count($orders) == 1)
+            if (count($orders) == 1)
                 $order->client_status = 'Новая';
 
             if (!empty($order->contract_id)) {

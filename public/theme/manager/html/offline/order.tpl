@@ -2420,13 +2420,15 @@
                                                         <input style="margin-left: 30px; display: none" type="button"
                                                                class="btn btn-danger cancel_restruct"
                                                                value="Отменить">
-                                                        <div style="margin-left: 30px; {if $asp_restruct == 1}display: none{/if}"
-                                                             data-order="{$order->order_id}"
-                                                             class="btn btn-primary form_restruct_docs">Закрепить график
-                                                            и сформировать документы для реструктуризации
-                                                        </div>
+                                                        {if $contract->status == 10}
+                                                            <div style="margin-left: 30px; {if $asp_restruct == 1}display: none{/if}"
+                                                                 data-order="{$order->order_id}"
+                                                                 class="btn btn-primary form_restruct_docs">Закрепить график
+                                                                и сформировать документы для реструктуризации
+                                                            </div>
+                                                        {/if}
                                                     {/if}
-                                                    {if $asp_restruct == 1}
+                                                    {if $contract->status == 11}
                                                         <div data-user="{$order->user_id}"
                                                              id="send_asp"
                                                              data-phone="{$order->phone_mobile}"
