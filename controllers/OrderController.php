@@ -3762,11 +3762,10 @@ class OrderController extends Controller
             else
                 $pdn = 0;
 
-            $this->users->update_user($order->user_id, ['pdn' => $pdn, 'balance_blocked' => 1]);
+            $this->users->update_user($order->user_id, ['balance_blocked' => 1]);
 
             $this->PaymentsSchedules->updates($order->order_id, ['actual' => 0]);
-
-            $this->contracts->update_contract($order->contract_id, ['status' => 10]);
+            $this->PaymentsSchedules->delete_unconfirmed(['order_id' => $order->order_id, 'confirmed' => 0, 'type' => 'restruct']);
 
             $order->payment_schedule =
                 [

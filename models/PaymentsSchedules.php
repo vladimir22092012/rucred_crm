@@ -17,6 +17,7 @@ class PaymentsSchedules extends Core
     {
         $actual_flag = '';
         $order_filter = '';
+        $confirmed_filter = '';
 
         if(isset($filter['actual']))
             $actual_flag = $this->db->placehold("AND actual = ?", $filter['actual']);
@@ -30,6 +31,7 @@ class PaymentsSchedules extends Core
         WHERE 1
         $actual_flag
         $order_filter
+        $confirmed_filter
         ");
 
         $this->db->query($query);
@@ -70,8 +72,29 @@ class PaymentsSchedules extends Core
         $this->db->query($query);
     }
 
-    public function delete($id)
+    public function delete_unconfirmed($params)
     {
+        $type = '';
+        $confirmed = '';
+        $order = '';
 
+        if(isset($params['type']))
+            $type = $this->db->placehold("AND `type` = ?", $params['type']);
+
+        if(isset($params['confirmed']))
+            $confirmed = $this->db->placehold("AND is_confirmed = ?", $params['confirmed']);
+
+        if(isset($params['order_id']))
+            $order = $this->db->placehold("AND order_id = ?", $params['order_id']);
+
+        $query = $this->db->placehold("
+        DELETE FROM s_payments_schedules
+        WHERE 1
+        $confirmed
+        $type
+        $order
+        ");
+
+        $this->db->query($query);
     }
 }

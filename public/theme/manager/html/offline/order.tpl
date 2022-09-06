@@ -1634,7 +1634,7 @@
                                                 </form>
                                             {/if}
                                         {/if}
-                                        {if $order->status == 5}
+                                        {if in_array($order->status, [5, 17, 18, 19])}
                                             {if $contract->status == 4}
                                                 <div class="card card-danger mb-1">
                                                     <div class="box text-center">
@@ -1684,13 +1684,30 @@
                                                         </h6> *}
                                                     </div>
                                                 </div>
-                                                <div class="pt-1 pb-2">
-                                                    <div data-order="{$order->order_id}"
-                                                         data-phone="{$order->phone_mobile}"
-                                                         class="btn btn-info btn-lg btn-block send_qr">
-                                                        Отправить ссылку на оплату
+                                                {if in_array($order->status, [5, 19])}
+                                                    <div class="pt-1 pb-2">
+                                                        <div data-order="{$order->order_id}"
+                                                             data-phone="{$order->phone_mobile}"
+                                                             class="btn btn-info btn-lg btn-block send_qr">
+                                                            Отправить ссылку на оплату
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                {/if}
+                                                {if $order->status == 18}
+                                                    <div>
+                                                        <button class="btn btn-success btn-block"
+                                                                data-order="{$order->order_id}"
+                                                                data-manager="{$manager->id}">
+                                                            <span>Одобрить реструктуризацию</span>
+                                                        </button>
+                                                        <button class="btn btn-danger btn-block"
+                                                                data-user="{$order->user_id}"
+                                                                data-order="{$order->order_id}"
+                                                                data-manager="{$manager->id}">
+                                                            <span>Отклонить реструктуризацию</span>
+                                                        </button>
+                                                    </div>
+                                                {/if}
                                             {/if}
                                             {if in_array('close_contract', $manager->permissions)}
                                                 <button
@@ -1736,10 +1753,6 @@
                                                     </button>
                                                 {/if}
                                             {/if}
-                                        {/if}
-
-                                        {if $contract->accept_code}
-                                            <h4 class="text-danger mb-0">АСП: {$contract->accept_code}</h4>
                                         {/if}
                                     </div>
                                     {if $order->status == 4}
@@ -2410,7 +2423,7 @@
                                                     <input style="margin-left: 30px; display: none" type="button"
                                                            class="btn btn-danger cancel"
                                                            value="Отменить">
-                                                    {if $order->status == 5}
+                                                    {if in_array($order->status, [5, 17, 18, 19])}
                                                         <input style="margin-left: 30px" type="button"
                                                                class="btn btn-danger restructuring"
                                                                value="Реструктуризация">
@@ -2420,24 +2433,24 @@
                                                         <input style="margin-left: 30px; display: none" type="button"
                                                                class="btn btn-danger cancel_restruct"
                                                                value="Отменить">
-                                                        {if $contract->status == 10}
-                                                            <div style="margin-left: 30px; {if $asp_restruct == 1}display: none{/if}"
+                                                        {if $need_form_restruct_docs == 1}
+                                                            <div style="margin-left: 30px;"
                                                                  data-order="{$order->order_id}"
                                                                  class="btn btn-primary form_restruct_docs">Закрепить график
                                                                 и сформировать документы для реструктуризации
                                                             </div>
                                                         {/if}
-                                                    {/if}
-                                                    {if $contract->status == 11}
-                                                        <div data-user="{$order->user_id}"
-                                                             id="send_asp"
-                                                             data-phone="{$order->phone_mobile}"
-                                                             data-order="{$order->order_id}"
-                                                             data-restruct="1"
-                                                             style="margin-left: 15px; width: 370px"
-                                                             class="btn btn-primary send_restruct_code">
-                                                            Подписать документы о реструктуризации
-                                                        </div>
+                                                        {if $order->status == 17}
+                                                            <div data-user="{$order->user_id}"
+                                                                 id="send_asp"
+                                                                 data-phone="{$order->phone_mobile}"
+                                                                 data-order="{$order->order_id}"
+                                                                 data-restruct="1"
+                                                                 style="margin-left: 15px; width: 370px"
+                                                                 class="btn btn-primary send_restruct_code">
+                                                                Подписать у Заёмщика и принять заявку в работу
+                                                            </div>
+                                                        {/if}
                                                     {/if}
                                                     {if in_array($order->status, [0])}
                                                         <input style="margin-left: 30px" type="button"

@@ -605,6 +605,7 @@ class OfflineOrderController extends Controller
         }
 
         $schedules = $this->PaymentsSchedules->gets($order_id);
+        $need_form_restruct_docs = 0;
 
         if (count($schedules) > 1) {
 
@@ -620,8 +621,12 @@ class OfflineOrderController extends Controller
                         return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
                     });
 
-                if ($schedule->actual == 1)
+                if ($schedule->actual == 1){
                     $payment_schedule = end($schedules);
+
+                    if($schedule->type = 'restruct' && $schedule->is_confirmed == 0)
+                        $need_form_restruct_docs = 1;
+                }
             }
         } else {
             $payment_schedule = end($schedules);
@@ -652,6 +657,7 @@ class OfflineOrderController extends Controller
 
         $this->design->assign('schedules', $schedules);
         $this->design->assign('payment_schedule', $payment_schedule);
+        $this->design->assign('need_form_restruct_docs', $need_form_restruct_docs);
 
         $loantype = $this->Loantypes->get_loantype($order->loan_type);
         $this->design->assign('loantype', $loantype);
@@ -666,22 +672,11 @@ class OfflineOrderController extends Controller
         $documents = $this->documents->get_documents($filter);
 
         $scans = $this->Scans->get_scans_by_order_id($order_id);
-        $asp_restruct = 0;
-        $need_confirm_restruct = 0;
 
         foreach ($documents as $document) {
             foreach ($scans as $scan) {
                 if ($document->template == $scan->type)
                     $document->scan = $scan;
-            }
-            if (in_array($document->type, ['DOP_GRAFIK', 'DOP_SOGLASHENIE']) && empty($document->asp_id)) {
-
-                if (empty($document->pre_asp_id)) {
-                    $asp_restruct = 1;
-                } else {
-                    $asp_restruct = 0;
-                    $need_confirm_restruct = 1;
-                }
             }
         }
 
@@ -693,8 +688,6 @@ class OfflineOrderController extends Controller
             $sort_docs[$key][] = $document;
         }
 
-        $this->design->assign('need_confirm_restruct', $need_confirm_restruct);
-        $this->design->assign('asp_restruct', $asp_restruct);
         $this->design->assign('sort_docs', $sort_docs);
 
         $settlement = $this->OrganisationSettlements->get_settlement($order->settlement_id);
@@ -3927,7 +3920,8 @@ class OfflineOrderController extends Controller
 
             $this->users->update_user($order->user_id, ['balance_blocked' => 1]);
 
-            $this->PaymentsSchedules->updates($order->order_id, ['actual' => 0, 'status' => 17]);
+            $this->PaymentsSchedules->updates($order->order_id, ['actual' => 0]);
+            $this->PaymentsSchedules->delete_unconfirmed(['order_id' => $order->order_id, 'confirmed' => 0, 'type' => 'restruct']);
 
             $order->payment_schedule =
                 [
@@ -4131,6 +4125,8 @@ class OfflineOrderController extends Controller
                         $this->documents->update_document($document->id, ['asp_id' => $asp_id, 'rucred_asp_id' => $rucred_asp_id]);
                     }
                 }
+
+                $this->orders->update_order($order->order_id, ['status' => 18]);
 
                 echo json_encode(['success' => 1]);
                 exit;
@@ -4585,6 +4581,9 @@ class OfflineOrderController extends Controller
             'params' => $order,
             'numeration' => '04.04.1'
         ));
+
+        $this->orders->update_order($order_id, ['status' => 17]);
+        $this->PaymentsSchedules->update($order->payment_schedule->id, ['is_confirmed' => 1]);
     }
 
 }
