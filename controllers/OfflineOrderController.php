@@ -4116,6 +4116,41 @@ class OfflineOrderController extends Controller
 
                 $this->orders->update_order($order->order_id, ['status' => 18]);
 
+                $communication_theme = $this->CommunicationsThemes->get(12);
+
+                $ticket =
+                    [
+                        'creator' => $this->manage->id,
+                        'creator_company' => 2,
+                        'client_lastname' => $order->lastname,
+                        'client_firstname' => $order->firstname,
+                        'client_patronymic' => $order->patronymic,
+                        'head' => $communication_theme->head,
+                        'text' => $communication_theme->text,
+                        'theme_id' => $communication_theme->id,
+                        'company_id' => 3,
+                        'group_id' => 2,
+                        'order_id' => $order_id,
+                        'status' => 0
+                    ];
+
+                $ticket_id = $this->Tickets->add_ticket($ticket);
+                $message =
+                    [
+                        'message' => $communication_theme->text,
+                        'ticket_id' => $ticket_id,
+                        'manager_id' => $this->manager->id,
+                    ];
+                $this->TicketMessages->add_message($message);
+
+                $cron =
+                    [
+                        'ticket_id' => $ticket_id,
+                        'is_complited' => 0
+                    ];
+
+                $this->NotificationsCron->add($cron);
+
                 echo json_encode(['success' => 1]);
                 exit;
             }
@@ -4145,6 +4180,41 @@ class OfflineOrderController extends Controller
                 $this->documents->update_document($document->id, ['rucred_asp_id' => $rucred_asp_id]);
             }
         }
+
+        $communication_theme = $this->CommunicationsThemes->get(31);
+
+        $ticket =
+            [
+                'creator' => $this->manage->id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => $communication_theme->id,
+                'company_id' => 3,
+                'group_id' => 2,
+                'order_id' => $order_id,
+                'status' => 0
+            ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+        $this->TicketMessages->add_message($message);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
 
         $this->orders->update_order($order_id, ['status' => 19]);
         exit;
