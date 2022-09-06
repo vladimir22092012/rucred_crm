@@ -15,16 +15,16 @@ class Loantypes extends Core
         return $result;
     }
 
-    public function check_uniq_number($number, $id = false){
+    public function check_uniq_number($number, $id = 0){
 
         $id_filter = '';
 
-        if($id)
+        if($id != 0)
             $id_filter = $this->db->placehold("AND id != ?", $id);
 
         $query = $this->db->placehold("
             SELECT `number`
-            FROM __loantypes
+            FROM s_loantypes
             WHERE `number` = ?
             $id_filter
         ", $number);
