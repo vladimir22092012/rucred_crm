@@ -4120,7 +4120,7 @@ class OfflineOrderController extends Controller
 
                 $ticket =
                     [
-                        'creator' => $this->manage->id,
+                        'creator' => $this->manager->id,
                         'creator_company' => 2,
                         'client_lastname' => $order->lastname,
                         'client_firstname' => $order->firstname,
