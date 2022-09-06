@@ -1115,7 +1115,7 @@ class NeworderController extends Controller
         }
 
         if ($validate_email == 0) {
-            echo json_encode(['error' => 'Проверьте правильность заполнения поля']);
+            echo json_encode(['error' => 'Проверьте правильность заполнения поля Электронной почты ']);
             exit;
         }
 
