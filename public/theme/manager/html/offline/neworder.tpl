@@ -21,7 +21,7 @@
     <script src="theme/{$settings->theme|escape}/assets/plugins/inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
-    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/neworder_new.js"></script>
+    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/neworder_new.js?v=1.01"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery.maskedinput@1.4.1/src/jquery.maskedinput.min.js"
             type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
@@ -528,7 +528,7 @@
                                             <input class="form-control" name="probably_return_sum"
                                                    id="final_sum"
                                                    style="margin-left: 10px; width: 100px" required
-                                                   value="{$order->probably_return_sum}">
+                                                   value="{$order->probably_return_sum}" readonly>
                                         </div>
                                         <div>
                                             <input type="button" class="btn btn-outline-info to_form_loan"
@@ -941,7 +941,7 @@
                                             <div class="form-group">
                                                 <label style="margin-left: 25px!important;">Количество
                                                     иждивенцев</label><br>
-                                                <input class="form-control" name="dependents"
+                                                <input class="form-control mask_number" name="dependents"
                                                        style="width: 300px; margin-left: 25px"
                                                        placeholder="необязательно" type="text"
                                                        value="{$order->dependents}">

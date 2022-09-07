@@ -246,7 +246,7 @@ $(function () {
             $('.passport_issued').empty();
             $(this).empty();
             $('.passport_issued').val(suggestion.value);
-            $(this).val(suggestion.data.code);
+            $(this).val(suggestion.data.code).trigger('input');
         }
     });
 
@@ -278,9 +278,9 @@ $(function () {
         minChars: 3,
         /* Вызывается, когда пользователь выбирает одну из подсказок */
         onSelect: function (suggestion) {
-            $(this).val(suggestion.data.bic);
+            $(this).val(suggestion.data.bic).trigger('input');
             $('.bank_name').val(suggestion.value);
-            $('.cor').val(suggestion.data.correspondent_account);
+            $('.cor').val(suggestion.data.correspondent_account).trigger('input');
         }
     });
 
@@ -296,6 +296,9 @@ $(function () {
         }
     };
 
+    $('.daterange').click(function () {
+    }).mask('99.99.9999');
+
     $('.phone_num').click(function () {
         $(this).setCursorPosition(3);
     }).mask('+7(999)999-99-99');
@@ -303,6 +306,10 @@ $(function () {
     $('.passport_serial').click(function () {
         $(this).setCursorPosition(0);
     }).mask('9999');
+
+    $('.subdivision_code').click(function () {
+        $(this).setCursorPosition(0);
+    }).mask('999-999');
 
     $('.passport_number').click(function () {
         $(this).setCursorPosition(0);
@@ -335,6 +342,14 @@ $(function () {
     $('.card_month', '.card_year').click(function () {
         $(this).setCursorPosition(0);
     }).mask('99');
+
+    $('.bik').click(function () {
+        $(this).setCursorPosition(0);
+    }).mask('999999999');
+
+    $('.cor').click(function () {
+        $(this).setCursorPosition(0);
+    }).mask('99999999999999999999');
 
     $('.validity_period').click(function () {
         $(this).setCursorPosition(0);
