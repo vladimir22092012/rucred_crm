@@ -296,9 +296,6 @@ $(function () {
         }
     };
 
-    $('.daterange').click(function () {
-    }).mask('99.99.9999');
-
     $('.phone_num').click(function () {
         $(this).setCursorPosition(3);
     }).mask('+7(999)999-99-99');
@@ -379,7 +376,7 @@ $(function () {
         });
     });
 
-    $(document).on('input', '.credit_procents', function () {
+    $(document).on('input', '.credit_procents, .daterange', function () {
         let value = $(this).val();
         value = value.replace(new RegExp(/[^.\d]/, 'g'), '');
         $(this).val(value);
