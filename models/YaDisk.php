@@ -314,13 +314,30 @@ class YaDisk extends Core
             $order = $this->orders->get_order($document->params->order_id);
             $this->design->assign('created_date', $order->date);
 
+            $phone = preg_replace('/(\d)(\d\d\d)(\d\d\d)(\d\d)(\d\d)/', '+$1 ($2) $3-$4-$5', $order->phone_mobile);
+            $this->design->assign('phone_mobile', $phone);
 
+            $this->design->assign('doc_type', $document->type);
+            $this->design->assign('doc_created', $document->created);
 
             $settlement = $this->OrganisationSettlements->get_settlement($document->params->settlement_id);
             $order = $this->orders->get_order($document->params->order_id);
             $contracts = $this->contracts->get_contracts(['order_id' => $document->params->order_id]);
-            $group = $this->groups->get_group($order->group_id);
-            $company = $this->companies->get_company($order->company_id);
+            //заглушка для документов с неполными данными
+            $isPlug = false;
+            try {
+                $group = $this->groups->get_group($order->group_id);
+            } catch (\Throwable $th) {
+                $group = '00'; //заглушка, нигде не отображается в реальных документах
+                $isPlug = true;
+            }
+
+            try {
+                $company = $this->companies->get_company($order->company_id);
+            } catch (\Throwable $th) {
+                $company = '00'; //заглушка, нигде не отображается в реальных документах
+                $isPlug = true;
+            }
 
             if (!empty($contracts)) {
                 $count_contracts = count($contracts);
@@ -331,7 +348,12 @@ class YaDisk extends Core
 
             $loantype = $this->Loantypes->get_loantype($order->loan_type);
 
-            $uid = "$group->number$company->number $loantype->number $order->personal_number $count_contracts";
+            if ($isPlug) {
+                $uid = "0";
+            } else {
+                $uid = "$group->number$company->number $loantype->number $order->personal_number $count_contracts";
+            }
+
             $this->design->assign('uid', $uid);
 
 
@@ -347,7 +369,13 @@ class YaDisk extends Core
             $requisite = end($requisite);
             $this->design->assign('requisite', $requisite);
 
-            $company = $this->Companies->get_company($document->params->company_id);
+            if (is_null($document->params->company_id)) {
+                $company = "0";
+            } else {
+                $company = $this->Companies->get_company($document->params->company_id);
+            }
+
+
             $this->design->assign('company', $company);
 
             if(!empty($document->asp_id)){
@@ -369,7 +397,29 @@ class YaDisk extends Core
 
             $this->design->assign('period', $period);
 
-            $payment_schedule = json_decode($document->params->payment_schedule['schedule'], true);
+            if (isset($document->params->payment_schedule['schedule'])) {
+                $payment_schedule = json_decode($document->params->payment_schedule['schedule'], true);
+            } else {
+                //Заглушка от ошибок для первого документа (в нем отсутствуют эти данные)
+                $payment_schedule = [
+                    "09.12.2022" => [
+                        "pay_sum" => 0,
+                        "loan_percents_pay" => 0,
+                        "loan_body_pay" => 0,
+                        "comission_pay" => 0,
+                        "rest_pay" => 0
+                    ],
+                    "result" => [
+                        "all_sum_pay" => 0.1,
+                        "all_loan_percents_pay" => 0.1,
+                        "all_loan_body_pay" => 0,
+                        "all_comission_pay" => 0,
+                        "all_rest_pay_sum" => 0
+                    ]
+                ];
+            }
+
+
 
             uksort(
                 $payment_schedule,
@@ -409,10 +459,17 @@ class YaDisk extends Core
 
             $all_percents_string_part_two = str_pad($all_percents_string[1], '2', '0', STR_PAD_RIGHT);
             $this->design->assign('all_percents_string_part_two', $all_percents_string_part_two);
+            $this->design->assign('all_percents_string', $all_percents_string);
 
-            $percents_per_day_str = explode('.', $document->params->percent);
-            $percents_per_day_str_part_one = $this->num2str($percents_per_day_str[0]);
-            $percents_per_day_str_part_two = $this->num2str($percents_per_day_str[1]);
+            if (is_null($document->params->percent)) {
+                $percents_per_day_str_part_one = 0;
+                $percents_per_day_str_part_two = 0;
+            } else {
+                $percents_per_day_str = explode('.', $document->params->percent);
+                $percents_per_day_str_part_one = $this->num2str($percents_per_day_str[0]);
+                $percents_per_day_str_part_two = $this->num2str($percents_per_day_str[1]);
+            }
+
 
             $this->design->assign('percents_per_day_str_part_one', $percents_per_day_str_part_one);
             $this->design->assign('percents_per_day_str_part_two', $percents_per_day_str_part_two);
@@ -430,7 +487,12 @@ class YaDisk extends Core
             $this->design->assign('first_part_all_sum_pay', $first_part_all_sum_pay);
 
 
-            $percents_per_year = $document->params->payment_schedule['psk'];
+
+            if (isset($document->params->payment_schedule['psk'])) {
+                $percents_per_year = $document->params->payment_schedule['psk'];
+            } else {
+                $percents_per_year = 1; //заглушка
+            }
             $percents = $percents_per_year;
 
             $percents = number_format($percents, 3, ',', ' ');
