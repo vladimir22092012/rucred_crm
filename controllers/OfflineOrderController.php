@@ -605,7 +605,6 @@ class OfflineOrderController extends Controller
         }
 
         $schedules = $this->PaymentsSchedules->gets($order_id);
-        $need_form_restruct_docs = 0;
 
         if (count($schedules) > 1) {
 
@@ -623,9 +622,6 @@ class OfflineOrderController extends Controller
 
                 if ($schedule->actual == 1) {
                     $payment_schedule = end($schedules);
-
-                    if ($schedule->type = 'restruct' && $schedule->is_confirmed == 0)
-                        $need_form_restruct_docs = 1;
                 }
             }
         } else {
@@ -657,7 +653,6 @@ class OfflineOrderController extends Controller
 
         $this->design->assign('schedules', $schedules);
         $this->design->assign('payment_schedule', $payment_schedule);
-        $this->design->assign('need_form_restruct_docs', $need_form_restruct_docs);
 
         $loantype = $this->Loantypes->get_loantype($order->loan_type);
         $this->design->assign('loantype', $loantype);
@@ -679,6 +674,22 @@ class OfflineOrderController extends Controller
                     $document->scan = $scan;
             }
         }
+
+        $need_form_restruct_docs = 0;
+
+        if (in_array($order->status, [5, 19])) {
+            $restruct_schedule = (array)$this->PaymentsSchedules->get([
+                'actual' => 1,
+                'order_id' => $order_id,
+                'type' => 'restruct',
+                'is_confirmed' => 0
+            ]);
+
+            if (empty($restruct_schedule))
+                $need_form_restruct_docs = 1;
+        }
+
+        $this->design->assign('need_form_restruct_docs', $need_form_restruct_docs);
 
         $sort_docs = [];
 
