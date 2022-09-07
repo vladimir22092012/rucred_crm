@@ -152,11 +152,10 @@ class DocumentController extends Controller
 
             $term = (count($current_schedule) > count($old_schedule)) ? count($current_schedule) - count($old_schedule) : 'no';
 
-            if($term != 'no')
-                $string_term = $this->num2str($term);
-            else
-                $string_term = 0;
+            if($term == 'no')
+                $term = 0;
 
+            $string_term = $this->num2str($term);
             $this->design->assign('term', $term);
             $this->design->assign('string_term', $string_term);
         }
