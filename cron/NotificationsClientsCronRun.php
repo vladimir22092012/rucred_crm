@@ -86,6 +86,9 @@ class NotificationsClientsCronRun extends Core
                         $telegram = new Api($this->config->telegram_token);
                         $telegram_check = $this->TelegramUsers->get($cron->user_id, 0);
 
+                        if(empty($telegram_check->chat_id) || $telegram_check->chat_id == '0')
+                            continue;
+
                         if (!empty($telegram_check)) {
                             $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $template->template]);
 
@@ -109,6 +112,9 @@ class NotificationsClientsCronRun extends Core
                             'avatar' => 'https://developers.viber.com/img/favicon.ico',
                         ]);
                         $viber_check = $this->ViberUsers->get($cron->user_id, 0);
+
+                        if(empty($viber_check->chat_id) || $viber_check->chat_id == '0')
+                            continue;
 
                         if (!empty($viber_check)) {
                             $bot->getClient()->sendMessage(
