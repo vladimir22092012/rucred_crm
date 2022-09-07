@@ -80,10 +80,10 @@ class DocumentController extends Controller
             $company = $this->Companies->get_company($document->params->company_id);
         }
 
-        
+
         $this->design->assign('company', $company);
 
-        if(!empty($document->asp_id)){
+        if (!empty($document->asp_id)) {
             $code_asp = $this->AspCodes->get_code(['id' => $document->asp_id]);
             $this->design->assign('code_asp', $code_asp);
 
@@ -98,14 +98,14 @@ class DocumentController extends Controller
         $start_date = new DateTime(date('Y-m-d', strtotime($order->probably_start_date)));
         $end_date = new DateTime(date('Y-m-d', strtotime($order->probably_return_date)));
 
-        if($document->type == 'OBSHIE_USLOVIYA_REST')
+        if ($document->type == 'OBSHIE_USLOVIYA_REST')
             $end_date = new DateTime(date('Y-m-d', strtotime($document->params->probably_return_date)));
 
         $period = date_diff($start_date, $end_date)->days;
 
         $this->design->assign('period', $period);
 
-       if (isset($document->params->payment_schedule['schedule'])) {
+        if (isset($document->params->payment_schedule['schedule'])) {
             $payment_schedule = json_decode($document->params->payment_schedule['schedule'], true);
         } else {
             //Заглушка от ошибок для первого документа (в нем отсутствуют эти данные)
@@ -128,7 +128,6 @@ class DocumentController extends Controller
         }
 
 
-
         uksort(
             $payment_schedule,
             function ($a, $b) {
@@ -141,17 +140,25 @@ class DocumentController extends Controller
             });
 
         if ($document->type == 'ZAYAVLENIE_RESTRUCT') {
-            array_pop($payment_schedule);
-            $last_pay = array_pop($payment_schedule);
-            $annouitet = $last_pay['pay_sum'];
+            $old_schedule = (array)$this->PaymentsSchedules->get(['actual' => 0, 'order_id' => $document->params->order_id]);
+            $old_schedule = json_decode($old_schedule['schedule'], true);
 
-            list($annouitet_first_part, $annouitet_second_part) = explode('.', $annouitet);
+            unset($old_schedule['result']);
 
-            $annouitet_first_part = $this->num2str($annouitet_first_part);
+            $current_schedule = (array)$this->PaymentsSchedules->get(['actual' => 1, 'order_id' => $document->params->order_id]);
+            $current_schedule = json_decode($current_schedule['schedule'], true);
 
-            $this->design->assign('annouitet', $annouitet);
-            $this->design->assign('annouitet_first_part', $annouitet_first_part);
-            $this->design->assign('annouitet_second_part', $annouitet_second_part);
+            unset($current_schedule['result']);
+
+            $term = (count($current_schedule) > count($old_schedule)) ? count($current_schedule) - count($old_schedule) : 'no';
+
+            if($term != 'no')
+                $string_term = $this->num2str($term);
+            else
+                $string_term = 0;
+
+            $this->design->assign('term', $term);
+            $this->design->assign('string_term', $string_term);
         }
 
         $all_pay_sum_string = explode('.', $payment_schedule['result']['all_sum_pay']);
@@ -177,7 +184,7 @@ class DocumentController extends Controller
             $percents_per_day_str_part_one = $this->num2str($percents_per_day_str[0]);
             $percents_per_day_str_part_two = $this->num2str($percents_per_day_str[1]);
         }
-        
+
 
         $this->design->assign('percents_per_day_str_part_one', $percents_per_day_str_part_one);
         $this->design->assign('percents_per_day_str_part_two', $percents_per_day_str_part_two);
@@ -193,7 +200,6 @@ class DocumentController extends Controller
 
         $this->design->assign('payment_schedule', $payment_schedule);
         $this->design->assign('first_part_all_sum_pay', $first_part_all_sum_pay);
-
 
 
         if (isset($document->params->payment_schedule['psk'])) {

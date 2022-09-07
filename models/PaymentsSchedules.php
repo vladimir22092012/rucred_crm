@@ -18,12 +18,19 @@ class PaymentsSchedules extends Core
         $actual_flag = '';
         $order_filter = '';
         $confirmed_filter = '';
+        $type = '';
 
         if(isset($filter['actual']))
             $actual_flag = $this->db->placehold("AND actual = ?", $filter['actual']);
 
         if(isset($filter['order_id']))
             $order_filter = $this->db->placehold("AND order_id = ?", $filter['order_id']);
+
+        if(isset($filter['confirmed']))
+            $confirmed_filter = $this->db->placehold("AND is_confirmed = ?", $filter['confirmed']);
+
+        if(isset($filter['type']))
+            $type = $this->db->placehold("AND `type` = ?", $filter['type']);
 
         $query = $this->db->placehold("
         SELECT * 
@@ -32,6 +39,8 @@ class PaymentsSchedules extends Core
         $actual_flag
         $order_filter
         $confirmed_filter
+        $type
+        ORDER BY id DESC
         ");
 
         $this->db->query($query);

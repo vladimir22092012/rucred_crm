@@ -4684,6 +4684,13 @@ class OfflineOrderController extends Controller
             'params' => $order,
             'numeration' => '04.10'
         ));
+        $this->documents->create_document(array(
+            'user_id' => $order->user_id,
+            'order_id' => $order->order_id,
+            'type' => 'ZAYAVLENIE_RESTRUCT',
+            'params' => $order,
+            'numeration' => '04.31'
+        ));
 
         $this->orders->update_order($order_id, ['status' => 17]);
         $this->PaymentsSchedules->update($order->payment_schedule->id, ['is_confirmed' => 1]);

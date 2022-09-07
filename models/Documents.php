@@ -28,7 +28,8 @@ class Documents extends Core
         'DOP_GRAFIK' => 'dop_grafik.tpl',
         'OBSHIE_USLOVIYA' => 'obshie_uslovia.tpl',
         'OBSHIE_USLOVIYA_REST' => 'obshie_uslovia.tpl',
-        'SOGLASIE_NA_OBR_PERS_DANNIH_OBL'       => 'pre_soglasie_na_obr_pers_dannih.tpl'
+        'SOGLASIE_NA_OBR_PERS_DANNIH_OBL'       => 'pre_soglasie_na_obr_pers_dannih.tpl',
+        'ZAYAVLENIE_RESTRUCT' => 'zayavlenie_restruct.tpl'
     );
 
 
@@ -49,7 +50,8 @@ class Documents extends Core
         'OBSHIE_USLOVIYA' => 'Справка по основным условиям микрозайма',
         'OBSHIE_USLOVIYA_REST' => 'Справка по основным условиям микрозайма',
         'SOGLASIE_NA_OBR_PERS_DANNIH_OBL'       => 'Облегчённое согласие на обработку персональных данных',
-        'INDIVIDUALNIE_USLOVIA_ONL' => 'Индивидуальные условия договора микрозайма'
+        'INDIVIDUALNIE_USLOVIA_ONL' => 'Индивидуальные условия договора микрозайма',
+        'ZAYAVLENIE_RESTRUCT' => 'Заявление на реструктуризацию микрозайма'
     );
 
     private $client_visible = array(
@@ -57,6 +59,7 @@ class Documents extends Core
         'SOGLASIE_VZAIMODEYSTVIE' => 0,
         'OBSHIE_USLOVIYA' => 1,
         'DOP_SOGLASHENIE' => 1,
+        'ZAYAVLENIE_RESTRUCT' => 1,
         'INDIVIDUALNIE_USLOVIA_ONL' => 1,
         'OBSHIE_USLOVIYA_REST' => 1,
         'SOGLASIE_MEGAFON' => 0,

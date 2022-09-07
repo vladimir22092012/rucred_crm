@@ -31,7 +31,7 @@
 <div><br><br></div>
 <div style="width: 100%">
     <h3 align="left">ЗАЯВЛЕНИЕ<br>о реструктуризации задолженности по договору микрозайма<br>№ {$uid}
-        от {$probably_start_date|date} 2022 года
+        от {$doc_created|date} 2022 года
     </h3>
 </div>
 <div style="width: 100%; font-size: 10px" align="justify">Настоящим прошу рассмотреть возможность и осуществить
@@ -43,31 +43,25 @@
 <table border="1" cellpadding="5">
     <tr>
         <td style="width: 30%">Дата реструктуризации:</td>
-        <td style="width: 70%"><strong>{$restruct_date|date}</strong></td>
+        <td style="width: 70%"><strong>{$doc_created|date}</strong></td>
     </tr>
     <tr>
         <td style="width: 30%">Сумма платежа на дату реструктуризации:</td>
-        <td style="width: 70%"><strong>{$annouitet|floatval|number_format:2:',':' '}({$annouitet_first_part|upper}
-                )</strong> рублей <strong>{$annouitet_second_part}</strong> {$annouitet_second_part|plural:'копейка':'копеек': 'копейки'}</td>
+        <td style="width: 70%"><strong>0,00 (НОЛЬ)</strong> рублей <strong> 00 </strong> копеек </td>
     </tr>
     <tr>
         <td style="width: 30%">Сумма процентов к погашению:</td>
-        <td style="width: 70%"><strong>{$payment_schedule['result']['all_loan_percents_pay']|floatval|number_format:2:',':' '}</strong>(<strong>{$all_percents_string_part_one|upper}</strong>)
-            рублей
-            <strong>{if $all_percents_string_part_two}{$all_percents_string_part_two}{else}00{/if}</strong>
-            {$all_percents_string_part_two|plural:'копейка':'копеек': 'копейки'}<br></td>
+        <td style="width: 70%"><strong>0,00 (НОЛЬ)</strong> рублей <strong> 00 </strong> копеек </td>
     </tr>
     <tr>
         <td style="width: 30%">Сумма основного долга к погашению:</td>
-        <td style="width: 70%"><strong>{$payment_schedule['result']['all_loan_body_pay']|floatval|number_format:2:',':' '}</strong><strong>({$amount_string|upper}
-                )</strong> рублей
-            <strong>00</strong> копеек
+        <td style="width: 70%"><strong>0,00 (НОЛЬ)</strong> рублей <strong> 00 </strong> копеек
         </td>
     </tr>
 </table>
-<div style="width: 100%; font-size: 10px" align="justify"><br>Прошу также произвести:<br>☐ отсрочку по уплате
-    непогашенных процентов в сумме [●] ([●]) руб. на 1 (Один) месяц;<br>☐ без увеличения срока микрозайма;<br>☐
-    увеличение срока микрозайма на [●] ([●]) месяцев.
+<div style="width: 100%; font-size: 10px" align="justify"><br>Прошу также произвести:<br>&#10065; отсрочку по уплате
+    непогашенных процентов в сумме 0,00 (НОЛЬ) руб. на 1 (Один) месяц;<br>{if $term == 'no'}&#10065;{else}&#x2611;{/if} без увеличения срока микрозайма;<br>{if $term != 'no'}&#10065;{else}&#x2611;{/if}
+    увеличение срока микрозайма на {$term} ({$string_term}) {$term|plural:'месяц':'месяца':'месяцев'}.
 </div>
 <div style="width: 100%; font-size: 10px" align="justify">Надлежащее обслуживание микрозайма после реструктуризации
     гарантирую.<br><br>После удовлетворения моего заявления на реструктуризацию моих обязательств по Договору микрозайма
@@ -78,6 +72,9 @@
 <div style="width: 100%; font-size: 10px" align="justify">Настоящее заявление составлено добровольно, никакого
     физического / психического воздействия на меня оказано не было. Действую в своих интересах.
 </div>
+<div>
+
+</div>
 {if !isset($code_asp->code)}
     <table>
         <tr style="width: 100%">
@@ -87,8 +84,8 @@
         </tr>
     </table>
 {else}
-    <table style="border: 0.25pt solid #002088; font-size: 8px; width: 50%"
-           cellpadding="1" cellspacing="6">
+    <table style="border: 0.25pt solid #002088; font-size: 8px; width: 50%;"
+           cellpadding="1" cellspacing="2">
         <tr>
             <td colspan="2"><strong>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ЦИФРОВОЙ ПОДПИСЬЮ</strong></td>
         </tr>
