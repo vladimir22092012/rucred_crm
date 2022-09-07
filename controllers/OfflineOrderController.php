@@ -685,7 +685,7 @@ class OfflineOrderController extends Controller
                 'is_confirmed' => 0
             ]);
 
-            if (empty($restruct_schedule))
+            if (!empty($restruct_schedule))
                 $need_form_restruct_docs = 1;
         }
 
