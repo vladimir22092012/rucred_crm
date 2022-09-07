@@ -677,7 +677,7 @@
                                                 <label class="control-label">Кем выдан</label>
                                                 <label class="control-label" style="margin-left: 440px">Когда
                                                     выдан</label><br>
-                                                <input disabled class="form-control passport_issued"
+                                                <input readonly class="form-control passport_issued"
                                                        style="width: 500px; margin-left: 25px"
                                                        type="text" name="passport_issued"
                                                        value="{$order->passport_issued}"/>
@@ -1137,14 +1137,14 @@
                                                 <div style="display: flex; flex-direction: column">
                                                     <label class="control-label">Наименование
                                                         банка</label>
-                                                    <input disabled class="form-control bank_name"
+                                                    <input readonly class="form-control bank_name"
                                                            style="width: 350px;margin-left: 30px"
                                                            type="text" name="requisite[name]"
                                                            value="{$order->requisite->name}"/>
                                                 </div>
                                                 <div style="display: flex; flex-direction: column">
                                                     <label class="control-label">Кор. счет</label>
-                                                    <input disabled class="form-control cor"
+                                                    <input readonly class="form-control cor"
                                                            style="width: 350px;margin-left: 30px"
                                                            type="text" name="requisite[correspondent_acc]"
                                                            value="{$order->requisite->correspondent_acc}"/>
