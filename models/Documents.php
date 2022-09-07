@@ -379,7 +379,6 @@ class Documents extends Core
                 $second_pak
                 $asp_flag
                 $rucred_asp
- 	            AND doc.`type` != 'ndfl'
             $sort 
             $sql_limit
         ");
