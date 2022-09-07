@@ -411,7 +411,7 @@ class NeworderController extends Controller
         $now_date = new DateTime(date('Y-m-d'));
         $passport_date = new DateTime(date('Y-m-d', strtotime($user['passport_date'])));
 
-        if($user['passport_date'] > date('Y-m-d') || date_diff($now_date, $passport_date)->days < 31){
+        if($passport_date > $now_date || date_diff($now_date, $passport_date)->days < 31){
             response_json(['error' => 1, 'reason' => 'Некорректная дата выдачи паспорта']);
             exit;
         }
