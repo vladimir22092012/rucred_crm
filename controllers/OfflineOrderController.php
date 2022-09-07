@@ -604,7 +604,7 @@ class OfflineOrderController extends Controller
             $this->form_docs($order_id);
         }
 
-        $schedules = $this->PaymentsSchedules->gets($order_id);
+        $schedules = $this->PaymentsSchedules->gets($order_id);;
 
         if (count($schedules) > 1) {
 
@@ -3315,6 +3315,8 @@ class OfflineOrderController extends Controller
             ORDER BY id DESC 
             LIMIT 1
             ", $order_id);
+
+            $this->orders->upload_orders($order_id, ['status' => 5]);
         }
         echo json_encode(['success' => 1]);
         exit;
