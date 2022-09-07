@@ -246,7 +246,7 @@ $(function () {
             $('.passport_issued').empty();
             $(this).empty();
             $('.passport_issued').val(suggestion.value);
-            $(this).val(suggestion.data.code).trigger('input');
+            $(this).trigger('input').val(suggestion.data.code);
         }
     });
 
@@ -280,7 +280,7 @@ $(function () {
         onSelect: function (suggestion) {
             $(this).val(suggestion.data.bic).trigger('input');
             $('.bank_name').val(suggestion.value);
-            $('.cor').val(suggestion.data.correspondent_account).trigger('input');
+            $('.cor').trigger('input').val(suggestion.data.correspondent_account);
         }
     });
 
@@ -377,6 +377,14 @@ $(function () {
             numeralThousandsGroupStyle: 'thousand',
             delimiter: ' ',
         });
+    });
+
+    $('.credit_procents').on('input', function () {
+        let value = $('.credit_procents').val();
+        let regexp = new RegExp('^[0-9.]', 'i');
+        let valid = regexp.test(value);
+
+        console.log(valid);
     });
 
     $('.groups').on('change', function (e) {

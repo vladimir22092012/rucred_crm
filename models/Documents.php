@@ -27,6 +27,7 @@ class Documents extends Core
         'DOP_SOGLASHENIE' => 'dop_soglashenie.tpl',
         'DOP_GRAFIK' => 'dop_grafik.tpl',
         'OBSHIE_USLOVIYA' => 'obshie_uslovia.tpl',
+        'OBSHIE_USLOVIYA_REST' => 'obshie_uslovia.tpl',
         'SOGLASIE_NA_OBR_PERS_DANNIH_OBL'       => 'pre_soglasie_na_obr_pers_dannih.tpl'
     );
 
@@ -46,6 +47,7 @@ class Documents extends Core
         'DOP_SOGLASHENIE' => 'Дополнительное соглашение к Индивидуальным условиям договора микрозайма',
         'DOP_GRAFIK' => 'График платежей по микрозайму (после реструктуризации)',
         'OBSHIE_USLOVIYA' => 'Справка по основным условиям микрозайма',
+        'OBSHIE_USLOVIYA_REST' => 'Справка по основным условиям микрозайма',
         'SOGLASIE_NA_OBR_PERS_DANNIH_OBL'       => 'Облегчённое согласие на обработку персональных данных',
         'INDIVIDUALNIE_USLOVIA_ONL' => 'Индивидуальные условия договора микрозайма'
     );
@@ -56,6 +58,7 @@ class Documents extends Core
         'OBSHIE_USLOVIYA' => 1,
         'DOP_SOGLASHENIE' => 1,
         'INDIVIDUALNIE_USLOVIA_ONL' => 1,
+        'OBSHIE_USLOVIYA_REST' => 1,
         'SOGLASIE_MEGAFON' => 0,
         'SOGLASIE_SCORING' => 0,
         'SOGLASIE_SPISANIE' => 0,

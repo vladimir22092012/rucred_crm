@@ -41,6 +41,13 @@
         <td style="width: 5%"></td>
         <td style="width: 50%"></td>
     </tr>
+    {if $doc_type == 'OBSHIE_USLOVIYA_REST'}
+        <tr>
+            <td style="width: 45%" align="left">по состоянию на {$doc_created|date}</td>
+            <td style="width: 5%"></td>
+            <td style="width: 50%"></td>
+        </tr>
+    {/if}
 </table>
 <div>
 

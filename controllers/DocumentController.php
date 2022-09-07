@@ -22,6 +22,9 @@ class DocumentController extends Controller
         $phone = preg_replace('/(\d)(\d\d\d)(\d\d\d)(\d\d)(\d\d)/', '+$1 ($2) $3-$4-$5', $order->phone_mobile);
         $this->design->assign('phone_mobile', $phone);
 
+        $this->design->assign('doc_type', $document->type);
+        $this->design->assign('doc_created', $document->created);
+
         $settlement = $this->OrganisationSettlements->get_settlement($document->params->settlement_id);
         $order = $this->orders->get_order($document->params->order_id);
         $contracts = $this->contracts->get_contracts(['order_id' => $document->params->order_id]);

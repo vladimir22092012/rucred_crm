@@ -1227,7 +1227,7 @@
                                                                    name="credits_return_date[][credits_return_date]"
                                                                    type="text"
                                                                    value="{$credits_story->credits_return_date}"></td>
-                                                        <td><input class="form-control"
+                                                        <td><input class="form-control credit_procents"
                                                                    name="credits_percents[][credits_percents]"
                                                                    type="text"
                                                                    value="{$credits_story->credits_percents}"></td>
@@ -1258,7 +1258,7 @@
                                                                name="credits_return_date[][credits_return_date]"
                                                                type="text"
                                                                value=""></td>
-                                                    <td><input class="form-control"
+                                                    <td><input class="form-control credit_procents"
                                                                name="credits_percents[][credits_percents]" type="text"
                                                                value=""></td>
                                                     <td><select class="form-control"

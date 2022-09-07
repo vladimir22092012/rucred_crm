@@ -4185,7 +4185,7 @@ class OfflineOrderController extends Controller
 
         $ticket =
             [
-                'creator' => $this->manage->id,
+                'creator' => $this->manager->id,
                 'creator_company' => 2,
                 'client_lastname' => $order->lastname,
                 'client_firstname' => $order->firstname,
@@ -4637,6 +4637,25 @@ class OfflineOrderController extends Controller
 
         $order->payment_schedule = (array)$this->PaymentsSchedules->get(['actual' => 1, 'order_id' => $order_id]);
 
+        $payment_schedule = (array)$this->PaymentsSchedules->get(['actual' => 1, 'order_id' => $order_id]);
+
+        uksort($payment_schedule,
+            function ($a, $b) {
+
+                if ($a == $b)
+                    return 0;
+
+                return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+            });
+
+        foreach ($payment_schedule as $key => $schedule) {
+
+            if ($key == 'result')
+                break;
+
+            $order->probably_return_date = $key;
+        }
+
         $this->documents->create_document(array(
             'user_id' => $order->user_id,
             'order_id' => $order->order_id,
@@ -4655,7 +4674,7 @@ class OfflineOrderController extends Controller
         $this->documents->create_document(array(
             'user_id' => $order->user_id,
             'order_id' => $order->order_id,
-            'type' => 'OBSHIE_USLOVIYA',
+            'type' => 'OBSHIE_USLOVIYA_REST',
             'params' => $order,
             'numeration' => '04.10'
         ));
