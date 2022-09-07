@@ -1291,7 +1291,7 @@
                                             {if !empty($order->cards_story)}
                                                 {foreach json_decode($order->cards_story) as $cards_story}
                                                     <tr>
-                                                        <td><input class="form-control "
+                                                        <td><input class="form-control"
                                                                    name="cards_bank_name[][cards_bank_name]" type="text"
                                                                    value="{$cards_story->cards_bank_name}"></td>
                                                         <td><input class="form-control mask_number"
