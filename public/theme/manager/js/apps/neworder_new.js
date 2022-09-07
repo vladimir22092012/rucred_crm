@@ -376,7 +376,7 @@ $(function () {
         });
     });
 
-    $(document).on('input', '.credit_procents, .daterange', function () {
+    $(document).on('input', '.credit_procents, .daterange, .mask_number', function () {
         let value = $(this).val();
         value = value.replace(new RegExp(/[^.\d]/, 'g'), '');
         $(this).val(value);
