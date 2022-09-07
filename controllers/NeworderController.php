@@ -365,7 +365,7 @@ class NeworderController extends Controller
         $now_date = new DateTime(date('Y-m-d'));
         $birth_date = new DateTime(date('Y-m-d', strtotime($user['birth'])));
 
-        if($user['birth'] > date('Y-m-d')){
+        if($birth_date > $now_date){
             response_json(['error' => 1, 'reason' => 'Некорректная дата рождения']);
             exit;
         }else
