@@ -1127,7 +1127,7 @@ class NeworderController extends Controller
         ', $email, $code, date('Y-m-d H:i:s'));
 
         $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
-        $mailResponse = $mailService->send(
+        $mailService->send(
             'rucred@ucase.live',
             $email,
             'RuCred | Ваш проверочный код для смены почты',
@@ -1135,7 +1135,7 @@ class NeworderController extends Controller
             '<h1>Сообщите код андеррайтеру РуКреда: </h1>' . "<h2>$code</h2>"
         );
 
-        echo json_encode(['success' => $mailResponse]);
+        echo json_encode(['success' => $code]);
         exit;
     }
 

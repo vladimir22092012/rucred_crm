@@ -116,6 +116,8 @@
                         }
                         else {
                             $('.show_email_code').show();
+                            $('.email_code_show').text(response['success']);
+                            $('.email_code_show').show();
                         }
                     }
                 })
@@ -783,11 +785,12 @@
                                                         <label class="control-label">Электронная почта
                                                             {if $order->email_confirmed == 1}<span>(подтверждена)</span></label>{/if}
                                                         <div class="form-row">
-                                                            <div class="col">
+                                                            <div style="display: flex">
                                                                 <input style="width: 400px" class="form-control email"
                                                                        type="text" name="email"
                                                                        placeholder="ivanov@mail.ru"
                                                                        value="{$order->email}" autocomplete="off"/>
+                                                                <div class="email_code_show badge badge-danger" style="position: absolute; margin-left: 350px; margin-top: 5px; display: none"></div>
                                                                 <input type="hidden" name="email_confirmed"
                                                                        class="email_confirmed" value="false"/>
                                                             </div>
