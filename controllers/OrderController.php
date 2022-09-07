@@ -3927,7 +3927,9 @@ class OrderController extends Controller
         $requisits = $this->Requisites->get_requisites(['user_id' => $order->user_id]);
         $order->probably_start_date = date('d.m.Y', strtotime($order->probably_start_date));
 
-        if($order->sent_1c != 2){
+        $fio = "$order->lastname $order->firstname $order->patronymic";
+
+        if ($order->sent_1c != 2) {
             echo json_encode(['error' => 'Заявка еще не была отправлена в 1с']);
             exit;
         }
@@ -3940,7 +3942,7 @@ class OrderController extends Controller
         }
 
         $description = "Оплата по договору микрозайма № $contract->number от $order->probably_start_date
-            // заемщик $default_requisit->holder ИНН $order->inn";
+            // заемщик $fio ИНН $order->inn";
 
         $transaction =
             [

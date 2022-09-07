@@ -4228,6 +4228,8 @@ class OfflineOrderController extends Controller
         $requisits = $this->Requisites->get_requisites(['user_id' => $order->user_id]);
         $order->probably_start_date = date('d.m.Y', strtotime($order->probably_start_date));
 
+        $fio = "$order->lastname $order->firstname $order->patronymic";
+
         if ($order->sent_1c != 2) {
             echo json_encode(['error' => 'Заявка еще не была отправлена в 1с']);
             exit;
@@ -4241,7 +4243,7 @@ class OfflineOrderController extends Controller
         }
 
         $description = "Оплата по договору микрозайма № $contract->number от $order->probably_start_date
-            // заемщик $default_requisit->holder ИНН $order->inn";
+            // заемщик $fio ИНН $order->inn";
 
         $transaction =
             [
@@ -4638,12 +4640,16 @@ class OfflineOrderController extends Controller
         $order->payment_schedule = (array)$this->PaymentsSchedules->get(['actual' => 1, 'order_id' => $order_id]);
 
         $payment_schedule = (array)$this->PaymentsSchedules->get(['actual' => 1, 'order_id' => $order_id]);
+        $payment_schedule = json_decode($payment_schedule['schedule'], true);
 
         uksort($payment_schedule,
             function ($a, $b) {
 
                 if ($a == $b)
                     return 0;
+
+                if ($a == 'result' || $b == 'result')
+                    return 1;
 
                 return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
             });
