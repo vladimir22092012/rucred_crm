@@ -385,6 +385,12 @@ $(function () {
         $(this).val(value);
     });
 
+    $(document).on('input', 'input[name="dependents"]', function () {
+        let value = $(this).val();
+        value = value.replace(new RegExp(/[^\d]/, 'g'), '');
+        $(this).val(value);
+    });
+
     $('.groups').on('change', function (e) {
         e.preventDefault();
 
