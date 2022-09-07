@@ -60,6 +60,21 @@ class YaDisk extends Core
                 $this->upload($upload_scans, $order, $resource, $file_name, $document);
             }
 
+            if ($type == 'ind_usloviya_online.tpl') {
+                $file_name = "$order->uid Form 040301 $date";
+                $file_name = $this->translit($file_name);
+
+                try {
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/');
+                    $resource->create();
+                } catch (Exception $e) {
+
+                }
+                $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/' . $file_name . '.pdf');
+
+                $this->upload($upload_scans, $order, $resource, $file_name, $document);
+            }
+
             if ($type == 'soglasie_na_obr_pers_dannih.tpl') {
                 $file_name = "$personal_number Form 0405 $date";
                 $file_name = $this->translit($file_name);
