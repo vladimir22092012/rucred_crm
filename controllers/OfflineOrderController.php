@@ -3258,6 +3258,7 @@ class OfflineOrderController extends Controller
         $probably_start_date = $this->request->post('probably_start_date');
         $loantype = $this->Loantypes->get_loantype((int)$loan_tarif);
         $order = $this->orders->get_order($order_id);
+        $delete_restruct = $this->orders->get_order('delete_restruct');
 
         if (empty($order->branche_id)) {
             $branches = $this->Branches->get_branches(['group_id' => $order->group_id]);
@@ -3291,6 +3292,30 @@ class OfflineOrderController extends Controller
 
         $this->orders->update_order($order_id, $order);
         $this->action_reform_schedule($order_id);
+
+        if (!empty($delete_restruct)) {
+            $this->db->query("
+            DELETE FROM s_documents
+            WHERE `type` in ('ZAYAVLENIE_RESTRUCT', 'OBSHIE_USLOVIYA_REST', 'DOP_GRAFIK', 'DOP_SOGLASHENIE')
+            AND order_id = ?
+            AND ready = 0
+            ", $order_id);
+
+            $this->db->query("
+            DELETE FROM s_payments_schedules
+            WHERE `type` = 'restruct'
+            AND order_id = ?
+            AND actual = 1
+            ", $order_id);
+
+            $this->db->query("
+            UPDATE s_payments_schedules
+            SET actual = 1
+            WHERE order_id = ?
+            ORDER BY id DESC 
+            LIMIT 1
+            ", $order_id);
+        }
         echo json_encode(['success' => 1]);
         exit;
     }
@@ -4228,6 +4253,14 @@ class OfflineOrderController extends Controller
         $this->NotificationsCron->add($cron);
 
         $this->orders->update_order($order_id, ['status' => 19]);
+
+        $this->db->query("
+            UPDATE s_documents
+            SET ready = 1
+            WHERE `type` in ('ZAYAVLENIE_RESTRUCT', 'OBSHIE_USLOVIYA_REST', 'DOP_GRAFIK', 'DOP_SOGLASHENIE')
+            AND order_id = ?
+            ", $order_id);
+
         exit;
     }
 

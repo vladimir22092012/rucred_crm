@@ -963,10 +963,32 @@
                 $('button[class="btn btn-info confirm_asp"]').attr('data-restruct', 1);
 
                 send_asp(phone, user, order, restruct);
-            })
+            });
+
+            $('.cancell_restruct').on('click', function () {
+                let delete_restruct = 1;
+
+                reset_schedule(delete_restruct);
+            });
         });
     </script>
     <script>
+
+        function reset_schedule(delete_restruct)
+        {
+            if(delete_restruct == 1)
+                delete_restruct = "delete_restruct=1";
+
+            let form = $('#loan_settings').serialize()+'&'+delete_restruct;
+
+            $.ajax({
+                method: 'post',
+                data: form,
+                success: function () {
+                    location.reload();
+                }
+            });
+        }
 
         function get_docs(order_id) {
             $.ajax({
