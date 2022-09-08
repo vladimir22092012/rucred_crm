@@ -4346,7 +4346,7 @@
                                 <label>Новый срок, мес</label>
                                 <select class="form-control" data-order="{$order->order_id}" name="new_term"
                                         id="new_term">
-                                    {for $i = 1 to count($payment_schedule->schedule)-2}
+                                    {for $i = 1 to $loantype->max_period}
                                         <option value="{$i}">{$i}</option>
                                     {/for}
                                 </select><br>
