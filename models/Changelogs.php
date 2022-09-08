@@ -101,10 +101,7 @@ class Changelogs extends Core
                     )
                 ');
             }
-        }
-        
-        
-        if (!empty($filter['search'])) {
+
             if (!empty($filter['search']['order_id'])) {
                 $search_filter .= $this->db->placehold(' AND o.id = ?', (int)$filter['search']['order_id']);
             }
@@ -142,11 +139,9 @@ class Changelogs extends Core
             }
         }
 
-        
-        
-        if (!empty($filter['sort'])) {
+        if (isset($filter['sort'])) {
             switch ($filter['sort']) :
-                case 'date_acs':
+                case 'date_asc':
                     $sort = 'cl.created ASC';
                     break;
             
@@ -225,6 +220,7 @@ class Changelogs extends Core
             ORDER BY $sort
             $sql_limit
         ");
+
         $this->db->query($query);
         if ($results = $this->db->results()) {
             foreach ($results as $result) {

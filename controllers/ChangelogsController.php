@@ -31,11 +31,14 @@ class ChangelogsController extends Controller
                 break;
         endswitch;
         $this->design->assign('period', $period);
+        $sort = $this->request->get('sort');
 
-        if (!($sort = $this->request->get('sort', 'string'))) {
+        if (empty($sort)) {
             $sort = 'date_desc';
         }
+
         $filter['sort'] = $sort;
+
         $this->design->assign('sort', $sort);
         
         if ($search = $this->request->get('search')) {
