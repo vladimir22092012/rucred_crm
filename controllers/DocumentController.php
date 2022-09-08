@@ -51,24 +51,30 @@ class DocumentController extends Controller
             $count_contracts = '01';
         }
 
-        $loantype = $this->Loantypes->get_loantype($order->loan_type);
+        if (isset($order->loan_type)) {
+            $loantype = $this->Loantypes->get_loantype($order->loan_type);
 
-        if ($isPlug) {
-            $uid = "0";
-        } else {
-            $uid = "$group->number$company->number $loantype->number $order->personal_number $count_contracts";
+            if ($isPlug) {
+                $uid = "0";
+            } else {
+                $uid = "$group->number$company->number $loantype->number $order->personal_number $count_contracts";
+            }
+
+            $this->design->assign('uid', $uid);
         }
-
-        $this->design->assign('uid', $uid);
 
 
         $this->design->assign('settlement', $settlement);
 
-        $regadress = $this->Addresses->get_address($document->params->regaddress_id);
-        $this->design->assign('regadress', $regadress);
+        if (isset($document->params->regaddress_id)) {
+            $regadress = $this->Addresses->get_address($document->params->regaddress_id);
+            $this->design->assign('regadress', $regadress);
+        }
 
-        $faktadress = $this->Addresses->get_address($document->params->faktaddress_id);
-        $this->design->assign('faktadress', $faktadress);
+        if (isset($document->params->faktaddress_id)) {
+            $faktadress = $this->Addresses->get_address($document->params->faktaddress_id);
+            $this->design->assign('faktadress', $faktadress);
+        }
 
         $requisite = $this->Requisites->get_requisites(['user_id' => $document->params->user_id]);
         $requisite = end($requisite);
@@ -152,12 +158,57 @@ class DocumentController extends Controller
 
             $term = (count($current_schedule) > count($old_schedule)) ? count($current_schedule) - count($old_schedule) : 'no';
 
-            if($term == 'no')
+            if ($term == 'no')
                 $term = 0;
 
             $string_term = $this->num2str($term);
             $this->design->assign('term', $term);
             $this->design->assign('string_term', $string_term);
+
+            foreach ($current_schedule as $schedule) {
+                if (isset($schedule['last_pay'])) {
+                    $pay_sum = number_format($schedule['pay_sum'], 2, ',', '');
+                    $loan_body_pay = number_format($schedule['loan_body_pay'], 2, ',', '');
+                    $loan_percents_pay = number_format($schedule['loan_percents_pay'], 2, ',', '');
+                    $comission_pay = number_format($schedule['comission_pay'], 2, ',', '');
+                }
+            }
+
+            $pay_sum = explode(',', $pay_sum);
+            $loan_body_pay = explode(',', $loan_body_pay);
+            $loan_percents_pay = explode(',', $loan_percents_pay);
+            $comission_pay = explode(',', $comission_pay);
+
+            $pay_sum_string =
+                [
+                    0 => $this->num2str($pay_sum[0]),
+                    1 => $this->num2str($pay_sum[1])
+                ];
+            $loan_body_pay_string =
+                [
+                    0 => $this->num2str($loan_body_pay[0]),
+                    1 => $this->num2str($loan_body_pay[1])
+                ];
+            $loan_percents_pay_string =
+                [
+                    0 => $this->num2str($loan_percents_pay[0]),
+                    1 => $this->num2str($loan_percents_pay[1])
+                ];
+            $comission_pay_string =
+                [
+                    0 => $this->num2str($comission_pay[0]),
+                    1 => $this->num2str($comission_pay[1])
+                ];
+
+            $this->design->assign('pay_sum', $pay_sum);
+            $this->design->assign('loan_body_pay', $loan_body_pay);
+            $this->design->assign('loan_percents_pay', $loan_percents_pay);
+            $this->design->assign('comission_pay', $comission_pay);
+
+            $this->design->assign('pay_sum_string', $pay_sum_string);
+            $this->design->assign('loan_body_pay_string', $loan_body_pay_string);
+            $this->design->assign('loan_percents_pay_string', $loan_percents_pay_string);
+            $this->design->assign('comission_pay_string', $comission_pay_string);
         }
 
         $all_pay_sum_string = explode('.', $payment_schedule['result']['all_sum_pay']);

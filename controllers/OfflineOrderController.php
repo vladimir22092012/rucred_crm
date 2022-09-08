@@ -3670,7 +3670,11 @@ class OfflineOrderController extends Controller
         $order_id = $this->request->post('order_id');
         $new_term = $this->request->post('new_term');
         $comment = $this->request->post('comment');
+
         $pay_amount = $this->request->post('pay_amount');
+        $comission_amount = $this->request->post('comission');
+        $pay_amount -= $comission_amount;
+
         $pay_date = date('d.m.Y', strtotime($this->request->post('pay_date')));
         $order = $this->orders->get_order($order_id);
         $order->new_term = $new_term;
@@ -3696,7 +3700,6 @@ class OfflineOrderController extends Controller
         $new_loan = $order->amount;
         $percent_pay = 0.00;
         $body_pay = 0.00;
-        $comission_pay = 0.00;
 
         foreach ($payment_schedule as $date => $schedule) {
 
@@ -3736,11 +3739,12 @@ class OfflineOrderController extends Controller
 
                 $new_shedule[$date] =
                     [
-                        'pay_sum' => $body_pay + $percent_pay,
+                        'pay_sum' => $body_pay + $percent_pay + $comission_amount,
                         'loan_body_pay' => $body_pay,
                         'loan_percents_pay' => $percent_pay,
-                        'comission_pay' => $comission_pay,
-                        'rest_pay' => $new_loan - $body_pay
+                        'comission_pay' => $comission_amount,
+                        'rest_pay' => $new_loan - $body_pay,
+                        'last_pay' => 1
                     ];
 
                 $last_date = $date;

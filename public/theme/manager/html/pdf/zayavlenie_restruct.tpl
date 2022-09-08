@@ -47,16 +47,19 @@
     </tr>
     <tr>
         <td style="width: 30%">Сумма платежа на дату реструктуризации:</td>
-        <td style="width: 70%"><strong>0,00 (НОЛЬ)</strong> рублей <strong> 00 </strong> копеек </td>
-    </tr>
-    <tr>
-        <td style="width: 30%">Сумма процентов к погашению:</td>
-        <td style="width: 70%"><strong>0,00 (НОЛЬ)</strong> рублей <strong> 00 </strong> копеек </td>
+        <td style="width: 70%"><strong>{$pay_sum[0]} ({$pay_sum_string[0]})</strong> рублей <strong> {$pay_sum[1]} </strong> копеек </td>
     </tr>
     <tr>
         <td style="width: 30%">Сумма основного долга к погашению:</td>
-        <td style="width: 70%"><strong>0,00 (НОЛЬ)</strong> рублей <strong> 00 </strong> копеек
-        </td>
+        <td style="width: 70%"><strong>{$loan_body_pay[0]} ({$loan_body_pay_string[0]})</strong> рублей <strong> {$loan_body_pay[1]} </strong> копеек</td>
+    </tr>
+    <tr>
+        <td style="width: 30%">Сумма процентов к погашению:</td>
+        <td style="width: 70%"><strong>{$loan_percents_pay[0]} ({$loan_percents_pay_string[0]})</strong> рублей <strong> {$loan_percents_pay[1]} </strong> копеек </td>
+    </tr>
+    <tr>
+        <td style="width: 30%">Сумма прочих комиссий и штрафов:</td>
+        <td style="width: 70%"><strong>{$comission_pay[0]} ({$comission_pay_string[0]})</strong> рублей <strong> {$comission_pay[1]} </strong> копеек</td>
     </tr>
 </table>
 <div style="width: 100%; font-size: 10px" align="justify"><br>Прошу также произвести:<br>&#10065; отсрочку по уплате
