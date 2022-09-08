@@ -1098,6 +1098,7 @@
                                                 <div style="display: flex; flex-direction: column">
                                                     <label class="control-label">Фамилия держателя счета</label>
                                                     <input class="form-control fio"
+                                                           readonly
                                                            style="width: 350px; margin-left: 30px"
                                                            type="text" name="requisite[holder][lastname]"
                                                            value="{$holder_lastname}"/>
@@ -1105,6 +1106,7 @@
                                                 <div style="display: flex; flex-direction: column">
                                                     <label class="control-label">Имя держателя счета</label>
                                                     <input class="form-control fio"
+                                                           readonly
                                                            style="width: 350px; margin-left: 30px"
                                                            type="text" name="requisite[holder][firstname]"
                                                            value="{$holder_firstname}"/>
@@ -1112,6 +1114,7 @@
                                                 <div style="display: flex; flex-direction: column">
                                                     <label class="control-label">Отчество держателя счета</label>
                                                     <input class="form-control fio"
+                                                           readonly
                                                            style="width: 350px; margin-left: 30px"
                                                            type="text" name="requisite[holder][patronymic]"
                                                            value="{$holder_patronymic}"/>
