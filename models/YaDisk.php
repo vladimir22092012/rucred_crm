@@ -29,21 +29,54 @@ class YaDisk extends Core
         $employer = explode(' ', $order->uid);
         $employer = "$employer[0]$employer[1]";
         $date = date('Y-m-d', strtotime($order->probably_start_date));
-        $bank = ($order->settlement_id == 2) ? 'МИнБанк' : 'РосДорБанк';
         $personal_number = $order->personal_number;
 
-        if ($upload_scans == 1) {
-            $upload_files = $this->Scans->get_scans_by_order_id($order_id, $pak);
-        } else {
-            $upload_files = $this->Documents->get_documents($filter);
+        $scans = $this->Scans->get_scans_by_order_id($order_id);
+        $documents = $this->Documents->get_documents($filter);
+
+        if (!empty($scans)) {
+            foreach ($scans as $scan) {
+                if ($scan->type == 'soglasie_rukred_rabotadatel.tpl') {
+                    $file_name = "$personal_number Form 0303(scan) ($employer) $date";
+                    $file_name = $this->translit($file_name);
+
+                    try {
+                        $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/');
+                        $resource->create();
+                    } catch (Exception $e) {
+
+                    }
+
+                    try {
+                        $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Approvals/');
+                        $resource->create();
+                    } catch (Exception $e) {
+
+                    }
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Approvals/' . $file_name . '.pdf');
+
+                    $this->upload(1, $order, $resource, $file_name, $scan);
+                }
+                if ($scan->type == 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl') {
+                    $file_name = "$order->uid Form(scan) 0304";
+                    $file_name = $this->translit($file_name);
+
+                    try {
+                        $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/');
+                        $resource->create();
+                    } catch (Exception $e) {
+
+                    }
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/' . $file_name . '.pdf');
+
+                    $this->upload(1, $order, $resource, $file_name, $scan);
+                }
+            }
         }
 
-        foreach ($upload_files as $document) {
+        foreach ($documents as $document) {
 
-            if ($upload_scans == 1)
-                $type = $document->type;
-            else
-                $type = $document->template;
+            $type = $document->template;
 
             if ($type == 'individualnie_usloviya.tpl') {
                 $file_name = "$order->uid Form 040302 $date";
@@ -378,7 +411,7 @@ class YaDisk extends Core
 
             $this->design->assign('company', $company);
 
-            if(!empty($document->asp_id)){
+            if (!empty($document->asp_id)) {
                 $code_asp = $this->AspCodes->get_code(['id' => $document->asp_id]);
                 $this->design->assign('code_asp', $code_asp);
 
@@ -418,7 +451,6 @@ class YaDisk extends Core
                     ]
                 ];
             }
-
 
 
             uksort(
@@ -487,7 +519,6 @@ class YaDisk extends Core
             $this->design->assign('first_part_all_sum_pay', $first_part_all_sum_pay);
 
 
-
             if (isset($document->params->payment_schedule['psk'])) {
                 $percents_per_year = $document->params->payment_schedule['psk'];
             } else {
@@ -546,13 +577,13 @@ class YaDisk extends Core
             $tpl = $this->design->fetch('pdf/' . $document->template);
             $this->pdf->create($tpl, $document->name, $document->template, $download = false, $file_name);
 
-            try{
+            try {
                 $resource->upload($this->config->__get('root_dir') . '/files/users/' . $file_name . '.pdf', true);
-            }catch (Exception $e){
+            } catch (Exception $e) {
 
             }
 
-            unlink($this->config->__get('root_dir'). '/files/users/' . $file_name . '.pdf');
+            unlink($this->config->__get('root_dir') . '/files/users/' . $file_name . '.pdf');
         }
     }
 
