@@ -221,6 +221,7 @@
                                             </form>
                                             {if $need_response == 1}
                                                 <div style="display: flex; justify-content: flex-end">
+                                                    {*
                                                     {if !empty($ticket->executor) && $manager->id != $ticket->executor || !empty($can_take_it)}
                                                         <div data-ticket="{$ticket->id}"
                                                              class="btn btn-outline-success accept_ticket"
@@ -228,6 +229,7 @@
                                                             Назначить ответственным себя
                                                         </div>
                                                     {/if}
+                                                    *}
                                                     {if in_array($manager->id, [$ticket->executor, $ticket->creator]) && $ticket->status != 6}
                                                         <div style="margin-left: 5px" type="button"
                                                              class="btn btn-outline-primary add_message">

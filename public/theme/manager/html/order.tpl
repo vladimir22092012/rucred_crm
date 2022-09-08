@@ -2713,70 +2713,76 @@
                                                 {/if}*}
                                             </h6>
                                             <br>
-                                            {if !empty($documents)}
-                                                {foreach $documents as $document}
-                                                    <div style="width: 100%!important; height: 50px; margin-left: 5px; display: flex; vertical-align: middle;"
-                                                         id="{$document->id}">
-                                                        <div class="form-group"
-                                                             style="width: 10px!important; margin-left: 5px">
-                                                            <label class="control-label">{$document->numeration}</label>
-                                                        </div>
-                                                        <div class="form-group"
-                                                             style="width: 40%!important; margin-left: 50px">
-                                                            <label class="control-label">{$document->name}</label>
-                                                        </div>
-                                                        <div style="margin-left: 10px">
-                                                            <a target="_blank"
-                                                               href="{$config->back_url}/document?id={$document->id}&action=download_file"><input
-                                                                        type="button"
-                                                                        class="btn btn-outline-success download_doc"
-                                                                        value="Сохранить"></a>
-                                                        </div>
-                                                        <div style="margin-left: 10px">
-                                                            <a target="_blank"
-                                                               href="{$config->back_url}/document/{$document->id}"><input
-                                                                        type="button"
-                                                                        class="btn btn-outline-warning print_doc"
-                                                                        value="Распечатать"></a>
-                                                        </div>
-                                                        {*
-                                                        <div class="btn-group"
-                                                             style="margin-left: 10px; height: 35px">
-                                                            {if $document->scan}
-                                                                <a target="_blank"
-                                                                   style="text-decoration: none!important;"
-                                                                   href="javascript:void(0);"
-                                                                   onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}');">
-                                                                    <input type="button"
-                                                                           class="btn btn-outline-info {$scan->type}"
-                                                                           value="Скан">
-                                                                </a>
-                                                            {/if}
-                                                            {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
-                                                                {if $manager->role != 'employer'}
-                                                                    <button type="button"
-                                                                            class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
-                                                                            data-toggle="dropdown" aria-haspopup="true"
-                                                                            aria-expanded="false">
-                                                                        <span class="sr-only">Toggle Dropdown</span>
-                                                                    </button>
-                                                                    <div class="dropdown-menu">
-                                                                        <input type="file" name="new_scan"
-                                                                               id="{$document->template}"
-                                                                               class="new_scan"
-                                                                               data-user="{$order->user_id}"
-                                                                               data-order="{$order->order_id}"
-                                                                               value="" style="display:none" multiple/>
-                                                                        <label for="{$document->template}"
-                                                                               class="dropdown-item">Приложить
-                                                                            скан</label>
-                                                                    </div>
-                                                                {/if}
-                                                            {/if}
-                                                        </div>
-                                                        *}
+                                            {if !empty($sort_docs)}
+                                                {foreach $sort_docs as $date => $documents}
+                                                    <div style="width: 100%!important; margin-left: 15px; display: flex; vertical-align: middle;">
+                                                        <strong>{$date|date}</strong>
                                                     </div>
                                                     <hr style="width: 100%; size: 2px">
+                                                    {foreach $documents as $document}
+                                                        <div style="width: 100%!important; height: 50px; margin-left: 5px; display: flex; vertical-align: middle;"
+                                                             id="{$document->id}">
+                                                            <div class="form-group"
+                                                                 style="width: 10px!important; margin-left: 5px">
+                                                                <label class="control-label">{$document->numeration}</label>
+                                                            </div>
+                                                            <div class="form-group"
+                                                                 style="width: 40%!important; margin-left: 50px">
+                                                                <label class="control-label">{$document->name}</label>
+                                                            </div>
+                                                            <div style="margin-left: 10px">
+                                                                <a target="_blank"
+                                                                   href="{$config->back_url}/document?id={$document->id}&action=download_file"><input
+                                                                            type="button"
+                                                                            class="btn btn-outline-success download_doc"
+                                                                            value="Сохранить"></a>
+                                                            </div>
+                                                            <div style="margin-left: 10px">
+                                                                <a target="_blank"
+                                                                   href="{$config->back_url}/document/{$document->id}"><input
+                                                                            type="button"
+                                                                            class="btn btn-outline-warning print_doc"
+                                                                            value="Распечатать"></a>
+                                                            </div>
+                                                            {*
+                                                            <div class="btn-group"
+                                                                 style="margin-left: 10px; height: 35px">
+                                                                {if $document->scan}
+                                                                    <a target="_blank"
+                                                                       style="text-decoration: none!important;"
+                                                                       href="javascript:void(0);"
+                                                                       onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}');">
+                                                                        <input type="button"
+                                                                               class="btn btn-outline-info {$scan->type}"
+                                                                               value="Скан">
+                                                                    </a>
+                                                                {/if}
+                                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
+                                                                    {if $manager->role != 'employer'}
+                                                                        <button type="button"
+                                                                                class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
+                                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                                aria-expanded="false">
+                                                                            <span class="sr-only">Toggle Dropdown</span>
+                                                                        </button>
+                                                                        <div class="dropdown-menu">
+                                                                            <input type="file" name="new_scan"
+                                                                                   id="{$document->template}"
+                                                                                   class="new_scan"
+                                                                                   data-user="{$order->user_id}"
+                                                                                   data-order="{$order->order_id}"
+                                                                                   value="" style="display:none" multiple/>
+                                                                            <label for="{$document->template}"
+                                                                                   class="dropdown-item">Приложить
+                                                                                скан</label>
+                                                                        </div>
+                                                                    {/if}
+                                                                {/if}
+                                                            </div>
+                                                            *}
+                                                        </div>
+                                                        <hr style="width: 100%; size: 2px">
+                                                    {/foreach}
                                                 {/foreach}
                                                 {*
                                                 <div
