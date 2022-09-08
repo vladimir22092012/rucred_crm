@@ -27,7 +27,7 @@ class LoantypeController extends Controller
 
             $check_uniq = $this->Loantypes->check_uniq_number($loantype->number, $loantype_id);
 
-            if(!empty($check_uniq))
+            if (!empty($check_uniq))
                 $this->design->assign('error', 'Такой номер уже есть');
 
             if (empty($loantype->name)) {
@@ -36,6 +36,8 @@ class LoantypeController extends Controller
                 $this->design->assign('error', 'Выберите процентную ставку');
             } elseif (empty($loantype->max_amount)) {
                 $this->design->assign('error', 'Укажите максимальную сумму кредита');
+            } elseif (mb_strlen($loantype->description) > 20) {
+                $this->design->assign('error', 'Длина описания не может быть более 20 символов');
             } elseif (empty($loantype->max_period)) {
                 $this->design->assign('error', 'Укажите максимальный срок кредита');
             } else {
@@ -105,9 +107,9 @@ class LoantypeController extends Controller
 
             $this->design->assign('groups', $groups);
 
-            if($this->manager->role == 'employer'){
-                foreach ($groups as $group){
-                    if($this->manager->group_id == $group['id']){
+            if ($this->manager->role == 'employer') {
+                foreach ($groups as $group) {
+                    if ($this->manager->group_id == $group['id']) {
                         $loantype->percent = $group['standart_percents'];
                         $loantype->profunion = $group['preferential_percents'];
                     }
