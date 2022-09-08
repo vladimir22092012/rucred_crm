@@ -1,4 +1,4 @@
-<div><br><br><br></div>
+<div><br></div>
 <table>
     <tr style="width: 100%">
         <td style="width: 60%"></td>
@@ -28,7 +28,7 @@
         <td style="width: 40%">фактически проживающий: <strong>{$faktadress->adressfull}</strong></td>
     </tr>
 </table>
-<div><br><br></div>
+<div><br></div>
 <div style="width: 100%">
     <h3 align="left">ЗАЯВЛЕНИЕ<br>о реструктуризации задолженности по договору микрозайма<br>№ {$uid}
         от {$doc_created|date} 2022 года
