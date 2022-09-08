@@ -4339,6 +4339,10 @@
                                 <input type="text" class="form-control" name="pay_amount">
                             </div>
                             <div class="form-group">
+                                <label>Из них комиссия, руб</label>
+                                <input type="text" class="form-control" name="comission">
+                            </div>
+                            <div class="form-group">
                                 <label>Новый срок, мес</label>
                                 <select class="form-control" data-order="{$order->order_id}" name="new_term"
                                         id="new_term">

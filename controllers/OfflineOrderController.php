@@ -4147,7 +4147,7 @@ class OfflineOrderController extends Controller
                 $documents = $this->documents->get_documents(['order_id' => $order_id]);
 
                 foreach ($documents as $document) {
-                    if (in_array($document->type, ['DOP_GRAFIK', 'DOP_SOGLASHENIE']) && empty($document->asp_id)) {
+                    if (in_array($document->type, ['DOP_GRAFIK', 'DOP_SOGLASHENIE', 'OBSHIE_USLOVIYA_REST', 'ZAYAVLENIE_RESTRUCT']) && empty($document->asp_id)) {
                         $this->documents->update_document($document->id, ['asp_id' => $asp_id]);
                     }
                 }
@@ -4214,7 +4214,7 @@ class OfflineOrderController extends Controller
         $rucred_asp_id = $this->AspCodes->add_code($asp_log);
 
         foreach ($documents as $document) {
-            if (in_array($document->type, ['DOP_GRAFIK', 'DOP_SOGLASHENIE']) && empty($document->rucred_asp_id)) {
+            if (in_array($document->type, ['DOP_GRAFIK', 'DOP_SOGLASHENIE', 'OBSHIE_USLOVIYA_REST', 'ZAYAVLENIE_RESTRUCT']) && empty($document->rucred_asp_id)) {
                 $this->documents->update_document($document->id, ['rucred_asp_id' => $rucred_asp_id]);
             }
         }
