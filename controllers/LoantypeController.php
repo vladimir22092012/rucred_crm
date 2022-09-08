@@ -23,6 +23,7 @@ class LoantypeController extends Controller
             $loantype->max_period = $this->request->post('max_period', 'integer');
             $loantype->online_flag = $this->request->post('online_flag', 'integer');
             $loantype->reason_flag = $this->request->post('reason_flag');
+            $loantype->description = $this->request->post('description');
 
             $check_uniq = $this->Loantypes->check_uniq_number($loantype->number, $loantype_id);
 

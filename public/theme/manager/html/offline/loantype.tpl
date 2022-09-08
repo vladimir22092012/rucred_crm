@@ -277,6 +277,16 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-5 ">
+                                                <label class="control-label">Описание</label>
+                                            </div>
+                                            <div class="col-7 ">
+                                                <textarea class="form-control" name="description">{$loantype->description}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
                                     {if $manager->role != 'employer'}
                                         <div class="form-group">
                                             <table class="table display table-striped dataTable">
