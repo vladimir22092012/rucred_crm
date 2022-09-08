@@ -63,7 +63,7 @@ class RegistrController extends Controller
 
             if (count($old_orders) > 1) {
                 foreach ($old_orders as $old_order) {
-                    if (in_array($old_order->status, [5, 7]))
+                    if (in_array($old_order->status, [5, 7, 19]))
                         $order->client_status = 'ПК';
                 }
             }
