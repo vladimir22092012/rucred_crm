@@ -207,12 +207,6 @@
                                                     <span class="label label-warning"
                                                           title="Клиент уже подавал ранее заявки">Повтор</span>
                                                 {/if}
-                                                {if $order->autoretry}
-                                                    <span class="label label-danger" title="">Автоповтор</span>
-                                                {/if}
-                                                {if $order->antirazgon}
-                                                    <span class="label label-danger" title="">АвтоАнтиРазгон {if $order->antirazgon == 1}0-2{elseif $order->antirazgon == 2}3-5{elseif $order->antirazgon == 3}6-10{/if}</span>
-                                                {/if}
                                             </td>
                                             <td style="width: 80px;" class="jsgrid-cell">
                                                 {$order->phone_mobile}

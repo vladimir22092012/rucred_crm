@@ -67,8 +67,7 @@ class RegistrController extends Controller
                         $order->client_status = 'ПК';
                 }
             }
-
-            if (count($orders) == 1)
+            if (count($old_orders) == 1)
                 $order->client_status = 'Новая';
 
             if (!empty($order->contract_id)) {
