@@ -2,12 +2,28 @@
 
 class Loantypes extends Core
 {
-    public function get_loantype($id)
+    public function get_loantype($id, $online_offline = 4)
     {
+
+        $flag = '';
+
+        if($online_offline != 4)
+        {
+            if($online_offline == 1)
+                $flag = $this->db->placehold("AND online_flag IN (1,3)");
+
+            if($online_offline == 2)
+                $flag = $this->db->placehold("AND online_flag IN (2,3)");
+
+            if($online_offline == 3)
+                $flag = $this->db->placehold("AND online_flag IN (3)");
+        }
+
         $query = $this->db->placehold("
             SELECT * 
             FROM __loantypes
             WHERE id = ?
+            $flag
         ", (int)$id);
         $this->db->query($query);
         $result = $this->db->result();

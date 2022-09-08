@@ -46,7 +46,10 @@ class GroupLoanTypes extends Core
         $loantypes = [];
 
         foreach ($results as $result) {
-            $loantype = $this->Loantypes->get_loantype($result->loantype_id);
+            $loantype = $this->Loantypes->get_loantype($result->loantype_id, 2);
+
+            if(empty($loantype))
+                continue;
 
             $loantypes[] =
                 [
