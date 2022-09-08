@@ -349,7 +349,22 @@
                     $('.cardes').hide();
                     $('.requisits').show();
                 }
-            })
+            });
+
+            $('.delete_draft').on('click', function () {
+                let orderId = $(this).attr('data-order');
+
+                $.ajax({
+                    method: 'POST',
+                    data:{
+                        action: 'delete_draft',
+                        orderId: orderId
+                    },
+                    success: function () {
+                        location.replace('/drafts')
+                    }
+                })
+            });
         });
     </script>
 {/capture}
@@ -1360,6 +1375,9 @@
                                                    class="btn btn-primary buttons_append create_new_draft"
                                                    value="Сохранить черновик">
                                         </div>
+                                        {if isset($order->order_id)}
+                                            <div data-order="{$order->order_id}" class="btn btn-outline-danger delete_draft" style="float: right">Удалить черновик</div>
+                                        {/if}
                                         <br><br>
                                         <input style="display: none" name="loan_type_to_submit"
                                                class="loan_type_to_submit" value="{$order->loan_type}">

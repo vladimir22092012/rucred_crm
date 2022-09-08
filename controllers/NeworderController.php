@@ -1488,4 +1488,13 @@ class NeworderController extends Controller
         echo json_encode($user);
         exit;
     }
+
+    private function action_delete_draft()
+    {
+        $orderId = $this->request->post('orderId');
+
+        $this->orders->delete_order($orderId);
+
+        exit;
+    }
 }
