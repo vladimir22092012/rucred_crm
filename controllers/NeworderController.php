@@ -370,7 +370,7 @@ class NeworderController extends Controller
             exit;
         }else
         {
-            if(date_diff($now_date, $birth_date)->days < 18){
+            if(date_diff($now_date, $birth_date)->y < 18){
                 response_json(['error' => 1, 'reason' => 'Не должно быть меньше 18 лет']);
                 exit;
             }

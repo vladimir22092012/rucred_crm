@@ -1547,6 +1547,13 @@
                                                 </div>
                                             </div>
                                         {/if}
+                                        {if $order->status == 10}
+                                            <div class="card card-success">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">Отправлено</h4>
+                                                </div>
+                                            </div>
+                                        {/if}
                                         {if $order->status == 13}
                                             <div class="card card-warning">
                                                 <div class="box text-center">
