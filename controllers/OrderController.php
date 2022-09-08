@@ -915,64 +915,15 @@ class OrderController extends Controller
             }
         }
 
-        $user_preferred = $this->UserContactPreferred->get($order->user_id);
+        $cron =
+            [
+                'template_id' => 7,
+                'user_id' => $order->user_id,
+            ];
 
-        if (!empty($user_preferred)) {
-            $template = $this->sms->get_template(7);
+        $this->NotificationsClientsCron->add($cron);
 
-            foreach ($user_preferred as $preferred) {
-                switch ($preferred->contact_type_id):
-
-                    case 1:
-                        $message = $template->template;
-                        $this->sms->send(
-                            $order->phone_mobile,
-                            $message
-                        );
-                        break;
-
-                    case 2:
-                        $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
-                        $mailService->send(
-                            'rucred@ucase.live',
-                            $order->email,
-                            'RuCred | Уведомление',
-                            "$template->template",
-                            "<h2>$template->template</h2>"
-                        );
-                        break;
-
-                    case 3:
-                        $telegram = new Api($this->config->telegram_token);
-                        $telegram_check = $this->TelegramUsers->get($order->user_id, 0);
-
-                        if (!empty($telegram_check)) {
-                            $telegram->sendMessage(['chat_id' => $telegram_check->chat_id, 'text' => $template->template]);
-                        }
-                        break;
-
-                    case 4:
-                        $bot = new Bot(['token' => $this->config->viber_token]);
-
-                        $botSender = new Sender([
-                            'name' => 'Whois bot',
-                            'avatar' => 'https://developers.viber.com/img/favicon.ico',
-                        ]);
-                        $viber_check = $this->ViberUsers->get($order->user_id, 0);
-
-                        if (!empty($viber_check)) {
-                            $bot->getClient()->sendMessage(
-                                (new \Viber\Api\Message\Text())
-                                    ->setSender($botSender)
-                                    ->setReceiver($viber_check->chat_id)
-                                    ->setText($template->template)
-                            );
-                        }
-                        break;
-
-                endswitch;
-            }
-        }
+        $this->tickets->update_by_theme_id(18, ['status' => 4], $order->order_id);
 
         echo json_encode(['success' => 1]);
         exit;
@@ -3978,23 +3929,7 @@ class OrderController extends Controller
         $payment->user_bik = $default_requisit->bik;
         $payment->users_inn = $order->inn;
 
-        $cron =
-            [
-                'order_id' => $order_id,
-                'pak' => 'second_pak',
-                'online' => 1
-            ];
-
-        $this->YaDiskCron->add($cron);
-
         $this->Soap1c->send_payment($payment);
-
-        /*
-        if (!isset($send_payment->return) || $send_payment->return != 'ОК') {
-            echo json_encode(['error' => $send_payment]);
-            exit;
-        }
-        */
 
         $asp_log =
             [
@@ -4009,52 +3944,17 @@ class OrderController extends Controller
         $asp_id = $this->AspCodes->add_code($asp_log);
 
         $this->documents->update_asp(['order_id' => $order_id, 'rucred_asp_id' => $asp_id, 'second_pak' => 1, 'online' => 1]);
-
-        $this->design->assign('order', $order);
-        $documents = $this->documents->get_documents(['order_id' => $order->order_id]);
-        $docs_email = [];
-
         $asp_id = $this->AspCodes->get_code(['order_id' => $order_id, 'type' => 'sms']);
         $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id->id, 'second_pak' => 1, 'online' => 1]);
 
-        foreach ($documents as $document) {
-            if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA_ONL', 'GRAFIK_OBSL_MKR'])){
-                $docs_email[$document->type] = $document->id;
-            }
-        }
+        $cron =
+            [
+                'order_id' => $order_id,
+                'pak' => 'second_pak',
+                'online' => 1
+            ];
 
-        $individ_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['INDIVIDUALNIE_USLOVIA'];
-        $graphic_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['GRAFIK_OBSL_MKR'];
-
-        $this->design->assign('individ_encrypt', $individ_encrypt);
-        $this->design->assign('graphic_encrypt', $graphic_encrypt);
-
-        $contracts = $this->contracts->get_contracts(['order_id' => $order->order_id]);
-        $group = $this->groups->get_group($order->group_id);
-        $company = $this->companies->get_company($order->company_id);
-
-        if (!empty($contracts)) {
-            $count_contracts = count($contracts);
-            $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
-        } else {
-            $count_contracts = '01';
-        }
-
-        $loantype = $this->Loantypes->get_loantype($order->loan_type);
-
-        $uid = "$group->number$company->number $loantype->number $order->personal_number $count_contracts";
-        $this->design->assign('uid', $uid);
-
-        $fetch = $this->design->fetch('email/approved.tpl');
-
-        $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
-        $mailService->send(
-            'rucred@ucase.live',
-            $order->email,
-            'RuCred | Ваш займ успешно выдан',
-            'Поздравляем!',
-            $fetch
-        );
+        $this->YaDiskCron->add($cron);
 
         $this->tickets->update_by_theme_id(12, ['status' => 4], $order_id);
 

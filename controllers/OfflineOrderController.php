@@ -4315,14 +4315,6 @@ class OfflineOrderController extends Controller
         $payment->user_bik = $default_requisit->bik;
         $payment->users_inn = $order->inn;
 
-        $cron =
-            [
-                'order_id' => $order_id,
-                'pak' => 'second_pak'
-            ];
-
-        $this->YaDiskCron->add($cron);
-
         $send_payment = $this->Soap1c->send_payment($payment);
 
 
