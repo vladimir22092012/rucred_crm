@@ -1,10 +1,6 @@
 <?php
 
-use Telegram\Bot\Api;
-use Viber\Bot;
-use Viber\Api\Sender;
-use Viber\Client;
-use App\Services\MailService;
+use PHPMailer\PHPMailer\PHPMailer;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -147,7 +143,7 @@ class StatusPaymentCron extends Core
 
                     //Content
                     $mail->isHTML(true);                                  //Set email format to HTML
-                    $mail->Subject = 'RuCred | Ссылка для привязки Viber';
+                    $mail->Subject = 'RuCred | Уведомление';
                     $mail->Body = $fetch;
 
                     $mail->send();

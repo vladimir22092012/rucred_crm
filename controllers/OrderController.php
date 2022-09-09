@@ -1,11 +1,6 @@
 <?php
 
-use Telegram\Bot\Api;
-use Viber\Bot;
-use Viber\Api\Sender;
-use Viber\Client;
-use App\Services\MailService;
-use App\Services\Encryption;
+use PHPMailer\PHPMailer\PHPMailer;
 
 error_reporting(-1);
 ini_set('display_errors', 'On');
@@ -1044,14 +1039,27 @@ class OrderController extends Controller
 
             $fetch = $this->design->fetch('email/approved.tpl');
 
-            $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
-            $mailResponse = $mailService->send(
-                'rucred@ucase.live',
-                $order->email,
-                'RuCred | Ваш займ успешно выдан',
-                'Поздравляем!',
-                $fetch
-            );
+            $mail = new PHPMailer(false);
+
+            //Server settings
+            $mail->isSMTP();                                            //Send using SMTP
+            $mail->Host = 'mail.nic.ru';                          //Set the SMTP server to send through
+            $mail->SMTPAuth = true;                                   //Enable SMTP authentication
+            $mail->Username = 'noreply@re-aktiv.ru';                  //SMTP username
+            $mail->Password = 'HG!_@H#*&!^!HwJSDJ2Wsqgq';             //SMTP password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         //Enable implicit TLS encryption
+            $mail->Port = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+            //Recipients
+            $mail->setFrom('noreply@re-aktiv.ru');
+            $mail->addAddress($order->email);     //Add a recipient
+
+            //Content
+            $mail->isHTML(true);                                  //Set email format to HTML
+            $mail->Subject = 'RuCred | Уведомление';
+            $mail->Body = $fetch;
+
+            $mail->send();
 
             $asp_log =
                 [
@@ -1066,7 +1074,6 @@ class OrderController extends Controller
             $asp_id = $this->AspCodes->add_code($asp_log);
 
             $this->documents->update_asp(['order_id' => $order_id, 'rucred_asp_id' => $asp_id, 'second_pak' => 1, 'online' => 1]);
-
             $asp_id = $this->AspCodes->get_code(['order_id' => $order_id, 'type' => 'sms']);
             $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id->id, 'second_pak' => 1, 'online' => 1]);
 
@@ -1078,6 +1085,14 @@ class OrderController extends Controller
                 ];
 
             $this->YaDiskCron->add($cron);
+
+            $cron =
+                [
+                    'template_id' => 8,
+                    'user_id' => $order->user_id,
+                ];
+
+            $this->NotificationsClientsCron->add($cron);
 
             $this->tickets->update_by_theme_id(12, ['status' => 4], $order_id);
 
