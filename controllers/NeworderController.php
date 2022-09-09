@@ -10,7 +10,7 @@ use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 error_reporting(-1);
-ini_set('display_errors', 'On');
+ini_set('display_errors', 'Off');
 date_default_timezone_set('Europe/Moscow');
 
 class NeworderController extends Controller
@@ -324,7 +324,7 @@ class NeworderController extends Controller
         $user['phone_mobile'] = preg_replace('/[^0-9]/', '', $user['phone_mobile']);
         $user['dependents'] = $this->request->post('dependents');
 
-        if(empty($user['dependents']))
+        if (empty($user['dependents']))
             $user['dependents'] = 0;
 
         if (empty($user['phone_mobile'])) {
@@ -363,12 +363,11 @@ class NeworderController extends Controller
         $now_date = new DateTime(date('Y-m-d'));
         $birth_date = new DateTime(date('Y-m-d', strtotime($user['birth'])));
 
-        if($birth_date > $now_date){
+        if ($birth_date > $now_date) {
             response_json(['error' => 1, 'reason' => 'Некорректная дата рождения']);
             exit;
-        }else
-        {
-            if(date_diff($now_date, $birth_date)->y < 18){
+        } else {
+            if (date_diff($now_date, $birth_date)->y < 18) {
                 response_json(['error' => 1, 'reason' => 'Не должно быть меньше 18 лет']);
                 exit;
             }
@@ -409,7 +408,7 @@ class NeworderController extends Controller
         $now_date = new DateTime(date('Y-m-d'));
         $passport_date = new DateTime(date('Y-m-d', strtotime($user['passport_date'])));
 
-        if($passport_date > $now_date || date_diff($now_date, $passport_date)->days < 31){
+        if ($passport_date > $now_date || date_diff($now_date, $passport_date)->days < 31) {
             response_json(['error' => 1, 'reason' => 'Некорректная дата выдачи паспорта']);
             exit;
         }
@@ -422,8 +421,7 @@ class NeworderController extends Controller
             exit;
         }
 
-        if(strlen($user['subdivision_code'] > 6) && strlen($user['subdivision_code'] < 6))
-        {
+        if (strlen($user['subdivision_code'] > 6) && strlen($user['subdivision_code'] < 6)) {
             response_json(['error' => 1, 'reason' => 'Некорректный код подразделения']);
             exit;
         }
@@ -1124,33 +1122,27 @@ class NeworderController extends Controller
         SET email = ?, code = ?, created = ?
         ', $email, $code, date('Y-m-d H:i:s'));
 
-        $mail = new PHPMailer(true);
+        $mail = new PHPMailer(false);
 
-        try {
-            //Server settings
-            $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
-            $mail->isSMTP();                                            //Send using SMTP
-            $mail->Host       = 'mail.nic.ru';                  //Set the SMTP server to send through
-            $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-            $mail->Username   = 'noreply@re-aktiv.ru';                  //SMTP username
-            $mail->Password   = 'HG!_@H#*&!^!HwJSDJ2Wsqgq';             //SMTP password
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;            //Enable implicit TLS encryption
-            $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+        //Server settings
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->Host = 'mail.nic.ru';                          //Set the SMTP server to send through
+        $mail->SMTPAuth = true;                                   //Enable SMTP authentication
+        $mail->Username = 'noreply@re-aktiv.ru';                  //SMTP username
+        $mail->Password = 'HG!_@H#*&!^!HwJSDJ2Wsqgq';             //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         //Enable implicit TLS encryption
+        $mail->Port = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
-            //Recipients
-            $mail->setFrom('rucred@ucase.live');
-            $mail->addAddress($email);     //Add a recipient
+        //Recipients
+        $mail->setFrom('noreply@re-aktiv.ru');
+        $mail->addAddress($email);     //Add a recipient
 
-            //Content
-            $mail->isHTML(true);                                  //Set email format to HTML
-            $mail->Subject = 'RuCred | Ваш проверочный код для смены почты';
-            $mail->Body    = '<h1>Сообщите код андеррайтеру РуКреда: </h1>' . "<h2>$code</h2>";
+        //Content
+        $mail->isHTML(true);                                  //Set email format to HTML
+        $mail->Subject = 'RuCred | Ваш проверочный код для смены почты';
+        $mail->Body = '<h1>Сообщите код андеррайтеру РуКреда: </h1>' . "<h2>$code</h2>";
 
-            $mail->send();
-            echo 'Message has been sent';
-        } catch (Exception $e) {
-            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-        }
+        $mail->send();
 
         echo json_encode(['success' => $code]);
         exit;
@@ -1455,14 +1447,28 @@ class NeworderController extends Controller
                 break;
 
             case 'viber':
-                $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
-                $mailResponse = $mailService->send(
-                    'rucred@ucase.live',
-                    $email,
-                    'RuCred | Ссылка для привязки Viber',
-                    'Ваша ссылка для привязки Viber:',
-                    '<h1>' . $this->config->back_url . '/redirect_api?user_id=' . $user_id . '</h1>'
-                );
+
+                $mail = new PHPMailer(false);
+
+                //Server settings
+                $mail->isSMTP();                                            //Send using SMTP
+                $mail->Host = 'mail.nic.ru';                          //Set the SMTP server to send through
+                $mail->SMTPAuth = true;                                   //Enable SMTP authentication
+                $mail->Username = 'noreply@re-aktiv.ru';                  //SMTP username
+                $mail->Password = 'HG!_@H#*&!^!HwJSDJ2Wsqgq';             //SMTP password
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         //Enable implicit TLS encryption
+                $mail->Port = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+                //Recipients
+                $mail->setFrom('noreply@re-aktiv.ru');
+                $mail->addAddress($email);     //Add a recipient
+
+                //Content
+                $mail->isHTML(true);                                  //Set email format to HTML
+                $mail->Subject = 'RuCred | Ссылка для привязки Viber';
+                $mail->Body = '<h1>' . $this->config->back_url . '/redirect_api?user_id=' . $user_id . '</h1>';
+
+                $mail->send();
 
                 $user =
                     [
@@ -1478,7 +1484,6 @@ class NeworderController extends Controller
                         'user_id' => $user_id,
                         'is_manager' => 0,
                         'type_id' => 2,
-                        'resp' => json_encode($mailResponse),
                         'text' => $this->config->back_url . '/redirect_api?user_id=' . $user_id
                     ];
 
