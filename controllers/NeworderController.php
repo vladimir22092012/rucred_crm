@@ -688,6 +688,8 @@ class NeworderController extends Controller
                                     $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
                                 }
                                 break;
+                            }else{
+                                $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
                             }
                         }
                     }
