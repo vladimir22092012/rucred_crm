@@ -5,6 +5,7 @@ use Viber\Bot;
 use Viber\Api\Sender;
 use Viber\Client;
 use App\Services\MailService;
+use PHPMailer\PHPMailer\PHPMailer;
 
 error_reporting(-1);
 ini_set('display_errors', 'Off');

@@ -4,6 +4,7 @@ use Telegram\Bot\Api;
 use Viber\Bot;
 use Viber\Api\Sender;
 use App\Services\MailService;
+use PHPMailer\PHPMailer\PHPMailer;
 
 error_reporting(-1);
 ini_set('display_errors', 'On');
