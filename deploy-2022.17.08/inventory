@@ -1,0 +1,5 @@
+[deploy]
+rucred-dev ansible_host=51.250.26.168 ansible_user='{{ user }}' ansible_ssh_pass='{{ pass }}'
+
+[dlmnt]
+rucred-development ansible_host=62.84.122.116 ansible_user='{{ userdev }}' ansible_ssh_pass='{{ passdev }}'

@@ -1,0 +1,8 @@
+- hosts: deploy
+  vars:
+    temp_repo_path: "/home/rucred-crm/deploy-folder-front"
+    repo_path: "/home/rucred-crm/rucred-client"
+    branch: "master"
+  #remote_user: rucred-crm
+  roles:
+    - { role: rucred }
