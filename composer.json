@@ -19,8 +19,7 @@
         "vlucas/phpdotenv": "^5.4",
         "irazasyed/telegram-bot-sdk": "^2.0",
         "arhitector/yandex": "dev-master",
-        "bogdaan/viber-bot-php": "^0.0.15",
-        "phpmailer/phpmailer": "^6.6"
+        "bogdaan/viber-bot-php": "^0.0.15"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
