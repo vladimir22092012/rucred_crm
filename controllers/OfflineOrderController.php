@@ -4162,7 +4162,7 @@ class OfflineOrderController extends Controller
 
                 $this->YaDiskCron->add($cron);
 
-                $this->orders->update_order($order->order_id, ['status' => 1, 'contract_id' => $contract_id,]);
+                $this->orders->update_order($order->order_id, ['status' => 1, 'contract_id' => $contract_id]);
                 $this->add_first_ticket($order->order_id, $order->user_id);
 
 
