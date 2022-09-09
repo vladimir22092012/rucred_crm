@@ -7,7 +7,7 @@ use Viber\Client;
 use App\Services\MailService;
 
 error_reporting(-1);
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'On');
 date_default_timezone_set('Europe/Moscow');
 
 class NeworderController extends Controller
@@ -320,14 +320,6 @@ class NeworderController extends Controller
         $user['phone_mobile'] = trim((string)$this->request->post('phone'));
         $user['phone_mobile'] = preg_replace('/[^0-9]/', '', $user['phone_mobile']);
         $user['dependents'] = $this->request->post('dependents');
-
-        if (empty($user['dependents']))
-            unset($user['dependents']);
-
-        if(is_float($user['dependents'])){
-            response_json(['error' => 1, 'reason' => 'Некорректное кол-во иждивенцев']);
-            exit;
-        }
 
         if (empty($user['phone_mobile'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует номер телефона']);
@@ -794,8 +786,8 @@ class NeworderController extends Controller
                     ];
                 $paydate->add(new DateInterval('P1M'));
             } else {
-                $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
-                $first_pay = new DateTime(date('Y-m-' . $first_pay_day, strtotime($start_date)));
+                $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date->format('Y-m-d'))));
+                $first_pay = new DateTime(date('Y-m-' . $first_pay_day, strtotime($start_date->format('Y-m-d'))));
                 $first_pay->add(new DateInterval('P1M'));
                 $count_days_this_month = date('t', strtotime($issuance_date->format('Y-m-d')));
                 $paydate = $this->check_pay_date($first_pay);
