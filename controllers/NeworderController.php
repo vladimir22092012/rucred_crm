@@ -682,11 +682,12 @@ class NeworderController extends Controller
                             $check_date = $this->WeekendCalendar->check_date($probably_start_date);
 
                             if (empty($check_date)) {
-                                if ($settlement_id == 2)
+                                if ($settlement_id == 2) {
+                                    $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+2 days'));
+                                } else {
                                     $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
+                                }
                                 break;
-                            } else {
-                                $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
                             }
                         }
                     }
