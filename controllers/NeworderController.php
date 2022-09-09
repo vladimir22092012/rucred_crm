@@ -324,6 +324,9 @@ class NeworderController extends Controller
         $user['phone_mobile'] = preg_replace('/[^0-9]/', '', $user['phone_mobile']);
         $user['dependents'] = $this->request->post('dependents');
 
+        if(empty($user['dependents']))
+            $user['dependents'] = 0;
+
         if (empty($user['phone_mobile'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует номер телефона']);
             exit;
