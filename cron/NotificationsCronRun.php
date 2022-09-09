@@ -158,16 +158,29 @@ class NotificationsCronRun extends Core
         $this->NotificationsLogs->add($log);
     }
 
-    private function mail_note($manager_id, $mail, $ticket)
+    private function mail_note($manager_id, $email, $ticket)
     {
-        $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
-        $mailService->send(
-            'rucred@ucase.live',
-            $mail,
-            'RuCred | Уведомление',
-            "$ticket->head",
-            "<h2>$ticket->text</h2>"
-        );
+        $mail = new PHPMailer(false);
+
+        //Server settings
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->Host = 'mail.nic.ru';                          //Set the SMTP server to send through
+        $mail->SMTPAuth = true;                                   //Enable SMTP authentication
+        $mail->Username = 'noreply@re-aktiv.ru';                  //SMTP username
+        $mail->Password = 'HG!_@H#*&!^!HwJSDJ2Wsqgq';             //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         //Enable implicit TLS encryption
+        $mail->Port = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+        //Recipients
+        $mail->setFrom('noreply@re-aktiv.ru');
+        $mail->addAddress($email);     //Add a recipient
+
+        //Content
+        $mail->isHTML(true);                                  //Set email format to HTML
+        $mail->Subject = 'RuCred | Уведомление';
+        $mail->Body = "<h2>$ticket->text</h2>";
+
+        $mail->send();
 
         $log =
             [

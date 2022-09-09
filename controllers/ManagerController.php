@@ -520,14 +520,27 @@ class ManagerController extends Controller
             $user_token = md5(time());
             $user_token = substr($user_token, 1, 10);
 
-            $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
-            $resp = $mailService->send(
-                'rucred@ucase.live',
-                $manager->email,
-                'RuCred | Ссылка для привязки Viber',
-                'Ваша ссылка для привязки Viber:',
-                '<h1>'.$this->config->back_url.'/redirect_api?user_id=' . $manager_id . '</h1>'
-            );
+            $mail = new PHPMailer(false);
+
+            //Server settings
+            $mail->isSMTP();                                            //Send using SMTP
+            $mail->Host = 'mail.nic.ru';                          //Set the SMTP server to send through
+            $mail->SMTPAuth = true;                                   //Enable SMTP authentication
+            $mail->Username = 'noreply@re-aktiv.ru';                  //SMTP username
+            $mail->Password = 'HG!_@H#*&!^!HwJSDJ2Wsqgq';             //SMTP password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         //Enable implicit TLS encryption
+            $mail->Port = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+            //Recipients
+            $mail->setFrom('noreply@re-aktiv.ru');
+            $mail->addAddress($manager->email);     //Add a recipient
+
+            //Content
+            $mail->isHTML(true);                                  //Set email format to HTML
+            $mail->Subject = 'RuCred | Уведомление';
+            $mail->Body = '<h1>'.$this->config->back_url.'/redirect_api?user_id=' . $manager_id . '</h1>';
+
+            $mail->send();
 
             $user =
                 [
