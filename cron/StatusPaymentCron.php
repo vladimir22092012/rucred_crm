@@ -101,7 +101,7 @@ class StatusPaymentCron extends Core
                     $docs_email = [];
 
                     foreach ($documents as $document) {
-                        if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR', 'INDIVIDUALNIE_USLOVIA_ONL', 'OBSHIE_USLOVIYA'])) {
+                        if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR', 'INDIVIDUALNIE_USLOVIA_ONL'])) {
                             $docs_email[$document->type] = $document->hash;
                         }
                     }
