@@ -1054,6 +1054,14 @@ class OfflineOrderController extends Controller
 
             $this->TicketMessages->add_message($message);
 
+            $cron =
+                [
+                    'ticket_id' => $ticket_id,
+                    'is_complited' => 0
+                ];
+
+            $this->NotificationsCron->add($cron);
+
             $this->design->assign('order', $order);
             $documents = $this->documents->get_documents(['order_id' => $order->order_id]);
             $docs_email = [];
