@@ -556,7 +556,6 @@ class ManagerController extends Controller
                     'user_id'    => $manager_id,
                     'is_manager' => 1,
                     'type_id'    => 1,
-                    'resp'       => json_encode($resp),
                     'text'       => $this->config->back_url.'/redirect_api?user_id=' . $manager_id
                 ];
 
