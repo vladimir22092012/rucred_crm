@@ -5,6 +5,9 @@ use Viber\Bot;
 use Viber\Api\Sender;
 use Viber\Client;
 use App\Services\MailService;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
 
 error_reporting(-1);
 ini_set('display_errors', 'On');
@@ -1118,14 +1121,33 @@ class NeworderController extends Controller
         SET email = ?, code = ?, created = ?
         ', $email, $code, date('Y-m-d H:i:s'));
 
-        $mailService = new MailService($this->config->mailjet_api_key, $this->config->mailjet_api_secret);
-        $mailService->send(
-            'rucred@ucase.live',
-            $email,
-            'RuCred | Ваш проверочный код для смены почты',
-            'Ваш код подтверждения электронной почты: ' . $code,
-            '<h1>Сообщите код андеррайтеру РуКреда: </h1>' . "<h2>$code</h2>"
-        );
+        $mail = new PHPMailer(true);
+
+        try {
+            //Server settings
+            $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+            $mail->isSMTP();                                            //Send using SMTP
+            $mail->Host       = 'https://re-aktiv.ru';                  //Set the SMTP server to send through
+            $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+            $mail->Username   = 'noreply@re-aktiv.ru';                  //SMTP username
+            $mail->Password   = 'HG!_@H#*&!^!HwJSDJ2Wsqgq';             //SMTP password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+            $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+            //Recipients
+            $mail->setFrom('rucred@ucase.live');
+            $mail->addAddress($email);     //Add a recipient
+
+            //Content
+            $mail->isHTML(true);                                  //Set email format to HTML
+            $mail->Subject = 'RuCred | Ваш проверочный код для смены почты';
+            $mail->Body    = '<h1>Сообщите код андеррайтеру РуКреда: </h1>' . "<h2>$code</h2>";
+
+            $mail->send();
+            echo 'Message has been sent';
+        } catch (Exception $e) {
+            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        }
 
         echo json_encode(['success' => $code]);
         exit;
