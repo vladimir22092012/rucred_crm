@@ -10,7 +10,7 @@ use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 error_reporting(-1);
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'On');
 date_default_timezone_set('Europe/Moscow');
 
 class NeworderController extends Controller
@@ -683,8 +683,7 @@ class NeworderController extends Controller
 
                             if (empty($check_date)) {
                                 if ($settlement_id == 2) {
-                                    $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+2 days'));
-                                } else {
+                                    if (date('H') > 14)
                                     $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
                                 }
                                 break;
