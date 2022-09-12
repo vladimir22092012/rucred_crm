@@ -563,6 +563,7 @@ class NeworderController extends Controller
             unset($user['user_id']);
 
             $user['original'] = 1;
+            $user['stage_registration'] = '8';
 
             if (!empty($old_user->regaddress_id))
                 $this->Addresses->update_address($old_user->regaddress_id, $regaddress);
