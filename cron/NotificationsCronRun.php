@@ -179,7 +179,7 @@ class NotificationsCronRun extends Core
         //Content
         $mail->isHTML(true);                                  //Set email format to HTML
         $mail->Subject = 'RuCred | Уведомление';
-        $mail->Body = "<h2>$ticket->text</h2><br><br>Ссылка на тикет: ".$this->config->back_url.'/ticket'.$ticket->id;
+        $mail->Body = "<h2>$ticket->text</h2><br><br>Ссылка на тикет: ".$this->config->back_url.'/ticket/'.$ticket->id;
 
         $mail->send();
 
