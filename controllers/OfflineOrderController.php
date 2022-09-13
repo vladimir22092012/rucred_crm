@@ -892,7 +892,7 @@ class OfflineOrderController extends Controller
 
         $this->orders->update_order($order_id, ['status' => 20]);
 
-        $communication_theme = $this->CommunicationsThemes->get(48);
+        $communication_theme = $this->CommunicationsThemes->get(47);
 
         $ticket =
             [
@@ -931,7 +931,7 @@ class OfflineOrderController extends Controller
 
         $cron =
             [
-                'template_id' => 12,
+                'template_id' => 10,
                 'user_id' => $order->user_id,
             ];
 
