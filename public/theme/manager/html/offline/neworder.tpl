@@ -499,6 +499,7 @@
                                                     Я не являюсь членом профсоюза
                                                 </label>
                                             </div>
+                                            {*
                                             <div class="form-check" style="margin-left: 25px"
                                                  id="profunion_toggle">
                                                 <input class="form-check-input want_profunion" type="checkbox"
@@ -508,6 +509,7 @@
                                                     Оповестить о желании вступления в профсоюз
                                                 </label>
                                             </div>
+                                            *}
                                         </div>
                                     </div>
                                     <br>
