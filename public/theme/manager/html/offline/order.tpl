@@ -451,6 +451,7 @@
             $('.accept_changes').on('click', function (e) {
 
                 let form = $('#loan_settings').serialize();
+                let order_id = $(this).attr('data-order');
 
                 $.ajax({
                     method: 'POST',
@@ -468,6 +469,7 @@
                             }, 3000);
                         }
                         if (resp['success']) {
+                            get_docs(order_id);
                             location.reload();
                         }
                     }

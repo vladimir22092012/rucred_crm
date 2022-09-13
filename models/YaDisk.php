@@ -30,6 +30,7 @@ class YaDisk extends Core
         $employer = "$employer[0]$employer[1]";
         $date = date('Y-m-d', strtotime($order->probably_start_date));
         $personal_number = $order->personal_number;
+        $contract = $this->contracts->get_contract($order->contract_id);
 
         $scans = $this->Scans->get_scans_by_order_id($order_id);
         $documents = $this->Documents->get_documents($filter);
@@ -58,16 +59,16 @@ class YaDisk extends Core
                     $this->upload(1, $order, $resource, $file_name, $scan);
                 }
                 if ($scan->type == 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl') {
-                    $file_name = "$order->uid Form(scan) 0304";
+                    $file_name = "$order->uid Form 0304(scan)";
                     $file_name = $this->translit($file_name);
 
                     try {
-                        $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/');
+                        $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/');
                         $resource->create();
                     } catch (Exception $e) {
 
                     }
-                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/' . $file_name . '.pdf');
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/' . $file_name . '.pdf');
 
                     $this->upload(1, $order, $resource, $file_name, $scan);
                 }
@@ -83,12 +84,12 @@ class YaDisk extends Core
                 $file_name = $this->translit($file_name);
 
                 try {
-                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/');
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/');
                     $resource->create();
                 } catch (Exception $e) {
 
                 }
-                $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/' . $file_name . '.pdf');
+                $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/' . $file_name . '.pdf');
 
                 $this->upload($upload_scans, $order, $resource, $file_name, $document);
             }
@@ -98,12 +99,12 @@ class YaDisk extends Core
                 $file_name = $this->translit($file_name);
 
                 try {
-                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/');
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/');
                     $resource->create();
                 } catch (Exception $e) {
 
                 }
-                $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/' . $file_name . '.pdf');
+                $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/' . $file_name . '.pdf');
 
                 $this->upload($upload_scans, $order, $resource, $file_name, $document);
             }
@@ -261,12 +262,12 @@ class YaDisk extends Core
                 $file_name = $this->translit($file_name);
 
                 try {
-                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/');
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/');
                     $resource->create();
                 } catch (Exception $e) {
 
                 }
-                $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/' . $file_name . '.pdf');
+                $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/' . $file_name . '.pdf');
 
                 $this->upload($upload_scans, $order, $resource, $file_name, $document);
             }
@@ -276,12 +277,12 @@ class YaDisk extends Core
                 $file_name = $this->translit($file_name);
 
                 try {
-                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/');
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/');
                     $resource->create();
                 } catch (Exception $e) {
 
                 }
-                $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/' . $file_name . '.pdf');
+                $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/' . $file_name . '.pdf');
 
                 $this->upload($upload_scans, $order, $resource, $file_name, $document);
             }
@@ -291,12 +292,12 @@ class YaDisk extends Core
                 $file_name = $this->translit($file_name);
 
                 try {
-                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/');
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/');
                     $resource->create();
                 } catch (Exception $e) {
 
                 }
-                $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/' . $file_name . '.pdf');
+                $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/' . $file_name . '.pdf');
 
                 $this->upload($upload_scans, $order, $resource, $file_name, $document);
             }
@@ -306,12 +307,12 @@ class YaDisk extends Core
                 $file_name = $this->translit($file_name);
 
                 try {
-                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/');
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/');
                     $resource->create();
                 } catch (Exception $e) {
 
                 }
-                $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/' . $file_name . '.pdf');
+                $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/' . $file_name . '.pdf');
 
                 $this->upload($upload_scans, $order, $resource, $file_name, $document);
             }
@@ -321,12 +322,12 @@ class YaDisk extends Core
                 $file_name = $this->translit($file_name);
 
                 try {
-                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/');
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/');
                     $resource->create();
                 } catch (Exception $e) {
 
                 }
-                $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $order->uid . ' ' . $translit_fio . '/' . $file_name . '.pdf');
+                $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/' . $file_name . '.pdf');
 
                 $this->upload($upload_scans, $order, $resource, $file_name, $document);
             }

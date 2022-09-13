@@ -421,8 +421,8 @@
         <tr style="width: 100%;">
             <td style="width: 30%; background-color: #b3b2ab">2.11. Цели использования Заёмщиком микрозайма
             </td>
-            <td style="width: 70%"> {if $loan->reason_flag == 0}&#x2611;{else}&#10065;{/if} На неотложные
-                нужды<br> {if $loan->reason_flag == 1}&#x2611;{else}&#10065;{/if} На рефинансирование обязательств перед
+            <td style="width: 70%"> {if $loan->reason_flag == 1}&#x2611;{else}&#10065;{/if} На неотложные
+                нужды<br> {if $loan->reason_flag == 2}&#x2611;{else}&#10065;{/if} На рефинансирование обязательств перед
                 третьими лицами
             </td>
         </tr>
