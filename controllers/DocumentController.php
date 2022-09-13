@@ -77,7 +77,6 @@ class DocumentController extends Controller
         }
 
         $requisite = $this->Requisites->getDefault($document->params->user_id);
-        $requisite = end($requisite);
         $this->design->assign('requisite', $requisite);
 
         if (is_null($document->params->company_id)) {
