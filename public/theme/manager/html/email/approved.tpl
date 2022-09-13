@@ -17,7 +17,7 @@
         </div>
         <div align="left">
             Вы успешно заключили договор микрозайма с ООО МКК «Русское кредитное общество»<br>№ {$uid}
-            от {$order->probably_start_date|date} г.
+            от {$order->created|date} г.
         </div>
         <div>
             <br><br><br>
@@ -30,7 +30,7 @@
         <div align="left">
             <ul>
                 <li><a target="_blank" href="{$individ_encrypt}">№ {$uid} от
-                        {$order->probably_start_date|date} г.</a></li>
+                        {$order->created|date} г.</a></li>
                 <br>
                 <li><a target="_blank" href="{$graphic_encrypt}">График платажей по договору № {$uid}</a></li>
             </ul>
