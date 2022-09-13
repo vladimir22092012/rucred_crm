@@ -67,6 +67,7 @@ class NotificationsClientsCronRun extends Core
 
                         //Server settings
                         $mail->isSMTP();                                            //Send using SMTP
+                        $mail->CharSet = 'UTF-8';
                         $mail->Host = 'mail.nic.ru';                          //Set the SMTP server to send through
                         $mail->SMTPAuth = true;                                   //Enable SMTP authentication
                         $mail->Username = 'noreply@re-aktiv.ru';                  //SMTP username
