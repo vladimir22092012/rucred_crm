@@ -543,7 +543,7 @@ $(function () {
 
         let html = $(
             '<tr>' +
-            '<td><input class="form-control" name="credits_bank_name[][credits_bank_name]" type="text" value=""></td>' +
+            '<td><input class="form-control bank_validate" name="credits_bank_name[][credits_bank_name]" type="text" value=""></td>' +
             '<td><input class="form-control mask_number" name="credits_rest_sum[][credits_rest_sum]" type="text" value=""></td>' +
             '<td><input class="form-control mask_number" name="credits_month_pay[][credits_month_pay]" type="text" value=""></td>' +
             '<td><input class="form-control validity_period" name="credits_return_date[][credits_return_date]" type="text" value=""></td>' +
@@ -566,7 +566,7 @@ $(function () {
 
         $('#cards_table').append(
             '<tr>' +
-            '<td><input class="form-control" name="cards_bank_name[][cards_bank_name]" type="text" value=""></td>' +
+            '<td><input class="form-control bank_validate" name="cards_bank_name[][cards_bank_name]" type="text" value=""></td>' +
             '<td><input class="form-control mask_number" name="cards_limit[][cards_limit]" type="text" value=""></td>' +
             '<td><input class="form-control mask_number" name="cards_rest_sum[][cards_rest_sum]" type="text" value=""></td>' +
             '<td><input class="form-control validity_period" name="cards_validity_period[][cards_validity_period]" type="text" value=""></td>' +

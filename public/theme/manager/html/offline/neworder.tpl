@@ -326,7 +326,7 @@
                 });
             });
 
-            $(document).on('input', '.fio', function () {
+            $(document).on('input', '.fio', '.bank_validate', function () {
                 let val = $(this).val().toUpperCase();
                 val = val.replace(new RegExp(/[^а-яА-Я\s-]+$/, 'g'), '');
                 $(this).val(val);
@@ -1235,7 +1235,7 @@
                                             {if !empty($order->credits_story)}
                                                 {foreach json_decode($order->credits_story) as $credits_story}
                                                     <tr>
-                                                        <td><input class="form-control"
+                                                        <td><input class="form-control bank_validate"
                                                                    name="credits_bank_name[][credits_bank_name]"
                                                                    type="text"
                                                                    value="{$credits_story->credits_bank_name}"></td>
@@ -1269,7 +1269,7 @@
                                                 {/foreach}
                                             {else}
                                                 <tr>
-                                                    <td><input class="form-control"
+                                                    <td><input class="form-control bank_validate"
                                                                name="credits_bank_name[][credits_bank_name]" type="text"
                                                                value=""></td>
                                                     <td><input class="form-control mask_number"
@@ -1315,7 +1315,7 @@
                                             {if !empty($order->cards_story)}
                                                 {foreach json_decode($order->cards_story) as $cards_story}
                                                     <tr>
-                                                        <td><input class="form-control"
+                                                        <td><input class="form-control bank_validate"
                                                                    name="cards_bank_name[][cards_bank_name]" type="text"
                                                                    value="{$cards_story->cards_bank_name}"></td>
                                                         <td><input class="form-control mask_number"
@@ -1345,7 +1345,7 @@
                                                 {/foreach}
                                             {else}
                                                 <tr>
-                                                    <td><input class="form-control "
+                                                    <td><input class="form-control bank_validate"
                                                                name="cards_bank_name[][cards_bank_name]" type="text"
                                                                value=""></td>
                                                     <td><input class="form-control mask_number"
