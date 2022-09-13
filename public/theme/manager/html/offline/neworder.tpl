@@ -328,7 +328,7 @@
 
             $(document).on('input', '.fio', function () {
                 let val = $(this).val().toUpperCase();
-                val = val.replace(new RegExp(/[^а-яА-Я]+$/, 'g'), '');
+                val = val.replace(new RegExp(/[^а-яА-Я\s-]+$/, 'g'), '');
                 $(this).val(val);
             });
 
