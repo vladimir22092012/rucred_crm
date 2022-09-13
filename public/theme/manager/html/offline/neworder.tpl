@@ -326,7 +326,7 @@
                 });
             });
 
-            $(document).on('input', '.fio', '.bank_validate', function () {
+            $(document).on('input', '.fio, .bank_validate', function () {
                 let val = $(this).val().toUpperCase();
                 val = val.replace(new RegExp(/[^а-яА-Я\s-]+$/, 'g'), '');
                 $(this).val(val);
