@@ -1,6 +1,5 @@
 <?php
 
-use App\Services\MailService;
 use PHPMailer\PHPMailer\PHPMailer;
 
 error_reporting(-1);
