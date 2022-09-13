@@ -1020,7 +1020,7 @@ class OrderController extends Controller
 
             foreach ($documents as $document) {
                 if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA_ONL', 'GRAFIK_OBSL_MKR']))
-                    $docs_email[$document->type] = $document->id;
+                    $docs_email[$document->type] = $document->hash;
             }
 
             $individ_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['INDIVIDUALNIE_USLOVIA'];
