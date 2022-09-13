@@ -1437,6 +1437,13 @@
                                                 </div>
                                             </div>
                                         {/if}
+                                        {if $order->status == 10}
+                                            <div class="card card-primary">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">{if $manager->role == 'middle'}Готово к выдаче{else}У миддла{/if}</h4>
+                                                </div>
+                                            </div>
+                                        {/if}
                                         {if $order->status == 13}
                                             <div class="card card-warning">
                                                 <div class="box text-center">

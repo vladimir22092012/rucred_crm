@@ -157,7 +157,7 @@
                                        class="btn btn-xs {if $filter_status==8}btn-danger{else}btn-outline-danger{/if}">Отказ
                                         клиента</a>
                                     <a href="{if $filter_status==10}{url status=null page=null}{else}{url status=10 page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status==10}btn-success{else}btn-outline-success{/if}">Отправлено</a>
+                                       class="btn btn-xs {if $filter_status==10}btn-primary{else}btn-outline-primary{/if}">{if $manager->role == 'middle'}Готово к выдаче{else}У миддла{/if}</a>
                                     <a href="{if $filter_status==13}{url status=null page=null}{else}{url status=13 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==13}btn-warning{else}btn-outline-warning{/if}">Р.Нецелесообразно</a>
                                     <a href="{if $filter_status==14}{url status=null page=null}{else}{url status=14 page=null}{/if}"
@@ -311,7 +311,7 @@
                                                     {elseif $order->status == 9}
                                                         <span class="label label-primary">Выдан</span>
                                                     {elseif $order->status == 10}
-                                                        <span class="label label-success">Отправлено</span>
+                                                        <span class="label label-primary">{if $manager->role == 'middle'}Готово к выдаче{else}У миддла{/if}</span>
                                                     {elseif $order->status == 14}
                                                         <span class="label label-success">Р.Подтверждена</span>
                                                     {elseif $order->status == 13}

@@ -143,7 +143,7 @@
                                                 {if $client->blocked}<span class="label label-danger">Заблокирован</span>{/if}
                                             </td>
                                             <td style="width: 80px;" class="jsgrid-cell">
-                                                {$client->birth}
+                                                {$client->birth|date}
                                             </td>
                                             <td style="width: 100px;" class="jsgrid-cell">
                                                 {$client->email|escape}
