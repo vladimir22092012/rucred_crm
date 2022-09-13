@@ -348,7 +348,29 @@
                         <label for="name" class="control-label">Текст тикета:</label>
                         <textarea type="text" class="form-control" name="text"></textarea>
                     </div>
-                    <div class="btn btn-danger " data-dismiss="modal">Отмена</div>
+                    <div style="display: flex; justify-content: space-between">
+                        <div class="form-group" style="display: flex; flex-direction: column">
+                            <label class="control-label">Получатель: </label>
+                            {foreach $manager_roles as $role}
+                                <div style="display: flex;">
+                                    <input type="checkbox" class="role-id-in-{$role->id}"
+                                           name="manager_permissions_in[][id]" value="{$role->id}">
+                                    <label style="margin-left: 10px">{$role->translate}</label>
+                                </div>
+                            {/foreach}
+                        </div>
+                        <div class="form-group" style="display: flex; flex-direction: column">
+                            <label class="control-label">Отправитель: </label>
+                            {foreach $manager_roles as $role}
+                                <div style="display: flex;">
+                                    <input type="checkbox" class="role-id-out-{$role->id}"
+                                           name="manager_permissions_out[][id]" value="{$role->id}">
+                                    <label style="margin-left: 10px">{$role->translate}</label>
+                                </div>
+                            {/foreach}
+                        </div>
+                    </div>
+                    <div class="btn btn-danger" data-dismiss="modal">Отмена</div>
                     <div class="btn btn-success save">Сохранить</div>
                 </form>
             </div>

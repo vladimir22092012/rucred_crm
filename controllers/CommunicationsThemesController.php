@@ -44,6 +44,8 @@ class CommunicationsThemesController extends Controller
         $number = $this->request->post('number');
         $head = $this->request->post('head');
         $text = $this->request->post('text');
+        $manager_permissions_in = $this->request->post('manager_permissions_in');
+        $manager_permissions_out = $this->request->post('manager_permissions_out');
 
         $number_check = $this->CommunicationsThemes->gets(['number' => $number]);
 
@@ -62,7 +64,22 @@ class CommunicationsThemesController extends Controller
                     'text' => $text
                 ];
 
-            $this->CommunicationsThemes->add($theme);
+            $theme_id = $this->CommunicationsThemes->add($theme);
+
+            if(!empty($manager_permissions_in)){
+                foreach ($manager_permissions_in as $permission){
+                    $permission = ['role_id' => $permission['id'], 'theme_id' => $theme_id];
+                    $this->ManagersCommunicationsIn->add($permission);
+                }
+            }
+
+            if(!empty($manager_permissions_out)){
+                foreach ($manager_permissions_out as $permission){
+                    $permission = ['role_id' => $permission['id'], 'theme_id' => $theme_id];
+                    $this->ManagersCommunicationsOut->add($permission);
+                }
+            }
+
             exit;
         }
     }
