@@ -1400,7 +1400,7 @@
                                                        value="{$order->probably_start_date|date}">
                                             </div>
                                             <div class="col-4">
-                                                <div class="btn btn-success js-cancel-edit show_reformat_button"
+                                                <div class="btn btn-success js-cancel-edit accept_changes"
                                                      data-manager="{$manager->id}"
                                                      data-order="{$order->order_id}"
                                                      data-user="{$order->user_id}">
