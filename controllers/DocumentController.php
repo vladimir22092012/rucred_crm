@@ -76,7 +76,7 @@ class DocumentController extends Controller
             $this->design->assign('faktadress', $faktadress);
         }
 
-        $requisite = $this->Requisites->get_requisites(['user_id' => $document->params->user_id]);
+        $requisite = $this->Requisites->getDefault($document->params->user_id);
         $requisite = end($requisite);
         $this->design->assign('requisite', $requisite);
 

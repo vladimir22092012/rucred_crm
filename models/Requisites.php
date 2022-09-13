@@ -59,6 +59,22 @@ class Requisites extends Core
         
         return $results;
 	}
+
+	public function getDefault($userId)
+    {
+        $query = $this->db->placehold("
+            SELECT * 
+            FROM __bank_requisites
+            WHERE user_id = ?
+            AND default = 1
+        ", $userId);
+
+        $this->db->query($query);
+
+        $result = $this->db->result();
+
+        return $result;
+    }
     
 	public function count_requisites($filter = array())
 	{
