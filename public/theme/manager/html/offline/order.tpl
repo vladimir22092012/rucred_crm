@@ -1583,6 +1583,20 @@
                                                 </div>
                                             </div>
                                         {/if}
+                                        {if $order->status == 11}
+                                            <div class="card card-danger">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">М.Отказ</h4>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        {if $order->status == 20}
+                                            <div class="card card-danger">
+                                                <div class="box text-center">
+                                                    <h4 class="text-white">А.Отказ</h4>
+                                                </div>
+                                            </div>
+                                        {/if}
                                         {if in_array($order->status, [4])}
                                             <div class="card card-primary">
                                                 <div class="box text-center">
