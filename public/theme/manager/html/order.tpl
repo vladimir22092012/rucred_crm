@@ -655,18 +655,6 @@
                 $('#modal_restruct').modal();
             });
 
-            $('.show_reformat_button').on('click', function () {
-                let start_date = $('#probably_start_date').val();
-                let tarif = $('select[name="loan_tarif"] option:selected').text();
-                let amount = $('input[name="amount"]').val();
-
-                $('.accept_changes').show();
-
-                $('.probably_start_date').text(start_date);
-                $('.loantype_name').text(tarif);
-                $('.loan_amount').text(new Intl.NumberFormat('ru-RU').format(amount));
-            });
-
             $('#new_term').on('change', function () {
                 let order_id = $(this).attr('data-order');
                 let pay_date = $('input[name="pay_date"]').val();
@@ -2315,11 +2303,6 @@
                                                                class="btn btn-warning reform"
                                                                value="Редактировать">
                                                     *}
-                                                    {if $order->status != 5}
-                                                        <input style="margin-left: 30px; display: none" type="button"
-                                                               class="btn btn-primary accept_changes"
-                                                               value="Переформатировать график">
-                                                    {/if}
                                                 {/if}
                                             </h6>
 
