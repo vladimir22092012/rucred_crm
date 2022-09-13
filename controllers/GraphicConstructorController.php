@@ -1,5 +1,9 @@
 <?php
 
+error_reporting(-1);
+ini_set('display_errors', 'On');
+date_default_timezone_set('Europe/Moscow');
+
 class GraphicConstructorController extends Controller
 {
     public function fetch()
@@ -183,8 +187,8 @@ class GraphicConstructorController extends Controller
 
             $paydate->add(new DateInterval('P1M'));
         } else {
-            $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date)));
-            $first_pay = new DateTime(date('Y-m-' . $first_pay_day, strtotime($start_date)));
+            $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date->format('Y-m-d'))));
+            $first_pay = new DateTime(date('Y-m-' . $first_pay_day, strtotime($start_date->format('Y-m-d'))));
             $first_pay->add(new DateInterval('P1M'));
             $count_days_this_month = date('t', strtotime($issuance_date->format('Y-m-d')));
             $paydate = $this->check_pay_date($first_pay);
