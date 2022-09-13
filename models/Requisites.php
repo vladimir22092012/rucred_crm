@@ -64,9 +64,9 @@ class Requisites extends Core
     {
         $query = $this->db->placehold("
             SELECT * 
-            FROM __bank_requisites
+            FROM s_bank_requisites
             WHERE user_id = ?
-            AND default = 1
+            AND `default` = 1
         ", $userId);
 
         $this->db->query($query);
