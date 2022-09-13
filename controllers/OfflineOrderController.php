@@ -115,6 +115,11 @@ class OfflineOrderController extends Controller
                     $this->json_output($response);
                     break;
 
+                case 'reject_by_under':
+                    $response = $this->action_reject_by_under();
+                    $this->json_output($response);
+                    break;
+
                 // одобрить заявку
                 case 'approve_order':
                     $this->approve_order_action();
@@ -251,6 +256,10 @@ class OfflineOrderController extends Controller
 
                 case 'accept_approve_by_under':
                     $this->action_accept_approve_by_under();
+                    break;
+
+                case 'reject_by_middle':
+                    $this->action_reject_by_middle();
                     break;
 
 
@@ -875,6 +884,62 @@ class OfflineOrderController extends Controller
         return array('success' => 1, 'status' => 1, 'manager' => $this->manager->name);
     }
 
+    private function action_reject_by_under()
+    {
+        $order_id = $this->request->post('order_id');
+
+        $order = $this->orders->get_order($order_id);
+
+        $this->orders->update_order($order_id, ['status' => 20]);
+
+        $communication_theme = $this->CommunicationsThemes->get(48);
+
+        $ticket =
+            [
+                'creator' => $this->manager->id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => $communication_theme->id,
+                'company_id' => $order->company_id,
+                'group_id' => 2,
+                'order_id' => $order_id,
+                'status' => 0
+            ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+
+        $this->TicketMessages->add_message($message);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
+
+        $cron =
+            [
+                'template_id' => 12,
+                'user_id' => $order->user_id,
+            ];
+
+        $this->NotificationsClientsCron->add($cron);
+
+        exit;
+    }
+
     /**
      * OrderController::approve_order_action()
      * Одобрение заявки
@@ -1315,7 +1380,6 @@ class OfflineOrderController extends Controller
         if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
             return array('error' => 'Не хватает прав для выполнения операции');
 
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($order);echo '</pre><hr />';
         $this->orders->update_order($order_id, $update);
 
         $this->changelogs->add_changelog(array(
@@ -1328,68 +1392,53 @@ class OfflineOrderController extends Controller
             'user_id' => $order->user_id,
         ));
 
-        // отправляем письмо независимо от того сняли за причину отказа или нет
-        $this->notify->send_reject_reason($order_id);
+        $communication_theme = $this->CommunicationsThemes->get(47);
 
-        // проверяем были ли уже списания за причину отказа, что бы не списать второй раз
-        $reject_operations = $this->operations->get_operations(array(
-            'type' => 'REJECT_REASON',
-            'order_id' => $order->order_id
-        ));
+        $ticket =
+            [
+                'creator' => $this->manager->id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => $communication_theme->id,
+                'company_id' => $order->company_id,
+                'group_id' => $order->group_id,
+                'order_id' => $order_id,
+                'status' => 0
+            ];
 
-        // Снимаем за причину отказа
-        if (empty($reject_operations)) {
-            if (!empty($order->service_reason) && $status == 3) {
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+        $this->TicketMessages->add_message($message);
 
-                $service_summ = $this->settings->reject_reason_cost * 100;
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
 
-                $description = 'Услуга "Узнай причину отказа"';
+        $this->NotificationsCron->add($cron);
 
-                $response = $this->best2pay->recurrent($order->card_id, $service_summ, $description);
-                //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump(htmlspecialchars($response));echo '</pre><hr />';
+        $cron =
+            [
+                'template_id' => 10,
+                'user_id' => $order->user_id,
+            ];
 
-                $xml = simplexml_load_string($response);
-                $b2p_status = (string)$xml->state;
-
-                if ($b2p_status == 'APPROVED') {
-                    $transaction = $this->transactions->get_operation_transaction($xml->order_id, $xml->id);
-
-                    $operation_id = $this->operations->add_operation(array(
-                        'contract_id' => 0,
-                        'user_id' => $order->user_id,
-                        'order_id' => $order->order_id,
-                        'type' => 'REJECT_REASON',
-                        'amount' => $this->settings->reject_reason_cost,
-                        'created' => date('Y-m-d H:i:s'),
-                        'transaction_id' => $transaction->id,
-                    ));
-
-                    $operation = $this->operations->get_operation($operation_id);
-                    $operation->transaction = $this->transactions->get_transaction($transaction->id);
-
-                    $this->operations->update_operation($operation->id, array(
-                        'sent_status' => 2,
-                        'sent_date' => date('Y-m-d H:i:s')
-                    ));
-
-                    //Отправляем чек
-                    $this->cloudkassir->send_reject_reason($order_id);
-
-
-                    return true;
-                    //echo __FILE__.' '.__LINE__.'<br /><pre>';echo(htmlspecialchars($recurring));echo $contract_id.'</pre><hr />';exit;
-
-                } else {
-                    return false;
-                }
-            }
-        }
+        $this->NotificationsClientsCron->add($cron);
 
         return array('success' => 1, 'status' => $status);
     }
 
-    private
-    function status_action($status)
+    private function status_action($status)
     {
         $order_id = $this->request->post('order_id', 'integer');
 
@@ -3056,8 +3105,7 @@ class OfflineOrderController extends Controller
         exit;
     }
 
-    private
-    function action_change_photo_status()
+    private function action_change_photo_status()
     {
         $status = $this->request->post('status', 'integer');
         $file_id = $this->request->post('file_id');
@@ -3144,7 +3192,7 @@ class OfflineOrderController extends Controller
         $this->orders->update_order($order_id, ['status' => 15]);
         $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
 
-        $communication_theme = $this->CommunicationsThemes->get(11);
+        $communication_theme = $this->CommunicationsThemes->get(48);
 
         $ticket =
             [
@@ -3180,6 +3228,14 @@ class OfflineOrderController extends Controller
             ];
 
         $this->NotificationsCron->add($cron);
+
+        $cron =
+            [
+                'template_id' => 12,
+                'user_id' => $order->user_id,
+            ];
+
+        $this->NotificationsClientsCron->add($cron);
 
 
         exit;
@@ -4759,6 +4815,60 @@ class OfflineOrderController extends Controller
 
         $this->orders->update_order($order_id, ['status' => 17]);
         $this->PaymentsSchedules->update($order->payment_schedule->id, ['is_confirmed' => 1]);
+    }
+
+    private function action_reject_by_middle()
+    {
+        $order_id = $this->request->post('order_id');
+
+        $order = $this->orders->get_order($order_id);
+
+        $this->orders->update_order($order_id, ['status' => 11]);
+
+        $communication_theme = $this->CommunicationsThemes->get(47);
+
+        $ticket =
+            [
+                'creator' => $this->manager->id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => $communication_theme->id,
+                'company_id' => $order->company_id,
+                'group_id' => 2,
+                'order_id' => $order_id,
+                'status' => 0
+            ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+
+        $this->TicketMessages->add_message($message);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
+
+        $cron =
+            [
+                'template_id' => 10,
+                'user_id' => $order->user_id,
+            ];
+
+        $this->NotificationsClientsCron->add($cron);
     }
 
 }

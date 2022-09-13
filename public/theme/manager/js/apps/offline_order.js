@@ -341,53 +341,6 @@ console.info(resp);
 
 
         })
-
-        $(document).on('submit', '.js-confirm-contract', function(e){
-            e.preventDefault();
-
-            var $form = $(this);
-
-            if ($form.hasClass('loading'))
-                return false;
-
-            var contract_id = $form.find('.js-contract-id').val();
-            var phone = $form.find('.js-contract-phone').val();
-            var code = $form.find('.js-contract-code').val();
-
-            $.ajax({
-                type: 'POST',
-                data: {
-                    action: 'confirm_contract',
-                    contract_id: contract_id,
-                    phone: phone,
-                    code: code,
-                },
-                beforeSend: function(){
-                    $form.addClass('loading');
-                },
-                success: function(resp){
-                    $form.removeClass('loading');
-                    if (!!resp.error)
-                    {
-                        Swal.fire({
-                            title: 'Ошибка!',
-                            text: resp.error,
-                            type: 'error',
-                        });
-                    }
-                    else if (!!resp.success)
-                    {
-                        app.update_page();
-console.log(resp);
-                    }
-                    else
-                    {
-                        console.error(resp);
-                    }
-
-                }
-            })
-        });
     };
 
     var _init_accept_order = function(){

@@ -960,6 +960,38 @@
 
                 reset_schedule(delete_restruct);
             });
+
+            $('.reject_by_middle').on('click', function (e) {
+                e.preventDefault();
+
+                let order_id = $(this).attr('data-order');
+
+                $.ajax({
+                    method: 'POST',
+                    data:{
+                        action: 'reject_by_middle',
+                        order_id: order_id,
+                    },
+                    success:function () {
+                        location.reload();
+                    }
+                })
+            });
+
+            $('.reject_by_under').on('click', function (e) {
+                let order_id = $(this).attr('data-order');
+
+                $.ajax({
+                    method: 'POST',
+                    data:{
+                        action: 'reject_by_under',
+                        order_id: order_id,
+                    },
+                    success:function () {
+                        location.reload();
+                    }
+                })
+            });
         });
     </script>
     <script>
@@ -1609,20 +1641,18 @@
                                         {/if}
                                         {if $order->status == 10}
                                             {if $order->settlement_id == 2 && in_array($manager->role, ['middle', 'admin', 'developer'])}
-                                                <form class=" pt-1 js-confirm-contract">
                                                     <div class="pt-1 pb-2">
                                                         <button class="btn btn-info btn-lg btn-block send_money"
                                                                 data-order="{$order->order_id}">
                                                             <i class="fas fa-hospital-symbol"></i>
                                                             <span>Одобрить заявку и выплатить средства</span>
                                                         </button>
-                                                        <button class="btn btn-danger btn-lg btn-block"
+                                                        <button class="btn btn-danger btn-lg btn-block reject_by_middle"
                                                                 data-order="{$order->order_id}">
                                                             <i class="fas fa-hospital-symbol"></i>
                                                             <span>Отказать в предоставлении займа</span>
                                                         </button>
                                                     </div>
-                                                </form>
                                             {/if}
                                             {if $order->settlement_id == 3 && in_array($manager->role, ['middle', 'admin', 'developer'])}
                                                 {if empty($issuance_transaction)}
@@ -1851,7 +1881,7 @@
                                                     data-manager="{$manager->id}">
                                                 <span>Принять в работу и передать Работодателю</span>
                                             </button>
-                                            <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
+                                            <button class="btn btn-danger btn-block"
                                                     data-event="13" data-user="{$order->user_id}"
                                                     data-order="{$order->order_id}"
                                                     data-manager="{$manager->id}">

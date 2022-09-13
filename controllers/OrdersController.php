@@ -112,7 +112,7 @@ class OrdersController extends Controller
             $filter['status'] = $status;
             $this->design->assign('filter_status', $status);
         }else{
-            $filter['status'] = [0,1,2,4,6,8,9,14,15,10,13];
+            $filter['status'] = [0,1,2,4,6,8,9,14,15,10,11,13];
         }
 
         $orders_source = $this->request->get('source');

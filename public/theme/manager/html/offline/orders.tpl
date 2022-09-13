@@ -166,12 +166,16 @@
                                         клиента</a>
                                     <a href="{if $filter_status==10}{url status=null page=null}{else}{url status=10 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==10}btn-primary{else}btn-outline-primary{/if}">{if $manager->role == 'middle'}Готово к выдаче{else}У миддла{/if}</a>
+                                    <a href="{if $filter_status==20}{url status=null page=null}{else}{url status=20 page=null}{/if}"
+                                       class="btn btn-xs {if $filter_status==20}btn-danger{else}btn-outline-danger{/if}">А.Отказ</a>
                                     <a href="{if $filter_status==14}{url status=null page=null}{else}{url status=14 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==14}btn-success{else}btn-outline-success{/if}">Р.Подтверждена</a>
                                     <a href="{if $filter_status==13}{url status=null page=null}{else}{url status=13 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==13}btn-warning{else}btn-outline-warning{/if}">Р.Нецелесообразно</a>
                                     <a href="{if $filter_status==15}{url status=null page=null}{else}{url status=15 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==15}btn-danger{else}btn-outline-danger{/if}">Р.Отклонена</a>
+                                    <a href="{if $filter_status==11}{url status=null page=null}{else}{url status=11 page=null}{/if}"
+                                       class="btn btn-xs {if $filter_status==11}btn-danger{else}btn-outline-danger{/if}">М.Отказ</a>
                                     {if $filter_status}
                                         <input type="hidden" value="{$filter_status}" id="filter_status"/>
                                     {/if}
@@ -315,6 +319,10 @@
                                                         <span class="label label-warning">Р.Нецелесообразно</span>
                                                     {elseif $order->status == 15}
                                                         <span class="label label-danger">Р.Отклонена</span>
+                                                    {elseif $order->status == 11}
+                                                        <span class="label label-danger">М.Отказ</span>
+                                                    {elseif $order->status == 20}
+                                                        <span class="label label-danger">А.Отказ</span>
                                                     {/if}
                                                 </small>
                                             </td>
