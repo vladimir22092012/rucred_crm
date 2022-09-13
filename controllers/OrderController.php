@@ -1023,7 +1023,7 @@ class OrderController extends Controller
                     $docs_email[$document->type] = $document->hash;
             }
 
-            $individ_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['INDIVIDUALNIE_USLOVIA'];
+            $individ_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['INDIVIDUALNIE_USLOVIA_ONL'];
             $graphic_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['GRAFIK_OBSL_MKR'];
 
             $this->design->assign('individ_encrypt', $individ_encrypt);
