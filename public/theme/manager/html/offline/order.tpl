@@ -1548,9 +1548,9 @@
                                             </div>
                                         {/if}
                                         {if $order->status == 10}
-                                            <div class="card card-success">
+                                            <div class="card card-primary">
                                                 <div class="box text-center">
-                                                    <h4 class="text-white">Отправлено</h4>
+                                                    <h4 class="text-white">{if $manager->role == 'middle'}Готово к выдаче{else}У миддла{/if}</h4>
                                                 </div>
                                             </div>
                                         {/if}
