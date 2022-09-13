@@ -84,6 +84,10 @@ class ManagerController extends Controller
                     case 'sms_note_flag':
                         $this->action_sms_note_flag();
                         break;
+
+                    case 'add_to_teh_chat':
+                        $this->action_add_to_teh_chat();
+                        break;
                 endswitch;
             } else {
                 $user = new StdClass();
@@ -105,10 +109,10 @@ class ManagerController extends Controller
                 $user->email_confirmed = $this->request->post('email_linked');
                 $user->phone_confirmed = $this->request->post('phone_linked');
 
-                if(empty($user->email_confirmed))
+                if (empty($user->email_confirmed))
                     unset($user->email_confirmed);
 
-                if(empty($user->phone_confirmed))
+                if (empty($user->phone_confirmed))
                     unset($user->phone_confirmed);
 
                 $same_login = $this->Managers->check_same_login($user->login, $user_id);
@@ -166,8 +170,7 @@ class ManagerController extends Controller
                         $manager = $this->managers->get_manager($user_id);
                         $user->id = $this->managers->update_manager($user_id, $user);
 
-                        if($manager->phone != $user->phone)
-                        {
+                        if ($manager->phone != $user->phone) {
                             $this->TelegramUsers->delete($user_id, 1);
                             $this->ViberUsers->delete($user_id, 1);
                             $this->managers->update_manager($user_id, ['telegram_note' => 0, 'viber_note' => 0]);
@@ -271,8 +274,8 @@ class ManagerController extends Controller
         }
         $this->design->assign('managers_credentials', $managers_credentials);
 
-        if(isset($to_manager)){
-            header('Location: '.$this->config->back_url.'/manager/'.$to_manager);
+        if (isset($to_manager)) {
+            header('Location: ' . $this->config->back_url . '/manager/' . $to_manager);
             exit;
         }
 
@@ -491,11 +494,11 @@ class ManagerController extends Controller
 
             $log =
                 [
-                    'user_id'    => $manager_id,
+                    'user_id' => $manager_id,
                     'is_manager' => 1,
-                    'type_id'    => 1,
-                    'resp'       => json_encode($resp),
-                    'text'       => $message
+                    'type_id' => 1,
+                    'resp' => json_encode($resp),
+                    'text' => $message
                 ];
 
             $this->NotificationsLogs->add($log);
@@ -540,7 +543,7 @@ class ManagerController extends Controller
             //Content
             $mail->isHTML(true);                                  //Set email format to HTML
             $mail->Subject = 'RuCred | Уведомление';
-            $mail->Body = '<h1>'.$this->config->back_url.'/redirect_api?user_id=' . $manager_id . '</h1>';
+            $mail->Body = '<h1>' . $this->config->back_url . '/redirect_api?user_id=' . $manager_id . '</h1>';
 
             $mail->send();
 
@@ -555,10 +558,10 @@ class ManagerController extends Controller
 
             $log =
                 [
-                    'user_id'    => $manager_id,
+                    'user_id' => $manager_id,
                     'is_manager' => 1,
-                    'type_id'    => 1,
-                    'text'       => $this->config->back_url.'/redirect_api?user_id=' . $manager_id
+                    'type_id' => 1,
+                    'text' => $this->config->back_url . '/redirect_api?user_id=' . $manager_id
                 ];
 
             $this->NotificationsLogs->add($log);
@@ -708,6 +711,17 @@ class ManagerController extends Controller
         $manager_id = $this->request->post('user_id');
 
         $this->managers->update_manager($manager_id, ['sms_note' => $flag]);
+        exit;
+    }
+
+    private function action_add_to_teh_chat()
+    {
+        $manager_id = $this->request->post('manager_id');
+        $manager = $this->managers->get_manager($manager_id);
+        $message = "Присоединиться в чат технической поддержки: https://t.me/wEjA3IMZeHMyZGZi";
+
+        $this->sms->send($manager->phone, $message);
+
         exit;
     }
 }

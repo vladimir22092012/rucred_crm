@@ -573,6 +573,29 @@
                     }
                 })
             });
+
+            $(document).on('click', '.add_to_teh_chat', function () {
+                let manager_id = $(this).attr('data-manager');
+                
+                $.ajax({
+                    method: 'POST',
+                    data:{
+                        action: 'add_to_teh_chat',
+                        manager_id: manager_id
+                    },
+                    success: function () {
+                        Swal.fire({
+                            title: 'Смс успешно отправлена',
+                            confirmButtonText: 'ОК'
+                        });
+
+                        $('.add_to_teh_chat').removeClass('btn-outline-primary');
+                        $('.add_to_teh_chat').addClass('btn-primary');
+                        $('.add_to_teh_chat').text('Отправлено');
+                        $('.add_to_teh_chat').removeClass('add_to_teh_chat');
+                    }
+                })
+            });
         });
     </script>
     <script>
@@ -692,6 +715,10 @@
                                     </div>
                                 </div>
                             </div>
+                        {/if}
+                        {if !empty($user->id)}
+                            <br>
+                            <div data-manager="{$user->id}" class="btn btn-outline-primary add_to_teh_chat">Добавить в чат поддержки</div>
                         {/if}
                     </div>
 
