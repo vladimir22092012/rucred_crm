@@ -1895,7 +1895,7 @@
                                                     data-manager="{$manager->id}">
                                                 <span>Принять в работу и передать Работодателю</span>
                                             </button>
-                                            <button class="btn btn-danger btn-block"
+                                            <button class="btn btn-danger btn-block reject_by_under"
                                                     data-event="13" data-user="{$order->user_id}"
                                                     data-order="{$order->order_id}"
                                                     data-manager="{$manager->id}">
