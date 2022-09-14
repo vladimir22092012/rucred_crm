@@ -1307,14 +1307,14 @@
     <!-- ============================================================== -->
     <div class="container-fluid">
         <div class="row page-titles">
-            <div class="col-md-3 col-8 align-self-center">
+            <div class="col-md-6 col-8 align-self-center">
                 <h4 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i> Заявка
-                    № {$order->uid}</h4>
+                    № {if !empty($contract->number)}{$contract->number}{else}{$order->group_number} {$order->company_number} {$order->personal_number}{/if}</h4>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
                     <li class="breadcrumb-item"><a href="offline_orders">Заявки</a></li>
                     <li class="breadcrumb-item active">Заявка
-                        № {$order->uid}</li>
+                        № {if !empty($contract->number)}{$contract->number}{else}{$order->group_number} {$order->company_number} {$order->personal_number}{/if}</li>
                 </ol>
             </div>
         </div>
