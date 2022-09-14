@@ -704,7 +704,7 @@ $(function () {
                             $('input[name="snils"]').val(user['snils']);
                             $('input[name="inn"]').val(user['inn']);
                             $('input[class="form-control account_number"]').val(user['requisites']['number']);
-                            $('input[class="form-control bik"]').trigger('input').val(user['requisites']['bik']);
+                            $('.bik').trigger('input').val(user['requisites']['bik']);
                             $('input[class="form-control bank_name"]').val(user['requisites']['name']);
                             $('input[class="form-control cor"]').val(user['requisites']['correspondent_acc']);
                         }
