@@ -1453,11 +1453,11 @@
                                             </div>
                                             <div class="form-group mb-1">
                                                 <input type="text" name="firstname" value="{$order->firstname}"
-                                                       class="form-control" placeholder="Имя"/>
+                                                       class="form-control" placeholder="Имя" {if $client_status != 'Новая'}disabled{/if}/>
                                             </div>
                                             <div class="form-group mb-1">
                                                 <input type="text" name="patronymic" value="{$order->patronymic}"
-                                                       class="form-control" placeholder="Отчество"/>
+                                                       class="form-control" placeholder="Отчество" {if $client_status != 'Новая'}disabled{/if}/>
                                             </div>
                                             <div class="form-group mb-1">
                                                 <input type="text" name="phone_mobile" value="{$order->phone_mobile}"
@@ -2160,7 +2160,7 @@
                                                                 class="form-group mb-1 {if in_array('empty_birth', (array)$contactdata_error)}has-danger{/if}">
                                                             <label class="control-label">Дата рождения</label>
                                                             <input type="text" name="birth" value="{$order->birth}"
-                                                                   class="form-control" placeholder="" required="true"/>
+                                                                   class="form-control" placeholder="" {if $client_status != 'Новая'}disabled{else}required="true"{/if}/>
                                                             {if in_array('empty_birth', (array)$contactdata_error)}
                                                                 <small class="form-control-feedback">Укажите дату
                                                                     рождения!
@@ -3199,7 +3199,7 @@
                                             <h6 class="card-header text-white">
                                                 <span>ИНН</span>
                                                 <span class="float-right">
-                                                    {if in_array($order->status, [0])}
+                                                    {if in_array($order->status, [0]) && $client_status == 'Новая'}
                                                         <a href="" class="text-white inn-edit"><i
                                                                     class=" fas fa-edit"></i></a>
                                                     {/if}
@@ -3234,7 +3234,7 @@
                                             <h6 class="card-header text-white">
                                                 <span>СНИЛС</span>
                                                 <span class="float-right">
-                                                    {if in_array($order->status, [0])}
+                                                    {if in_array($order->status, [0]) && $client_status == 'Новая'}
                                                         <a href="" class="text-white snils-edit"><i
                                                                     class=" fas fa-edit"></i></a>
                                                     {/if}

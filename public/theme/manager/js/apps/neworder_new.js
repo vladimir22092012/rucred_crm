@@ -278,7 +278,7 @@ $(function () {
         minChars: 3,
         /* Вызывается, когда пользователь выбирает одну из подсказок */
         onSelect: function (suggestion) {
-            $(this).val(suggestion.data.bic).trigger('input');
+            $(this).trigger('input').val(suggestion.data.bic);
             $('.bank_name').val(suggestion.value);
             $('.cor').trigger('input').val(suggestion.data.correspondent_account);
         }
@@ -343,10 +343,6 @@ $(function () {
     $('.bik').click(function () {
         $(this).setCursorPosition(0);
     }).mask('999999999');
-
-    $('.cor').click(function () {
-        $(this).setCursorPosition(0);
-    }).mask('99999999999999999999');
 
     $('.validity_period').click(function () {
         $(this).setCursorPosition(0);
@@ -707,6 +703,10 @@ $(function () {
                             $('input[name="passport_date"]').val(user['passport_date']);
                             $('input[name="snils"]').val(user['snils']);
                             $('input[name="inn"]').val(user['inn']);
+                            $('input[class="form-control account_number"]').val(user['requisites']['number']);
+                            $('input[class="form-control bik"]').trigger('input').val(user['requisites']['bik']);
+                            $('input[class="form-control bank_name"]').val(user['requisites']['name']);
+                            $('input[class="form-control cor"]').val(user['requisites']['correspondent_acc']);
                         }
                     })
                 });

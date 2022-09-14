@@ -956,6 +956,12 @@ class NeworderController extends Controller
                             'comment' => 'Первый график'
                         ];
 
+                    $old_orders = $this->orders->get_orders(['user_id' => $user_id]);
+
+                    if(count($old_orders) > 1){
+                        $this->users->update_user($user_id, ['regaddress_id' => 0, 'faktaddress_id' => 0]);
+                    }
+
                     $this->PaymentsSchedules->add($schedules);
 
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
@@ -1019,6 +1025,12 @@ class NeworderController extends Controller
                             );
                             $this->scorings->add_scoring($add_scoring);
                         }
+                    }
+
+                    $old_orders = $this->orders->get_orders(['user_id' => $user_id]);
+
+                    if(count($old_orders) > 1){
+                        $this->users->update_user($user_id, ['regaddress_id' => 0, 'faktaddress_id' => 0]);
                     }
 
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
@@ -1508,6 +1520,18 @@ class NeworderController extends Controller
         $user_id = $this->request->post('user_id');
 
         $user = $this->users->get_user($user_id);
+
+        $requisites = $this->Requisites->getDefault($user_id);
+
+        if(!empty($requisites))
+        {
+            $user_fio = "$user->lastname $user->firstname $user->patronymic";
+            $requisites_fio = $requisites->holder;
+
+            if($user_fio == $requisites_fio)
+                $user->requisites = $requisites;
+        }
+
         $passport_serial = explode(' ', $user->passport_serial);
         $user->passport_series = $passport_serial[0];
         $user->passport_number = $passport_serial[1];
