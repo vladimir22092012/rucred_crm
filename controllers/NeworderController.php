@@ -1077,7 +1077,10 @@ class NeworderController extends Controller
         INSERT INTO s_sms_messages
         SET phone = ?, code = ?, response = ?, ip = ?, created = ?
         ', $phone, $code, $response['resp'], $_SERVER['REMOTE_ADDR'] ?? '', date('Y-m-d H:i:s'));
-        echo json_encode(['success' => 1]);
+        echo json_encode([
+            'success' => 1,
+            'code' => $code
+        ]);
         exit;
     }
 

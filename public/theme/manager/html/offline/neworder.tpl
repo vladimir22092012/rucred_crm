@@ -5,20 +5,23 @@
     <!-- Bootstrap tether Core JavaScript -->
     <script src="theme/{$settings->theme|escape}/assets/plugins/bootstrap/js/popper.min.js?v=1.02"></script>
     <script src="theme/{$settings->theme|escape}/assets/plugins/bootstrap/js/bootstrap.js?v=1.01"></script>
-    <script src="theme/{$settings->theme|escape}/assets/plugins/sticky-kit-master/dist/sticky-kit.min.js?v=1.01"></script>
-    <script src="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     <script
-            src="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
+        src="theme/{$settings->theme|escape}/assets/plugins/sticky-kit-master/dist/sticky-kit.min.js?v=1.01"></script>
+    <script
+        src="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
+    <script
+        src="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     <script src="theme/manager/assets/plugins/moment/moment.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
     <script src="theme/manager/assets/plugins/daterangepicker/daterangepicker.js"></script>
     <script
-            src="theme/{$settings->theme|escape}/assets/plugins/inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
+        src="theme/{$settings->theme|escape}/assets/plugins/inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
     <!--Menu sidebar -->
     <script src="theme/{$settings->theme|escape}/js/sidebarmenu.js?v=1.01"></script>
     <!-- slimscrollbar scrollbar JavaScript -->
     <script src="theme/{$settings->theme|escape}/js/jquery.slimscroll.js?v=1.01"></script>
-    <script src="theme/{$settings->theme|escape}/assets/plugins/inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
+    <script
+        src="theme/{$settings->theme|escape}/assets/plugins/inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/neworder_new.js?v=1.02"></script>
@@ -53,8 +56,9 @@
                                 title: response['error'],
                                 confirmButtonText: 'ОК'
                             });
-                        }
-                        else {
+                        } else {
+                            let code = response['code'];
+                            $('.phone_send_code').show().text(code);
                             $('.show_phone_code').show();
                         }
                     }
@@ -96,7 +100,7 @@
             $('.accept_email_edit').click(function (e) {
                 e.preventDefault();
 
-                let email = $('input[class="form-control email"]').val();
+                let email = $('input[class="form-control casing-upper-mask email"]').val().toLowerCase();
                 let user_id = $(this).attr('data-user');
 
                 $.ajax({
@@ -113,8 +117,7 @@
                                 title: response['error'],
                                 confirmButtonText: 'ОК'
                             });
-                        }
-                        else {
+                        } else {
                             $('.show_email_code').show();
                             $('.email_code_show').text(response['success']);
                             $('.email_code_show').show();
@@ -157,8 +160,7 @@
 
                 if (order['prev_fio'] != null) {
                     $('input[id="change_fio2"]').trigger('click');
-                }
-                else {
+                } else {
                     $('input[id="change_fio1"]').trigger('click');
                 }
 
@@ -334,18 +336,18 @@
 
             $('select[name="settlement"]').on('change', function () {
 
-                if($(this).val() == 2){
+                if ($(this).val() == 2) {
                     $('select[name="payout_type"]').show();
 
-                    if(order['card_id']){
+                    if (order['card_id']) {
                         $('.requisits').hide();
                         $('.cardes').show();
                     }
-                    if(order['requisite_id']){
+                    if (order['requisite_id']) {
                         $('.cardes').hide();
                         $('.requisits').show();
                     }
-                }else{
+                } else {
                     $('select[name="payout_type"]').hide();
                     $('.cardes').hide();
                     $('.requisits').show();
@@ -357,7 +359,7 @@
 
                 $.ajax({
                     method: 'POST',
-                    data:{
+                    data: {
                         action: 'delete_draft',
                         orderId: orderId
                     },
@@ -448,7 +450,7 @@
                     <div class="card-header">
                         <h4 class="mb-0 text-white float-left">Заявка {$order->order_id}</h4>
                         <small
-                                class="text-white float-right">{$offline_points[$manager->offline_point_id]->address}</small>
+                            class="text-white float-right">{$offline_points[$manager->offline_point_id]->address}</small>
                     </div>
                     <div class="card-body">
                         <div class="form-body">
@@ -584,26 +586,30 @@
                                             <label class="control-label">Место рождения</label>
                                             <label class="control-label" style="margin-left: 240px">Дата
                                                 рождения</label><br>
-                                            <input class="form-control" style="width: 350px; margin-left: 25px"
+                                            <input class="form-control casing-upper-mask"
+                                                   style="width: 350px; margin-left: 25px"
                                                    type="text" name="birth_place" value="{$order->birth_place}""
                                             />
                                             <input type="text" style="width: 180px; margin-left: 25px"
                                                    name="birth"
-                                                   class="form-control daterange"  value="{$order->birth|date}">
+                                                   class="form-control daterange" value="{$order->birth|date}">
                                         </div>
                                         <br>
                                         <div class="phone_edit_form" style="width: 100%">
                                             <label class="control-label">Телефон{if $order->phone_mobile_confirmed == 1}
                                                 <span>(подтвержден)</span>{/if}</label>
                                             <div class="form-row">
-                                                <div class="col">
-                                                    <input style="width: 400px; margin-left: 25px"
+                                                <div class="col" style="position: relative">
+                                                    <input style="width: calc(100% - 45px); margin-left: 25px"
                                                            class="form-control phone_num"
                                                            type="text"
                                                            name="phone"
                                                            placeholder="+7(900)000-00-00"
                                                            value="{$order->phone_mobile}"
                                                            autocomplete="off"/>
+                                                    <div class="phone_send_code badge badge-danger"
+                                                         style="position: absolute; margin-left: 350px; margin-top: 5px;right: 30px;display: none">
+                                                    </div>
                                                     <input type="hidden" name="phone_confirmed"
                                                            class="phone_confirmed" value="false"/>
                                                 </div>
@@ -719,7 +725,7 @@
                                         <br>
                                         <div style="width: 100%;">
                                             <label class="control-label">Адрес регистрации</label><br>
-                                            <input class="form-control Regadress" name="Regadressfull"
+                                            <input class="form-control casing-upper-mask Regadress" name="Regadressfull"
                                                    style="width: 700px; margin-left: 25px" type="text"
                                                    {if !empty($Regaddressfull)}value="{$Regaddressfull->adressfull}"{/if}/>
                                             <input style="display: none" class="Registration" name="Regadress"/>
@@ -733,7 +739,8 @@
                                                 <label class="" for="actual_address">Совпадает с адресом
                                                     регистрации</label>
                                             </div>
-                                            <input class="form-control Faktaddress" id="actual_address_toggle"
+                                            <input class="form-control casing-upper-mask Faktaddress"
+                                                   id="actual_address_toggle"
                                                    style="width: 700px; margin-left: 25px; {if $order->actual_address == 1} display:none; {/if}"
                                                    name="Faktadressfull"
                                                    {if !empty($Faktaddressfull)}value="{$Faktaddressfull->adressfull}"{/if}
@@ -747,7 +754,9 @@
                                                     name="timezone"
                                                     style="width: 200px; margin-left: 25px">
                                                 {for $i= -1 to 9}
-                                                    <option value="{$i}" {if empty($order->timezone) && $i == 0}selected{elseif $i == $order->timezone}selected{/if}>МСК {if $i > 0}+ {/if} {if $i != 0}{$i}{/if}</option>
+                                                    <option value="{$i}"
+                                                            {if empty($order->timezone) && $i == 0}selected{elseif $i == $order->timezone}selected{/if}>
+                                                        МСК {if $i > 0}+ {/if} {if $i != 0}{$i}{/if}</option>
                                                 {/for}
                                             </select>
                                         </div>
@@ -804,11 +813,13 @@
                                                             {if $order->email_confirmed == 1}<span>(подтверждена)</span></label>{/if}
                                                         <div class="form-row">
                                                             <div style="display: flex">
-                                                                <input style="width: 400px" class="form-control email"
+                                                                <input style="width: 400px"
+                                                                       class="form-control casing-upper-mask email"
                                                                        type="text" name="email"
                                                                        placeholder="ivanov@mail.ru"
                                                                        value="{$order->email}" autocomplete="off"/>
-                                                                <div class="email_code_show badge badge-danger" style="position: absolute; margin-left: 350px; margin-top: 5px; display: none"></div>
+                                                                <div class="email_code_show badge badge-danger"
+                                                                     style="position: absolute; margin-left: 350px; margin-top: 5px; display: none"></div>
                                                                 <input type="hidden" name="email_confirmed"
                                                                        class="email_confirmed" value="false"/>
                                                             </div>
@@ -826,8 +837,9 @@
                                                                     <input type="text" class="form-control email_code"
                                                                            placeholder="Код из письма">
                                                                     <div class="input-group-append">
-                                                                        <button class="btn btn-primary accept_edit_email_with_code"
-                                                                                type="button" data-user="{$order->user_id}">
+                                                                        <button
+                                                                            class="btn btn-primary accept_edit_email_with_code"
+                                                                            type="button" data-user="{$order->user_id}">
                                                                             Подтвердить
                                                                         </button>
                                                                     </div>
@@ -855,7 +867,8 @@
                                                        type="text" name="viber" value="{$order->viber_num}"
                                                        autocomplete="off">
                                                 <label style="margin-left: 25px; display: none"
-                                                       class="label label-success viber_confirmed">Cсылка для привязки отправлена</label>
+                                                       class="label label-success viber_confirmed">Cсылка для привязки
+                                                    отправлена</label>
                                                 <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
                                                        name="viber_same"
                                                        {if isset($order) && $order->viber_num == $order->phone_mobile}checked{/if}
@@ -897,7 +910,8 @@
                                                        type="text" name="telegram" value="{$order->telegram_num}"
                                                        autocomplete="off">
                                                 <label style="margin-left: 25px; display: none"
-                                                       class="label label-success telegram_confirmed">Cсылка для привязки отправлена</label>
+                                                       class="label label-success telegram_confirmed">Cсылка для
+                                                    привязки отправлена</label>
                                                 <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
                                                        name="telegram_same"
                                                        {if isset($order) && $order->telegram_num == $order->phone_mobile}checked{/if}
@@ -983,7 +997,7 @@
                                             </div>
                                         </div>
                                         <table
-                                                class="jsgrid-table table table-striped attestation_table" {if empty($order->attestation)} style="display: none" {/if}>
+                                            class="jsgrid-table table table-striped attestation_table" {if empty($order->attestation)} style="display: none" {/if}>
                                             <thead>
                                             <tr>
                                                 <th>Дата окончания</th>
@@ -1382,7 +1396,10 @@
                                                    value="Сохранить черновик">
                                         </div>
                                         {if isset($order->order_id)}
-                                            <div data-order="{$order->order_id}" class="btn btn-outline-danger delete_draft" style="float: right">Удалить черновик</div>
+                                            <div data-order="{$order->order_id}"
+                                                 class="btn btn-outline-danger delete_draft" style="float: right">
+                                                Удалить черновик
+                                            </div>
                                         {/if}
                                         <br><br>
                                         <input style="display: none" name="loan_type_to_submit"
