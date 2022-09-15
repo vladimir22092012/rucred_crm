@@ -267,17 +267,17 @@ $(function () {
     }
   });
 
-  $('.bik').suggestions({
-    token: token_dadata,
-    type: "bank",
-    minChars: 3,
-    /* Вызывается, когда пользователь выбирает одну из подсказок */
-    onSelect: function (suggestion) {
-      $(this).val(suggestion.data.bic).trigger('input');
-      $('.bank_name').val(suggestion.value);
-      $('.cor').trigger('input').val(suggestion.data.correspondent_account);
-    }
-  });
+    $('.bik').suggestions({
+        token: token_dadata,
+        type: "bank",
+        minChars: 3,
+        /* Вызывается, когда пользователь выбирает одну из подсказок */
+        onSelect: function (suggestion) {
+            $(this).trigger('input').val(suggestion.data.bic);
+            $('.bank_name').val(suggestion.value);
+            $('.cor').trigger('input').val(suggestion.data.correspondent_account);
+        }
+    });
 
   $.fn.setCursorPosition = function (pos) {
     if ($(this).get(0).setSelectionRange) {
@@ -339,13 +339,9 @@ $(function () {
     $(this).setCursorPosition(0);
   }).mask('999999999');
 
-  $('.cor').click(function () {
-    $(this).setCursorPosition(0);
-  }).mask('99999999999999999999');
-
-  $('.validity_period').click(function () {
-    $(this).setCursorPosition(0);
-  }).mask('99/99');
+    $('.validity_period').click(function () {
+        $(this).setCursorPosition(0);
+    }).mask('99/99');
 
   $(document).on('change', '.js-lastname-input , .js-firstname-input , .js-patronymic-input', function () {
 
@@ -696,28 +692,32 @@ $(function () {
           }, 2000);
 
 
-          $.ajax({
-            method: 'POST',
-            dataType: 'JSON',
-            data: {
-              action: 'get_user',
-              user_id: user_id
-            },
-            success: function (user) {
-              $('input[name="passport_serial"]').val(user['passport_series']);
-              $('input[name="passport_number"]').val(user['passport_number']);
-              $('input[name="passport_issued"]').val(user['passport_issued']);
-              $('input[name="subdivision_code"]').val(user['subdivision_code']);
-              $('input[name="passport_date"]').val(user['passport_date']);
-              $('input[name="snils"]').val(user['snils']);
-              $('input[name="inn"]').val(user['inn']);
+                    $.ajax({
+                        method: 'POST',
+                        dataType: 'JSON',
+                        data: {
+                            action: 'get_user',
+                            user_id: user_id
+                        },
+                        success: function (user) {
+                            $('input[name="passport_serial"]').val(user['passport_series']);
+                            $('input[name="passport_number"]').val(user['passport_number']);
+                            $('input[name="passport_issued"]').val(user['passport_issued']);
+                            $('input[name="subdivision_code"]').val(user['subdivision_code']);
+                            $('input[name="passport_date"]').val(user['passport_date']);
+                            $('input[name="snils"]').val(user['snils']);
+                            $('input[name="inn"]').val(user['inn']);
+                            $('input[class="form-control account_number"]').val(user['requisites']['number']);
+                            $('.bik').trigger('input').val(user['requisites']['bik']);
+                            $('input[class="form-control bank_name"]').val(user['requisites']['name']);
+                            $('input[class="form-control cor"]').val(user['requisites']['correspondent_acc']);
+                        }
+                    })
+                });
             }
-          })
         });
-      }
+        $('input[name="check_same_users"]').val('1');
     });
-    $('input[name="check_same_users"]').val('1');
-  });
 
   $('select[name="payout_type"]').on('change', function () {
     $('.requisits').toggle();

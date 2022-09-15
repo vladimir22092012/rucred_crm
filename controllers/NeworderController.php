@@ -10,8 +10,7 @@ use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 error_reporting(-1);
-ini_set('display_errors', 'On');
-date_default_timezone_set('Europe/Moscow');
+ini_set('display_errors', 'Off');
 
 class NeworderController extends Controller
 {
@@ -956,7 +955,15 @@ class NeworderController extends Controller
                             'comment' => 'Первый график'
                         ];
 
+                    $old_orders = $this->orders->get_orders(['user_id' => $user_id]);
+
+                    if(count($old_orders) > 1){
+                        $this->users->update_user($user_id, ['regaddress_id' => 0, 'faktaddress_id' => 0]);
+                    }
+
                     $this->PaymentsSchedules->add($schedules);
+
+                    $this->form_docs($order_id);
 
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                     exit;
@@ -1020,6 +1027,14 @@ class NeworderController extends Controller
                             $this->scorings->add_scoring($add_scoring);
                         }
                     }
+
+                    $old_orders = $this->orders->get_orders(['user_id' => $user_id]);
+
+                    if(count($old_orders) > 1){
+                        $this->users->update_user($user_id, ['regaddress_id' => 0, 'faktaddress_id' => 0]);
+                    }
+
+                    $this->form_docs($order_id);
 
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                 }
@@ -1511,6 +1526,18 @@ class NeworderController extends Controller
         $user_id = $this->request->post('user_id');
 
         $user = $this->users->get_user($user_id);
+
+        $requisites = $this->Requisites->getDefault($user_id);
+
+        if(!empty($requisites))
+        {
+            $user_fio = "$user->lastname $user->firstname $user->patronymic";
+            $requisites_fio = $requisites->holder;
+
+            if($user_fio == $requisites_fio)
+                $user->requisites = $requisites;
+        }
+
         $passport_serial = explode(' ', $user->passport_serial);
         $user->passport_series = $passport_serial[0];
         $user->passport_number = $passport_serial[1];
@@ -1526,5 +1553,43 @@ class NeworderController extends Controller
         $this->orders->delete_order($orderId);
 
         exit;
+    }
+
+    private function form_docs($order_id)
+    {
+        $order = $this->orders->get_order($order_id);
+        $order->payment_schedule = (array)$this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
+
+        $doc_types =
+            [
+                '04.05' => 'SOGLASIE_NA_OBR_PERS_DANNIH',
+                '04.06' => 'SOGLASIE_RUKRED_RABOTODATEL',
+                '03.03' => 'SOGLASIE_RABOTODATEL',
+            ];
+
+        if ($order->settlement_id == 2)
+            $doc_types['04.05.1'] = 'SOGLASIE_MINB';
+        else
+            $doc_types['04.05.2'] = 'SOGLASIE_RDB';
+
+        $doc_types['04.07'] = 'SOGLASIE_NA_KRED_OTCHET';
+        $doc_types['04.03.02'] = 'INDIVIDUALNIE_USLOVIA';
+        $doc_types['04.04'] = 'GRAFIK_OBSL_MKR';
+        $doc_types['04.12'] = 'PERECHISLENIE_ZAEMN_SREDSTV';
+        $doc_types['04.09'] = 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP';
+        $doc_types['04.10'] = 'OBSHIE_USLOVIYA';
+        $doc_types['03.04'] = 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR';
+
+        foreach ($doc_types as $key => $type) {
+
+            $this->documents->create_document(array(
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'type' => $type,
+                'params' => $order,
+                'numeration' => (string)$key,
+                'hash' => sha1(rand(11111, 99999))
+            ));
+        }
     }
 }

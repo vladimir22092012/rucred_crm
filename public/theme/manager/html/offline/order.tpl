@@ -69,12 +69,20 @@
 
                 $.ajax({
                     url: '/upload_files',
+                    dataType: 'JSON',
                     data: form_data,
                     type: 'POST',
                     processData: false,
                     contentType: false,
-                    success: function () {
-                        window.location.reload();
+                    success: function (resp) {
+                        if(resp['error']){
+                            Swal.fire({
+                                title: resp['message'],
+                                confirmButtonText: 'ОК'
+                            });
+                        }else{
+                            window.location.reload();
+                        }
                     }
                 });
             });
@@ -367,32 +375,6 @@
                         order_id: order_id
                     },
                     success: function () {
-                        location.reload();
-                    }
-                });
-            });
-
-            $('.ndfl').on('change', function (e) {
-
-                let form_data = new FormData();
-
-                form_data.append('file', e.target.files[0]);
-                form_data.append('user_id', $(this).attr('data-user'));
-                form_data.append('type', 'ndfl');
-                form_data.append('action', 'add');
-                form_data.append('template', $(this).attr('id'));
-                form_data.append('order_id', $(this).attr('data-order'));
-                form_data.append('notreplace', '1');
-                form_data.append('ndfl', 'yes');
-                form_data.append('name', e.target.files[0]['name']);
-
-                $.ajax({
-                    url: '/upload_files',
-                    data: form_data,
-                    type: 'POST',
-                    processData: false,
-                    contentType: false,
-                    success: function (resp) {
                         location.reload();
                     }
                 });
@@ -1307,14 +1289,14 @@
     <!-- ============================================================== -->
     <div class="container-fluid">
         <div class="row page-titles">
-            <div class="col-md-3 col-8 align-self-center">
+            <div class="col-md-6 col-8 align-self-center">
                 <h4 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i> Заявка
-                    № {$order->uid}</h4>
+                    № {if !empty($contract->number)}{$contract->number}{else}{$order->group_number} {$order->company_number} {$order->personal_number}{/if} ({$order->order_id})</h4>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
                     <li class="breadcrumb-item"><a href="offline_orders">Заявки</a></li>
                     <li class="breadcrumb-item active">Заявка
-                        № {$order->uid}</li>
+                        № {if !empty($contract->number)}{$contract->number}{else}{$order->group_number} {$order->company_number} {$order->personal_number}{/if} ({$order->order_id})</li>
                 </ol>
             </div>
         </div>
@@ -1453,11 +1435,11 @@
                                             </div>
                                             <div class="form-group mb-1">
                                                 <input type="text" name="firstname" value="{$order->firstname}"
-                                                       class="form-control" placeholder="Имя"/>
+                                                       class="form-control" placeholder="Имя" {if $client_status != 'Новая'}disabled{/if}/>
                                             </div>
                                             <div class="form-group mb-1">
                                                 <input type="text" name="patronymic" value="{$order->patronymic}"
-                                                       class="form-control" placeholder="Отчество"/>
+                                                       class="form-control" placeholder="Отчество" {if $client_status != 'Новая'}disabled{/if}/>
                                             </div>
                                             <div class="form-group mb-1">
                                                 <input type="text" name="phone_mobile" value="{$order->phone_mobile}"
@@ -2160,7 +2142,7 @@
                                                                 class="form-group mb-1 {if in_array('empty_birth', (array)$contactdata_error)}has-danger{/if}">
                                                             <label class="control-label">Дата рождения</label>
                                                             <input type="text" name="birth" value="{$order->birth}"
-                                                                   class="form-control" placeholder="" required="true"/>
+                                                                   class="form-control" placeholder="" {if $client_status != 'Новая'}disabled{else}required="true"{/if}/>
                                                             {if in_array('empty_birth', (array)$contactdata_error)}
                                                                 <small class="form-control-feedback">Укажите дату
                                                                     рождения!
@@ -3199,7 +3181,7 @@
                                             <h6 class="card-header text-white">
                                                 <span>ИНН</span>
                                                 <span class="float-right">
-                                                    {if in_array($order->status, [0])}
+                                                    {if in_array($order->status, [0]) && $client_status == 'Новая'}
                                                         <a href="" class="text-white inn-edit"><i
                                                                     class=" fas fa-edit"></i></a>
                                                     {/if}
@@ -3234,7 +3216,7 @@
                                             <h6 class="card-header text-white">
                                                 <span>СНИЛС</span>
                                                 <span class="float-right">
-                                                    {if in_array($order->status, [0])}
+                                                    {if in_array($order->status, [0]) && $client_status == 'Новая'}
                                                         <a href="" class="text-white snils-edit"><i
                                                                     class=" fas fa-edit"></i></a>
                                                     {/if}
