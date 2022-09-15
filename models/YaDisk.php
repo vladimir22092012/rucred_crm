@@ -28,9 +28,15 @@ class YaDisk extends Core
         $translit_fio = $this->translit($fio);
         $employer = explode(' ', $order->uid);
         $employer = "$employer[0]$employer[1]";
-        $date = date('Y-m-d', strtotime($order->probably_start_date));
+        $date = date('Y-m-d', strtotime($order->date));
         $personal_number = $order->personal_number;
         $contract = $this->contracts->get_contract($order->contract_id);
+
+        if (!empty($contract->number)) {
+            $order->uid = $contract->number;
+        } else {
+            $order->uid = "$order->group_number $order->company_number $order->personal_number ({$order->order_id})";
+        }
 
         $scans = $this->Scans->get_scans_by_order_id($order_id);
         $documents = $this->Documents->get_documents($filter);
@@ -59,7 +65,7 @@ class YaDisk extends Core
                     $this->upload(1, $order, $resource, $file_name, $scan);
                 }
                 if ($scan->type == 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl') {
-                    $file_name = "$order->uid Form 0304(scan)";
+                    $file_name = "$order->uid Form 0304(scan) $date";
                     $file_name = $this->translit($file_name);
 
                     try {
@@ -258,7 +264,7 @@ class YaDisk extends Core
             }
 
             if ($type == 'zayavlenie_na_perechislenie_chasti_zp.tpl') {
-                $file_name = "$order->uid Form 0409";
+                $file_name = "$order->uid Form 0409 $date";
                 $file_name = $this->translit($file_name);
 
                 try {
@@ -273,7 +279,7 @@ class YaDisk extends Core
             }
 
             if ($type == 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl') {
-                $file_name = "$order->uid Form 0304";
+                $file_name = "$order->uid Form 0304 $date";
                 $file_name = $this->translit($file_name);
 
                 try {
@@ -288,7 +294,7 @@ class YaDisk extends Core
             }
 
             if ($type == 'grafik_obsl_mkr.tpl') {
-                $file_name = "$order->uid Form 0404";
+                $file_name = "$order->uid Form 0404 $date";
                 $file_name = $this->translit($file_name);
 
                 try {
@@ -318,7 +324,7 @@ class YaDisk extends Core
             }
 
             if ($type == 'perechislenie_zaemnih_sredstv.tpl') {
-                $file_name = "$order->uid Form 0412";
+                $file_name = "$order->uid Form 0412 $date";
                 $file_name = $this->translit($file_name);
 
                 try {
