@@ -31,8 +31,7 @@ $(function () {
             $('.alert-danger').fadeIn();
             $('.alert-danger').html('<span>Вы не ввели сумму займа</span>');
             $('.alert-danger').fadeOut(3000);
-        }
-        else {
+        } else {
 
             if (parseInt(sum) >= parseInt(min_amount) && parseInt(sum) <= parseInt(max_amount)) {
                 $('.alert-danger').hide();
@@ -65,8 +64,7 @@ $(function () {
                         $('#final_sum').val(sum);
                     }
                 });
-            }
-            else {
+            } else {
                 $('.alert-danger').fadeIn();
                 $('.alert-danger').html('<span>Проверьте правильность суммы</span>');
                 $('.alert-danger').fadeOut(3000);
@@ -119,8 +117,7 @@ $(function () {
         if (loan_id != 1) {
             $('#return_sum').hide();
             $('#month_sum').show();
-        }
-        else {
+        } else {
             $('#month_sum').hide();
             $('#return_sum').show();
         }
@@ -203,8 +200,7 @@ $(function () {
         if ($(this).is(':checked')) {
             $('.in_profunion').show();
             $('.out_profunion').hide();
-        }
-        else {
+        } else {
             $('.in_profunion').hide();
             $('.out_profunion').show();
         }
@@ -220,8 +216,7 @@ $(function () {
 
         if (value == 1) {
             $('.my_company_toggle').show();
-        }
-        else {
+        } else {
             $('.my_company_toggle').hide();
         }
     });
@@ -364,6 +359,12 @@ $(function () {
             $('input[name="requisite[holder][patronymic]"]').val(patronymic);
     });
 
+
+    Inputmask({
+        casing: 'upper'
+    }).mask($('.casing-upper-mask'));
+
+
     $('.mask_number').each(function () {
         new Cleave(this, {
             numeral: true,
@@ -376,7 +377,18 @@ $(function () {
         let value = $(this).val();
         value = value.replace(new RegExp(/[^.\d]/, 'g'), '');
         $(this).val(value);
+
+        if ($(this).hasClass('daterange')) {
+
+        } else {
+            new Cleave(this, {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                delimiter: ' ',
+            });
+        }
     });
+
 
     $(document).on('input', 'input[name="dependents"]', function () {
         let value = $(this).val();
@@ -384,7 +396,7 @@ $(function () {
         $(this).val(value);
     });
 
-    $(document).on('input', '.Regadress', '.Faktaddress', function () {
+    $(document).on('input', '.Regadress , .Faktaddress', function () {
         let value = $(this).val();
         value = value.replace(new RegExp(/[^а-яёА-ЯЁ0-9,.\s]+$/, 'g'), '');
         $(this).val(value);
@@ -496,8 +508,7 @@ $(function () {
                     });
                 }
             });
-        }
-        else {
+        } else {
             $('.my_company').hide();
             $('.branches').hide();
             $('#pricelist').empty();
@@ -528,8 +539,7 @@ $(function () {
                     }
                 }
             });
-        }
-        else {
+        } else {
             $('.branches').hide();
         }
     });
@@ -615,8 +625,7 @@ $(function () {
         if (phone_number.length > 10) {
             final_number = phone_number.slice(-10);
             $(this).val(final_number);
-        }
-        else {
+        } else {
             phone_number = Number(phone_number);
             $(this).val(phone_number);
         }

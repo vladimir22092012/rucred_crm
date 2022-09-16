@@ -140,7 +140,7 @@ class Soap1c extends Core
         $item->НазначениеПлатежа = $payment->description;
         $item->СчетКонтрагента = $payment->user_acc_number;
         $item->БИКБанкаКонтрагента = $payment->user_bik;
-        $item->ИННПолучателя = '9725055162';
+        $item->ИННПолучателя = $payment->users_inn;
 
         $request = new StdClass();
         $request->TextJSON = json_encode($item);

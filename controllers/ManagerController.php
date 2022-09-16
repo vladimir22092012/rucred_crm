@@ -1,7 +1,5 @@
 <?php
 
-use PHPMailer\PHPMailer\PHPMailer;
-
 error_reporting(-1);
 ini_set('display_errors', 'Off');
 
@@ -717,7 +715,8 @@ class ManagerController extends Controller
     {
         $manager_id = $this->request->post('manager_id');
         $manager = $this->managers->get_manager($manager_id);
-        $message = "Присоединиться в чат технической поддержки: https://t.me/wEjA3IMZeHMyZGZi";
+        $link = urlencode('https://t.me/+wEjA3IMZeHMyZGZi');
+        $message = "Присоединиться в чат технической поддержки: ".$link;
 
         $this->sms->send($manager->phone, $message);
 

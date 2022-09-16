@@ -4372,7 +4372,7 @@ class OfflineOrderController extends Controller
         }
 
         $description = "Оплата по договору микрозайма № $contract->number от $order->probably_start_date
-            // заемщик $fio ИНН $order->inn";
+            // заемщик $fio ИНН $order->inn. Без налога (НДС)";
 
         $transaction =
             [

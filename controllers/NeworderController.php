@@ -11,7 +11,6 @@ use PHPMailer\PHPMailer\Exception;
 
 error_reporting(-1);
 ini_set('display_errors', 'Off');
-date_default_timezone_set('Europe/Moscow');
 
 class NeworderController extends Controller
 {
@@ -1078,7 +1077,10 @@ class NeworderController extends Controller
         INSERT INTO s_sms_messages
         SET phone = ?, code = ?, response = ?, ip = ?, created = ?
         ', $phone, $code, $response['resp'], $_SERVER['REMOTE_ADDR'] ?? '', date('Y-m-d H:i:s'));
-        echo json_encode(['success' => 1]);
+        echo json_encode([
+            'success' => 1,
+            'code' => $code
+        ]);
         exit;
     }
 
