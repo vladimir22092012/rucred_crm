@@ -129,7 +129,7 @@
             $('.accept_edit_email_with_code').click(function (e) {
                 e.preventDefault();
 
-                let email = $('input[class="form-control email"]').val();
+                let email = $('input[class="form-control casing-upper-mask email"]').val();
                 let email_code = $('input[class="form-control email_code"]').val();
 
                 $.ajax({
