@@ -827,7 +827,7 @@ class NeworderController extends Controller
                 $paydate->add(new DateInterval('P1M'));
             }
 
-            $end_date = $this->check_date($paydate->format('Y-m-d'), $order['loan_type'], $first_pay_day);
+            $end_date = $this->check_date($paydate->format('Y-m-d'), $order['loan_type']);
             $end_date = new DateTime(date('Y-m-d', strtotime($end_date)));
 
             if ($rest_sum !== 0) {
