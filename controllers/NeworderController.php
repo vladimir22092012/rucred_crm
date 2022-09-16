@@ -757,6 +757,7 @@ class NeworderController extends Controller
             }
 
             $rest_sum = $order['amount'];
+            $end_date = new DateTime(date('Y-m-' . $first_pay_day, strtotime($probably_end_date)));
             $start_date = new DateTime(date('Y-m-d', strtotime($probably_start_date)));
             $paydate = new DateTime($start_date->format('Y-m-' . $first_pay_day));
 
@@ -827,19 +828,17 @@ class NeworderController extends Controller
                 $paydate->add(new DateInterval('P1M'));
             }
 
-            $end_date = $this->check_date($paydate->format('Y-m-d'), $order['loan_type']);
-            $end_date = new DateTime(date('Y-m-d', strtotime($end_date)));
-
             if ($rest_sum !== 0) {
                 $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
                 $interval = new DateInterval('P1M');
-                $end_date->setTime(24, 0, 1);
+                $lastdate = clone $end_date;
+                $end_date->setTime(0, 0, 1);
                 $daterange = new DatePeriod($paydate, $interval, $end_date);
 
                 foreach ($daterange as $date) {
                     $date = $this->check_pay_date($date);
 
-                    if ($end_date->format('m') - $date->format('m') == 1) {
+                    if ($date->format('m') == $lastdate->format('m')) {
                         $loan_body_pay = $rest_sum;
                         $loan_percents_pay = $annoouitet_pay - $loan_body_pay;
                         $rest_sum = 0.00;
