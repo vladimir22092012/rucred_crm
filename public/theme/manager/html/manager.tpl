@@ -651,6 +651,28 @@
     <link href="theme/manager/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet"
           type="text/css"/>
     <link href="theme/manager/assets/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
+    <style>
+
+        .tooltiper::after {
+            background: rgba(0, 0, 0, 0.8);
+            width: 300px;
+            border-radius: 8px 8px 8px 0px;
+            box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
+            color: #FFF;
+            content: attr(data-tooltip); /* Главная часть кода, определяющая содержимое всплывающей подсказки */
+            margin-top: -40px;
+            opacity: 0; /* Наш элемент прозрачен... */
+            padding: 3px 7px;
+            position: absolute;
+            visibility: hidden; /* ...и скрыт. */
+            transition: all 0.4s ease-in-out; /* Добавить плавности по вкусу */
+        }
+
+        .tooltiper:hover::after {
+            opacity: 1; /* Показываем его */
+            visibility: visible;
+        }
+    </style>
 {/capture}
 
 
@@ -1189,12 +1211,13 @@
                                         <div class="form-group">
                                             <label class="col-md-5">Дополнительные каналы связи</label>
                                             <div class="col-md-5">
-                                                <div style="display: flex; margin: 5px 25px; width: 90%; justify-content: space-between">
-                                                    <input class="form-check-input viber_flag"
+                                                <div style="display: flex; margin: 5px 25px; justify-content: space-between">
+                                                    <input class="form-check-input viber_flag {if empty($check_viber_hook)}tooltiper{/if}"
                                                            type="checkbox"
+                                                           {if empty($check_viber_hook)}data-tooltip="Сначала привяжите мессенджер"{/if}
                                                            name="viber_note"
                                                            data-user="{$user->id}"
-                                                           value="1" {if $user->viber_note == 1}checked{/if}>
+                                                           value="1" {if $user->viber_note == 1}checked{/if} {if empty($check_viber_hook)}disabled{/if}>
                                                     <label class="form-check-label">
                                                         Viber
                                                     </label>
@@ -1203,11 +1226,12 @@
                                                     </small>
                                                     <div class="btn btn-outline-primary viber_hook" data-user="{$user->id}">{if !empty($check_viber_hook)}Перепривязать{else}Привязать{/if}</div>
                                                 </div>
-                                                <div style="display: flex; margin: 5px 25px; width: 90%; justify-content: space-between">
-                                                    <input class="form-check-input telegram_flag" type="checkbox"
+                                                <div style="display: flex; margin: 5px 25px; justify-content: space-between">
+                                                    <input class="form-check-input telegram_flag {if empty($check_viber_hook)}tooltiper{/if}" type="checkbox"
                                                            name="telegram_note"
+                                                           {if empty($check_viber_hook)}data-tooltip="Сначала привяжите мессенджер"{/if}
                                                            data-user="{$user->id}"
-                                                           value="1" {if $user->telegram_note == 1}checked{/if}>
+                                                           value="1" {if $user->telegram_note == 1}checked{/if} {if empty($check_telegram_hook)}disabled{/if}>
                                                     <label class="form-check-label">
                                                         Telegram
                                                     </label>
