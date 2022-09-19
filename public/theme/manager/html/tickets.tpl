@@ -270,6 +270,9 @@
                                             {else}<a href="{url page=null sort='t.created asc'}">Дата / Время</a>{/if}
                                         </th>
                                         <th style="width: 70px; text-align: center"
+                                            class="jsgrid-header-cell">Инфо о займе
+                                        </th>
+                                        <th style="width: 70px; text-align: center"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 't.creator asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 't.creator desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 't.creator asc'}<a
                                                 href="{url page=null sort='t.creator desc'}">
@@ -295,12 +298,14 @@
                                                     Текст</a>
                                             {else}<a href="{url page=null sort='t.text asc'}">Текст</a>{/if}
                                         </th>
+                                        {*
                                         <th style="width: 70px; text-align: center"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 't.text asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 't.text desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 't.text asc'}<a href="{url page=null sort='t.text desc'}">
                                                     Вложения</a>
                                             {else}<a href="{url page=null sort='t.text asc'}">Вложения</a>{/if}
                                         </th>
+                                        *}
                                     </tr>
                                     <tr class="jsgrid-filter-row" id="search_form">
                                         <td style="width: 70px;" class="jsgrid-cell">
@@ -312,6 +317,7 @@
                                             <input type="text" name="date" value="{$search['date']}"
                                                    class="form-control input-sm">
                                         </td>
+                                        <td style="width: 70px;"></td>
                                         <td style="width: 70px;" class="jsgrid-cell">
                                             <input type="text" name="amount" value="{$search['maker']}"
                                                    class="form-control input-sm">
@@ -328,10 +334,12 @@
                                             <input type="text" name="fio" value="{$search['text']}"
                                                    class="form-control input-sm">
                                         </td>
+                                        {*
                                         <td style="width: 70px;" class="jsgrid-cell">
                                             <input type="text" name="birth" value="{$search['inside']}"
                                                    class="form-control input-sm">
                                         </td>
+                                        *}
                                     </tr>
                                     <div class="jsgrid-grid-body">
                                         <table class="jsgrid-table table table-striped table-hover">
@@ -363,6 +371,13 @@
                                                         {$ticket->created|date}
                                                     </td>
                                                     <td style="width: 70px;" class="jsgrid-cell">
+                                                        {$ticket->order->lastname} {$ticket->order->firstname} {$ticket->order->patronymic}
+                                                        <br>{$ticket->order->uid}
+                                                        {if isset($ticket->contract)}
+                                                            <br>{$ticket->contract->number}
+                                                        {/if}
+                                                    </td>
+                                                    <td style="width: 70px;" class="jsgrid-cell">
                                                         {if $ticket->creator == 0}
                                                             ООО МКК "РУССКОЕ КРЕДИТНОЕ ОБЩЕСТВО"
                                                         {else}
@@ -382,6 +397,7 @@
                                                     <td style="width: 130px;" class="jsgrid-cell">
                                                         {$ticket->text|escape}
                                                     </td>
+                                                    {*
                                                     <td style="width: 70px;" class="jsgrid-cell">
                                                         {if $ticket->files == 1}
                                                             Да
@@ -389,6 +405,7 @@
                                                             Нет
                                                         {/if}
                                                     </td>
+                                                    *}
                                                 </tr>
                                             {/foreach}
                                             </tbody>

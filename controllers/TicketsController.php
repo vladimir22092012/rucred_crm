@@ -76,8 +76,15 @@ class TicketsController extends Controller
                     $company->name = 'Отсутствует';
                 }
 
-
                 $ticket->creator_company_name = $company->name;
+
+                if (!empty($ticket->order_id)) {
+                    $ticket->order = $this->orders->get_order($ticket->order_id);
+
+                    if (!empty($ticket->order->contract_id)){
+                        $ticket->contract = $this->contracts->get_contract($ticket->order->contract_id);
+                    }
+                }
             }
 
             $themes = $this->CommunicationsThemes->gets(['sort' => 'id DESC', 'create_ticket' => [41,42]]);

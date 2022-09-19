@@ -168,12 +168,12 @@
                                                         </div>
                                                         <div style="display: flex;">
                                                             <label>Номер заявки: </label>
-                                                            <span style="margin-left: 25px">{$order->uid}({$order->order_id})</span>
+                                                            <span style="margin-left: 25px">{$order->uid}</span>
                                                         </div>
                                                         {if isset($contract)}
                                                             <div style="display: flex;">
                                                                 <label>Номер договора: </label>
-                                                                <span style="margin-left: 10px">{$contract->number} ({$order->order_id})</span>
+                                                                <span style="margin-left: 10px">{$contract->number}</span>
                                                             </div>
                                                         {/if}
                                                         <br>
