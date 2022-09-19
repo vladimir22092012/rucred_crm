@@ -137,22 +137,22 @@
                                                     <span class="text-white" style="width: 20%">{$ticket->head}</span>
                                                     {if in_array($ticket->status, [0,1])}
                                                         <small class="label label-warning"
-                                                               style="margin-left: 50px; width: 7%">К принятию
+                                                               style="margin-left: 50px; width: 10%">К принятию
                                                         </small>
                                                     {/if}
                                                     {if $ticket->status == 2}
                                                         <small class="label label-primary"
-                                                               style="margin-left: 50px; width: 7%">Принят/В работе
+                                                               style="margin-left: 50px; width: 10%">Принят/В работе
                                                         </small>
                                                     {/if}
                                                     {if $ticket->status == 4}
                                                         <small class="label label-success"
-                                                               style="margin-left: 50px; width: 7%">Исполнено
+                                                               style="margin-left: 50px; width: 10%">Исполнено
                                                         </small>
                                                     {/if}
                                                     {if $ticket->status == 6}
                                                         <small class="badge badge-dark"
-                                                               style="margin-left: 50px; width: 7%">Закрыт
+                                                               style="margin-left: 50px; width: 10%">Закрыт
                                                         </small>
                                                     {/if}
                                                     <span class="label label-text" style="width: 65%">
