@@ -1489,7 +1489,7 @@ class NeworderController extends Controller
                 //Content
                 $mail->isHTML(true);                                  //Set email format to HTML
                 $mail->Subject = 'RuCred | Ссылка для привязки Viber';
-                $mail->Body = '<h1>' . $this->config->back_url . '/redirect_api?user_id=' . $user_id . '</h1>';
+                $mail->Body = '<h1>' . $this->config->back_url . '/redirect_api?user_id=' . $user_token . '</h1>';
 
                 $mail->send();
 
@@ -1501,18 +1501,6 @@ class NeworderController extends Controller
                     ];
 
                 $this->ViberUsers->add($user);
-
-                $log =
-                    [
-                        'user_id' => $user_id,
-                        'is_manager' => 0,
-                        'type_id' => 2,
-                        'text' => $this->config->back_url . '/redirect_api?user_id=' . $user_id
-                    ];
-
-                $this->NotificationsLogs->add($log);
-
-
                 break;
         endswitch;
 

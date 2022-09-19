@@ -85,6 +85,14 @@ class ManagerController extends Controller
                     case 'add_to_teh_chat':
                         $this->action_add_to_teh_chat();
                         break;
+
+                    case 'viber_flag':
+                        $this->action_viber_flag();
+                        break;
+
+                    case 'telegram_flag':
+                        $this->action_telegram_flag();
+                        break;
                 endswitch;
             } else {
                 $user = new StdClass();
@@ -511,62 +519,52 @@ class ManagerController extends Controller
     private function action_viber_hook()
     {
         $manager_id = $this->request->post('user');
-        $flag = $this->request->post('flag');
-
         $is_manager = 1;
         $check_viber_hook = $this->ViberUsers->get($manager_id, $is_manager);
+        $manager = $this->managers->get_manager($manager_id);
+        $new_token = md5(time());
+        $new_token = substr($new_token, 1, 10);
+
+        $mail = new PHPMailer(false);
+
+        //Server settings
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->CharSet = 'UTF-8';
+        $mail->Host = 'mail.nic.ru';                          //Set the SMTP server to send through
+        $mail->SMTPAuth = true;                                   //Enable SMTP authentication
+        $mail->Username = 'noreply@re-aktiv.ru';                  //SMTP username
+        $mail->Password = 'HG!_@H#*&!^!HwJSDJ2Wsqgq';             //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         //Enable implicit TLS encryption
+        $mail->Port = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+        //Recipients
+        $mail->setFrom('noreply@re-aktiv.ru');
+        $mail->addAddress($manager->email);     //Add a recipient
+
+        //Content
+        $mail->isHTML(true);                                  //Set email format to HTML
+        $mail->Subject = 'RuCred | Уведомление';
+        $mail->Body = '<h1>' . $this->config->back_url . '/redirect_api?user_id=' . $new_token . '</h1>';
+
+        $mail->send();
+
+        $user =
+            [
+                'user_id' => $manager_id,
+                'token' => $new_token,
+                'is_manager' => 1
+            ];
 
         if (empty($check_viber_hook)) {
-            $manager = $this->managers->get_manager($manager_id);
-            $user_token = md5(time());
-            $user_token = substr($user_token, 1, 10);
-
-            $mail = new PHPMailer(false);
-
-            //Server settings
-            $mail->isSMTP();                                            //Send using SMTP
-            $mail->CharSet = 'UTF-8';
-            $mail->Host = 'mail.nic.ru';                          //Set the SMTP server to send through
-            $mail->SMTPAuth = true;                                   //Enable SMTP authentication
-            $mail->Username = 'noreply@re-aktiv.ru';                  //SMTP username
-            $mail->Password = 'HG!_@H#*&!^!HwJSDJ2Wsqgq';             //SMTP password
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         //Enable implicit TLS encryption
-            $mail->Port = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
-
-            //Recipients
-            $mail->setFrom('noreply@re-aktiv.ru');
-            $mail->addAddress($manager->email);     //Add a recipient
-
-            //Content
-            $mail->isHTML(true);                                  //Set email format to HTML
-            $mail->Subject = 'RuCred | Уведомление';
-            $mail->Body = '<h1>' . $this->config->back_url . '/redirect_api?user_id=' . $manager_id . '</h1>';
-
-            $mail->send();
-
-            $user =
-                [
-                    'user_id' => $manager_id,
-                    'token' => $user_token,
-                    'is_manager' => 1
-                ];
-
             $this->ViberUsers->add($user);
+        }else{
+            $old_token = $this->ViberUsers->get($manager_id, 1);
+            $old_token = $old_token->token;
 
-            $log =
-                [
-                    'user_id' => $manager_id,
-                    'is_manager' => 1,
-                    'type_id' => 1,
-                    'text' => $this->config->back_url . '/redirect_api?user_id=' . $manager_id
-                ];
-
-            $this->NotificationsLogs->add($log);
-
-            echo json_encode(['info' => 1]);
+            $this->ViberUsers->update(['token' => $new_token], $old_token);
         }
 
-        $this->managers->update_manager($manager_id, ['viber_note' => $flag]);
+        echo json_encode(['info' => 1]);
         exit;
     }
 
@@ -716,10 +714,26 @@ class ManagerController extends Controller
         $manager_id = $this->request->post('manager_id');
         $manager = $this->managers->get_manager($manager_id);
         $link = urlencode('https://t.me/+wEjA3IMZeHMyZGZi');
-        $message = "Присоединиться в чат технической поддержки: ".$link;
+        $message = "Присоединиться в чат технической поддержки: " . $link;
 
         $this->sms->send($manager->phone, $message);
 
         exit;
+    }
+
+    private function action_telegram_flag()
+    {
+        $manager_id = $this->request->post('user');
+        $flag = $this->request->post('flag');
+
+        $this->managers->update_manager($manager_id, ['telegram_note' => $flag]);
+    }
+
+    private function action_viber_flag()
+    {
+        $manager_id = $this->request->post('user');
+        $flag = $this->request->post('flag');
+
+        $this->managers->update_manager($manager_id, ['viber_note' => $flag]);
     }
 }

@@ -387,16 +387,16 @@
                 });
             });
 
-            $(document).on('click', '.telegram_hook, .viber_hook', function () {
+            $('.viber_flag, .telegram_flag').on('click', function () {
                 let user = $(this).attr('data-user');
                 let flag = 0;
-                let action = 'telegram_hook';
+                let action = 'telegram_flag';
 
                 if ($(this).is(':checked'))
                     flag = 1;
 
-                if ($(this).hasClass('viber_hook'))
-                    action = 'viber_hook';
+                if ($(this).hasClass('viber_flag'))
+                    action = 'viber_flag';
 
                 $.ajax({
                     method: 'POST',
@@ -406,7 +406,27 @@
                         user: user,
                         flag: flag
                     },
-                    success: function (resp) {
+                    success: function () {
+
+                    }
+                })
+            });
+
+            $(document).on('click', '.telegram_hook, .viber_hook', function () {
+                let user = $(this).attr('data-user');
+                let action = 'telegram_hook';
+
+                if ($(this).hasClass('viber_hook'))
+                    action = 'viber_hook';
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: action,
+                        user: user
+                    },
+                    success: function () {
                         if (action == 'telegram_hook') {
                             $('.confirm_telegram').fadeIn();
 
@@ -1165,38 +1185,42 @@
                                         </select>
                                     </div>
                                     <br>
-                                    <div class="form-group">
-                                        <label class="col-md-5">Дополнительные каналы связи</label>
-                                        <div class="col-md-5">
-                                            <div class="form-check">
-                                                <input class="form-check-input viber_hook"
-                                                       type="checkbox"
-                                                       name="viber_note"
-                                                       data-user="{$user->id}"
-                                                       value="1" {if $user->viber_note == 1}checked{/if}>
-                                                <label class="form-check-label">
-                                                    Viber
-                                                </label>
-                                                <small class="confirm_viber"
-                                                       style="margin-left: 20px; display: none; color: #aa0009">Вы еще
-                                                    не привязаны, вам отправлена ссылка на почту
-                                                </small>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input telegram_hook" type="checkbox"
-                                                       name="telegram_note"
-                                                       data-user="{$user->id}"
-                                                       value="1" {if $user->telegram_note == 1}checked{/if}>
-                                                <label class="form-check-label">
-                                                    Telegram
-                                                </label>
-                                                <small class="confirm_telegram"
-                                                       style="margin-left: 20px; display: none; color: #aa0009">Вы еще
-                                                    не привязаны, вам отправлено смс с ссылкой
-                                                </small>
+                                    {if !empty($user->id)}
+                                        <div class="form-group">
+                                            <label class="col-md-5">Дополнительные каналы связи</label>
+                                            <div class="col-md-5">
+                                                <div style="display: flex; margin: 5px 25px; width: 50%; justify-content: space-between">
+                                                    <input class="form-check-input viber_flag"
+                                                           type="checkbox"
+                                                           name="viber_note"
+                                                           data-user="{$user->id}"
+                                                           value="1" {if $user->viber_note == 1}checked{/if}>
+                                                    <label class="form-check-label">
+                                                        Viber
+                                                    </label>
+                                                    <small class="confirm_viber"
+                                                           style="margin-left: 20px; display: none; color: #aa0009">Вы еще
+                                                        не привязаны, вам отправлена ссылка на почту
+                                                    </small>
+                                                    <div class="btn btn-outline-primary viber_hook" data-user="{$user->id}">{if $user->viber_note == 1}Перепривязать{else}Привязать{/if}</div>
+                                                </div>
+                                                <div style="display: flex; margin: 5px 25px; width: 50%; justify-content: space-between">
+                                                    <input class="form-check-input telegram_flag" type="checkbox"
+                                                           name="telegram_note"
+                                                           data-user="{$user->id}"
+                                                           value="1" {if $user->telegram_note == 1}checked{/if}>
+                                                    <label class="form-check-label">
+                                                        Telegram
+                                                    </label>
+                                                    <small class="confirm_telegram"
+                                                           style="margin-left: 20px; display: none; color: #aa0009">Вы еще
+                                                        не привязаны, вам отправлено смс с ссылкой
+                                                    </small>
+                                                    <div class="btn btn-outline-primary telegram_hook" data-user="{$user->id}">{if $user->telegram_note == 1}Перепривязать{else}Привязать{/if}</div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    {/if}
                                     <div class="jsgrid-grid-body">
                                         <h4>Реестр полномочий</h4>
                                         <table style="width: 100%" class="jsgrid-table table table-striped table-hover">
