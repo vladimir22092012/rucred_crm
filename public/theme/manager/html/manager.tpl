@@ -1199,8 +1199,7 @@
                                                         Viber
                                                     </label>
                                                     <small class="confirm_viber"
-                                                           style="margin-left: 20px; display: none; color: #aa0009">Вы еще
-                                                        не привязаны, вам отправлена ссылка на почту
+                                                           style="margin-left: 20px; display: none; color: #aa0009">Отправлено письмо на почту с ссылкой для привязки
                                                     </small>
                                                     <div class="btn btn-outline-primary viber_hook" data-user="{$user->id}">{if !empty($check_viber_hook)}Перепривязать{else}Привязать{/if}</div>
                                                 </div>
@@ -1213,8 +1212,7 @@
                                                         Telegram
                                                     </label>
                                                     <small class="confirm_telegram"
-                                                           style="margin-left: 20px; display: none; color: #aa0009">Вы еще
-                                                        не привязаны, вам отправлено смс с ссылкой
+                                                           style="margin-left: 20px; display: none; color: #aa0009">Отправлена смс с ссылкой для привязки
                                                     </small>
                                                     <div class="btn btn-outline-primary telegram_hook" data-user="{$user->id}">{if !empty($check_telegram_hook)}Перепривязать{else}Привязать{/if}</div>
                                                 </div>
