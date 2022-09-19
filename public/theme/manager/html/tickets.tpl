@@ -256,13 +256,13 @@
                             <div class="jsgrid-grid-header jsgrid-header-scrollbar">
                                 <table class="jsgrid-table table table-striped table-hover">
                                     <tr class="jsgrid-header-row">
-                                        <th style="width: 40px; text-align: center"
+                                        <th style="width: 70px; text-align: center"
                                             class="jsgrid-header-cell jsgrid-align-right jsgrid-header-sortable {if $sort == 't.id desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 't.id asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
                                             {if $sort == 't.id asc'}<a href="{url page=null sort='t.id desc'}">
                                                     ID</a>
                                             {else}<a href="{url page=null sort='t.id asc'}">ID</a>{/if}
                                         </th>
-                                        <th style="width: 70px; text-align: center"
+                                        <th style="width: 40px; text-align: center"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 't.created asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 't.created desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 't.created asc'}<a
                                                 href="{url page=null sort='t.created desc'}">Дата /
@@ -313,7 +313,7 @@
                                             <input type="text" name="order_id" value="{$search['id']}"
                                                    class="form-control input-sm">
                                         </td>
-                                        <td style="width: 70px;" class="jsgrid-cell">
+                                        <td style="width: 40px;" class="jsgrid-cell">
                                             <input type="text" name="date" value="{$search['date']}"
                                                    class="form-control input-sm">
                                         </td>
@@ -347,7 +347,7 @@
                                             {foreach $tickets as $ticket}
                                                 <tr class="jsgrid-row"
                                                     onclick="window.open('/ticket/{$ticket->id}/')">
-                                                    <td style="width: 40px;" class="jsgrid-cell">
+                                                    <td style="width: 70px;" class="jsgrid-cell">
                                                         {$ticket->number}<br>
                                                         {if !$archive}
                                                             {if in_array($ticket->status, [0,1])}
@@ -367,7 +367,7 @@
                                                             <small class="blink ">Новый!</small>
                                                         {/if}
                                                     </td>
-                                                    <td style="width: 70px;" class="jsgrid-cell">
+                                                    <td style="width: 40px;" class="jsgrid-cell">
                                                         {$ticket->created|date}
                                                     </td>
                                                     <td style="width: 70px;" class="jsgrid-cell">
