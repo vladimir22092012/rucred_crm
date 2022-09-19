@@ -1189,7 +1189,7 @@
                                         <div class="form-group">
                                             <label class="col-md-5">Дополнительные каналы связи</label>
                                             <div class="col-md-5">
-                                                <div style="display: flex; margin: 5px 25px; width: 70%; justify-content: space-between">
+                                                <div style="display: flex; margin: 5px 25px; width: 90%; justify-content: space-between">
                                                     <input class="form-check-input viber_flag"
                                                            type="checkbox"
                                                            name="viber_note"
@@ -1203,7 +1203,7 @@
                                                     </small>
                                                     <div class="btn btn-outline-primary viber_hook" data-user="{$user->id}">{if !empty($check_viber_hook)}Перепривязать{else}Привязать{/if}</div>
                                                 </div>
-                                                <div style="display: flex; margin: 5px 25px; width: 70%; justify-content: space-between">
+                                                <div style="display: flex; margin: 5px 25px; width: 90%; justify-content: space-between">
                                                     <input class="form-check-input telegram_flag" type="checkbox"
                                                            name="telegram_note"
                                                            data-user="{$user->id}"
