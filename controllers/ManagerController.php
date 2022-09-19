@@ -481,47 +481,38 @@ class ManagerController extends Controller
     private function action_telegram_hook()
     {
         $manager_id = $this->request->post('user');
-        $flag = $this->request->post('flag');
 
         $is_manager = 1;
         $check_telegram_hook = $this->TelegramUsers->get($manager_id, $is_manager);
 
+        $manager = $this->managers->get_manager($manager_id);
+        $new_token = md5(time());
+        $new_token = substr($new_token, 1, 10);
+
+        $phone = $manager->phone;
+        $template = $this->sms->get_template(5);
+        $message = str_replace('$user_token', $new_token, $template->template);
+
+        $this->sms->send($phone, $message);
+
+        $user =
+            [
+                'user_id' => $manager_id,
+                'token' => $new_token,
+                'is_manager' => 1
+            ];
+
         if (empty($check_telegram_hook)) {
-            $manager = $this->managers->get_manager($manager_id);
-            $user_token = md5(time());
-            $user_token = substr($user_token, 1, 10);
-
-            $phone = $manager->phone;
-            $template = $this->sms->get_template(5);
-            $message = str_replace('$user_token', $user_token, $template->template);
-
-            $resp = $this->sms->send($phone, $message);
-
-            $user =
-                [
-                    'user_id' => $manager_id,
-                    'token' => $user_token,
-                    'is_manager' => 1
-                ];
 
             $this->TelegramUsers->add($user);
+        }else{
+            $old_token = $this->TelegramUsers->get($manager_id, 1);
+            $old_token = $old_token->token;
 
-            $log =
-                [
-                    'user_id' => $manager_id,
-                    'is_manager' => 1,
-                    'type_id' => 1,
-                    'resp' => json_encode($resp),
-                    'text' => $message
-                ];
-
-            $this->NotificationsLogs->add($log);
-
-            echo json_encode(['info' => 1]);
+            $this->TelegramUsers->update_token($new_token, $old_token);
         }
 
-        $this->managers->update_manager($manager_id, ['telegram_note' => $flag]);
-
+        echo json_encode(['info' => 1]);
         exit;
     }
 

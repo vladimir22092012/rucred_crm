@@ -29,6 +29,20 @@ class TelegramUsers extends Core
         return $id;
     }
 
+    public function update_token($new_token, $old_token)
+    {
+        $query = $this->db->placehold("
+        UPDATE s_telegram_users
+        SET token = ?
+        WHERE token = ?
+        ", $new_token, $old_token);
+
+        $this->db->query($query);
+        $id = $this->db->insert_id();
+
+        return $id;
+    }
+
     public function get($user_id, $manager_flag = false)
     {
         if(in_array($manager_flag, [0,1]))
