@@ -155,6 +155,7 @@
             text-align: center;
             vertical-align: middle;
             position: relative;
+            cursor: pointer;
         }
 
         .table tr:hover td {
@@ -162,25 +163,11 @@
         }
 
         .table tr:hover td:after {
-            content: '';
-            position: absolute;
             top: 0px;
             right: 0px;
             bottom: 0px;
             left: 0px;
             width: 105%;
-            cursor: pointer;
-        }
-
-        /* Рамка слева у первой ячейки */
-        .table tr:hover td:first-child:after {
-            border-left: 3px solid orange;
-        }
-
-        /* Рамка справа у последний ячейки */
-        .table tr:hover td:last-child:after {
-            border-right: 3px solid orange;
-            width: auto;
         }
     </style>
 {/capture}
