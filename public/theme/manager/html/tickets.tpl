@@ -143,6 +143,46 @@
             }
         }
     </style>
+    <style>
+        .table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: 100%;
+        }
+
+        .table th, .table td {
+            padding: 10px;
+            text-align: center;
+            vertical-align: middle;
+            position: relative;
+        }
+
+        .table tr:hover td {
+            background: #fffabe;
+        }
+
+        .table tr:hover td:after {
+            content: '';
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            bottom: 0px;
+            left: 0px;
+            width: 105%;
+            cursor: pointer;
+        }
+
+        /* Рамка слева у первой ячейки */
+        .table tr:hover td:first-child:after {
+            border-left: 3px solid orange;
+        }
+
+        /* Рамка справа у последний ячейки */
+        .table tr:hover td:last-child:after {
+            border-right: 3px solid orange;
+            width: auto;
+        }
+    </style>
 {/capture}
 
 <div class="page-wrapper">
@@ -199,9 +239,11 @@
                             <div class="clearfix">
                                 <div class="js-filter-status mb-2 float-left">
                                     <a href="{if $filter_status==0}{url status=null page=null}{else}{url status=0 page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status===0}btn-warning{else}btn-outline-warning{/if}">К принятию</a>
+                                       class="btn btn-xs {if $filter_status===0}btn-warning{else}btn-outline-warning{/if}">К
+                                        принятию</a>
                                     <a href="{if $filter_status==2}{url status=null page=null}{else}{url status=2 page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status==1}btn-info{else}btn-outline-info{/if}">Принят/В работе</a>
+                                       class="btn btn-xs {if $filter_status==1}btn-info{else}btn-outline-info{/if}">Принят/В
+                                        работе</a>
                                     <a href="{if $filter_status==4}{url status=null page=null}{else}{url status=4 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==4}btn-danger{else}btn-outline-success{/if}">Исполнено</a>
                                     {if $filter_status}
@@ -295,9 +337,10 @@
                                         <table class="jsgrid-table table table-striped table-hover">
                                             <tbody style="text-align: center">
                                             {foreach $tickets as $ticket}
-                                                <tr class="jsgrid-row">
+                                                <tr class="jsgrid-row"
+                                                    onclick="window.open('/ticket/{$ticket->id}/')">
                                                     <td style="width: 40px;" class="jsgrid-cell">
-                                                        <a href="/ticket/{$ticket->id}/">{$ticket->id}</a><br>
+                                                        {$ticket->id}<br>
                                                         {if !$archive}
                                                             {if in_array($ticket->status, [0,1])}
                                                                 <small class="label label-warning">К принятию</small>

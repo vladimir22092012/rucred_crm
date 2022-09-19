@@ -35,7 +35,7 @@ class YaDisk extends Core
         if (!empty($contract->number)) {
             $order->uid = $contract->number;
         } else {
-            $order->uid = "$order->group_number $order->company_number $order->personal_number ({$order->order_id})";
+            $order->uid = "$order->uid ({$order->order_id})";
         }
 
         $scans = $this->Scans->get_scans_by_order_id($order_id);
