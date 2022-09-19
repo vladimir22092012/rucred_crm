@@ -312,7 +312,7 @@ class DocumentController extends Controller
         if (!empty($contract->number)) {
             $order->uid = $contract->number;
         } else {
-            $order->uid = "$order->group_number $order->company_number $order->personal_number ({$order->order_id})";
+            $order->uid = "$order->uid ({$order->order_id})";
         }
 
         $fio = $document->params->lastname . ' ' . mb_substr($document->params->firstname, 0, 1) . mb_substr($document->params->patronymic, 0, 1);
