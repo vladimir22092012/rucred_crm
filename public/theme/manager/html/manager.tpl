@@ -1202,7 +1202,7 @@
                                                            style="margin-left: 20px; display: none; color: #aa0009">Вы еще
                                                         не привязаны, вам отправлена ссылка на почту
                                                     </small>
-                                                    <div class="btn btn-outline-primary viber_hook" data-user="{$user->id}">{if $user->viber_note == 1}Перепривязать{else}Привязать{/if}</div>
+                                                    <div class="btn btn-outline-primary viber_hook" data-user="{$user->id}">{if !empty($check_viber_hook)}Перепривязать{else}Привязать{/if}</div>
                                                 </div>
                                                 <div style="display: flex; margin: 5px 25px; width: 50%; justify-content: space-between">
                                                     <input class="form-check-input telegram_flag" type="checkbox"
@@ -1216,7 +1216,7 @@
                                                            style="margin-left: 20px; display: none; color: #aa0009">Вы еще
                                                         не привязаны, вам отправлено смс с ссылкой
                                                     </small>
-                                                    <div class="btn btn-outline-primary telegram_hook" data-user="{$user->id}">{if $user->telegram_note == 1}Перепривязать{else}Привязать{/if}</div>
+                                                    <div class="btn btn-outline-primary telegram_hook" data-user="{$user->id}">{if !empty($check_telegram_hook)}Перепривязать{else}Привязать{/if}</div>
                                                 </div>
                                             </div>
                                         </div>

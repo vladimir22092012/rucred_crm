@@ -220,6 +220,13 @@ class ManagerController extends Controller
 
             if ($id = $this->request->get('id', 'integer')) {
                 $user = $this->managers->get_manager($id);
+
+                $is_manager = 1;
+                $check_viber_hook = $this->ViberUsers->get($id, $is_manager);
+                $check_telegram_hook = $this->TelegramUsers->get($id, $is_manager);
+
+                $this->design->assign('check_viber_hook', $check_viber_hook);
+                $this->design->assign('check_telegram_hook', $check_telegram_hook);
             }
         }
 
