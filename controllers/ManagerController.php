@@ -1,7 +1,9 @@
 <?php
 
+use PHPMailer\PHPMailer\PHPMailer;
+
 error_reporting(-1);
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'On');
 
 class ManagerController extends Controller
 {
