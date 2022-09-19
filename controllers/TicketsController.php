@@ -77,6 +77,7 @@ class TicketsController extends Controller
                 }
 
                 $ticket->creator_company_name = $company->name;
+                $ticket->number = str_pad($ticket->id, 6, '0', STR_PAD_LEFT);
 
                 if (!empty($ticket->order_id)) {
                     $ticket->order = $this->orders->get_order($ticket->order_id);

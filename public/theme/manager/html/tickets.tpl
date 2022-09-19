@@ -348,7 +348,7 @@
                                                 <tr class="jsgrid-row"
                                                     onclick="window.open('/ticket/{$ticket->id}/')">
                                                     <td style="width: 40px;" class="jsgrid-cell">
-                                                        {$ticket->id}<br>
+                                                        {$ticket->number}<br>
                                                         {if !$archive}
                                                             {if in_array($ticket->status, [0,1])}
                                                                 <small class="label label-warning">К принятию</small>
