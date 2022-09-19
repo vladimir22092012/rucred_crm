@@ -31,6 +31,16 @@ class TicketController extends Controller
         $get_note = $this->TicketsNotes->get($ticket_id, $this->manager->id);
         $ticket = $this->Tickets->get_ticket($ticket_id);
 
+        if (!empty($ticket->order_id)) {
+            $order = $this->orders->get_order($ticket->order_id);
+            $this->design->assign('order', $order);
+
+            if (!empty($order->contract_id)){
+                $contract = $this->contracts->get_contract($order->contract_id);
+                $this->design->assign('contract', $contract);
+            }
+        }
+
         $need_response = $this->CommunicationsThemes->get($ticket->theme_id);
         $this->design->assign('need_response', $need_response->need_response);
 

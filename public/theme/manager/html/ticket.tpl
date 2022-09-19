@@ -135,10 +135,6 @@
                                             <form class="mb-3 border">
                                                 <h6 class="card-header card-success">
                                                     <span class="text-white" style="width: 20%">{$ticket->head}</span>
-                                                    {if !empty($ticket->order_id)}
-                                                        <span class="text-white" style="width: 20%; margin-left: 50px">Номер заявки: <a
-                                                                    href="{if $offline == 1}/offline_order/{else}/order/{/if}{$ticket->order_id}">{$ticket->order_id}</a></span>
-                                                    {/if}
                                                     {if in_array($ticket->status, [0,1])}
                                                         <small class="label label-warning"
                                                                style="margin-left: 50px; width: 7%">К принятию
@@ -165,14 +161,27 @@
                                                 </h6>
                                                 {if !empty($ticket->order_id)}
                                                     <br>
-                                                    <div class="row pt-2 view-block" style="margin-left: 3px">
-                                                        <div class="col-md-12">
-                                                            <div class="btn btn-info">
-                                                                <a target="_blank"
-                                                                   style="text-decoration: none; color: #f8fff7;"
-                                                                   href="{if $offline == 1}/offline_order/{else}/order/{/if}{$ticket->order_id}">Просмотреть
-                                                                    заявку</a>
+                                                    <div style="display: flex; flex-direction: column; margin-left: 10px;">
+                                                        <div style="display: flex;">
+                                                            <label>ФИО Заемщика: </label>
+                                                            <span style="margin-left: 15px">{$order->lastname} {$order->firstname} {$order->patronymic}</span>
+                                                        </div>
+                                                        <div style="display: flex;">
+                                                            <label>Номер заявки: </label>
+                                                            <span style="margin-left: 25px">{$order->uid}({$order->order_id})</span>
+                                                        </div>
+                                                        {if isset($contract)}
+                                                            <div style="display: flex;">
+                                                                <label>Номер договора: </label>
+                                                                <span style="margin-left: 10px">{$contract->number} ({$order->order_id})</span>
                                                             </div>
+                                                        {/if}
+                                                        <br>
+                                                        <div class="btn btn-info" style="width: 200px">
+                                                            <a target="_blank"
+                                                               style="text-decoration: none; color: #f8fff7;"
+                                                               href="{if $offline == 1}/offline_order/{else}/order/{/if}{$ticket->order_id}">Просмотреть
+                                                                заявку</a>
                                                         </div>
                                                     </div>
                                                     <br>
