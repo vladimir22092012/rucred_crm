@@ -307,75 +307,101 @@ class DocumentController extends Controller
         $this->design->assign('$period_days', $period_days);
 
         $tpl = $this->design->fetch('pdf/' . $document->template);
+        $contract = $this->contracts->get_contract($order->contract_id);
+
+        if (!empty($contract->number)) {
+            $order->uid = $contract->number;
+        } else {
+            $order->uid = "$order->group_number $order->company_number $order->personal_number ({$order->order_id})";
+        }
+
+        $fio = $document->params->lastname . ' ' . mb_substr($document->params->firstname, 0, 1) . mb_substr($document->params->patronymic, 0, 1);
+        $uid = $document->params->uid;
+        $employer = explode(' ', $uid);
+        $employer = "$employer[0]$employer[1]";
+        $date = date('Y-m-d', strtotime($document->params->probably_start_date));
+
+        if ($document->template == 'individualnie_usloviya.tpl') {
+            $file_name = "$order->uid Form 040302 $date";
+            $file_name = $this->translit($file_name);
+        }
+
+        if ($document->template == 'ind_usloviya_online.tpl') {
+            $file_name = "$order->uid Form 040301 $date";
+            $file_name = $this->translit($file_name);
+        }
+
+        if ($document->template == 'soglasie_na_obr_pers_dannih.tpl') {
+            $file_name = "$order->personal_number Form 0405 $date";
+            $file_name = $this->translit($file_name);
+        }
+
+        if ($document->template == 'soglasie_rdb.tpl') {
+            $file_name = "$order->personal_number Form 04052 $date";
+            $file_name = $this->translit($file_name);
+        }
+
+        if ($document->template == 'soglasie_minb.tpl') {
+            $file_name = "$order->personal_number Form 04051 $date";
+            $file_name = $this->translit($file_name);
+        }
+
+        if ($document->template == 'soglasie_rabotadatelu.tpl') {
+            $file_name = "$order->personal_number Form 0406 ($employer) $date";
+            $file_name = $this->translit($file_name);
+        }
+
+        if ($document->template == 'soglasie_rukred_rabotadatel.tpl') {
+            $file_name = "$order->personal_number Form 0303 ($employer) $date";
+            $file_name = $this->translit($file_name);
+        }
+
+        if ($document->template == 'soglasie_na_kred_otchet.tpl') {
+            $file_name = "$order->personal_number Form 0407 $date";
+            $file_name = $this->translit($file_name);
+        }
+
+        if ($document->template == 'zayavlenie_na_perechislenie_chasti_zp.tpl') {
+            $file_name = "$order->uid Form 0409 $date";
+            $file_name = $this->translit($file_name);
+        }
+
+        if ($document->template == 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl') {
+            $file_name = "$order->uid Form 0304 $date";
+            $file_name = $this->translit($file_name);
+        }
+
+        if ($document->template == 'grafik_obsl_mkr.tpl') {
+            $file_name = "$order->uid Form 0404 $date";
+            $file_name = $this->translit($file_name);
+        }
+
+        if ($document->template == 'obshie_uslovia.tpl') {
+            $file_name = "$order->uid Form 0410 $date";
+            $file_name = $this->translit($file_name);
+        }
+
+        if ($document->template == 'perechislenie_zaemnih_sredstv.tpl') {
+            $file_name = "$order->uid Form 0412 $date";
+            $file_name = $this->translit($file_name);
+        }
+
+        if ($document->template == 'dop_grafik.tpl') {
+            $file_name = $fio . " - График платежей по микрозайму (после реструктуризации)" . "($date)";
+        }
+
+        if ($document->template == 'dop_soglashenie.tpl') {
+            $file_name = $fio . " - Дополнительное соглашение к Индивидуальным условиям договора микрозайма" . "($date)";
+        }
+
+        if (isset($file_name))
+            $file_name = $this->translit($file_name);
 
 
         if ($this->request->get('action') == 'download_file') {
-            $fio = $document->params->lastname . ' ' . mb_substr($document->params->firstname, 0, 1) . mb_substr($document->params->patronymic, 0, 1);
-            $uid = $document->params->uid;
-            $employer = explode(' ', $uid);
-            $employer = "$employer[0]$employer[1]";
-            $date = date('Y-m-d', strtotime($document->params->probably_start_date));
-            $bank = ($document->params->settlement_id == 2) ? 'МИнБанк' : 'РосДорБанк';
-
-            if ($document->template == 'individualnie_usloviya.tpl') {
-                $download = $fio . ' - Договор микрозайма ' . $uid . ' ' . "($date)" . ' ' . $bank;
-            }
-
-            if ($document->template == 'soglasie_na_obr_pers_dannih.tpl') {
-                $download = $fio . ' - Согласие на обработку ПД ' . $uid . ' ' . "($date)";
-            }
-
-            if ($document->template == 'soglasie_rdb.tpl') {
-                $download = $fio . ' - Согласие на идентификацию через банк РДБ ' . $uid . ' ' . "($date)";
-            }
-
-            if ($document->template == 'soglasie_minb.tpl') {
-                $download = $fio . ' - Согласие на идентификацию через банк МИНБ ' . $uid . ' ' . "($date)";
-            }
-
-            if ($document->template == 'soglasie_rabotadatelu.tpl') {
-                $download = $fio . ' - Согласие на обработку и передачу ПД работодателю ' . $employer . ' ' . "($date)";
-            }
-
-            if ($document->template == 'soglasie_rukred_rabotadatel.tpl') {
-                $download = $fio . " - Согласие работодателю $employer на обработку и передачу ПД " . "($date)";
-            }
-
-            if ($document->template == 'soglasie_na_kred_otchet.tpl') {
-                $download = $fio . " - Согласие на запрос КО " . "($date)";
-            }
-
-            if ($document->template == 'zayavlenie_na_perechislenie_chasti_zp.tpl') {
-                $download = $fio . " - Обязательство подать заявление работодателю $employer  на перечисление" . "($date)";
-            }
-
-            if ($document->template == 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl') {
-                $download = $fio . " - Заявление работодателю $employer  на перечисление по микрозайму " . "($date)";
-            }
-
-            if ($document->template == 'grafik_obsl_mkr.tpl') {
-                $download = $fio . " - График обслуживания микрозайма" . "($date)";
-            }
-
-            if ($document->template == 'perechislenie_zaemnih_sredstv.tpl') {
-                $download = $fio . " - Согласие на перечисление заемных средств" . "($date)";
-            }
-
-            if ($document->template == 'dop_grafik.tpl') {
-                $download = $fio . " - График платежей по микрозайму (после реструктуризации)" . "($date)";
-            }
-
-            if ($document->template == 'dop_soglashenie.tpl') {
-                $download = $fio . " - Дополнительное соглашение к Индивидуальным условиям договора микрозайма" . "($date)";
-            }
-
-            if (isset($download))
-                $download = $this->translit($download);
-
-
-            $this->pdf->create($tpl, $document->name, $document->template, $download);
+            $this->pdf->create($tpl, $document->name, $file_name, 1);
         } else {
-            $this->pdf->create($tpl, $document->name, $document->template);
+            $this->pdf->create($tpl, $document->name, $file_name);
         }
     }
 
