@@ -31,6 +31,32 @@ class GroupLoanTypes extends Core
         return $groups;
     }
 
+    public function gets($params)
+    {
+        $where = '';
+
+        if(isset($params['group_id']))
+            $where .= $this->db->placehold("AND group_id = ?", $params['group_id']);
+
+        if(isset($params['on_off_flag']))
+            $where .= $this->db->placehold("AND on_off_flag = ?", $params['on_off_flag']);
+
+        if(isset($params['loantype_id']))
+            $where .= $this->db->placehold("AND loantype_id = ?", $params['loantype_id']);
+
+        $query = $this->db->placehold("
+        SELECT * 
+        FROM s_group_loantypes
+        WHERE 1
+        $where
+        ");
+
+        $this->db->query($query);
+        $results = $this->db->results();
+
+        return $results;
+    }
+
     public function get_loantypes_on($group_id)
     {
         $query = $this->db->placehold("

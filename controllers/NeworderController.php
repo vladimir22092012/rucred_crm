@@ -131,6 +131,15 @@ class NeworderController extends Controller
         $this->design->assign('loantypes', $loantypes);
 
         $groups = $this->Groups->get_groups();
+
+        foreach ($groups as $key => $group)
+        {
+            $flag = $this->GroupLoanTypes->gets(['group_id' => $group->id, 'on_off_flag' => 1]);
+
+            if(empty($flag))
+                unset($groups[$key]);
+        }
+
         $this->design->assign('groups', $groups);
 
         $settlements = $this->OrganisationSettlements->get_settlements();
