@@ -3,8 +3,6 @@
 use Telegram\Bot\Api;
 use Viber\Bot;
 use Viber\Api\Sender;
-use Viber\Client;
-use App\Services\MailService;
 use PHPMailer\PHPMailer\PHPMailer;
 
 error_reporting(-1);
@@ -161,6 +159,22 @@ class NotificationsCronRun extends Core
 
     private function mail_note($manager_id, $email, $ticket)
     {
+
+        $order = $this->orders->get_order($ticket->order_id);
+        $fio = "$order->lastname $order->firstname $order->patronymic";
+        $loantype = $this->loantypes->get_loantype($order->loan_type);
+
+        $message = '';
+        $message .= "<h2>$ticket->text</h2><br><br>";
+        $message .= '<h3>Номер тикета: '. str_pad($ticket->id, 6, 0, STR_PAD_LEFT).'</h3>';
+        $message .= '<h3>Номер заявки: '.$order->order_id.'</h3>';
+        $message .= '<h3>Дата заявки: '.date('d.m.Y', strtotime($order->date)).'</h3>';
+        $message .= '<h3>ФИО клиента: '. $fio .'</h3>';
+        $message .= '<h3>Тариф: '. $loantype->name .'</h3>';
+        $message .= '<h3>Сумма: '. $order->amount .'</h3>';
+        $message .= "Ссылка на тикет: ".$this->config->back_url.'/ticket/'.$ticket->id.'<br><br>';
+
+
         $mail = new PHPMailer(false);
 
         //Server settings
@@ -180,7 +194,7 @@ class NotificationsCronRun extends Core
         //Content
         $mail->isHTML(true);                                  //Set email format to HTML
         $mail->Subject = 'RuCred | Уведомление';
-        $mail->Body = "<h2>$ticket->text</h2><br><br>Ссылка на тикет: ".$this->config->back_url.'/ticket/'.$ticket->id;
+        $mail->Body = $message;
 
         $mail->send();
 
