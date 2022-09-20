@@ -781,25 +781,24 @@ class NeworderController extends Controller
                 }
 
             } else {
-                $issuance_date = new DateTime(date('Y-m-d', strtotime($start_date->format('Y-m-d'))));
                 $first_pay = new DateTime(date('Y-m-' . $first_pay_day, strtotime($start_date->format('Y-m-d'))));
                 $first_pay->add(new DateInterval('P1M'));
-                $count_days_this_month = date('t', strtotime($issuance_date->format('Y-m-d')));
+                $count_days_this_month = date('t', strtotime($start_date->format('Y-m-d')));
                 $paydate = $this->check_pay_date($first_pay);
 
-                if (date_diff($first_pay, $issuance_date)->days <= $loan->min_period) {
-                    $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($first_pay, $issuance_date)->days;
+                if (date_diff($first_pay, $start_date)->days <= $loan->min_period) {
+                    $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($first_pay, $start_date)->days;
                     $percents_pay = $sum_pay;
                     $body_pay = 0.00;
                 }
-                if (date_diff($first_pay, $issuance_date)->days > $loan->min_period && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
-                    $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($first_pay, $issuance_date)->days);
+                if (date_diff($first_pay, $start_date)->days > $loan->min_period && date_diff($first_pay, $start_date)->days < $count_days_this_month) {
+                    $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($first_pay, $start_date)->days);
                     $sum_pay = $annoouitet_pay - $minus_percents;
                     $percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
                     $percents_pay = round($percents_pay, 2, PHP_ROUND_HALF_DOWN);
                     $body_pay = $sum_pay - $percents_pay;
                 }
-                if (date_diff($first_pay, $issuance_date)->days >= $count_days_this_month) {
+                if (date_diff($first_pay, $start_date)->days >= $count_days_this_month) {
                     $sum_pay = $annoouitet_pay;
                     $percents_pay = $rest_sum * $percent_per_month;
                     $body_pay = $sum_pay - $percents_pay;
