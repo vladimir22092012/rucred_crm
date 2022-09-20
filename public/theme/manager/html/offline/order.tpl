@@ -75,12 +75,12 @@
                     processData: false,
                     contentType: false,
                     success: function (resp) {
-                        if(resp['error']){
+                        if (resp['error']) {
                             Swal.fire({
                                 title: resp['message'],
                                 confirmButtonText: 'ОК'
                             });
-                        }else{
+                        } else {
                             window.location.reload();
                         }
                     }
@@ -876,18 +876,25 @@
                             let order = $('.accept_order_by_underwriter').attr('data-order');
                             let restruct = $('.accept_order_by_underwriter').attr('data-restruct');
 
-                            $('.confirm_asp').fadeIn();
-                            $('.code_asp').fadeIn();
-                            $('.send_asp_code').text('Отправить смс повторно');
-
                             if (restruct == 1)
                                 $('.confirm_asp').attr('data_restruct', 1);
-
 
                             send_asp(phone, user, order, restruct);
                         }
                     }
                 });
+            });
+
+            $('.send_asp_code').on('click', function () {
+                let phone = $('.accept_order_by_underwriter').attr('data-phone');
+                let user = $('.accept_order_by_underwriter').attr('data-user');
+                let order = $('.accept_order_by_underwriter').attr('data-order');
+                let restruct = $('.accept_order_by_underwriter').attr('data-restruct');
+
+                if (restruct == 1)
+                    $('.confirm_asp').attr('data_restruct', 1);
+
+                send_asp(phone, user, order, restruct);
             });
 
             $('.approve_by_under').on('click', function (e) {
@@ -950,11 +957,11 @@
 
                 $.ajax({
                     method: 'POST',
-                    data:{
+                    data: {
                         action: 'reject_by_middle',
                         order_id: order_id,
                     },
-                    success:function () {
+                    success: function () {
                         location.reload();
                     }
                 })
@@ -965,11 +972,11 @@
 
                 $.ajax({
                     method: 'POST',
-                    data:{
+                    data: {
                         action: 'reject_by_under',
                         order_id: order_id,
                     },
-                    success:function () {
+                    success: function () {
                         location.reload();
                     }
                 })
@@ -978,12 +985,11 @@
     </script>
     <script>
 
-        function reset_schedule(delete_restruct)
-        {
-            if(delete_restruct == 1)
+        function reset_schedule(delete_restruct) {
+            if (delete_restruct == 1)
                 delete_restruct = "delete_restruct=1";
 
-            let form = $('#loan_settings').serialize()+'&'+delete_restruct;
+            let form = $('#loan_settings').serialize() + '&' + delete_restruct;
 
             $.ajax({
                 method: 'post',
@@ -1026,11 +1032,8 @@
                             confirmButtonText: 'Да'
                         })
                     } else {
-                        $('#asp_notification').fadeIn();
-
-                        setTimeout(function () {
-                            $('#asp_notification').fadeOut();
-                        }, 3000);
+                        $('.phone_send_code').text(resp['success']);
+                        $('.phone_send_code').fadeIn();
                     }
                 }
             });
@@ -1291,12 +1294,15 @@
         <div class="row page-titles">
             <div class="col-md-6 col-8 align-self-center">
                 <h4 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i> Заявка
-                    № {if !empty($contract->number)}{$contract->number}{else}{$order->group_number}{$order->company_number} {$order->personal_number}{/if} ({$order->order_id})</h4>
+                    № {if !empty($contract->number)}{$contract->number}{else}{$order->group_number}{$order->company_number} {$order->personal_number}{/if}
+                    ({$order->order_id})</h4>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
                     <li class="breadcrumb-item"><a href="offline_orders">Заявки</a></li>
                     <li class="breadcrumb-item active">Заявка
-                        № {if !empty($contract->number)}{$contract->number}{else}{$order->group_number}{$order->company_number} {$order->personal_number}{/if} ({$order->order_id})</li>
+                        № {if !empty($contract->number)}{$contract->number}{else}{$order->group_number}{$order->company_number} {$order->personal_number}{/if}
+                        ({$order->order_id})
+                    </li>
                 </ol>
             </div>
         </div>
@@ -1435,11 +1441,13 @@
                                             </div>
                                             <div class="form-group mb-1">
                                                 <input type="text" name="firstname" value="{$order->firstname}"
-                                                       class="form-control" placeholder="Имя" {if $client_status != 'Новая'}disabled{/if}/>
+                                                       class="form-control" placeholder="Имя"
+                                                       {if $client_status != 'Новая'}disabled{/if}/>
                                             </div>
                                             <div class="form-group mb-1">
                                                 <input type="text" name="patronymic" value="{$order->patronymic}"
-                                                       class="form-control" placeholder="Отчество" {if $client_status != 'Новая'}disabled{/if}/>
+                                                       class="form-control" placeholder="Отчество"
+                                                       {if $client_status != 'Новая'}disabled{/if}/>
                                             </div>
                                             <div class="form-group mb-1">
                                                 <input type="text" name="phone_mobile" value="{$order->phone_mobile}"
@@ -1637,18 +1645,18 @@
                                         {/if}
                                         {if $order->status == 10}
                                             {if $order->settlement_id == 2 && in_array($manager->role, ['middle', 'admin', 'developer'])}
-                                                    <div class="pt-1 pb-2">
-                                                        <button class="btn btn-info btn-lg btn-block send_money"
-                                                                data-order="{$order->order_id}">
-                                                            <i class="fas fa-hospital-symbol"></i>
-                                                            <span>Одобрить заявку и выплатить средства</span>
-                                                        </button>
-                                                        <button class="btn btn-danger btn-lg btn-block reject_by_middle"
-                                                                data-order="{$order->order_id}">
-                                                            <i class="fas fa-hospital-symbol"></i>
-                                                            <span>Отказать в предоставлении займа</span>
-                                                        </button>
-                                                    </div>
+                                                <div class="pt-1 pb-2">
+                                                    <button class="btn btn-info btn-lg btn-block send_money"
+                                                            data-order="{$order->order_id}">
+                                                        <i class="fas fa-hospital-symbol"></i>
+                                                        <span>Одобрить заявку и выплатить средства</span>
+                                                    </button>
+                                                    <button class="btn btn-danger btn-lg btn-block reject_by_middle"
+                                                            data-order="{$order->order_id}">
+                                                        <i class="fas fa-hospital-symbol"></i>
+                                                        <span>Отказать в предоставлении займа</span>
+                                                    </button>
+                                                </div>
                                             {/if}
                                             {if $order->settlement_id == 3 && in_array($manager->role, ['middle', 'admin', 'developer'])}
                                                 {if empty($issuance_transaction)}
@@ -2142,7 +2150,8 @@
                                                                 class="form-group mb-1 {if in_array('empty_birth', (array)$contactdata_error)}has-danger{/if}">
                                                             <label class="control-label">Дата рождения</label>
                                                             <input type="text" name="birth" value="{$order->birth}"
-                                                                   class="form-control" placeholder="" {if $client_status != 'Новая'}disabled{else}required="true"{/if}/>
+                                                                   class="form-control" placeholder=""
+                                                                   {if $client_status != 'Новая'}disabled{else}required="true"{/if}/>
                                                             {if in_array('empty_birth', (array)$contactdata_error)}
                                                                 <small class="form-control-feedback">Укажите дату
                                                                     рождения!
@@ -2469,7 +2478,8 @@
                                                         {if $need_form_restruct_docs == 1}
                                                             <div style="margin-left: 30px;"
                                                                  data-order="{$order->order_id}"
-                                                                 class="btn btn-primary form_restruct_docs">Закрепить график
+                                                                 class="btn btn-primary form_restruct_docs">Закрепить
+                                                                график
                                                                 и сформировать документы для реструктуризации
                                                             </div>
                                                         {/if}
@@ -4416,10 +4426,9 @@
                         <input type="text" class="form-control code_asp"
                                placeholder="SMS код"
                                value="{if $is_developer}{$contract->accept_code}{/if}"/>
-                        <small id="asp_success"
-                               style="display: none; color: #009d07">
-                            Успешно!
-                        </small>
+                        <div class="phone_send_code badge badge-danger"
+                             style="position: absolute; margin-left: 350px; margin-top: 5px; right: 150px;display: none">
+                        </div>
                         <button class="btn btn-info confirm_asp" type="button"
                                 data-user="{$order->user_id}"
                                 data-order="{$order->order_id}"
@@ -4434,7 +4443,7 @@
                                 data-phone="{$order->phone_mobile}"
                                 data-order="{$order->order_id}"
                                 class="btn btn-primary btn-block send_asp_code">
-                            Отправить смс
+                            Отправить смс повторно
                         </button>
                     </div>
                 </div>

@@ -4059,7 +4059,7 @@ class OfflineOrderController extends Controller
         SET phone = ?, code = ?, response = ?, ip = ?, user_id = ?, created = ?
         ', $phone, $code, $response['resp'], $_SERVER['REMOTE_ADDR'] ?? '', $user_id, date('Y-m-d H:i:s'));
 
-        echo json_encode(['success' => 1]);
+        echo json_encode(['success' => $code]);
         exit;
 
     }

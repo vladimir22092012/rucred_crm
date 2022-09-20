@@ -556,7 +556,7 @@ $(function () {
             '<td><input class="form-control credit_procents" name="credits_percents[][credits_percents]" type="text" value=""></td>' +
             '<td><select class="form-control" name="credits_delay[][credits_delay]"><option value="Да">Да</option>' +
             '<option value="Нет" selected>Нет</option></select></td>' +
-            '<td></td>' +
+            '<td><div class="btn btn-outline-danger delete_credit">-</div></td>' +
             '</tr>'
         );
 
@@ -578,12 +578,16 @@ $(function () {
             '<td><input class="form-control validity_period" name="cards_validity_period[][cards_validity_period]" type="text" value=""></td>' +
             '<td><select class="form-control" name="cards_delay[][cards_delay]"><option value="Да">Да</option>' +
             '<option value="Нет" selected>Нет</option></select></td>' +
-            '<td></td>' +
+            '<td><div class="btn btn-outline-danger delete_card">-</div></td>' +
             '</tr>');
 
         $('.validity_period').click(function () {
             $(this).setCursorPosition(0);
         }).mask('99/99');
+    });
+
+    $(document).on('click', '.delete_credit, .delete_card', function () {
+        $(this).closest('tr').remove();
     });
 
     $('.add_to_attestation_table').on('click', function () {
