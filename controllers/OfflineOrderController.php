@@ -3506,24 +3506,35 @@ class OfflineOrderController extends Controller
             foreach ($daterange as $date) {
                 $date = $this->check_pay_date($date);
 
-                if ($end_date->format('m') == $date->format('m')) {
+                if ($end_date->format('m') - $date->format('m') == 1) {
                     $loan_body_pay = $rest_sum;
                     $loan_percents_pay = $annoouitet_pay - $loan_body_pay;
                     $rest_sum = 0.00;
+
+                    $payment_schedule[$date->format('d.m.Y')] =
+                        [
+                            'pay_sum' => $annoouitet_pay,
+                            'loan_percents_pay' => $loan_percents_pay,
+                            'loan_body_pay' => $loan_body_pay,
+                            'comission_pay' => 0.00,
+                            'rest_pay' => $rest_sum
+                        ];
+
+                    break;
                 } else {
                     $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
                     $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
                     $rest_sum = round($rest_sum - $loan_body_pay, 2);
-                }
 
-                $payment_schedule[$date->format('d.m.Y')] =
-                    [
-                        'pay_sum' => $annoouitet_pay,
-                        'loan_percents_pay' => $loan_percents_pay,
-                        'loan_body_pay' => $loan_body_pay,
-                        'comission_pay' => 0.00,
-                        'rest_pay' => $rest_sum
-                    ];
+                    $payment_schedule[$date->format('d.m.Y')] =
+                        [
+                            'pay_sum' => $annoouitet_pay,
+                            'loan_percents_pay' => $loan_percents_pay,
+                            'loan_body_pay' => $loan_body_pay,
+                            'comission_pay' => 0.00,
+                            'rest_pay' => $rest_sum
+                        ];
+                }
             }
         }
 
