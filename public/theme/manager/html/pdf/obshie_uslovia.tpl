@@ -61,7 +61,7 @@
     </tr>
     <tr>
         <td style="40%"><strong>3.</strong> Дата предоставления микрозайма</td>
-        <td style="60%"><strong>Не позднее {$probably_start_date|date}</strong> года</td>
+        <td style="60%">Не позднее <strong>{$probably_start_date|date}</strong> года</td>
     </tr>
     <tr>
         <td style="40%"><strong>4.</strong> Срок микрозайма</td>
