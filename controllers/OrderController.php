@@ -290,8 +290,8 @@ class OrderController extends Controller
 
                     $managers_roles = $this->ManagerRoles->get();
 
-                    foreach ($managers_roles as $role){
-                        if($this->manager->role == $role->name)
+                    foreach ($managers_roles as $role) {
+                        if ($this->manager->role == $role->name)
                             $filter['role_id'] = $role->id;
                     }
 
@@ -554,9 +554,9 @@ class OrderController extends Controller
 
         $schedules = $this->PaymentsSchedules->gets($order_id);
 
-        if(count($schedules) > 1){
+        if (count($schedules) > 1) {
 
-            foreach ($schedules as $key => $schedule){
+            foreach ($schedules as $key => $schedule) {
                 $schedule->schedule = json_decode($schedule->schedule, true);
 
                 uksort($schedule->schedule,
@@ -568,10 +568,10 @@ class OrderController extends Controller
                         return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
                     });
 
-                if($schedule->actual == 1)
+                if ($schedule->actual == 1)
                     $payment_schedule = end($schedules);
             }
-        }else{
+        } else {
             $payment_schedule = end($schedules);
             $payment_schedule->schedule = json_decode($payment_schedule->schedule, true);
 
@@ -623,7 +623,7 @@ class OrderController extends Controller
                     $document->scan = $scan;
             }
 
-            if($document->type == 'DOP_GRAFIK' && empty($document->asp_id))
+            if ($document->type == 'DOP_GRAFIK' && empty($document->asp_id))
                 $asp_restruct = 1;
         }
 
@@ -827,12 +827,12 @@ class OrderController extends Controller
 
         $users_docs = $this->Documents->get_documents(['order_id' => $order_id]);
 
-        if (empty($users_docs)){
+        if (empty($users_docs)) {
             echo json_encode(['error' => 'Не сформированы документы!']);
             exit;
         }
 
-        if ($order->amount < $loan->min_amount && $order->amount > $loan->max_amount){
+        if ($order->amount < $loan->min_amount && $order->amount > $loan->max_amount) {
             echo json_encode(['error' => 'Проверьте сумму займа!']);
             exit;
         }
@@ -2514,83 +2514,18 @@ class OrderController extends Controller
 
     private function action_images()
     {
-        $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
 
         $statuses = $this->request->post('status');
 
         foreach ($statuses as $file_id => $status) {
-            $update = array(
-                'status' => $status,
-                'id' => $file_id
-            );
-            $old_files = $this->users->get_file($file_id);
-            $old_values = array();
-            foreach ($update as $key => $val)
-                $old_values[$key] = $old_files->$key;
-            if ($old_values['status'] != $update['status']) {
-                $this->changelogs->add_changelog(array(
-                    'manager_id' => $this->manager->id,
-                    'created' => date('Y-m-d H:i:s'),
-                    'type' => 'images',
-                    'old_values' => serialize($old_values),
-                    'new_values' => serialize($update),
-                    'user_id' => $user_id,
-                    'order_id' => $order_id,
-                    'file_id' => $file_id,
-                ));
-            }
 
             $this->users->update_file($file_id, array('status' => $status));
-
-            if ($status == 3) {
-                $this->users->update_user($user_id, array('stage_files' => 0));
-            } else {
-                $have_reject = 0;
-                if ($files = $this->users->get_files(array('user_id' => $user_id))) {
-                    foreach ($have_reject as $item)
-                        if ($item->status == 3)
-                            $have_reject = 1;
-                }
-                if (empty($have_reject))
-                    $this->users->update_user($user_id, array('stage_files' => 1));
-                else
-                    $this->users->update_user($user_id, array('stage_files' => 0));
-
-            }
-
-
         }
-
-        $order = new StdClass();
-        $order->order_id = $order_id;
-        $order->user_id = $user_id;
-
-        $isset_order = $this->orders->get_order((int)$order_id);
-
-        $order->status = $isset_order->status;
-        $order->manager_id = $isset_order->manager_id;
-
-        $this->design->assign('order', $order);
 
         $files = $this->users->get_files(array('user_id' => $user_id));
-
-        //Отправляемв 1с
-        $need_send = array();
-        $files_dir = str_replace('https://', 'http://', $this->config->front_url . '/files/users/');
-        foreach ($files as $f) {
-            if ($f->sent_1c == 0 && $f->status == 2) {
-                $need_send_item = new StdClass();
-                $need_send_item->id = $f->id;
-                $need_send_item->user_id = $f->user_id;
-                $need_send_item->type = $f->type;
-                $need_send_item->url = $files_dir . $f->name;
-
-                $need_send[] = $need_send_item;
-            }
-        }
-
         $this->design->assign('files', $files);
+        exit;
     }
 
     private function action_services()
@@ -3137,7 +3072,7 @@ class OrderController extends Controller
             $first_pay_day = $branch->payday;
         }
 
-        $probably_return_date = new DateTime(date('Y-m-'.$first_pay_day, strtotime($probably_start_date . '+' . $loantype->max_period . 'month')));
+        $probably_return_date = new DateTime(date('Y-m-' . $first_pay_day, strtotime($probably_start_date . '+' . $loantype->max_period . 'month')));
         $probably_return_date = $this->check_pay_date($probably_return_date);
 
         if ($amount < $loantype->min_amount || $amount > $loantype->max_amount) {
@@ -3865,7 +3800,7 @@ class OrderController extends Controller
                 }
             }
 
-            if(!empty($restruct) && $restruct == 1){
+            if (!empty($restruct) && $restruct == 1) {
                 $this->Contracts->update_contract($order->contract_id, ['return_date' => $next_payment]);
 
                 $query = $this->db->placehold("
@@ -3876,7 +3811,7 @@ class OrderController extends Controller
                 ", $asp_id);
 
                 $this->db->query($query);
-            }else{
+            } else {
 
                 $contract =
                     [
@@ -4061,7 +3996,7 @@ class OrderController extends Controller
         $doc_types['04.10'] = 'OBSHIE_USLOVIYA';
         $doc_types['03.04'] = 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR';
 
-        if($asp_id)
+        if ($asp_id)
             $order->asp = $asp_id;
 
 

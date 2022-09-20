@@ -2628,64 +2628,14 @@ class OfflineOrderController extends Controller
 
     private function action_images()
     {
-        $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
 
         $statuses = $this->request->post('status');
 
         foreach ($statuses as $file_id => $status) {
-            $update = array(
-                'status' => $status,
-                'id' => $file_id
-            );
-            $old_files = $this->users->get_file($file_id);
-            $old_values = array();
-            foreach ($update as $key => $val)
-                $old_values[$key] = $old_files->$key;
-            if ($old_values['status'] != $update['status']) {
-                $this->changelogs->add_changelog(array(
-                    'manager_id' => $this->manager->id,
-                    'created' => date('Y-m-d H:i:s'),
-                    'type' => 'images',
-                    'old_values' => serialize($old_values),
-                    'new_values' => serialize($update),
-                    'user_id' => $user_id,
-                    'order_id' => $order_id,
-                    'file_id' => $file_id,
-                ));
-            }
 
             $this->users->update_file($file_id, array('status' => $status));
-
-            if ($status == 3) {
-                $this->users->update_user($user_id, array('stage_files' => 0));
-            } else {
-                $have_reject = 0;
-                if ($files = $this->users->get_files(array('user_id' => $user_id))) {
-                    foreach ($have_reject as $item)
-                        if ($item->status == 3)
-                            $have_reject = 1;
-                }
-                if (empty($have_reject))
-                    $this->users->update_user($user_id, array('stage_files' => 1));
-                else
-                    $this->users->update_user($user_id, array('stage_files' => 0));
-
-            }
-
-
         }
-
-        $order = new StdClass();
-        $order->order_id = $order_id;
-        $order->user_id = $user_id;
-
-        $isset_order = $this->orders->get_order((int)$order_id);
-
-        $order->status = $isset_order->status;
-        $order->manager_id = $isset_order->manager_id;
-
-        $this->design->assign('order', $order);
 
         $files = $this->users->get_files(array('user_id' => $user_id));
 
