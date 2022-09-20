@@ -161,7 +161,6 @@ class GraphicConstructorController extends Controller
 
         if ($start_date->format('d') < $first_pay_day) {
             if (date_diff($this->check_pay_date($paydate), $start_date)->days <= $loan->free_period) {
-
                 $plus_loan_percents = round(($percent / 100) * $amount * date_diff($paydate, $start_date)->days, 2);
                 $sum_pay = $annoouitet_pay + $plus_loan_percents;
                 $percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2);
