@@ -299,7 +299,8 @@ class Managers extends Core
             'boss' => 'Босс',
             'underwriter' => 'Андеррайтер',
             'employer' => 'Работодатель',
-            'middle' => 'Мидл'
+            'middle' => 'Мидл',
+            'controller' => 'Контролер'
         );
 
         return $roles;
