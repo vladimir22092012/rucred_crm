@@ -339,6 +339,8 @@
                                     <a href="/whitelist"><i class="mdi mdi-tooltip"></i>Whitelist</a></li>
                                 <li {if in_array($module, ['BlacklistController'])}class="active"{/if}>
                                     <a href="/blacklist"><i class="mdi mdi-tooltip"></i>Blacklist</a></li>
+                                <li {if in_array($module, ['RfmlistController'])}class="active"{/if}>
+                                    <a href="/rfmlist"><i class="mdi mdi-tooltip"></i>Rfmlist</a></li>
                             {/if}
                             {if $manager->role != 'employer'}
                                 <li {if in_array($module, ['CommunicationsThemesController'])}class="active"{/if}>
