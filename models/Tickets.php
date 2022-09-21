@@ -32,7 +32,7 @@ class Tickets extends Core
         $executor = '';
         $creator = '';
 
-        if($status === false)
+        if($status == 'false')
             $status = $this->db->placehold("AND t.status != 6");
         else
             $status = $this->db->placehold("AND t.status = ?", $status);
