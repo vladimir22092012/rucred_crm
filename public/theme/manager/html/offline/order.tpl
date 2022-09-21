@@ -2252,6 +2252,38 @@
                                                     </div>
                                                 </div>
                                             </form>
+                                            <form action="{url}" class="js-order-item-form mb-3 border"
+                                                  id="address_form">
+
+                                                <input type="hidden" name="action" value="addresses"/>
+                                                <input type="hidden" name="user_id" value="{$client->id}"/>
+
+                                                <h6 class="card-header card-success">
+                                                    <span class="text-white">Адрес</span>
+                                                </h6>
+                                                <br>
+                                                <div class="row view-block {if $addresses_error}hide{/if}">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label class="control-label col-md-4">Адрес
+                                                                прописки:</label>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$order->regaddress->adressfull}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label class="control-label col-md-4">Адрес
+                                                                проживания:</label>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$order->faktaddress->adressfull}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
                                             <!-- / Контакты-->
 
                                             <form action="{url}"

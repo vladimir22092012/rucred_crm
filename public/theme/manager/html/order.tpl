@@ -1177,12 +1177,15 @@
         <div class="row page-titles">
             <div class="col-md-6 col-8 align-self-center">
                 <h4 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i> Заявка
-                    № {if !empty($contract->number)}{$contract->number}{else}{$order->group_number} {$order->company_number} {$order->personal_number}{/if} ({$order->order_id})</h4>
+                    № {if !empty($contract->number)}{$contract->number}{else}{$order->group_number} {$order->company_number} {$order->personal_number}{/if}
+                    ({$order->order_id})</h4>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
                     <li class="breadcrumb-item"><a href="orders">Заявки</a></li>
                     <li class="breadcrumb-item active">Заявка
-                        № {if !empty($contract->number)}{$contract->number}{else}{$order->group_number} {$order->company_number} {$order->personal_number}{/if} ({$order->order_id})</li>
+                        № {if !empty($contract->number)}{$contract->number}{else}{$order->group_number} {$order->company_number} {$order->personal_number}{/if}
+                        ({$order->order_id})
+                    </li>
                 </ol>
             </div>
         </div>
@@ -1887,7 +1890,7 @@
                                                             <label class="control-label col-md-4">Паспорт:</label>
                                                             <div class="col-md-8">
                                                                 <p class="form-control-static">{$order->passport_serial}
-                                                                    от {$order->passport_date}</p>
+                                                                    от {$order->passport_date|date}</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -2038,7 +2041,7 @@
                                                                 class="form-group mb-1 {if in_array('empty_passport_date', (array)$contactdata_error)}has-danger{/if}">
                                                             <label class="control-label">Дата выдачи</label>
                                                             <input type="text" class="form-control" name="passport_date"
-                                                                   value="{$order->passport_date}" placeholder=""
+                                                                   value="{$order->passport_date|date}" placeholder=""
                                                                    required="true"/>
                                                             {if in_array('empty_passport_date', (array)$contactdata_error)}
                                                                 <small class="form-control-feedback">Укажите дату выдачи
@@ -2091,6 +2094,38 @@
                                                             <button type="button"
                                                                     class="btn btn-inverse js-cancel-edit">Отмена
                                                             </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                            <form action="{url}" class="js-order-item-form mb-3 border"
+                                                  id="address_form">
+
+                                                <input type="hidden" name="action" value="addresses"/>
+                                                <input type="hidden" name="user_id" value="{$client->id}"/>
+
+                                                <h6 class="card-header card-success">
+                                                    <span class="text-white">Адрес</span>
+                                                </h6>
+                                                <br>
+                                                <div class="row view-block {if $addresses_error}hide{/if}">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label class="control-label col-md-4">Адрес
+                                                                прописки:</label>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$order->regaddress->adressfull}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label class="control-label col-md-4">Адрес
+                                                                проживания:</label>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$order->faktaddress->adressfull}</p>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -2210,28 +2245,6 @@
                                                                         </div>
                                                                     </div>
                                                                 </li>
-                                                                {if $manager->role != 'employer' && in_array($order->status, [0, 1, 2])}
-                                                                    <select class="form-control photo_status"
-                                                                            data-file="{$file->id}"
-                                                                            name="photo_status">
-                                                                        <option value="1"
-                                                                                {if $file->type == 'document'}selected{/if}>
-                                                                            Выберите тип документа
-                                                                        </option>
-                                                                        <option value="2"
-                                                                                {if $file->type == 'Паспорт: разворот'}selected{/if}>
-                                                                            Паспорт: разворот
-                                                                        </option>
-                                                                        <option value="3"
-                                                                                {if $file->type == 'Паспорт: регистрация'}selected{/if}>
-                                                                            Паспорт: регистрация
-                                                                        </option>
-                                                                        <option value="4"
-                                                                                {if $file->type == 'Селфи с паспортом'}selected{/if}>
-                                                                            Селфи с паспортом
-                                                                        </option>
-                                                                    </select>
-                                                                {/if}
                                                             </div>
                                                         {/foreach}
                                                     </ul>
@@ -3203,12 +3216,6 @@
                                 <!-- -->
                             </div>
                             <br>
-                            {if !in_array($manager->role, ['employer', 'underwriter']) && in_array($order->status, [0,1,2])}
-                                <div type="button" class="btn btn-outline-danger delete_order"
-                                     data-order="{$order->order_id}" style="margin-left: 20px">
-                                    Удалить заявку
-                                </div>
-                            {/if}
                         </div>
 
                         <!-- Комментарии -->

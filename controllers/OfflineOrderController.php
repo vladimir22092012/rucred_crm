@@ -296,6 +296,9 @@ class OfflineOrderController extends Controller
                     $scroll_to_photo = $this->request->get('scroll');
                     $this->design->assign('scroll_to_photo', $scroll_to_photo);
 
+                    $order->regaddress = $this->addresses->get_address($order->regaddress_id);
+                    $order->faktaddress = $this->addresses->get_address($order->faktaddress_id);
+
                     if (!empty($order->requisite_id)) {
                         $order->requisite = $this->requisites->get_requisite($order->requisite_id);
 

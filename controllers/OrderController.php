@@ -276,6 +276,9 @@ class OrderController extends Controller
 
                     $order->requisite = $this->requisites->get_requisite($order->requisite_id);
 
+                    $order->regaddress = $this->addresses->get_address($order->regaddress_id);
+                    $order->faktaddress = $this->addresses->get_address($order->faktaddress_id);
+
                     $holder = $order->requisite->holder;
                     $holder = explode(' ', $holder, 3);
                     $same_holder = 0;
