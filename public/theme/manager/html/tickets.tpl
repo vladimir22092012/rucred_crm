@@ -225,14 +225,14 @@
                         {if !$archive}
                             <div class="clearfix">
                                 <div class="js-filter-status mb-2 float-left">
-                                    <a href="{if $filter_status==0}{url status=null page=null}{else}{url status=0 page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status===0}btn-warning{else}btn-outline-warning{/if}">К
+                                    <a href="{if $filter_status=='0'}{url status=null page=null}{else}{url status='0' page=null}{/if}"
+                                       class="btn btn-xs {if $filter_status=='0'}btn-warning{else}btn-outline-warning{/if}">К
                                         принятию</a>
                                     <a href="{if $filter_status==2}{url status=null page=null}{else}{url status=2 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==1}btn-info{else}btn-outline-info{/if}">Принят/В
                                         работе</a>
                                     <a href="{if $filter_status==4}{url status=null page=null}{else}{url status=4 page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status==4}btn-danger{else}btn-outline-success{/if}">Исполнено</a>
+                                       class="btn btn-xs {if $filter_status==4}btn-success{else}btn-outline-success{/if}">Исполнено</a>
                                     {if $filter_status}
                                         <input type="hidden" value="{$filter_status}" id="filter_status"/>
                                     {/if}

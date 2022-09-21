@@ -45,6 +45,13 @@ class TicketsController extends Controller
                 $in_out = 'archive';
             }
 
+            $filter_status = $this->request->get('status');
+
+            if (empty($filter_status)) {
+                $filter_status = $this->request->get('status');
+                $this->design->assign('filter_status', $filter_status);
+            }
+
             $sort = 't.id desc';
 
             if ($this->request->get('sort', 'string')) {
@@ -52,7 +59,7 @@ class TicketsController extends Controller
                 $this->design->assign('sort', $sort);
             }
 
-            $tickets = $this->Tickets->get_tickets($manager_role, $manager_id, $in_out, ['sort' => $sort]);
+            $tickets = $this->Tickets->get_tickets($manager_role, $manager_id, $in_out, ['sort' => $sort], $filter_status);
 
             foreach ($tickets as $key => $ticket) {
 

@@ -3848,7 +3848,7 @@
                                                                     <td>{$o->date|date} {$o->date|time}</td>
                                                                     <td>
                                                                         <a href="order/{$o->order_id}"
-                                                                           target="_blank">{$o->order_id}</a>
+                                                                           target="_blank">{$o->uid}</a>
                                                                     </td>
                                                                     <td>
                                                                         {$o->contract->number}

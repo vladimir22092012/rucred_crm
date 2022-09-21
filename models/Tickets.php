@@ -24,14 +24,18 @@ class Tickets extends Core
         return $id;
     }
 
-    public function get_tickets($manager_role, $manager_id, $in_out, $sort = 't.id asc')
+    public function get_tickets($manager_role, $manager_id, $in_out, $sort = 't.id asc', $status = false)
     {
         $out = '';
         $manager = '';
         $theme = '';
-        $status = $this->db->placehold("AND t.status != 6");
         $executor = '';
         $creator = '';
+
+        if($status === false)
+            $status = $this->db->placehold("AND t.status != 6");
+        else
+            $status = $this->db->placehold("AND t.status = ?", $status);
 
 
         if (isset($sort['sort']))
