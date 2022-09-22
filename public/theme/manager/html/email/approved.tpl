@@ -29,7 +29,7 @@
         <br>
         <div align="left">
             <ul>
-                <li><a target="_blank" href="{$individ_encrypt}">№ {$uid} от
+                <li><a target="_blank" href="{$individ_encrypt}">Договор № {$uid} от
                         {$order->created|date} г.</a></li>
                 <br>
                 <li><a target="_blank" href="{$graphic_encrypt}">График платежей по договору № {$uid}</a></li>
