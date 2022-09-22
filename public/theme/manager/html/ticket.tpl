@@ -117,7 +117,7 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
                     <li class="breadcrumb-item"><a href="/tickets?in=true">Коммуникации</a></li>
-                    <li class="breadcrumb-item active">Тикет № {$ticket->id}</li>
+                    <li class="breadcrumb-item active">Тикет № {$ticket->number}</li>
                 </ol>
             </div>
         </div>

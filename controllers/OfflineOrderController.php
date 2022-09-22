@@ -262,6 +262,10 @@ class OfflineOrderController extends Controller
                     $this->action_reject_by_middle();
                     break;
 
+                case 'next_schedule_date':
+                    $this->action_next_schedule_date();
+                    break;
+
 
             endswitch;
 
@@ -4865,6 +4869,26 @@ class OfflineOrderController extends Controller
             ];
 
         $this->NotificationsClientsCron->add($cron);
+    }
+
+    private function action_next_schedule_date()
+    {
+        $previous_date = $this->request->post('date');
+        $order_id      = $this->request->post('order');
+        $next_date     = new DateTime(date('Y-m-d', strtotime($previous_date)));
+        $next_date->add(new DateInterval('P1M'));
+
+        $schedule = $this->PaymentsSchedules->get(['actual' => 1, 'order_id' => $order_id]);
+        $schedule = json_decode($schedule->schedule, true);
+
+        foreach ($schedule as $date => $payment)
+        {
+            if($date == $next_date->format('d.m.Y'))
+                $next_pay = ['date' => $date, 'payment' => $payment];
+        }
+
+        echo json_encode($next_pay);
+        exit;
     }
 
 }

@@ -880,6 +880,7 @@
 
                 $.ajax({
                     method: 'POST',
+                    dataType: 'JSON',
                     data: {
                         action: 'next_schedule_date',
                         date: date,
@@ -887,7 +888,13 @@
 
                     },
                     success: function (resp) {
-
+                        $('input[name="pay_date"]').val(resp['date']);
+                        $('.perspective_pay').show();
+                        $('.perspective_pay').attr('style', 'display: flex; flex-direction:column');
+                        $('#next_sum_pay').text(resp['payment']['pay_sum']);
+                        $('#next_sum_od').text(resp['payment']['loan_body_pay']);
+                        $('#next_sum_prc').text(resp['payment']['loan_percents_pay']);
+                        $('#next_sum_com').text(resp['payment']['comission_pay']);
                     }
                 })
             });
@@ -4068,13 +4075,20 @@
                                 <label>Дата изменения</label>
                                 <input type="text" class="form-control daterange" name="pay_date">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group perspective_pay" style="display: none">
                                 <label>Сумма ожидаемого платежа (расчётный параметр), руб</label>
-                                <input type="text" class="form-control" name="pay_amount">
+                                <label><strong>Общая сумма: </strong><span id="next_sum_pay"></span> руб</label>
+                                <label><strong>Сумма ОД: </strong><span id="next_sum_od"></span> руб</label>
+                                <label><strong>Сумма %%: </strong><span id="next_sum_prc"></span> руб</label>
+                                <label><strong>Комиссия: </strong><span id="next_sum_com"></span> руб</label>
                             </div>
                             <div class="form-group">
                                 <label>Сумма нового платежа, руб</label>
                                 <input type="text" class="form-control" name="pay_amount">
+                            </div>
+                            <div class="form-group">
+                                <label>Из них комиссия, руб</label>
+                                <input type="text" class="form-control" name="comission">
                             </div>
                             <div class="form-group">
                                 <label>Новый срок, мес</label>

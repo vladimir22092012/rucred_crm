@@ -1242,7 +1242,9 @@
                                                 <th>Срок погашения, месяц и год</th>
                                                 <th>Ставка, % годовых</th>
                                                 <th>Наличие просрочек</th>
-                                                <th></th>
+                                                <th><input type="button"
+                                                               class="btn btn-outline-success add_to_credits_table"
+                                                               value="+"></th>
                                             </tr>
                                             </thead>
                                             <tbody id="credits_table">
@@ -1274,11 +1276,7 @@
                                                                 <option value="Да">Да</option>
                                                                 <option value="Нет" selected>Нет</option>
                                                             </select></td>
-                                                        {if $credits_story@iteration == 1}
-                                                            <td><input type="button"
-                                                                       class="btn btn-outline-success add_to_credits_table"
-                                                                       value="+"></td>
-                                                        {/if}
+                                                        <td><div class="btn btn-outline-danger delete_credit">-</div></td>
                                                     </tr>
                                                 {/foreach}
                                             {else}
@@ -1304,9 +1302,7 @@
                                                             <option value="Да">Да</option>
                                                             <option value="Нет" selected>Нет</option>
                                                         </select></td>
-                                                    <td><input type="button"
-                                                               class="btn btn-outline-success add_to_credits_table"
-                                                               value="+"></td>
+                                                    <td><div class="btn btn-outline-danger delete_credit">-</div></td>
                                                 </tr>
                                             {/if}
                                             </tbody>
@@ -1322,7 +1318,9 @@
                                                 <th>Текущая задолженность, руб.</th>
                                                 <th>Срок действия карты, месяц и год</th>
                                                 <th>Наличие просрочек</th>
-                                                <th></th>
+                                                <th><input type="button"
+                                                           class="btn btn-outline-success add_to_cards_table"
+                                                           value="+"></th>
                                             </tr>
                                             </thead>
                                             <tbody id="cards_table">
@@ -1350,11 +1348,7 @@
                                                                 <option value="Нет" selected>Нет</option>
                                                             </select
                                                         </td>
-                                                        {if $credits_story@iteration == 1}
-                                                            <td><input type="button"
-                                                                       class="btn btn-outline-success add_to_cards_table"
-                                                                       value="+"></td>
-                                                        {/if}
+                                                        <td><div class="btn btn-outline-danger delete_card">-</div></td>
                                                     </tr>
                                                 {/foreach}
                                             {else}
@@ -1378,9 +1372,7 @@
                                                             <option value="Нет" selected>Нет</option>
                                                         </select
                                                     </td>
-                                                    <td><input type="button"
-                                                               class="btn btn-outline-success add_to_cards_table"
-                                                               value="+"></td>
+                                                    <td><div class="btn btn-outline-danger delete_card">-</div></td>
                                                 </tr>
                                             {/if}
                                             </tbody>

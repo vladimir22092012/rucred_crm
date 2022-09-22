@@ -4234,10 +4234,10 @@ class OrderController extends Controller
         foreach ($schedule as $date => $payment)
         {
             if($date == $next_date->format('d.m.Y'))
-                $next_pay = $payment;
+                $next_pay = ['date' => $date, 'payment' => $payment];
         }
 
-        echo json_encode(['payment' => $next_pay]);
+        echo json_encode($next_pay);
         exit;
     }
 

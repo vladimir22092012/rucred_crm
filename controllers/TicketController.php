@@ -79,6 +79,8 @@ class TicketController extends Controller
 
         $messages = $this->TicketMessages->get_messages($ticket_id);
 
+        $ticket->number = str_pad($ticket->id, 6, '0', STR_PAD_LEFT);
+
         $this->design->assign('messages', $messages);
 
         foreach ($ticket->docs as $key => $files) {
