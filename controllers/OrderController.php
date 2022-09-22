@@ -235,12 +235,12 @@ class OrderController extends Controller
                     return $this->action_send_qr();
                     break;
 
-                case 'upload_docs_to_yandex':
-                    return $this->action_upload_docs_to_yandex();
-                    break;
-
                 case 'accept_online_order':
                     $this->action_accept_online_order();
+                    break;
+
+                case 'next_schedule_date':
+                    $this->action_next_schedule_date();
                     break;
 
 
@@ -288,6 +288,22 @@ class OrderController extends Controller
                         if ($order->lastname == $holder_name && $order->firstname == $holder_firstname && $order->patronymic == $holder_patronymic)
                             $same_holder = 1;
                     }
+
+                    $need_form_restruct_docs = 0;
+
+                    if (in_array($order->status, [5, 19])) {
+                        $restruct_schedule = (array)$this->PaymentsSchedules->get([
+                            'actual' => 1,
+                            'order_id' => $order_id,
+                            'type' => 'restruct',
+                            'is_confirmed' => 0
+                        ]);
+
+                        if (!empty($restruct_schedule))
+                            $need_form_restruct_docs = 1;
+                    }
+
+                    $this->design->assign('need_form_restruct_docs', $need_form_restruct_docs);
 
                     $this->design->assign('same_holder', $same_holder);
 
@@ -1107,6 +1123,36 @@ class OrderController extends Controller
             $this->NotificationsClientsCron->add($cron);
 
             $this->tickets->update_by_theme_id(12, ['status' => 4], $order_id);
+
+            $schedule = $this->PaymentsSchedules->get(['actual' => 1, 'order_id' => $order->order_id]);
+            $schedules = json_decode($schedule->schedule, true);
+            unset($schedules['result']);
+
+            uksort($schedules,
+                function ($a, $b) {
+
+                    if ($a == $b)
+                        return 0;
+
+                    return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+                });
+
+            foreach ($schedules as $date => $payment) {
+                $graphs_payments =
+                    [
+                        'order_id' => $order->order_id,
+                        'user_id' => $order->user_id,
+                        'schedules_id' => $schedule->id,
+                        'sum_pay' => $payment['pay_sum'],
+                        'od_pay' => $payment['loan_body_pay'],
+                        'prc_pay' => $payment['loan_percents_pay'],
+                        'com_pay' => $payment['comission_pay'],
+                        'rest_pay' => $payment['rest_pay'],
+                        'pay_date' => date('d.m.Y', strtotime($date))
+                    ];
+
+                $this->PaymentsToSchedules->add($graphs_payments);
+            }
 
             return ['success' => 1];
         } else {
@@ -4173,6 +4219,26 @@ class OrderController extends Controller
             ];
 
         $this->NotificationsCron->add($cron);
+    }
+
+    private function action_next_schedule_date()
+    {
+        $previous_date = $this->request->post('date');
+        $order_id      = $this->request->post('order');
+        $next_date     = new DateTime(date('Y-m-d', strtotime($previous_date)));
+        $next_date->add(new DateInterval('P1M'));
+
+        $schedule = $this->PaymentsSchedules->get(['actual' => 1, 'order_id' => $order_id]);
+        $schedule = json_decode($schedule->schedule, true);
+
+        foreach ($schedule as $date => $payment)
+        {
+            if($date == $next_date->format('d.m.Y'))
+                $next_pay = $payment;
+        }
+
+        echo json_encode(['payment' => $next_pay]);
+        exit;
     }
 
 }

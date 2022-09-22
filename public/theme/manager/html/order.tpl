@@ -872,7 +872,25 @@
                         }
                     }
                 });
-            })
+            });
+
+            $('.next_pay_date').on('change', function () {
+                let date = $(this).val();
+                let order = $(this).attr('data-order');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'next_schedule_date',
+                        date: date,
+                        order: order
+
+                    },
+                    success: function (resp) {
+
+                    }
+                })
+            });
         });
     </script>
     <script>
@@ -2303,11 +2321,14 @@
                                                         <input style="margin-left: 30px; display: none" type="button"
                                                                class="btn btn-danger cancel_restruct"
                                                                value="Отменить">
-                                                        <div style="margin-left: 30px; {if $asp_restruct == 1}display: none{/if}"
-                                                             data-order="{$order->order_id}"
-                                                             class="btn btn-primary form_restruct_docs">Закрепить график
-                                                            и сформировать документы для реструктуризации
-                                                        </div>
+                                                        {if $need_form_restruct_docs == 1}
+                                                            <div style="margin-left: 30px; {if $asp_restruct == 1}display: none{/if}"
+                                                                 data-order="{$order->order_id}"
+                                                                 class="btn btn-primary form_restruct_docs">Закрепить
+                                                                график
+                                                                и сформировать документы для реструктуризации
+                                                            </div>
+                                                        {/if}
                                                     {/if}
                                                     {if $asp_restruct == 10}
                                                         <div class="btn btn-primary"
@@ -4039,11 +4060,20 @@
                         <input type="hidden" name="order_id" value="{$order->order_id}">
                         <div class="form-group" style="display:flex; flex-direction: column">
                             <div class="form-group">
-                                <label>Дата поступившего платежа</label>
+                                <label>Подтвержденная дата по графику</label>
+                                <input type="text" data-order="{$order->order_id}"
+                                       class="form-control daterange next_pay_date">
+                            </div>
+                            <div class="form-group">
+                                <label>Дата изменения</label>
                                 <input type="text" class="form-control daterange" name="pay_date">
                             </div>
                             <div class="form-group">
-                                <label>Поступивший платеж, руб</label>
+                                <label>Сумма ожидаемого платежа (расчётный параметр), руб</label>
+                                <input type="text" class="form-control" name="pay_amount">
+                            </div>
+                            <div class="form-group">
+                                <label>Сумма нового платежа, руб</label>
                                 <input type="text" class="form-control" name="pay_amount">
                             </div>
                             <div class="form-group">

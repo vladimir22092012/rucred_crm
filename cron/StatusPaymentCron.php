@@ -149,6 +149,36 @@ class StatusPaymentCron extends Core
 
                     $mail->send();
 
+                    $schedule = $this->PaymentsSchedules->get(['actual' => 1, 'order_id' => $order->order_id]);
+                    $schedules = json_decode($schedule->schedule, true);
+                    unset($schedules['result']);
+
+                    uksort($schedules,
+                        function ($a, $b) {
+
+                            if ($a == $b)
+                                return 0;
+
+                            return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+                        });
+
+                    foreach ($schedules as $date => $payment) {
+                        $graphs_payments =
+                            [
+                                'order_id' => $order->order_id,
+                                'user_id' => $order->user_id,
+                                'schedules_id' => $schedule->id,
+                                'sum_pay' => $payment['pay_sum'],
+                                'od_pay' => $payment['loan_body_pay'],
+                                'prc_pay' => $payment['loan_percents_pay'],
+                                'com_pay' => $payment['comission_pay'],
+                                'rest_pay' => $payment['rest_pay'],
+                                'pay_date' => date('d.m.Y', strtotime($date))
+                            ];
+
+                        $this->PaymentsToSchedules->add($graphs_payments);
+                    }
+
                 } else {
                     echo '<pre>';
                     var_dump($res);
