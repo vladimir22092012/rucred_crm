@@ -3230,7 +3230,7 @@ class OfflineOrderController extends Controller
 
         $this->NotificationsClientsCron->add($cron);
 
-
+        $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
         exit;
     }
 
@@ -3277,6 +3277,8 @@ class OfflineOrderController extends Controller
             ];
 
         $this->NotificationsCron->add($cron);
+
+        $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
         exit;
     }
 
