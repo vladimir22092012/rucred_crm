@@ -1295,15 +1295,12 @@ class OrderController extends Controller
     {
         $order_id = $this->request->post('order_id', 'integer');
         $reason_id = $this->request->post('reason', 'integer');
-        $status = $this->request->post('status', 'integer');
-
-        if (!($order = $this->orders->get_order((int)$order_id)))
-            return array('error' => 'Неизвестный ордер');
+        $order = $this->orders->get_order((int)$order_id);
 
         $reason = $this->reasons->get_reason($reason_id);
 
         $update = array(
-            'status' => $status,
+            'status' => 20,
             'manager_id' => $this->manager->id,
             'reject_reason' => $reason->client_name,
             'reason_id' => $reason_id,
@@ -1315,10 +1312,6 @@ class OrderController extends Controller
             'reject_reason' => $order->reject_reason
         );
 
-        if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
-            return array('error' => 'Не хватает прав для выполнения операции');
-
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($order);echo '</pre><hr />';
         $this->orders->update_order($order_id, $update);
 
         $this->changelogs->add_changelog(array(
@@ -1331,64 +1324,50 @@ class OrderController extends Controller
             'user_id' => $order->user_id,
         ));
 
-        // отправляем письмо независимо от того сняли за причину отказа или нет
-        $this->notify->send_reject_reason($order_id);
+        $communication_theme = $this->CommunicationsThemes->get(47);
 
-        // проверяем были ли уже списания за причину отказа, что бы не списать второй раз
-        $reject_operations = $this->operations->get_operations(array(
-            'type' => 'REJECT_REASON',
-            'order_id' => $order->order_id
-        ));
+        $ticket =
+            [
+                'creator' => $this->manager->id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => $communication_theme->id,
+                'company_id' => $order->company_id,
+                'group_id' => $order->group_id,
+                'order_id' => $order_id,
+                'status' => 0
+            ];
 
-        // Снимаем за причину отказа
-        if (empty($reject_operations)) {
-            if (!empty($order->service_reason) && $status == 3) {
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+        $this->TicketMessages->add_message($message);
 
-                $service_summ = $this->settings->reject_reason_cost * 100;
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
 
-                $description = 'Услуга "Узнай причину отказа"';
+        $this->NotificationsCron->add($cron);
 
-                $response = $this->best2pay->recurrent($order->card_id, $service_summ, $description);
-                //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump(htmlspecialchars($response));echo '</pre><hr />';
+        $cron =
+            [
+                'template_id' => 10,
+                'user_id' => $order->user_id,
+            ];
 
-                $xml = simplexml_load_string($response);
-                $b2p_status = (string)$xml->state;
+        $this->NotificationsClientsCron->add($cron);
 
-                if ($b2p_status == 'APPROVED') {
-                    $transaction = $this->transactions->get_operation_transaction($xml->order_id, $xml->id);
-
-                    $operation_id = $this->operations->add_operation(array(
-                        'contract_id' => 0,
-                        'user_id' => $order->user_id,
-                        'order_id' => $order->order_id,
-                        'type' => 'REJECT_REASON',
-                        'amount' => $this->settings->reject_reason_cost,
-                        'created' => date('Y-m-d H:i:s'),
-                        'transaction_id' => $transaction->id,
-                    ));
-
-                    $operation = $this->operations->get_operation($operation_id);
-                    $operation->transaction = $this->transactions->get_transaction($transaction->id);
-
-                    $this->operations->update_operation($operation->id, array(
-                        'sent_status' => 2,
-                        'sent_date' => date('Y-m-d H:i:s')
-                    ));
-
-                    //Отправляем чек
-                    $this->cloudkassir->send_reject_reason($order_id);
-
-
-                    return true;
-                    //echo __FILE__.' '.__LINE__.'<br /><pre>';echo(htmlspecialchars($recurring));echo $contract_id.'</pre><hr />';exit;
-
-                } else {
-                    return false;
-                }
-            }
-        }
-
-        return array('success' => 1, 'status' => $status);
+        return array('success' => 1, 'status' => 20);
     }
 
     private function status_action($status)

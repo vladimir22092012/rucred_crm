@@ -1400,15 +1400,12 @@ class OfflineOrderController extends Controller
     {
         $order_id = $this->request->post('order_id', 'integer');
         $reason_id = $this->request->post('reason', 'integer');
-        $status = $this->request->post('status', 'integer');
-
-        if (!($order = $this->orders->get_order((int)$order_id)))
-            return array('error' => 'Неизвестный ордер');
+        $order = $this->orders->get_order((int)$order_id);
 
         $reason = $this->reasons->get_reason($reason_id);
 
         $update = array(
-            'status' => $status,
+            'status' => 20,
             'manager_id' => $this->manager->id,
             'reject_reason' => $reason->client_name,
             'reason_id' => $reason_id,
@@ -1419,9 +1416,6 @@ class OfflineOrderController extends Controller
             'manager_id' => $order->manager_id,
             'reject_reason' => $order->reject_reason
         );
-
-        if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
-            return array('error' => 'Не хватает прав для выполнения операции');
 
         $this->orders->update_order($order_id, $update);
 
@@ -1478,7 +1472,7 @@ class OfflineOrderController extends Controller
 
         $this->NotificationsClientsCron->add($cron);
 
-        return array('success' => 1, 'status' => $status);
+        return array('success' => 1, 'status' => 20);
     }
 
     private function status_action($status)
