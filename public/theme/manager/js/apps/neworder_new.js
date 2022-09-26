@@ -398,7 +398,7 @@ $(function () {
 
     $(document).on('input', '.Regadress , .Faktaddress', function () {
         let value = $(this).val();
-        value = value.replace(new RegExp(/[^а-яёА-ЯЁ0-9,.\s]+$/, 'g'), '');
+        value = value.replace(new RegExp(/[^а-яёА-ЯЁ0-9,.\s-]+$/, 'g'), '');
         $(this).val(value);
     });
 
