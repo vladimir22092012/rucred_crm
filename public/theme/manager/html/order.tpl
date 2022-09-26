@@ -1206,7 +1206,12 @@
                     ({$order->order_id})</h4>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
-                    <li class="breadcrumb-item"><a href="orders">Заявки</a></li>
+                    <li class="breadcrumb-item">
+                        {if isset($from_registr)}
+                            <a href="registr">Реестр сделок</a>
+                        {else}
+                            <a href="offline_orders">Заявки</a>
+                        {/if}</li>
                     <li class="breadcrumb-item active">Заявка
                         № {if !empty($contract->number)}{$contract->number}{else}{$order->group_number} {$order->company_number} {$order->personal_number}{/if}
                         ({$order->order_id})
