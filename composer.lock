@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6c9dfcbfadb9b4a223a635c92f72aea0",
+    "content-hash": "10dfc09793f17e158b709eb734b7afc4",
     "packages": [
         {
             "name": "arhitector/yandex",
