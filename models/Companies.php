@@ -53,7 +53,6 @@ class Companies extends Core
         FROM s_companies
         WHERE 1
         $group_id
-        $blocked
         $company_name
         ");
 
