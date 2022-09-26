@@ -179,6 +179,8 @@ class StatusPaymentCron extends Core
                         $this->PaymentsToSchedules->add($graphs_payments);
                     }
 
+                    $this->tickets->update_by_theme_id(12, ['status' => 4], $order->order_id);
+
                 } else {
                     echo '<pre>';
                     var_dump($res);
