@@ -38,15 +38,10 @@ class Companies extends Core
     public function get_companies($filter = array())
     {
         $group_id = '';
-        $blocked = '';
         $company_name = '';
 
         if (isset($filter['group_id'])) {
             $group_id = $this->db->placehold("AND group_id = ?", (int)$filter['group_id']);
-        }
-
-        if (isset($filter['blocked'])) {
-            $blocked = $this->db->placehold("AND blocked = ?", (int)$filter['blocked']);
         }
 
         if(isset($filter['company_name'])){
@@ -108,8 +103,7 @@ class Companies extends Core
         com.ogrn,
         com.kpp,
         com.jur_address,
-        com.phys_address,
-        com.blocked  
+        com.phys_address
         FROM s_companies as com
         JOIN s_groups as gr on com.group_id = gr.id
         WHERE com.id = ?
@@ -227,7 +221,6 @@ class Companies extends Core
         com.kpp,
         com.jur_address,
         com.phys_address,
-        com.blocked,
         gr.id
         FROM s_companies as com
         JOIN s_groups as gr on com.group_id = gr.id
