@@ -124,11 +124,12 @@ class IndexController extends Controller
             WHERE creator != ?
             and status != 6
             and theme_id in ($themes_id)
+            and created >= ? 
             and not exists (SELECT *
             FROM s_tickets_notifications
             WHERE ticket_id = s_tickets.id
             AND user_id = ?)
-            ", $this->manager->id, $this->manager->id);
+            ", $this->manager->id, date('Y-m-d', strtotime($this->manager->created)), $this->manager->id);
 
                 $this->db->query($query);
                 $count_in = $this->db->result('count');
