@@ -1323,7 +1323,12 @@
                     ({$order->order_id})</h4>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
-                    <li class="breadcrumb-item"><a href="offline_orders">Заявки</a></li>
+                    <li class="breadcrumb-item">
+                        {if isset($from_registr)}
+                            <a href="registr">Реестр сделок</a>
+                        {else}
+                            <a href="offline_orders">Заявки</a>
+                        {/if}</li>
                     <li class="breadcrumb-item active">Заявка
                         № {if !empty($contract->number)}{$contract->number}{else}{$order->group_number}{$order->company_number} {$order->personal_number}{/if}
                         ({$order->order_id})
@@ -3570,8 +3575,7 @@
                                                 <div class="row view-block p-2 snils-front">
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-0 row">
-                                                            <label class="control-label col-md-8 col-7 snils-number">{$order->pdn}
-                                                                %</label>
+                                                            <label class="control-label col-md-8 col-7 snils-number">{$order->pdn} %</label>
                                                         </div>
                                                     </div>
                                                 </div>

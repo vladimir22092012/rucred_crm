@@ -281,6 +281,12 @@ class OfflineOrderController extends Controller
             if ($order_id = $this->request->get('id', 'integer')) {
                 if ($order = $this->orders->get_order($order_id)) {
 
+                    $from_registr = $this->request->get('reg');
+
+                    if(!empty($from_registr))
+                        $this->design->assign('from_registr', $from_registr);
+
+
                     $old_orders = $this->orders->get_orders(['user_id' => $order->user_id]);
 
                     $client_status = 'Повтор';
@@ -3224,7 +3230,7 @@ class OfflineOrderController extends Controller
 
         $this->NotificationsClientsCron->add($cron);
 
-
+        $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
         exit;
     }
 
@@ -3271,6 +3277,8 @@ class OfflineOrderController extends Controller
             ];
 
         $this->NotificationsCron->add($cron);
+
+        $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
         exit;
     }
 

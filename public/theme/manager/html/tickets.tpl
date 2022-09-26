@@ -89,7 +89,21 @@
                     }
                 })
             });
-        })
+
+            $('#new_tickets').on('click', function () {
+
+                if ($(this).is(':checked')) {
+                    $('tr[class="jsgrid-row"]').each(function () {
+                        let selector = $(this).find('.blink').length;
+
+                        if (!selector)
+                            $(this).hide();
+                    });
+                } else {
+                    $('tr[class="jsgrid-row"]').show();
+                }
+            });
+        });
     </script>
 {/capture}
 
@@ -237,6 +251,9 @@
                                         <input type="hidden" value="{$filter_status}" id="filter_status"/>
                                     {/if}
                                 </div>
+                                <input style="margin-left: 20px!important;" type="checkbox" name="new_tickets"
+                                       id="new_tickets">
+                                <label for="new_tickets">Только новые</label>
                             </div>
                         {/if}
                         <div id="basicgrid" class="jsgrid" style="position: relative; width: 100%;">
@@ -351,7 +368,7 @@
                                                             {/if}
                                                         {/if}
                                                         {if $ticket->new == 1}
-                                                            <small class="blink ">Новый!</small>
+                                                            <small class="blink">Новый!</small>
                                                         {/if}
                                                     </td>
                                                     <td style="width: 40px;" class="jsgrid-cell">
@@ -361,7 +378,8 @@
                                                         {$ticket->order->lastname} {$ticket->order->firstname} {$ticket->order->patronymic}
                                                         <br>{$ticket->order->uid}
                                                         {if isset($ticket->contract)}
-                                                            <br>{$ticket->contract->number}
+                                                            <br>
+                                                            {$ticket->contract->number}
                                                         {/if}
                                                     </td>
                                                     <td style="width: 70px;" class="jsgrid-cell">

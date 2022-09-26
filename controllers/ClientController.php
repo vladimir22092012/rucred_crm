@@ -1131,7 +1131,7 @@ class ClientController extends Controller
     {
         $group_id = $this->request->post('group_id');
 
-        $companies = $this->Companies->get_companies(['group_id' => $group_id, 'blocked' => 0]);
+        $companies = $this->Companies->get_companies(['group_id' => $group_id, 'offline_blocked' => 0]);
 
         echo json_encode(['companies' => $companies]);
         exit;
