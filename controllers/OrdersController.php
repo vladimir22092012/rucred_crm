@@ -54,21 +54,8 @@ class OrdersController extends Controller
                     $filter['current'] = $this->manager->id;
                 }
         */
-        if ($this->manager->role == 'collector' || $this->manager->role == 'chief_collector') {
-            // показываем только выданные заявки
-            $filter['status'] = array(5);
-        }
-
-        if ($this->manager->role == 'quality_control') {
-            $filter['workout_sort'] = 1;
-        }
 
         $filter['offline'] = 0;
-
-        if (!in_array($this->manager->role, array('collector', 'chief_collector', 'developer'))) {
-            // показываем заявки только созданные на сайте
-            $filter['type'] = 'base';
-        }
 
         if (!($sort = $this->request->get('sort', 'string'))) {
             $sort = 'order_id_desc';
@@ -108,16 +95,16 @@ class OrdersController extends Controller
 
         $status = $this->request->get('status');
 
-        if(!empty($status)){
+        if (!empty($status)) {
             $filter['status'] = $status;
             $this->design->assign('filter_status', $status);
-        }else{
-            $filter['status'] = [0, 1, 2, 4, 6, 8, 9, 14, 15, 10, 11, 13, 20];
+        } else {
+            $filter['status'] = [0, 1, 2, 3, 4, 6, 8, 9, 14, 15, 10, 11, 13, 20];
         }
 
         $orders_source = $this->request->get('source');
 
-        if(!empty($orders_source)){
+        if (!empty($orders_source)) {
             $filter['order_source'] = $orders_source;
             $this->design->assign('filter_source', $orders_source);
         }
@@ -201,14 +188,14 @@ class OrdersController extends Controller
 
             $order->client_status = 'Повтор';
 
-            if(count($old_orders) > 1){
-                foreach ($old_orders as $old_order){
-                    if(in_array($old_order->status, [5,7]))
+            if (count($old_orders) > 1) {
+                foreach ($old_orders as $old_order) {
+                    if (in_array($old_order->status, [5, 7]))
                         $order->client_status = 'ПК';
                 }
             }
 
-            if(count($old_orders) == 1)
+            if (count($old_orders) == 1)
                 $order->client_status = 'Новая';
         }
 
