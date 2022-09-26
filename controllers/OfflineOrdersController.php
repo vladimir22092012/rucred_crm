@@ -97,15 +97,19 @@ class OfflineOrdersController extends Controller
 
         $status = $this->request->get('status');
 
-        if(!empty($status)){
+        if (!empty($status)) {
             $filter['status'] = $status;
             $this->design->assign('filter_status', $status);
-        }else{
-            $filter['status'] = [0,1,2,4,6,8,9,14,15,10,11,13,20];
+        } else {
+            $filter['status'] = [0, 1, 2, 4, 6, 8, 9, 14, 15, 10, 11, 13, 20];
         }
 
-        if ($this->request->get('drafts'))
+        if ($this->request->get('drafts')) {
             $filter['status'] = 12;
+
+            if ($this->request->get('online'))
+                $filter['offline'] = 0;
+        }
 
         $orders_count = $this->orders->count_orders($filter);
 
@@ -203,14 +207,14 @@ class OfflineOrdersController extends Controller
 
             $order->client_status = 'Повтор';
 
-            if(count($old_orders) > 1){
-                foreach ($old_orders as $old_order){
-                    if(in_array($old_order->status, [5,7]))
+            if (count($old_orders) > 1) {
+                foreach ($old_orders as $old_order) {
+                    if (in_array($old_order->status, [5, 7]))
                         $order->client_status = 'ПК';
                 }
             }
 
-            if(count($old_orders) == 1)
+            if (count($old_orders) == 1)
                 $order->client_status = 'Новая';
         }
 
@@ -219,8 +223,18 @@ class OfflineOrdersController extends Controller
 
 
         if ($this->request->get('drafts')) {
+            if($this->request->get('online'))
+            {
+                $drafts_online = 1;
+                $this->design->assign('drafts_online', $drafts_online);
+            }else{
+                $drafts_offline = 1;
+                $this->design->assign('drafts_offline', $drafts_offline);
+            }
+
             $drafts = 1;
             $this->design->assign('drafts', $drafts);
+
             return $this->design->fetch('offline/drafts.tpl');
         } else
             return $this->design->fetch('offline/orders.tpl');
