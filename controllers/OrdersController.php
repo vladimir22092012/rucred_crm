@@ -54,21 +54,8 @@ class OrdersController extends Controller
                     $filter['current'] = $this->manager->id;
                 }
         */
-        if ($this->manager->role == 'collector' || $this->manager->role == 'chief_collector') {
-            // показываем только выданные заявки
-            $filter['status'] = array(5);
-        }
-
-        if ($this->manager->role == 'quality_control') {
-            $filter['workout_sort'] = 1;
-        }
 
         $filter['offline'] = 0;
-
-        if (!in_array($this->manager->role, array('collector', 'chief_collector', 'developer'))) {
-            // показываем заявки только созданные на сайте
-            $filter['type'] = 'base';
-        }
 
         if (!($sort = $this->request->get('sort', 'string'))) {
             $sort = 'order_id_desc';
@@ -112,7 +99,7 @@ class OrdersController extends Controller
             $filter['status'] = $status;
             $this->design->assign('filter_status', $status);
         }else{
-            $filter['status'] = [0,1,2,4,6,8,9,14,15,10,11,13];
+            $filter['status'] = [0, 1, 2, 3, 4, 6, 8, 9, 14, 15, 10, 11, 13, 20];
         }
 
         $orders_source = $this->request->get('source');
