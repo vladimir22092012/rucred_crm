@@ -193,7 +193,7 @@
                                                     <input type="checkbox" name="blocked_flag"
                                                            data-company="{$company->com_id}"
                                                            class="onoffswitch-checkbox offline_blocked"
-                                                           id="offline_blocked">
+                                                           id="offline_blocked" {if $company->offline_blocked == 1}checked{/if}>
                                                     <label class="onoffswitch-label" for="offline_blocked">
                                                         <span class="onoffswitch-inner"></span>
                                                         <span class="onoffswitch-switch"></span>
@@ -205,7 +205,7 @@
                                                     <input type="checkbox" name="blocked_flag"
                                                            data-company="{$company->com_id}"
                                                            class="onoffswitch-checkbox online_blocked"
-                                                           id="online_blocked">
+                                                           id="online_blocked" {if $company->online_blocked == 1}checked{/if}>
                                                     <label class="onoffswitch-label" for="online_blocked">
                                                         <span class="onoffswitch-inner"></span>
                                                         <span class="onoffswitch-switch"></span>
