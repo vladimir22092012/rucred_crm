@@ -64,6 +64,12 @@ class TicketsController extends Controller
 
             foreach ($tickets as $key => $ticket) {
 
+                if($this->manager->created > $ticket->created)
+                {
+                    unset($tickets[$key]);
+                    continue;
+                }
+
                 $ticket->new = 0;
                 $ticket_new = $this->TicketsNotes->get($ticket->id, $manager_id);
 
