@@ -1733,6 +1733,12 @@
                                             <i class="fas fa-check-circle"></i>
                                             <span>Принять в работу</span>
                                         </button>
+                                        <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
+                                                data-event="13" data-user="{$order->user_id}"
+                                                data-order="{$order->order_id}"
+                                                data-manager="{$manager->id}">
+                                            <span>Отказать без рассмотрения</span>
+                                        </button>
                                     {/if}
                                     {if $order->status == 2 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
                                         <div class="col-12">

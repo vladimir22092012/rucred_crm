@@ -1876,8 +1876,13 @@
                                                 data-phone="{$order->phone_mobile}" data-event="12"
                                                 data-user="{$order->user_id}"
                                                 data-order="{$order->order_id}" data-manager="{$manager->id}">
-                                            <i class="fas fa-check-circle"></i>
                                             <span>Подписать и принять в работу</span>
+                                        </button>
+                                        <button class="btn btn-danger btn-block reject_by_under"
+                                                data-event="13" data-user="{$order->user_id}"
+                                                data-order="{$order->order_id}"
+                                                data-manager="{$manager->id}">
+                                            <span>Отказать без рассмотрения</span>
                                         </button>
                                     {/if}
                                     {*
