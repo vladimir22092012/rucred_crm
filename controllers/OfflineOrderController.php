@@ -283,7 +283,7 @@ class OfflineOrderController extends Controller
 
                     $from_registr = $this->request->get('reg');
 
-                    if(!empty($from_registr))
+                    if (!empty($from_registr))
                         $this->design->assign('from_registr', $from_registr);
 
 
@@ -3359,6 +3359,7 @@ class OfflineOrderController extends Controller
             ];
 
         $this->orders->update_order($order_id, $order);
+
         $this->action_reform_schedule($order_id);
 
         if (!empty($delete_restruct)) {
@@ -3414,7 +3415,7 @@ class OfflineOrderController extends Controller
         $start_date = new DateTime(date('Y-m-d', strtotime($order['probably_start_date'])));
         $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date->format('Y-m-d'))));
 
-        if($start_date->format('d') > $first_pay_day)
+        if ($start_date->format('d') > $first_pay_day)
             $paydate->add(new DateInterval('P1M'));
 
         $end_date = $this->check_date($paydate->format('Y-m-d'), $order['loan_type'], $first_pay_day);
@@ -3487,43 +3488,33 @@ class OfflineOrderController extends Controller
         }
 
         if ($rest_sum !== 0) {
+
             $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
             $interval = new DateInterval('P1M');
             $end_date->setTime(0, 0, 1);
             $daterange = new DatePeriod($paydate, $interval, $end_date);
 
             foreach ($daterange as $date) {
-                $date = $this->check_pay_date($date);
+                $pay_date = $this->check_pay_date($date);
 
-                if ($end_date->format('m') - $date->format('m') == 1) {
+                if ($end_date->format('m') == $date->format('m')) {
                     $loan_body_pay = $rest_sum;
                     $loan_percents_pay = $annoouitet_pay - $loan_body_pay;
                     $rest_sum = 0.00;
-
-                    $payment_schedule[$date->format('d.m.Y')] =
-                        [
-                            'pay_sum' => $annoouitet_pay,
-                            'loan_percents_pay' => $loan_percents_pay,
-                            'loan_body_pay' => $loan_body_pay,
-                            'comission_pay' => 0.00,
-                            'rest_pay' => $rest_sum
-                        ];
-
-                    break;
                 } else {
                     $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
                     $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
                     $rest_sum = round($rest_sum - $loan_body_pay, 2);
-
-                    $payment_schedule[$date->format('d.m.Y')] =
-                        [
-                            'pay_sum' => $annoouitet_pay,
-                            'loan_percents_pay' => $loan_percents_pay,
-                            'loan_body_pay' => $loan_body_pay,
-                            'comission_pay' => 0.00,
-                            'rest_pay' => $rest_sum
-                        ];
                 }
+
+                $payment_schedule[$pay_date->format('d.m.Y')] =
+                    [
+                        'pay_sum' => $annoouitet_pay,
+                        'loan_percents_pay' => $loan_percents_pay,
+                        'loan_body_pay' => $loan_body_pay,
+                        'comission_pay' => 0.00,
+                        'rest_pay' => $rest_sum
+                    ];
             }
         }
 
@@ -3672,7 +3663,7 @@ class OfflineOrderController extends Controller
 
         $start_date = date('Y-m-d', strtotime($start_date));
         $first_pay = new DateTime(date('Y-m-10', strtotime($start_date)));
-        $end_date = date('Y-m-'.$first_pay_day, strtotime($start_date . '+' . $loan->max_period . 'month'));
+        $end_date = date('Y-m-' . $first_pay_day, strtotime($start_date . '+' . $loan->max_period . 'month'));
 
         $start_date = new DateTime($start_date);
         $end_date = new DateTime($end_date);
@@ -4876,16 +4867,15 @@ class OfflineOrderController extends Controller
     private function action_next_schedule_date()
     {
         $previous_date = $this->request->post('date');
-        $order_id      = $this->request->post('order');
-        $next_date     = new DateTime(date('Y-m-d', strtotime($previous_date)));
+        $order_id = $this->request->post('order');
+        $next_date = new DateTime(date('Y-m-d', strtotime($previous_date)));
         $next_date->add(new DateInterval('P1M'));
 
         $schedule = $this->PaymentsSchedules->get(['actual' => 1, 'order_id' => $order_id]);
         $schedule = json_decode($schedule->schedule, true);
 
-        foreach ($schedule as $date => $payment)
-        {
-            if($date == $next_date->format('d.m.Y'))
+        foreach ($schedule as $date => $payment) {
+            if ($date == $next_date->format('d.m.Y'))
                 $next_pay = ['date' => $date, 'payment' => $payment];
         }
 
