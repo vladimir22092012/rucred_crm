@@ -3493,13 +3493,8 @@ class OfflineOrderController extends Controller
             $interval = new DateInterval('P1M');
             $end_date->setTime(0, 0, 1);
             $daterange = new DatePeriod($paydate, $interval, $end_date);
-            $i = 1;
-            $final = $loan->max_period;
 
             foreach ($daterange as $date) {
-
-                if ($i == $final)
-                    break;
 
                 $pay_date = $this->check_pay_date($date);
 
@@ -3521,8 +3516,6 @@ class OfflineOrderController extends Controller
                         'comission_pay' => 0.00,
                         'rest_pay' => $rest_sum
                     ];
-
-                $i++;
             }
         }
 
