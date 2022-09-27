@@ -124,7 +124,7 @@ class IndexController extends Controller
             WHERE creator != ?
             and status != 6
             and theme_id in ($themes_id)
-            and created >= ? 
+            and created > ? 
             and not exists (SELECT *
             FROM s_tickets_notifications
             WHERE ticket_id = s_tickets.id
