@@ -64,7 +64,7 @@ class TicketsController extends Controller
 
             foreach ($tickets as $key => $ticket) {
 
-                if($this->manager->created > $ticket->created)
+                if(date('Y-m-d', strtotime($this->manager->created)) > date('Y-m-d', strtotime($ticket->created)))
                 {
                     unset($tickets[$key]);
                     continue;
