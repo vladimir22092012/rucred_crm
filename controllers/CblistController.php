@@ -25,6 +25,8 @@ class CblistController extends Controller
                     $passport_serial = json_decode($value->Раздел2->Участник->СведФЛИП->СведДокУдЛичн->СерияДок[0]);
                     $passport_number = json_decode($value->Раздел2->Участник->СведФЛИП->СведДокУдЛичн->НомДок[0]);
                     $birth           = $value->Раздел2->Участник->СведФЛИП->ДатаРождения;
+                    $birth           = str_replace('/', '-', (string)$birth);
+                    $birth           = date('Y-m-d', strtotime($birth));
 
                     $person =
                         [
