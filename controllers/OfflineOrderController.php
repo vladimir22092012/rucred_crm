@@ -3433,11 +3433,7 @@ class OfflineOrderController extends Controller
             $sum_pay = $annoouitet_pay + $plus_loan_percents;
             $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2);
             $body_pay = $sum_pay - $loan_percents_pay;
-
-            if ($paydate->format('m') == $start_date->format('m'))
-                $paydate->add(new DateInterval('P2M'));
-            else
-                $paydate->add(new DateInterval('P1M'));
+            $paydate->add(new DateInterval('P1M'));
 
             $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
             $iteration++;
