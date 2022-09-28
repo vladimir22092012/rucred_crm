@@ -3415,12 +3415,8 @@ class OfflineOrderController extends Controller
         $start_date = new DateTime(date('Y-m-d', strtotime($order['probably_start_date'])));
         $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date->format('Y-m-d'))));
 
-        if ($start_date->format('d') > $first_pay_day)
+        if ($start_date > $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day))
             $paydate->add(new DateInterval('P1M'));
-
-        $end_date = $this->check_date($paydate->format('Y-m-d'), $order['loan_type'], $first_pay_day);
-        $end_date = new DateTime(date('Y-m-d', strtotime($end_date)));
-
 
         $percent_per_month = (($order['percent'] / 100) * 365) / 12;
         $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
@@ -3428,13 +3424,18 @@ class OfflineOrderController extends Controller
 
         $iteration = 0;
 
-        if ($start_date->format('d') < $first_pay_day) {
+        if ($start_date < $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day)) {
             if (date_diff($this->check_pay_date($paydate), $start_date)->days <= $loan->free_period) {
                 $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days, 2);
                 $sum_pay = $annoouitet_pay + $plus_loan_percents;
                 $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2);
                 $body_pay = $sum_pay - $loan_percents_pay;
-                $paydate->add(new DateInterval('P1M'));
+
+                if($paydate->format('m') == $start_date->format('m'))
+                    $paydate->add(new DateInterval('P2M'));
+                else
+                    $paydate->add(new DateInterval('P1M'));
+
                 $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
                 $iteration++;
             } else {
