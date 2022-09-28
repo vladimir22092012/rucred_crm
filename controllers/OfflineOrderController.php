@@ -3426,7 +3426,7 @@ class OfflineOrderController extends Controller
         $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
         $annoouitet_pay = round($annoouitet_pay, '2');
 
-        $iteration = 1;
+        $iteration = 0;
 
         if ($start_date->format('d') < $first_pay_day) {
             if (date_diff($this->check_pay_date($paydate), $start_date)->days <= $loan->free_period) {
@@ -3436,12 +3436,12 @@ class OfflineOrderController extends Controller
                 $body_pay = $sum_pay - $loan_percents_pay;
                 $paydate->add(new DateInterval('P1M'));
                 $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
+                $iteration++;
             } else {
                 $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
                 $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days;
                 $loan_percents_pay = $sum_pay;
-                $body_pay = 0;
-                $iteration++;
+                $body_pay = 0.00;
             }
 
             $payment_schedule[$paydate->format('d.m.Y')] =
@@ -3464,7 +3464,6 @@ class OfflineOrderController extends Controller
                 $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($first_pay, $issuance_date)->days;
                 $percents_pay = $sum_pay;
                 $body_pay = 0.00;
-                $iteration++;
             }
             if (date_diff($first_pay, $issuance_date)->days > $loan->min_period && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
                 $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($first_pay, $issuance_date)->days);
@@ -3472,11 +3471,13 @@ class OfflineOrderController extends Controller
                 $percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
                 $percents_pay = round($percents_pay, 2, PHP_ROUND_HALF_DOWN);
                 $body_pay = $sum_pay - $percents_pay;
+                $iteration++;
             }
             if (date_diff($first_pay, $issuance_date)->days >= $count_days_this_month) {
                 $sum_pay = $annoouitet_pay;
                 $percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
                 $body_pay = round($sum_pay - $percents_pay, 2);
+                $iteration++;
             }
 
             $payment_schedule[$paydate->format('d.m.Y')] =
