@@ -3479,11 +3479,10 @@ class OfflineOrderController extends Controller
         $period -= $iteration;
 
 
-        if ($rest_sum !== 0) {
-
-            $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
+        if ($rest_sum != 0) {
 
             for ($i = 1; $i <= $period; $i++) {
+                $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
                 $date = $this->check_pay_date($paydate);
 
                 if ($i == $period) {
@@ -3605,19 +3604,20 @@ class OfflineOrderController extends Controller
 
     private function check_pay_date($date)
     {
+        $clone_date = clone $date;
 
         for ($i = 0; $i <= 15; $i++) {
 
-            $check_date = $this->WeekendCalendar->check_date($date->format('Y-m-d'));
+            $check_date = $this->WeekendCalendar->check_date($clone_date->format('Y-m-d'));
 
             if ($check_date == null) {
                 break;
             } else {
-                $date->sub(new DateInterval('P1D'));
+                $clone_date->sub(new DateInterval('P1D'));
             }
         }
 
-        return $date;
+        return $clone_date;
     }
 
     private
