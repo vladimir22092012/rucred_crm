@@ -369,6 +369,10 @@
                         <li {if in_array($module, ['RfmlistController'])}class="active"{/if}>
                             <a href="/rfmlist"><i class="mdi mdi-tooltip"></i>Rfmlist</a></li>
                     {/if}
+                    {if in_array($manager->role, ['developer', 'admin', 'controller'])}
+                        <li {if in_array($module, ['CblistController'])}class="active"{/if}>
+                            <a href="/cblist"><i class="mdi mdi-tooltip"></i>Cblist</a></li>
+                    {/if}
                     {if in_array('managers', $manager->permissions) && $manager->role != 'employer'}
                         <li class="nav-small-cap">Настройки</li>
                         {if !in_array($manager->role, ['employer', 'underwriter'])}
