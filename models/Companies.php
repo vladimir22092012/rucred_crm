@@ -39,6 +39,7 @@ class Companies extends Core
     {
         $group_id = '';
         $company_name = '';
+        $blocked_filter = '';
 
         if (isset($filter['group_id'])) {
             $group_id = $this->db->placehold("AND group_id = ?", (int)$filter['group_id']);
@@ -48,12 +49,16 @@ class Companies extends Core
             $company_name = "AND `name` LIKE '%".$filter['company_name']."%'";
         }
 
+        if(isset($filter['offline_blocked']))
+            $blocked_filter = $this->db->placehold("AND offline_blocked = ?", $filter['offline_blocked']);
+
         $query = $this->db->placehold("
         SELECT * 
         FROM s_companies
         WHERE 1
         $group_id
         $company_name
+        $blocked_filter
         ");
 
         $this->db->query($query);
@@ -222,7 +227,9 @@ class Companies extends Core
         com.kpp,
         com.jur_address,
         com.phys_address,
-        gr.id
+        gr.id,
+        com.online_blocked,
+        com.offline_blocked
         FROM s_companies as com
         JOIN s_groups as gr on com.group_id = gr.id
         WHERE 1

@@ -227,7 +227,14 @@
                                                 onclick="location.href='company/{$company->com_id}'"
                                                 onmouseover="this.style.backgroundColor='#AEA8F5';"
                                                 onmouseout="this.style.backgroundColor='white';">
-                                                <td>{$company->gr_number}, {$company->gr_name}</td>
+                                                <td>{$company->gr_number}, {$company->gr_name}
+                                                    {if $company->offline_blocked == 1}
+                                                        <br>
+                                                        <label class="badge badge-danger">Оффлайн блокировка</label>
+                                                    {/if}{if $company->online_blocked == 1}
+                                                        <br>
+                                                        <label class="badge badge-danger">Онлайн блокировка</label>
+                                                    {/if}</td>
                                                 <td class="com-number">{$company->gr_number}{$company->com_number}</td>
                                                 <td class="com-name">{$company->com_name} {if ($company->blocked)}
                                                         <span class="label label-danger">Blocked</span>
