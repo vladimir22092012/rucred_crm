@@ -318,6 +318,10 @@
                                                         <span class="label label-warning">Р.Нецелесообразно</span>
                                                     {elseif $order->status == 15}
                                                         <span class="label label-danger">Р.Отклонена</span>
+                                                    {elseif $order->status == 11}
+                                                        <span class="label label-danger">М.Отказ</span>
+                                                    {elseif $order->status == 20}
+                                                        <span class="label label-danger">А.Отказ</span>
                                                     {/if}
                                                 </small>
                                                 <small>
