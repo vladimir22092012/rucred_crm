@@ -17,7 +17,7 @@ class OnlineDocsController extends Controller
             $this->design->assign($param_name, $param_value);
         }
 
-        $order = $this->orders->get_order($document->params->order_id);
+        $order = $this->orders->get_order($document->order_id);
         $this->design->assign('created_date', $order->date);
 
 
