@@ -898,6 +898,23 @@
                     }
                 })
             });
+
+            $('.reject_by_middle').on('click', function (e) {
+                e.preventDefault();
+
+                let order_id = $(this).attr('data-order');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'reject_by_middle',
+                        order_id: order_id,
+                    },
+                    success: function () {
+                        location.reload();
+                    }
+                })
+            });
         });
     </script>
     <script>
@@ -1563,7 +1580,7 @@
                                                             <i class="fas fa-hospital-symbol"></i>
                                                             <span>Одобрить заявку и выплатить средства</span>
                                                         </button>
-                                                        <button class="btn btn-danger btn-lg btn-block"
+                                                        <button class="btn btn-danger btn-lg btn-block reject_by_middle"
                                                                 data-order="{$order->order_id}">
                                                             <i class="fas fa-hospital-symbol"></i>
                                                             <span>Отказать в предоставлении займа</span>
@@ -1581,7 +1598,7 @@
                                                                 Одобрить заявку и выплатить средства
                                                             </div>
                                                         </div>
-                                                        <button class="btn btn-danger btn-lg btn-block"
+                                                        <button class="btn btn-danger btn-lg btn-block reject_by_middle"
                                                                 data-order="{$order->order_id}">
                                                             <span>Отказать в предоставлении займа</span>
                                                         </button>
