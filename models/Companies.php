@@ -108,8 +108,7 @@ class Companies extends Core
         com.kpp,
         com.jur_address,
         com.phys_address,
-        com.online_blocked,
-        com.offline_blocked
+        com.blocked
         FROM s_companies as com
         JOIN s_groups as gr on com.group_id = gr.id
         WHERE com.id = ?
@@ -228,8 +227,7 @@ class Companies extends Core
         com.jur_address,
         com.phys_address,
         gr.id,
-        com.online_blocked,
-        com.offline_blocked
+        com.blocked
         FROM s_companies as com
         JOIN s_groups as gr on com.group_id = gr.id
         WHERE 1

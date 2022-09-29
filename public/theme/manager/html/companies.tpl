@@ -228,17 +228,12 @@
                                                 onmouseover="this.style.backgroundColor='#AEA8F5';"
                                                 onmouseout="this.style.backgroundColor='white';">
                                                 <td>{$company->gr_number}, {$company->gr_name}
-                                                    {if $company->offline_blocked == 1}
+                                                    {if $company->blocked == 1}
                                                         <br>
-                                                        <label class="badge badge-danger">Оффлайн блокировка</label>
-                                                    {/if}{if $company->online_blocked == 1}
-                                                        <br>
-                                                        <label class="badge badge-danger">Онлайн блокировка</label>
+                                                        <label class="badge badge-danger">Заблокирована</label>
                                                     {/if}</td>
                                                 <td class="com-number">{$company->gr_number}{$company->com_number}</td>
-                                                <td class="com-name">{$company->com_name} {if ($company->blocked)}
-                                                        <span class="label label-danger">Blocked</span>
-                                                    {/if}</td>
+                                                <td class="com-name">{$company->com_name}</td>
                                                 <td class="eio-pos">{$company->eio_position}</td>
                                                 <td class="eio-fio">{$company->eio_fio}</td>
                                                 <td class="inn">{$company->inn}</td>

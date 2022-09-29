@@ -65,12 +65,8 @@ class CompanyController extends Controller
                 $this->action_wrong_info();
                 break;
 
-            case 'online_blocked':
-                $this->action_online_blocked();
-                break;
-
-            case 'offline_blocked':
-                $this->action_offline_blocked();
+            case 'blocked':
+                $this->action_blocked();
                 break;
         endswitch;
 
@@ -550,21 +546,12 @@ class CompanyController extends Controller
         exit;
     }
 
-    private function action_online_blocked()
+    private function action_blocked()
     {
         $company_id = $this->request->post('company');
         $value      = $this->request->post('value');
 
-        $this->companies->update_company($company_id, ['online_blocked' => $value]);
-        exit;
-    }
-
-    private function action_offline_blocked()
-    {
-        $company_id = $this->request->post('company');
-        $value      = $this->request->post('value');
-
-        $this->companies->update_company($company_id, ['offline_blocked' => $value]);
+        $this->companies->update_company($company_id, ['blocked' => $value]);
         exit;
     }
 }

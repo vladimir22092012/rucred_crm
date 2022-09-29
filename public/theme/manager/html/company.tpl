@@ -188,25 +188,13 @@
                                         <th>Описание</th>
                                         {if in_array($manager->role, ['developer', 'admin'])}
                                             <th>
-                                                <span>Блокировка<br>Оффлайн</span>
+                                                <span>Блокировка</span>
                                                 <div class="onoffswitch">
                                                     <input type="checkbox" name="blocked_flag"
                                                            data-company="{$company->com_id}"
-                                                           class="onoffswitch-checkbox offline_blocked"
-                                                           id="offline_blocked" {if $company->offline_blocked == 1}checked{/if}>
-                                                    <label class="onoffswitch-label" for="offline_blocked">
-                                                        <span class="onoffswitch-inner"></span>
-                                                        <span class="onoffswitch-switch"></span>
-                                                    </label>
-                                                </div>
-                                            </th>
-                                            <th><span>Блокировка<br>Онлайн</span>
-                                                <div class="onoffswitch">
-                                                    <input type="checkbox" name="blocked_flag"
-                                                           data-company="{$company->com_id}"
-                                                           class="onoffswitch-checkbox online_blocked"
-                                                           id="online_blocked" {if $company->online_blocked == 1}checked{/if}>
-                                                    <label class="onoffswitch-label" for="online_blocked">
+                                                           class="onoffswitch-checkbox blocked"
+                                                           id="blocked" {if $company->blocked == 1}checked{/if}>
+                                                    <label class="onoffswitch-label" for="blocked">
                                                         <span class="onoffswitch-inner"></span>
                                                         <span class="onoffswitch-switch"></span>
                                                     </label>

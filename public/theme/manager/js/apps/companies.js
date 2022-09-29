@@ -281,16 +281,15 @@ $(function () {
         });
     });
 
-    $('.online_blocked, .offline_blocked').on('click', function () {
+    $('.blocked').on('click', function () {
 
         let value = ($(this).is(':checked')) ? 1 : 0;
-        let action = ($(this).hasClass('online_blocked')) ? 'online_blocked' : 'offline_blocked';
         let company = $(this).attr('data-company');
 
         $.ajax({
             method: 'POST',
             data:{
-                action: action,
+                action: 'blocked',
                 value: value,
                 company: company
             }
