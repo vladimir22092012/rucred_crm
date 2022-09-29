@@ -331,7 +331,7 @@
                                                                        data-standart-percents="{$group['standart_percents']}"
                                                                        data-preferential-percents="{$group['preferential_percents']}"
                                                                        class="btn btn-outline-warning edit-company-tarif"
-                                                                       value="Редактировать"></td>
+                                                                       value="Ред"></td>
                                                             {/if}
                                                         </tr>
                                                     {/foreach}
