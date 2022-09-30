@@ -391,7 +391,7 @@
                                                         <div class="form-group row m-0">
                                                             <label class="control-label col-md-4">Дата рождения:</label>
                                                             <div class="col-md-8">
-                                                                <p class="form-control-static">{$client->birth|escape}</p>
+                                                                <p class="form-control-static">{$client->birth|date}</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -409,7 +409,7 @@
                                                             <label class="control-label col-md-4">Паспорт:</label>
                                                             <div class="col-md-8">
                                                                 <p class="form-control-static">{$client->passport_serial}
-                                                                    от {$client->passport_date|escape}</p>
+                                                                    от {$client->passport_date|date}</p>
                                                             </div>
                                                         </div>
                                                     </div>
