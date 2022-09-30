@@ -33,8 +33,6 @@ class Cblist extends Core
 
     public function search($fio)
     {
-        $fio = mb_strtolower($fio, 'utf8');
-
         $query = $this->db->placehold("
             SELECT id
             FROM __cblist
