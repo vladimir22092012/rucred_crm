@@ -236,6 +236,21 @@
                 });
             });
 
+            $('.reject_by_under').on('click', function (e) {
+                let order_id = $(this).attr('data-order');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'reject_by_under',
+                        order_id: order_id,
+                    },
+                    success: function () {
+                        location.reload();
+                    }
+                })
+            });
+
             $('.send_money').on('click', function (e) {
                 e.preventDefault();
 

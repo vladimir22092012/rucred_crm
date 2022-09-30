@@ -247,6 +247,11 @@ class OrderController extends Controller
                     $this->action_reject_by_middle();
                     break;
 
+                case 'reject_by_under':
+                    $response = $this->action_reject_by_under();
+                    $this->json_output($response);
+                    break;
+
 
             endswitch;
 
@@ -4281,6 +4286,62 @@ class OrderController extends Controller
             ];
 
         $this->NotificationsClientsCron->add($cron);
+    }
+
+    private function action_reject_by_under()
+    {
+        $order_id = $this->request->post('order_id');
+
+        $order = $this->orders->get_order($order_id);
+
+        $this->orders->update_order($order_id, ['status' => 20]);
+
+        $communication_theme = $this->CommunicationsThemes->get(47);
+
+        $ticket =
+            [
+                'creator' => $this->manager->id,
+                'creator_company' => 2,
+                'client_lastname' => $order->lastname,
+                'client_firstname' => $order->firstname,
+                'client_patronymic' => $order->patronymic,
+                'head' => $communication_theme->head,
+                'text' => $communication_theme->text,
+                'theme_id' => $communication_theme->id,
+                'company_id' => $order->company_id,
+                'group_id' => 2,
+                'order_id' => $order_id,
+                'status' => 0
+            ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $this->manager->id,
+            ];
+
+        $this->TicketMessages->add_message($message);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
+
+        $cron =
+            [
+                'template_id' => 10,
+                'user_id' => $order->user_id,
+            ];
+
+        $this->NotificationsClientsCron->add($cron);
+
+        exit;
     }
 
 }
