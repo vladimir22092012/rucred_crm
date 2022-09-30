@@ -36,6 +36,18 @@ class NotificationsClientsCronRun extends Core
             $template = $this->sms->get_template($cron->template_id);
             $user = $this->users->get_user($cron->user_id);
 
+            $str_params =
+                [
+                    '$date'
+                ];
+
+            $str_replace =
+                [
+                    date('d.m.Y', strtotime($cron->created))
+                ];
+
+            $template->template = str_replace($str_params, $str_replace, $template->template);
+
             if(empty($user))
                 continue;
 
