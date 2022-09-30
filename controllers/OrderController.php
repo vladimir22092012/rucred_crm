@@ -294,13 +294,25 @@ class OrderController extends Controller
                     $order->faktaddress = $this->addresses->get_address($order->faktaddress_id);
 
                     $holder = $order->requisite->holder;
-                    $holder = explode(' ', $holder, 3);
-                    $same_holder = 0;
 
-                    if (count($holder) == 3) {
-                        list($holder_name, $holder_firstname, $holder_patronymic) = $holder;
-                        if ($order->lastname == $holder_name && $order->firstname == $holder_firstname && $order->patronymic == $holder_patronymic)
-                            $same_holder = 1;
+                    if(!empty($holder))
+                    {
+                        $holder = explode(' ', $holder, 3);
+                        $same_holder = 0;
+
+                        if (count($holder) == 3) {
+                            list($holder_name, $holder_firstname, $holder_patronymic) = $holder;
+                            if ($order->lastname == $holder_name && $order->firstname == $holder_firstname && $order->patronymic == $holder_patronymic)
+                                $same_holder = 1;
+                        }
+
+                        if (count($holder) == 2) {
+                            list($holder_name, $holder_firstname) = $holder;
+                            if ($order->lastname == $holder_name && $order->firstname == $holder_firstname)
+                                $same_holder = 1;
+                        }
+
+                        $this->design->assign('same_holder', $same_holder);
                     }
 
                     $need_form_restruct_docs = 0;
@@ -318,8 +330,6 @@ class OrderController extends Controller
                     }
 
                     $this->design->assign('need_form_restruct_docs', $need_form_restruct_docs);
-
-                    $this->design->assign('same_holder', $same_holder);
 
                     $managers_roles = $this->ManagerRoles->get();
 
