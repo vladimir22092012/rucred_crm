@@ -229,6 +229,21 @@ class ManagerController extends Controller
 
                 $this->design->assign('check_viber_hook', $check_viber_hook);
                 $this->design->assign('check_telegram_hook', $check_telegram_hook);
+
+                $managers_credentials = $this->ManagersCredentials->gets(['manager_id' => $id]);
+
+                if (!empty($managers_credentials)) {
+                    foreach ($managers_credentials as $credential) {
+                        $company = $this->companies->get_company($credential->company_id);
+                        $credential->company_name = $company->name;
+
+                        if ($credential->type == 'permanently')
+                            $credential->type = 'Постоянный';
+                        else
+                            $credential->type = 'Временный по доверенности';
+                    }
+                }
+                $this->design->assign('managers_credentials', $managers_credentials);
             }
         }
 
@@ -272,21 +287,6 @@ class ManagerController extends Controller
         $this->design->assign('managers_company', $managers_company);
 
         $this->design->assign('groups', $groups);
-
-        $managers_credentials = $this->ManagersCredentials->gets(['manager_id' => $id]);
-
-        if (!empty($managers_credentials)) {
-            foreach ($managers_credentials as $credential) {
-                $company = $this->companies->get_company($credential->company_id);
-                $credential->company_name = $company->name;
-
-                if ($credential->type == 'permanently')
-                    $credential->type = 'Постоянный';
-                else
-                    $credential->type = 'Временный по доверенности';
-            }
-        }
-        $this->design->assign('managers_credentials', $managers_credentials);
 
         if (isset($to_manager)) {
             header('Location: ' . $this->config->back_url . '/manager/' . $to_manager);
