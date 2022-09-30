@@ -84,6 +84,8 @@ class TicketsController extends Controller
                         $ticket->executor = array();
                         $ticket->executor['name'] = $manager->name;
                         $ticket->executor['id'] = $manager->id;
+                    }else{
+                        $ticket->executor = 0;
                     }
                 }
 
