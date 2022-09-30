@@ -78,9 +78,13 @@ class TicketsController extends Controller
 
                 if (!empty($ticket->executor) && $ticket->executor != 0) {
                     $manager = $this->managers->get_manager($ticket->executor);
-                    $ticket->executor = array();
-                    $ticket->executor['name'] = $manager->name;
-                    $ticket->executor['id'] = $manager->id;
+
+                    if(!empty($manager))
+                    {
+                        $ticket->executor = array();
+                        $ticket->executor['name'] = $manager->name;
+                        $ticket->executor['id'] = $manager->id;
+                    }
                 }
 
                 if($ticket->creator_company)
