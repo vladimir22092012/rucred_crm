@@ -70,6 +70,7 @@ class RunScoringsApp extends Core
                         case 'antirazgon':
                         case 'nbki':
                         case 'attestation':
+                        case 'cblist':
 
                             $add_scoring = array(
                                 'user_id' => $order->user_id,
