@@ -4098,8 +4098,6 @@ class OrderController extends Controller
 
         $this->orders->update_order($order_id, ['status' => 2]);
 
-        $this->add_first_ticket($order->order_id, $order->user_id);
-
         echo json_encode(['success' => 1]);
         exit;
     }
