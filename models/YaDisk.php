@@ -10,7 +10,7 @@ class YaDisk extends Core
         $this->disk = new Arhitector\Yandex\Disk($this->config->__get('yadisk_token'));
     }
 
-    public function upload_orders_files($order_id, $upload_scans, $pak = false)
+    public function upload_orders_files($order_id, $pak = false)
     {
 
         $filter = array();
@@ -97,7 +97,7 @@ class YaDisk extends Core
                 }
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/' . $file_name . '.pdf');
 
-                $this->upload($upload_scans, $order, $resource, $file_name, $document);
+                $this->upload(0, $order, $resource, $file_name, $document);
             }
 
             if ($type == 'ind_usloviya_online.tpl') {
@@ -112,7 +112,7 @@ class YaDisk extends Core
                 }
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/' . $file_name . '.pdf');
 
-                $this->upload($upload_scans, $order, $resource, $file_name, $document);
+                $this->upload(0, $order, $resource, $file_name, $document);
             }
 
             if ($type == 'soglasie_na_obr_pers_dannih.tpl') {
@@ -133,7 +133,7 @@ class YaDisk extends Core
                 }
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Approvals/' . $file_name . '.pdf');
 
-                $this->upload($upload_scans, $order, $resource, $file_name, $document);
+                $this->upload(0, $order, $resource, $file_name, $document);
             }
 
             if ($type == 'soglasie_rdb.tpl') {
@@ -155,7 +155,7 @@ class YaDisk extends Core
                 }
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Approvals/' . $file_name . '.pdf');
 
-                $this->upload($upload_scans, $order, $resource, $file_name, $document);
+                $this->upload(0, $order, $resource, $file_name, $document);
             }
 
             if ($type == 'soglasie_minb.tpl') {
@@ -177,7 +177,7 @@ class YaDisk extends Core
                 }
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Approvals/' . $file_name . '.pdf');
 
-                $this->upload($upload_scans, $order, $resource, $file_name, $document);
+                $this->upload(0, $order, $resource, $file_name, $document);
             }
 
             if ($type == 'soglasie_rukred_rabotadatel.tpl') {
@@ -199,7 +199,7 @@ class YaDisk extends Core
                 }
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Approvals/' . $file_name . '.pdf');
 
-                $this->upload($upload_scans, $order, $resource, $file_name, $document);
+                $this->upload(0, $order, $resource, $file_name, $document);
             }
 
             if ($type == 'soglasie_rabotadatelu.tpl') {
@@ -221,7 +221,7 @@ class YaDisk extends Core
                 }
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Approvals/' . $file_name . '.pdf');
 
-                $this->upload($upload_scans, $order, $resource, $file_name, $document);
+                $this->upload(0, $order, $resource, $file_name, $document);
             }
 
             if ($type == 'soglasie_na_kred_otchet.tpl') {
@@ -243,7 +243,7 @@ class YaDisk extends Core
                 }
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Approvals/' . $file_name . '.pdf');
 
-                $this->upload($upload_scans, $order, $resource, $file_name, $document);
+                $this->upload(0, $order, $resource, $file_name, $document);
 
                 try {
                     $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/');
@@ -260,7 +260,7 @@ class YaDisk extends Core
                 }
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Finance/' . $file_name . '.pdf');
 
-                $this->upload($upload_scans, $order, $resource, $file_name, $document);
+                $this->upload(0, $order, $resource, $file_name, $document);
             }
 
             if ($type == 'zayavlenie_na_perechislenie_chasti_zp.tpl') {
@@ -275,7 +275,7 @@ class YaDisk extends Core
                 }
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/' . $file_name . '.pdf');
 
-                $this->upload($upload_scans, $order, $resource, $file_name, $document);
+                $this->upload(0, $order, $resource, $file_name, $document);
             }
 
             if ($type == 'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl') {
@@ -290,7 +290,7 @@ class YaDisk extends Core
                 }
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/' . $file_name . '.pdf');
 
-                $this->upload($upload_scans, $order, $resource, $file_name, $document);
+                $this->upload(0, $order, $resource, $file_name, $document);
             }
 
             if ($type == 'grafik_obsl_mkr.tpl') {
@@ -305,7 +305,7 @@ class YaDisk extends Core
                 }
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/' . $file_name . '.pdf');
 
-                $this->upload($upload_scans, $order, $resource, $file_name, $document);
+                $this->upload(0, $order, $resource, $file_name, $document);
             }
 
             if ($type == 'obshie_uslovia.tpl') {
@@ -320,7 +320,7 @@ class YaDisk extends Core
                 }
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/' . $file_name . '.pdf');
 
-                $this->upload($upload_scans, $order, $resource, $file_name, $document);
+                $this->upload(0, $order, $resource, $file_name, $document);
             }
 
             if ($type == 'perechislenie_zaemnih_sredstv.tpl') {
@@ -335,7 +335,7 @@ class YaDisk extends Core
                 }
                 $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3102 Loans/' . $contract->number . ' ' . $translit_fio . '/' . $file_name . '.pdf');
 
-                $this->upload($upload_scans, $order, $resource, $file_name, $document);
+                $this->upload(0, $order, $resource, $file_name, $document);
             }
         }
     }

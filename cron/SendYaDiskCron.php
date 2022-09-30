@@ -43,19 +43,10 @@ class SendYaDiskCron extends Core
                 ", $cron->order_id);
 
             $this->db->query($query);
-            $scans = $this->db->results();
-
-            $users_docs = $this->documents->get_documents(['order_id' => $cron->order_id, $cron->pak => 1]);
 
             try {
-                $upload_scans = 0;
 
-                if(!empty($scans)){
-                    if (count($scans) == count($users_docs))
-                        $upload_scans = 1;
-                }
-
-                $this->YaDisk->upload_orders_files($cron->order_id, $upload_scans, $pak[0]);
+                $this->YaDisk->upload_orders_files($cron->order_id, $pak[0]);
             } catch (Exception $e) {
 
             }
