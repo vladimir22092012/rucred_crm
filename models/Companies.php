@@ -49,8 +49,8 @@ class Companies extends Core
             $company_name = "AND `name` LIKE '%".$filter['company_name']."%'";
         }
 
-        if(isset($filter['offline_blocked']))
-            $blocked_filter = $this->db->placehold("AND offline_blocked = ?", $filter['offline_blocked']);
+        if(isset($filter['blocked']))
+            $blocked_filter = $this->db->placehold("AND blocked = ?", $filter['blocked']);
 
         $query = $this->db->placehold("
         SELECT * 
