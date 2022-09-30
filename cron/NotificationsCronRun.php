@@ -30,7 +30,7 @@ class NotificationsCronRun extends Core
         foreach ($crons as $cron) {
             $ticket = $this->tickets->get_ticket($cron->ticket_id);
 
-            if(empty($ticket))
+            if (empty($ticket))
                 continue;
 
 
@@ -58,6 +58,9 @@ class NotificationsCronRun extends Core
             $managers = $this->managers->get_managers(['role' => $roles_name]);
 
             foreach ($managers as $manager) {
+                if ($manager->role == 'employer' && $ticket->group_id != $manager->group_id)
+                    continue;
+
                 if ($manager->telegram_note == 1) {
                     $this->telegram_note($manager->id, $ticket, 1);
                 }
@@ -87,10 +90,10 @@ class NotificationsCronRun extends Core
 
                 $log =
                     [
-                        'user_id'    => $manager_id,
+                        'user_id' => $manager_id,
                         'is_manager' => 1,
-                        'type_id'    => 3,
-                        'text'       => $ticket->text
+                        'type_id' => 3,
+                        'text' => $ticket->text
                     ];
 
                 $this->NotificationsLogs->add($log);
@@ -123,10 +126,10 @@ class NotificationsCronRun extends Core
 
                 $log =
                     [
-                        'user_id'    => $manager_id,
+                        'user_id' => $manager_id,
                         'is_manager' => 1,
-                        'type_id'    => 4,
-                        'text'       => $ticket->text
+                        'type_id' => 4,
+                        'text' => $ticket->text
                     ];
 
                 $this->NotificationsLogs->add($log);
@@ -148,10 +151,10 @@ class NotificationsCronRun extends Core
 
         $log =
             [
-                'user_id'    => $manager_id,
+                'user_id' => $manager_id,
                 'is_manager' => 1,
-                'type_id'    => 1,
-                'text'       => $ticket->text
+                'type_id' => 1,
+                'text' => $ticket->text
             ];
 
         $this->NotificationsLogs->add($log);
@@ -166,13 +169,13 @@ class NotificationsCronRun extends Core
 
         $message = '';
         $message .= "<h2>$ticket->text</h2><br><br>";
-        $message .= '<h3>Номер тикета: '. str_pad($ticket->id, 6, 0, STR_PAD_LEFT).'</h3>';
-        $message .= '<h3>Номер заявки: '.$order->order_id.'</h3>';
-        $message .= '<h3>Дата заявки: '.date('d.m.Y', strtotime($order->date)).'</h3>';
-        $message .= '<h3>ФИО клиента: '. $fio .'</h3>';
-        $message .= '<h3>Тариф: '. $loantype->name .'</h3>';
-        $message .= '<h3>Сумма: '. $order->amount .'</h3>';
-        $message .= "Ссылка на тикет: ".$this->config->back_url.'/ticket/'.$ticket->id.'<br><br>';
+        $message .= '<h3>Номер тикета: ' . str_pad($ticket->id, 6, 0, STR_PAD_LEFT) . '</h3>';
+        $message .= '<h3>Номер заявки: ' . $order->order_id . '</h3>';
+        $message .= '<h3>Дата заявки: ' . date('d.m.Y', strtotime($order->date)) . '</h3>';
+        $message .= '<h3>ФИО клиента: ' . $fio . '</h3>';
+        $message .= '<h3>Тариф: ' . $loantype->name . '</h3>';
+        $message .= '<h3>Сумма: ' . $order->amount . '</h3>';
+        $message .= "Ссылка на тикет: " . $this->config->back_url . '/ticket/' . $ticket->id . '<br><br>';
 
 
         $mail = new PHPMailer(false);
@@ -200,10 +203,10 @@ class NotificationsCronRun extends Core
 
         $log =
             [
-                'user_id'    => $manager_id,
+                'user_id' => $manager_id,
                 'is_manager' => 1,
-                'type_id'    => 2,
-                'text'       => $ticket->text
+                'type_id' => 2,
+                'text' => $ticket->text
             ];
 
         $this->NotificationsLogs->add($log);
