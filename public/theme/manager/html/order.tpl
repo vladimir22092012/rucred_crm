@@ -3004,7 +3004,7 @@
                                                                         </span>
                                                                     <span class="time">
                                                                             {if $scorings[$scoring_type->name]->created}
-                                                                                {$scorings[$scoring_type->name]->created|date} {$scorings[$scoring_type->name]->created|time}
+                                                                                Дата скоринга: {$scorings[$scoring_type->name]->created|date} {$scorings[$scoring_type->name]->created|time}
                                                                             {/if}
                                                                         {if $scoring_type->name == 'fssp'}
                                                                             <a href="/ajax/show_fssp.php?id={$scorings[$scoring_type->name]->id}&password=Hjkdf8d"
