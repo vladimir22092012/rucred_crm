@@ -16,14 +16,14 @@
         $(function () {
 
             $(document).on('click', '.add_group', function () {
-               $('#add_group_modal').modal();
+                $('#add_group_modal').modal();
             });
 
             $('.to_edit').on('click', function () {
                 $('.to_edit').hide();
                 $('.group_front').hide();
                 $('.group_edit').show();
-        });
+            });
 
             $('.cancel_edit').on('click', function () {
                 $('.group_edit').hide();
@@ -49,12 +49,12 @@
                         number: number
                     },
                     success: function (resp) {
-                        if(resp['error']){
+                        if (resp['error']) {
                             Swal.fire({
                                 title: resp['error'],
                                 confirmButtonText: 'ОК'
                             });
-                        }else{
+                        } else {
                             location.reload();
                         }
                     }
@@ -73,7 +73,7 @@
                 })
             });
 
-            $('.delete_group').on('click', function (e) {
+            $('.delete_group').on('click', function () {
 
                 let group_id = $(this).attr('data-group');
 
@@ -97,7 +97,22 @@
                         }
                     }
                 })
-            })
+            });
+
+            $('.blocked').on('change', function () {
+
+                let group_id = $(this).attr('data-group');
+                let value    = $(this).val();
+
+                $.ajax({
+                    method: 'POST',
+                    data:{
+                        action: 'blocked',
+                        group_id: group_id,
+                        value: value
+                    }
+                })
+            });
         })
     </script>
 {/capture}
@@ -126,10 +141,8 @@
                 </div>
             {/if}
         </div>
-
         <div class="row">
             <div class="col-12">
-
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title"></h4>
@@ -139,9 +152,10 @@
                                 <table id="config-table" class="table display table-striped dataTable">
                                     <thead>
                                     <tr>
-                                        <th class="">Номер группы</th>
+                                        <th class="" style="width: 150px">Номер группы</th>
                                         <th class="">Наименование группы</th>
                                         <th></th>
+                                        <th>Блокировка</th>
                                     </tr>
                                     </thead>
                                     <tbody id="table-body">
@@ -152,7 +166,9 @@
                                                 <td class="group_front">{$group->name}</td>
                                                 <td class="group_edit" style="display: none">
                                                     <input type="text" class="form-control number"
-                                                           style="width: 300px" value="{$group->number}">
+                                                           style="width: 150px" value="{$group->number}">
+                                                </td>
+                                                <td class="group_edit" style="display: none">
                                                     <input type="text" class="form-control group_name"
                                                            style="width: 300px" value="{$group->name}">
                                                     <input type="button" data-group="{$group->id}"
@@ -166,6 +182,14 @@
                                                         <div class="btn btn-outline-warning to_edit">
                                                             Редактировать
                                                         </div>
+                                                    </td>
+                                                    <td>
+                                                        <select data-group="{$group->id}" class="form-control blocked">
+                                                            <option value="1">Везде</option>
+                                                            <option value="2">Онлайн</option>
+                                                            <option value="3">Оффлайн</option>
+                                                            <option value="4">Нигде</option>
+                                                        </select>
                                                     </td>
                                                     <td>
                                                         {if $group->number != '00'}<input type="button"
@@ -210,6 +234,15 @@
                     <div class="form-group">
                         <label for="name" class="control-label">Наименование группы</label>
                         <input type="text" class="form-control" name="name" id="name" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Блокировка</label>
+                        <select class="form-control" name="blocked">
+                            <option value="1">Везде</option>
+                            <option value="2">Онлайн</option>
+                            <option value="3">Оффлайн</option>
+                            <option value="4">Нигде</option>
+                        </select>
                     </div>
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
                     <input type="button" class="btn btn-success action_add_group" value="Сохранить">

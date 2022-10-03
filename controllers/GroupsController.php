@@ -4,19 +4,14 @@ class GroupsController extends Controller
 {
     public function fetch()
     {
-        switch ($this->request->post('action', 'string')) :
-            case 'add_group':
-                $this->action_add_group();
-                break;
-
-            case 'update_group':
-                $this->action_update_group();
-                break;
-
-            case 'delete_group':
-                $this->action_delete_group();
-                break;
-        endswitch;
+        if ($this->request->method('post')) {
+            if ($this->request->post('action', 'string')) {
+                $methodName = 'action_' . $this->request->post('action', 'string');
+                if (method_exists($this, $methodName)) {
+                    $this->$methodName();
+                }
+            }
+        }
 
         $filter = array();
 
@@ -32,7 +27,8 @@ class GroupsController extends Controller
 
     private function action_add_group()
     {
-        $name = $this->request->post('name');
+        $name    = $this->request->post('name');
+        $blocked = $this->request->post('blocked');
 
         $last_number = $this->Groups->last_number();
 
@@ -52,7 +48,8 @@ class GroupsController extends Controller
         $group =
             [
                 'name' => $name,
-                'number' => $last_number
+                'number' => $last_number,
+                'blocked' => $blocked
             ];
 
         $group_id = $this->Groups->add_group($group);
@@ -80,10 +77,10 @@ class GroupsController extends Controller
 
         $groups = $this->groups->get_groups(['number' => $number]);
 
-        if(!empty($groups)){
+        if (!empty($groups)) {
             echo json_encode(['error' => 'Такой номер уже есть']);
             exit;
-        }else{
+        } else {
             $group =
                 [
                     'name' => $group_name,
@@ -115,5 +112,14 @@ class GroupsController extends Controller
             $this->GroupLoanTypes->delete_group($group_id);
             exit;
         }
+    }
+
+    private function action_blocked()
+    {
+        $group_id = $this->request->post('group_id');
+        $value    = $this->request->post('value');
+
+        $this->groups->update_group($group_id, ['blocked' => $value]);
+        exit;
     }
 }
