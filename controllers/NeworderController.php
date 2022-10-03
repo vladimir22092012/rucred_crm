@@ -832,7 +832,6 @@ class NeworderController extends Controller
                 ];
             $paydate->add(new DateInterval('P1M'));
 
-
             $period = $loan->max_period;
             $period -= $iteration;
 
@@ -850,6 +849,14 @@ class NeworderController extends Controller
                         $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
                         $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
                         $rest_sum = round($rest_sum - $loan_body_pay, 2);
+                    }
+
+                    if(isset($payment_schedule[$date->format('d.m.Y')]))
+                    {
+
+                        $date = $this->add($date->format('d.m.Y'), 2);
+                        $paydate->setDate($date->format('Y'), $date->format('m'), $first_pay_day);
+                        $date = $this->check_pay_date($paydate);
                     }
 
                     $payment_schedule[$date->format('d.m.Y')] =
@@ -1585,5 +1592,27 @@ class NeworderController extends Controller
                 'hash' => sha1(rand(11111, 99999))
             ));
         }
+    }
+
+    private function add($date_str, $months)
+    {
+        $date = new DateTime($date_str);
+
+        // We extract the day of the month as $start_day
+        $start_day = $date->format('j');
+
+        // We add 1 month to the given date
+        $date->modify("+{$months} month");
+
+        // We extract the day of the month again so we can compare
+        $end_day = $date->format('j');
+
+        if ($start_day != $end_day)
+        {
+            // The day of the month isn't the same anymore, so we correct the date
+            $date->modify('last day of last month');
+        }
+
+        return $date;
     }
 }
