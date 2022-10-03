@@ -185,10 +185,10 @@
                                                     </td>
                                                     <td>
                                                         <select data-group="{$group->id}" class="form-control blocked">
-                                                            <option value="1">Везде</option>
-                                                            <option value="2">Онлайн</option>
-                                                            <option value="3">Оффлайн</option>
-                                                            <option value="4">Нигде</option>
+                                                            <option value="1" {if $group->blocked == 'all'}selected{/if}>Везде</option>
+                                                            <option value="2" {if $group->blocked == 'online'}selected{/if}>Онлайн</option>
+                                                            <option value="3" {if $group->blocked == 'offline'}selected{/if}>Оффлайн</option>
+                                                            <option value="4" {if $group->blocked == 'nowhere'}selected{/if}>Нигде</option>
                                                         </select>
                                                     </td>
                                                     <td>
