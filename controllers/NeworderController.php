@@ -774,76 +774,75 @@ class NeworderController extends Controller
             }
 
             $rest_sum = $order['amount'];
-            $end_date = new DateTime(date('Y-m-' . $first_pay_day, strtotime($probably_end_date)));
             $start_date = new DateTime(date('Y-m-d', strtotime($probably_start_date)));
-            $paydate = new DateTime($start_date->format('Y-m-' . $first_pay_day));
+            $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date->format('Y-m-d'))));
+            $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
+
+            if ($start_date > $paydate)
+                $paydate->add(new DateInterval('P1M'));
 
             $percent_per_month = (($order['percent'] / 100) * 365) / 12;
             $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
             $annoouitet_pay = round($annoouitet_pay, '2');
 
-            if ($start_date->format('d') < $first_pay_day) {
-                if (date_diff($this->check_pay_date($paydate), $start_date)->days <= $loan->free_period) {
+            $iteration = 0;
 
-                    $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days, 2);
-                    $sum_pay = $annoouitet_pay + $plus_loan_percents;
-                    $percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2);
-                    $body_pay = $sum_pay - $percents_pay;
+            $count_days_this_month = date('t', strtotime($start_date->format('Y-m-d')));
 
-                } else {
-                    $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
-                    $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days;
-                    $percents_pay = $sum_pay;
-                    $body_pay = 0;
-                }
+            if (date_diff($paydate, $start_date)->days <= $loan->free_period) {
 
+                $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days, 2);
+                $sum_pay = $annoouitet_pay + $plus_loan_percents;
+                $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2);
+                $body_pay = $sum_pay - $loan_percents_pay;
+                $paydate->add(new DateInterval('P1M'));
+
+                $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
+                $iteration++;
+
+            } elseif (date_diff($paydate, $start_date)->days < $loan->min_period) {
+                $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days;
+                $loan_percents_pay = $sum_pay;
+                $body_pay = 0.00;
+            } elseif (date_diff($paydate, $start_date)->days >= $loan->min_period && date_diff($paydate, $start_date)->days < $count_days_this_month) {
+                $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($paydate, $start_date)->days);
+                $sum_pay = $annoouitet_pay - round($minus_percents, 2);
+                $loan_percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
+                $loan_percents_pay = round($loan_percents_pay, 2, PHP_ROUND_HALF_DOWN);
+                $body_pay = $sum_pay - $loan_percents_pay;
+                $iteration++;
+            } elseif (date_diff($paydate, $start_date)->days >= $count_days_this_month) {
+                $sum_pay = $annoouitet_pay;
+                $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
+                $body_pay = round($sum_pay - $loan_percents_pay, 2);
+                $iteration++;
             } else {
-                $first_pay = new DateTime(date('Y-m-' . $first_pay_day, strtotime($start_date->format('Y-m-d'))));
-                $first_pay->add(new DateInterval('P1M'));
-                $count_days_this_month = date('t', strtotime($start_date->format('Y-m-d')));
-                $paydate = $this->check_pay_date($first_pay);
-
-                if (date_diff($first_pay, $start_date)->days <= $loan->min_period) {
-                    $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($first_pay, $start_date)->days;
-                    $percents_pay = $sum_pay;
-                    $body_pay = 0.00;
-                }
-                if (date_diff($first_pay, $start_date)->days > $loan->min_period && date_diff($first_pay, $start_date)->days < $count_days_this_month) {
-                    $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($first_pay, $start_date)->days);
-                    $sum_pay = $annoouitet_pay - $minus_percents;
-                    $percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
-                    $percents_pay = round($percents_pay, 2, PHP_ROUND_HALF_DOWN);
-                    $body_pay = $sum_pay - $percents_pay;
-                }
-                if (date_diff($first_pay, $start_date)->days >= $count_days_this_month) {
-                    $sum_pay = $annoouitet_pay;
-                    $percents_pay = $rest_sum * $percent_per_month;
-                    $body_pay = $sum_pay - $percents_pay;
-                }
+                $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days;
+                $loan_percents_pay = $sum_pay;
+                $body_pay = 0.00;
             }
 
             $payment_schedule[$paydate->format('d.m.Y')] =
                 [
                     'pay_sum' => $sum_pay,
-                    'loan_percents_pay' => $percents_pay,
-                    'loan_body_pay' => ($body_pay) ? $body_pay : 0,
+                    'loan_percents_pay' => $loan_percents_pay,
+                    'loan_body_pay' => $body_pay,
                     'comission_pay' => 0.00,
                     'rest_pay' => $rest_sum -= $body_pay
                 ];
-
             $paydate->add(new DateInterval('P1M'));
 
-            if ($rest_sum !== 0) {
-                $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
-                $interval = new DateInterval('P1M');
-                $lastdate = clone $end_date;
-                $end_date->setTime(0, 0, 1);
-                $daterange = new DatePeriod($paydate, $interval, $end_date);
 
-                foreach ($daterange as $date) {
-                    $date = $this->check_pay_date($date);
+            $period = $loan->max_period;
+            $period -= $iteration;
 
-                    if ($date->format('m') == $lastdate->format('m')) {
+            if ($rest_sum != 0) {
+
+                for ($i = 1; $i <= $period; $i++) {
+                    $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
+                    $date = $this->check_pay_date($paydate);
+
+                    if ($i == $period) {
                         $loan_body_pay = $rest_sum;
                         $loan_percents_pay = $annoouitet_pay - $loan_body_pay;
                         $rest_sum = 0.00;
@@ -861,6 +860,8 @@ class NeworderController extends Controller
                             'comission_pay' => 0.00,
                             'rest_pay' => $rest_sum
                         ];
+
+                    $paydate->add(new DateInterval('P1M'));
                 }
             }
 
