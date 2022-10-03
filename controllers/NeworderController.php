@@ -259,6 +259,8 @@ class NeworderController extends Controller
         if (!empty($credits_story)) {
             foreach ($credits_story as $credit) {
                 $credit['credits_month_pay'] = preg_replace("/[^,.0-9]/", '', $credit['credits_month_pay']);
+                $credit['credits_rest_sum']  = preg_replace("/[^,.0-9]/", '', $credit['credits_rest_sum']);
+
                 if (!empty($credit['credits_month_pay']) && $credit['credits_delay'] == 'Нет')
                     $sum_credits_pay += $credit['credits_month_pay'];
 
