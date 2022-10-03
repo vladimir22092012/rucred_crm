@@ -168,7 +168,7 @@
                                                         </div>
                                                         <div style="display: flex;">
                                                             <label>Номер заявки: </label>
-                                                            <span style="margin-left: 25px">{$order->uid}</span>
+                                                            <span style="margin-left: 25px">{$order->uid} ({$order->order_id})</span>
                                                         </div>
                                                         {if isset($contract)}
                                                             <div style="display: flex;">

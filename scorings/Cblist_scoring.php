@@ -39,7 +39,9 @@ class Cblist_scoring extends Core
             if ($score) {
                 $person = $this->Rfmlist->get_person((int)$score);
                 $update['body'] = serialize($person);
-                $update['string_result'] = 'Пользователь найден в списке: ' . $person->fio;
+                $update['string_result'] = 'Пользователь найден в списке: ' . $person->fio.
+                    'ID: ' .$person->id.
+                    'Дата записи:' . $person->created->date;
 
                 $scoring_types = $this->scorings->get_types();
 
