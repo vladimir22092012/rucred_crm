@@ -103,9 +103,6 @@ class DocumentController extends Controller
         $start_date = new DateTime(date('Y-m-d', strtotime($order->probably_start_date)));
         $end_date = new DateTime(date('Y-m-d', strtotime($order->probably_return_date)));
 
-        if ($document->type == 'OBSHIE_USLOVIYA_REST')
-            $end_date = new DateTime(date('Y-m-d', strtotime($document->params->probably_return_date)));
-
         $period = date_diff($start_date, $end_date)->days;
 
         $this->design->assign('period', $period);
