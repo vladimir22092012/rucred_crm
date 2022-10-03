@@ -3501,6 +3501,14 @@ class OfflineOrderController extends Controller
                     $rest_sum = round($rest_sum - $loan_body_pay, 2);
                 }
 
+                if(isset($payment_schedule[$date->format('d.m.Y')]))
+                {
+
+                    $date = $this->add_month($date->format('d.m.Y'), 2);
+                    $paydate->setDate($date->format('Y'), $date->format('m'), $first_pay_day);
+                    $date = $this->check_pay_date($paydate);
+                }
+
                 $payment_schedule[$date->format('d.m.Y')] =
                     [
                         'pay_sum' => $annoouitet_pay,
@@ -4878,6 +4886,28 @@ class OfflineOrderController extends Controller
 
         echo json_encode($next_pay);
         exit;
+    }
+
+    private function add_month($date_str, $months)
+    {
+        $date = new DateTime($date_str);
+
+        // We extract the day of the month as $start_day
+        $start_day = $date->format('j');
+
+        // We add 1 month to the given date
+        $date->modify("+{$months} month");
+
+        // We extract the day of the month again so we can compare
+        $end_day = $date->format('j');
+
+        if ($start_day != $end_day)
+        {
+            // The day of the month isn't the same anymore, so we correct the date
+            $date->modify('last day of last month');
+        }
+
+        return $date;
     }
 
 }
