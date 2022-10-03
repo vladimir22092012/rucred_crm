@@ -24,6 +24,19 @@ class SendYaDiskCron extends Core
 
         foreach ($crons as $cron){
 
+            $order = $this->orders->get_order($cron->order_id);
+
+            if(empty($order))
+            {
+                $update =
+                    [
+                        'is_complited' => 1
+                    ];
+
+                $this->YaDiskCron->update($update, $cron->id);
+                continue;
+            }
+
             $type = '';
             $pak = explode('_', $cron->pak);
 
