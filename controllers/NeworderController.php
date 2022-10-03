@@ -134,6 +134,9 @@ class NeworderController extends Controller
 
         foreach ($groups as $key => $group)
         {
+            if(in_array($group->blocked, ['all', 'offline']))
+                unset($groups[$key]);
+
             $flag = $this->GroupLoanTypes->gets(['group_id' => $group->id, 'on_off_flag' => 1]);
 
             if(empty($flag))
