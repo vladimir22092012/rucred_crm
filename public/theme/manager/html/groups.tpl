@@ -155,7 +155,7 @@
                                         <th class="" style="width: 150px">Номер группы</th>
                                         <th class="">Наименование группы</th>
                                         <th></th>
-                                        <th>Блокировка</th>
+                                        <th>Доступность</th>
                                     </tr>
                                     </thead>
                                     <tbody id="table-body">
