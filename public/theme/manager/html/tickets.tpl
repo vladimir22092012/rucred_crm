@@ -380,6 +380,7 @@
                                                         {if isset($ticket->contract)}
                                                             <br>
                                                             {$ticket->contract->number}
+                                                            ({$ticket->order->order_id})
                                                         {/if}
                                                     </td>
                                                     <td style="width: 70px;" class="jsgrid-cell">
