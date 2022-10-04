@@ -78,7 +78,7 @@
                                         <td style="width: 100px;" class="jsgrid-cell jsgrid-align-right">
                                             <input type="text" name="created" value="{$search['created']}" class="form-control input-sm">
                                         </td>
-                                        <td style="width: 80px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 100px;" class="jsgrid-cell jsgrid-align-right">
                                             <input type="text" name="created" value="{$search['created']}" class="form-control input-sm">
                                         </td>
                                         <td style="width: 200px;" class="jsgrid-cell jsgrid-align-right">
@@ -98,7 +98,7 @@
                                             <td style="width: 100px;" class="jsgrid-cell jsgrid-align-right">
                                                 <a href="neworder/draft/{$client->order->id}">{$client->order->id}</a>
                                             </td>
-                                            <td style="width: 80px;" class="jsgrid-cell">
+                                            <td style="width: 100px;" class="jsgrid-cell">
                                                 <span>{$client->created|date}</span>
                                                 {$client->created|time}
                                             </td>
