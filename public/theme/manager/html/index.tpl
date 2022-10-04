@@ -255,7 +255,7 @@
                         </li>
                         {if $manager->role != 'employer'}
                             <li {if in_array($module, ['MissingController'])}class="active"{/if}>
-                                <a class="" href="missing/" aria-expanded="false"><i class="mdi mdi-sleep"></i><span
+                                <a class="" href="missings/" aria-expanded="false"><i class="mdi mdi-sleep"></i><span
                                             class="hide-menu">Отвалы</span></a>
                             </li>
                         {/if}

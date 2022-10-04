@@ -1,91 +1,12 @@
 {$meta_title='Отвалы клиентов' scope=parent}
 
 {capture name='page_scripts'}
-
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/clients.js"></script>
-
-    <script>
-        function MissingsApp()
-        {
-            var app = this;
-
-            app.init_set_manager = function(){
-                $(document).on('click', '.js-set-manager', function(){
-                     var $this = $(this);
-
-                     var _user_id = $(this).data('user');
-
-                     $.ajax({
-                        type: 'POST',
-                        data: {
-                            action: 'set_manager',
-                            user_id: _user_id
-                        },
-                        success: function(resp){
-                            if (!!resp.error)
-                            {
-                                Swal.fire({
-                                    text: resp.error,
-                                    type: 'error',
-                                });
-                            }
-                            else
-                            {
-console.log($this.closest('.jsgrid-row'))
-                                $this.closest('.jsgrid-row').find('.js-close-missing').show();
-                                $this.closest('.jsgrid-row').find('.js-missing-manager-name').text(resp.manager_name);
-                            }
-                        }
-                     })
-                });
-            };
-
-            app.init_close_missing = function(){
-                $(document).on('click', '.js-close-missing', function(){
-                     var $this = $(this);
-
-                     var _user_id = $(this).data('user');
-
-                     $.ajax({
-                        type: 'POST',
-                        data: {
-                            action: 'close_missing',
-                            user_id: _user_id
-                        },
-                        success: function(resp){
-                            if (!!resp.error)
-                            {
-                                Swal.fire({
-                                    text: resp.error,
-                                    type: 'error',
-                                });
-                            }
-                            else
-                            {
-                                $this.closest('.jsgrid-row').fadeOut()
-                            }
-                        }
-                     })
-                });
-            }
-
-            ;(function(){
-                app.init_set_manager();
-                app.init_close_missing();
-            })();
-        }
-        $(function(){
-            new MissingsApp();
-        })
-    </script>
 {/capture}
 
 {capture name='page_styles'}
     <link type="text/css" rel="stylesheet" href="theme/{$settings->theme|escape}/assets/plugins/jsgrid/jsgrid.min.css" />
     <link type="text/css" rel="stylesheet" href="theme/{$settings->theme|escape}/assets/plugins/jsgrid/jsgrid-theme.min.css" />
-    <style>
-        .jsgrid-table { margin-bottom:0}
-    </style>
 {/capture}
 
 <div class="page-wrapper">
@@ -128,15 +49,15 @@ console.log($this.closest('.jsgrid-row'))
                                             {if $sort == 'id_asc'}<a href="{url page=null sort='id_desc'}">ID</a>
                                             {else}<a href="{url page=null sort='id_asc'}">ID</a>{/if}
                                         </th>
-                                        <th style="width: 80px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'date_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'date_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                        <th style="width: 100px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'date_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'date_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'date_asc'}<a href="{url page=null sort='date_desc'}">Регистрация</a>
                                             {else}<a href="{url page=null sort='date_asc'}">Регистрация</a>{/if}
                                         </th>
-                                        <th style="width: 80px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'date_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'date_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                        <th style="width: 100px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'date_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'date_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'date_asc'}<a href="{url page=null sort='date_desc'}">Посл. действие</a>
                                             {else}<a href="{url page=null sort='date_asc'}">Посл. действие</a>{/if}
                                         </th>
-                                        <th style="width: 120px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                        <th style="width: 200px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'fio_asc'}<a href="{url page=null sort='fio_desc'}">ФИО</a>
                                             {else}<a href="{url page=null sort='fio_asc'}">ФИО</a>{/if}
                                         </th>
@@ -144,8 +65,8 @@ console.log($this.closest('.jsgrid-row'))
                                             {if $sort == 'phone_asc'}<a href="{url page=null sort='phone_desc'}">Телефон</a>
                                             {else}<a href="{url page=null sort='phone_asc'}">Телефон</a>{/if}
                                         </th>
-                                        <th style="width:340px" class="jsgrid-header-cell ">
-                                            <a href="javascript:void(0);">Этапы</a>
+                                        <th style="width:280px" class="jsgrid-header-cell ">
+                                            Этапы
                                         </th>
                                     </tr>
 
@@ -154,19 +75,18 @@ console.log($this.closest('.jsgrid-row'))
                                             <input type="hidden" name="sort" value="{$sort}" />
                                             <input type="text" name="user_id" value="{$search['user_id']}" class="form-control input-sm">
                                         </td>
-                                        <td style="width: 80px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 100px;" class="jsgrid-cell jsgrid-align-right">
                                             <input type="text" name="created" value="{$search['created']}" class="form-control input-sm">
                                         </td>
                                         <td style="width: 80px;" class="jsgrid-cell jsgrid-align-right">
                                             <input type="text" name="created" value="{$search['created']}" class="form-control input-sm">
                                         </td>
-                                        <td style="width: 120px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 200px;" class="jsgrid-cell jsgrid-align-right">
                                             <input type="text" name="fio" value="{$search['fio']}" class="form-control input-sm">
                                         </td>
-                                        <td style="width: 100px;" class="jsgrid-cell">
+                                        <td style="width: 380px;" class="jsgrid-cell">
                                             <input type="text" name="phone" value="{$search['phone']}" class="form-control input-sm">
                                         </td>
-                                        <td style="width: 60px;" class="jsgrid-cell"></td>
                                     </tr>
                                 </table>
                             </div>
@@ -176,46 +96,33 @@ console.log($this.closest('.jsgrid-row'))
                                     {foreach $clients as $client}
                                         <tr class="jsgrid-row">
                                             <td style="width: 100px;" class="jsgrid-cell jsgrid-align-right">
-                                                <a href="client/{$client->id}">{$client->id}</a>
+                                                <a href="neworder/draft/{$client->order->id}">{$client->order->uid} ({$client->order->id})</a>
                                             </td>
                                             <td style="width: 80px;" class="jsgrid-cell">
                                                 <span>{$client->created|date}</span>
                                                 {$client->created|time}
                                             </td>
-                                            <td style="width: 80px;" class="jsgrid-cell">
+                                            <td style="width: 100px;" class="jsgrid-cell">
                                                 <span>{$client->last_stage_date|date}</span>
                                                 {$client->last_stage_date|time}
                                             </td>
-                                            <td style="width: 120px;" class="jsgrid-cell">
+                                            <td style="width: 200px;" class="jsgrid-cell">
                                                 {$client->lastname|escape}
                                                 {$client->firstname|escape}
                                                 {$client->patronymic|escape}
                                             </td>
                                             <td style="width: 100px;" class="jsgrid-cell">
-                                                <span class="phone-cell">{$client->phone_mobile|escape}</span>
-                                                <button class="js-mango-call mango-call"  data-phone="{$client->phone_mobile}" data-user="{$client->id}"
-                                                        title="Выполнить звонок">
-                                                    <i class="fas fa-mobile-alt"></i></button>
+                                                {$client->phone_mobile|escape}
                                             </td>
-                                            <td style="width: 150px;" class="jsgrid-cell">
-                                                <span class="label label-success">Регистрация</span>
-                                                <span class="label {if $client->stage_personal}label-success{else}label-inverse{/if}">Перс. инфо</span>
-                                                <span class="label {if $client->stage_passport}label-success{else}label-inverse{/if}">Паспорт</span>
-                                                <span class="label {if $client->stage_address}label-success{else}label-inverse{/if}">Адрес</span>
-                                                <span class="label {if $client->stage_work}label-success{else}label-inverse{/if}">Работа</span>
-                                                <span class="label {if $client->stage_files}label-success{else}label-inverse{/if}">Файлы</span>
-                                                <span class="label {if $client->stage_card}label-success{else}label-inverse{/if}">Карта</span>
-                                                {if $client->stage_sms_sended}
-                                                <span class="label label-primary" title="СМС сообщение отправлено">СМС</span>
-                                                {/if}
-                                            </td>
-                                            <td style="width: 30px;" class="jsgrid-cell text-right">
-                                                <button class="js-open-sms-modal mango-call" title="Отправить смс" data-user="{$client->id}">
-                                                    <i class="far fa-share-square"></i>
-                                                </button>
-                                            </td>
-                                            <td style="width: 160px;" class="jsgrid-cell">
-
+                                            <td style="width: 280px;" class="jsgrid-cell">
+                                                <span class="label label-success">Телефон</span>
+                                                <span class="label {if $client->stage_registration > 1}label-success{else}label-inverse{/if}">Анкета</span>
+                                                <span class="label {if $client->stage_registration > 2}label-success{else}label-inverse{/if}">Контакты</span>
+                                                <span class="label {if $client->stage_registration > 3}label-success{else}label-inverse{/if}">Работодатель</span><br>
+                                                <span class="label {if $client->stage_registration > 4}label-success{else}label-inverse{/if}">Реквизиты</span>
+                                                <span class="label {if $client->stage_registration > 5}label-success{else}label-inverse{/if}">Профсоюз</span>
+                                                <span class="label {if $client->stage_registration > 6}label-success{else}label-inverse{/if}">Фото</span>
+                                                <span class="label {if $client->stage_registration > 7}label-success{else}label-inverse{/if}">Подписание</span>
                                             </td>
                                         </tr>
                                     {/foreach}
@@ -308,49 +215,4 @@ console.log($this.closest('.jsgrid-row'))
     <!-- ============================================================== -->
     <!-- End footer -->
     <!-- ============================================================== -->
-</div>
-
-<div id="modal_send_sms" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h4 class="modal-title">Отправить смс-сообщение?</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="tab-content tabcontent-border p-3" id="myTabContent">
-                            <div role="tabpanel" class="tab-pane fade active show" id="waiting_reason" aria-labelledby="home-tab">
-                                <form class="js-sms-form">
-                                    <input type="hidden" name="user_id" value="" />
-                                    <input type="hidden" name="order_id" value="" />
-                                    <input type="hidden" name="yuk" value="" />
-                                    <input type="hidden" name="action" value="send_sms" />
-                                    <div class="form-group">
-                                        <label for="name" class="control-label">Выберите шаблон сообщения:</label>
-                                        <select name="template_id" class="form-control">
-                                            <script>
-                                                console.log({$sms_template})
-                                            </script>
-                                            {foreach $sms_templates as $sms_template}
-                                                <option value="{$sms_template->id}" title="{$sms_template->template|escape}">
-                                                    {$sms_template->name|escape} ({$sms_template->template})
-                                                </option>
-                                            {/foreach}
-                                        </select>
-                                    </div>
-                                    <div class="form-action clearfix">
-                                        <button type="button" class="btn btn-danger btn-lg float-left waves-effect" data-dismiss="modal">Отменить</button>
-                                        <button type="submit" class="btn btn-success btn-lg float-right waves-effect waves-light">Да, отправить</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>

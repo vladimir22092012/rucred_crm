@@ -177,6 +177,21 @@ class Orders extends Core
         return $result;
     }
 
+    public function get_by_user($userId)
+    {
+        $this->db->query("
+        SELECT *
+        FROM s_orders
+        WHERE user_id = ?
+        ORDER by id desc
+        limit 1
+        ", $userId);
+
+        $order = $this->db->result();
+
+        return $order;
+    }
+
     public function last_order_number($user_id)
     {
         $query = $this->db->placehold("

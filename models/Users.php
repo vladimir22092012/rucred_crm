@@ -167,8 +167,8 @@ class Users extends Core
     public function get_users($filter = array())
     {
         $id_filter = '';
-        $missing_filter = '';
         $keyword_filter = '';
+        $stage_filter = '';
         $search_filter = '';
         $limit = 1000;
         $page = 1;
@@ -179,25 +179,8 @@ class Users extends Core
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
         }
 
-        if (!empty($filter['missing'])) {
-            $missing_filter = $this->db->placehold("
-                AND (
-                    stage_personal = 0
-                    OR stage_passport = 0
-                    OR stage_address = 0
-                    OR stage_work = 0
-                    OR stage_files = 0
-                    OR stage_card = 0
-                )
-                AND (
-                    (NOW() > created + INTERVAL " . intval($filter['missing']) . " SECOND  AND stage_personal = 0)
-                    OR (NOW() > stage_personal_date + INTERVAL " . intval($filter['missing']) . " SECOND AND stage_passport = 0)
-                    OR (NOW() > passport_date_added_date + INTERVAL " . intval($filter['missing']) . " SECOND AND stage_address = 0)
-                    OR (NOW() > address_data_added_date + INTERVAL " . intval($filter['missing']) . " SECOND AND stage_work = 0)
-                    OR (NOW() > work_added_date +  INTERVAL " . intval($filter['missing']) . " SECOND AND stage_files = 0)
-                    OR (NOW() > files_added_date + INTERVAL " . intval($filter['missing']) . " SECOND AND stage_card = 0)
-                )
-            ");
+        if (!empty($filter['stage_filter'])) {
+            $stage_filter = $this->db->placehold("AND stage_registration != 8");
         }
 
         if (isset($filter['keyword'])) {
@@ -304,9 +287,9 @@ class Users extends Core
             WHERE 1
                 $id_filter
                 $search_filter
-                $missing_filter
                 $keyword_filter
                 $employer_filter
+                $stage_filter
             ORDER BY $sort
             $sql_limit
         ");
@@ -324,7 +307,7 @@ class Users extends Core
     public function count_users($filter = array())
     {
         $id_filter = '';
-        $missing_filter = '';
+        $stage_filter = '';
         $keyword_filter = '';
         $search_filter = '';
         $employer_filter = '';
@@ -333,25 +316,8 @@ class Users extends Core
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('interval', (array)$filter['id']));
         }
 
-        if (!empty($filter['missing'])) {
-            $missing_filter = $this->db->placehold("
-                AND (
-                    stage_personal = 0
-                    OR stage_passport = 0
-                    OR stage_address = 0
-                    OR stage_work = 0
-                    OR stage_files = 0
-                    OR stage_card = 0
-                )
-                AND (
-                    (NOW() > created + INTERVAL " . intval($filter['missing']) . " SECOND  AND stage_personal = 0)
-                    OR (NOW() > stage_personal_date + INTERVAL " . intval($filter['missing']) . " SECOND AND stage_passport = 0)
-                    OR (NOW() > passport_date_added_date + INTERVAL " . intval($filter['missing']) . " SECOND AND stage_address = 0)
-                    OR (NOW() > address_data_added_date + INTERVAL " . intval($filter['missing']) . " SECOND AND stage_work = 0)
-                    OR (NOW() > work_added_date +  INTERVAL " . intval($filter['missing']) . " SECOND AND stage_files = 0)
-                    OR (NOW() > files_added_date + INTERVAL " . intval($filter['missing']) . " SECOND AND stage_card = 0)
-                )
-            ");
+        if (!empty($filter['stage_filter'])) {
+            $stage_filter = $this->db->placehold("AND stage_registration != 8");
         }
 
         if (isset($filter['keyword'])) {
@@ -403,7 +369,7 @@ class Users extends Core
             FROM __users
             WHERE 1
                 $id_filter
-                $missing_filter
+                $stage_filter
                 $search_filter
                 $keyword_filter
                 $employer_filter
