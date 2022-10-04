@@ -96,7 +96,7 @@
                                     {foreach $clients as $client}
                                         <tr class="jsgrid-row">
                                             <td style="width: 100px;" class="jsgrid-cell jsgrid-align-right">
-                                                <a href="neworder/draft/{$client->order->id}">{$client->order->uid} ({$client->order->id})</a>
+                                                <a href="neworder/draft/{$client->order->id}">{$client->order->id}</a>
                                             </td>
                                             <td style="width: 80px;" class="jsgrid-cell">
                                                 <span>{$client->created|date}</span>
