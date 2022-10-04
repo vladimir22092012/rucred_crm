@@ -387,7 +387,7 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-5 ">
-                                                <label class="control-label">Минимальный срок до первой выплаты по осн.долгу, дней</label>
+                                                <label class="control-label">Льготный период до первой выплаты по осн.долгу, дней</label>
                                             </div>
                                             <div class="col-7 ">
                                                 <select class="form-control" name="min_period" {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
