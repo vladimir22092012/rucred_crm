@@ -1378,7 +1378,7 @@
                                                                 <tr>
                                                                     <td>{$order->date|date} {$order->date|time}</td>
                                                                     <td>
-                                                                        <a href="offline_order/{$order->order_id}"
+                                                                        <a href="{if $order->offline == 1}offline_order{else}order{/if}/{$order->order_id}"
                                                                            target="_blank">{$order->order_id}</a>
                                                                     </td>
                                                                     <td>{$order->contract->number}</td>
