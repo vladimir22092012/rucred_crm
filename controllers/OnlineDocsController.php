@@ -91,7 +91,7 @@ class OnlineDocsController extends Controller
         $this->design->assign('loan', $loan);
 
         $start_date = new DateTime(date('Y-m-d', strtotime($order->probably_start_date)));
-        $end_date = new DateTime(date('Y-m-10', strtotime($order->probably_return_date)));
+        $end_date = new DateTime(date('Y-m-d', strtotime($order->probably_return_date)));
 
         $period = date_diff($start_date, $end_date)->days;
 
