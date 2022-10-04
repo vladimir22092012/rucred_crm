@@ -376,11 +376,10 @@
                                                     </td>
                                                     <td style="width: 70px;" class="jsgrid-cell">
                                                         {$ticket->order->lastname} {$ticket->order->firstname} {$ticket->order->patronymic}
-                                                        <br>{$ticket->order->uid}
+                                                        <br>{$ticket->order->uid} ({$ticket->order->order_id})
                                                         {if isset($ticket->contract)}
                                                             <br>
                                                             {$ticket->contract->number}
-                                                            ({$ticket->order->order_id})
                                                         {/if}
                                                     </td>
                                                     <td style="width: 70px;" class="jsgrid-cell">
