@@ -3780,9 +3780,7 @@ class OfflineOrderController extends Controller
 
         foreach ($payment_schedule as $date => $schedule) {
 
-            $date = date('d.m.Y', strtotime($date));
-
-            if ($pay_date <= $date) {
+            if (strtotime($pay_date) <= strtotime($date)) {
                 if ($pay_amount < $schedule['pay_sum']) {
                     if ($pay_amount >= $schedule['loan_percents_pay']) {
                         $percent_pay = $schedule['loan_percents_pay'];
@@ -3813,6 +3811,8 @@ class OfflineOrderController extends Controller
                     $percent_pay = $schedule['loan_percents_pay'];
                     $new_loan -= $schedule['loan_body_pay'];
                 }
+
+                $date = date('d.m.Y', strtotime($date));
 
                 $new_shedule[$date] =
                     [
