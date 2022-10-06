@@ -314,8 +314,7 @@ class OfflineOrderController extends Controller
 
                         $holder = $order->requisite->holder;
 
-                        if(!empty($holder))
-                        {
+                        if (!empty($holder)) {
                             $holder = explode(' ', $holder, 3);
                             $same_holder = 0;
 
@@ -3501,8 +3500,7 @@ class OfflineOrderController extends Controller
                     $rest_sum = round($rest_sum - $loan_body_pay, 2);
                 }
 
-                if(isset($payment_schedule[$date->format('d.m.Y')]))
-                {
+                if (isset($payment_schedule[$date->format('d.m.Y')])) {
 
                     $date = $this->add_month($date->format('d.m.Y'), 2);
                     $paydate->setDate($date->format('Y'), $date->format('m'), $first_pay_day);
@@ -3850,6 +3848,7 @@ class OfflineOrderController extends Controller
 
         $start_date = date('Y-m-' . $first_pay_day, strtotime($last_date . '+1 month'));
         $start_date = new DateTime($start_date);
+        $last_date = new DateTime($last_date);
 
         $percent_per_month = (($order->percent / 100) * 365) / 12;
         $annoouitet_pay = $new_loan * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$new_term)));
@@ -3860,9 +3859,13 @@ class OfflineOrderController extends Controller
             $start_date->setDate($start_date->format('Y'), $start_date->format('m'), $first_pay_day);
             $start_date = $this->check_pay_date($start_date);
 
-            if ($i == $new_term) {
+            if ($i == $new_term && $new_term != 1) {
                 $loan_body_pay = $new_loan;
                 $loan_percents_pay = $annoouitet_pay - $loan_body_pay;
+                $new_loan = 0.00;
+            } elseif ($new_term == 1) {
+                $loan_body_pay = $new_loan;
+                $loan_percents_pay = (($order->percent * $new_loan) * date_diff($start_date, $last_date)->days) / 100;
                 $new_loan = 0.00;
             } else {
                 if (isset($plus_percents)) {
@@ -4895,8 +4898,7 @@ class OfflineOrderController extends Controller
         // We extract the day of the month again so we can compare
         $end_day = $date->format('j');
 
-        if ($start_day != $end_day)
-        {
+        if ($start_day != $end_day) {
             // The day of the month isn't the same anymore, so we correct the date
             $date->modify('last day of last month');
         }
