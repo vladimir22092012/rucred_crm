@@ -3854,6 +3854,9 @@ class OfflineOrderController extends Controller
         $annoouitet_pay = $new_loan * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$new_term)));
         $annoouitet_pay = round($annoouitet_pay, '2');
 
+        if(!isset($plus_percents))
+            $plus_percents = 0;
+
         for ($i = 1; $i <= $new_term; $i++) {
 
             $start_date->setDate($start_date->format('Y'), $start_date->format('m'), $first_pay_day);
@@ -3868,28 +3871,21 @@ class OfflineOrderController extends Controller
                 $loan_percents_pay = (($order->percent * $new_loan) * date_diff($start_date, $last_date)->days) / 100;
                 $new_loan = 0.00;
             } else {
-                if (isset($plus_percents)) {
-                    $loan_percents_pay = round($new_loan * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
-                    $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
-                    $loan_percents_pay += $plus_percents;
-                    $annoouitet_pay += $plus_percents;
-                    $new_loan = round($new_loan - $loan_body_pay, 2);
-                    unset($plus_percents);
-                } else {
-                    $loan_percents_pay = round($new_loan * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
-                    $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
-                    $new_loan = round($new_loan - $loan_body_pay, 2);
-                }
+                $loan_percents_pay = round($new_loan * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
+                $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
+                $new_loan = round($new_loan - $loan_body_pay, 2);
             }
 
             $new_shedule[$start_date->format('d.m.Y')] =
                 [
-                    'pay_sum' => $annoouitet_pay,
-                    'loan_percents_pay' => $loan_percents_pay,
+                    'pay_sum' => $annoouitet_pay + $plus_percents,
+                    'loan_percents_pay' => $loan_percents_pay + $plus_percents,
                     'loan_body_pay' => $loan_body_pay,
                     'comission_pay' => 0.00,
                     'rest_pay' => $new_loan
                 ];
+
+            $plus_percents = 0;
 
             $start_date->add(new DateInterval('P1M'));
         }
