@@ -4866,15 +4866,26 @@ class OfflineOrderController extends Controller
     {
         $previous_date = $this->request->post('date');
         $order_id = $this->request->post('order');
-        $next_date = new DateTime(date('Y-m-d', strtotime($previous_date)));
-        $next_date->add(new DateInterval('P1M'));
 
         $schedule = $this->PaymentsSchedules->get(['actual' => 1, 'order_id' => $order_id]);
         $schedule = json_decode($schedule->schedule, true);
+        array_shift($schedule);
+
+        uksort($schedule,
+            function ($a, $b) {
+
+                if ($a == $b)
+                    return 0;
+
+                return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+            });
+
 
         foreach ($schedule as $date => $payment) {
-            if ($date == $next_date->format('d.m.Y'))
+            if (strtotime($previous_date) < strtotime($date)){
                 $next_pay = ['date' => $date, 'payment' => $payment];
+                break;
+            }
         }
 
         echo json_encode($next_pay);
