@@ -226,6 +226,10 @@ class OfflineOrderController extends Controller
                     return $this->action_do_restruct();
                     break;
 
+                case 'save_restruct':
+                    return $this->action_save_restruct();
+                    break;
+
                 case 'send_asp_code':
                     return $this->action_send_asp_code();
                     break;
@@ -3956,12 +3960,12 @@ class OfflineOrderController extends Controller
                     $rest_sum = number_format($payment['rest_pay'], 2, ',', ' ');
 
                     $payment_schedule_html .= "<tr>";
-                    $payment_schedule_html .= "<td><input type='text' class='form-control daterange' name='date[][date]' value=" . $date . " disabled></td>";
-                    $payment_schedule_html .= "<td><input type='text' class='form-control restructure_pay' name='pay_sum[][pay_sum]' value='$paysum' disabled></td>";
-                    $payment_schedule_html .= "<td><input type='text' class='form-control restructure_od' name='loan_body_pay[][loan_body_pay]' value='$body_sum' disabled></td>";
-                    $payment_schedule_html .= "<td><input type='text' class='form-control restructure_prc' name='loan_percents_pay[][loan_percents_pay]' value='$percent_sum' disabled></td>";
-                    $payment_schedule_html .= "<td><input type='text' class='form-control restructure_cms' name='comission_pay[][comission_pay]' value='$comission_sum' disabled></td>";
-                    $payment_schedule_html .= "<td><input type='text' class='form-control rest_sum' name='rest_pay[][rest_pay]' value='$rest_sum' disabled></td>";
+                    $payment_schedule_html .= "<td><input type='text' class='form-control daterange' name='date[][date]' value='$date'</td>";
+                    $payment_schedule_html .= "<td><input type='text' class='form-control restructure_pay_sum' name='pay_sum[][pay_sum]' value='$paysum' readonly></td>";
+                    $payment_schedule_html .= "<td><input type='text' class='form-control restructure_od' name='loan_body_pay[][loan_body_pay]' value='$body_sum'></td>";
+                    $payment_schedule_html .= "<td><input type='text' class='form-control restructure_prc' name='loan_percents_pay[][loan_percents_pay]' value='$percent_sum'></td>";
+                    $payment_schedule_html .= "<td><input type='text' class='form-control restructure_cms' name='comission_pay[][comission_pay]' value='$comission_sum'></td>";
+                    $payment_schedule_html .= "<td><input type='text' class='form-control rest_sum' name='rest_pay[][rest_pay]' value='$rest_sum' readonly></td>";
                     $payment_schedule_html .= "</tr>";
                 }
             }
@@ -3973,86 +3977,153 @@ class OfflineOrderController extends Controller
             $rest_sum = number_format($new_shedule['result']['all_rest_pay_sum'], 2, ',', ' ');
 
             $payment_schedule_html .= "<tr>";
-            $payment_schedule_html .= "<td><input type='text' class='form-control daterange' value='ИТОГО' disabled></td>";
-            $payment_schedule_html .= "<td><input type='text' class='form-control' value='$paysum' disabled></td>";
-            $payment_schedule_html .= "<td><input type='text' class='form-control' value='$body_sum' disabled></td>";
-            $payment_schedule_html .= "<td><input type='text' class='form-control' value='$percent_sum' disabled></td>";
-            $payment_schedule_html .= "<td><input type='text' class='form-control' value='$comission_sum' disabled></td>";
-            $payment_schedule_html .= "<td><input type='text' class='form-control' value='$rest_sum' disabled></td>";
+            $payment_schedule_html .= "<td><input type='text' class='form-control daterange' value='ИТОГО' readonly></td>";
+            $payment_schedule_html .= "<td><input type='text' name='result[all_sum_pay]' class='form-control' value='$paysum' readonly></td>";
+            $payment_schedule_html .= "<td><input type='text' name='result[all_loan_body_pay]' class='form-control' value='$body_sum' readonly></td>";
+            $payment_schedule_html .= "<td><input type='text' name='result[all_loan_percents_pay]' class='form-control' value='$percent_sum' readonly></td>";
+            $payment_schedule_html .= "<td><input type='text' name='result[all_comission_pay]' class='form-control' value='$comission_sum' readonly></td>";
+            $payment_schedule_html .= "<td><input type='text' name='result[all_rest_pay_sum]' class='form-control' value='$rest_sum' readonly></td>";
             $payment_schedule_html .= "</tr>";
 
-            echo json_encode(['schedule' => $payment_schedule_html, 'psk' => $psk]);
+            echo json_encode(['schedule' => $payment_schedule_html, 'psk' => $psk, 'new_loan' => $new_shedule['result']['all_loan_body_pay']]);
             exit;
 
-        } else {
-
-            $all_sum_credits = 0;
-            $sum_credits_pay = 0;
-            $credits_story = json_decode($user['credits_story']);
-            $cards_story = json_decode($user['cards_story']);
-
-            if (!empty($credits_story)) {
-                foreach ($credits_story as $credit) {
-                    $credit->credits_month_pay = preg_replace("/[^,.0-9]/", '', $credit->credits_month_pay);
-                    if (!empty($credit->credits_month_pay))
-                        $sum_credits_pay += $credit->credits_month_pay;
-                }
-
-                $all_sum_credits += $sum_credits_pay;
-            }
-
-            if (!empty($cards_story)) {
-                foreach ($cards_story as $card) {
-                    $card->cards_rest_sum = preg_replace("/[^,.0-9]/", '', $card->cards_rest_sum);
-                    $card->cards_limit = preg_replace("/[^,.0-9]/", '', $card->cards_limit);
-
-                    if (!empty($card->cards_limit)) {
-                        $max = 0.05 * $card->cards_limit;
-                    } else {
-                        $max = 0;
-                    }
-                    if (!empty($card->cards_rest_sum)) {
-                        $min = 0.1 * $card->cards_rest_sum;
-                    } else {
-                        $min = 0;
-                    }
-
-                    $all_sum_credits += min($max, $min);
-                }
-            }
-
-            $month_pay = $order->amount * ((1 / $loan->max_period) + (($psk / 100) / 12));
-
-            $all_sum_credits += $month_pay;
-
-            if ($all_sum_credits != 0)
-                $pdn = round(($all_sum_credits / $user['income']) * 100, 2);
-            else
-                $pdn = 0;
-
-            $this->users->update_user($order->user_id, ['balance_blocked' => 1]);
-
-            $this->PaymentsSchedules->updates($order->order_id, ['actual' => 0]);
-            $this->PaymentsSchedules->delete_unconfirmed(['order_id' => $order->order_id, 'confirmed' => 0, 'type' => 'restruct']);
-
-            $order->payment_schedule =
-                [
-                    'user_id' => $order->user_id,
-                    'order_id' => $order->order_id,
-                    'contract_id' => $order->contract_id,
-                    'created' => date('Y-m-d H:i:s'),
-                    'type' => 'restruct',
-                    'actual' => 1,
-                    'schedule' => json_encode($new_shedule),
-                    'psk' => $psk,
-                    'pdn' => $pdn,
-                    'comment' => $comment
-                ];
-
-            $this->PaymentsSchedules->add($order->payment_schedule);
-            exit;
         }
 
+    }
+
+    private function action_save_restruct()
+    {
+        $date = $this->request->post('date');
+        $pay_sum = $this->request->post('pay_sum');
+        $loan_percents_pay = $this->request->post('loan_percents_pay');
+        $loan_body_pay = $this->request->post('loan_body_pay');
+        $comission_pay = $this->request->post('comission_pay');
+        $rest_pay = $this->request->post('rest_pay');
+        $order_id = $this->request->post('order_id');
+        $comment = $this->request->post('comment');
+
+        $order = $this->orders->get_order($order_id);
+        $user  = $this->users->get_user($order->user_id);
+        $user = (array)$user;
+
+        $results['result'] = $this->request->post('result');
+
+        $payment_schedule = array_replace_recursive($date, $pay_sum, $loan_percents_pay, $loan_body_pay, $comission_pay, $rest_pay);
+
+        foreach ($payment_schedule as $date => $payment) {
+            $payment_schedule[$payment['date']] = array_slice($payment, 1);
+            $payment_schedule[$payment['date']]['pay_sum'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['pay_sum']);
+            $payment_schedule[$payment['date']]['loan_percents_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['loan_percents_pay']);
+            $payment_schedule[$payment['date']]['loan_body_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['loan_body_pay']);
+            $payment_schedule[$payment['date']]['rest_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['rest_pay']);
+            unset($payment_schedule[$date]);
+        }
+
+        foreach ($results as $key => $result) {
+            $results[$key]['all_sum_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_sum_pay']);
+            $results[$key]['all_loan_percents_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_loan_percents_pay']);
+            $results[$key]['all_loan_body_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_loan_body_pay']);
+            $results[$key]['all_comission_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_comission_pay']);
+            $results[$key]['all_rest_pay_sum'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_rest_pay_sum']);
+        }
+
+        $dates[0] = date('d.m.Y', strtotime($order->probably_start_date));
+        $payments[0] = -$order->amount;
+
+        foreach ($payment_schedule as $date => $pay) {
+            $payments[] = (float)$pay['pay_sum'];
+            $dates[] = date('d.m.Y', strtotime($date));
+        }
+
+        $term = count($payment_schedule);
+        $payment_schedule = array_merge($payment_schedule, $results);
+
+        foreach ($dates as $date) {
+
+            $date = new DateTime(date('Y-m-d H:i:s', strtotime($date)));
+
+            $new_dates[] = mktime(
+                $date->format('H'),
+                $date->format('i'),
+                $date->format('s'),
+                $date->format('m'),
+                $date->format('d'),
+                $date->format('Y')
+            );
+        }
+
+        $xirr = round($this->Financial->XIRR($payments, $new_dates) * 100, 3);
+        $xirr /= 100;
+
+        $psk = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
+
+        $all_sum_credits = 0;
+        $sum_credits_pay = 0;
+        $credits_story = json_decode($user['credits_story']);
+        $cards_story = json_decode($user['cards_story']);
+
+
+        if (!empty($credits_story)) {
+            foreach ($credits_story as $credit) {
+                $credit->credits_month_pay = preg_replace("/[^,.0-9]/", '', $credit->credits_month_pay);
+                if (!empty($credit->credits_month_pay))
+                    $sum_credits_pay += $credit->credits_month_pay;
+            }
+
+            $all_sum_credits += $sum_credits_pay;
+        }
+
+        if (!empty($cards_story)) {
+            foreach ($cards_story as $card) {
+                $card->cards_rest_sum = preg_replace("/[^,.0-9]/", '', $card->cards_rest_sum);
+                $card->cards_limit = preg_replace("/[^,.0-9]/", '', $card->cards_limit);
+
+                if (!empty($card->cards_limit)) {
+                    $max = 0.05 * $card->cards_limit;
+                } else {
+                    $max = 0;
+                }
+                if (!empty($card->cards_rest_sum)) {
+                    $min = 0.1 * $card->cards_rest_sum;
+                } else {
+                    $min = 0;
+                }
+
+                $all_sum_credits += min($max, $min);
+            }
+        }
+
+        $month_pay = $order->amount * ((1 / $term) + (($psk / 100) / 12));
+
+        $all_sum_credits += $month_pay;
+
+        if ($all_sum_credits != 0)
+            $pdn = round(($all_sum_credits / $user['income']) * 100, 2);
+        else
+            $pdn = 0;
+
+        $this->users->update_user($order->user_id, ['balance_blocked' => 1]);
+
+        $this->PaymentsSchedules->updates($order->order_id, ['actual' => 0]);
+        $this->PaymentsSchedules->delete_unconfirmed(['order_id' => $order->order_id, 'confirmed' => 0, 'type' => 'restruct']);
+
+        $order->payment_schedule =
+            [
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'contract_id' => $order->contract_id,
+                'created' => date('Y-m-d H:i:s'),
+                'type' => 'restruct',
+                'actual' => 1,
+                'schedule' => json_encode($payment_schedule),
+                'psk' => $psk,
+                'pdn' => $pdn,
+                'comment' => $comment
+            ];
+
+        $this->PaymentsSchedules->add($order->payment_schedule);
+        exit;
     }
 
     private function action_send_asp_code()

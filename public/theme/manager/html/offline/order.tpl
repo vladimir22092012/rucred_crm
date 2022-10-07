@@ -690,15 +690,10 @@
             $('.do_restruct, .accept_restruct').on('click', function (e) {
                 e.preventDefault();
 
-                let preview = 0;
-
                 if ($(this).hasClass('do_restruct'))
-                    preview = 1;
-
-                do_restruct(preview);
-
-                if ($(this).hasClass('accept_restruct'))
-                    location.reload();
+                    preview();
+                else
+                    save_restruct();
             });
 
             $('.cancel_restruct').on('click', function () {
@@ -1090,29 +1085,41 @@
             });
         }
 
-        function do_restruct(preview) {
+        function preview() {
 
-            let form = $('#restruct_form').serialize();
-
-            if (preview == 1)
-                form += '&preview=1';
+            let form = $('#restruct_form').serialize() + '&preview=1';
 
             $.ajax({
                 method: 'POST',
                 dataType: 'JSON',
                 data: form,
                 success: function (html) {
-                    if (preview == 1) {
-                        $('.restructuring').hide();
-                        $('.accept_restruct').show();
-                        $('.cancel_restruct').show();
-                        $('tbody').html(html['schedule']);
-                        $('#psk').html(html['psk']);
-                        $('#modal_restruct').modal('hide');
-                    }
-                    else {
-                        location.reload()
-                    }
+                    $('.restructuring').hide();
+                    $('.accept_restruct').show();
+                    $('.cancel_restruct').show();
+                    $('#main_schedule').html(html['schedule']);
+                    $('#psk').html(html['psk']);
+                    $('#modal_restruct').modal('hide');
+                    $('#loan_amount').val(html['new_loan']);
+                    $.getScript('theme/{$settings->theme|escape}/js/apps/edit_schedule.js');
+                    $('#payment_schedule').find('input[name="action"]').val('save_restruct');
+                }
+            });
+        }
+
+        function save_restruct() {
+
+            let form = $('#payment_schedule').serialize();
+
+            let comment = $('.restruct_comment').val();
+
+            form = form + '&comment=' + comment;
+
+            $.ajax({
+                method: 'POST',
+                data: form,
+                success: function (html) {
+                    location.reload()
                 }
             });
         }
@@ -1368,6 +1375,7 @@
                         <div class="form-body">
                             <div class="row">
                                 <div class="col-4 col-md-3 col-lg-3" style="display: flex;">
+                                    <input type="hidden" id="loan_amount">
                                     <small>
                                         {if $client_status == 'ПК'}
                                             <span class="label label-success">ПК</span>
@@ -2590,7 +2598,7 @@
                                                         </thead>
                                                         <input type="hidden" name="action" value="edit_schedule">
                                                         <input type="hidden" name="order_id" value="{$order->order_id}">
-                                                        <tbody>
+                                                        <tbody id="main_schedule">
                                                         {if !empty($payment_schedule)}
                                                             {foreach $payment_schedule->schedule as $date => $payment}
                                                                 {if $date != 'result'}
@@ -3580,7 +3588,8 @@
                                                 <div class="row view-block p-2 snils-front">
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-0 row">
-                                                            <label class="control-label col-md-8 col-7 snils-number">{$order->pdn} %</label>
+                                                            <label class="control-label col-md-8 col-7 snils-number">{$order->pdn}
+                                                                %</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -4452,7 +4461,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Комментарий</label>
-                                <textarea class="form-control" name="comment"></textarea>
+                                <textarea class="form-control restruct_comment" name="comment"></textarea>
                             </div>
                             <label id="new_term_digit" style="display: none; color: #880000">Новый срок, мес</label>
                         </div>
