@@ -1153,6 +1153,7 @@
                     $('#loan_amount').val(html['new_loan']);
                     $.getScript('theme/{$settings->theme|escape}/js/apps/edit_schedule.js');
                     $('#payment_schedule').find('input[name="action"]').val('save_restruct');
+                    $('#payment_schedule').find('input[name="restruct_date"]').val(html['pay_date']);
                 }
             });
         }
@@ -2648,6 +2649,7 @@
                                                         </thead>
                                                         <input type="hidden" name="action" value="edit_schedule">
                                                         <input type="hidden" name="order_id" value="{$order->order_id}">
+                                                        <input type="hidden" name="restruct_date" >
                                                         <tbody id="main_schedule">
                                                         {if !empty($payment_schedule)}
                                                             {foreach $payment_schedule->schedule as $date => $payment}

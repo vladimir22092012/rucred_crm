@@ -3831,7 +3831,6 @@ class OfflineOrderController extends Controller
                         'loan_percents_pay' => $percent_pay,
                         'comission_pay' => $comission_amount,
                         'rest_pay' => $new_loan - $body_pay,
-                        'last_pay' => 1
                     ];
 
                 $last_date = $date;
@@ -3999,7 +3998,7 @@ class OfflineOrderController extends Controller
             $payment_schedule_html .= "<td><input type='text' name='result[all_rest_pay_sum]' class='form-control' value='$rest_sum' readonly></td>";
             $payment_schedule_html .= "</tr>";
 
-            echo json_encode(['schedule' => $payment_schedule_html, 'psk' => $psk, 'new_loan' => $new_shedule['result']['all_loan_body_pay']]);
+            echo json_encode(['pay_date' => $pay_date, 'schedule' => $payment_schedule_html, 'psk' => $psk, 'new_loan' => $new_shedule['result']['all_loan_body_pay']]);
             exit;
 
         }
@@ -4017,6 +4016,8 @@ class OfflineOrderController extends Controller
         $order_id = $this->request->post('order_id');
         $comment = $this->request->post('comment');
 
+        $restruct_date = $this->request->post('restruct_date');
+
         $order = $this->orders->get_order($order_id);
         $user = $this->users->get_user($order->user_id);
         $user = (array)$user;
@@ -4031,6 +4032,10 @@ class OfflineOrderController extends Controller
             $payment_schedule[$payment['date']]['loan_percents_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['loan_percents_pay']);
             $payment_schedule[$payment['date']]['loan_body_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['loan_body_pay']);
             $payment_schedule[$payment['date']]['rest_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['rest_pay']);
+
+            if(date('Y-m-d', strtotime($date)) == date('Y-m-d', strtotime($restruct_date)))
+                $payment_schedule[$payment['date']]['last_pay'] = 1;
+
             unset($payment_schedule[$date]);
         }
 
@@ -4889,7 +4894,7 @@ class OfflineOrderController extends Controller
             'numeration' => '04.31'
         ));
 
-        $this->orders->update_order($order_id, ['status' => 17]);
+        $this->orders->update_order($order_id, ['status' => 17, 'probably_return_date' => $order->probably_return_date]);
         $this->PaymentsSchedules->update($order->payment_schedule->id, ['is_confirmed' => 1]);
     }
 

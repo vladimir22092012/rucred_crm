@@ -189,10 +189,9 @@
                 ({$percents_per_day_str_part_one|upper} {if $percents_per_day_str_part_two|upper} ЦЕЛЫХ И {$percents_per_day_str_part_two|upper} СОТЫХ ПРОЦЕНТА{/if}
                 )</strong><br>(04) Полная
             стоимость микрозайма в валюте
-            микрозайма: <br><strong>{$psk_rub}</strong>
-            <strong>{$payment_schedule['result']['all_loan_percents_pay']|number_format:2:',':' '}</strong>
+            микрозайма: <br><strong>{$payment_schedule['result']['all_loan_percents_pay']|number_format:0:',':' '}</strong>
             (<strong>{$all_percents_string_part_one|upper}</strong>)
-            рублей
+            {$payment_schedule['result']['all_loan_percents_pay']|plural:'рубль':'рублей':'рубля'}
             <strong>{if $all_percents_string_part_two}{$all_percents_string_part_two}{else}00{/if}</strong>
             {$all_percents_string_part_two|plural:'копейка':'копеек':'копейки'}<br>(05)
             Полная стоимость микрозайма в процентах
