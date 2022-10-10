@@ -270,6 +270,14 @@ class OfflineOrderController extends Controller
                     $this->action_next_schedule_date();
                     break;
 
+                case 'get_companies':
+                    $this->action_get_companies();
+                    break;
+
+                case 'get_branches':
+                    $this->action_get_branches();
+                    break;
+
 
             endswitch;
 
@@ -3748,7 +3756,8 @@ class OfflineOrderController extends Controller
     {
         $order_id = $this->request->post('order_id');
         $new_term = $this->request->post('new_term');
-        $comment = $this->request->post('comment');
+
+        $branch_id  = $this->request->post('branch');
 
         $pay_amount = $this->request->post('pay_amount');
         $comission_amount = $this->request->post('comission');
@@ -3757,7 +3766,6 @@ class OfflineOrderController extends Controller
         $pay_date = date('d.m.Y', strtotime($this->request->post('pay_date')));
         $order = $this->orders->get_order($order_id);
         $order->new_term = $new_term;
-        $loan = $this->loantypes->get_loantype($order->loan_type);
 
         $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
         $payment_schedule = json_decode($payment_schedule->schedule, true);
@@ -3836,17 +3844,23 @@ class OfflineOrderController extends Controller
             $i++;
         }
 
-        $user = (array)$this->users->get_user($order->user_id);
+        if(empty($branch_id))
+        {
+            $user = (array)$this->users->get_user($order->user_id);
 
-        if (empty($user['branche_id'])) {
-            $branches = $this->Branches->get_branches(['company_id' => $user['company_id']]);
+            if (empty($user['branche_id'])) {
+                $branches = $this->Branches->get_branches(['company_id' => $user['company_id']]);
 
-            foreach ($branches as $branch) {
-                if ($branch->number == '00')
-                    $first_pay_day = $branch->payday;
+                foreach ($branches as $branch) {
+                    if ($branch->number == '00')
+                        $first_pay_day = $branch->payday;
+                }
+            } else {
+                $branch = $this->Branches->get_branch($user['branche_id']);
+                $first_pay_day = $branch->payday;
             }
-        } else {
-            $branch = $this->Branches->get_branch($user['branche_id']);
+        }else{
+            $branch = $this->Branches->get_branch($branch_id);
             $first_pay_day = $branch->payday;
         }
 
@@ -3858,7 +3872,7 @@ class OfflineOrderController extends Controller
         $annoouitet_pay = $new_loan * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$new_term)));
         $annoouitet_pay = round($annoouitet_pay, '2');
 
-        if(!isset($plus_percents))
+        if (!isset($plus_percents))
             $plus_percents = 0;
 
         for ($i = 1; $i <= $new_term; $i++) {
@@ -4004,7 +4018,7 @@ class OfflineOrderController extends Controller
         $comment = $this->request->post('comment');
 
         $order = $this->orders->get_order($order_id);
-        $user  = $this->users->get_user($order->user_id);
+        $user = $this->users->get_user($order->user_id);
         $user = (array)$user;
 
         $results['result'] = $this->request->post('result');
@@ -4953,7 +4967,7 @@ class OfflineOrderController extends Controller
 
 
         foreach ($schedule as $date => $payment) {
-            if (strtotime($previous_date) < strtotime($date)){
+            if (strtotime($previous_date) < strtotime($date)) {
                 $next_pay = ['date' => $date, 'payment' => $payment];
                 break;
             }
@@ -4982,6 +4996,48 @@ class OfflineOrderController extends Controller
         }
 
         return $date;
+    }
+
+    private function action_get_companies()
+    {
+        $group_id = $this->request->post('group_id');
+
+        $companies = $this->companies->get_companies(['group_id' => $group_id, 'blocked' => 0]);
+
+        if (!empty($companies)) {
+            $html = "<option value='0'>Выберите компанию</option>";
+
+            foreach ($companies as $company) {
+                $html .= "<option value='$company->id'>$company->name</option>";
+            }
+
+            echo json_encode(['html' => $html]);
+            exit;
+        } else {
+            echo json_encode(['empty' => 1]);
+            exit;
+        }
+    }
+
+    private function action_get_branches()
+    {
+        $company_id = $this->request->post('company_id');
+
+        $branches = $this->Branches->get_company_branches($company_id);
+
+        if (!empty($branches)) {
+            $html = '';
+
+            foreach ($branches as $branch) {
+                $html .= "<option value='$branch->id'>$branch->name</option>";
+            }
+
+            echo json_encode(['html' => $html]);
+            exit;
+        } else {
+            echo json_encode(['empty' => 1]);
+            exit;
+        }
     }
 
 }

@@ -1001,6 +1001,56 @@
                     }
                 })
             });
+
+            $('.groups').on('change', function () {
+                let group_id = $(this).val();
+
+                (group_id == 0) ? $('.companies').hide() : $('.companies').show();
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'get_companies',
+                        group_id: group_id
+                    },
+                    success: function (companies) {
+                        if (companies['html'])
+                            $('.companies').html(companies['html']);
+                    }
+                });
+            });
+
+            $('input[name="new_employer"]').on('click', function () {
+                if ($(this).is(':checked')) {
+                    $('.groups').show();
+                } else {
+                    $('.groups').hide();
+                    $('.companies').empty();
+                    $('.companies').hide();
+                    $('.branches').empty();
+                    $('.branches').hide();
+                }
+            });
+
+            $('.companies').on('change', function () {
+                let company_id = $(this).val();
+
+                (company_id == 0) ? $('.branches').hide() : $('.branches').show();
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'get_branches',
+                        company_id: company_id
+                    },
+                    success: function (branches) {
+                        if (branches['html'])
+                            $('.branches').html(branches['html']);
+                    }
+                });
+            });
         });
     </script>
     <script>
@@ -4426,6 +4476,28 @@
                         <input type="hidden" name="action" value="do_restruct">
                         <input type="hidden" name="order_id" value="{$order->order_id}">
                         <div class="form-group" style="display:flex; flex-direction: column">
+                            <div class="form-check-inline">
+                                <input type="checkbox" name="new_employer" value="1">
+                                <label style="margin-left: 25px">Изменение работодателя</label>
+                            </div>
+                            <div class="form-group">
+                                <select class="form-control groups" name="group" style="display: none;">
+                                    <option value="0" selected>Выберите группу</option>
+                                    {foreach $groups as $group}
+                                        <option value="{$group->id}">{$group->name}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <select class="form-control companies" name="company" style="display: none;">
+
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <select class="form-control branches" name="branch" style="display: none;">
+
+                                </select>
+                            </div>
                             <div class="form-group">
                                 <label>Подтвержденная дата по графику</label>
                                 <input type="text" data-order="{$order->order_id}"
