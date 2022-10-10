@@ -681,11 +681,11 @@ class NeworderController extends Controller
 
                 if (date('Y-m-d') >= date('Y-m-d', strtotime($probably_start_date))) {
 
-                    if ($settlement_id == 3 && date('H') > 14)
+                    if ($settlement_id == 3 && date('H') >= 14)
                         $probably_start_date = date('Y-m-d', strtotime('+1 days'));
 
                     if ($settlement_id == 2) {
-                        if (date('H') > 14)
+                        if (date('H') >= 14)
                             $probably_start_date = date('Y-m-d', strtotime('+2 days'));
                         else
                             $probably_start_date = date('Y-m-d', strtotime('+1 days'));
@@ -700,7 +700,7 @@ class NeworderController extends Controller
 
                             if (empty($check_date)) {
                                 if ($settlement_id == 2) {
-                                    if (date('H') > 14)
+                                    if (date('H') >= 14)
                                     $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
                                 }
                                 break;
