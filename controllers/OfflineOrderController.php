@@ -3893,6 +3893,13 @@ class OfflineOrderController extends Controller
                 $new_loan = round($new_loan - $loan_body_pay, 2);
             }
 
+            if(isset($payment_schedule[$start_date->format('d.m.Y')]))
+            {
+                $start_date = $this->add_month($start_date->format('d.m.Y'), 2);
+                $start_date->setDate($start_date->format('Y'), $start_date->format('m'), $first_pay_day);
+                $start_date = $this->check_pay_date($start_date);
+            }
+
             $new_shedule[$start_date->format('d.m.Y')] =
                 [
                     'pay_sum' => $annoouitet_pay + $plus_percents,
