@@ -222,11 +222,11 @@ class DocumentController extends Controller
         $this->design->assign('all_percents_string_part_two', $all_percents_string_part_two);
         $this->design->assign('all_percents_string', $all_percents_string);
 
-        if (is_null($order->percent)) {
+        if (is_null($document->params->percent)) {
             $percents_per_day_str_part_one = 0;
             $percents_per_day_str_part_two = 0;
         } else {
-            $percents_per_day_str = explode('.', $order->percent);
+            $percents_per_day_str = explode('.', $document->params->percent);
             $percents_per_day_str_part_one = $this->num2str($percents_per_day_str[0]);
             $percents_per_day_str_part_two = $this->num2str($percents_per_day_str[1]);
         }
