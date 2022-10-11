@@ -1051,6 +1051,42 @@
                     }
                 });
             });
+
+            $('#group_select').on('change', function () {
+
+                let group_id = $(this).val();
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'get_companies',
+                        group_id: group_id
+                    },
+                    success: function (companies) {
+                        if (companies['html'])
+                            $('#company_select').html(companies['html']);
+                    }
+                });
+            });
+
+            $('#company_select').on('change', function () {
+
+                let company_id = $(this).val();
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'get_branches',
+                        company_id: company_id
+                    },
+                    success: function (branches) {
+                        if (branches['html'])
+                            $('#branch_select').html(branches['html']);
+                    }
+                });
+            });
         });
     </script>
     <script>
@@ -2649,7 +2685,7 @@
                                                         </thead>
                                                         <input type="hidden" name="action" value="edit_schedule">
                                                         <input type="hidden" name="order_id" value="{$order->order_id}">
-                                                        <input type="hidden" name="restruct_date" >
+                                                        <input type="hidden" name="restruct_date">
                                                         <tbody id="main_schedule">
                                                         {if !empty($payment_schedule)}
                                                             {foreach $payment_schedule->schedule as $date => $payment}
