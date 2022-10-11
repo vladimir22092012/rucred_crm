@@ -163,10 +163,10 @@ class DocumentController extends Controller
 
             foreach ($current_schedule as $schedule) {
                 if (isset($schedule['last_pay'])) {
-                    $pay_sum = number_format($schedule['pay_sum'], 2, ',', '');
-                    $loan_body_pay = number_format($schedule['loan_body_pay'], 2, ',', '');
-                    $loan_percents_pay = number_format($schedule['loan_percents_pay'], 2, ',', '');
-                    $comission_pay = number_format($schedule['comission_pay'], 2, ',', '');
+                    $pay_sum = number_format(floatval($schedule['pay_sum']), 2, ',', '');
+                    $loan_body_pay = number_format(floatval($schedule['loan_body_pay']), 2, ',', '');
+                    $loan_percents_pay = number_format(floatval($schedule['loan_percents_pay']), 2, ',', '');
+                    $comission_pay = number_format(floatval($schedule['comission_pay']), 2, ',', '');
                 }
             }
 

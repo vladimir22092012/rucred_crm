@@ -4042,7 +4042,7 @@ class OfflineOrderController extends Controller
             $payment_schedule[$payment['date']]['loan_body_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['loan_body_pay']);
             $payment_schedule[$payment['date']]['rest_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['rest_pay']);
 
-            if(date('Y-m-d', strtotime($date)) == date('Y-m-d', strtotime($restruct_date)))
+            if($payment['date'] == $restruct_date)
                 $payment_schedule[$payment['date']]['last_pay'] = 1;
 
             unset($payment_schedule[$date]);
@@ -4872,6 +4872,8 @@ class OfflineOrderController extends Controller
 
             $order->probably_return_date = $key;
         }
+
+        $order->probably_return_date = date('Y-m-d', strtotime($order->probably_return_date));
 
         $this->documents->create_document(array(
             'user_id' => $order->user_id,
