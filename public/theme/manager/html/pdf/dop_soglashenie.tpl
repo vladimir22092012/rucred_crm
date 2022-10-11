@@ -185,7 +185,7 @@
             (<strong>{$period_str|upper}</strong>)
             {$period|plural:'день':'дней':'дня'}<br>(03)
             Процентная
-            ставка по микрозайму в день: <strong>{$percent}%
+            ставка по микрозайму в день: <strong>{$percent|number_format:3:',':' '}%
                 ({$percents_per_day_str_part_one|upper} {if $percents_per_day_str_part_two|upper} ЦЕЛЫХ И {$percents_per_day_str_part_two|upper} СОТЫХ ПРОЦЕНТА{/if}
                 )</strong><br>(04) Полная
             стоимость микрозайма в валюте
