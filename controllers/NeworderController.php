@@ -796,8 +796,6 @@ class NeworderController extends Controller
                 $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2);
                 $body_pay = $sum_pay - $loan_percents_pay;
                 $paydate->add(new DateInterval('P1M'));
-
-                $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
                 $iteration++;
 
             } elseif (date_diff($paydate, $start_date)->days < $loan->min_period) {
@@ -821,6 +819,8 @@ class NeworderController extends Controller
                 $loan_percents_pay = $sum_pay;
                 $body_pay = 0.00;
             }
+
+            $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
 
             $payment_schedule[$paydate->format('d.m.Y')] =
                 [
