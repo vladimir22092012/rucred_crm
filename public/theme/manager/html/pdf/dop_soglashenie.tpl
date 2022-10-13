@@ -99,29 +99,17 @@
 <div>
     <br>
 </div>
-{if !isset($sms)}
-    <footer>
-        <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
-            <tr style="width: 100%">
-                <td style="width: 8%; height: 30px" align="center">
-                    <div><strong style="color: #b3b2ab;padding-top: 2px">СТР. 1</strong></div>
-                </td>
-                <td style="width: 37%" align="center">
-                    <div><span style="color: #b3b2ab">ПОДПИСЬ</span></div>
-                </td>
-                <td style="width: 40%" align="center">
-                    <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
-                </td>
-                <td style="width: 15%;" align="center">
-                    <div><span style="color: #b3b2ab">ДАТА</span></div>
-                </td>
-            </tr>
-        </table>
-    </footer>
-{/if}
-{if isset($sms)}
-    <table style="border: 0.25pt solid #002088; font-size: 8px; width: 50%"
-           cellpadding="1" cellspacing="6">
+{if !isset($code_asp->code)}
+    <table>
+        <tr style="width: 100%">
+            <td style="width: 30%"><strong>{$date|date} года</strong></td>
+            <td style="width: 20%"></td>
+            <td style="width: 40%">_______________/____________</td>
+        </tr>
+    </table>
+{else}
+    <table style="border: 0.25pt solid #002088; font-size: 8px; width: 50%;"
+           cellpadding="1" cellspacing="2">
         <tr>
             <td colspan="2"><strong>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ЦИФРОВОЙ ПОДПИСЬЮ</strong></td>
         </tr>
@@ -248,29 +236,17 @@
 <div>
 
 </div>
-{if !isset($sms)}
-    <footer>
-        <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
-            <tr style="width: 100%">
-                <td style="width: 8%; height: 30px" align="center">
-                    <div><strong style="color: #b3b2ab;padding-top: 2px">СТР. 2</strong></div>
-                </td>
-                <td style="width: 37%" align="center">
-                    <div><span style="color: #b3b2ab">ПОДПИСЬ</span></div>
-                </td>
-                <td style="width: 40%" align="center">
-                    <div><span style="color: #b3b2ab">ФИО ПОЛНОСТЬЮ СОБСТВЕННОРУЧНО</span></div>
-                </td>
-                <td style="width: 15%;" align="center">
-                    <div><span style="color: #b3b2ab">ДАТА</span></div>
-                </td>
-            </tr>
-        </table>
-    </footer>
-{/if}
-{if isset($sms)}
-    <table style="border: 0.25pt solid #002088; font-size: 8px; width: 50%"
-           cellpadding="1" cellspacing="6">
+{if !isset($code_asp->code)}
+    <table>
+        <tr style="width: 100%">
+            <td style="width: 30%"><strong>{$date|date} года</strong></td>
+            <td style="width: 20%"></td>
+            <td style="width: 40%">_______________/____________</td>
+        </tr>
+    </table>
+{else}
+    <table style="border: 0.25pt solid #002088; font-size: 8px; width: 50%;"
+           cellpadding="1" cellspacing="2">
         <tr>
             <td colspan="2"><strong>ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ЦИФРОВОЙ ПОДПИСЬЮ</strong></td>
         </tr>
