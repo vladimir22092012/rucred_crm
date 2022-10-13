@@ -105,7 +105,10 @@ class UploadFilesController extends Controller
             }
         }
 
-        echo json_encode(['success' => 1, 'message' => 'Файл загружен успешно']);
+        if(!isset($file_id))
+            $file_id = 0;
+
+        echo json_encode(['success' => 1, 'message' => 'Файл загружен успешно', 'file_id' => $file_id]);
         exit;
     }
 

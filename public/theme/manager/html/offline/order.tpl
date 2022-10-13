@@ -58,6 +58,8 @@
             $('.new_scan').on('change', function (e) {
                 let form_data = new FormData();
 
+                let document_id = $(this).attr('data-document');
+
                 form_data.append('file', e.target.files[0]);
                 form_data.append('user_id', $(this).attr('data-user'));
                 form_data.append('type', 'document');
@@ -81,7 +83,17 @@
                                 confirmButtonText: 'ОК'
                             });
                         } else {
-                            window.location.reload();
+                            $.ajax({
+                                method: 'POST',
+                                data: {
+                                    action: 'bind_scan',
+                                    document_id: document_id,
+                                    file_id: resp['file_id']
+                                },
+                                success: function () {
+                                    window.location.reload();
+                                }
+                            })
                         }
                     }
                 });
@@ -1205,8 +1217,16 @@
             $.ajax({
                 method: 'POST',
                 data: form,
-                success: function (html) {
-                    location.reload()
+                success: function (resp) {
+                    if (resp['success'])
+                        location.reload();
+
+                    if (resp['error']) {
+                        Swal.fire({
+                            title: resp['error'],
+                            confirmButtonText: 'ОК'
+                        });
+                    }
                 }
             });
         }
@@ -3130,6 +3150,7 @@
                                                                                    class="new_scan"
                                                                                    data-user="{$order->user_id}"
                                                                                    data-order="{$order->order_id}"
+                                                                                   data-document="{$document->id}"
                                                                                    value="" style="display:none;"
                                                                                    multiple/>
                                                                             <label for="{$document->template}"

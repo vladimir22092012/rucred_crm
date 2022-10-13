@@ -278,6 +278,10 @@ class OfflineOrderController extends Controller
                     $this->action_get_branches();
                     break;
 
+                case 'bind_scan':
+                    $this->action_bind_scan();
+                    break;
+
 
             endswitch;
 
@@ -4025,6 +4029,23 @@ class OfflineOrderController extends Controller
         $restruct_date = $this->request->post('restruct_date');
 
         $order = $this->orders->get_order($order_id);
+
+        $documents = $this->documents->get_documents(['order_id' => $order->order_id, 'stage_type' => 'restruct']);
+
+        $count_scans = 0;
+
+        foreach ($documents as $document)
+        {
+            if(in_array($document->numeration, ['03.03', '03.04']))
+                $count_scans++;
+        }
+
+        if($count_scans < 2)
+        {
+            echo json_encode(['error' => 'Не все сканы приложены']);
+            exit;
+        }
+
         $user = $this->users->get_user($order->user_id);
         $user = (array)$user;
 
@@ -4149,6 +4170,8 @@ class OfflineOrderController extends Controller
 
         $this->PaymentsSchedules->add($order->payment_schedule);
         $this->orders->update_order($order->order_id, ['status' => 17]);
+
+        echo json_encode(['success' => 1]);
         exit;
     }
 
@@ -5077,6 +5100,15 @@ class OfflineOrderController extends Controller
         } else {
             echo json_encode(['empty' => 1]);
         }
+        exit;
+    }
+
+    private function action_bind_scan()
+    {
+        $doc_id  = $this->request->post('document_id');
+        $scan_id = $this->request->post('file_id');
+
+        $this->documents->update_document($doc_id, ['scan_id' => $scan_id]);
         exit;
     }
 
