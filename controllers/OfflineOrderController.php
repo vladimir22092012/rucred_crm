@@ -282,6 +282,10 @@ class OfflineOrderController extends Controller
                     $this->action_bind_scan();
                     break;
 
+                case 'check_restruct_scans':
+                    $this->action_check_restruct_scans();
+                    break;
+
 
             endswitch;
 
@@ -4030,22 +4034,6 @@ class OfflineOrderController extends Controller
 
         $order = $this->orders->get_order($order_id);
 
-        $documents = $this->documents->get_documents(['order_id' => $order->order_id, 'stage_type' => 'restruct']);
-
-        $count_scans = 0;
-
-        foreach ($documents as $document)
-        {
-            if(in_array($document->numeration, ['03.03', '03.04']) && !empty($document->scan_id))
-                $count_scans++;
-        }
-
-        if($count_scans < 2)
-        {
-            echo json_encode(['error' => 'Не все сканы приложены']);
-            exit;
-        }
-
         $user = $this->users->get_user($order->user_id);
         $user = (array)$user;
 
@@ -5105,10 +5093,31 @@ class OfflineOrderController extends Controller
 
     private function action_bind_scan()
     {
-        $doc_id  = $this->request->post('document_id');
+        $doc_id = $this->request->post('document_id');
         $scan_id = $this->request->post('file_id');
 
         $this->documents->update_document($doc_id, ['scan_id' => $scan_id]);
+        exit;
+    }
+
+    private function action_check_restruct_scans()
+    {
+        $order_id = $this->request->post('order_id');
+
+        $documents = $this->documents->get_documents(['order_id' => $order_id, 'stage_type' => 'restruct']);
+
+        $count_scans = 0;
+
+        foreach ($documents as $document) {
+            if (in_array($document->numeration, ['03.03', '03.04']) && !empty($document->scan_id))
+                $count_scans++;
+        }
+
+        if ($count_scans < 2)
+            echo json_encode(['error' => 'Не все сканы приложены']);
+        else
+            echo json_encode(['success' => 1]);
+
         exit;
     }
 

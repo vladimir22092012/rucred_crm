@@ -944,11 +944,29 @@
                 let order = $(this).attr('data-order');
                 let restruct = 1;
 
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'check_restruct_scans',
+                        order_id: order
+                    },
+                    success: function (resp) {
+                        if (resp['success']) {
+                            $('#sms_confirm_modal').modal();
+                            $('button[class="btn btn-info confirm_asp"]').attr('data-restruct', 1);
 
-                $('#sms_confirm_modal').modal();
-                $('button[class="btn btn-info confirm_asp"]').attr('data-restruct', 1);
+                            send_asp(phone, user, order, restruct);
+                        }
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'Да'
+                            })
+                        }
+                    }
+                });
 
-                send_asp(phone, user, order, restruct);
             });
 
             $('.cancell_restruct').on('click', function () {
@@ -1217,16 +1235,8 @@
             $.ajax({
                 method: 'POST',
                 data: form,
-                success: function (resp) {
-                    if (resp['success'])
-                        location.reload();
-
-                    if (resp['error']) {
-                        Swal.fire({
-                            title: resp['error'],
-                            confirmButtonText: 'ОК'
-                        });
-                    }
+                success: function () {
+                    location.reload();
                 }
             });
         }
