@@ -3182,6 +3182,7 @@
                                                                                    class="new_scan"
                                                                                    data-user="{$order->user_id}"
                                                                                    data-order="{$order->order_id}"
+                                                                                   data-document="{$document->id}"
                                                                                    value="" style="display:none;"
                                                                                    multiple/>
                                                                             <label for="{$document->template}"
