@@ -333,6 +333,7 @@ class Documents extends Core
             doc.asp_id,
             doc.pre_asp_id,
             doc.hash,
+            doc.scan_id,
             us.lastname,
             us.firstname,
             us.patronymic,
