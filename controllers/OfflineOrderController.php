@@ -3347,7 +3347,7 @@ class OfflineOrderController extends Controller
         $probably_start_date = $this->request->post('probably_start_date');
         $loantype = $this->Loantypes->get_loantype((int)$loan_tarif);
         $order = $this->orders->get_order($order_id);
-        $delete_restruct = $this->orders->get_order('delete_restruct');
+        $delete_restruct = $this->request->post('delete_restruct');
 
         if (empty($order->branche_id)) {
             $branches = $this->Branches->get_branches(['group_id' => $order->group_id]);
@@ -3406,7 +3406,7 @@ class OfflineOrderController extends Controller
             LIMIT 1
             ", $order_id);
 
-            $this->orders->upload_orders($order_id, ['status' => 5]);
+            $this->orders->update_order($order_id, ['status' => 5]);
         }
         echo json_encode(['success' => 1]);
         exit;
@@ -3728,15 +3728,15 @@ class OfflineOrderController extends Controller
                 return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
             });
 
-        $i = 1;
+        $i = 0;
 
         foreach ($payment_schedule as $date => $schedule) {
             $date = date('Y-m-d', strtotime($date));
 
-            if ($pay_date < $date) {
+            if (strtotime($pay_date) == strtotime($date)) {
                 break;
-            }
-            $i++;
+            }else
+                $i++;
         }
 
         $term_diff = ($i + $new_term) - count($payment_schedule);
@@ -4152,6 +4152,7 @@ class OfflineOrderController extends Controller
             ];
 
         $this->PaymentsSchedules->add($order->payment_schedule);
+        $this->orders->update_order($order->order_id, ['status' => 17]);
         exit;
     }
 

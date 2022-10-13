@@ -1871,7 +1871,7 @@
                                                         </div>
                                                     </div>
                                                 {/if}
-                                                {if $order->status == 18}
+                                                {if in_array($order->status, [17,18])}
                                                     <div>
                                                         <button class="btn btn-success btn-block confirm_restruct"
                                                                 data-order="{$order->order_id}"
