@@ -735,7 +735,7 @@ class OfflineOrderController extends Controller
 
         foreach ($documents as $document) {
             $key = date('Y-m-d', strtotime($document->created));
-            if(empty($document->stage_type))
+            if (empty($document->stage_type))
                 $document->stage_type = 'reg-docs';
 
             $sort_docs[$key][$document->stage_type][] = $document;
@@ -3727,14 +3727,14 @@ class OfflineOrderController extends Controller
                 return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
             });
 
-        $i = 0;
+        $i = 1;
 
         foreach ($payment_schedule as $date => $schedule) {
             $date = date('Y-m-d', strtotime($date));
 
             if (strtotime($pay_date) == strtotime($date)) {
                 break;
-            }else
+            } else
                 $i++;
         }
 
@@ -3757,7 +3757,7 @@ class OfflineOrderController extends Controller
         $order_id = $this->request->post('order_id');
         $new_term = $this->request->post('new_term');
 
-        $branch_id  = $this->request->post('branch');
+        $branch_id = $this->request->post('branch');
 
         $pay_amount = $this->request->post('pay_amount');
         $comission_amount = $this->request->post('comission');
@@ -3843,8 +3843,7 @@ class OfflineOrderController extends Controller
             $i++;
         }
 
-        if(empty($branch_id))
-        {
+        if (empty($branch_id)) {
             $user = (array)$this->users->get_user($order->user_id);
 
             if (empty($user['branche_id'])) {
@@ -3858,7 +3857,7 @@ class OfflineOrderController extends Controller
                 $branch = $this->Branches->get_branch($user['branche_id']);
                 $first_pay_day = $branch->payday;
             }
-        }else{
+        } else {
             $branch = $this->Branches->get_branch($branch_id);
             $first_pay_day = $branch->payday;
         }
@@ -3894,9 +3893,7 @@ class OfflineOrderController extends Controller
             }
 
 
-
-            if(isset($new_shedule[$start_date->format('d.m.Y')]))
-            {
+            if (isset($new_shedule[$start_date->format('d.m.Y')])) {
                 $start_date = $this->add_month($start_date->format('d.m.Y'), 2);
                 $start_date->setDate($start_date->format('Y'), $start_date->format('m'), $first_pay_day);
                 $start_date = $this->check_pay_date($start_date);
@@ -4042,7 +4039,7 @@ class OfflineOrderController extends Controller
             $payment_schedule[$payment['date']]['loan_body_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['loan_body_pay']);
             $payment_schedule[$payment['date']]['rest_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['rest_pay']);
 
-            if($payment['date'] == $restruct_date)
+            if ($payment['date'] == $restruct_date)
                 $payment_schedule[$payment['date']]['last_pay'] = 1;
 
             unset($payment_schedule[$date]);
@@ -5073,17 +5070,14 @@ class OfflineOrderController extends Controller
 
         if (!empty($branches)) {
             $html = '';
-
             foreach ($branches as $branch) {
                 $html .= "<option value='$branch->id'>$branch->name</option>";
             }
-
             echo json_encode(['html' => $html]);
-            exit;
         } else {
             echo json_encode(['empty' => 1]);
-            exit;
         }
+        exit;
     }
 
 }
