@@ -3060,17 +3060,18 @@
                                                                      style="width: 40%!important; margin-left: 50px">
                                                                     <label class="control-label">{$document->name}</label>
                                                                 </div>
-                                                                {if $order->status == 0}
-                                                                    {if in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR'])}
-                                                                        <span style="height: 20px; margin-left: 10px;"
-                                                                              data-tooltip="Этот документ нельзя подписать АСП кодом"
-                                                                              class="badge badge-danger warning_asp warning">&#33;</span>
-                                                                    {else}
-                                                                        <div style="margin-left: 20px"
-                                                                             class="margin_show">
-
-                                                                        </div>
-                                                                    {/if}
+                                                                {if in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR']) && $order->status == 0 && $document->stage_type == 'reg-docs'}
+                                                                    <span style="height: 20px; margin-left: 10px;"
+                                                                          data-tooltip="Этот документ нельзя подписать АСП кодом"
+                                                                          class="badge badge-danger warning_asp warning">&#33;</span>
+                                                                {elseif in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR']) && $order->status == 17 && $document->stage_type == 'restruct'}
+                                                                    <span style="height: 20px; margin-left: 10px;"
+                                                                          data-tooltip="Этот документ нельзя подписать АСП кодом"
+                                                                          class="badge badge-danger warning_asp warning">&#33;</span>
+                                                                {else}
+                                                                    <div style="margin-left: 20px"
+                                                                         class="margin_show">
+                                                                    </div>
                                                                 {/if}
                                                                 {if $document->scan}
                                                                     <div style="margin-left: 10px">
@@ -3114,29 +3115,48 @@
                                                                 {/if}
                                                                 <div class="btn-group"
                                                                      style="margin-left: 10px; height: 35px">
-                                                                    {if in_array($order->status, [0])}
-                                                                        {if $manager->role != 'employer'}
-                                                                            <button type="button"
-                                                                                    class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
-                                                                                    data-toggle="dropdown"
-                                                                                    aria-haspopup="true"
-                                                                                    aria-expanded="false"
-                                                                                    style="margin-left: 1px">
-                                                                                <span class="sr-only">Toggle Dropdown</span>
-                                                                            </button>
-                                                                            <div class="dropdown-menu">
-                                                                                <input type="file" name="new_scan"
-                                                                                       id="{$document->template}"
-                                                                                       class="new_scan"
-                                                                                       data-user="{$order->user_id}"
-                                                                                       data-order="{$order->order_id}"
-                                                                                       value="" style="display:none;"
-                                                                                       multiple/>
-                                                                                <label for="{$document->template}"
-                                                                                       class="dropdown-item">Приложить
-                                                                                    скан</label>
-                                                                            </div>
-                                                                        {/if}
+                                                                    {if in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR']) && $order->status == 0 && $document->stage_type == 'reg-docs' && $manager->role != 'employer'}
+                                                                        <button type="button"
+                                                                                class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
+                                                                                data-toggle="dropdown"
+                                                                                aria-haspopup="true"
+                                                                                aria-expanded="false"
+                                                                                style="margin-left: 1px">
+                                                                            <span class="sr-only">Toggle Dropdown</span>
+                                                                        </button>
+                                                                        <div class="dropdown-menu">
+                                                                            <input type="file" name="new_scan"
+                                                                                   id="{$document->template}"
+                                                                                   class="new_scan"
+                                                                                   data-user="{$order->user_id}"
+                                                                                   data-order="{$order->order_id}"
+                                                                                   value="" style="display:none;"
+                                                                                   multiple/>
+                                                                            <label for="{$document->template}"
+                                                                                   class="dropdown-item">Приложить
+                                                                                скан</label>
+                                                                        </div>
+                                                                    {elseif in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR']) && $order->status == 17 && $document->stage_type == 'restruct' && $manager->role != 'employer'}
+                                                                        <button type="button"
+                                                                                class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
+                                                                                data-toggle="dropdown"
+                                                                                aria-haspopup="true"
+                                                                                aria-expanded="false"
+                                                                                style="margin-left: 1px">
+                                                                            <span class="sr-only">Toggle Dropdown</span>
+                                                                        </button>
+                                                                        <div class="dropdown-menu">
+                                                                            <input type="file" name="new_scan"
+                                                                                   id="{$document->template}"
+                                                                                   class="new_scan"
+                                                                                   data-user="{$order->user_id}"
+                                                                                   data-order="{$order->order_id}"
+                                                                                   value="" style="display:none;"
+                                                                                   multiple/>
+                                                                            <label for="{$document->template}"
+                                                                                   class="dropdown-item">Приложить
+                                                                                скан</label>
+                                                                        </div>
                                                                     {/if}
                                                                 </div>
                                                             </div>
