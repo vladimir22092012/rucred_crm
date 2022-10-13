@@ -4036,7 +4036,7 @@ class OfflineOrderController extends Controller
 
         foreach ($documents as $document)
         {
-            if(in_array($document->numeration, ['03.03', '03.04']))
+            if(in_array($document->numeration, ['03.03', '03.04']) && !empty($document->scan_id))
                 $count_scans++;
         }
 
