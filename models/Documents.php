@@ -126,6 +126,7 @@ class Documents extends Core
             'order_id' => isset($data['order_id']) ? $data['order_id'] : 0,
             'contract_id' => isset($data['contract_id']) ? $data['contract_id'] : 0,
             'type' => $data['type'],
+            'stage_type' => $data['stage_type'],
             'name' => $this->names[$data['type']],
             'template' => $this->templates[$data['type']],
             'client_visible' => $this->client_visible[$data['type']],

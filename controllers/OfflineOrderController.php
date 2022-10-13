@@ -4880,6 +4880,7 @@ class OfflineOrderController extends Controller
         $this->documents->create_document(array(
             'user_id' => $order->user_id,
             'order_id' => $order->order_id,
+            'stage_type' => 'restruct',
             'type' => 'DOP_SOGLASHENIE',
             'params' => $order,
             'numeration' => '04.03.3'
@@ -4889,6 +4890,7 @@ class OfflineOrderController extends Controller
             'user_id' => $order->user_id,
             'order_id' => $order->order_id,
             'type' => 'DOP_GRAFIK',
+            'stage_type' => 'restruct',
             'params' => $order,
             'numeration' => '04.04.1'
         ));
@@ -4896,6 +4898,7 @@ class OfflineOrderController extends Controller
             'user_id' => $order->user_id,
             'order_id' => $order->order_id,
             'type' => 'OBSHIE_USLOVIYA_REST',
+            'stage_type' => 'restruct',
             'params' => $order,
             'numeration' => '04.10'
         ));
@@ -4903,11 +4906,36 @@ class OfflineOrderController extends Controller
             'user_id' => $order->user_id,
             'order_id' => $order->order_id,
             'type' => 'ZAYAVLENIE_RESTRUCT',
+            'stage_type' => 'restruct',
             'params' => $order,
             'numeration' => '04.31'
         ));
+        $this->documents->create_document(array(
+            'user_id' => $order->user_id,
+            'order_id' => $order->order_id,
+            'type' => 'SOGLASIE_RUKRED_RABOTODATEL',
+            'stage_type' => 'restruct',
+            'params' => $order,
+            'numeration' => '04.06'
+        ));
+        $this->documents->create_document(array(
+            'user_id' => $order->user_id,
+            'order_id' => $order->order_id,
+            'type' => 'SOGLASIE_RABOTODATEL',
+            'stage_type' => 'restruct',
+            'params' => $order,
+            'numeration' => '03.03'
+        ));
+        $this->documents->create_document(array(
+            'user_id' => $order->user_id,
+            'order_id' => $order->order_id,
+            'type' => 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR',
+            'stage_type' => 'restruct',
+            'params' => $order,
+            'numeration' => '03.04'
+        ));
 
-        $this->orders->update_order($order_id, ['status' => 17, 'probably_return_date' => $order->probably_return_date]);
+        $this->orders->update_order($order_id, ['probably_return_date' => $order->probably_return_date]);
         $this->PaymentsSchedules->update($order->payment_schedule->id, ['is_confirmed' => 1]);
     }
 

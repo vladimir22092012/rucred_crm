@@ -1586,6 +1586,7 @@ class NeworderController extends Controller
             $this->documents->create_document(array(
                 'user_id' => $order->user_id,
                 'order_id' => $order->order_id,
+                'stage_type' => 'reg-docs',
                 'type' => $type,
                 'params' => $order,
                 'numeration' => (string)$key,
