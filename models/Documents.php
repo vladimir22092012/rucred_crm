@@ -215,6 +215,7 @@ class Documents extends Core
         $limit = 1000;
         $page = 1;
         $search_list = '';
+        $stage_types = '';
         $rucred_asp = '';
         $sort = $this->db->placehold("ORDER BY doc.id");
 
@@ -231,6 +232,9 @@ class Documents extends Core
 
         if(isset($filter['asp_flag']))
             $asp_flag = $this->db->placehold("AND asp_id = ?", $filter['asp_flag']);
+
+        if(isset($filter['stage_type']))
+            $stage_types = $this->db->placehold("AND stage_type = ?", $filter['stage_type']);
 
         if(isset($filter['rucred_asp']))
             $rucred_asp = $this->db->placehold("AND rucred_asp_id = ?", $filter['rucred_asp']);
@@ -317,6 +321,7 @@ class Documents extends Core
             doc.order_id,
             doc.contract_id,
             doc.`type`,
+            doc.stage_type,
             doc.name,
             doc.template,
             doc.client_visible,
@@ -349,6 +354,7 @@ class Documents extends Core
                 $second_pak
                 $asp_flag
                 $rucred_asp
+                $stage_types
             $sort 
             $sql_limit
         ");

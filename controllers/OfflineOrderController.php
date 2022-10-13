@@ -721,15 +721,11 @@ class OfflineOrderController extends Controller
 
         $need_form_restruct_docs = 0;
 
-        if (in_array($order->status, [5, 19])) {
-            $restruct_schedule = (array)$this->PaymentsSchedules->get([
-                'actual' => 1,
-                'order_id' => $order_id,
-                'type' => 'restruct',
-                'is_confirmed' => 0
-            ]);
+        if (in_array($order->status, [5, 17, 19])) {
 
-            if (!empty($restruct_schedule))
+            $restruct_docs = $this->documents->get_documents(['order_id' => $order->order_id, 'stage_type' => 'restruct', 'asp_flag' => null]);
+
+            if (empty($restruct_docs))
                 $need_form_restruct_docs = 1;
         }
 
@@ -739,9 +735,12 @@ class OfflineOrderController extends Controller
 
         foreach ($documents as $document) {
             $key = date('Y-m-d', strtotime($document->created));
+            if(empty($document->stage_type))
+                $document->stage_type = 'reg-docs';
 
-            $sort_docs[$key][] = $document;
+            $sort_docs[$key][$document->stage_type][] = $document;
         }
+
 
         $this->design->assign('sort_docs', $sort_docs);
 

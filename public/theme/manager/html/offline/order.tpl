@@ -1980,32 +1980,6 @@
                                             <span>Отказать без рассмотрения</span>
                                         </button>
                                     {/if}
-                                    {*
-                                    {if $order->status == 0 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
-                                        <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
-                                            <form class=" pt-1 js-confirm-contract">
-                                                <div class="input-group" style="display: flex;">
-                                                    <input type="hidden" name="contract_id" class="js-contract-id"
-                                                           value="{$order->contract_id}"/>
-                                                    <input type="hidden" name="phone" class="js-contract-phone"
-                                                           value="{$order->phone_mobile|escape}"/>
-                                                    {if $enough_scans == 0}
-                                                        {if empty({$order->sms})}
-                                                            <div class="col-md-12">
-                                                                <button data-user="{$order->user_id}"
-                                                                        id="send_asp"
-                                                                        data-phone="{$order->phone_mobile}"
-                                                                        data-order="{$order->order_id}"
-                                                                        class="btn btn-primary btn-block send_asp_code">
-                                                                    Подписать документы у Заёмщика
-                                                                </button>
-                                                            </div>
-                                                        {/if}
-                                                    {/if}
-                                                </div>
-                                            </form>
-                                        </div>
-                                    {/if} *}
                                     {if $order->status == 1 && in_array($manager->role, ['developer', 'admin', 'underwriter'])}
                                         <div class="col-12">
                                             <button
@@ -2637,24 +2611,26 @@
                                                         <input style="margin-left: 30px; display: none" type="button"
                                                                class="btn btn-danger cancel_restruct"
                                                                value="Отменить">
-                                                        {if $need_form_restruct_docs == 1}
-                                                            <div style="margin-left: 30px;"
-                                                                 data-order="{$order->order_id}"
-                                                                 class="btn btn-primary form_restruct_docs">Закрепить
-                                                                график
-                                                                и сформировать документы для реструктуризации
-                                                            </div>
-                                                        {/if}
                                                         {if $order->status == 17}
-                                                            <div data-user="{$order->user_id}"
-                                                                 id="send_asp"
-                                                                 data-phone="{$order->phone_mobile}"
-                                                                 data-order="{$order->order_id}"
-                                                                 data-restruct="1"
-                                                                 style="margin-left: 15px; width: 370px"
-                                                                 class="btn btn-primary send_restruct_code">
-                                                                Подписать у Заёмщика и принять заявку в работу
-                                                            </div>
+                                                            {if $need_form_restruct_docs == 1}
+                                                                <div style="margin-left: 30px;"
+                                                                     data-order="{$order->order_id}"
+                                                                     class="btn btn-primary form_restruct_docs">
+                                                                    Закрепить
+                                                                    график
+                                                                    и сформировать документы для реструктуризации
+                                                                </div>
+                                                            {else}
+                                                                <div data-user="{$order->user_id}"
+                                                                     id="send_asp"
+                                                                     data-phone="{$order->phone_mobile}"
+                                                                     data-order="{$order->order_id}"
+                                                                     data-restruct="1"
+                                                                     style="margin-left: 15px; width: 370px"
+                                                                     class="btn btn-primary send_restruct_code">
+                                                                    Подписать у Заёмщика и принять заявку в работу
+                                                                </div>
+                                                            {/if}
                                                         {/if}
                                                     {/if}
                                                     {if in_array($order->status, [0])}
@@ -3059,102 +3035,113 @@
                                             </h6>
                                             <br>
                                             {if !empty($sort_docs)}
-                                                {foreach $sort_docs as $date => $documents}
+                                                {foreach $sort_docs as $date => $docs}
                                                     <div style="width: 100%!important; margin-left: 15px; display: flex; vertical-align: middle;">
                                                         <strong>{$date|date}</strong>
                                                     </div>
                                                     <hr style="width: 100%; size: 2px">
-                                                    {foreach $documents as $document}
-                                                        <div style="width: 100%!important; height: 50px; margin-left: 5px; display: flex; vertical-align: middle;"
-                                                             id="{$document->id}">
-                                                            <div class="form-group"
-                                                                 style="width: 10px!important; margin-left: 5px">
-                                                                <label class="control-label">{$document->numeration}</label>
-                                                            </div>
-                                                            <div class="form-group"
-                                                                 style="width: 40%!important; margin-left: 50px">
-                                                                <label class="control-label">{$document->name}</label>
-                                                            </div>
-                                                            {if $order->status == 0}
-                                                                {if in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR'])}
-                                                                    <span style="height: 20px; margin-left: 10px;"
-                                                                          data-tooltip="Этот документ нельзя подписать АСП кодом"
-                                                                          class="badge badge-danger warning_asp warning">&#33;</span>
-                                                                {else}
-                                                                    <div style="margin-left: 20px" class="margin_show">
+                                                    {foreach $docs as $type => $documents}
+                                                        <div style="width: 100%!important; margin-left: 15px; display: flex; vertical-align: middle;">
+                                                            {if $type == 'reg-docs'}
+                                                                <strong>Регистрация</strong>
+                                                            {elseif $type == 'restruct'}
+                                                                <strong>Реструктуризация</strong>
+                                                            {/if}
+                                                        </div>
+                                                        {foreach $documents as $document}
+                                                            <hr style="width: 100%; size: 2px">
+                                                            <div style="width: 100%!important; height: 50px; margin-left: 5px; display: flex; vertical-align: middle;"
+                                                                 id="{$document->id}">
+                                                                <div class="form-group"
+                                                                     style="width: 10px!important; margin-left: 5px">
+                                                                    <label class="control-label">{$document->numeration}</label>
+                                                                </div>
+                                                                <div class="form-group"
+                                                                     style="width: 40%!important; margin-left: 50px">
+                                                                    <label class="control-label">{$document->name}</label>
+                                                                </div>
+                                                                {if $order->status == 0}
+                                                                    {if in_array($document->type, ['SOGLASIE_RABOTODATEL', 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR'])}
+                                                                        <span style="height: 20px; margin-left: 10px;"
+                                                                              data-tooltip="Этот документ нельзя подписать АСП кодом"
+                                                                              class="badge badge-danger warning_asp warning">&#33;</span>
+                                                                    {else}
+                                                                        <div style="margin-left: 20px"
+                                                                             class="margin_show">
 
-                                                                    </div>
-                                                                {/if}
-                                                            {/if}
-                                                            {if $document->scan}
-                                                                <div style="margin-left: 10px">
-                                                                    <a target="_blank"
-                                                                       style="text-decoration: none!important;"
-                                                                       href="{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}"
-                                                                       download>
-                                                                        <input type="button"
-                                                                               class="btn btn-outline-info"
-                                                                               value="Сохранить">
-                                                                    </a>
-                                                                </div>
-                                                            {else}
-                                                                <div style="margin-left: 10px">
-                                                                    <a target="_blank"
-                                                                       href="{$config->back_url}/document?id={$document->id}&action=download_file"><input
-                                                                                type="button"
-                                                                                class="btn btn-outline-success download_doc"
-                                                                                value="Сохранить"></a>
-                                                                </div>
-                                                            {/if}
-                                                            {if !$document->scan}
-                                                                <div style="margin-left: 10px">
-                                                                    <a target="_blank"
-                                                                       href="{$config->back_url}/document/{$document->id}"><input
-                                                                                type="button"
-                                                                                class="btn btn-outline-warning print_doc"
-                                                                                value="Распечатать"></a>
-                                                                </div>
-                                                            {else}
-                                                                <div style="margin-left: 10px">
-                                                                    <a target="_blank"
-                                                                       style="text-decoration: none!important;"
-                                                                       href="javascript:void(0);"
-                                                                       onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}');">
-                                                                        <input type="button"
-                                                                               class="btn btn-outline-info {$scan->type}"
-                                                                               value="Распечатать">
-                                                                    </a>
-                                                                </div>
-                                                            {/if}
-                                                            <div class="btn-group"
-                                                                 style="margin-left: 10px; height: 35px">
-                                                                {if in_array($order->status, [0])}
-                                                                    {if $manager->role != 'employer'}
-                                                                        <button type="button"
-                                                                                class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
-                                                                                data-toggle="dropdown"
-                                                                                aria-haspopup="true"
-                                                                                aria-expanded="false"
-                                                                                style="margin-left: 1px">
-                                                                            <span class="sr-only">Toggle Dropdown</span>
-                                                                        </button>
-                                                                        <div class="dropdown-menu">
-                                                                            <input type="file" name="new_scan"
-                                                                                   id="{$document->template}"
-                                                                                   class="new_scan"
-                                                                                   data-user="{$order->user_id}"
-                                                                                   data-order="{$order->order_id}"
-                                                                                   value="" style="display:none;"
-                                                                                   multiple/>
-                                                                            <label for="{$document->template}"
-                                                                                   class="dropdown-item">Приложить
-                                                                                скан</label>
                                                                         </div>
                                                                     {/if}
                                                                 {/if}
+                                                                {if $document->scan}
+                                                                    <div style="margin-left: 10px">
+                                                                        <a target="_blank"
+                                                                           style="text-decoration: none!important;"
+                                                                           href="{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}"
+                                                                           download>
+                                                                            <input type="button"
+                                                                                   class="btn btn-outline-info"
+                                                                                   value="Сохранить">
+                                                                        </a>
+                                                                    </div>
+                                                                {else}
+                                                                    <div style="margin-left: 10px">
+                                                                        <a target="_blank"
+                                                                           href="{$config->back_url}/document?id={$document->id}&action=download_file"><input
+                                                                                    type="button"
+                                                                                    class="btn btn-outline-success download_doc"
+                                                                                    value="Сохранить"></a>
+                                                                    </div>
+                                                                {/if}
+                                                                {if !$document->scan}
+                                                                    <div style="margin-left: 10px">
+                                                                        <a target="_blank"
+                                                                           href="{$config->back_url}/document/{$document->id}"><input
+                                                                                    type="button"
+                                                                                    class="btn btn-outline-warning print_doc"
+                                                                                    value="Распечатать"></a>
+                                                                    </div>
+                                                                {else}
+                                                                    <div style="margin-left: 10px">
+                                                                        <a target="_blank"
+                                                                           style="text-decoration: none!important;"
+                                                                           href="javascript:void(0);"
+                                                                           onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$document->scan->name}');">
+                                                                            <input type="button"
+                                                                                   class="btn btn-outline-info {$scan->type}"
+                                                                                   value="Распечатать">
+                                                                        </a>
+                                                                    </div>
+                                                                {/if}
+                                                                <div class="btn-group"
+                                                                     style="margin-left: 10px; height: 35px">
+                                                                    {if in_array($order->status, [0])}
+                                                                        {if $manager->role != 'employer'}
+                                                                            <button type="button"
+                                                                                    class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
+                                                                                    data-toggle="dropdown"
+                                                                                    aria-haspopup="true"
+                                                                                    aria-expanded="false"
+                                                                                    style="margin-left: 1px">
+                                                                                <span class="sr-only">Toggle Dropdown</span>
+                                                                            </button>
+                                                                            <div class="dropdown-menu">
+                                                                                <input type="file" name="new_scan"
+                                                                                       id="{$document->template}"
+                                                                                       class="new_scan"
+                                                                                       data-user="{$order->user_id}"
+                                                                                       data-order="{$order->order_id}"
+                                                                                       value="" style="display:none;"
+                                                                                       multiple/>
+                                                                                <label for="{$document->template}"
+                                                                                       class="dropdown-item">Приложить
+                                                                                    скан</label>
+                                                                            </div>
+                                                                        {/if}
+                                                                    {/if}
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <hr style="width: 100%; size: 2px">
+                                                            <hr style="width: 100%; size: 2px">
+                                                        {/foreach}
                                                     {/foreach}
                                                 {/foreach}
                                                 {*
