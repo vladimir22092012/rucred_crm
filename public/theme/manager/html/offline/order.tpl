@@ -3043,9 +3043,9 @@
                                                     {foreach $docs as $type => $documents}
                                                         <div style="width: 100%!important; margin-left: 15px; display: flex; vertical-align: middle;">
                                                             {if $type == 'reg-docs'}
-                                                                <strong>Регистрация</strong>
+                                                                <strong class="badge badge-secondary">Регистрация</strong>
                                                             {elseif $type == 'restruct'}
-                                                                <strong>Реструктуризация</strong>
+                                                                <strong class="badge badge-secondary">Реструктуризация</strong>
                                                             {/if}
                                                         </div>
                                                         {foreach $documents as $document}
