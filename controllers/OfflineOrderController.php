@@ -4663,6 +4663,7 @@ class OfflineOrderController extends Controller
                 'user_id' => $order->user_id,
                 'order_id' => $order->order_id,
                 'type' => $type,
+                'stage_type' => 'reg-docs',
                 'params' => $order,
                 'numeration' => (string)$key,
                 'asp_id' => $order->asp,

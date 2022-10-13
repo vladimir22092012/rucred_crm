@@ -3037,7 +3037,7 @@
                                             {if !empty($sort_docs)}
                                                 {foreach $sort_docs as $date => $docs}
                                                     <div style="width: 100%!important; margin-left: 15px; display: flex; vertical-align: middle;">
-                                                        <strong>{$date|date}</strong>
+                                                        <strong class="badge badge-secondary">{$date|date}</strong>
                                                     </div>
                                                     <hr style="width: 100%; size: 2px">
                                                     {foreach $docs as $type => $documents}
