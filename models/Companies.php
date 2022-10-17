@@ -108,7 +108,8 @@ class Companies extends Core
         com.kpp,
         com.jur_address,
         com.phys_address,
-        com.blocked
+        com.blocked,
+        com.permissions
         FROM s_companies as com
         JOIN s_groups as gr on com.group_id = gr.id
         WHERE com.id = ?
