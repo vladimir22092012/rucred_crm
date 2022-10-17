@@ -10,8 +10,18 @@
             type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
     <script src="theme/manager/assets/plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
     <script>
         $(function () {
+
+            $('.cleaves').each(function () {
+                new Cleave(this, {
+                    numeral: true,
+                    numeralThousandsGroupStyle: 'thousand',
+                    numeralDecimalMark: ',',
+                    delimiter: ' ',
+                });
+            });
 
             moment.locale('ru');
 
@@ -1021,13 +1031,15 @@
 
                     },
                     success: function (resp) {
-                        $('input[name="pay_date"]').val(resp['date']);
+                        $('input[name="pay_date"]').val(resp['next_pay']['date']);
                         $('.perspective_pay').show();
                         $('.perspective_pay').attr('style', 'display: flex; flex-direction:column');
-                        $('#next_sum_pay').text(resp['payment']['pay_sum']);
-                        $('#next_sum_od').text(resp['payment']['loan_body_pay']);
-                        $('#next_sum_prc').text(resp['payment']['loan_percents_pay']);
-                        $('#next_sum_com').text(resp['payment']['comission_pay']);
+                        $('#next_sum_pay').text(resp['next_pay']['payment']['pay_sum']);
+                        $('#next_sum_od').text(resp['next_pay']['payment']['loan_body_pay']);
+                        $('#next_sum_prc').text(resp['next_pay']['payment']['loan_percents_pay']);
+                        $('#next_sum_com').text(resp['next_pay']['payment']['comission_pay']);
+                        $('.pay_dates').fadeIn();
+                        $('select[name="pay_date"]').html(resp['dates']);
                     }
                 })
             });
@@ -1220,6 +1232,7 @@
                     $.getScript('theme/{$settings->theme|escape}/js/apps/edit_schedule.js');
                     $('#payment_schedule').find('input[name="action"]').val('save_restruct');
                     $('#payment_schedule').find('input[name="restruct_date"]').val(html['pay_date']);
+                    $('#payment_schedule').find('input[name="change_employer"]').val(html['change_employer']);
                 }
             });
         }
@@ -1642,7 +1655,8 @@
                                             </div>
                                             <div class="col-4 text-center">
                                                 <h6>Дата выдачи</h6>
-                                                <h4 class="text-primary probably_start_date">{$order->probably_start_date|date}</h4>
+                                                <h4 class="text-primary probably_start_date">{$order->probably_start_date|date}
+                                                    ({$order->probably_start_weekday})</h4>
                                             </div>
                                             {if in_array($order->status, [0])}
                                                 <a href="javascript:void(0);"
@@ -2692,6 +2706,7 @@
                                                         <input type="hidden" name="action" value="edit_schedule">
                                                         <input type="hidden" name="order_id" value="{$order->order_id}">
                                                         <input type="hidden" name="restruct_date">
+                                                        <input type="hidden" name="change_employer">
                                                         <tbody id="main_schedule">
                                                         {if !empty($payment_schedule)}
                                                             {foreach $payment_schedule->schedule as $date => $payment}
@@ -4580,9 +4595,11 @@
                                 <input type="text" data-order="{$order->order_id}"
                                        class="form-control daterange next_pay_date">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group pay_dates" style="display: none;">
                                 <label>Дата изменения</label>
-                                <input type="text" class="form-control daterange" name="pay_date">
+                                <select class="form-control" name="pay_date">
+
+                                </select>
                             </div>
                             <div class="form-group perspective_pay" style="display: none">
                                 <label>Сумма ожидаемого платежа (расчётный параметр), руб</label>
@@ -4593,11 +4610,11 @@
                             </div>
                             <div class="form-group">
                                 <label>Сумма нового платежа, руб</label>
-                                <input type="text" class="form-control" name="pay_amount">
+                                <input type="text" class="form-control cleaves" name="pay_amount">
                             </div>
                             <div class="form-group">
                                 <label>Из них комиссия, руб</label>
-                                <input type="text" class="form-control" name="comission">
+                                <input type="text" class="form-control cleaves" name="comission">
                             </div>
                             <div class="form-group">
                                 <label>Новый срок, мес</label>

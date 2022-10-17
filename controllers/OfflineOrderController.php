@@ -301,6 +301,20 @@ class OfflineOrderController extends Controller
             if ($order_id = $this->request->get('id', 'integer')) {
                 if ($order = $this->orders->get_order($order_id)) {
 
+                    $weekdays =
+                        [
+                            'Mon' => "Пн",
+                            'Tue' => "Вт",
+                            'Wed' => "Ср",
+                            'Thu' => "Чт",
+                            'Fri' => "Пт",
+                            'Sat' => "Сб",
+                            'Sun' => "Вс"
+                        ];
+
+                    $weekday = date('D', strtotime($order->probably_start_date));
+                    $order->probably_start_weekday = $weekdays[$weekday];
+
                     $from_registr = $this->request->get('reg');
 
                     if (!empty($from_registr))
@@ -3768,7 +3782,11 @@ class OfflineOrderController extends Controller
         $branch_id = $this->request->post('branch');
 
         $pay_amount = $this->request->post('pay_amount');
+        $pay_amount = str_replace([' ', ','], ['', '.'], $pay_amount);
+
         $comission_amount = $this->request->post('comission');
+        $comission_amount = str_replace([' ', ','], ['', '.'], $comission_amount);
+
         $pay_amount -= $comission_amount;
 
         $pay_date = date('d.m.Y', strtotime($this->request->post('pay_date')));
@@ -3853,6 +3871,7 @@ class OfflineOrderController extends Controller
 
         if (empty($branch_id)) {
             $user = (array)$this->users->get_user($order->user_id);
+            $change_employer = 0;
 
             if (empty($user['branche_id'])) {
                 $branches = $this->Branches->get_branches(['company_id' => $user['company_id']]);
@@ -3868,6 +3887,7 @@ class OfflineOrderController extends Controller
         } else {
             $branch = $this->Branches->get_branch($branch_id);
             $first_pay_day = $branch->payday;
+            $change_employer = 1;
         }
 
         $start_date = date('Y-m-' . $first_pay_day, strtotime($last_date . '+1 month'));
@@ -3976,6 +3996,17 @@ class OfflineOrderController extends Controller
 
             $payment_schedule_html = '';
 
+            $weekdays =
+                [
+                    'Mon' => "Пн",
+                    'Tue' => "Вт",
+                    'Wed' => "Ср",
+                    'Thu' => "Чт",
+                    'Fri' => "Пт",
+                    'Sat' => "Сб",
+                    'Sun' => "Вс"
+                ];
+
 
             foreach ($new_shedule as $date => $payment) {
                 if ($date != 'result') {
@@ -3986,8 +4017,11 @@ class OfflineOrderController extends Controller
                     $comission_sum = number_format((float)$payment['comission_pay'], 2, ',', ' ');
                     $rest_sum = number_format($payment['rest_pay'], 2, ',', ' ');
 
+                    $weekday = date('D', strtotime($date));
+                    $weekday = $weekdays[$weekday];
+
                     $payment_schedule_html .= "<tr>";
-                    $payment_schedule_html .= "<td><input type='text' class='form-control daterange' name='date[][date]' value='$date'</td>";
+                    $payment_schedule_html .= "<td><input type='text' class='form-control daterange' name='date[][date]' value='$date ($weekday)'</td>";
                     $payment_schedule_html .= "<td><input type='text' class='form-control restructure_pay_sum' name='pay_sum[][pay_sum]' value='$paysum' readonly></td>";
                     $payment_schedule_html .= "<td><input type='text' class='form-control restructure_od' name='loan_body_pay[][loan_body_pay]' value='$body_sum'></td>";
                     $payment_schedule_html .= "<td><input type='text' class='form-control restructure_prc' name='loan_percents_pay[][loan_percents_pay]' value='$percent_sum'></td>";
@@ -4012,7 +4046,15 @@ class OfflineOrderController extends Controller
             $payment_schedule_html .= "<td><input type='text' name='result[all_rest_pay_sum]' class='form-control' value='$rest_sum' readonly></td>";
             $payment_schedule_html .= "</tr>";
 
-            echo json_encode(['pay_date' => $pay_date, 'schedule' => $payment_schedule_html, 'psk' => $psk, 'new_loan' => $new_shedule['result']['all_loan_body_pay']]);
+            echo json_encode(
+                [
+                    'pay_date' => $pay_date,
+                    'schedule' => $payment_schedule_html,
+                    'psk' => $psk,
+                    'new_loan' => $new_shedule['result']['all_loan_body_pay'],
+                    'change_employer' => $change_employer
+                ]);
+
             exit;
 
         }
@@ -4029,6 +4071,7 @@ class OfflineOrderController extends Controller
         $rest_pay = $this->request->post('rest_pay');
         $order_id = $this->request->post('order_id');
         $comment = $this->request->post('comment');
+        $change_employer = $this->request->post('change_employer');
 
         $restruct_date = $this->request->post('restruct_date');
 
@@ -4042,6 +4085,8 @@ class OfflineOrderController extends Controller
         $payment_schedule = array_replace_recursive($date, $pay_sum, $loan_percents_pay, $loan_body_pay, $comission_pay, $rest_pay);
 
         foreach ($payment_schedule as $date => $payment) {
+            $payment['date'] = explode('(', $payment['date']);
+            $payment['date'] = $payment['date'][0];
             $payment_schedule[$payment['date']] = array_slice($payment, 1);
             $payment_schedule[$payment['date']]['pay_sum'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['pay_sum']);
             $payment_schedule[$payment['date']]['loan_percents_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['loan_percents_pay']);
@@ -4049,7 +4094,10 @@ class OfflineOrderController extends Controller
             $payment_schedule[$payment['date']]['rest_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['rest_pay']);
 
             if ($payment['date'] == $restruct_date)
+            {
                 $payment_schedule[$payment['date']]['last_pay'] = 1;
+                $payment_schedule[$payment['date']]['change_employer'] = $change_employer;
+            }
 
             unset($payment_schedule[$date]);
         }
@@ -4875,10 +4923,15 @@ class OfflineOrderController extends Controller
                 return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
             });
 
+        $change_employer = 0;
+
         foreach ($payment_schedule as $key => $schedule) {
 
             if ($key == 'result')
                 break;
+
+            if(isset($schedule['change_employer']))
+                $change_employer = $schedule['change_employer'];
 
             $order->probably_return_date = $key;
         }
@@ -4918,30 +4971,34 @@ class OfflineOrderController extends Controller
             'params' => $order,
             'numeration' => '04.31'
         ));
-        $this->documents->create_document(array(
-            'user_id' => $order->user_id,
-            'order_id' => $order->order_id,
-            'type' => 'SOGLASIE_RUKRED_RABOTODATEL',
-            'stage_type' => 'restruct',
-            'params' => $order,
-            'numeration' => '04.06'
-        ));
-        $this->documents->create_document(array(
-            'user_id' => $order->user_id,
-            'order_id' => $order->order_id,
-            'type' => 'SOGLASIE_RABOTODATEL',
-            'stage_type' => 'restruct',
-            'params' => $order,
-            'numeration' => '03.03'
-        ));
-        $this->documents->create_document(array(
-            'user_id' => $order->user_id,
-            'order_id' => $order->order_id,
-            'type' => 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR',
-            'stage_type' => 'restruct',
-            'params' => $order,
-            'numeration' => '03.04'
-        ));
+
+        if($change_employer == 1)
+        {
+            $this->documents->create_document(array(
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'type' => 'SOGLASIE_RUKRED_RABOTODATEL',
+                'stage_type' => 'restruct',
+                'params' => $order,
+                'numeration' => '04.06'
+            ));
+            $this->documents->create_document(array(
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'type' => 'SOGLASIE_RABOTODATEL',
+                'stage_type' => 'restruct',
+                'params' => $order,
+                'numeration' => '03.03'
+            ));
+            $this->documents->create_document(array(
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'type' => 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR',
+                'stage_type' => 'restruct',
+                'params' => $order,
+                'numeration' => '03.04'
+            ));
+        }
 
         $this->orders->update_order($order_id, ['probably_return_date' => $order->probably_return_date]);
         $this->PaymentsSchedules->update($order->payment_schedule->id, ['is_confirmed' => 1]);
@@ -5019,15 +5076,16 @@ class OfflineOrderController extends Controller
                 return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
             });
 
+        $dates = '';
 
         foreach ($schedule as $date => $payment) {
-            if (strtotime($previous_date) < strtotime($date)) {
+            if (strtotime($previous_date) < strtotime($date) && !isset($next_pay)) {
                 $next_pay = ['date' => $date, 'payment' => $payment];
-                break;
             }
+            $dates .= "<option value='$date'>$date</option>";
         }
 
-        echo json_encode($next_pay);
+        echo json_encode(['next_pay' => $next_pay, 'dates' => $dates]);
         exit;
     }
 
