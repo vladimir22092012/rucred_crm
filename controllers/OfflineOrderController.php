@@ -732,13 +732,9 @@ class OfflineOrderController extends Controller
 
         $documents = $this->documents->get_documents($filter);
 
-        $scans = $this->Scans->get_scans_by_order_id($order_id);
-
         foreach ($documents as $document) {
-            foreach ($scans as $scan) {
-                if ($document->template == $scan->type)
-                    $document->scan = $scan;
-            }
+            if(!empty($document->scan_id))
+                $document->scan = $this->Scans->get($document->scan_id);
         }
 
         $need_form_restruct_docs = 0;
@@ -4093,7 +4089,7 @@ class OfflineOrderController extends Controller
             $payment_schedule[$payment['date']]['loan_body_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['loan_body_pay']);
             $payment_schedule[$payment['date']]['rest_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['rest_pay']);
 
-            if ($payment['date'] == $restruct_date)
+            if (strtotime($payment['date']) == strtotime($restruct_date))
             {
                 $payment_schedule[$payment['date']]['last_pay'] = 1;
                 $payment_schedule[$payment['date']]['change_employer'] = $change_employer;

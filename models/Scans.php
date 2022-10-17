@@ -42,6 +42,21 @@ class Scans extends Core
         return $results;
     }
 
+    public function get($id)
+    {
+        $query = $this->db->placehold("
+            SELECT * 
+            FROM s_scans 
+            WHERE id = ?
+            ", $id);
+
+        $this->db->query($query);
+
+        $result = $this->db->result();
+
+        return $result;
+    }
+
     public function delete_scan($params)
     {
         $query = $this->db->placehold("
