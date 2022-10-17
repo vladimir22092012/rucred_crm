@@ -217,6 +217,17 @@
                                     </thead>
                                     <tbody>
                                     <tr>
+                                        <td>Доступность</td>
+                                        <td></td>
+                                        <td colspan="7">
+                                            <select data-company="{$company->com_id}" class="form-control com_permissions" style="width: 150px">
+                                                <option value="all" {if $company->permissions == 'all'}selected{/if}>Везде</option>
+                                                <option value="online" {if $company->permissions == 'online'}selected{/if}>Онлайн</option>
+                                                <option value="offline" {if $company->permissions == 'offline'}selected{/if}>Оффлайн</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td>Наименование компании</td>
                                         <td>{$company->gr_number}{$company->com_number}</td>
                                         <td colspan="7">{$company->com_name}</td>

@@ -68,6 +68,10 @@ class CompanyController extends Controller
             case 'blocked':
                 $this->action_blocked();
                 break;
+
+            case 'change_permission':
+                $this->action_change_permission();
+                break;
         endswitch;
 
         $company_id = $this->request->get('id');
@@ -552,6 +556,15 @@ class CompanyController extends Controller
         $value      = $this->request->post('value');
 
         $this->companies->update_company($company_id, ['blocked' => $value]);
+        exit;
+    }
+
+    private function action_change_permission()
+    {
+        $company_id = $this->request->post('com_id');
+        $permission = $this->request->post('permission');
+
+        $this->companies->update_company($company_id, ['permissions' => $permission]);
         exit;
     }
 }

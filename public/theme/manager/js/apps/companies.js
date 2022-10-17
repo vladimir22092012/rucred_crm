@@ -295,4 +295,18 @@ $(function () {
             }
         })
     });
+
+    $('.com_permissions').on('change', function () {
+        let permission = $(this).val();
+        let com_id = $(this).attr('data-company');
+
+        $.ajax({
+            method: 'POST',
+            data:{
+                action: 'change_permission',
+                permission: permission,
+                com_id: com_id
+            }
+        });
+    });
 });
