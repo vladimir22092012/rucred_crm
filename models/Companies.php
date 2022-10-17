@@ -40,6 +40,7 @@ class Companies extends Core
         $group_id = '';
         $company_name = '';
         $blocked_filter = '';
+        $permissions = '';
 
         if (isset($filter['group_id'])) {
             $group_id = $this->db->placehold("AND group_id = ?", (int)$filter['group_id']);
@@ -52,6 +53,9 @@ class Companies extends Core
         if(isset($filter['blocked']))
             $blocked_filter = $this->db->placehold("AND blocked = ?", $filter['blocked']);
 
+        if(isset($filter['permissions']))
+            $permissions = $this->db->placehold("AND permissions IN (?@)", $filter['permissions']);
+
         $query = $this->db->placehold("
         SELECT * 
         FROM s_companies
@@ -59,6 +63,7 @@ class Companies extends Core
         $group_id
         $company_name
         $blocked_filter
+        $permissions
         ");
 
         $this->db->query($query);
