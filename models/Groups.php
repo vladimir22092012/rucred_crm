@@ -6,6 +6,7 @@ class Groups extends Core
     {
         $employer_filter = '';
         $number_filter = '';
+        $blocked_filter = '';
 
         if(isset($filter['employer']))
             $employer_filter = $this->db->placehold("AND id = ?", (int)$filter['employer']);
@@ -13,12 +14,16 @@ class Groups extends Core
         if(isset($filter['number']))
             $employer_filter = $this->db->placehold("AND number = ?", (int)$filter['number']);
 
+        if(isset($filter['blocked']))
+            $blocked_filter = $this->db->placehold("AND blocked in (?@)", $filter['blocked']);
+
         $query = $this->db->placehold("
         SELECT *
         FROM s_groups
         WHERE 1
         $employer_filter
         $number_filter
+        $blocked_filter
         ");
 
         $this->db->query($query);

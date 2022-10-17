@@ -402,16 +402,21 @@
                                 <br><br>
                                 <hr style="width: 100%; size: 5px">
                                 <form method="POST" id="forms" style="width: 100%">
+                                    <h3>Доступность</h3><br>
+                                    <div style="width: 100%; margin-left: 25px">
+                                        <select style="width: 300px" class="form-control permission">
+                                            <option value="none">Выберите режим</option>
+                                            <option value="all">Все компании и тарифы</option>
+                                            <option value="online">Компании и тарифы в онлайне</option>
+                                            <option value="offline">Компании и тарифы в офлайне</option>
+                                        </select>
+                                    </div><br>
                                     <h3>Работодатель</h3><br>
                                     <div style="width: 100%; margin-left: 25px">
-                                        <select style="width: 500px" class="form-control groups"
+                                        <select style="width: 500px; display: none;"
+                                                class="form-control groups"
                                                 name="group">
                                             <option value="none" selected>Выберите из списка</option>
-                                            {if !empty($groups)}
-                                                {foreach $groups as $group}
-                                                    <option value="{$group->id}">{$group->name}</option>
-                                                {/foreach}
-                                            {/if}
                                         </select>
                                         <select style="width: 500px; margin-left:10px; display: none;"
                                                 class="form-control my_company"

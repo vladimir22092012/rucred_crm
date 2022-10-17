@@ -19,8 +19,24 @@ class GraphicConstructorController extends Controller
 
         if ($this->request->get('action') == 'get_companies') {
             $group_id = $this->request->get('group_id');
+            $permission = $this->request->get('permission');
 
-            $companies = $this->Companies->get_companies(['group_id' => $group_id, 'offline_blocked' => 0]);
+            switch ($permission)
+            {
+                case 'all':
+                    $permission = ['all'];
+                    break;
+
+                case 'online':
+                    $permission = ['all', 'online'];
+                    break;
+
+                case 'offline':
+                    $permission = ['all', 'offline'];
+                    break;
+            }
+
+            $companies = $this->Companies->get_companies(['group_id' => $group_id, 'offline_blocked' => 0, 'permissions' => $permission]);
             $loantypes = $this->GroupLoanTypes->get_loantypes_on($group_id);
 
             echo json_encode(['companies' => $companies, 'loantypes' => $loantypes]);
@@ -45,9 +61,6 @@ class GraphicConstructorController extends Controller
             $loantypes[$lt->id] = $lt;
         }
         $this->design->assign('loantypes', $loantypes);
-
-        $groups = $this->Groups->get_groups();
-        $this->design->assign('groups', $groups);
 
         $settlements = $this->OrganisationSettlements->get_settlements();
         $this->design->assign('settlements', $settlements);
@@ -419,5 +432,41 @@ class GraphicConstructorController extends Controller
         }
 
         return $date;
+    }
+
+    private function action_get_groups()
+    {
+        $permission = $this->request->post('permission');
+
+        switch ($permission)
+        {
+            case 'online':
+                $blocked = ['all', 'online'];
+                break;
+
+            case 'offline':
+                $blocked = ['all', 'offline'];
+                break;
+
+            default:
+                $blocked = '';
+                break;
+        }
+
+        $groups = $this->Groups->get_groups(['blocked' => $blocked]);
+
+        if (!empty($groups)) {
+            $html = "<option value='none'>Выберите группу</option>";
+
+            foreach ($groups as $group) {
+                $html .= "<option value='$group->id'>$group->name</option>";
+            }
+
+            echo $html;
+            exit;
+        } else {
+            echo json_encode(['empty' => 1]);
+            exit;
+        }
     }
 }

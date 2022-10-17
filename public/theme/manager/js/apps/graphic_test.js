@@ -366,6 +366,25 @@ $(function () {
         });
     });
 
+    $('.permission').on('change', function () {
+        let permission = $(this).val();
+
+        $('.groups').fadeIn();
+        $('.groups').empty();
+        $('.groups').append('<option value="none">Выберите из списка</option>');
+
+        $.ajax({
+            method: 'POST',
+            data: {
+                action: 'get_groups',
+                permission: permission
+            },
+            success: function (resp) {
+                $('.groups').html(resp);
+            }
+        });
+    });
+
     $('.groups').on('change', function (e) {
         e.preventDefault();
 
@@ -375,13 +394,15 @@ $(function () {
         $('.branches').append('<option value="none">Выберите из списка</option>');
 
         let group_id = $(this).val();
+        let permission = $('.permission').val();
 
         if (group_id != 'none') {
             $.ajax({
                 dataType: 'JSON',
                 data: {
                     action: 'get_companies',
-                    group_id: group_id
+                    group_id: group_id,
+                    permission: permission
                 },
                 success: function (resp) {
                     $('.my_company').show();
