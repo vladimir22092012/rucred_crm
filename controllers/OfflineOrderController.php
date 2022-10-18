@@ -5072,6 +5072,7 @@ class OfflineOrderController extends Controller
                 return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
             });
 
+
         foreach ($schedule as $date => $payment) {
             if (strtotime($previous_date) < strtotime($date) && !isset($next_pay)) {
                 $next_pay = ['date' => $date, 'payment' => $payment];

@@ -4591,18 +4591,17 @@
                             </div>
                             <div class="form-group">
                                 <label>Подтвержденная дата по графику</label>
-                                <input type="text" data-order="{$order->order_id}"
-                                       class="form-control daterange next_pay_date">
-                            </div>
-                            <div class="form-group pay_dates">
-                                <label>Дата изменения</label>
-                                <select class="form-control" name="pay_date">
+                                <select data-order="{$order->order_id}" class="form-control next_pay_date">
                                     {foreach $payment_schedule->schedule as $date => $payment}
                                         {if $date != 'result'}
                                             <option value="{$date}">{$date}</option>
                                         {/if}
                                     {/foreach}
                                 </select>
+                            </div>
+                            <div class="form-group pay_dates">
+                                <label>Дата изменения</label>
+                                <input type="text" class="form-control daterange" name="pay_date">
                             </div>
                             <div class="form-group perspective_pay" style="display: none">
                                 <label>Сумма ожидаемого платежа (расчётный параметр), руб</label>
