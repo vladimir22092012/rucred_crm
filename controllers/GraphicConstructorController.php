@@ -25,19 +25,22 @@ class GraphicConstructorController extends Controller
             {
                 case 'all':
                     $permission = ['all'];
+                    $flag = 3;
                     break;
 
                 case 'online':
                     $permission = ['all', 'online'];
+                    $flag = 1;
                     break;
 
                 case 'offline':
                     $permission = ['all', 'offline'];
+                    $flag = 2;
                     break;
             }
 
             $companies = $this->Companies->get_companies(['group_id' => $group_id, 'offline_blocked' => 0, 'permissions' => $permission]);
-            $loantypes = $this->GroupLoanTypes->get_loantypes_on($group_id);
+            $loantypes = $this->GroupLoanTypes->get_loantypes_on($group_id, $flag);
 
             echo json_encode(['companies' => $companies, 'loantypes' => $loantypes]);
             exit;

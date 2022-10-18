@@ -57,7 +57,7 @@ class GroupLoanTypes extends Core
         return $results;
     }
 
-    public function get_loantypes_on($group_id)
+    public function get_loantypes_on($group_id, $flag = 2)
     {
         $query = $this->db->placehold("
         SELECT * 
@@ -72,7 +72,7 @@ class GroupLoanTypes extends Core
         $loantypes = [];
 
         foreach ($results as $result) {
-            $loantype = $this->Loantypes->get_loantype($result->loantype_id, 2);
+            $loantype = $this->Loantypes->get_loantype($result->loantype_id, $flag);
 
             if(empty($loantype))
                 continue;
