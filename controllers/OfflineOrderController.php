@@ -5072,16 +5072,13 @@ class OfflineOrderController extends Controller
                 return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
             });
 
-        $dates = '';
-
         foreach ($schedule as $date => $payment) {
             if (strtotime($previous_date) < strtotime($date) && !isset($next_pay)) {
                 $next_pay = ['date' => $date, 'payment' => $payment];
             }
-            $dates .= "<option value='$date'>$date</option>";
         }
 
-        echo json_encode(['next_pay' => $next_pay, 'dates' => $dates]);
+        echo json_encode(['next_pay' => $next_pay]);
         exit;
     }
 
