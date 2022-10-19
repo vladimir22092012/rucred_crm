@@ -3012,14 +3012,12 @@ class OrderController extends Controller
         $this->NotificationsCron->add($cron);
         $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
 
-        $this->changelogs->add_changelog(array(
+        $this->eventlogs->add_log(array(
+            'event_id' => 72,
             'manager_id' => $this->manager->id,
-            'created' => date('Y-m-d H:i:s'),
-            'type' => 'approve_employer',
-            'old_values' => array('status' => 2),
-            'new_values' => array('status' => 14),
-            'user_id' => $order->user_id,
             'order_id' => $order_id,
+            'user_id' => $order->user_id,
+            'created' => date('Y-m-d H:i:s'),
         ));
 
         exit;
@@ -3079,14 +3077,12 @@ class OrderController extends Controller
 
         $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
 
-        $this->changelogs->add_changelog(array(
+        $this->eventlogs->add_log(array(
+            'event_id' => 71,
             'manager_id' => $this->manager->id,
-            'created' => date('Y-m-d H:i:s'),
-            'type' => 'reject_employer',
-            'old_values' => array('status' => 2),
-            'new_values' => array('status' => 15),
-            'user_id' => $order->user_id,
             'order_id' => $order_id,
+            'user_id' => $order->user_id,
+            'created' => date('Y-m-d H:i:s'),
         ));
 
         exit;
@@ -3136,14 +3132,12 @@ class OrderController extends Controller
 
         $this->NotificationsCron->add($cron);
 
-        $this->changelogs->add_changelog(array(
+        $this->eventlogs->add_log(array(
+            'event_id' => 73,
             'manager_id' => $this->manager->id,
-            'created' => date('Y-m-d H:i:s'),
-            'type' => 'question_employer',
-            'old_values' => array('status' => 2),
-            'new_values' => array('status' => 13),
-            'user_id' => $order->user_id,
             'order_id' => $order_id,
+            'user_id' => $order->user_id,
+            'created' => date('Y-m-d H:i:s'),
         ));
 
         exit;

@@ -51,6 +51,10 @@ class Eventlogs extends Core
         63 => 'Звонок директору',
         
         70 => 'Добавление комментария',
+
+        71 => 'Заявка отклонена работодателем',
+        72 => 'Заявка принята работодателем',
+        73 => 'Не целесообразно, работодатель',
         
     );
     
@@ -112,7 +116,7 @@ class Eventlogs extends Core
                 $id_filter
                 $order_filter
 				$keyword_filter
-            ORDER BY id ASC 
+            ORDER BY id DESC
             $sql_limit
         ");
         $this->db->query($query);

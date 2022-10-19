@@ -20,10 +20,7 @@ class Changelogs extends Core
             'reject_order' => 'Заявка отклонена',
             'approve_order' => 'Заявка одобрена',
             'order_status' => 'Статус заявки',
-            'contactdata' => 'Контактные данные',
-            'reject_employer' => 'Заявка отклонена работодателем',
-            'approve_employer' => 'Заявка принята работодателем',
-            'question_employer' => 'Не целесообразно, работодатель',
+            'contactdata' => 'Контактные данные'
         );
     
         return $types;
@@ -146,6 +143,10 @@ class Changelogs extends Core
             switch ($filter['sort']) :
                 case 'date_asc':
                     $sort = 'cl.created ASC';
+                    break;
+
+                case 'id_desc':
+                    $sort = 'cl.id DESC';
                     break;
             
                 case 'date_desc':

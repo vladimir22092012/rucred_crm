@@ -1794,20 +1794,20 @@
                                                 </div>
                                             </div>
                                         {/if}
-                                        {if in_array($order->status, [13,14])&& in_array($manager->role, ['underwriter', 'admin', 'developer'])}
+                                        {if in_array($order->status, [13,14,15]) && $manager->role != 'employer'}
                                             <div>
                                                 <button class="btn btn-success btn-block approve_by_under"
                                                         data-order="{$order->order_id}"
                                                         data-manager="{$manager->id}">
                                                     <i class="fas fa-check-circle"></i>
-                                                    <span>Одобрить заявку и передать Миддлу</span>
+                                                    <span>Одобрить заявку</span>
                                                 </button>
                                                 <button class="btn btn-danger btn-block reject_by_under"
                                                         data-user="{$order->user_id}"
                                                         data-order="{$order->order_id}"
                                                         data-manager="{$manager->id}">
                                                     <i class="fas fa-times-circle"></i>
-                                                    <span>Отказать в рассмотрении</span>
+                                                    <span>Отклонить заявку</span>
                                                 </button>
                                             </div>
                                         {/if}

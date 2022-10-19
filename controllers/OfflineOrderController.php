@@ -585,7 +585,7 @@ class OfflineOrderController extends Controller
 
                     $this->design->assign('user', $user);
 
-                    $changelogs = $this->changelogs->get_changelogs(array('order_id' => $order_id));
+                    $changelogs = $this->changelogs->get_changelogs(array('order_id' => $order_id, 'sort' => 'date_desc'));
                     foreach ($changelogs as $changelog) {
                         $changelog->user = $user;
                         if (!empty($changelog->manager_id) && !empty($managers[$changelog->manager_id]))
@@ -3207,6 +3207,14 @@ class OfflineOrderController extends Controller
 
         $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
 
+        $this->eventlogs->add_log(array(
+            'event_id' => 72,
+            'manager_id' => $this->manager->id,
+            'order_id' => $order_id,
+            'user_id' => $order->user_id,
+            'created' => date('Y-m-d H:i:s'),
+        ));
+
         exit;
     }
 
@@ -3263,6 +3271,15 @@ class OfflineOrderController extends Controller
         $this->NotificationsClientsCron->add($cron);
 
         $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
+
+        $this->eventlogs->add_log(array(
+            'event_id' => 71,
+            'manager_id' => $this->manager->id,
+            'order_id' => $order_id,
+            'user_id' => $order->user_id,
+            'created' => date('Y-m-d H:i:s'),
+        ));
+
         exit;
     }
 
@@ -3311,6 +3328,15 @@ class OfflineOrderController extends Controller
         $this->NotificationsCron->add($cron);
 
         $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
+
+        $this->eventlogs->add_log(array(
+            'event_id' => 73,
+            'manager_id' => $this->manager->id,
+            'order_id' => $order_id,
+            'user_id' => $order->user_id,
+            'created' => date('Y-m-d H:i:s'),
+        ));
+
         exit;
     }
 
