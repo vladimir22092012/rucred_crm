@@ -3012,6 +3012,16 @@ class OrderController extends Controller
         $this->NotificationsCron->add($cron);
         $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
 
+        $this->changelogs->add_changelog(array(
+            'manager_id' => $this->manager->id,
+            'created' => date('Y-m-d H:i:s'),
+            'type' => 'approve_employer',
+            'old_values' => array('status' => 2),
+            'new_values' => array('status' => 14),
+            'user_id' => $order->user_id,
+            'order_id' => $order_id,
+        ));
+
         exit;
     }
 
@@ -3068,6 +3078,17 @@ class OrderController extends Controller
         $this->NotificationsClientsCron->add($cron);
 
         $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
+
+        $this->changelogs->add_changelog(array(
+            'manager_id' => $this->manager->id,
+            'created' => date('Y-m-d H:i:s'),
+            'type' => 'reject_employer',
+            'old_values' => array('status' => 2),
+            'new_values' => array('status' => 15),
+            'user_id' => $order->user_id,
+            'order_id' => $order_id,
+        ));
+
         exit;
     }
 
@@ -3114,6 +3135,17 @@ class OrderController extends Controller
             ];
 
         $this->NotificationsCron->add($cron);
+
+        $this->changelogs->add_changelog(array(
+            'manager_id' => $this->manager->id,
+            'created' => date('Y-m-d H:i:s'),
+            'type' => 'question_employer',
+            'old_values' => array('status' => 2),
+            'new_values' => array('status' => 13),
+            'user_id' => $order->user_id,
+            'order_id' => $order_id,
+        ));
+
         exit;
     }
 

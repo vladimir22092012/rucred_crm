@@ -21,6 +21,9 @@ class Changelogs extends Core
             'approve_order' => 'Заявка одобрена',
             'order_status' => 'Статус заявки',
             'contactdata' => 'Контактные данные',
+            'reject_employer' => 'Заявка отклонена работодателем',
+            'approve_employer' => 'Заявка принята работодателем',
+            'question_employer' => 'Не целесообразно, работодатель',
         );
     
         return $types;
