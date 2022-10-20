@@ -4591,7 +4591,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Подтвержденная дата по графику</label>
-                                <select data-order="{$order->order_id}" class="form-control next_pay_date">
+                                <select data-order="{$order->order_id}" name="last_pay_date" class="form-control next_pay_date">
                                     {foreach $payment_schedule->schedule as $date => $payment}
                                         {if $date != 'result'}
                                             <option value="{$date}">{$date}</option>

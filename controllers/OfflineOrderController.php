@@ -733,7 +733,7 @@ class OfflineOrderController extends Controller
         $documents = $this->documents->get_documents($filter);
 
         foreach ($documents as $document) {
-            if(!empty($document->scan_id))
+            if (!empty($document->scan_id))
                 $document->scan = $this->Scans->get($document->scan_id);
         }
 
@@ -3812,6 +3812,8 @@ class OfflineOrderController extends Controller
         $pay_amount -= $comission_amount;
 
         $pay_date = date('d.m.Y', strtotime($this->request->post('pay_date')));
+        $last_pay_date = date('d.m.Y', strtotime($this->request->post('last_pay_date')));
+
         $order = $this->orders->get_order($order_id);
         $order->new_term = $new_term;
 
@@ -3837,6 +3839,8 @@ class OfflineOrderController extends Controller
         $body_pay = 0.00;
 
         foreach ($payment_schedule as $date => $schedule) {
+
+            $date = date('d.m.Y', strtotime($date));
 
             if (strtotime($pay_date) <= strtotime($date)) {
                 if ($pay_amount < $schedule['pay_sum']) {
@@ -3870,8 +3874,6 @@ class OfflineOrderController extends Controller
                     $new_loan -= $schedule['loan_body_pay'];
                 }
 
-                $date = date('d.m.Y', strtotime($date));
-
                 $new_shedule[$date] =
                     [
                         'pay_sum' => $body_pay + $percent_pay + $comission_amount,
@@ -3883,9 +3885,18 @@ class OfflineOrderController extends Controller
 
                 $last_date = $date;
                 break;
+            } elseif (strtotime($last_pay_date) >= strtotime($date)) {
+                $new_shedule[$date] = $schedule;
+            } else {
+                $new_shedule[$date] =
+                    [
+                        'pay_sum' => 0.00,
+                        'loan_body_pay' => 0.00,
+                        'loan_percents_pay' => 0.00,
+                        'comission_pay' => 0.00,
+                        'rest_pay' => $new_loan,
+                    ];
             }
-
-            $new_shedule[$date] = $schedule;
             $new_loan -= round($schedule['loan_body_pay'], 2);
 
             $i++;
@@ -4115,8 +4126,7 @@ class OfflineOrderController extends Controller
             $payment_schedule[$payment['date']]['loan_body_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['loan_body_pay']);
             $payment_schedule[$payment['date']]['rest_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['rest_pay']);
 
-            if (strtotime($payment['date']) == strtotime($restruct_date))
-            {
+            if (strtotime($payment['date']) == strtotime($restruct_date)) {
                 $payment_schedule[$payment['date']]['last_pay'] = 1;
                 $payment_schedule[$payment['date']]['change_employer'] = $change_employer;
             }
@@ -4952,7 +4962,7 @@ class OfflineOrderController extends Controller
             if ($key == 'result')
                 break;
 
-            if(isset($schedule['change_employer']))
+            if (isset($schedule['change_employer']))
                 $change_employer = $schedule['change_employer'];
 
             $order->probably_return_date = $key;
@@ -4994,8 +5004,7 @@ class OfflineOrderController extends Controller
             'numeration' => '04.31'
         ));
 
-        if($change_employer == 1)
-        {
+        if ($change_employer == 1) {
             $this->documents->create_document(array(
                 'user_id' => $order->user_id,
                 'order_id' => $order->order_id,
