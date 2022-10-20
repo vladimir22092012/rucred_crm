@@ -150,6 +150,11 @@
                                                                style="margin-left: 50px; width: 10%">Исполнено
                                                         </small>
                                                     {/if}
+                                                    {if $ticket->status == 7}
+                                                        <small class="label label-danger"
+                                                               style="margin-left: 50px; width: 10%">Отказ
+                                                        </small>
+                                                    {/if}
                                                     {if $ticket->status == 6}
                                                         <small class="badge badge-dark"
                                                                style="margin-left: 50px; width: 10%">Закрыт

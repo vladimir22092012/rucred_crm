@@ -47,7 +47,7 @@ class TicketsController extends Controller
 
             $filter_status = $this->request->get('status');
 
-            if (in_array($filter_status, ['0',2,4])) {
+            if (in_array($filter_status, ['0',2,4,7])) {
                 $this->design->assign('filter_status', $filter_status);
             }else{
                 $filter_status = 'false';

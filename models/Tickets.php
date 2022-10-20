@@ -8,7 +8,8 @@ class Tickets extends Core
             1 => 'Направленный тикет',
             2 => 'Принят/В работе',
             4 => 'Исполнено',
-            6 => 'Закрыт'
+            6 => 'Закрыт',
+            7 => 'Отказ'
         ];
 
     public function add_ticket($ticket)

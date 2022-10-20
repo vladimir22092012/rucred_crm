@@ -3223,7 +3223,7 @@ class OfflineOrderController extends Controller
         $order_id = (int)$this->request->post('order_id');
         $order = $this->orders->get_order($order_id);
         $this->orders->update_order($order_id, ['status' => 15]);
-        $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
+        $this->tickets->update_by_theme_id(8, ['status' => 7], $order_id);
 
         $communication_theme = $this->CommunicationsThemes->get(48);
 
