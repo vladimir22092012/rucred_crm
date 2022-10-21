@@ -24,22 +24,36 @@ class GraphicConstructorController extends Controller
             switch ($permission)
             {
                 case 'all':
-                    $permission = ['all'];
                     $flag = 3;
+                    $search =
+                        [
+                            'group_id' => $group_id,
+                            'permissions' => ['all', 'online', 'offline']
+                        ];
                     break;
 
                 case 'online':
-                    $permission = ['all', 'online'];
                     $flag = 1;
+                    $search =
+                        [
+                            'group_id' => $group_id,
+                            'permissions' => ['all', 'online'],
+                            'blocked' => 0
+                        ];
                     break;
 
                 case 'offline':
-                    $permission = ['all', 'offline'];
                     $flag = 2;
+                    $search =
+                        [
+                            'group_id' => $group_id,
+                            'permissions' => ['all', 'offline'],
+                            'blocked' => 0
+                        ];
                     break;
             }
 
-            $companies = $this->Companies->get_companies(['group_id' => $group_id, 'offline_blocked' => 0, 'permissions' => $permission]);
+            $companies = $this->Companies->get_companies($search);
             $loantypes = $this->GroupLoanTypes->get_loantypes_on($group_id, $flag);
 
             echo json_encode(['companies' => $companies, 'loantypes' => $loantypes]);

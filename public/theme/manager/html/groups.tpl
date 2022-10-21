@@ -236,7 +236,7 @@
                         <input type="text" class="form-control" name="name" id="name" value=""/>
                     </div>
                     <div class="form-group">
-                        <label class="control-label">Блокировка</label>
+                        <label class="control-label">Доступность</label>
                         <select class="form-control" name="blocked">
                             <option value="1">Везде</option>
                             <option value="2">Онлайн</option>
