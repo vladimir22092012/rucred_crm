@@ -3171,6 +3171,7 @@ class OfflineOrderController extends Controller
         $order = $this->orders->get_order($order_id);
         $this->orders->update_order($order_id, ['status' => 14]);
         $communication_theme = $this->CommunicationsThemes->get(11);
+        $this->tickets->update_by_theme_id(18, ['status' => 7], $order_id);
 
         $ticket =
             [
