@@ -943,6 +943,8 @@ class OfflineOrderController extends Controller
 
         $this->orders->update_order($order_id, ['status' => 20]);
 
+        $this->tickets->update_by_theme_id(11, ['status' => 7], $order_id);
+
         $communication_theme = $this->CommunicationsThemes->get(47);
 
         $ticket =
@@ -5042,6 +5044,8 @@ class OfflineOrderController extends Controller
         $order = $this->orders->get_order($order_id);
 
         $this->orders->update_order($order_id, ['status' => 11]);
+
+        $this->tickets->update_by_theme_id(12, ['status' => 7], $order_id);
 
         $communication_theme = $this->CommunicationsThemes->get(47);
 
