@@ -68,10 +68,8 @@ class NotificationsCronRun extends Core
                         continue;
 
                     foreach ($managers_companies as $company_id => $company_name)
-                    {
                         if($ticket->company_id == $company_id)
                             $skip = 0;
-                    }
 
                     if($skip == 1)
                         continue;
