@@ -992,6 +992,14 @@ class OfflineOrderController extends Controller
 
         $this->NotificationsClientsCron->add($cron);
 
+        $this->eventlogs->add_log(array(
+            'event_id' => 74,
+            'manager_id' => $this->manager->id,
+            'order_id' => $order_id,
+            'user_id' => $order->user_id,
+            'created' => date('Y-m-d H:i:s'),
+        ));
+
         exit;
     }
 
@@ -3838,12 +3846,16 @@ class OfflineOrderController extends Controller
         $new_loan = $order->amount;
         $percent_pay = 0.00;
         $body_pay = 0.00;
+        $lost_percents = 0.00;
 
         foreach ($payment_schedule as $date => $schedule) {
 
             $date = date('d.m.Y', strtotime($date));
 
             if (strtotime($pay_date) <= strtotime($date)) {
+                $schedule['pay_sum'] += $lost_percents;
+                $schedule['loan_percents_pay'] += $lost_percents;
+
                 if ($pay_amount < $schedule['pay_sum']) {
                     if ($pay_amount >= $schedule['loan_percents_pay']) {
                         $percent_pay = $schedule['loan_percents_pay'];
@@ -3857,6 +3869,7 @@ class OfflineOrderController extends Controller
                     } else {
                         $percent_pay = $pay_amount;
                         $plus_percents = round($schedule['loan_percents_pay'] - $pay_amount, 2);
+                        $body_pay = 0.00;
                     }
                 }
 
@@ -3888,6 +3901,7 @@ class OfflineOrderController extends Controller
                 break;
             } elseif (strtotime($last_pay_date) >= strtotime($date)) {
                 $new_shedule[$date] = $schedule;
+                $new_loan -= round($schedule['loan_body_pay'], 2);
             } else {
                 $new_shedule[$date] =
                     [
@@ -3897,8 +3911,9 @@ class OfflineOrderController extends Controller
                         'comission_pay' => 0.00,
                         'rest_pay' => $new_loan,
                     ];
+
+                $lost_percents += $schedule['loan_percents_pay'];
             }
-            $new_loan -= round($schedule['loan_body_pay'], 2);
 
             $i++;
         }
@@ -4003,8 +4018,12 @@ class OfflineOrderController extends Controller
             if ($date != 'result') {
                 $payments[] = round($pay['pay_sum'], '2');
                 $dates[] = date('d.m.Y', strtotime($date));
-                $rest_sum -= round($pay['loan_body_pay'], 2);
-                $new_shedule[$date]['rest_pay'] = $rest_sum;
+
+                if(!isset($new_shedule[$date]['rest_pay']) && $new_shedule[$date]['loan_body_pay'] != 0)
+                {
+                    $rest_sum -= round($pay['loan_body_pay'], 2);
+                    $new_shedule[$date]['rest_pay'] = $rest_sum;
+                }
             }
         }
 
@@ -5090,6 +5109,16 @@ class OfflineOrderController extends Controller
             ];
 
         $this->NotificationsClientsCron->add($cron);
+
+        $this->eventlogs->add_log(array(
+            'event_id' => 76,
+            'manager_id' => $this->manager->id,
+            'order_id' => $order_id,
+            'user_id' => $order->user_id,
+            'created' => date('Y-m-d H:i:s'),
+        ));
+
+        exit;
     }
 
     private function action_next_schedule_date()

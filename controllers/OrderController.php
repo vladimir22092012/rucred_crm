@@ -4330,6 +4330,16 @@ class OrderController extends Controller
             ];
 
         $this->NotificationsClientsCron->add($cron);
+
+        $this->eventlogs->add_log(array(
+            'event_id' => 76,
+            'manager_id' => $this->manager->id,
+            'order_id' => $order_id,
+            'user_id' => $order->user_id,
+            'created' => date('Y-m-d H:i:s'),
+        ));
+
+        exit;
     }
 
     private function action_reject_by_under()
@@ -4388,6 +4398,14 @@ class OrderController extends Controller
             ];
 
         $this->NotificationsClientsCron->add($cron);
+
+        $this->eventlogs->add_log(array(
+            'event_id' => 74,
+            'manager_id' => $this->manager->id,
+            'order_id' => $order_id,
+            'user_id' => $order->user_id,
+            'created' => date('Y-m-d H:i:s'),
+        ));
 
         exit;
     }

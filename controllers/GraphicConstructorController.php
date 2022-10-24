@@ -378,32 +378,6 @@ class GraphicConstructorController extends Controller
         $rest_sum = number_format($payment_schedule['result']['all_rest_pay_sum'], 2, ',', ' ');
         $psk = number_format($psk, 3, ',', ' ');
 
-        $settlement_id = 2;
-
-        if (date('H') >= 14)
-            $probably_start_date = date('Y-m-d', strtotime($date_from.'+2 days'));
-        else
-            $probably_start_date = date('Y-m-d', strtotime($date_from.'+1 days'));
-
-        $check_date = $this->WeekendCalendar->check_date($probably_start_date);
-
-        if (!empty($check_date)) {
-            for ($i = 0; $i <= 15; $i++) {
-
-                $check_date = $this->WeekendCalendar->check_date($probably_start_date);
-
-                if (empty($check_date)) {
-                    if ($settlement_id == 2) {
-                        if (date('H') >= 14)
-                            $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
-                    }
-                    break;
-                } else {
-                    $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
-                }
-            }
-        }
-
         $payment_schedule_html .= "<tr>";
         $payment_schedule_html .= "<td><input type='text' class='form-control daterange' value='ИТОГО' disabled></td>";
         $payment_schedule_html .= "<td><input type='text' class='form-control' value='$paysum' disabled></td>";
@@ -420,7 +394,7 @@ class GraphicConstructorController extends Controller
 
         $payment_schedule_html .= "<tr>";
         $payment_schedule_html .= "<td><input type='text' class='form-control daterange' value='Дата выдачи' disabled></td>";
-        $payment_schedule_html .= "<td><input type='text' class='form-control' value=$probably_start_date disabled></td>";
+        $payment_schedule_html .= "<td><input type='text' class='form-control' value=$date_from disabled></td>";
         $payment_schedule_html .= "</td>";
 
         $payment_schedule_html .= '</tbody>
