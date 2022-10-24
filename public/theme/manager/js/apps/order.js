@@ -389,12 +389,7 @@ function OrderApp() {
                     timer: 5000,
                     type: 'error',
                     title: 'Ошибка!',
-                    text: 'Необходимо принять файлы клиента!',
-                    onClose: () => {
-                        $('html, body').animate({
-                            scrollTop: $("#images_form").offset().top - 100  // класс объекта к которому приезжаем
-                        }, 1000);
-                    }
+                    text: 'Необходимо принять файлы клиента!'
                 });
 
                 return false;
@@ -721,40 +716,6 @@ function OrderApp() {
         });
 
     };
-
-
-    var _init_submit_form = function () {
-        $(document).on('submit', '.js-order-item-form', function (e) {
-            e.preventDefault();
-
-            var $form = $(this);
-            var _id = $form.attr('id');
-
-            if ($form.hasClass('js-check-amount')) {
-                if (!_check_amount())
-                    return false;
-            }
-
-            $.ajax({
-                url: $form.attr('action'),
-                type: 'POST',
-                data: $form.serialize(),
-                beforeSend: function () {
-                    $form.addClass('loading');
-                },
-                success: function (resp) {
-
-                    var $content = $(resp).find('#' + _id).html();
-
-                    $form.html($content);
-
-                    $form.removeClass('loading');
-
-                    _init_toggle_form();
-                }
-            })
-        });
-    }
 
     var _check_amount = function () {
         var amount = parseInt($('[name=amount]').val())

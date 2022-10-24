@@ -51,6 +51,10 @@ class OrderController extends Controller
                     $this->fio_action();
                     break;
 
+                case 'personal_edit':
+                    $this->action_personal_edit();
+                    break;
+
                 case 'contactdata':
                     $this->contactdata_action();
                     break;
@@ -269,7 +273,7 @@ class OrderController extends Controller
 
                     $from_registr = $this->request->get('reg');
 
-                    if(!empty($from_registr))
+                    if (!empty($from_registr))
                         $this->design->assign('from_registr', $from_registr);
 
                     $old_orders = $this->orders->get_orders(['user_id' => $order->user_id]);
@@ -295,8 +299,7 @@ class OrderController extends Controller
 
                     $holder = $order->requisite->holder;
 
-                    if(!empty($holder))
-                    {
+                    if (!empty($holder)) {
                         $holder = explode(' ', $holder, 3);
                         $same_holder = 0;
 
@@ -1745,90 +1748,251 @@ class OrderController extends Controller
 
     private function fio_action()
     {
-        $order_id = $this->request->post('order_id', 'integer');
-        $user_id = $this->request->post('user_id', 'integer');
+        $order_id = $this->request->post('order_id');
+        $user_id = $this->request->post('user_id');
+        $comment = $this->request->post('comment');
+
+        if (empty($comment)) {
+            echo json_encode(['error' => 'Заполните комментарий!']);
+            exit;
+        }
 
         $order = new StdClass();
         $order->lastname = trim($this->request->post('lastname'));
         $order->firstname = trim($this->request->post('firstname'));
         $order->patronymic = trim($this->request->post('patronymic'));
-        $order->phone_mobile = trim($this->request->post('phone_mobile'));
 
-        $fio_error = array();
+        $update = array(
+            'Имя' => $order->lastname,
+            'Фамилия' => $order->firstname,
+            'Отчество' => $order->patronymic,
+            'Причина' => $comment
+        );
 
-        if (empty($order->lastname))
-            $contacts_error[] = 'empty_lastname';
-        if (empty($order->firstname))
-            $contacts_error[] = 'empty_firstname';
-        if (empty($order->patronymic))
-            $contacts_error[] = 'empty_patronymic';
-        if (empty($order->phone_mobile))
-            $contacts_error[] = 'empty_phone_mobile';
+        $old_user = $this->users->get_user($user_id);
 
-        if (empty($fio_error)) {
-            $update = array(
-                'lastname' => $order->lastname,
-                'firstname' => $order->firstname,
-                'patronymic' => $order->patronymic,
-                'phone_mobile' => $order->phone_mobile,
-            );
+        $old_values = array(
+            'Имя' => $old_user->lastname,
+            'Фамилия' => $old_user->firstname,
+            'Отчество' => $old_user->patronymic
+        );
 
-            $old_user = $this->users->get_user($user_id);
-            $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
-                    $old_values[$key] = $old_user->$key;
-
-            $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
-                    $log_update[$k] = $u;
-
-            $this->changelogs->add_changelog(array(
-                'manager_id' => $this->manager->id,
-                'created' => date('Y-m-d H:i:s'),
-                'type' => 'fio',
-                'old_values' => serialize($old_values),
-                'new_values' => serialize($log_update),
-                'order_id' => $order_id,
-                'user_id' => $user_id,
-            ));
-
-            $this->users->update_user($user_id, $update);
-
-            // редактирование в документах
-            if (!empty($user_id)) {
-                $documents = $this->documents->get_documents(array('user_id' => $user_id));
-                foreach ($documents as $doc) {
-                    if (isset($doc->params['lastname']))
-                        $doc->params['lastname'] = $order->lastname;
-                    if (isset($doc->params['firstname']))
-                        $doc->params['firstname'] = $order->firstname;
-                    if (isset($doc->params['patronymic']))
-                        $doc->params['patronymic'] = $order->patronymic;
-                    if (isset($doc->params['fio']))
-                        $doc->params['fio'] = $order->lastname . ' ' . $order->firstname . ' ' . $order->patronymic;
-                    if (isset($doc->params['phone']))
-                        $doc->params['phone'] = $order->phone_mobile;
-
-                    $this->documents->update_document($doc->id, array('params' => $doc->params));
-                }
-            }
-
+        if ($old_user->lastname == $order->lastname) {
+            unset($update['Имя']);
+            unset($old_values['Имя']);
         }
 
-        $this->design->assign('fio_error', $fio_error);
+        if ($old_user->firstname == $order->firstname) {
+            unset($update['Фамилия']);
+            unset($old_values['Фамилия']);
+        }
 
-        $order->order_id = $order_id;
-        $order->user_id = $user_id;
+        if ($old_user->patronymic == $order->patronymic) {
+            unset($update['Отчество']);
+            unset($old_values['Отчество']);
+        }
 
-        $isset_order = $this->orders->get_order((int)$order_id);
+        $this->changelogs->add_changelog(array(
+            'manager_id' => $this->manager->id,
+            'created' => date('Y-m-d H:i:s'),
+            'type' => 'fio',
+            'old_values' => serialize($old_values),
+            'new_values' => serialize($update),
+            'order_id' => $order_id,
+            'user_id' => $user_id,
+        ));
 
-        $order->status = $isset_order->status;
-        $order->manager_id = $isset_order->manager_id;
-        $order->phone_mobile = $isset_order->phone_mobile;
+        $this->users->update_user($user_id, $update);
 
-        $this->design->assign('order', $order);
+        echo json_encode(['success' => 'Заполните комментарий!']);
+        exit;
+    }
+
+    private function action_personal_edit()
+    {
+        $order_id = $this->request->post('order_id');
+        $user_id = $this->request->post('user_id');
+        $comment = $this->request->post('comment');
+
+        if (empty($comment)) {
+            echo json_encode(['error' => 'Заполните комментарий!']);
+            exit;
+        }
+        $Regadress = json_decode($this->request->post('Registration'));
+
+        $regaddress = [];
+        $regaddress['adressfull'] = $this->request->post('regaddress');
+        $regaddress['zip'] = $Regadress->data->postal_code ?? '';
+        $regaddress['region'] = $Regadress->data->region ?? '';
+        $regaddress['region_type'] = $Regadress->data->region_type ?? '';
+        $regaddress['city'] = $Regadress->data->city ?? '';
+        $regaddress['city_type'] = $Regadress->data->city_type ?? '';
+        $regaddress['district'] = $Regadress->data->city_district ?? '';
+        $regaddress['district_type'] = $Regadress->data->city_district_type ?? '';
+        $regaddress['locality'] = $Regadress->data->settlement ?? '';
+        $regaddress['locality_type'] = $Regadress->data->settlement_type ?? '';
+        $regaddress['street'] = $Regadress->data->street ?? '';
+        $regaddress['street_type'] = $Regadress->data->street_type ?? '';
+        $regaddress['house'] = $Regadress->data->house ?? '';
+        $regaddress['building'] = $Regadress->data->block ?? '';
+        $regaddress['room'] = $Regadress->data->flat ?? '';
+        $regaddress['okato'] = $Regadress->data->okato ?? '';
+        $regaddress['oktmo'] = $Regadress->data->oktmo ?? '';
+
+        $Fakt_adress = json_decode($this->request->post('Faktadres'));
+
+        $faktaddress = [];
+        $faktaddress['adressfull'] = $this->request->post('faktaddress');
+        $faktaddress['zip'] = $Fakt_adress->data->postal_code ?? '';
+        $faktaddress['region'] = $Fakt_adress->data->region ?? '';
+        $faktaddress['region_type'] = $Fakt_adress->data->region_type ?? '';
+        $faktaddress['city'] = $Fakt_adress->data->city ?? '';
+        $faktaddress['city_type'] = $Fakt_adress->data->city_type ?? '';
+        $faktaddress['district'] = $Fakt_adress->data->city_district ?? '';
+        $faktaddress['district_type'] = $Fakt_adress->data->city_district_type ?? '';
+        $faktaddress['locality'] = $Fakt_adress->data->settlement ?? '';
+        $faktaddress['locality_type'] = $Fakt_adress->data->settlement_type ?? '';
+        $faktaddress['street'] = $Fakt_adress->data->street ?? '';
+        $faktaddress['street_type'] = $Fakt_adress->data->street_type ?? '';
+        $faktaddress['house'] = $Fakt_adress->data->house ?? '';
+        $faktaddress['building'] = $Fakt_adress->data->block ?? '';
+        $faktaddress['room'] = $Fakt_adress->data->flat ?? '';
+        $faktaddress['okato'] = $Fakt_adress->data->okato ?? '';
+        $faktaddress['oktmo'] = $Fakt_adress->data->oktmo ?? '';
+
+        $old_user = $this->users->get_user($user_id);
+
+        $lastname           = trim($this->request->post('lastname'));
+        $firstname          = trim($this->request->post('firstname'));
+        $patronymic         = trim($this->request->post('patronymic'));
+        $birth              = trim($this->request->post('birth'));
+        $birth_place        = trim($this->request->post('birth_place'));
+        $passport_serial    = trim($this->request->post('passport_serial'));
+        $passport_serial    = str_replace('-', ' ', $passport_serial);
+        $passport_date      = trim($this->request->post('passport_date'));
+        $subdivision_code   = trim($this->request->post('subdivision_code'));
+        $passport_issued    = trim($this->request->post('passport_issued'));
+        $inn                = trim($this->request->post('inn'));
+        $snils              = trim($this->request->post('snils'));
+
+        $old_regaddress  = $this->Addresses->get_address($old_user->regaddress_id);
+        $old_faktaddress = $this->Addresses->get_address($old_user->faktaddress_id);
+
+        $this->Addresses->update_address($old_user->regaddress_id, $regaddress);
+        $this->Addresses->update_address($old_user->faktaddress_id, $faktaddress);
+
+        $update = array(
+            'Имя' => $lastname,
+            'Фамилия' => $firstname,
+            'Отчество' => $patronymic,
+            'Дата рождения' => $birth,
+            'Место рождения' => $birth_place,
+            'Серия и номер паспорта' => $passport_serial,
+            'Дата выдачи паспорта' => $passport_date,
+            'Код подразделения' => $subdivision_code,
+            'Кем выдан паспорт' => $passport_issued,
+            'ИНН' => $inn,
+            'СНИЛС' => $snils,
+            'Адрес регистрации' => $regaddress['adressfull'],
+            'Адрес проживания' => $faktaddress['adressfull'],
+            'Причина' => $comment
+        );
+
+        $old_values = array(
+            'Имя' => $old_user->lastname,
+            'Фамилия' => $old_user->firstname,
+            'Отчество' => $old_user->patronymic,
+            'Дата рождения' => $old_user->birth,
+            'Место рождения' => $old_user->birth_place,
+            'Серия и номер паспорта' => $old_user->passport_serial,
+            'Дата выдачи паспорта' => $old_user->passport_date,
+            'Код подразделения' => $old_user->subdivision_code,
+            'Кем выдан паспорт' => $old_user->passport_issued,
+            'ИНН' => $old_user->inn,
+            'СНИЛС' => $old_user->snils,
+            'Адрес регистрации' => $old_regaddress->adressfull,
+            'Адрес проживания' => $old_faktaddress->adressfull
+        );
+
+        if ($old_user->lastname == $lastname) {
+            unset($update['Имя']);
+            unset($old_values['Имя']);
+        }
+
+        if ($old_user->firstname == $firstname) {
+            unset($update['Фамилия']);
+            unset($old_values['Фамилия']);
+        }
+
+        if ($old_user->patronymic == $patronymic) {
+            unset($update['Отчество']);
+            unset($old_values['Отчество']);
+        }
+
+        if (strtotime($old_user->birth )== strtotime($birth)) {
+            unset($update['Дата рождения']);
+            unset($old_values['Дата рождения']);
+        }
+
+        if ($old_user->birth_place == $birth_place) {
+            unset($update['Место рождения']);
+            unset($old_values['Место рождения']);
+        }
+
+        if ($old_user->passport_serial == $passport_serial) {
+            unset($update['Серия и номер паспорта']);
+            unset($old_values['Серия и номер паспорта']);
+        }
+
+        if (strtotime($old_user->passport_date) == strtotime($passport_date)) {
+            unset($update['Дата выдачи паспорта']);
+            unset($old_values['Дата выдачи паспорта']);
+        }
+
+        if ($old_user->subdivision_code == $subdivision_code) {
+            unset($update['Код подразделения']);
+            unset($old_values['Код подразделения']);
+        }
+
+        if ($old_user->passport_issued == $passport_issued) {
+            unset($update['Кем выдан паспорт']);
+            unset($old_values['Кем выдан паспорт']);
+        }
+
+        if ($old_user->inn == $inn) {
+            unset($update['ИНН']);
+            unset($old_values['ИНН']);
+        }
+
+        if ($old_user->snils == $snils) {
+            unset($update['СНИЛС']);
+            unset($old_values['СНИЛС']);
+        }
+
+        if ($old_regaddress->adressfull == $regaddress['adressfull']) {
+            unset($update['Адрес регистрации']);
+            unset($old_values['Адрес регистрации']);
+        }
+
+        if ($old_faktaddress->adressfull == $faktaddress['adressfull']) {
+            unset($update['Адрес проживания']);
+            unset($old_values['Адрес проживания']);
+        }
+
+        $this->changelogs->add_changelog(array(
+            'manager_id' => $this->manager->id,
+            'created' => date('Y-m-d H:i:s'),
+            'type' => 'fio',
+            'old_values' => serialize($old_values),
+            'new_values' => serialize($update),
+            'order_id' => $order_id,
+            'user_id' => $user_id,
+        ));
+
+        $this->users->update_user($user_id, $update);
+
+        echo json_encode(['success' => 'Заполните комментарий!']);
+        exit;
     }
 
     private function addresses_action()
@@ -4259,16 +4423,15 @@ class OrderController extends Controller
     private function action_next_schedule_date()
     {
         $previous_date = $this->request->post('date');
-        $order_id      = $this->request->post('order');
-        $next_date     = new DateTime(date('Y-m-d', strtotime($previous_date)));
+        $order_id = $this->request->post('order');
+        $next_date = new DateTime(date('Y-m-d', strtotime($previous_date)));
         $next_date->add(new DateInterval('P1M'));
 
         $schedule = $this->PaymentsSchedules->get(['actual' => 1, 'order_id' => $order_id]);
         $schedule = json_decode($schedule->schedule, true);
 
-        foreach ($schedule as $date => $payment)
-        {
-            if($date == $next_date->format('d.m.Y'))
+        foreach ($schedule as $date => $payment) {
+            if ($date == $next_date->format('d.m.Y'))
                 $next_pay = ['date' => $date, 'payment' => $payment];
         }
 

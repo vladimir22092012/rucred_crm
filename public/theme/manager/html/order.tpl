@@ -10,8 +10,13 @@
             type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
     <script src="theme/manager/assets/plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.maskedinput@1.4.1/src/jquery.maskedinput.min.js"
+            type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
     <script>
         $(function () {
+
+            let token_dadata = "25c845f063f9f3161487619f630663b2d1e4dcd7";
 
             moment.locale('ru');
 
@@ -21,6 +26,61 @@
                 locale: {
                     format: 'DD.MM.YYYY'
                 },
+            });
+
+            $('input[name="snils"]').click(function () {
+                $(this).setCursorPosition(0);
+            }).mask('999-999-999 99');
+
+            $('input[name="inn"]').click(function () {
+                $(this).setCursorPosition(0);
+            }).mask('999999999999');
+
+            $('input[name="subdivision_code"]').click(function () {
+                $(this).setCursorPosition(0);
+            }).mask('999-999');
+
+            $('input[name="passport_serial"]').click(function () {
+                $(this).setCursorPosition(0);
+            }).mask('9999-999999');
+
+            $('input[name="personal_number"]').click(function () {
+                $(this).setCursorPosition(0);
+            }).mask('999999');
+
+            $('input[name="subdivision_code"]').suggestions({
+                token: token_dadata,
+                type: "fms_unit",
+                minChars: 3,
+                /* Вызывается, когда пользователь выбирает одну из подсказок */
+                onSelect: function (suggestion) {
+                    $('textarea[name="passport_issued"]').empty();
+                    $(this).empty();
+                    $('textarea[name="passport_issued"]').val(suggestion.value);
+                    $(this).trigger('input').val(suggestion.data.code);
+                }
+            });
+
+            $('textarea[name="regaddress"]').suggestions({
+                token: token_dadata,
+                type: "ADDRESS",
+                minChars: 3,
+                /* Вызывается, когда пользователь выбирает одну из подсказок */
+                onSelect: function (suggestion) {
+                    $(this).val(suggestion.value);
+                    $('.Registration').val(JSON.stringify(suggestion));
+                }
+            });
+
+            $('textarea[name="faktaddress"]').suggestions({
+                token: token_dadata,
+                type: "ADDRESS",
+                minChars: 3,
+                /* Вызывается, когда пользователь выбирает одну из подсказок */
+                onSelect: function (suggestion) {
+                    $(this).val(suggestion.value);
+                    $('.Faktadres').val(JSON.stringify(suggestion));
+                }
             });
 
             $('.get-docs').on('click', function (e) {
@@ -930,6 +990,32 @@
                     }
                 })
             });
+
+            $('.edit_fio').on('click', function (e) {
+                e.preventDefault();
+
+                $('#edit_fio_modal').modal();
+
+                $('.save_fio').on('click', function () {
+
+                    let form = $('#fio_form').serialize();
+
+                    $.ajax({
+                        method: 'POST',
+                        dataType: 'JSON',
+                        data: form,
+                        success: function (resp) {
+                            if (resp['error']) {
+                                Swal.fire({
+                                    title: resp['error'],
+                                    confirmButtonText: 'Ок'
+                                })
+                            } else if (resp['success'])
+                                location.reload();
+                        }
+                    });
+                });
+            });
         });
     </script>
     <script>
@@ -1092,6 +1178,7 @@
     <link href="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/magnific-popup.css"
           rel="stylesheet"/>
     <link href="theme/{$settings->theme|escape}/assets/plugins/fancybox3/dist/jquery.fancybox.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet"/>
     <style>
         label, p, .btn {
             font-size: 13px !important;
@@ -1352,13 +1439,8 @@
                             </div>
                             <div class="row pt-2">
                                 <div class="col-12 col-md-4 col-lg-3">
-                                    <form action="{url}" class="js-order-item-form " id="fio_form">
-
-                                        <input type="hidden" name="action" value="fio"/>
-                                        <input type="hidden" name="order_id" value="{$order->order_id}"/>
-                                        <input type="hidden" name="user_id" value="{$order->user_id}"/>
-
-                                        <div class="border p-2 view-block">
+                                    <div class="border p-2 view-block">
+                                        <div style="display: flex; justify-content: space-between">
                                             <h6>
                                                 <a href="client/{$order->user_id}" title="Перейти в карточку клиента">
                                                     {$order->lastname|escape}
@@ -1366,47 +1448,17 @@
                                                     {$order->patronymic|escape}
                                                 </a>
                                             </h6>
-                                            <h4>
-                                                <span class="phone_mobile_format">{$order->phone_mobile}</span>
-                                            </h4>
-                                            {*<a href="javascript:void(0);"
-                                                                                    class="text-info js-edit-form edit-amount js-event-add-click"
-                                                                                    data-event="30"
-                                                                                    data-manager="{$manager->id}"
-                                                                                    data-order="{$order->order_id}"
-                                                                                    data-user="{$order->user_id}"><i
-                                                        class=" fas fa-edit"></i></a>*}
+                                            {if $order->status == 0 && $manager->role != 'employer'}
+                                                <div style="margin-left: 110px"
+                                                     class="btn btn-outline-info btn-xs edit_fio">
+                                                    <i class=" fas fa-edit"></i>
+                                                </div>
+                                            {/if}
                                         </div>
-
-                                        <div class="edit-block hide">
-                                            <div class="form-group mb-1">
-                                                <input type="text" name="lastname" value="{$order->lastname}"
-                                                       class="form-control" placeholder="Фамилия"/>
-                                            </div>
-                                            <div class="form-group mb-1">
-                                                <input type="text" name="firstname" value="{$order->firstname}"
-                                                       class="form-control" placeholder="Имя"/>
-                                            </div>
-                                            <div class="form-group mb-1">
-                                                <input type="text" name="patronymic" value="{$order->patronymic}"
-                                                       class="form-control" placeholder="Отчество"/>
-                                            </div>
-                                            <div class="form-group mb-1">
-                                                <input type="text" name="phone_mobile" value="{$order->phone_mobile}"
-                                                       class="form-control" placeholder="Телефон"/>
-                                            </div>
-                                            <div class="form-actions">
-                                                <button type="submit" class="btn btn-success js-event-add-click"
-                                                        data-event="40" data-manager="{$manager->id}"
-                                                        data-order="{$order->order_id}" data-user="{$order->user_id}"><i
-                                                            class="fa fa-check"></i> Сохранить
-                                                </button>
-                                                <button type="button" class="btn btn-inverse js-cancel-edit">Отмена
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                    </form>
+                                        <h4>
+                                            <span class="phone_mobile_format">{$order->phone_mobile}</span>
+                                        </h4>
+                                    </div>
                                 </div>
                                 <div class="col-12 col-md-8 col-lg-6">
                                     <form class="mb-3 p-2 border" id="loan_settings">
@@ -1902,18 +1954,9 @@
                                                 <input type="hidden" name="order_id" value="{$order->order_id}"/>
                                                 <input type="hidden" name="user_id" value="{$order->user_id}"/>
 
-                                                <h6 class="card-header card-success">
+                                                <h6 class="card-header card-success"
+                                                    style="display: flex; justify-content: space-between">
                                                     <span class="text-white ">Общая информация</span>
-                                                    <span class="float-right">
-                                                            {penalty_button penalty_block='personal'}
-                                                        {*
-                                                        <a href="javascript:void(0);"
-                                                           class=" text-white js-edit-form js-event-add-click"
-                                                           data-event="32" data-manager="{$manager->id}"
-                                                           data-order="{$order->order_id}"
-                                                           data-user="{$order->user_id}"><i
-                                                                    class=" fas fa-edit"></i></a>*}
-                                                        </span>
                                                 </h6>
 
                                                 <div class="row pt-2 view-block {if $contactdata_error}hide{/if}">
@@ -4171,6 +4214,105 @@
             </div>
         </div>
     </div>
+    <div id="edit_fio_modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Выберите параметры для реструктуризации</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <form id="fio_form">
+                        <input type="hidden" name="action" value="personal_edit">
+                        <input type="hidden" name="order_id" value="{$order->order_id}">
+                        <input type="hidden" name="user_id" value="{$order->user_id}">
+                        <div class="form-group" style="display:flex; flex-direction: column">
+                            <div class="form-group">
+                                <label>Фамилия</label>
+                                <input type="text" name="lastname" value="{$order->lastname}"
+                                       class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Имя</label>
+                                <input type="text" name="firstname" value="{$order->firstname}"
+                                       class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Отчество</label>
+                                <input type="text" name="patronymic" value="{$order->patronymic}"
+                                       class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Дата рождения</label>
+                                <input class="form-control" name="birth" value="{$order->birth|date}"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Место рождения</label>
+                                <input type="text" name="birth_place" value="{$order->birth_place}"
+                                       class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Паспорт: серия/номер</label>
+                                <input type="text" name="passport_serial" value="{$order->passport_serial}"
+                                       class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Паспорт: Дата выдачи</label>
+                                <input name="passport_date" value="{$order->passport_date|date}" class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Паспорт: Код подразделения</label>
+                                <input type="text" name="subdivision_code" value="{$order->subdivision_code}"
+                                       class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Паспорт: Кем выдан</label>
+                                <textarea name="passport_issued"
+                                          class="form-control">{$order->passport_issued}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>ИНН</label>
+                                <input type="text" name="inn" value="{$order->inn}"
+                                       class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label>СНИЛС</label>
+                                <input type="text" name="snils" value="{$order->snils}"
+                                       class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Адрес прописки</label>
+                                <textarea name="regaddress"
+                                          class="form-control">{$order->regaddress->adressfull}</textarea>
+                                <input type="hidden" class="Registration">
+                            </div>
+                            <div class="form-group">
+                                <label>Адрес проживания</label>
+                                <textarea name="faktaddress"
+                                          class="form-control">{$order->faktaddress->adressfull}</textarea>
+                                <input type="hidden" class="Faktadres">
+                            </div>
+                            <div class="form-group">
+                                <label>Номер клиента</label>
+                                <input type="text" name="personal_number" value="{$order->personal_number}"
+                                       class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Причина редактирования</label>
+                                <textarea name="comment"
+                                          class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div>
+                            <input type="button" class="btn btn-danger cancel" data-dismiss="modal" value="Отмена">
+                            <input type="button" class="btn btn-success float-right save_fio" value="Сохранить">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="sms_confirm_modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
          aria-labelledby="mySmallModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-md">
@@ -4212,7 +4354,6 @@
             </div>
         </div>
     </div>
-
     <script>
         class ItcAccordion {
             constructor(target, config) {
