@@ -420,10 +420,6 @@ $(function () {
 
                     for (let key in resp['loantypes']) {
 
-                        if (resp['loantypes'][key]['online_flag'] == 1)
-                            continue;
-
-
                         $('#pricelist').append(
                             '<div class="price_container">' +
                             '<div class="price_basic" data-loan-period="' + resp['loantypes'][key]['max_period'] + '"' +

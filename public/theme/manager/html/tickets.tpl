@@ -368,6 +368,10 @@
                                                                 <small class="label label-success">Исполнено</small>
                                                                 <br>
                                                             {/if}
+                                                            {if $ticket->status == 7}
+                                                                <small class="label label-danger">Отказ</small>
+                                                                <br>
+                                                            {/if}
                                                         {/if}
                                                         {if $ticket->new == 1}
                                                             <small class="blink">Новый!</small>

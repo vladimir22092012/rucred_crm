@@ -943,7 +943,9 @@ class OfflineOrderController extends Controller
 
         $this->orders->update_order($order_id, ['status' => 20]);
 
-        $this->tickets->update_by_theme_id(11, ['status' => 7], $order_id);
+        $this->tickets->update_by_theme_id(18, ['status' => 7], $order_id);
+        $this->tickets->update_by_theme_id(8, ['status' => 7], $order_id);
+        $this->tickets->update_by_theme_id(48, ['status' => 7], $order_id);
 
         $communication_theme = $this->CommunicationsThemes->get(47);
 
@@ -3171,7 +3173,7 @@ class OfflineOrderController extends Controller
         $order = $this->orders->get_order($order_id);
         $this->orders->update_order($order_id, ['status' => 14]);
         $communication_theme = $this->CommunicationsThemes->get(11);
-        $this->tickets->update_by_theme_id(18, ['status' => 7], $order_id);
+        $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
 
         $ticket =
             [
@@ -3207,8 +3209,6 @@ class OfflineOrderController extends Controller
             ];
 
         $this->NotificationsCron->add($cron);
-
-        $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
 
         $this->eventlogs->add_log(array(
             'event_id' => 72,
@@ -3272,8 +3272,6 @@ class OfflineOrderController extends Controller
             ];
 
         $this->NotificationsClientsCron->add($cron);
-
-        $this->tickets->update_by_theme_id(8, ['status' => 4], $order_id);
 
         $this->eventlogs->add_log(array(
             'event_id' => 71,

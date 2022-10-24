@@ -21,8 +21,7 @@ class GraphicConstructorController extends Controller
             $group_id = $this->request->get('group_id');
             $permission = $this->request->get('permission');
 
-            switch ($permission)
-            {
+            switch ($permission) {
                 case 'all':
                     $flag = 3;
                     $search =
@@ -191,6 +190,12 @@ class GraphicConstructorController extends Controller
         $annoouitet_pay = $amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
         $annoouitet_pay = round($annoouitet_pay, '2');
 
+        if($loan_id == 1) {
+            $percent_per_month = (($percent / 100) * 360) / 12;
+            $annoouitet_pay = $amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
+            $annoouitet_pay = round($annoouitet_pay, '2');
+        }
+
         $iteration = 0;
 
         $count_days_this_month = date('t', strtotime($start_date->format('Y-m-d')));
@@ -205,7 +210,7 @@ class GraphicConstructorController extends Controller
             $iteration++;
 
         } elseif (date_diff($paydate, $start_date)->days < $loan->min_period) {
-            $sum_pay = ($percent / 100) * $amount* date_diff($paydate, $start_date)->days;
+            $sum_pay = ($percent / 100) * $amount * date_diff($paydate, $start_date)->days;
             $loan_percents_pay = $sum_pay;
             $body_pay = 0.00;
         } elseif (date_diff($paydate, $start_date)->days >= $loan->min_period && date_diff($paydate, $start_date)->days < $count_days_this_month) {
@@ -375,15 +380,10 @@ class GraphicConstructorController extends Controller
 
         $settlement_id = 2;
 
-        if ($settlement_id == 3 && date('H') > 14)
-            $probably_start_date = date('Y-m-d', strtotime('+1 days'));
-
-        if ($settlement_id == 2) {
-            if (date('H') > 14)
-                $probably_start_date = date('Y-m-d', strtotime('+2 days'));
-            else
-                $probably_start_date = date('Y-m-d', strtotime('+1 days'));
-        }
+        if (date('H') >= 14)
+            $probably_start_date = date('Y-m-d', strtotime($date_from.'+2 days'));
+        else
+            $probably_start_date = date('Y-m-d', strtotime($date_from.'+1 days'));
 
         $check_date = $this->WeekendCalendar->check_date($probably_start_date);
 
@@ -394,11 +394,11 @@ class GraphicConstructorController extends Controller
 
                 if (empty($check_date)) {
                     if ($settlement_id == 2) {
-                        if (date('H') > 14)
+                        if (date('H') >= 14)
                             $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
                     }
                     break;
-                }else{
+                } else {
                     $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
                 }
             }
@@ -455,8 +455,7 @@ class GraphicConstructorController extends Controller
     {
         $permission = $this->request->post('permission');
 
-        switch ($permission)
-        {
+        switch ($permission) {
             case 'online':
                 $blocked = ['all', 'online'];
                 break;
