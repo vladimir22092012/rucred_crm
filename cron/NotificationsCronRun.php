@@ -58,8 +58,24 @@ class NotificationsCronRun extends Core
             $managers = $this->managers->get_managers(['role' => $roles_name]);
 
             foreach ($managers as $manager) {
-                if ($manager->role == 'employer' && $ticket->group_id != $manager->group_id)
-                    continue;
+                if ($manager->role == 'employer')
+                {
+                    $skip = 1;
+
+                    $managers_companies = $this->ManagersEmployers->get_records($manager->id);
+
+                    if(empty($managers_companies))
+                        continue;
+
+                    foreach ($managers_companies as $company_id => $company_name)
+                    {
+                        if($ticket->company_id == $company_id)
+                            $skip = 0;
+                    }
+
+                    if($skip == 1)
+                        continue;
+                }
 
                 if ($manager->telegram_note == 1) {
                     $this->telegram_note($manager->id, $ticket, 1);
