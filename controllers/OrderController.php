@@ -1881,7 +1881,7 @@ class OrderController extends Controller
         $this->Addresses->update_address($old_user->regaddress_id, $regaddress);
         $this->Addresses->update_address($old_user->faktaddress_id, $faktaddress);
 
-        $update = array(
+        $new_values = array(
             'Имя' => $lastname,
             'Фамилия' => $firstname,
             'Отчество' => $patronymic,
@@ -1915,67 +1915,67 @@ class OrderController extends Controller
         );
 
         if ($old_user->lastname == $lastname) {
-            unset($update['Имя']);
+            unset($new_values['Имя']);
             unset($old_values['Имя']);
         }
 
         if ($old_user->firstname == $firstname) {
-            unset($update['Фамилия']);
+            unset($new_values['Фамилия']);
             unset($old_values['Фамилия']);
         }
 
         if ($old_user->patronymic == $patronymic) {
-            unset($update['Отчество']);
+            unset($new_values['Отчество']);
             unset($old_values['Отчество']);
         }
 
         if (strtotime($old_user->birth )== strtotime($birth)) {
-            unset($update['Дата рождения']);
+            unset($new_values['Дата рождения']);
             unset($old_values['Дата рождения']);
         }
 
         if ($old_user->birth_place == $birth_place) {
-            unset($update['Место рождения']);
+            unset($new_values['Место рождения']);
             unset($old_values['Место рождения']);
         }
 
         if ($old_user->passport_serial == $passport_serial) {
-            unset($update['Серия и номер паспорта']);
+            unset($new_values['Серия и номер паспорта']);
             unset($old_values['Серия и номер паспорта']);
         }
 
         if (strtotime($old_user->passport_date) == strtotime($passport_date)) {
-            unset($update['Дата выдачи паспорта']);
+            unset($new_values['Дата выдачи паспорта']);
             unset($old_values['Дата выдачи паспорта']);
         }
 
         if ($old_user->subdivision_code == $subdivision_code) {
-            unset($update['Код подразделения']);
+            unset($new_values['Код подразделения']);
             unset($old_values['Код подразделения']);
         }
 
         if ($old_user->passport_issued == $passport_issued) {
-            unset($update['Кем выдан паспорт']);
+            unset($new_values['Кем выдан паспорт']);
             unset($old_values['Кем выдан паспорт']);
         }
 
         if ($old_user->inn == $inn) {
-            unset($update['ИНН']);
+            unset($new_values['ИНН']);
             unset($old_values['ИНН']);
         }
 
         if ($old_user->snils == $snils) {
-            unset($update['СНИЛС']);
+            unset($new_values['СНИЛС']);
             unset($old_values['СНИЛС']);
         }
 
         if ($old_regaddress->adressfull == $regaddress['adressfull']) {
-            unset($update['Адрес регистрации']);
+            unset($new_values['Адрес регистрации']);
             unset($old_values['Адрес регистрации']);
         }
 
         if ($old_faktaddress->adressfull == $faktaddress['adressfull']) {
-            unset($update['Адрес проживания']);
+            unset($new_values['Адрес проживания']);
             unset($old_values['Адрес проживания']);
         }
 
@@ -1984,10 +1984,32 @@ class OrderController extends Controller
             'created' => date('Y-m-d H:i:s'),
             'type' => 'fio',
             'old_values' => serialize($old_values),
-            'new_values' => serialize($update),
+            'new_values' => serialize($new_values),
             'order_id' => $order_id,
             'user_id' => $user_id,
         ));
+
+        $update = [];
+
+        $keys =
+            [
+                'Имя' => 'lastname',
+                'Фамилия' => 'firstname',
+                'Отчество' => 'patronymic',
+                'Дата рождения' => 'birth',
+                'Место рождения' => 'birth_place',
+                'Серия и номер паспорта' => 'passport_serial',
+                'Дата выдачи паспорта' => 'passport_date',
+                'Код подразделения' => 'subdivision_code',
+                'Кем выдан паспорт' => 'passport_issued',
+                'ИНН' => 'inn',
+                'СНИЛС' => 'snils',
+            ];
+
+        foreach ($new_values as $key => $value)
+        {
+            $update[$keys[$key]] = $value;
+        }
 
         $this->users->update_user($user_id, $update);
 
