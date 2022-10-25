@@ -3504,7 +3504,7 @@ class OfflineOrderController extends Controller
 
             $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days, 2);
             $sum_pay = $annoouitet_pay + $plus_loan_percents;
-            $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2);
+            $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2, PHP_ROUND_HALF_DOWN);
             $body_pay = $sum_pay - $loan_percents_pay;
             $paydate->add(new DateInterval('P1M'));
 
@@ -3543,7 +3543,6 @@ class OfflineOrderController extends Controller
                 'rest_pay' => $rest_sum -= $body_pay
             ];
         $paydate->add(new DateInterval('P1M'));
-
 
         $period = $loan->max_period;
         $period -= $iteration;
