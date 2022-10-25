@@ -2008,7 +2008,8 @@ class OrderController extends Controller
 
         foreach ($new_values as $key => $value)
         {
-            $update[$keys[$key]] = $value;
+            if(isset($keys[$key]))
+                $update[$keys[$key]] = $value;
         }
 
         $this->users->update_user($user_id, $update);
