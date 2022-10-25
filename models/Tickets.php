@@ -63,11 +63,7 @@ class Tickets extends Core
                 $theme = $this->db->placehold("AND theme_id = 0");
             }
         }
-
-        if ($manager_role == 'employer' && $in_out == 'in') {
-            $employer = $this->managers->get_manager($manager_id);
-            $out = $this->db->placehold("AND t.group_id = ?", $employer->group_id);
-        }
+        
 
         if ($in_out == 'archive') {
             $status = $this->db->placehold("AND t.status = 6");
