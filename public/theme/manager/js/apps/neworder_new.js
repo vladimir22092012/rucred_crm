@@ -684,6 +684,7 @@ $(function () {
 
                 $('.choose_user').on('click', function () {
                     let user_id = $(this).attr('data-user');
+                    /*
 
                     $('input[name="user_id"]').attr('value', user_id);
 
@@ -699,7 +700,7 @@ $(function () {
                         $('#users_same').fadeOut();
                         $('#users_same').empty();
                     }, 2000);
-
+                    */
 
                     $.ajax({
                         method: 'POST',
@@ -716,10 +717,22 @@ $(function () {
                             $('input[name="passport_date"]').val(user['passport_date']);
                             $('input[name="snils"]').val(user['snils']);
                             $('input[name="inn"]').val(user['inn']);
+                            $('input[name="snils"]').attr('readonly', true);
+                            $('input[name="inn"]').attr('readonly', true);
                             $('input[class="form-control account_number"]').val(user['requisites']['number']);
                             $('.bik').trigger('input').val(user['requisites']['bik']);
                             $('input[class="form-control bank_name"]').val(user['requisites']['name']);
                             $('input[class="form-control cor"]').val(user['requisites']['correspondent_acc']);
+                            $('input[name="Regadressfull"]').val(user['regaddress']);
+                            $('input[name="actual_address"]').val(user['faktaddress']);
+
+                            if(user['fio_spouse'])
+                            {
+                                $('#sex1').trigger('click');
+                                $('input[name="fio_spouse[lastname]"]').val(user['spouse_lastname']);
+                                $('input[name="fio_spouse[firstname]"]').val(user['spouse_firstname']);
+                                $('input[name="fio_spouse[patronymic]"]').val(user['spouse_patronymic']);
+                            }
                         }
                     })
                 });

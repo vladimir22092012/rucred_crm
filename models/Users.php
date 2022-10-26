@@ -601,15 +601,19 @@ class Users extends Core
         if (isset($user['patronymic']))
             $patronymic = $this->db->placehold("AND patronymic = ?", $user['patronymic']);
 
+        $unformatted_birth = $user['birth'];
+        $formatted_birth = date('Y-m-d', strtotime($user['birth']));
+        $formatted_birth = implode('","', [(string)$formatted_birth, (string)$unformatted_birth]);
+        $formatted_birth = '("'.$formatted_birth.'")';
+
         $query = $this->db->placehold("
         SELECT *
         FROM s_users
         WHERE lastname = ?
-        AND firstname = ?
-        AND birth = ?
         $patronymic
-        ", $user['lastname'], $user['firstname'], $user['birth']);
-
+        AND firstname = ?
+        AND birth in $formatted_birth
+        ", $user['lastname'], $user['firstname']);
         $this->db->query($query);
 
         $results = $this->db->results();

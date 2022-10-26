@@ -67,17 +67,6 @@
                         <div class="col-xs-12">
                             <input class="form-control" type="password" required="" name="password" placeholder="Пароль"> </div>
                     </div>
-                    <div class="form-group">
-                        <div class="col-md-12">
-                            <div class="checkbox checkbox-primary float-left pt-0">
-                                <input id="checkbox-signup" type="checkbox" name="remember" value="1">
-                                <label for="checkbox-signup"> Запомнить меня </label>
-                            </div>
-                            {*}
-                            <a href="javascript:void(0)" id="to-recover" class="text-dark float-right"><i class="fa fa-lock mr-1"></i> Забыли пароль?</a>
-                            {*}
-                        </div>
-                    </div>
                     <div class="form-group text-center mt-3">
                         <div class="col-xs-12">
                             <button class="btn btn-outline-info btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">Войти</button>

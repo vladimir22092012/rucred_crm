@@ -105,7 +105,7 @@ class NeworderController extends Controller
             exit;
         }
 
-        if ($this->request->get('action') === 'check_same_users') {
+        if ($this->request->get('action') == 'check_same_users') {
 
             $user['lastname'] = $this->request->get('lastname');
             $user['firstname'] = $this->request->get('firstname');
@@ -1542,6 +1542,17 @@ class NeworderController extends Controller
         $passport_serial = explode(' ', $user->passport_serial);
         $user->passport_series = $passport_serial[0];
         $user->passport_number = $passport_serial[1];
+
+        $regaddress = $this->Addresses->get_address($user->regaddress_id);
+        $faktaddress = $this->Addresses->get_address($user->regaddress_id);
+
+        $user->regaddress = $regaddress->adressfull;
+        $user->faktaddress = $faktaddress->adressfull;
+
+        $fio_spouse = explode(' ', $user->fio_spouse);
+
+        $user->regaddress = $regaddress->adressfull;
+        $user->faktaddress = $faktaddress->adressfull;
 
         echo json_encode($user);
         exit;
