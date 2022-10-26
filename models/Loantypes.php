@@ -16,7 +16,7 @@ class Loantypes extends Core
                 $flag = $this->db->placehold("AND online_flag IN (2,3)");
 
             if($online_offline == 3)
-                $flag = $this->db->placehold("AND online_flag IN (3)");
+                $flag = $this->db->placehold("AND online_flag IN (1,2,3)");
         }
 
         $query = $this->db->placehold("
