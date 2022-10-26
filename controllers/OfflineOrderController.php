@@ -3893,7 +3893,7 @@ class OfflineOrderController extends Controller
                         'loan_body_pay' => $body_pay,
                         'loan_percents_pay' => $percent_pay,
                         'comission_pay' => $comission_amount,
-                        'rest_pay' => $new_loan - $body_pay,
+                        'rest_pay' => $new_loan
                     ];
 
                 $last_date = $date;
@@ -3916,7 +3916,7 @@ class OfflineOrderController extends Controller
 
             $i++;
         }
-
+        
         if (empty($branch_id)) {
             $user = (array)$this->users->get_user($order->user_id);
             $change_employer = 0;
