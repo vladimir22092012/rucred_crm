@@ -132,14 +132,13 @@ class NeworderController extends Controller
 
         $groups = $this->Groups->get_groups();
 
-        foreach ($groups as $key => $group)
-        {
-            if(in_array($group->blocked, ['online', 'nowhere']))
+        foreach ($groups as $key => $group) {
+            if (in_array($group->blocked, ['online', 'nowhere']))
                 unset($groups[$key]);
 
             $flag = $this->GroupLoanTypes->gets(['group_id' => $group->id, 'on_off_flag' => 1]);
 
-            if(empty($flag))
+            if (empty($flag))
                 unset($groups[$key]);
         }
 
@@ -262,7 +261,7 @@ class NeworderController extends Controller
         if (!empty($credits_story)) {
             foreach ($credits_story as $credit) {
                 $credit['credits_month_pay'] = preg_replace("/[^,.0-9]/", '', $credit['credits_month_pay']);
-                $credit['credits_rest_sum']  = preg_replace("/[^,.0-9]/", '', $credit['credits_rest_sum']);
+                $credit['credits_rest_sum'] = preg_replace("/[^,.0-9]/", '', $credit['credits_rest_sum']);
 
                 if (!empty($credit['credits_month_pay']) && $credit['credits_delay'] == 'Нет')
                     $sum_credits_pay += $credit['credits_month_pay'];
@@ -701,10 +700,10 @@ class NeworderController extends Controller
                             if (empty($check_date)) {
                                 if ($settlement_id == 2) {
                                     if (date('H') >= 14)
-                                    $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
+                                        $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
                                 }
                                 break;
-                            }else{
+                            } else {
                                 $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
                             }
                         }
@@ -851,8 +850,7 @@ class NeworderController extends Controller
                         $rest_sum = round($rest_sum - $loan_body_pay, 2);
                     }
 
-                    if(isset($payment_schedule[$date->format('d.m.Y')]))
-                    {
+                    if (isset($payment_schedule[$date->format('d.m.Y')])) {
 
                         $date = $this->add($date->format('d.m.Y'), 2);
                         $paydate->setDate($date->format('Y'), $date->format('m'), $first_pay_day);
@@ -970,7 +968,7 @@ class NeworderController extends Controller
 
                     $old_orders = $this->orders->get_orders(['user_id' => $user_id]);
 
-                    if(count($old_orders) > 1){
+                    if (count($old_orders) > 1) {
                         $this->users->update_user($user_id, ['regaddress_id' => 0, 'faktaddress_id' => 0]);
                     }
 
@@ -1043,7 +1041,7 @@ class NeworderController extends Controller
 
                     $old_orders = $this->orders->get_orders(['user_id' => $user_id]);
 
-                    if(count($old_orders) > 1){
+                    if (count($old_orders) > 1) {
                         $this->users->update_user($user_id, ['regaddress_id' => 0, 'faktaddress_id' => 0]);
                     }
 
@@ -1530,12 +1528,11 @@ class NeworderController extends Controller
 
         $requisites = $this->Requisites->getDefault($user_id);
 
-        if(!empty($requisites))
-        {
+        if (!empty($requisites)) {
             $user_fio = "$user->lastname $user->firstname $user->patronymic";
             $requisites_fio = $requisites->holder;
 
-            if($user_fio == $requisites_fio)
+            if ($user_fio == $requisites_fio)
                 $user->requisites = $requisites;
         }
 
@@ -1550,9 +1547,14 @@ class NeworderController extends Controller
         $user->faktaddress = $faktaddress->adressfull;
 
         $fio_spouse = explode(' ', $user->fio_spouse);
+        $user->spouse_lastname = $fio_spouse[0];
+        $user->spouse_firstname = $fio_spouse[1];
+        $user->spouse_patronymic = $fio_spouse[2];
 
         $user->regaddress = $regaddress->adressfull;
         $user->faktaddress = $faktaddress->adressfull;
+
+        $user->contacts = $this->Contacts->get_contacts($user->id);
 
         echo json_encode($user);
         exit;
@@ -1619,8 +1621,7 @@ class NeworderController extends Controller
         // We extract the day of the month again so we can compare
         $end_day = $date->format('j');
 
-        if ($start_day != $end_day)
-        {
+        if ($start_day != $end_day) {
             // The day of the month isn't the same anymore, so we correct the date
             $date->modify('last day of last month');
         }

@@ -724,14 +724,39 @@ $(function () {
                             $('input[class="form-control bank_name"]').val(user['requisites']['name']);
                             $('input[class="form-control cor"]').val(user['requisites']['correspondent_acc']);
                             $('input[name="Regadressfull"]').val(user['regaddress']);
-                            $('input[name="actual_address"]').val(user['faktaddress']);
+                            $('input[name="Faktadressfull"]').val(user['faktaddress']);
+                            $('input[name="phone"]').val(user['phone_mobile']);
+                            $('input[name="birth_place"]').val(user['birth_place']);
 
-                            if(user['fio_spouse'])
-                            {
+                            if (user['fio_spouse']) {
                                 $('#sex1').trigger('click');
                                 $('input[name="fio_spouse[lastname]"]').val(user['spouse_lastname']);
                                 $('input[name="fio_spouse[firstname]"]').val(user['spouse_firstname']);
                                 $('input[name="fio_spouse[patronymic]"]').val(user['spouse_patronymic']);
+                                $('input[name="phone_spouse"]').val(user['phone_spouse']);
+                            }
+
+                            if (user['contacts']) {
+                                for (let contact of user['contacts']) {
+                                    $('input[name="'+contact['type']+'"]').val(contact['value']);
+                                }
+                            }
+
+                            $('input[name="income_medium"]').val(user['income']);
+                            $('input[name="outcome_medium"]').val(user['expenses']);
+                            $('input[name="dependents"]').val(user['dependents']);
+
+                            if(user['foreign_flag'] == 1)
+                                $('#foreign2').trigger('click');
+                            if(user['foreign_husb_wife'] == 1)
+                            {
+                                $('#foreign_husb_wife2').trigger('click');
+                                $('input[name="fio_public_spouse"]').val(user['fio_public_spouse']);
+                            }
+                            if(user['foreign_relative'] == 1)
+                            {
+                                $('#foreign_relative2').trigger('click');
+                                $('input[name="fio_relative"]').val(user['fio_relative']);
                             }
                         }
                     })
