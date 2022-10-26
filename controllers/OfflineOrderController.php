@@ -3916,7 +3916,7 @@ class OfflineOrderController extends Controller
 
             $i++;
         }
-        
+
         if (empty($branch_id)) {
             $user = (array)$this->users->get_user($order->user_id);
             $change_employer = 0;

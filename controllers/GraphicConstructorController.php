@@ -183,7 +183,7 @@ class GraphicConstructorController extends Controller
         $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date->format('Y-m-d'))));
         $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
 
-        if ($start_date > $paydate)
+        if ($start_date >= $paydate)
             $paydate->add(new DateInterval('P1M'));
 
         $percent_per_month = (($percent / 100) * 365) / 12;
@@ -201,7 +201,6 @@ class GraphicConstructorController extends Controller
         $count_days_this_month = date('t', strtotime($start_date->format('Y-m-d')));
 
         if (date_diff($paydate, $start_date)->days <= $loan->free_period) {
-
             $plus_loan_percents = round(($percent / 100) * $amount * date_diff($paydate, $start_date)->days, 2);
             $sum_pay = $annoouitet_pay + $plus_loan_percents;
             $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2, PHP_ROUND_HALF_DOWN);
@@ -221,10 +220,16 @@ class GraphicConstructorController extends Controller
             $body_pay = $sum_pay - $loan_percents_pay;
             $iteration++;
         } elseif (date_diff($paydate, $start_date)->days >= $count_days_this_month) {
-            $sum_pay = $annoouitet_pay;
-            $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
-            $body_pay = round($sum_pay - $loan_percents_pay, 2);
-            $iteration++;
+            if ($loan->id == 1) {
+                $body_pay = $rest_sum;
+                $loan_percents_pay = $amount * ($percent/100) * date_diff($paydate, $start_date)->days;
+                $sum_pay = $body_pay + $loan_percents_pay;
+            }else{
+                $sum_pay = $annoouitet_pay;
+                $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
+                $body_pay = round($sum_pay - $loan_percents_pay, 2);
+                $iteration++;
+            }
         } else {
             $sum_pay = ($percent / 100) * $amount * date_diff($paydate, $start_date)->days;
             $loan_percents_pay = $sum_pay;
