@@ -3893,7 +3893,7 @@ class OfflineOrderController extends Controller
                         'loan_body_pay' => $body_pay,
                         'loan_percents_pay' => $percent_pay,
                         'comission_pay' => $comission_amount,
-                        'rest_pay' => $new_loan - $body_pay,
+                        'rest_pay' => $new_loan
                     ];
 
                 $last_date = $date;
