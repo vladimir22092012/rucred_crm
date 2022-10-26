@@ -190,7 +190,7 @@ class GraphicConstructorController extends Controller
         $annoouitet_pay = $amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
         $annoouitet_pay = round($annoouitet_pay, '2');
 
-        if($loan_id == 1) {
+        if ($loan_id == 1) {
             $percent_per_month = (($percent / 100) * 360) / 12;
             $annoouitet_pay = $amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -1)));
             $annoouitet_pay = round($annoouitet_pay, '2');
@@ -253,9 +253,14 @@ class GraphicConstructorController extends Controller
                 $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
                 $date = $this->check_pay_date($paydate);
 
-                if ($i == $period) {
+                if ($i == $period && $loan->id != 1) {
                     $loan_body_pay = $rest_sum;
                     $loan_percents_pay = $annoouitet_pay - $loan_body_pay;
+                    $rest_sum = 0.00;
+                } elseif ($loan->id == 1) {
+                    $loan_body_pay = $rest_sum;
+                    $loan_percents_pay = $amount * ($percent/100) * date_diff($start_date, $date)->days - $loan_percents_pay;
+                    $annoouitet_pay = $loan_body_pay + $loan_percents_pay;
                     $rest_sum = 0.00;
                 } else {
                     $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
@@ -439,7 +444,7 @@ class GraphicConstructorController extends Controller
                 break;
 
             default:
-                $blocked = '';
+                $blocked = ['all', 'offline', 'online', 'nowhere'];
                 break;
         }
 

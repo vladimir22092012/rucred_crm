@@ -118,6 +118,20 @@ class IndexController extends Controller
             if(!empty($themes_id)){
                 $themes_id = implode(',', $themes_id);
 
+                $permissions = '';
+
+                if ($this->manager->role == 'employer') {
+                    $companies_id = [];
+
+                    $managers_companies = $this->ManagersEmployers->get_records($this->manager->id);
+
+                    foreach ($managers_companies as $company_id => $company_name)
+                        $companies_id[] = $company_id;
+
+                    $permissions = implode(',', $companies_id);
+                    $permissions = $this->db->placehold("AND company_id in ($permissions)");
+                }
+
                 $query = $this->db->placehold("
             SELECT COUNT(*) as `count`
             FROM s_tickets
@@ -125,6 +139,7 @@ class IndexController extends Controller
             and status != 6
             and theme_id in ($themes_id)
             and created > ? 
+            $permissions
             and not exists (SELECT *
             FROM s_tickets_notifications
             WHERE ticket_id = s_tickets.id

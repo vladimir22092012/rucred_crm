@@ -33,7 +33,7 @@ class Tickets extends Core
         $executor = '';
         $creator = '';
 
-        if($status == 'false')
+        if ($status == 'false')
             $status = $this->db->placehold("AND t.status != 6");
         else
             $status = $this->db->placehold("AND t.status = ?", $status);
@@ -62,12 +62,22 @@ class Tickets extends Core
             } else {
                 $theme = $this->db->placehold("AND theme_id = 0");
             }
+
+            if ($manager_role == 'employer') {
+                $companies_id = [];
+
+                $manager = $this->managers->get_manager($manager_id);
+
+                $managers_companies = $this->ManagersEmployers->get_records($manager->id);
+
+                foreach ($managers_companies as $company_id => $company_name)
+                    $companies_id[] = $company_id;
+
+                $manager = implode(',', $companies_id);
+                $manager = $this->db->placehold("AND company_id in ($manager)");
+            }
         }
 
-        if ($manager_role == 'employer' && $in_out == 'in') {
-            $employer = $this->managers->get_manager($manager_id);
-            $out = $this->db->placehold("AND t.group_id = ?", $employer->group_id);
-        }
 
         if ($in_out == 'archive') {
             $status = $this->db->placehold("AND t.status = 6");
@@ -152,7 +162,7 @@ class Tickets extends Core
         $this->db->query($query);
         $ticket = $this->db->result();
 
-        if(empty($ticket))
+        if (empty($ticket))
             return null;
 
         $query = $this->db->placehold("
