@@ -602,6 +602,8 @@ class NeworderController extends Controller
 
             $this->Contacts->add($contact);
 
+            if(isset($user['faktaddress_id']))
+
             $this->users->update_user($user_id, $user);
             $this->UserContactPreferred->delete($user_id);
 
@@ -814,7 +816,7 @@ class NeworderController extends Controller
                 $loan_percents_pay = $sum_pay;
                 $body_pay = 0.00;
             } elseif (date_diff($paydate, $start_date)->days >= $loan->min_period && date_diff($paydate, $start_date)->days < $count_days_this_month) {
-                $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($paydate, $start_date)->days - 1);
+                $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($paydate, $start_date)->days);
                 $sum_pay = $annoouitet_pay - round($minus_percents, 2);
                 $loan_percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
                 $loan_percents_pay = round($loan_percents_pay, 2, PHP_ROUND_HALF_DOWN);
