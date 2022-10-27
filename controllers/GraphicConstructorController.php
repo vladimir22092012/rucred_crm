@@ -223,6 +223,7 @@ class GraphicConstructorController extends Controller
         } elseif (date_diff($paydate, $start_date)->days >= $count_days_this_month) {
             if ($loan->id == 1) {
                 $body_pay = $rest_sum;
+                $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
                 $loan_percents_pay = $amount * ($percent/100) * date_diff($paydate, $start_date)->days;
                 $sum_pay = $body_pay + $loan_percents_pay;
             }else{
