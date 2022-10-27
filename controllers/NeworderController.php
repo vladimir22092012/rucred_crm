@@ -372,6 +372,7 @@ class NeworderController extends Controller
 
 
         $user['email'] = trim((string)$this->request->post('email'));
+
         $user['gender'] = trim((string)$this->request->post('gender'));
         $user['birth'] = trim((string)$this->request->post('birth'));
 
@@ -589,6 +590,17 @@ class NeworderController extends Controller
                 $this->Addresses->update_address($old_user->faktaddress_id, $faktaddress);
             else
                 $user['faktaddress_id'] = $this->Addresses->add_address($faktaddress);
+
+            $this->Contacts->delete($old_user->id);
+
+            $contact =
+                [
+                    'user_id' => $old_user->id,
+                    'type'    => 'email',
+                    'value'   => $user['email']
+                ];
+
+            $this->Contacts->add($contact);
 
             $this->users->update_user($user_id, $user);
             $this->UserContactPreferred->delete($user_id);

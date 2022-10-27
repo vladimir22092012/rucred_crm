@@ -25,4 +25,13 @@ class Contacts extends Core
 
         $this->db->query($query);
     }
+
+    public function add($contact)
+    {
+        $query = $this->db->placehold("
+            INSERT INTO s_contacts SET ?%
+        ", $contact);
+        $this->db->query($query);
+        return $this->db->insert_id();
+    }
 }
