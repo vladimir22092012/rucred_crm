@@ -1043,7 +1043,7 @@
                                         <h4>Являетесь ли вы иностранным публичным должностным лицом?</h4><br>
                                         <div class="form-check" style="margin-left: 30px">
                                             <input class="form-check-input" type="radio" name="foreign"
-                                                   id="foreign1" value="1" checked>
+                                                   id="foreign1" value="0" checked>
                                             <label class="form-check-label" for="foreign1">
                                                 Нет
                                             </label>
@@ -1062,7 +1062,7 @@
                                             лица?</h4><br>
                                         <div class="form-check" style="margin-left: 30px">
                                             <input class="form-check-input" type="radio" name="foreign_husb_wife"
-                                                   id="foreign_husb_wife1" checked value="1">
+                                                   id="foreign_husb_wife1" checked value="0">
                                             <label class="form-check-label" for="foreign_husb_wife1">
                                                 Нет
                                             </label>
@@ -1088,7 +1088,7 @@
                                             лица?</h4><br>
                                         <div class="form-check" style="margin-left: 30px">
                                             <input class="form-check-input" type="radio" name="foreign_relative"
-                                                   id="foreign_relative1" checked value="1">
+                                                   id="foreign_relative1" checked value="0">
                                             <label class="form-check-label" for="foreign_relative1">
                                                 Нет
                                             </label>

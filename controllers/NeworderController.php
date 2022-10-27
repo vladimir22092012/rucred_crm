@@ -602,6 +602,30 @@ class NeworderController extends Controller
 
             $this->Contacts->add($contact);
 
+            if(isset($user['telegram_num']))
+            {
+                $contact =
+                    [
+                        'user_id' => $old_user->id,
+                        'type'    => 'telegram',
+                        'value'   => $user['telegram_num']
+                    ];
+
+                $this->Contacts->add($contact);
+            }
+
+            if(isset($user['viber_num']))
+            {
+                $contact =
+                    [
+                        'user_id' => $old_user->id,
+                        'type'    => 'viber',
+                        'value'   => $user['viber_num']
+                    ];
+
+                $this->Contacts->add($contact);
+            }
+
             if(isset($user['faktaddress_id']))
 
             $this->users->update_user($user_id, $user);
