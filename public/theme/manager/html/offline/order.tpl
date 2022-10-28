@@ -1977,7 +1977,7 @@
                                         {/if}
                                     </div>
                                     {if $order->status == 4}
-                                        {if in_array($manager->role, ['developer', 'admin', 'middle', 'employer'])}
+                                        {if in_array($manager->role, ['developer', 'admin', 'employer'])}
                                             <div>
                                                 <button class="btn btn-success btn-block accept-order warning_asp"
                                                         data-tooltip="Подтвердите нахождение сотрудника в данной организации"
