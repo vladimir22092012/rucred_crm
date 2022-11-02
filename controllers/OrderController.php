@@ -4173,7 +4173,7 @@ class OrderController extends Controller
                 $default_requisit = $requisit;
         }
 
-        $description = "Оплата по договору микрозайма № $contract->number от $order->probably_start_date
+        $description = "Оплата по договору микрозайма № $contract->number от $order->date
             // заемщик $fio ИНН $order->inn. Без налога (НДС)";
 
         $transaction =
