@@ -27,7 +27,7 @@ class DocumentController extends Controller
 
         $settlement = $this->OrganisationSettlements->get_settlement($document->params->settlement_id);
         $order = $this->orders->get_order($document->params->order_id);
-        $contracts = $this->contracts->get_contracts(['order_id' => $document->params->order_id]);
+        $contracts = $this->contracts->get_contracts(['user_id' => $document->params->user_id, 'status' => [2,3,4]]);
         //заглушка для документов с неполными данными
         $isPlug = false;
         try {
@@ -45,7 +45,7 @@ class DocumentController extends Controller
         }
 
         if (!empty($contracts)) {
-            $count_contracts = count($contracts);
+            $count_contracts = count($contracts) + 1;
             $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
         } else {
             $count_contracts = '01';

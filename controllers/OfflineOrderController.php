@@ -3511,7 +3511,7 @@ class OfflineOrderController extends Controller
             $iteration++;
 
         } elseif (date_diff($paydate, $start_date)->days < $loan->min_period) {
-            $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days;
+            $sum_pay = ($order['percent'] / 100) * $order['amount'] * (date_diff($paydate, $start_date)->days -1);
             $loan_percents_pay = $sum_pay;
             $body_pay = 0.00;
         } elseif (date_diff($paydate, $start_date)->days >= $loan->min_period && date_diff($paydate, $start_date)->days < $count_days_this_month) {
