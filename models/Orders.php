@@ -91,6 +91,7 @@ class Orders extends Core
                 o.sms,
                 o.settlement_id,
                 o.requisite_id,
+                o.is_archived,
                 u.UID AS user_uid,
                 u.service_sms,
                 u.service_insurance,
@@ -232,6 +233,7 @@ class Orders extends Core
         $employer_filter = '';
         $settlements_filter = '';
         $orders_source_filter = '';
+        $archived_filter = '';
 
         if (isset($filter['settlement_id']))
             $settlements_filter = $this->db->placehold("AND o.settlement_id = ?", $filter['settlement_id']);
@@ -254,6 +256,8 @@ class Orders extends Core
         }else{
             $status_filter = $this->db->placehold("AND o.status != 12");
         }
+
+        $archived_filter = $this->db->placehold("AND o.is_archived = ?", !empty($filter['archived']) ? $filter['archived'] : false);
 
         if (!empty($filter['order_source'])) {
             switch ($filter['order_source']) :
@@ -595,6 +599,7 @@ class Orders extends Core
                 $manager_id_filter
                 $settlements_filter
                 $orders_source_filter
+                $archived_filter
             ORDER BY $workout_sort $sort
             $sql_limit
         ");

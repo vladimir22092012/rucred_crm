@@ -31,6 +31,9 @@
             "App\\": "app/",
             "Api\\": "api/"
         },
-        "files": ["autoload.php"]
+        "files": [
+            "autoload.php",
+            "app/helpers.php"
+        ]
     }
 }
