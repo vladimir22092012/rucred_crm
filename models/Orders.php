@@ -257,7 +257,7 @@ class Orders extends Core
             $status_filter = $this->db->placehold("AND o.status != 12");
         }
 
-        $archived_filter = $this->db->placehold("AND o.is_archived = ?", !empty($filter['archived']) ? $filter['archived'] : false);
+        $archived_filter = $this->db->placehold("AND o.is_archived = ?", $filter['archived'] ?? false);
 
         if (!empty($filter['order_source'])) {
             switch ($filter['order_source']) :

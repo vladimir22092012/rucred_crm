@@ -9,7 +9,10 @@ class OfflineOrdersController extends Controller
         $filter = array();
 
         $filter['offline'] = 1;
+        $filter['archived'] = $this->request->get('archive') === 'true';
+
         $this->design->assign('offline', $filter['offline']);
+        $this->design->assign('archived', $filter['archived']);
 
         if (!($period = $this->request->get('period'))) {
             $period = 'all';
