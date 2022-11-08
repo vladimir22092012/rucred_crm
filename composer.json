@@ -41,7 +41,8 @@
             "Api\\": "api/"
         },
         "files": [
-            "autoload.php"
+            "autoload.php",
+            "app/helpers.php"
         ]
     },
     "config": {
