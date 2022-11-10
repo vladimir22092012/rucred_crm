@@ -684,7 +684,7 @@ $(function () {
 
                 $('.choose_user').on('click', function () {
                     let user_id = $(this).attr('data-user');
-                    /*
+
 
                     $('input[name="user_id"]').attr('value', user_id);
 
@@ -700,7 +700,7 @@ $(function () {
                         $('#users_same').fadeOut();
                         $('#users_same').empty();
                     }, 2000);
-                    */
+
 
                     $.ajax({
                         method: 'POST',
