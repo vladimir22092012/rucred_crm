@@ -3,7 +3,7 @@
 use PHPMailer\PHPMailer\PHPMailer;
 
 error_reporting(-1);
-ini_set('display_errors', 'On');
+ini_set('display_errors', 'Off');
 
 class OrderController extends Controller
 {
@@ -1862,20 +1862,27 @@ class OrderController extends Controller
 
         $old_user = $this->users->get_user($user_id);
 
-        $lastname           = trim($this->request->post('lastname'));
-        $firstname          = trim($this->request->post('firstname'));
-        $patronymic         = trim($this->request->post('patronymic'));
-        $birth              = trim($this->request->post('birth'));
-        $birth_place        = trim($this->request->post('birth_place'));
-        $passport_serial    = trim($this->request->post('passport_serial'));
-        $passport_serial    = str_replace('-', ' ', $passport_serial);
-        $passport_date      = trim($this->request->post('passport_date'));
-        $subdivision_code   = trim($this->request->post('subdivision_code'));
-        $passport_issued    = trim($this->request->post('passport_issued'));
-        $inn                = trim($this->request->post('inn'));
-        $snils              = trim($this->request->post('snils'));
+        $lastname = trim($this->request->post('lastname'));
+        $firstname = trim($this->request->post('firstname'));
+        $patronymic = trim($this->request->post('patronymic'));
+        $birth = trim($this->request->post('birth'));
+        $birth_place = trim($this->request->post('birth_place'));
+        $passport_serial = trim($this->request->post('passport_serial'));
+        $passport_serial = str_replace('-', ' ', $passport_serial);
+        $passport_date = trim($this->request->post('passport_date'));
+        $subdivision_code = trim($this->request->post('subdivision_code'));
+        $passport_issued = trim($this->request->post('passport_issued'));
+        $inn = trim($this->request->post('inn'));
+        $snils = trim($this->request->post('snils'));
+        $personalNumber = trim($this->request->post('personal_number'));
+        $profUnion = trim($this->request->post('profunion'));
 
-        $old_regaddress  = $this->Addresses->get_address($old_user->regaddress_id);
+        if (empty($profUnion))
+            $profUnion = 'Нет';
+        else
+            $profUnion = 'Да';
+
+        $old_regaddress = $this->Addresses->get_address($old_user->regaddress_id);
         $old_faktaddress = $this->Addresses->get_address($old_user->faktaddress_id);
 
         $this->Addresses->update_address($old_user->regaddress_id, $regaddress);
@@ -1895,8 +1902,15 @@ class OrderController extends Controller
             'СНИЛС' => $snils,
             'Адрес регистрации' => $regaddress['adressfull'],
             'Адрес проживания' => $faktaddress['adressfull'],
+            'Персональный номер' => $personalNumber,
+            'Профсоюз' => $profUnion,
             'Причина' => $comment
         );
+
+        if (empty($old_user->profunion))
+            $old_user->profunion = 'Нет';
+        else
+            $old_user->profunion = 'Да';
 
         $old_values = array(
             'Имя' => $old_user->lastname,
@@ -1911,12 +1925,19 @@ class OrderController extends Controller
             'ИНН' => $old_user->inn,
             'СНИЛС' => $old_user->snils,
             'Адрес регистрации' => $old_regaddress->adressfull,
-            'Адрес проживания' => $old_faktaddress->adressfull
+            'Адрес проживания' => $old_faktaddress->adressfull,
+            'Персональный номер' => $old_user->personal_number,
+            'Профсоюз' => $old_user->profunion,
         );
 
         if ($old_user->lastname == $lastname) {
             unset($new_values['Имя']);
             unset($old_values['Имя']);
+        }
+
+        if ($old_user->profunion == $profUnion) {
+            unset($new_values['Профсоюз']);
+            unset($old_values['Профсоюз']);
         }
 
         if ($old_user->firstname == $firstname) {
@@ -1929,7 +1950,12 @@ class OrderController extends Controller
             unset($old_values['Отчество']);
         }
 
-        if (strtotime($old_user->birth )== strtotime($birth)) {
+        if ($old_user->personal_number == $personalNumber) {
+            unset($new_values['Персональный номер']);
+            unset($old_values['Персональный номер']);
+        }
+
+        if (strtotime($old_user->birth) == strtotime($birth)) {
             unset($new_values['Дата рождения']);
             unset($old_values['Дата рождения']);
         }
@@ -2004,17 +2030,44 @@ class OrderController extends Controller
                 'Кем выдан паспорт' => 'passport_issued',
                 'ИНН' => 'inn',
                 'СНИЛС' => 'snils',
+                'Персональный номер' => 'personal_number',
+                'Профсоюз' => 'profunion'
             ];
 
-        foreach ($new_values as $key => $value)
-        {
-            if(isset($keys[$key]))
-                $update[$keys[$key]] = $value;
+        foreach ($new_values as $key => $value) {
+            if (isset($keys[$key])) {
+                if ($key == 'Профсоюз') {
+
+                    $order = OrdersORM::find($order_id);
+
+                    $loan_type_groups = $this->GroupLoanTypes->get_loantype_groups((int)$order->loan_type);
+
+                    $record = array();
+
+                    foreach ($loan_type_groups as $loantype_group) {
+                        if ($loantype_group['id'] == $order->group_id) {
+                            $record = $loantype_group;
+                        }
+                    }
+
+                    if ($value == 'Да') {
+                        $update[$keys[$key]] = 1;
+                        OrdersORM::find($order_id)->update(['percent' => (float)$record['preferential_percents']]);
+                    } else {
+                        $update[$keys[$key]] = 0;
+                        OrdersORM::find($order_id)->update(['percent' => (float)$record['standart_percents']]);
+                    }
+                } else
+                    $update[$keys[$key]] = $value;
+            }
         }
 
-        $this->users->update_user($user_id, $update);
+        UsersORM::find($user_id)->update($update);
 
-        echo json_encode(['success' => 'Заполните комментарий!']);
+        $this->action_reform_schedule($order_id);
+        $this->form_docs($order_id);
+
+        echo json_encode(['success' => 1]);
         exit;
     }
 
@@ -3046,10 +3099,9 @@ class OrderController extends Controller
 
     private function action_cors_change()
     {
-        $user_id = (int)$this->request->post('user_id');
-
         $requisite = $this->request->post('requisite');
         $this->requisites->update_requisite($requisite['id'], $requisite);
+        exit;
     }
 
     private function action_edit_schedule()
