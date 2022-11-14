@@ -3524,12 +3524,12 @@ class OrderController extends Controller
             $paydate = $this->check_pay_date($first_pay);
 
             if (date_diff($first_pay, $issuance_date)->days <= $loan->min_period) {
-                $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($first_pay, $issuance_date)->days;
+                $sum_pay = ($order['percent'] / 100) * $order['amount'] * (date_diff($first_pay, $issuance_date)->days -1);
                 $percents_pay = $sum_pay;
                 $body_pay = 0.00;
             }
             if (date_diff($first_pay, $issuance_date)->days > $loan->min_period && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
-                $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($first_pay, $issuance_date)->days);
+                $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - (date_diff($first_pay, $issuance_date)->days -1));
 
                 $sum_pay = $annoouitet_pay - $minus_percents;
                 $percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
