@@ -23,6 +23,8 @@ class ClientsController extends Controller
         if ($this->manager->role == 'employer')
             $filter['employer'] = $this->manager->group_id;
 
+        $filter['stage_filter'] = 1;
+
         $current_page = $this->request->get('page', 'integer');
         $current_page = max(1, $current_page);
         $this->design->assign('current_page_num', $current_page);
