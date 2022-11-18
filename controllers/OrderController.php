@@ -87,8 +87,8 @@ class OrderController extends Controller
                     $this->action_snils_change();
                     break;
 
-                case 'cors_change':
-                    $this->action_cors_change();
+                case 'requisites_edit':
+                    $this->action_requisites_edit();
                     break;
 
                 case 'cards':
@@ -3097,10 +3097,69 @@ class OrderController extends Controller
         $this->users->update_user($user_id, ['snils' => $snils_number]);
     }
 
-    private function action_cors_change()
+    private function action_requisites_edit()
     {
-        $requisite = $this->request->post('requisite');
-        $this->requisites->update_requisite($requisite['id'], $requisite);
+        $userId = $this->request->post('user_id');
+        $orderId = $this->request->post('order_id');
+        $hold = $this->request->post('hold');
+        $acc = $this->request->post('acc');
+        $bank = $this->request->post('bank');
+        $bik = $this->request->post('bik');
+        $cor = $this->request->post('cor');
+
+        $update =
+            [
+                'name' => $bank,
+                'bik'  => $bik,
+                'number' => $acc,
+                'holder' => $hold,
+                'correspondent_acc' => $cor
+            ];
+
+        $oldRequisites = RequisitesORM::where('user_id', $userId)
+            ->where('default', 1)
+            ->first()->toArray();
+
+        unset($oldRequisites['id']);
+        unset($oldRequisites['default']);
+        unset($oldRequisites['user_id']);
+
+        $newValues = array_diff($update, $oldRequisites);
+        $oldValues = array_intersect_key($oldRequisites, $newValues);
+
+        RequisitesORM::where('user_id', $userId)->update($newValues);
+
+        $translate =
+            [
+                'name' => "Наименование банка",
+                'bik'  => "Бик банка",
+                'number' => "Номер счета",
+                'holder' => "Держатель счета",
+                'correspondent_acc' => "Кор счет"
+            ];
+
+        foreach ($oldValues as $key => $value)
+        {
+            $oldValues[$translate[$key]] = $value;
+            unset($oldValues[$key]);
+        }
+
+        foreach ($newValues as $key => $value)
+        {
+            $newValues[$translate[$key]] = $value;
+            unset($newValues[$key]);
+        }
+
+        $this->changelogs->add_changelog(array(
+            'manager_id' => $this->manager->id,
+            'created' => date('Y-m-d H:i:s'),
+            'type' => 'requisites',
+            'old_values' => serialize($oldValues),
+            'new_values' => serialize($newValues),
+            'order_id' => $orderId,
+            'user_id' => $userId,
+        ));
+
         exit;
     }
 
