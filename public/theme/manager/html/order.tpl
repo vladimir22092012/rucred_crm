@@ -201,7 +201,7 @@
                         method: 'POST',
                         data: $form.serialize(),
                         success: function () {
-                            //location.reload();
+                            location.reload();
                         }
                     });
                 })
