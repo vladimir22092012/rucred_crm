@@ -207,7 +207,7 @@
                     $.ajax({
                         method: 'POST',
                         data: $form.serialize(),
-                        success: function (resp) {
+                        success: function () {
                             location.reload();
                         }
                     });
@@ -3178,11 +3178,9 @@
                                         <form class="mb-3 border js-order-item-form">
                                             <h6 class="card-header text-white">
                                                 <span>Расчетный счет</span>
-                                                {*
                                                     <span class="float-right"><a class="text-white cors-edit" href=""><i
                                                                     class=" fas fa-edit"></i></a>
                                                 </span>
-                                                *}
                                             </h6>
                                             {if $same_holder == 1}
                                                 <input type="hidden" name="action" value="cors_change"/>
@@ -4297,6 +4295,13 @@
                                 <label>Номер клиента</label>
                                 <input type="text" name="personal_number" value="{$order->personal_number}"
                                        class="form-control" disabled="disabled" readonly="readonly" />
+                            </div>
+                            <div class="form-group">
+                                <label>Состоит ли в профсоюзе</label>
+                                <select name="profunion" class="form-control">
+                                    <option value="0" {if $order->profunion == 0}selected{/if}>Нет</option>
+                                    <option value="1" {if $order->profunion == 1}selected{/if}>Да</option>
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label>Причина редактирования</label>
