@@ -179,8 +179,12 @@ class Users extends Core
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
         }
 
-        if (!empty($filter['stage_filter'])) {
+        if (!empty($filter['stage_filter']) && $filter['stage_filter'] = 1) {
             $stage_filter = $this->db->placehold("AND stage_registration != 8");
+        }
+
+        if (!empty($filter['stage_filter']) && $filter['stage_filter'] = 2) {
+            $stage_filter = $this->db->placehold("AND stage_registration = 8");
         }
 
         if (isset($filter['keyword'])) {
