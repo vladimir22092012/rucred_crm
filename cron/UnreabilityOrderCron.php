@@ -18,7 +18,7 @@ class UnreabilityOrderCron extends Core
 
         if (!empty($orders)) {
             foreach ($orders as $order) {
-                $now = new DateTime();
+                $now = new DateTime(date('Y-m-d'));
                 $createDate = new DateTime(date('Y-m-d', strtotime($order->date)));
 
                 if(date_diff($now, $createDate)->days > 3)
