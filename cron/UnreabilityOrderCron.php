@@ -27,3 +27,4 @@ class UnreabilityOrderCron extends Core
         }
     }
 }
+new UnreabilityOrderCron();
