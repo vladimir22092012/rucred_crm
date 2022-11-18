@@ -4296,7 +4296,7 @@
                             <div class="form-group">
                                 <label>Номер клиента</label>
                                 <input type="text" name="personal_number" value="{$order->personal_number}"
-                                       class="form-control"/>
+                                       class="form-control" disabled="disabled" readonly="readonly" />
                             </div>
                             <div class="form-group">
                                 <label>Причина редактирования</label>

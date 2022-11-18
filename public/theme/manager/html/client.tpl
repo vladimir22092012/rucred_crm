@@ -34,49 +34,6 @@
                 })
             });
 
-            $('.edit_personal_number').on('click', function (e) {
-                e.preventDefault();
-
-
-                $(this).hide();
-                $('.show_personal_number').hide();
-                $('.number_edit_form').show();
-
-                $('.cancel_edit').on('click', function () {
-                    $('.number_edit_form').hide();
-                    $('.edit_personal_number').show();
-                    $('.show_personal_number').show();
-                });
-
-                $('.accept_edit').on('click', function () {
-                    e.preventDefault();
-
-                    let user_id = $(this).attr('data-user');
-                    let number = $('input[class="form-control number_edit_form number"]').val();
-
-                    $.ajax({
-                        method: 'POST',
-                        dataType: 'JSON',
-                        data: {
-                            action: 'edit_personal_number',
-                            user_id: user_id,
-                            number: number
-                        },
-                        success: function (resp) {
-                            if (resp['error']) {
-                                Swal.fire({
-                                    title: resp['error'],
-                                    confirmButtonText: 'ОК'
-                                });
-                            }
-                            else {
-                                location.reload();
-                            }
-                        }
-                    });
-                });
-            });
-
             $('.fa-eraser').on('click', function (e) {
                 e.preventDefault();
 
@@ -268,21 +225,8 @@
                                                 <br>
                                                 <small>Номер клиента:</small>
                                                 <small class="show_personal_number">{$client->personal_number}</small>
-                                                {if $manager->role != 'employer'}
-                                                <a data-user="{$client->id}"
-                                                   class="text-info edit_personal_number"><i
-                                                            class=" fas fa-edit"></i></a>
-                                                <input type="text" class="form-control number_edit_form number"
-                                                       style="width: 80px; display: none"
-                                                       value="{$client->personal_number}">
-                                                <input type="button" style="display: none"
-                                                       data-user="{$client->id}"
-                                                       class="btn btn-success number_edit_form accept_edit"
-                                                       value="Сохранить">
-                                                <input type="button" style="display: none"
-                                                       class="btn btn-danger number_edit_form cancel_edit"
-                                                       value="Отмена">
                                             </div>
+                                            {if $manager->role != 'employer'}
                                             <div class="col-md-2">
                                                 <div class="custom-control custom-checkbox mr-sm-2 mb-3">
                                                     <input type="checkbox" class="custom-control-input js-blocked-input"
