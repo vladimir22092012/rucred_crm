@@ -4278,6 +4278,137 @@ class OrderController extends Controller
             ];
 
         $this->YaDiskCron->add($cron);
+        $communication_theme = $this->CommunicationsThemes->get(17);
+
+
+        $ticket = [
+            'creator' => $order->manager_id,
+            'creator_company' => 2,
+            'client_lastname' => $order->lastname,
+            'client_firstname' => $order->firstname,
+            'client_patronymic' => $order->patronymic,
+            'head' => $communication_theme->head,
+            'text' => $communication_theme->text,
+            'theme_id' => 17,
+            'company_id' => 2,
+            'group_id' => $order->group_id,
+            'order_id' => $order->order_id,
+            'status' => 0
+        ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $order->manager_id,
+            ];
+
+        $this->TicketMessages->add_message($message);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
+
+        $cron =
+            [
+                'template_id' => 8,
+                'user_id' => $order->user_id,
+            ];
+
+        $this->NotificationsClientsCron->add($cron);
+
+        $this->design->assign('order', $order);
+        $documents = $this->documents->get_documents(['order_id' => $order->order_id]);
+        $docs_email = [];
+
+        foreach ($documents as $document) {
+            if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR', 'INDIVIDUALNIE_USLOVIA_ONL'])) {
+                $docs_email[$document->type] = $document->hash;
+            }
+        }
+
+        $individ_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['INDIVIDUALNIE_USLOVIA'];
+        $graphic_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['GRAFIK_OBSL_MKR'];
+
+        $this->design->assign('individ_encrypt', $individ_encrypt);
+        $this->design->assign('graphic_encrypt', $graphic_encrypt);
+
+        $contracts = $this->contracts->get_contracts(['order_id' => $order->order_id]);
+        $group = $this->groups->get_group($order->group_id);
+        $company = $this->companies->get_company($order->company_id);
+
+        if (!empty($contracts)) {
+            $count_contracts = count($contracts);
+            $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
+        } else {
+            $count_contracts = '01';
+        }
+
+        $loantype = $this->Loantypes->get_loantype($order->loan_type);
+
+        $uid = "$group->number$company->number $loantype->number $order->personal_number $count_contracts";
+        $this->design->assign('uid', $uid);
+
+        $fetch = $this->design->fetch('email/approved.tpl');
+
+        $mail = new PHPMailer(false);
+
+        //Server settings
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->CharSet = 'UTF-8';
+        $mail->Host = 'mail.nic.ru';                          //Set the SMTP server to send through
+        $mail->SMTPAuth = true;                                   //Enable SMTP authentication
+        $mail->Username = 'noreply@re-aktiv.ru';                  //SMTP username
+        $mail->Password = 'HG!_@H#*&!^!HwJSDJ2Wsqgq';             //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         //Enable implicit TLS encryption
+        $mail->Port = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+        //Recipients
+        $mail->setFrom('noreply@re-aktiv.ru');
+        $mail->addAddress($order->email);     //Add a recipient
+
+        //Content
+        $mail->isHTML(true);                                  //Set email format to HTML
+        $mail->Subject = 'RuCred | Уведомление';
+        $mail->Body = $fetch;
+
+        $mail->send();
+
+        $schedule = $this->PaymentsSchedules->get(['actual' => 1, 'order_id' => $order->order_id]);
+        $schedules = json_decode($schedule->schedule, true);
+        unset($schedules['result']);
+
+        uksort($schedules,
+            function ($a, $b) {
+
+                if ($a == $b)
+                    return 0;
+
+                return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+            });
+
+        foreach ($schedules as $date => $payment) {
+            $graphs_payments =
+                [
+                    'order_id' => $order->order_id,
+                    'user_id' => $order->user_id,
+                    'schedules_id' => $schedule->id,
+                    'sum_pay' => $payment['pay_sum'],
+                    'od_pay' => $payment['loan_body_pay'],
+                    'prc_pay' => $payment['loan_percents_pay'],
+                    'com_pay' => $payment['comission_pay'],
+                    'rest_pay' => $payment['rest_pay'],
+                    'pay_date' => date('d.m.Y', strtotime($date))
+                ];
+
+            $this->PaymentsToSchedules->add($graphs_payments);
+        }
 
         $this->tickets->update_by_theme_id(12, ['status' => 4], $order_id);
 
