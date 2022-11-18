@@ -531,6 +531,8 @@ class Orders extends Core
                 o.group_id,
                 o.requisite_id,
                 o.is_archived,
+                o.updated,
+                o.unreability,
                 u.UID AS user_uid,
                 u.service_sms,
                 u.service_insurance,

@@ -46,19 +46,36 @@ class MissingsController extends Controller
 
         $clients_count = $this->users->count_users($filter);
 
-        $pages_num = ceil($clients_count / $items_per_page);
-        $this->design->assign('total_pages_num', $pages_num);
-        $this->design->assign('total_orders_count', $clients_count);
-
         $filter['page'] = $current_page;
         $filter['limit'] = $items_per_page;
 
         $clients = $this->users->get_users($filter);
 
-        foreach ($clients as $client)
-        {
+        $filter_status = $this->request->get('status');
+
+        $minusCount = 0;
+
+        foreach ($clients as $key => $client) {
             $client->order = $this->orders->get_by_user($client->id);
+
+            if($filter_status == '0' && $client->order->unreability == 1)
+            {
+                unset($clients[$key]);
+                $minusCount++;
+            }
+
+            if($filter_status == 1 && $client->order->unreability == 0)
+            {
+                unset($clients[$key]);
+                $minusCount++;
+            }
         }
+
+        $this->design->assign('filter_status', $filter_status);
+
+        $pages_num = ceil(($clients_count - $minusCount) / $items_per_page);
+        $this->design->assign('total_pages_num', $pages_num);
+        $this->design->assign('total_orders_count', $clients_count);
 
         $this->design->assign('clients', $clients);
 
@@ -123,7 +140,7 @@ class MissingsController extends Controller
             $order = $this->orders->get_order($order_id);
             if (!empty($order->contract_id)) {
                 $code = $this->helpers->c2o_encode($order->contract_id);
-                $payment_link = $this->config->front_url.'/p/'.$code;
+                $payment_link = $this->config->front_url . '/p/' . $code;
                 $template->template = str_replace('{$payment_link}', $payment_link, $template->template);
             }
         }
@@ -158,7 +175,7 @@ class MissingsController extends Controller
             'user_id' => $user->id,
             'order_id' => $order_id,
             'manager_id' => $this->manager->id,
-            'text' => 'Клиенту отправлено смс с текстом: '.$template->template,
+            'text' => 'Клиенту отправлено смс с текстом: ' . $template->template,
             'created' => date('Y-m-d H:i:s'),
             'organization' => empty($yuk) ? 'mkk' : 'yuk',
             'auto' => 1
@@ -174,6 +191,6 @@ class MissingsController extends Controller
             'order_id' => $order_id,
         ));
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';
-        $this->json_output(array('success'=>true));
+        $this->json_output(array('success' => true));
     }
 }
