@@ -3,7 +3,7 @@
 use PHPMailer\PHPMailer\PHPMailer;
 
 error_reporting(-1);
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'On');
 
 class OrderController extends Controller
 {
@@ -87,8 +87,8 @@ class OrderController extends Controller
                     $this->action_snils_change();
                     break;
 
-                case 'cors_change':
-                    $this->action_cors_change();
+                case 'requisites_edit':
+                    $this->action_requisites_edit();
                     break;
 
                 case 'cards':
@@ -254,6 +254,18 @@ class OrderController extends Controller
                 case 'reject_by_under':
                     $response = $this->action_reject_by_under();
                     $this->json_output($response);
+                    break;
+
+                case 'get_companies':
+                    $this->action_get_companies();
+                    break;
+
+                case 'get_branches':
+                    $this->action_get_branches();
+                    break;
+
+                case 'edit_loan_settings':
+                    $this->action_edit_loan_settings();
                     break;
 
 
@@ -3097,10 +3109,69 @@ class OrderController extends Controller
         $this->users->update_user($user_id, ['snils' => $snils_number]);
     }
 
-    private function action_cors_change()
+    private function action_requisites_edit()
     {
-        $requisite = $this->request->post('requisite');
-        $this->requisites->update_requisite($requisite['id'], $requisite);
+        $userId = $this->request->post('user_id');
+        $orderId = $this->request->post('order_id');
+        $hold = $this->request->post('hold');
+        $acc = $this->request->post('acc');
+        $bank = $this->request->post('bank');
+        $bik = $this->request->post('bik');
+        $cor = $this->request->post('cor');
+
+        $update =
+            [
+                'name' => $bank,
+                'bik'  => $bik,
+                'number' => $acc,
+                'holder' => $hold,
+                'correspondent_acc' => $cor
+            ];
+
+        $oldRequisites = RequisitesORM::where('user_id', $userId)
+            ->where('default', 1)
+            ->first()->toArray();
+
+        unset($oldRequisites['id']);
+        unset($oldRequisites['default']);
+        unset($oldRequisites['user_id']);
+
+        $newValues = array_diff($update, $oldRequisites);
+        $oldValues = array_intersect_key($oldRequisites, $newValues);
+
+        RequisitesORM::where('user_id', $userId)->update($newValues);
+
+        $translate =
+            [
+                'name' => "Наименование банка",
+                'bik'  => "Бик банка",
+                'number' => "Номер счета",
+                'holder' => "Держатель счета",
+                'correspondent_acc' => "Кор счет"
+            ];
+
+        foreach ($oldValues as $key => $value)
+        {
+            $oldValues[$translate[$key]] = $value;
+            unset($oldValues[$key]);
+        }
+
+        foreach ($newValues as $key => $value)
+        {
+            $newValues[$translate[$key]] = $value;
+            unset($newValues[$key]);
+        }
+
+        $this->changelogs->add_changelog(array(
+            'manager_id' => $this->manager->id,
+            'created' => date('Y-m-d H:i:s'),
+            'type' => 'requisites',
+            'old_values' => serialize($oldValues),
+            'new_values' => serialize($newValues),
+            'order_id' => $orderId,
+            'user_id' => $userId,
+        ));
+
         exit;
     }
 
@@ -3419,6 +3490,8 @@ class OrderController extends Controller
         $amount = $this->request->post('amount');
         $loan_tarif = $this->request->post('loan_tarif');
         $probably_start_date = $this->request->post('probably_start_date');
+        $profUnion = $this->request->post('profunion');
+
         $loantype = $this->Loantypes->get_loantype((int)$loan_tarif);
         $order = $this->orders->get_order($order_id);
 
@@ -3454,6 +3527,65 @@ class OrderController extends Controller
 
         $this->orders->update_order($order_id, $order);
         $this->action_reform_schedule($order_id);
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_edit_loan_settings()
+    {
+        $orderId = (int)$this->request->post('order_id');
+        $amount = (int)$this->request->post('amount');
+        $userId  = (int)$this->request->post('user_id');
+        $loanTypeId = $this->request->post('loan_tarif');
+        $probablyStartDate = $this->request->post('probably_start_date');
+        $profUnion = $this->request->post('profunion');
+        $groupId = $this->request->post('group');
+        $companyId = $this->request->post('company');
+        $brancheId = $this->request->post('branch');
+
+        $branche = BranchesORM::find($brancheId);
+        $loanType = LoantypesORM::find($loanTypeId);
+
+        $probably_return_date = new DateTime(date('Y-m-' . $branche->payday, strtotime($probablyStartDate . '+' . $loanType->max_period . 'month')));
+        $probably_return_date = $this->check_pay_date($probably_return_date);
+
+        if ($amount < $loanType->min_amount || $amount > $loanType->max_amount) {
+            echo json_encode(['error' => 'Проверьте сумму займа']);
+            exit;
+        }
+
+        $groupLoanType = GroupLoanTypesORM::where('group_id', $groupId)->where('loantype_id', $loanTypeId)->first();
+
+        if ($profUnion == 1) {
+            $percent = (float)$groupLoanType->preferential_percents;
+        }
+        else{
+            $percent = (float)$groupLoanType->standart_percents;
+        }
+
+        $order =
+            [
+                'amount' => $amount,
+                'loan_type' => $loanTypeId,
+                'percent' => $percent,
+                'group_id' => $groupId,
+                'company_id' => $companyId,
+                'branche_id' => $brancheId,
+                'probably_start_date' => date('Y-m-d', strtotime($probablyStartDate)),
+                'probably_return_date' => $probably_return_date->format('Y-m-d')
+            ];
+
+        $user =
+            [
+                'group_id' => $groupId,
+                'company_id' => $companyId,
+                'branche_id' => $brancheId
+            ];
+
+        OrdersORM::where('id', $orderId)->update($order);
+        UsersORM::where('id', $userId)->update($user);
+
+        $this->action_reform_schedule($orderId);
         echo json_encode(['success' => 1]);
         exit;
     }
@@ -3630,6 +3762,8 @@ class OrderController extends Controller
 
         $actual_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
         $this->PaymentsSchedules->update($actual_schedule->id, ['psk' => $psk, 'schedule' => $schedule]);
+
+        $this->form_docs($order_id);
     }
 
     private function check_pay_date($date)
@@ -4278,6 +4412,137 @@ class OrderController extends Controller
             ];
 
         $this->YaDiskCron->add($cron);
+        $communication_theme = $this->CommunicationsThemes->get(17);
+
+
+        $ticket = [
+            'creator' => $order->manager_id,
+            'creator_company' => 2,
+            'client_lastname' => $order->lastname,
+            'client_firstname' => $order->firstname,
+            'client_patronymic' => $order->patronymic,
+            'head' => $communication_theme->head,
+            'text' => $communication_theme->text,
+            'theme_id' => 17,
+            'company_id' => 2,
+            'group_id' => $order->group_id,
+            'order_id' => $order->order_id,
+            'status' => 0
+        ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $order->manager_id,
+            ];
+
+        $this->TicketMessages->add_message($message);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
+
+        $cron =
+            [
+                'template_id' => 8,
+                'user_id' => $order->user_id,
+            ];
+
+        $this->NotificationsClientsCron->add($cron);
+
+        $this->design->assign('order', $order);
+        $documents = $this->documents->get_documents(['order_id' => $order->order_id]);
+        $docs_email = [];
+
+        foreach ($documents as $document) {
+            if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR', 'INDIVIDUALNIE_USLOVIA_ONL'])) {
+                $docs_email[$document->type] = $document->hash;
+            }
+        }
+
+        $individ_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['INDIVIDUALNIE_USLOVIA'];
+        $graphic_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['GRAFIK_OBSL_MKR'];
+
+        $this->design->assign('individ_encrypt', $individ_encrypt);
+        $this->design->assign('graphic_encrypt', $graphic_encrypt);
+
+        $contracts = $this->contracts->get_contracts(['order_id' => $order->order_id]);
+        $group = $this->groups->get_group($order->group_id);
+        $company = $this->companies->get_company($order->company_id);
+
+        if (!empty($contracts)) {
+            $count_contracts = count($contracts);
+            $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
+        } else {
+            $count_contracts = '01';
+        }
+
+        $loantype = $this->Loantypes->get_loantype($order->loan_type);
+
+        $uid = "$group->number$company->number $loantype->number $order->personal_number $count_contracts";
+        $this->design->assign('uid', $uid);
+
+        $fetch = $this->design->fetch('email/approved.tpl');
+
+        $mail = new PHPMailer(false);
+
+        //Server settings
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->CharSet = 'UTF-8';
+        $mail->Host = 'mail.nic.ru';                          //Set the SMTP server to send through
+        $mail->SMTPAuth = true;                                   //Enable SMTP authentication
+        $mail->Username = 'noreply@re-aktiv.ru';                  //SMTP username
+        $mail->Password = 'HG!_@H#*&!^!HwJSDJ2Wsqgq';             //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         //Enable implicit TLS encryption
+        $mail->Port = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+        //Recipients
+        $mail->setFrom('noreply@re-aktiv.ru');
+        $mail->addAddress($order->email);     //Add a recipient
+
+        //Content
+        $mail->isHTML(true);                                  //Set email format to HTML
+        $mail->Subject = 'RuCred | Уведомление';
+        $mail->Body = $fetch;
+
+        $mail->send();
+
+        $schedule = $this->PaymentsSchedules->get(['actual' => 1, 'order_id' => $order->order_id]);
+        $schedules = json_decode($schedule->schedule, true);
+        unset($schedules['result']);
+
+        uksort($schedules,
+            function ($a, $b) {
+
+                if ($a == $b)
+                    return 0;
+
+                return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+            });
+
+        foreach ($schedules as $date => $payment) {
+            $graphs_payments =
+                [
+                    'order_id' => $order->order_id,
+                    'user_id' => $order->user_id,
+                    'schedules_id' => $schedule->id,
+                    'sum_pay' => $payment['pay_sum'],
+                    'od_pay' => $payment['loan_body_pay'],
+                    'prc_pay' => $payment['loan_percents_pay'],
+                    'com_pay' => $payment['comission_pay'],
+                    'rest_pay' => $payment['rest_pay'],
+                    'pay_date' => date('d.m.Y', strtotime($date))
+                ];
+
+            $this->PaymentsToSchedules->add($graphs_payments);
+        }
 
         $this->tickets->update_by_theme_id(12, ['status' => 4], $order_id);
 
@@ -4645,6 +4910,45 @@ class OrderController extends Controller
             'created' => date('Y-m-d H:i:s'),
         ));
 
+        exit;
+    }
+
+    private function action_get_companies()
+    {
+        $group_id = $this->request->post('group_id');
+
+        $companies = $this->companies->get_companies(['group_id' => $group_id, 'blocked' => 0]);
+
+        if (!empty($companies)) {
+            $html = "<option value='0'>Выберите компанию</option>";
+
+            foreach ($companies as $company) {
+                $html .= "<option value='$company->id'>$company->name</option>";
+            }
+
+            echo json_encode(['html' => $html]);
+            exit;
+        } else {
+            echo json_encode(['empty' => 1]);
+            exit;
+        }
+    }
+
+    private function action_get_branches()
+    {
+        $company_id = $this->request->post('company_id');
+
+        $branches = $this->Branches->get_company_branches($company_id);
+
+        if (!empty($branches)) {
+            $html = '';
+            foreach ($branches as $branch) {
+                $html .= "<option value='$branch->id'>$branch->name</option>";
+            }
+            echo json_encode(['html' => $html]);
+        } else {
+            echo json_encode(['empty' => 1]);
+        }
         exit;
     }
 
