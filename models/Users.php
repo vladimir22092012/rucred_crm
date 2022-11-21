@@ -183,7 +183,7 @@ class Users extends Core
             $stage_filter = $this->db->placehold("AND stage_registration != 8");
         }
 
-        if (!isset($filter['stage_filter']) && $filter['stage_filter'] = 2) {
+        if (isset($filter['stage_filter']) && $filter['stage_filter'] = 2) {
             $stage_filter = $this->db->placehold("AND stage_registration = 8");
         }
 
@@ -297,6 +297,7 @@ class Users extends Core
             ORDER BY $sort
             $sql_limit
         ");
+
         $this->db->query($query);
 
         if ($results = $this->db->results()) {
