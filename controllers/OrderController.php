@@ -3,7 +3,7 @@
 use PHPMailer\PHPMailer\PHPMailer;
 
 error_reporting(-1);
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'On');
 
 class OrderController extends Controller
 {
@@ -254,6 +254,18 @@ class OrderController extends Controller
                 case 'reject_by_under':
                     $response = $this->action_reject_by_under();
                     $this->json_output($response);
+                    break;
+
+                case 'get_companies':
+                    $this->action_get_companies();
+                    break;
+
+                case 'get_branches':
+                    $this->action_get_branches();
+                    break;
+
+                case 'edit_loan_settings':
+                    $this->action_edit_loan_settings();
                     break;
 
 
@@ -3478,6 +3490,8 @@ class OrderController extends Controller
         $amount = $this->request->post('amount');
         $loan_tarif = $this->request->post('loan_tarif');
         $probably_start_date = $this->request->post('probably_start_date');
+        $profUnion = $this->request->post('profunion');
+
         $loantype = $this->Loantypes->get_loantype((int)$loan_tarif);
         $order = $this->orders->get_order($order_id);
 
@@ -3513,6 +3527,65 @@ class OrderController extends Controller
 
         $this->orders->update_order($order_id, $order);
         $this->action_reform_schedule($order_id);
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_edit_loan_settings()
+    {
+        $orderId = (int)$this->request->post('order_id');
+        $amount = (int)$this->request->post('amount');
+        $userId  = (int)$this->request->post('user_id');
+        $loanTypeId = $this->request->post('loan_tarif');
+        $probablyStartDate = $this->request->post('probably_start_date');
+        $profUnion = $this->request->post('profunion');
+        $groupId = $this->request->post('group');
+        $companyId = $this->request->post('company');
+        $brancheId = $this->request->post('branch');
+
+        $branche = BranchesORM::find($brancheId);
+        $loanType = LoantypesORM::find($loanTypeId);
+
+        $probably_return_date = new DateTime(date('Y-m-' . $branche->payday, strtotime($probablyStartDate . '+' . $loanType->max_period . 'month')));
+        $probably_return_date = $this->check_pay_date($probably_return_date);
+
+        if ($amount < $loanType->min_amount || $amount > $loanType->max_amount) {
+            echo json_encode(['error' => 'Проверьте сумму займа']);
+            exit;
+        }
+
+        $groupLoanType = GroupLoanTypesORM::where('group_id', $groupId)->where('loantype_id', $loanTypeId)->first();
+
+        if ($profUnion == 1) {
+            $percent = (float)$groupLoanType->preferential_percents;
+        }
+        else{
+            $percent = (float)$groupLoanType->standart_percents;
+        }
+
+        $order =
+            [
+                'amount' => $amount,
+                'loan_type' => $loanTypeId,
+                'percent' => $percent,
+                'group_id' => $groupId,
+                'company_id' => $companyId,
+                'branche_id' => $brancheId,
+                'probably_start_date' => date('Y-m-d', strtotime($probablyStartDate)),
+                'probably_return_date' => $probably_return_date->format('Y-m-d')
+            ];
+
+        $user =
+            [
+                'group_id' => $groupId,
+                'company_id' => $companyId,
+                'branche_id' => $brancheId
+            ];
+
+        OrdersORM::where('id', $orderId)->update($order);
+        UsersORM::where('id', $userId)->update($user);
+
+        $this->action_reform_schedule($orderId);
         echo json_encode(['success' => 1]);
         exit;
     }
@@ -3689,6 +3762,8 @@ class OrderController extends Controller
 
         $actual_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
         $this->PaymentsSchedules->update($actual_schedule->id, ['psk' => $psk, 'schedule' => $schedule]);
+
+        $this->form_docs($order_id);
     }
 
     private function check_pay_date($date)
@@ -4835,6 +4910,45 @@ class OrderController extends Controller
             'created' => date('Y-m-d H:i:s'),
         ));
 
+        exit;
+    }
+
+    private function action_get_companies()
+    {
+        $group_id = $this->request->post('group_id');
+
+        $companies = $this->companies->get_companies(['group_id' => $group_id, 'blocked' => 0]);
+
+        if (!empty($companies)) {
+            $html = "<option value='0'>Выберите компанию</option>";
+
+            foreach ($companies as $company) {
+                $html .= "<option value='$company->id'>$company->name</option>";
+            }
+
+            echo json_encode(['html' => $html]);
+            exit;
+        } else {
+            echo json_encode(['empty' => 1]);
+            exit;
+        }
+    }
+
+    private function action_get_branches()
+    {
+        $company_id = $this->request->post('company_id');
+
+        $branches = $this->Branches->get_company_branches($company_id);
+
+        if (!empty($branches)) {
+            $html = '';
+            foreach ($branches as $branch) {
+                $html .= "<option value='$branch->id'>$branch->name</option>";
+            }
+            echo json_encode(['html' => $html]);
+        } else {
+            echo json_encode(['empty' => 1]);
+        }
         exit;
     }
 
