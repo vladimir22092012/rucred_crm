@@ -153,7 +153,6 @@ class NeworderController extends Controller
 
     private function action_create_new_order()
     {
-
         $amount = preg_replace("/[^,.0-9]/", '', $this->request->post('amount'));
 
         $percent = (float)$this->request->post('percent');
@@ -717,12 +716,13 @@ class NeworderController extends Controller
             if ($payout_type == 'bank') {
 
                 if (date('Y-m-d') >= date('Y-m-d', strtotime($probably_start_date))) {
+                    $timeOfTransitionToNextBankingDay = date('H:i', strtotime($this->Settings->time_of_transition_to_the_next_banking_day));
 
-                    if ($settlement_id == 3 && date('H') >= 14)
+                    if ($settlement_id == 3 && date('H:i') >= $timeOfTransitionToNextBankingDay)
                         $probably_start_date = date('Y-m-d', strtotime('+1 days'));
 
                     if ($settlement_id == 2) {
-                        if (date('H') >= 14)
+                        if (date('H:i') >= $timeOfTransitionToNextBankingDay)
                             $probably_start_date = date('Y-m-d', strtotime('+2 days'));
                         else
                             $probably_start_date = date('Y-m-d', strtotime('+1 days'));
@@ -737,7 +737,7 @@ class NeworderController extends Controller
 
                             if (empty($check_date)) {
                                 if ($settlement_id == 2) {
-                                    if (date('H') >= 14)
+                                    if (date('H:i') >= $timeOfTransitionToNextBankingDay)
                                         $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
                                 }
                                 break;

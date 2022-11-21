@@ -27,5 +27,12 @@ class SettingsController extends Controller
         $value = $this->request->post('value');
 
         $this->SettingsTable->update($type, $value);
+      }
+
+    private function action_change_transition_time()
+    {
+        $value = $this->request->post('value');
+
+        $this->SettingsTable->update('time_of_transition_to_the_next_banking_day', $value);
     }
 }
