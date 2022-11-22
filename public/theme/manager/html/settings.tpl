@@ -1,8 +1,26 @@
 {$meta_title = 'Общие Настройки' scope=parent}
 
 {capture name='page_scripts'}
+    <script src="https://cdn.jsdelivr.net/npm/jquery.maskedinput@1.4.1/src/jquery.maskedinput.min.js"
+            type="text/javascript"></script>
+
     <script>
         $(function () {
+            $('.time_of_transition_to_the_next_banking_day').mask('99:99', { completed: function () {
+                    $.ajax({
+                        method: 'POST',
+                        data: {
+                            action: 'change_transition_time',
+                            value: this.val()
+                        },
+                        success: function () {
+                            Swal.fire({
+                                title: 'Успешно!',
+                                html: 'Время перехода на следующий банковский день изменён'
+                            });
+                        }
+                    });
+            }})
 
             $('.b2p, .okb, .onec').on('click', function () {
 
@@ -31,7 +49,6 @@
     </script>
     <script>
         function change_type(type, value) {
-
             $.ajax({
                 method: 'POST',
                 data: {
@@ -139,6 +156,25 @@
                         </div>
                     </div>
 
+                    <div class="mt-3 row">
+                        <div class="col-md-3">
+                            <h3 class="box-title">
+                                Переход на следующий банковский день
+                            </h3>
+                            <div class="form-group mb-2">
+                                <div class="">
+                                    <input
+                                        type="text"
+                                        class="form-control time_of_transition_to_the_next_banking_day"
+                                        name="time_of_transition_to_the_next_banking_day"
+                                        value="{$settings->time_of_transition_to_the_next_banking_day}" placeholder=""
+                                    >
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
                     <!--
                     <div class="row">
                         <div class="col-12">
@@ -207,9 +243,9 @@
                             </div>
                         </div>
                     </div>
-                                                            
+
                     <hr class="mb-3 mt-3" />
-                    
+
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -233,12 +269,12 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            
+
                         </div>
                     </div>
-                                                            
+
                     <hr class="mb-3 mt-3" />
-                    
+
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -262,12 +298,12 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            
+
                         </div>
                     </div>
-                    
+
                     <hr class="mb-3 mt-3" />
-                    
+
                     <div class="row">
                         <div class="col-12">
                             <h3 class="box-title">
@@ -284,14 +320,14 @@
                         </div>
 
                         <div class="col-md-4">
-                            
+
                         </div>
                     </div>
                     -->
                 </div>
             </div>
 
-            <hr class="mb-3 mt-3"/>
+            {*<hr class="mb-3 mt-3"/>
             <div class="row">
                 {if in_array($manager->role, ['admin', 'developer'])}
                 <div class="col-12 grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-width="12">
@@ -299,7 +335,7 @@
                         <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Сохранить</button>
                     </div>
                 </div>
-                {/if}
+                {/if}*}
         </form>
         <!-- Row -->
         <!-- ============================================================== -->
