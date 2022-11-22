@@ -4151,12 +4151,11 @@
         </div>
     </div>
     <div id="edit_requisites_modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+         aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Редактирование платежный реквизитов</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 </div>
                 <div class="modal-body">
                     <form id="requisites_form">
@@ -4205,12 +4204,11 @@
         </div>
     </div>
     <div id="edit_settings_modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+         aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Редактирование платежный реквизитов</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 </div>
                 <div class="modal-body">
                     <form id="settings_form">
@@ -4295,12 +4293,11 @@
         </div>
     </div>
     <div id="edit_fio_modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+         aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Редактирование основных данных</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 </div>
                 <div class="modal-body">
                     <form id="fio_form">
