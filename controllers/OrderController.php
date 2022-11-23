@@ -268,6 +268,10 @@ class OrderController extends Controller
                     $this->action_edit_loan_settings();
                     break;
 
+                case 'confirm_sms':
+                    $this->action_confirm_sms();
+                    break;
+
 
             endswitch;
 
@@ -676,6 +680,7 @@ class OrderController extends Controller
         $asp_restruct = 0;
 
         foreach ($documents as $document) {
+
             foreach ($scans as $scan) {
                 if ($document->template == $scan->type)
                     $document->scan = $scan;
@@ -1887,12 +1892,6 @@ class OrderController extends Controller
         $inn = trim($this->request->post('inn'));
         $snils = trim($this->request->post('snils'));
         $personalNumber = trim($this->request->post('personal_number'));
-        $profUnion = trim($this->request->post('profunion'));
-
-        if (empty($profUnion))
-            $profUnion = 'Нет';
-        else
-            $profUnion = 'Да';
 
         $old_regaddress = $this->Addresses->get_address($old_user->regaddress_id);
         $old_faktaddress = $this->Addresses->get_address($old_user->faktaddress_id);
@@ -1915,14 +1914,8 @@ class OrderController extends Controller
             'Адрес регистрации' => $regaddress['adressfull'],
             'Адрес проживания' => $faktaddress['adressfull'],
             'Персональный номер' => $personalNumber,
-            'Профсоюз' => $profUnion,
             'Причина' => $comment
         );
-
-        if (empty($old_user->profunion))
-            $old_user->profunion = 'Нет';
-        else
-            $old_user->profunion = 'Да';
 
         $old_values = array(
             'Имя' => $old_user->lastname,
@@ -1938,18 +1931,12 @@ class OrderController extends Controller
             'СНИЛС' => $old_user->snils,
             'Адрес регистрации' => $old_regaddress->adressfull,
             'Адрес проживания' => $old_faktaddress->adressfull,
-            'Персональный номер' => $old_user->personal_number,
-            'Профсоюз' => $old_user->profunion,
+            'Персональный номер' => $old_user->personal_number
         );
 
         if ($old_user->lastname == $lastname) {
             unset($new_values['Имя']);
             unset($old_values['Имя']);
-        }
-
-        if ($old_user->profunion == $profUnion) {
-            unset($new_values['Профсоюз']);
-            unset($old_values['Профсоюз']);
         }
 
         if ($old_user->firstname == $firstname) {
@@ -2042,42 +2029,24 @@ class OrderController extends Controller
                 'Кем выдан паспорт' => 'passport_issued',
                 'ИНН' => 'inn',
                 'СНИЛС' => 'snils',
-                'Персональный номер' => 'personal_number',
-                'Профсоюз' => 'profunion'
+                'Персональный номер' => 'personal_number'
             ];
 
         foreach ($new_values as $key => $value) {
             if (isset($keys[$key])) {
-                if ($key == 'Профсоюз') {
-
-                    $order = OrdersORM::find($order_id);
-
-                    $loan_type_groups = $this->GroupLoanTypes->get_loantype_groups((int)$order->loan_type);
-
-                    $record = array();
-
-                    foreach ($loan_type_groups as $loantype_group) {
-                        if ($loantype_group['id'] == $order->group_id) {
-                            $record = $loantype_group;
-                        }
-                    }
-
-                    if ($value == 'Да') {
-                        $update[$keys[$key]] = 1;
-                        OrdersORM::find($order_id)->update(['percent' => (float)$record['preferential_percents']]);
-                    } else {
-                        $update[$keys[$key]] = 0;
-                        OrdersORM::find($order_id)->update(['percent' => (float)$record['standart_percents']]);
-                    }
-                } else
-                    $update[$keys[$key]] = $value;
+                $update[$keys[$key]] = $value;
             }
         }
 
         UsersORM::find($user_id)->update($update);
+        $asp = AspCodesORM::where('user_id', $user_id)->orderBy('id', 'desc')->first();
 
         $this->action_reform_schedule($order_id);
         $this->form_docs($order_id);
+
+        DocumentsORM::where('order_id', $order_id)
+            ->whereNotIn('type', ['OBSHIE_USLOVIYA', 'INDIVIDUALNIE_USLOVIA_ONL', 'GRAFIK_OBSL_MKR'])
+            ->update(['asp_id' => $asp->id]);
 
         echo json_encode(['success' => 1]);
         exit;
@@ -2313,7 +2282,6 @@ class OrderController extends Controller
         $this->design->assign('order', $order);
 
     }
-
 
     private function action_personal()
     {
@@ -3026,71 +2994,24 @@ class OrderController extends Controller
 
     private function send_sms_action()
     {
-        $yuk = $this->request->post('yuk', 'integer');
-        $user_id = $this->request->post('user_id', 'integer');
-        $order_id = $this->request->post('order_id', 'integer');
-        $template_id = $this->request->post('template_id', 'integer');
+        $orderId = $this->request->post('order');
 
-        $user = $this->users->get_user((int)$user_id);
+        $order = OrdersORM::find($orderId);
 
-        $template = $this->sms->get_template($template_id);
-
-        if (!empty($order_id)) {
-            $order = $this->orders->get_order($order_id);
-            if (!empty($order->contract_id)) {
-                $code = $this->helpers->c2o_encode($order->contract_id);
-                $payment_link = $this->config->front_url . '/p/' . $code;
-                $template->template = str_replace('{$payment_link}', $payment_link, $template->template);
-            }
-        }
-
-        $resp = $this->sms->send(
-            $user->phone_mobile,
-            $template->template
+        $code = random_int(1000, 9999);
+        $template = $this->sms->get_template(2);
+        $message = str_replace('$code', $code, $template->template);
+        $response = $this->sms->send(
+            $order->user->phone_mobile,
+            $message
         );
+        $this->db->query('
+        INSERT INTO s_sms_messages
+        SET phone = ?, code = ?, response = ?, ip = ?, user_id = ?, created = ?
+        ', $order->user->phone_mobile, $code, $response['resp'], $_SERVER['REMOTE_ADDR'] ?? '', $order->user->id, date('Y-m-d H:i:s'));
 
-        $sms_message_id = $this->sms->add_message(array(
-            'user_id' => $user->id,
-            'order_id' => $order_id,
-            'phone' => $user->phone_mobile,
-            'message' => $template->template,
-            'created' => date('Y-m-d H:i:s'),
-        ));
-
-        $this->communications->add_communication(array(
-            'user_id' => $user->id,
-            'manager_id' => $this->manager->id,
-            'created' => date('Y-m-d H:i:s'),
-            'type' => 'sms',
-            'content' => $template->template,
-            'outer_id' => $sms_message_id,
-            'from_number' => $this->sms->get_originator($yuk),
-            'to_number' => $user->phone_mobile,
-            'yuk' => $yuk,
-            'result' => serialize($resp),
-        ));
-
-        $this->comments->add_comment(array(
-            'user_id' => $user->id,
-            'order_id' => $order_id,
-            'manager_id' => $this->manager->id,
-            'text' => 'Клиенту отправлено смс с текстом: ' . $template->template,
-            'created' => date('Y-m-d H:i:s'),
-            'organization' => empty($yuk) ? 'mkk' : 'yuk',
-            'auto' => 1
-        ));
-
-        $this->changelogs->add_changelog(array(
-            'manager_id' => $this->manager->id,
-            'created' => date('Y-m-d H:i:s'),
-            'type' => 'send_sms',
-            'old_values' => array(),
-            'new_values' => array($template->template),
-            'user_id' => $user->id,
-            'order_id' => $order_id,
-        ));
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';
-        $this->json_output(array('success' => true));
+        echo json_encode(['code' => $code]);
+        exit;
     }
 
     private function action_inn_change()
@@ -3122,7 +3043,7 @@ class OrderController extends Controller
         $update =
             [
                 'name' => $bank,
-                'bik'  => $bik,
+                'bik' => $bik,
                 'number' => $acc,
                 'holder' => $hold,
                 'correspondent_acc' => $cor
@@ -3144,20 +3065,18 @@ class OrderController extends Controller
         $translate =
             [
                 'name' => "Наименование банка",
-                'bik'  => "Бик банка",
+                'bik' => "Бик банка",
                 'number' => "Номер счета",
                 'holder' => "Держатель счета",
                 'correspondent_acc' => "Кор счет"
             ];
 
-        foreach ($oldValues as $key => $value)
-        {
+        foreach ($oldValues as $key => $value) {
             $oldValues[$translate[$key]] = $value;
             unset($oldValues[$key]);
         }
 
-        foreach ($newValues as $key => $value)
-        {
+        foreach ($newValues as $key => $value) {
             $newValues[$translate[$key]] = $value;
             unset($newValues[$key]);
         }
@@ -3171,6 +3090,13 @@ class OrderController extends Controller
             'order_id' => $orderId,
             'user_id' => $userId,
         ));
+
+        $asp = AspCodesORM::where('user_id', $userId)->orderBy('id', 'desc')->first();
+        $this->form_docs($orderId);
+
+        DocumentsORM::where('order_id', $orderId)
+            ->whereNotIn('type', ['OBSHIE_USLOVIYA', 'INDIVIDUALNIE_USLOVIA_ONL', 'GRAFIK_OBSL_MKR'])
+            ->update(['asp_id' => $asp->id]);
 
         exit;
     }
@@ -3535,7 +3461,7 @@ class OrderController extends Controller
     {
         $orderId = (int)$this->request->post('order_id');
         $amount = (int)$this->request->post('amount');
-        $userId  = (int)$this->request->post('user_id');
+        $userId = (int)$this->request->post('user_id');
         $loanTypeId = $this->request->post('loan_tarif');
         $probablyStartDate = $this->request->post('probably_start_date');
         $profUnion = $this->request->post('profunion');
@@ -3558,8 +3484,7 @@ class OrderController extends Controller
 
         if ($profUnion == 1) {
             $percent = (float)$groupLoanType->preferential_percents;
-        }
-        else{
+        } else {
             $percent = (float)$groupLoanType->standart_percents;
         }
 
@@ -3656,12 +3581,12 @@ class OrderController extends Controller
             $paydate = $this->check_pay_date($first_pay);
 
             if (date_diff($first_pay, $issuance_date)->days <= $loan->min_period) {
-                $sum_pay = ($order['percent'] / 100) * $order['amount'] * (date_diff($first_pay, $issuance_date)->days -1);
+                $sum_pay = ($order['percent'] / 100) * $order['amount'] * (date_diff($first_pay, $issuance_date)->days - 1);
                 $percents_pay = $sum_pay;
                 $body_pay = 0.00;
             }
             if (date_diff($first_pay, $issuance_date)->days > $loan->min_period && date_diff($first_pay, $issuance_date)->days < $count_days_this_month) {
-                $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - (date_diff($first_pay, $issuance_date)->days -1));
+                $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - (date_diff($first_pay, $issuance_date)->days - 1));
 
                 $sum_pay = $annoouitet_pay - $minus_percents;
                 $percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
@@ -4235,7 +4160,7 @@ class OrderController extends Controller
         SET phone = ?, code = ?, response = ?, ip = ?, user_id = ?, created = ?
         ', $phone, $code, $response['resp'], $_SERVER['REMOTE_ADDR'] ?? '', $user_id, date('Y-m-d H:i:s'));
 
-        echo json_encode(['success' => 1]);
+        echo json_encode(['code' => $code]);
         exit;
 
     }
@@ -4618,26 +4543,24 @@ class OrderController extends Controller
             $doc_types['04.05.2'] = 'SOGLASIE_RDB';
 
         $doc_types['04.07'] = 'SOGLASIE_NA_KRED_OTCHET';
-        $doc_types['04.03.02'] = 'INDIVIDUALNIE_USLOVIA';
+        $doc_types['04.03.02'] = 'INDIVIDUALNIE_USLOVIA_ONL';
         $doc_types['04.04'] = 'GRAFIK_OBSL_MKR';
         $doc_types['04.12'] = 'PERECHISLENIE_ZAEMN_SREDSTV';
         $doc_types['04.09'] = 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP';
         $doc_types['04.10'] = 'OBSHIE_USLOVIYA';
         $doc_types['03.04'] = 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR';
 
-        if ($asp_id)
-            $order->asp = $asp_id;
-
-
         foreach ($doc_types as $key => $type) {
 
-            $this->documents->create_document(array(
+            $resp = $this->documents->create_document(array(
                 'user_id' => $order->user_id,
                 'order_id' => $order->order_id,
                 'type' => $type,
                 'params' => $order,
                 'numeration' => (string)$key,
-                'asp_id' => $order->asp
+                'asp_id' => ($asp_id) ? $asp_id : null,
+                'hash' => sha1(rand(11111, 99999)),
+                'stage_type' => 'reg-docs'
             ));
         }
     }
@@ -4949,6 +4872,54 @@ class OrderController extends Controller
         } else {
             echo json_encode(['empty' => 1]);
         }
+        exit;
+    }
+
+    private function action_confirm_sms()
+    {
+        $code = $this->request->post('code');
+        $orderId = $this->request->post('order');
+
+        $order = OrdersORM::find($orderId);
+
+        $this->db->query("
+        SELECT code, created
+        FROM s_sms_messages
+        WHERE phone = ?
+        AND code = ?
+        AND user_id = ?
+        ORDER BY created DESC
+        LIMIT 1
+        ", $order->user->phone_mobile, $code, $order->user->id);
+
+        $results = $this->db->results();
+
+        if (empty($results)) {
+
+            echo json_encode(['error' => 1]);
+
+        } else {
+            $asp_log =
+                [
+                    'user_id' => $order->user->id,
+                    'order_id' => $order->id,
+                    'code' => $code,
+                    'created' => date('Y-m-d H:i:s'),
+                    'type' => 'sms',
+                    'recepient' => $order->user->phone_mobile,
+                    'manager_id' => $this->manager->id
+                ];
+
+
+            $asp_id = $this->AspCodes->add_code($asp_log);
+
+            DocumentsORM::where('order_id', $orderId)
+                ->whereNotIn('type', ['OBSHIE_USLOVIYA', 'INDIVIDUALNIE_USLOVIA_ONL', 'GRAFIK_OBSL_MKR'])
+                ->update(['asp_id' => $asp_id]);
+
+            echo json_encode(['success' => 1]);
+        }
+
         exit;
     }
 

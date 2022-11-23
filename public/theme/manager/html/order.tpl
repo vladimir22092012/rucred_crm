@@ -772,13 +772,12 @@
 
                 $('.confirm_asp').fadeIn();
                 $('.code_asp').fadeIn();
-                $(this).text('Отправить смс повторно');
 
 
                 send_asp(phone, user, order);
             });
 
-            $('.confirm_asp').on('click', function (e) {
+            $(document).on('click', '.confirm_asp', function (e) {
                 e.preventDefault();
 
                 let phone = $(this).attr('data-phone');
@@ -1012,55 +1011,70 @@
 
             $('.edit_settings').on('click', function () {
                 $('#edit_settings_modal').modal();
+            });
 
-                $('#group_select').on('change', function () {
+            $('#group_select').on('change', function () {
 
-                    let group_id = $(this).val();
+                let group_id = $(this).val();
 
-                    $.ajax({
-                        method: 'POST',
-                        dataType: 'JSON',
-                        data: {
-                            action: 'get_companies',
-                            group_id: group_id
-                        },
-                        success: function (companies) {
-                            if (companies['html'])
-                                $('#company_select').html(companies['html']);
-                        }
-                    });
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'get_companies',
+                        group_id: group_id
+                    },
+                    success: function (companies) {
+                        if (companies['html'])
+                            $('#company_select').html(companies['html']);
+                    }
                 });
+            });
 
-                $('#company_select').on('change', function () {
+            $('#company_select').on('change', function () {
 
-                    let company_id = $(this).val();
+                let company_id = $(this).val();
 
-                    $.ajax({
-                        method: 'POST',
-                        dataType: 'JSON',
-                        data: {
-                            action: 'get_branches',
-                            company_id: company_id
-                        },
-                        success: function (branches) {
-                            if (branches['html'])
-                                $('#branch_select').html(branches['html']);
-                        }
-                    });
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'get_branches',
+                        company_id: company_id
+                    },
+                    success: function (branches) {
+                        if (branches['html'])
+                            $('#branch_select').html(branches['html']);
+                    }
                 });
+            });
 
-                $('.save_settings').on('click', function () {
+            $(document).on('click', '.save_settings', function () {
 
-                    let form = $('#settings_form').serialize();
+                let form = $('#settings_form').serialize();
+                let that = $(this);
 
-                    $.ajax({
-                        method: 'POST',
-                        data: form,
-                        success: function () {
-                            location.reload();
-                        }
-                    });
-                })
+                $.ajax({
+                    method: 'POST',
+                    data: form,
+                    success: function () {
+
+                        $('#edit_settings_modal').modal('hide');
+                        $('#sms_confirm_modal').modal();
+                        let order = that.attr('data-order');
+
+                        send_sms(order);
+                    }
+                });
+            });
+
+            $(document).on('click', '.confirm_settings', function (e) {
+                e.preventDefault();
+
+                let order = $(this).attr('data-order');
+                let code = $('.code_asp').val();
+
+                confirm_sms(code, order);
             });
         });
     </script>
@@ -1100,12 +1114,32 @@
                                 get_docs(order);
                             }
                         });
-                    } else {
-                        $('#asp_notification').fadeIn();
+                    }
+                }
+            });
+        }
 
-                        setTimeout(function () {
-                            $('#asp_notification').fadeOut();
-                        }, 3000);
+        function send_sms(order) {
+
+            $.ajax({
+                method: 'POST',
+                dataType: 'JSON',
+                data: {
+                    action: 'send_sms',
+                    order: order
+                },
+                success: function (resp) {
+                    if (resp['error']) {
+                        Swal.fire({
+                            title: resp['error'],
+                            confirmButtonText: 'Ок'
+                        });
+                    }
+                    if (resp['code']) {
+                        $('.phone_send_code').show();
+                        $('.phone_send_code').text(resp['code']);
+                        $('button[class="btn btn-info confirm_asp"]').removeClass('confirm_asp');
+                        $('button[class="btn btn-info"]').addClass('confirm_settings');
                     }
                 }
             });
@@ -1131,6 +1165,30 @@
                             confirmButtonText: 'ОК'
                         });
                     } else {
+                        location.reload();
+                    }
+                }
+            });
+        }
+
+        function confirm_sms(code, order) {
+
+            $.ajax({
+                method: 'POST',
+                dataType: 'JSON',
+                data: {
+                    action: 'confirm_sms',
+                    code: code,
+                    order: order,
+                },
+                success: function (response) {
+                    if (response['error'] == 1) {
+                        Swal.fire({
+                            title: 'Неверный код',
+                            confirmButtonText: 'ОК'
+                        });
+                    }
+                    if (response['success'] == 1) {
                         location.reload();
                     }
                 }
@@ -1904,13 +1962,6 @@
                                                     data-manager="{$manager->id}">
                                                 <span>Отказать без передачи Работодателю</span>
                                             </button>
-                                        </div>
-                                    {/if}
-                                    {if !empty({$order->sms})}
-                                        <div><br>
-                                            <div class="text-center">
-                                                <h4>Код ПЭП: {$order->sms}</h4>
-                                            </div>
                                         </div>
                                     {/if}
                                     {if $need_confirm_restruct == 1 && in_array($manager->role, ['admin', 'middle', 'developer'])}
@@ -4285,7 +4336,9 @@
                         </div>
                         <div>
                             <input type="button" class="btn btn-danger cancel" data-dismiss="modal" value="Отмена">
-                            <input type="button" class="btn btn-success float-right save_settings" value="Сохранить">
+                            <input data-user="{$order->user_id}" data-phone="{$order->phone_mobile}"
+                                   data-order="{$order->order_id}" type="button"
+                                   class="btn btn-success float-right save_settings" value="Сохранить">
                         </div>
                     </form>
                 </div>
@@ -4391,29 +4444,26 @@
         </div>
     </div>
     <div id="sms_confirm_modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+         aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
 
                 <div class="modal-header">
                     <h4 class="modal-title">Подтвердить смс</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 </div>
                 <div class="modal-body">
                     <div class="alert" style="display:none"></div>
                     <div style="display: flex;" class="col-md-12">
                         <input type="text" class="form-control code_asp"
-                               style="display:none"
                                placeholder="SMS код"
-                               value="{if $is_developer}{$contract->accept_code}{/if}"/>
-                        <small id="asp_success"
-                               style="display: none; color: #009d07">
-                            Успешно!
-                        </small>
+                               value=""/>
+                        <div class="phone_send_code badge badge-danger"
+                             style="position: absolute; margin-left: 350px; margin-top: 5px; right: 150px;display: none">
+                        </div>
                         <button class="btn btn-info confirm_asp" type="button"
                                 data-user="{$order->user_id}"
                                 data-order="{$order->order_id}"
-                                style="margin-left: 15px; display:none"
+                                style="margin-left: 15px"
                                 data-phone="{$order->phone_mobile}">Подтвердить
                         </button>
                     </div>
