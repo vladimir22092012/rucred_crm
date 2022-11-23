@@ -418,6 +418,13 @@ class NeworderController extends Controller
             exit;
         }
 
+        $check_same_users = $this->request->post('check_same_users');
+
+        if (empty($check_same_users)) {
+            response_json(['error' => 1, 'reason' => 'Произведите проверку на совпадения']);
+            exit;
+        }
+
         $user['passport_date'] = (string)$this->request->post('passport_date');
 
         $now_date = new DateTime(date('Y-m-d'));
@@ -1018,13 +1025,6 @@ class NeworderController extends Controller
                     exit;
                 }
             } else {
-
-                $check_same_users = $this->request->post('check_same_users');
-
-                if (empty($check_same_users)) {
-                    response_json(['error' => 1, 'reason' => 'Произведите проверку на совпадения']);
-                    exit;
-                }
 
                 $order_id = $this->orders->add_order($order);
 
