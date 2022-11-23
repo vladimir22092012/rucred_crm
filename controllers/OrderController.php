@@ -2041,7 +2041,7 @@ class OrderController extends Controller
         $order = $this->orders->get_order($order_id);
 
         DocumentsORM::where('order_id', $order_id)
-            ->update(['params' => $order]);
+            ->update(['params' => serialize($order)]);
 
         echo json_encode(['success' => 1]);
         exit;
@@ -3089,7 +3089,7 @@ class OrderController extends Controller
         $order = $this->orders->get_order($orderId);
 
         DocumentsORM::where('order_id', $orderId)
-            ->update(['params' => $order]);
+            ->update(['params' => serialize($order)]);
 
         exit;
     }
