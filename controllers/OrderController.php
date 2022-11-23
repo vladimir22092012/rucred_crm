@@ -2038,15 +2038,10 @@ class OrderController extends Controller
             }
         }
 
-        UsersORM::find($user_id)->update($update);
-        $asp = AspCodesORM::where('user_id', $user_id)->orderBy('id', 'desc')->first();
-
-        $this->action_reform_schedule($order_id);
-        $this->form_docs($order_id);
+        $order = $this->orders->get_order($order_id);
 
         DocumentsORM::where('order_id', $order_id)
-            ->whereNotIn('type', ['OBSHIE_USLOVIYA', 'INDIVIDUALNIE_USLOVIA_ONL', 'GRAFIK_OBSL_MKR'])
-            ->update(['asp_id' => $asp->id]);
+            ->update(['params' => $order]);
 
         echo json_encode(['success' => 1]);
         exit;
@@ -3091,12 +3086,10 @@ class OrderController extends Controller
             'user_id' => $userId,
         ));
 
-        $asp = AspCodesORM::where('user_id', $userId)->orderBy('id', 'desc')->first();
-        $this->form_docs($orderId);
+        $order = $this->orders->get_order($orderId);
 
         DocumentsORM::where('order_id', $orderId)
-            ->whereNotIn('type', ['OBSHIE_USLOVIYA', 'INDIVIDUALNIE_USLOVIA_ONL', 'GRAFIK_OBSL_MKR'])
-            ->update(['asp_id' => $asp->id]);
+            ->update(['params' => $order]);
 
         exit;
     }
