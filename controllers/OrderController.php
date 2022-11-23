@@ -2040,6 +2040,8 @@ class OrderController extends Controller
 
         $order = $this->orders->get_order($order_id);
 
+        UsersORM::where('id', $user_id)->update($update);
+
         DocumentsORM::where('order_id', $order_id)
             ->update(['params' => serialize($order)]);
 
