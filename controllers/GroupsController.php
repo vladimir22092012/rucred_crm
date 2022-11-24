@@ -27,7 +27,7 @@ class GroupsController extends Controller
 
     private function action_add_group()
     {
-        $name    = $this->request->post('name');
+        $name    = $this->request->post('group_name');
         $blocked = $this->request->post('blocked');
 
         $last_number = $this->Groups->last_number();
@@ -67,6 +67,9 @@ class GroupsController extends Controller
 
             $this->GroupLoanTypes->add_group($group);
         }
+
+        echo json_encode(['success' => 1]);
+        exit;
     }
 
     private function action_update_group()
@@ -74,17 +77,20 @@ class GroupsController extends Controller
         $group_id = $this->request->post('group_id', 'integer');
         $group_name = $this->request->post('group_name');
         $number = $this->request->post('number');
+        $blocked = $this->request->post('blocked');
 
         $groups = $this->groups->get_groups(['number' => $number]);
+        $group = (array) $this->groups->get_group($group_id);
 
-        if (!empty($groups)) {
+        if (!empty($groups) && $group['number'] !== $number) {
             echo json_encode(['error' => 'Такой номер уже есть']);
             exit;
         } else {
             $group =
                 [
                     'name' => $group_name,
-                    'number' => $number
+                    'number' => $number,
+                    'blocked' => $blocked
                 ];
 
             $this->Groups->update_group($group_id, $group);
