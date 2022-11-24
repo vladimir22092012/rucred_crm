@@ -4544,6 +4544,7 @@ class OrderController extends Controller
         $doc_types['04.09'] = 'ZAYAVLENIE_NA_PERECHISL_CHASTI_ZP';
         $doc_types['04.10'] = 'OBSHIE_USLOVIYA';
         $doc_types['03.04'] = 'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR';
+        $doc_types['0.1'] = 'SOGLASIE_NA_OBR_PERS_DANNIH_OBL';
 
         foreach ($doc_types as $key => $type) {
 
@@ -4909,7 +4910,7 @@ class OrderController extends Controller
             $asp_id = $this->AspCodes->add_code($asp_log);
 
             DocumentsORM::where('order_id', $orderId)
-                ->whereNotIn('type', ['OBSHIE_USLOVIYA', 'INDIVIDUALNIE_USLOVIA_ONL', 'GRAFIK_OBSL_MKR'])
+                ->whereNotIn('type', ['INDIVIDUALNIE_USLOVIA_ONL', 'GRAFIK_OBSL_MKR'])
                 ->update(['asp_id' => $asp_id]);
 
             echo json_encode(['success' => 1]);
