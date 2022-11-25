@@ -22,9 +22,6 @@
                 if ($(this).val() === 'annouitet') {
                     number_of_payouts
                         .val('')
-                        .attr({
-                            min: 2
-                        })
                         .removeAttr('readonly');
                 } else if ($(this).val() === 'pdl') {
                     number_of_payouts
