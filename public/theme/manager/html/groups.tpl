@@ -25,7 +25,9 @@
 
                 addGroupModal.find('#number-input').parent().hide();
 
-                addGroupModal.modal('show');
+                addGroupModal.modal({
+                    backdrop: 'static'
+                }, 'show');
             });
 
             $('.to_edit').on('click', function () {
@@ -45,7 +47,9 @@
                 editGroupModal.find('#add-group-btn').hide();
                 editGroupModal.find('#edit-group-btn').show();
 
-                editGroupModal.modal('show');
+                editGroupModal.modal({
+                    backdrop: 'static'
+                }, 'show');
             });
 
             $('#edit-group-btn').on('click', function (e) {
