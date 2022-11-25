@@ -4259,7 +4259,7 @@
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Редактирование платежный реквизитов</h4>
+                    <h4 class="modal-title">Редактирование условий займа</h4>
                 </div>
                 <div class="modal-body">
                     <form id="settings_form">
