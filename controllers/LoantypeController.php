@@ -52,6 +52,7 @@ class LoantypeController extends Controller
         $loantype->name = $this->request->post('name');
 
         $loantype->percent = $this->request->post('percent');
+        $loantype->type = $this->request->post('product_type');
         $loantype->percent = str_replace(',', '.', $loantype->percent);
         $loantype->profunion = $this->request->post('profunion');
         $loantype->profunion = str_replace(',', '.', $loantype->profunion);
@@ -80,6 +81,10 @@ class LoantypeController extends Controller
             $this->design->assign('error', 'Длина описания не может быть более 20 символов');
         } elseif (empty($loantype->max_period)) {
             $this->design->assign('error', 'Укажите максимальный срок кредита');
+        } elseif ($loantype->type === 'pdl' && $loantype->max_period > 1
+            || $loantype->type === 'annouitet' && $loantype->max_period <= 1
+        ) {
+            $this->design->assign('error', 'Для данного типа продукта, данное количество выплат недоступно');
         } else {
             if (empty($loantype_id)) {
                 $loantype->id = $this->loantypes->add_loantype($loantype);

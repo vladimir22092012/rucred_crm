@@ -5,10 +5,94 @@
 {/if}
 
 {capture name='page_scripts'}
+    <!-- jQuery Validation JS -->
+    <script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js'></script>
+
     <script>
         $(function () {
+            let loantype_id = $('#loantype_id').val();
+            let product_type = $('#product_type');
+            let number_of_payouts = $('#number_of_payouts');
 
-            let loantype_id = {{$loantype->id}};
+            if (product_type.val() === 'pdl') {
+                number_of_payouts.val('1').attr('readonly', 'readonly');
+            }
+
+            product_type.on('change', function (e) {
+                if ($(this).val() === 'annouitet') {
+                    number_of_payouts
+                        .val('')
+                        .attr({
+                            min: 2
+                        })
+                        .removeAttr('readonly');
+                } else if ($(this).val() === 'pdl') {
+                    number_of_payouts
+                        .val('1')
+                        .attr('readonly', 'readonly');
+                }
+            });
+
+            $('#loantype_form').validate({
+                rules: {
+                    percent: "required",
+                    online_flag: "required",
+                    max_amount: "required",
+                    min_amount: "required",
+                    free_days: "required",
+                    profunion: "required",
+                    max_period: {
+                        required: true,
+                        min: function () {
+                            return (product_type.val() === 'pdl') ? 1 : 2;
+                        },
+                    },
+                    description: {
+                        maxlength: 20
+                    }
+                },
+
+                errorElement: "em",
+
+                errorPlacement: function ( error, element ) {
+                    // Add the `invalid-feedback` class to the error element
+                    error.addClass( "invalid-feedback" );
+                    error.insertAfter(element);
+                },
+                highlight: function ( element, errorClass, validClass ) {
+                    $( element ).addClass( "is-invalid" ).removeClass( "is-valid" );
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $( element ).addClass( "is-valid" ).removeClass( "is-invalid" );
+                },
+                messages: {
+                    number: {
+                        required: "Пожалуйста, укажите номер тарифа"
+                    },
+                    name: {
+                        required: "Пожалуйста, укажите наименование вида кредита"
+                    },
+                    max_amount: {
+                        required: "Пожалуйста, укажите максимальную сумму кредита"
+                    },
+                    min_amount: {
+                        required: "Пожалуйста, укажите минимальную сумму кредита"
+                    },
+                    description: {
+                        maxlength: "Длина описания не может быть более 20 символов"
+                    },
+                    percent: {
+                        required: "Пожалуйста, укажите процентную ставку"
+                    },
+                    profunion: {
+                        required: "Пожалуйста, укажите льготную ставку"
+                    },
+                    max_period: {
+                        required: "Пожалуйста, укажите максимальный срок кредита",
+                        min: "Для данного типа продукта, данное количество выплат недоступно"
+                    }
+                }
+            });
 
             $('.edit-company-tarif').on('click', function (e) {
                 e.preventDefault();
@@ -57,7 +141,7 @@
                     }
                 });
             });
-        })
+        });
     </script>
 {/capture}
 
@@ -183,7 +267,7 @@
         <!-- Row -->
         <div class="card card-outline-info">
             <div class="card-body">
-                <form method="POST">
+                <form id="loantype_form" method="POST">
 
                     <input type="hidden" name="action" value="edit_loan"/>
 
@@ -212,7 +296,7 @@
                             <div class="border">
                                 <h5 class="card-header"><span class="text-white">Общие</span></h5>
 
-                                <input type="hidden" name="id" value="{$loantype->id}"/>
+                                <input id="loantype_id" type="hidden" name="id" value="{$loantype->id}"/>
 
                                 <div class="p-2 pt-4">
                                     <div class="form-group">
@@ -221,8 +305,14 @@
                                                 <label class="control-label">Тип продукта</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <select class="form-control"
-                                                        {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
+                                                <select
+                                                    id="product_type"
+                                                    class="form-control"
+                                                    name="product_type"
+                                                    {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}
+                                                        disabled
+                                                    {/if}
+                                                >
                                                     <option value="pdl" {if $loantype->type == 'pdl'}selected{/if}>Payroll PDL
                                                     </option>
                                                     <option value="annouitet"
@@ -428,9 +518,14 @@
                                                 <label class="control-label">Количество выплат</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <input type="text" class="form-control" name="max_period"
-                                                       value="{$loantype->max_period}"
-                                                       {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}/>
+                                                <input
+                                                    id="number_of_payouts"
+                                                    type="number"
+                                                    class="form-control"
+                                                    name="max_period"
+                                                    value="{$loantype->max_period}"
+                                                    {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}
+                                                />
                                             </div>
                                         </div>
                                     </div>
