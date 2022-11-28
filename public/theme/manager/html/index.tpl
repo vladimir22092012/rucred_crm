@@ -240,8 +240,7 @@
                                                      {if $count_in != 0}data-badge="{$count_in}"{/if}></i><span>Входящие запросы</span></a>
                     </li>
                     <li {if $out}class="active"{/if}><a
-                                href="tickets?out=true"><i class="mdi mdi-email-variant badge1"
-                                                           {if $count_out != 0}data-badge="{$count_out}"{/if}></i><span>Исходящие запросы</span></a>
+                                href="tickets?out=true"><i class="mdi mdi-email-variant"></i><span>Исходящие запросы</span></a>
                     </li>
                     <li {if $archive}class="active"{/if}><a
                                 href="tickets?archive=true"><i
