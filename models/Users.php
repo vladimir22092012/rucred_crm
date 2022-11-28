@@ -179,11 +179,11 @@ class Users extends Core
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
         }
 
-        if (isset($filter['stage_filter']) && $filter['stage_filter'] = 1) {
+        if (isset($filter['stage_filter']) && $filter['stage_filter'] == 1) {
             $stage_filter = $this->db->placehold("AND stage_registration != 8");
         }
 
-        if (isset($filter['stage_filter']) && $filter['stage_filter'] = 2) {
+        if (isset($filter['stage_filter']) && $filter['stage_filter'] == 2) {
             $stage_filter = $this->db->placehold("AND stage_registration = 8");
         }
 
@@ -321,11 +321,11 @@ class Users extends Core
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('interval', (array)$filter['id']));
         }
 
-        if (isset($filter['stage_filter']) && $filter['stage_filter'] = 1) {
+        if (isset($filter['stage_filter']) && $filter['stage_filter'] == 1) {
             $stage_filter = $this->db->placehold("AND stage_registration != 8");
         }
 
-        if (isset($filter['stage_filter']) && $filter['stage_filter'] = 2) {
+        if (isset($filter['stage_filter']) && $filter['stage_filter'] == 2) {
             $stage_filter = $this->db->placehold("AND stage_registration = 8");
         }
 
