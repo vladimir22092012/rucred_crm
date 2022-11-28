@@ -258,12 +258,6 @@
                                         class="hide-menu">Архив заявок</span></a>
                         </li>
                         {if $manager->role != 'employer'}
-                            <li {if in_array($module, ['MissingController'])}class="active"{/if}>
-                                <a class="" href="missings/" aria-expanded="false"><i class="mdi mdi-sleep"></i><span
-                                            class="hide-menu">Отвалы</span></a>
-                            </li>
-                        {/if}
-                        {if $manager->role != 'employer'}
                             <li{if $drafts_online == 1} class="active"{/if}>
                                 <a class="" href="drafts?online=1" aria-expanded="false"><i
                                             class="mdi mdi-database"></i><span
@@ -301,6 +295,12 @@
                                         class="mdi mdi-chart-bubble"></i><span
                                         class="hide-menu">Реестр клиентов</span></a>
                         </li>
+                        {if $manager->role != 'employer'}
+                            <li {if in_array($module, ['MissingController'])}class="active"{/if}>
+                                <a class="" href="missings/" aria-expanded="false"><i class="mdi mdi-sleep"></i><span
+                                            class="hide-menu">Взаимодействия с клиентами</span></a>
+                            </li>
+                        {/if}
                         <li {if in_array($module, ['RegistrController'])}class="active"{/if}>
                             <a class="" href="registr/" aria-expanded="false"><i
                                         class="mdi mdi-book-open-page-variant"></i><span
