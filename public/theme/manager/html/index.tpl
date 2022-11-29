@@ -256,13 +256,6 @@
                             <a class="" href="orders?archive=true" aria-expanded="false"><i class="mdi mdi-animation"></i><span
                                         class="hide-menu">Архив заявок</span></a>
                         </li>
-                        {if $manager->role != 'employer'}
-                            <li{if $drafts_online == 1} class="active"{/if}>
-                                <a class="" href="drafts?online=1" aria-expanded="false"><i
-                                            class="mdi mdi-database"></i><span
-                                            class="hide-menu">Черновики</span></a>
-                            </li>
-                        {/if}
                     {/if}
                     {if in_array('offline_settings', $manager->permissions) || in_array('offline', $manager->permissions)}
                         <li class="nav-small-cap">Оффлайн заявки</li>
