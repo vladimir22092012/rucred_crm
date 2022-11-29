@@ -15,4 +15,14 @@ class CompaniesORM extends \Illuminate\Database\Eloquent\Model
     {
         return $this->hasOne(GroupsORM::class, 'id','group_id');
     }
+
+    public function employees()
+    {
+        return $this->belongsToMany(
+            EmployeeORM::class,
+            's_managers_employers',
+            'company_id',
+            'manager_id'
+        );
+    }
 }

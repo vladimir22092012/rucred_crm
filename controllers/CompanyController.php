@@ -553,9 +553,16 @@ class CompanyController extends Controller
     private function action_blocked()
     {
         $company_id = $this->request->post('company');
-        $value      = $this->request->post('value');
+        $value = (bool) $this->request->post('value');
 
-        $this->companies->update_company($company_id, ['blocked' => $value]);
+        $company = CompaniesORM::find($company_id);
+        $company->employees()->where('role', 'employer')->update([
+            'blocked' => $value
+        ]);
+        $company->update([
+            'blocked' => $value
+        ]);
+
         exit;
     }
 
