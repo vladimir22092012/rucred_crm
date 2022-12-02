@@ -1469,7 +1469,7 @@
                                         {elseif $client_status == 'Повтор'}
                                             <span class="label label-warning">Повтор</span>
                                         {elseif $client_status == 'Новая'}
-                                            <span class="label label-info">Новая</span>
+                                            <span class="label label-info">Новый</span>
                                         {/if}
                                     </small>
                                     <small style="margin-left: 25px">

@@ -346,7 +346,7 @@
                         <li {if in_array($module, ['CompaniesController'])}class="active"{/if}><a
                                     href="companies"><i class="mdi mdi-compass"></i>Компании</a></li>
                         <li {if in_array($module, ['LoantypesController','LoantypeController'])}class="active"{/if}>
-                            <a href="loantypes"><i class="mdi mdi-magnet"></i>Продукты</a></li>
+                            <a href="loantypes"><i class="mdi mdi-magnet"></i>Тарифы и условия</a></li>
                         {if in_array($manager->role, ['developer', 'admin'])}
                             <li {if in_array($module, ['WhitelistController'])}class="active"{/if}>
                                 <a href="/whitelist"><i class="mdi mdi-tooltip"></i>Whitelist</a></li>
