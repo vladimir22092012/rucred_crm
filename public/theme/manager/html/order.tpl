@@ -1067,10 +1067,19 @@
 
                 confirm_sms(code, order);
             });
+
+            $('.refreshConditions').on('click', function () {
+                $.ajax({
+                   method: 'POST',
+                   data:{
+                       action: 'refreshConditions',
+
+                   }
+                });
+            });
         });
     </script>
     <script>
-
         function get_docs(order_id) {
             $.ajax({
                 method: 'post',
@@ -1547,6 +1556,10 @@
                                             <span class="phone_mobile_format">{$order->phone_mobile}</span>
                                         </h4>
                                     </div>
+                                    <br>
+                                    <div>
+                                        ID клиента: {$order->user_id}{if !empty($order->contract_id)}<br>ID сделки: {$order->contract_id}{/if}
+                                    </div>
                                 </div>
                                 <div class="col-12 col-md-8 col-lg-6">
                                     <form class="mb-3 p-2 border" id="loan_settings">
@@ -1720,6 +1733,15 @@
                                                 </div>
                                             </div>
                                         {/if}
+                                        {*
+                                        {if $order->status == 0}
+                                            <div class="card card-primary">
+                                                <div data-order="" class="btn btn-info btn-block refreshConditions">
+                                                    Обновить условия
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        *}
                                         {if in_array($order->status, [13,14,15]) && $manager->role != 'employer'}
                                             <div>
                                                 <button class="btn btn-success btn-block approve_by_under"

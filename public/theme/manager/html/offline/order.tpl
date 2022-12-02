@@ -1764,37 +1764,10 @@
                                                 <span class="phone_mobile_format">{$order->phone_mobile}</span>
                                             </h4>
                                         </div>
-
-                                        <div class="edit-block hide">
-                                            <div class="form-group mb-1">
-                                                <input type="text" name="lastname" value="{$order->lastname}"
-                                                       class="form-control" placeholder="Фамилия"/>
-                                            </div>
-                                            <div class="form-group mb-1">
-                                                <input type="text" name="firstname" value="{$order->firstname}"
-                                                       class="form-control" placeholder="Имя"
-                                                       {if $client_status != 'Новая'}disabled{/if}/>
-                                            </div>
-                                            <div class="form-group mb-1">
-                                                <input type="text" name="patronymic" value="{$order->patronymic}"
-                                                       class="form-control" placeholder="Отчество"
-                                                       {if $client_status != 'Новая'}disabled{/if}/>
-                                            </div>
-                                            <div class="form-group mb-1">
-                                                <input type="text" name="phone_mobile" value="{$order->phone_mobile}"
-                                                       class="form-control" placeholder="Телефон"/>
-                                            </div>
-                                            <div class="form-actions">
-                                                <button type="submit" class="btn btn-success js-event-add-click"
-                                                        data-event="40" data-manager="{$manager->id}"
-                                                        data-order="{$order->order_id}" data-user="{$order->user_id}"><i
-                                                            class="fa fa-check"></i> Сохранить
-                                                </button>
-                                                <button type="button" class="btn btn-inverse js-cancel-edit">Отмена
-                                                </button>
-                                            </div>
+                                        <br>
+                                        <div>
+                                            ID клиента: {$order->user_id}{if !empty($order->contract_id)}<br>ID сделки: {$order->contract_id}{/if}
                                         </div>
-
                                     </form>
                                 </div>
                                 <div class="col-12 col-md-8 col-lg-6">
