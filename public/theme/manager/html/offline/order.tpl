@@ -1698,7 +1698,7 @@
                                             <span class="label label-info">Клиентский сайт</span>
                                         {elseif $order->order_source_id == 2}
                                             <span class="label label-primary">Мобильное приложение</span>
-                                        {elseif $order->order_source_id == 3}
+                                        {elseif $order->offline == 1}
                                             <span class="label label-success">Црм</span>
                                         {/if}
                                     </small>
