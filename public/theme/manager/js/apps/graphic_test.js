@@ -369,20 +369,25 @@ $(function () {
     $('.permission').on('change', function () {
         let permission = $(this).val();
 
-        $('.groups').fadeIn();
-        $('.groups').empty();
-        $('.groups').append('<option value="none">Выберите из списка</option>');
+        if (permission != 'none') {
+            $('.groups').fadeIn();
+            $('.groups').empty();
+            $('.groups').append('<option value="none">Выберите из списка</option>');
 
-        $.ajax({
-            method: 'POST',
-            data: {
-                action: 'get_groups',
-                permission: permission
-            },
-            success: function (resp) {
-                $('.groups').html(resp);
-            }
-        });
+            $.ajax({
+                method: 'POST',
+                data: {
+                    action: 'get_groups',
+                    permission: permission
+                },
+                success: function (resp) {
+                    $('.groups').html(resp);
+                }
+            });
+        } else {
+            $('.groups').fadeOut();
+            $('.groups').empty();
+        }
     });
 
     $('.groups').on('change', function (e) {

@@ -21,7 +21,7 @@
     <script src="theme/{$settings->theme|escape}/assets/plugins/inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
-    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/graphic_test.js"></script>
+    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/graphic_test.js?v=1.01"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery.maskedinput@1.4.1/src/jquery.maskedinput.min.js"
             type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
@@ -403,14 +403,24 @@
                                 <hr style="width: 100%; size: 5px">
                                 <form method="POST" id="forms" style="width: 100%">
                                     <h3>Доступность</h3><br>
-                                    <div style="width: 100%; margin-left: 25px">
-                                        <select style="width: 300px" class="form-control permission">
-                                            <option value="none">Выберите режим</option>
-                                            <option value="all">Все компании и тарифы</option>
-                                            <option value="online">Компании и тарифы в онлайне</option>
-                                            <option value="offline">Компании и тарифы в офлайне</option>
-                                        </select>
-                                    </div><br>
+                                    <div style="display: flex">
+                                        <div style="margin-left: 25px">
+                                            <select style="width: 300px" class="form-control permission">
+                                                <option value="none">Выберите режим</option>
+                                                <option value="all">Все компании и тарифы</option>
+                                                <option value="online">Компании и тарифы в онлайне</option>
+                                                <option value="offline">Компании и тарифы в офлайне</option>
+                                            </select>
+                                        </div>
+                                        {*
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" id="showBlocked" class="custom-control-input">
+                                            <label class="custom-control-label" for="showBlocked">Показать
+                                                заблокированные</label>
+                                        </div>
+                                        *}
+                                    </div>
+                                    <br>
                                     <h3>Работодатель</h3><br>
                                     <div style="width: 100%; margin-left: 25px">
                                         <select style="width: 500px; display: none;"
@@ -448,6 +458,7 @@
                                                     Я не являюсь членом профсоюза
                                                 </label>
                                             </div>
+                                            {*
                                             <div class="form-check" style="margin-left: 25px"
                                                  id="profunion_toggle">
                                                 <input class="form-check-input want_profunion" type="checkbox"
@@ -457,6 +468,7 @@
                                                     Оповестить о желании вступления в профсоюз
                                                 </label>
                                             </div>
+                                            *}
                                         </div>
                                     </div>
                                     <br>

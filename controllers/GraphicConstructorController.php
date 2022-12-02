@@ -399,6 +399,7 @@ class GraphicConstructorController extends Controller
         $payment_schedule_html .= "<td><input type='text' class='form-control' value='$rest_sum' disabled></td>";
         $payment_schedule_html .= "</tr>";
 
+        /*
         $payment_schedule_html .= "<tr>";
         $payment_schedule_html .= "<td><input type='text' class='form-control daterange' value='ПСК' disabled></td>";
         $payment_schedule_html .= "<td><input type='text' class='form-control' value='$psk' disabled></td>";
@@ -408,6 +409,7 @@ class GraphicConstructorController extends Controller
         $payment_schedule_html .= "<td><input type='text' class='form-control daterange' value='Дата выдачи' disabled></td>";
         $payment_schedule_html .= "<td><input type='text' class='form-control' value=$date_from disabled></td>";
         $payment_schedule_html .= "</td>";
+        */
 
         $payment_schedule_html .= '</tbody>
                                     </table>';
