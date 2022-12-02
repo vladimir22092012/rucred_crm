@@ -3507,15 +3507,8 @@ class OfflineOrderController extends Controller
             $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2, PHP_ROUND_HALF_DOWN);
             $body_pay = $sum_pay - $loan_percents_pay;
             $paydate->add(new DateInterval('P1M'));
-
             $iteration++;
-
-        } elseif (date_diff($paydate, $start_date)->days < $loan->min_period) {
-            $sum_pay = ($order['percent'] / 100) * $order['amount'] * (date_diff($paydate, $start_date)->days-1);
-            $loan_percents_pay = $sum_pay;
-            $body_pay = 0.00;
         } elseif (date_diff($paydate, $start_date)->days >= $loan->min_period && date_diff($paydate, $start_date)->days < $count_days_this_month) {
-
             $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - (date_diff($paydate, $start_date)->days-1));
             $sum_pay = $annoouitet_pay - round($minus_percents, 2);
             $loan_percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
@@ -3555,11 +3548,16 @@ class OfflineOrderController extends Controller
                 $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
                 $date = $this->check_pay_date($paydate);
 
-                if ($i == $period) {
+                if ($i == $period && $loan->id != 1) {
                     $loan_body_pay = $rest_sum;
                     $loan_percents_pay = $annoouitet_pay - $loan_body_pay;
                     $rest_sum = 0.00;
-                } else {
+                } elseif ($loan->id == 1) {
+                    $loan_body_pay = $rest_sum;
+                    $loan_percents_pay = $order['amount'] * ($order['percent']/100) * date_diff($start_date, $date)->days - $loan_percents_pay;
+                    $annoouitet_pay = $loan_body_pay + $loan_percents_pay;
+                    $rest_sum = 0.00;
+                }else {
                     $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
                     $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
                     $rest_sum = round($rest_sum - $loan_body_pay, 2);
