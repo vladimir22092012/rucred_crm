@@ -336,6 +336,9 @@ class OfflineOrderController extends Controller
                     if (!empty($from_registr))
                         $this->design->assign('from_registr', $from_registr);
 
+                    $projectNumber = ProjectContractNumberORM::where('orderId', $order->order_id)->where('userId', $order->user_id)->first();
+                    $this->design->assign('projectNumber', $projectNumber);
+
 
                     $old_orders = $this->orders->get_orders(['user_id' => $order->user_id]);
 
@@ -3389,7 +3392,7 @@ class OfflineOrderController extends Controller
             $paydate->add(new DateInterval('P1M'));
             $iteration++;
         } elseif (date_diff($paydate, $start_date)->days >= $loan->min_period && date_diff($paydate, $start_date)->days < $count_days_this_month) {
-            $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($paydate, $start_date)->days -1);
+            $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($paydate, $start_date)->days - 1);
             $sum_pay = $annoouitet_pay - round($minus_percents, 2);
             $loan_percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
             $loan_percents_pay = round($loan_percents_pay, 2, PHP_ROUND_HALF_DOWN);
@@ -3892,8 +3895,7 @@ class OfflineOrderController extends Controller
                 $payments[] = round($pay['pay_sum'], '2');
                 $dates[] = date('d.m.Y', strtotime($date));
 
-                if(!isset($new_shedule[$date]['rest_pay']) && $new_shedule[$date]['loan_body_pay'] != 0)
-                {
+                if (!isset($new_shedule[$date]['rest_pay']) && $new_shedule[$date]['loan_body_pay'] != 0) {
                     $rest_sum -= round($pay['loan_body_pay'], 2);
                     $new_shedule[$date]['rest_pay'] = $rest_sum;
                 }
@@ -4240,7 +4242,7 @@ class OfflineOrderController extends Controller
                 $contracts = $this->contracts->get_contracts(['user_id' => $order->user_id]);
 
                 if (!empty($contracts)) {
-                    $count_contracts = count($contracts)+1;
+                    $count_contracts = count($contracts) + 1;
                     $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
                 } else {
                     $count_contracts = '01';
@@ -5312,6 +5314,21 @@ class OfflineOrderController extends Controller
         $inn = trim($this->request->post('inn'));
         $snils = trim($this->request->post('snils'));
         $personalNumber = trim($this->request->post('personal_number'));
+        $projectNumber = trim($this->request->post('project_number'));
+
+        $sameProjectNumber = ProjectContractNumberORM::where('uid', $projectNumber)
+            ->where('orderId', '!=', $order_id)
+            ->where('userId', '!=', $user_id)
+            ->first();
+
+        if (!empty($sameProjectNumber)) {
+            echo json_encode(['error' => 'Такой проект номера уже есть']);
+            exit;
+        }
+
+        $oldProjectNumber = ProjectContractNumberORM::where('orderId', $order_id)->where('userId', $user_id)->first();
+
+        ProjectContractNumberORM::updateOrCreate(['orderId' => $order_id, 'userId' => $user_id], ['uid' => $projectNumber]);
 
         $old_regaddress = $this->Addresses->get_address($old_user->regaddress_id);
         $old_faktaddress = $this->Addresses->get_address($old_user->faktaddress_id);
@@ -5334,6 +5351,7 @@ class OfflineOrderController extends Controller
             'Адрес регистрации' => $regaddress['adressfull'],
             'Адрес проживания' => $faktaddress['adressfull'],
             'Персональный номер' => $personalNumber,
+            'Проект номера' => $projectNumber,
             'Причина' => $comment
         );
 
@@ -5351,12 +5369,18 @@ class OfflineOrderController extends Controller
             'СНИЛС' => $old_user->snils,
             'Адрес регистрации' => empty($old_regaddress->adressfull) ?? '',
             'Адрес проживания' => empty($old_faktaddress->adressfull) ?? '',
-            'Персональный номер' => $old_user->personal_number
+            'Персональный номер' => $old_user->personal_number,
+            'Проект номера' => $oldProjectNumber->uid
         );
 
         if ($old_user->lastname == $lastname) {
             unset($new_values['Имя']);
             unset($old_values['Имя']);
+        }
+
+        if (!empty($oldProjectNumber) && $oldProjectNumber == $projectNumber) {
+            unset($new_values['Проект номера']);
+            unset($old_values['Проект номера']);
         }
 
         if ($old_user->firstname == $firstname) {
@@ -5458,7 +5482,7 @@ class OfflineOrderController extends Controller
             }
         }
 
-        if(!empty($update))
+        if (!empty($update))
             UsersORM::where('id', $user_id)->update($update);
 
         $order = $this->orders->get_order($order_id);
@@ -5500,7 +5524,7 @@ class OfflineOrderController extends Controller
         $newValues = array_diff($update, $oldRequisites);
         $oldValues = array_intersect_key($oldRequisites, $newValues);
 
-        if(!empty($update))
+        if (!empty($update))
             RequisitesORM::where('user_id', $userId)->update($newValues);
 
         $translate =

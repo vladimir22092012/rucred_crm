@@ -5030,6 +5030,11 @@
                                        class="form-control"/>
                             </div>
                             <div class="form-group">
+                                <label>Проект номера договора</label>
+                                <input type="text" name="project_number" value="{$projectNumber->uid}"
+                                       class="form-control"/>
+                            </div>
+                            <div class="form-group">
                                 <label>Причина редактирования</label>
                                 <textarea name="comment"
                                           class="form-control"></textarea>
