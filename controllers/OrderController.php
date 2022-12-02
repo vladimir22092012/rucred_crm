@@ -1929,8 +1929,8 @@ class OrderController extends Controller
             'Кем выдан паспорт' => $old_user->passport_issued,
             'ИНН' => $old_user->inn,
             'СНИЛС' => $old_user->snils,
-            'Адрес регистрации' => $old_regaddress->adressfull,
-            'Адрес проживания' => $old_faktaddress->adressfull,
+            'Адрес регистрации' => empty($old_regaddress->adressfull) ?? '',
+            'Адрес проживания' => empty($old_faktaddress->adressfull) ?? '',
             'Персональный номер' => $old_user->personal_number
         );
 
@@ -1994,12 +1994,12 @@ class OrderController extends Controller
             unset($old_values['СНИЛС']);
         }
 
-        if ($old_regaddress->adressfull == $regaddress['adressfull']) {
+        if (!empty($old_regaddress) && $old_regaddress->adressfull == $regaddress['adressfull']) {
             unset($new_values['Адрес регистрации']);
             unset($old_values['Адрес регистрации']);
         }
 
-        if ($old_faktaddress->adressfull == $faktaddress['adressfull']) {
+        if (!empty($old_faktaddress) && $old_faktaddress->adressfull == $faktaddress['adressfull']) {
             unset($new_values['Адрес проживания']);
             unset($old_values['Адрес проживания']);
         }
@@ -2038,7 +2038,8 @@ class OrderController extends Controller
             }
         }
 
-        UsersORM::where('id', $user_id)->update($update);
+        if(!empty($update))
+            UsersORM::where('id', $user_id)->update($update);
 
         $order = $this->orders->get_order($order_id);
 
@@ -3558,7 +3559,7 @@ class OrderController extends Controller
             $paydate->add(new DateInterval('P1M'));
             $iteration++;
         } elseif (date_diff($paydate, $start_date)->days >= $loan->min_period && date_diff($paydate, $start_date)->days < $count_days_this_month) {
-            $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($paydate, $start_date)->days);
+            $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($paydate, $start_date)->days -1);
             $sum_pay = $annoouitet_pay - round($minus_percents, 2);
             $loan_percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
             $loan_percents_pay = round($loan_percents_pay, 2, PHP_ROUND_HALF_DOWN);

@@ -891,15 +891,6 @@
                 });
             });
 
-            $(document).on('click', '.test_ya', function () {
-                $.ajax({
-                    method: 'POST',
-                    data: {
-                        action: 'upload_docs_to_yandex'
-                    }
-                })
-            });
-
             $('a[href^="#"]').click(function (e) {
                 e.preventDefault();
 
@@ -1118,6 +1109,31 @@
                 }
             });
         }
+        function confirm_asp(user, phone, code, order, restruct) {
+
+            $.ajax({
+                method: 'POST',
+                dataType: 'JSON',
+                data: {
+                    action: 'confirm_asp',
+                    user: user,
+                    phone: phone,
+                    code: code,
+                    order: order,
+                    restruct: restruct
+                },
+                success: function (response) {
+                    if (response['error'] == 1) {
+                        Swal.fire({
+                            title: 'Неверный код',
+                            confirmButtonText: 'ОК'
+                        });
+                    } else {
+                        location.reload();
+                    }
+                }
+            });
+        }
 
         function send_sms(order) {
 
@@ -1140,32 +1156,6 @@
                         $('.phone_send_code').text(resp['code']);
                         $('button[class="btn btn-info confirm_asp"]').removeClass('confirm_asp');
                         $('button[class="btn btn-info"]').addClass('confirm_settings');
-                    }
-                }
-            });
-        }
-
-        function confirm_asp(user, phone, code, order, restruct) {
-
-            $.ajax({
-                method: 'POST',
-                dataType: 'JSON',
-                data: {
-                    action: 'confirm_asp',
-                    user: user,
-                    phone: phone,
-                    code: code,
-                    order: order,
-                    restruct: restruct
-                },
-                success: function (response) {
-                    if (response['error'] == 1) {
-                        Swal.fire({
-                            title: 'Неверный код',
-                            confirmButtonText: 'ОК'
-                        });
-                    } else {
-                        location.reload();
                     }
                 }
             });
@@ -4464,13 +4454,13 @@
                                 <label>Адрес прописки</label>
                                 <textarea name="regaddress"
                                           class="form-control">{$order->regaddress->adressfull}</textarea>
-                                <input type="hidden" class="Registration">
+                                <input type="hidden" name="Registration" class="Registration">
                             </div>
                             <div class="form-group">
                                 <label>Адрес проживания</label>
                                 <textarea name="faktaddress"
                                           class="form-control">{$order->faktaddress->adressfull}</textarea>
-                                <input type="hidden" class="Faktadres">
+                                <input type="hidden" name="Faktadres" class="Faktadres">
                             </div>
                             <div class="form-group">
                                 <label>Номер клиента</label>
