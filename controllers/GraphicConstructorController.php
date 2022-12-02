@@ -399,6 +399,31 @@ class GraphicConstructorController extends Controller
         $payment_schedule_html .= "<td><input type='text' class='form-control' value='$rest_sum' disabled></td>";
         $payment_schedule_html .= "</tr>";
 
+        $payment_schedule_html .= '</tbody>
+                                    </table>';
+        $payment_schedule_html .= '<div><br></div>';
+
+        $payment_schedule_html .= '<table border="2" style="font-size: 15px">';
+        $payment_schedule_html .= '<tbody>';
+
+        $payment_schedule_html .= "<tr>";
+        $payment_schedule_html .= "<td style='width: 70%'><input type='text' class='form-control' value='Минимальный срок до первой выплаты по %%' disabled></td>";
+        $payment_schedule_html .= "<td><input type='text' class='form-control' value='$loan->free_period' disabled></td>";
+        $payment_schedule_html .= "</td>";
+
+        $payment_schedule_html .= "<tr>";
+        $payment_schedule_html .= "<td><input type='text' class='form-control' value='Минимальный срок до первой выплаты по осн.долгу' disabled></td>";
+        $payment_schedule_html .= "<td><input type='text' class='form-control' value='$loan->min_period' disabled></td>";
+        $payment_schedule_html .= "</td>";
+
+        $payment_schedule_html .= "<tr>";
+        $payment_schedule_html .= "<td><input type='text' class='form-control' value='День выплаты з/п' disabled></td>";
+        $payment_schedule_html .= "<td><input type='text' class='form-control' value='$first_pay_day' disabled></td>";
+        $payment_schedule_html .= "</td>";
+
+        $payment_schedule_html .= '</tbody>';
+        $payment_schedule_html .= '</table>';
+
         /*
         $payment_schedule_html .= "<tr>";
         $payment_schedule_html .= "<td><input type='text' class='form-control daterange' value='ПСК' disabled></td>";
