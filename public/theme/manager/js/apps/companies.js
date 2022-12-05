@@ -12,6 +12,20 @@ $(function () {
         },
     });
 
+    $(document).on('input', '#inn, #ogrn, #kpp', function () {
+        let value = $(this).val();
+        value = value.replace(new RegExp(/[^.\d]/, 'g'), '');
+        $(this).val(value);
+    });
+
+    $('#inn').click(function () {
+        $(this).setCursorPosition(0);
+    }).mask('9999999999');
+
+    $('#ogrn').click(function () {
+        $(this).setCursorPosition(0);
+    }).mask('9999999999999');
+
     $('.add-company-modal').on('click', function () {
         $('#add-company-modal').modal();
     });
@@ -227,7 +241,6 @@ $(function () {
         type: "BANK",
         minChars: 3,
         onSelect: function (suggestion) {
-            console.log(suggestion);
             $(this).val(suggestion.value);
             $('#correspondent_account').val(suggestion.data.correspondent_account);
             $('#bik_settlement').val(suggestion.data.bic);

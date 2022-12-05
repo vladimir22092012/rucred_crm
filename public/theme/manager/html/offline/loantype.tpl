@@ -30,6 +30,12 @@
                 }
             });
 
+            $(document).on('input', '.digitPreg', function () {
+                let value = $(this).val();
+                value = value.replace(new RegExp(/[^ \d\s.,]/, 'g'), '');
+                $(this).val(value);
+            });
+
             $('#loantype_form').validate({
                 rules: {
                     percent: "required",
@@ -441,7 +447,7 @@
                                                 <label class="control-label">Регулярная ставка, % в день</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <input type="text" class="form-control" name="percent"
+                                                <input type="text" class="form-control digitPreg" name="percent"
                                                        {if $loantype}value="{$loantype->percent|number_format:3:',':' '}" {/if} {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}/>
                                             </div>
                                         </div>
@@ -452,7 +458,7 @@
                                                 <label class="control-label">Льготная ставка, % в день</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <input type="text" class="form-control" name="profunion"
+                                                <input type="text" class="form-control digitPreg" name="profunion"
                                                        {if $loantype}value="{$loantype->profunion|number_format:3:',':' '}" {/if} {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}/>
                                             </div>
                                         </div>
@@ -491,7 +497,7 @@
                                                 <label class="control-label">Минимальная сумма, руб</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <input type="text" class="form-control" name="min_amount"
+                                                <input type="text" class="form-control digitPreg" name="min_amount"
                                                        value="{$loantype->min_amount|number_format:0:',':' '}"
                                                        {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}/>
                                             </div>
@@ -503,7 +509,7 @@
                                                 <label class="control-label">Максимальная сумма, руб</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <input type="text" class="form-control" name="max_amount"
+                                                <input type="text" class="form-control digitPreg" name="max_amount"
                                                        value="{$loantype->max_amount|number_format:0:',':' '}"
                                                        {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}/>
                                             </div>
@@ -518,7 +524,7 @@
                                                 <input
                                                     id="number_of_payouts"
                                                     type="number"
-                                                    class="form-control"
+                                                    class="form-control digitPreg"
                                                     name="max_period"
                                                     value="{$loantype->max_period}"
                                                     {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}
@@ -578,7 +584,7 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h4 class="modal-title">Редактировать компанию</h4>
+                <h4 class="modal-title">Редактировать условия</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
@@ -589,12 +595,12 @@
                     <input type="hidden" name="group_id" value="">
                     <div class="form-group">
                         <label for="standart_percents" class="control-label">Процентная ставка</label>
-                        <input type="text" class="form-control" name="standart_percents" id="standart_percents"
+                        <input type="text" class="form-control digitPreg" name="standart_percents" id="standart_percents"
                                value=""/>
                     </div>
                     <div class="form-group">
                         <label for="preferential_percents" class="control-label">Льготная ставка</label>
-                        <input type="text" class="form-control" name="preferential_percents" id="preferential_percents"
+                        <input type="text" class="form-control digitPreg" name="preferential_percents" id="preferential_percents"
                                value=""/>
                     </div>
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">

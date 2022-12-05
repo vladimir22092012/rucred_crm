@@ -19,12 +19,17 @@
     <script src="theme/manager/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     <script src="theme/manager/assets/plugins/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="theme/manager/assets/plugins/datatables.net-bs4/js/dataTables.responsive.min.js"></script>
-    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/companies.js"></script>
+    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/companies.js?v=1.01"></script>
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.maskedinput@1.4.1/src/jquery.maskedinput.min.js" type="text/javascript"></script>
     <script>
         $(function () {
 
             let token_dadata = "25c845f063f9f3161487619f630663b2d1e4dcd7";
+
+            $('.phoneMask').click(function () {
+                $(this).setCursorPosition(0);
+            }).mask('+7(999)999-9999');
 
             $('#inn').suggestions({
                 token: token_dadata,
@@ -583,7 +588,7 @@
                     </div>
                     <div class="form-group">
                         <label for="phone" class="control-label">Контактный телефон:</label>
-                        <input type="text" class="form-control" name="phone" id="phone" value=""/>
+                        <input type="text" class="form-control phoneMask" name="phone" id="phone" value=""/>
                     </div>
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
                     <input type="submit" class="btn btn-success add_branche" value="Сохранить">
@@ -696,7 +701,7 @@
                     </div>
                     <div class="form-group">
                         <label for="phone" class="control-label">Контактный телефон:</label>
-                        <input type="text" class="form-control edit_branch_form" name="phone" id="phone" value=""/>
+                        <input type="text" class="form-control edit_branch_form phoneMask" name="phone" id="phone" value=""/>
                     </div>
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
                     <input type="button" class="btn btn-success action_edit_branch" value="Сохранить">
