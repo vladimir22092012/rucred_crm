@@ -28,7 +28,7 @@ class MissingsController extends Controller
         $filter = array();
 
         if (!($sort = $this->request->get('sort', 'string'))) {
-            $sort = 'id_desc';
+            $sort = 'modified_desc';
         }
         $filter['sort'] = $sort;
         $this->design->assign('sort', $sort);

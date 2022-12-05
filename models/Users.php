@@ -246,6 +246,14 @@ class Users extends Core
                     $sort = 'created ASC';
                     break;
 
+                case 'modified_asc':
+                    $sort = 'updated ASC';
+                    break;
+
+                case 'modified_desc':
+                    $sort = 'updated DESC';
+                    break;
+
                 case 'fio_desc':
                     $sort = 'lastname DESC, firstname DESC, patronymic DESC';
                     break;

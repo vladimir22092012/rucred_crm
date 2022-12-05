@@ -69,10 +69,10 @@
                                             {else}<a href="{url page=null sort='date_asc'}">Регистрация</a>{/if}
                                         </th>
                                         <th style="width: 100px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'date_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'date_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'date_asc'}<a href="{url page=null sort='date_desc'}">Посл.
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'modified_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'modified_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'modified_asc'}<a href="{url page=null sort='modified_desc'}">Посл.
                                                 действие</a>
-                                            {else}<a href="{url page=null sort='date_asc'}">Посл. действие</a>{/if}
+                                            {else}<a href="{url page=null sort='modified_asc'}">Посл. действие</a>{/if}
                                         </th>
                                         <th style="width: 200px;"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
