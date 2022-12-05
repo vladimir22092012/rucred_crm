@@ -555,7 +555,7 @@
 </div>
 
 <div id="modal_add_branch" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+     aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
 
@@ -599,7 +599,7 @@
 </div>
 
 <div id="modal_edit_company" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+     aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
 
@@ -669,7 +669,7 @@
 </div>
 
 <div id="edit_branch" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+     aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
 
@@ -712,7 +712,7 @@
 </div>
 
 <div id="add_settlement" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+     aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
 
@@ -750,7 +750,7 @@
 </div>
 
 <div id="update_settlement" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+     aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
 
@@ -789,7 +789,7 @@
 </div>
 
 <div id="add_document" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+     aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
 
