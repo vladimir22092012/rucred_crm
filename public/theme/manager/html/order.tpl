@@ -1442,7 +1442,7 @@
                         {if isset($from_registr)}
                             <a href="registr">Реестр сделок</a>
                         {else}
-                            <a href="offline_orders">Заявки</a>
+                            <a href="orders">Заявки</a>
                         {/if}</li>
                     <li class="breadcrumb-item active">Заявка
                         № {if !empty($contract->number)}{$contract->number}{else}{$order->group_number} {$order->company_number} {$order->personal_number}{/if}
