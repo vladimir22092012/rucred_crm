@@ -282,17 +282,17 @@
                     {/if}
                     {if in_array('managers', $manager->permissions)}
                         <li class="nav-small-cap">Сделки</li>
-                        <li {if in_array($module, ['ClientController', 'ClientsController'])}class="active"{/if}>
-                            <a class="" href="clients/" aria-expanded="false"><i
-                                        class="mdi mdi-chart-bubble"></i><span
-                                        class="hide-menu">Реестр клиентов</span></a>
-                        </li>
                         {if $manager->role != 'employer'}
                             <li {if in_array($module, ['MissingController'])}class="active"{/if}>
                                 <a class="" href="missings/" aria-expanded="false"><i class="mdi mdi-sleep"></i><span
                                             class="hide-menu">Взаимодействия с клиентами</span></a>
                             </li>
                         {/if}
+                        <li {if in_array($module, ['ClientController', 'ClientsController'])}class="active"{/if}>
+                            <a class="" href="clients/" aria-expanded="false"><i
+                                        class="mdi mdi-chart-bubble"></i><span
+                                        class="hide-menu">Реестр клиентов</span></a>
+                        </li>
                         <li {if in_array($module, ['RegistrController'])}class="active"{/if}>
                             <a class="" href="registr/" aria-expanded="false"><i
                                         class="mdi mdi-book-open-page-variant"></i><span
@@ -310,10 +310,6 @@
                         <li {if in_array($module, ['ManagerController', 'ManagersController'])}class="active"{/if}>
                             <a class="" href="managers/" aria-expanded="false"><i
                                         class="mdi mdi-account-multiple-outline"></i><span class="hide-menu">Пользователи</span></a>
-                        </li>
-                        <li {if in_array($module, ['GraphicConstructorController'])}class="active"{/if}>
-                            <a class="" href="graphic_constructor/" aria-expanded="false"><i
-                                        class="mdi mdi-react"></i><span class="hide-menu">Тест-калькулятор</span></a>
                         </li>
                     {/if}
                     {if in_array('managers', $manager->permissions)}
@@ -381,6 +377,10 @@
                             <li {if in_array($module, ['SettingsController'])}class="active"{/if}><a
                                         href="settings/"><i class="mdi mdi-settings"></i>Общие</a></li>
                         {/if}
+                        <li {if in_array($module, ['GraphicConstructorController'])}class="active"{/if}>
+                            <a class="" href="graphic_constructor/" aria-expanded="false"><i
+                                        class="mdi mdi-react"></i><span class="hide-menu">Демонстратор калькулятора</span></a>
+                        </li>
                         {if in_array($manager->role, ['developer', 'admin'])}
                             <li {if in_array($module, ['DeleteUsersController'])}class="active"{/if}>
                                 <a href="delete_users/"><i class="mdi mdi-account-location"></i>Удаление тестовых

@@ -382,10 +382,10 @@
 
         <div class="row page-titles">
             <div class="col-md-6 col-8 align-self-center">
-                <h3 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i>Тест-калькулятор</h3>
+                <h3 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i>Демонстратор калькулятора</h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
-                    <li class="breadcrumb-item active">Тест-калькулятор</li>
+                    <li class="breadcrumb-item active">Демонстратор калькулятора</li>
                 </ol>
             </div>
             <div class="col-md-6 col-4 align-self-center">
