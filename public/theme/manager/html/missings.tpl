@@ -135,10 +135,12 @@
                                                 {$client->lastname|escape}
                                                 {$client->firstname|escape}
                                                 {$client->patronymic|escape}<br>
-                                                {if $client->order->unreability == 0}
+                                                {if $client->order->unreability == 0 && $client->stage_registration >= 8 }
+                                                    <span class="badge badge-success">У андеррайтера</span>
+                                                {elseif $client->order->unreability == 0}
                                                     <span class="badge badge-success">Реанимируемый</span>
-                                                {else}
-                                                    <span class="badge badge-danger">Не реанимируюемый</span>
+                                                {elseif $client->order->unreability == 1}
+                                                    <span class="badge badge-danger">Не реанимируемый</span>
                                                 {/if}
                                             </td>
                                             <td style="width: 100px;" class="jsgrid-cell">

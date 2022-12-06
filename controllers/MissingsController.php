@@ -38,8 +38,6 @@ class MissingsController extends Controller
             $this->design->assign('search', array_filter($search));
         }
 
-        $filter['stage_filter'] = 1;
-
         $current_page = $this->request->get('page', 'integer');
         $current_page = max(1, $current_page);
         $this->design->assign('current_page_num', $current_page);
