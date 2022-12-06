@@ -194,7 +194,7 @@
                                         {if in_array($manager->role, ['developer', 'admin'])}
                                             <th>
                                                 <span>Доступность</span>
-                                                <select data-company="{$company->com_id}"
+                                                <select data-company="{$company->id}"
                                                         class="form-control com_permissions" style="width: 150px">
                                                     <option value="all"
                                                             {if $company->permissions == 'all'}selected{/if}>Везде
@@ -211,7 +211,7 @@
                                                 <span>Блокировка</span>
                                                 <div class="onoffswitch">
                                                     <input type="checkbox" name="blocked_flag"
-                                                           data-company="{$company->com_id}"
+                                                           data-company="{$company->id}"
                                                            class="onoffswitch-checkbox blocked"
                                                            id="blocked" {if $company->blocked == 1}checked{/if}>
                                                     <label class="onoffswitch-label" for="blocked">
@@ -223,12 +223,12 @@
                                             <th><input type="button"
                                                        class="btn btn-outline-info action-edit-company button-fixed"
                                                        value="Редактировать компанию"></th>
-                                            <th><input type="button" data-company-id="{$company->com_id}"
+                                            <th><input type="button" data-company-id="{$company->id}"
                                                        class="btn btn-outline-danger action-delete-company button-fixed"
                                                        value="Удалить компанию"></th>
                                         {/if}
                                         <th>
-                                            <div data-company="{$company->com_id}" data-group="{$company->gr_id}"
+                                            <div data-company="{$company->id}" data-group="{$company->group->id}"
                                                  class="btn btn-outline-warning wrong_info" style="width: 200px">
                                                 Сообщить о неточности
                                             </div>
@@ -238,13 +238,13 @@
                                     <tbody>
                                     <tr>
                                         <td>Наименование компании</td>
-                                        <td>{$company->gr_number}{$company->com_number}</td>
-                                        <td colspan="7">{$company->com_name}</td>
+                                        <td>{$company->group->number}{$company->number}</td>
+                                        <td colspan="7">{$company->name}</td>
                                     </tr>
                                     <tr>
                                         <td>Позиция</td>
-                                        <td>{$company->gr_number}</td>
-                                        <td colspan="7">{$company->gr_name}</td>
+                                        <td>{$company->group->number}</td>
+                                        <td colspan="7">{$company->group->name}</td>
                                     </tr>
                                     <tr>
                                         <td>ИНН</td>
@@ -271,7 +271,7 @@
                                         <td colspan="7">{$company->eio_position} {$company->eio_fio}</td>
                                     </tr>
                                     <tr>
-                                        <td {if !empty($docs)}rowspan="{count($docs)+1}"{/if}>Документы компании</td>
+                                        <td {if $company->docs->isNotEmpty()}rowspan="{count($company->docs)+1}"{/if}>Документы компании</td>
                                         <td>Дата документа</td>
                                         <td>Название документа</td>
                                         <td>Комментарий</td>
@@ -283,8 +283,8 @@
                                             {/if}
                                         </td>
                                     </tr>
-                                    {if !empty($docs)}
-                                        {foreach $docs as $doc}
+                                    {if $company->docs->isNotEmpty()}
+                                        {foreach $company->docs as $doc}
                                             <tr>
                                                 <td>{$doc->created|date}</td>
                                                 <td>{$doc->name}</td>
@@ -301,7 +301,7 @@
                                     <tr style="height: 50px">
                                         <td colspan="7"></td>
                                     </tr>
-                                    {if $company->com_id == 2}
+                                    {if $company->id == 2}
                                         <tr>
                                             <td rowspan="{count($settlements)+1}">Расчетные счета</td>
                                             <td>Наименование банка</td>
@@ -344,7 +344,7 @@
                                         <td colspan="7"></td>
                                     </tr>
                                     <tr>
-                                        <td rowspan="{count($branches)+2}">Филиалы и даты выплат</td>
+                                        <td rowspan="{count($company->branches)+2}">Филиалы и даты выплат</td>
                                         <td>Код</td>
                                         <td>Наименование филиала</td>
                                         <td>Дата выплаты</td>
@@ -364,9 +364,9 @@
                                         <td><input type="text" class="form-control searchable"></td>
                                         <td colspan="2"></td>
                                     </tr>
-                                    {foreach $branches as $branch}
+                                    {foreach $company->branches as $branch}
                                         <tr class="branches_list">
-                                            <td>{$company->gr_number}{$company->com_number}-{$branch->number}</td>
+                                            <td>{$company->group->number}{$company->number}-{$branch->number}</td>
                                             <td>{$branch->name}</td>
                                             <td>{$branch->payday}</td>
                                             <td>{$branch->fio} {$branch->phone}</td>
@@ -398,7 +398,7 @@
                     </div>
                 </div>
                 <div class="jsgrid-grid-body">
-                    {if !empty($managers)}
+                    {if $company->managers->isNotEmpty()}
                         <h4>Пользователи CRM, связанные с данной компанией</h4>
                         <table style="width: 100%" class="jsgrid-table table table-striped table-hover">
                             <thead>
@@ -410,7 +410,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {foreach $managers as $manager}
+                            {foreach $company->managers as $manager}
                                 <tr>
                                     <td>{$manager->login}</td>
                                     <td><a target="_blank" href="/manager/{$manager->id}">{$manager->name}</a></td>
@@ -423,6 +423,8 @@
                                         <span class="label label-{$label_class}">
                                                         {if $manager->role == 'developer'}
                                                             Разработчик
+                                                        {elseif $manager->role == 'boss'}
+                                                            Босс
                                                         {elseif $manager->role == 'admin'}
                                                             Админ
                                                         {elseif $manager->role == 'middle'}
@@ -433,7 +435,17 @@
                                                             Работодатель
                                                         {/if}</span>
                                     </td>
-                                    <td>{$manager->credential_type}</td>
+                                    <td>
+                                        {if $manager->credentials->isNotEmpty()}
+                                            {if $manager->credentials->first()->type === 'permanently'}
+                                                Постоянный
+                                            {else}
+                                                Временный по доверенности
+                                            {/if}
+                                        {else}
+                                            Нет информации
+                                        {/if}
+                                    </td>
                                 </tr>
                             {/foreach}
                             </tbody>
@@ -466,7 +478,7 @@
                                     <option value="payments">Выплаты</option>
                                     <option value="extras">Дополнительно</option>
                                 </select>
-                                <input type="file" id="upload_file" data-company="{$company->com_id}"
+                                <input type="file" id="upload_file" data-company="{$company->id}"
                                        style="margin-left: 25px">
                                 <div class="btn btn-outline-success float-right send_file">Отправить</div>
                                 <div class="show_attestations">
@@ -568,8 +580,8 @@
                 <div class="alert" style="display:none"></div>
                 <form id="add_branche_form">
                     <input type="hidden" name="action" value="add_branch">
-                    <input type="hidden" name="group_id" value="{$company->gr_id}">
-                    <input type="hidden" name="company_id" value="{$company->com_id}">
+                    <input type="hidden" name="group_id" value="{$company->group->id}">
+                    <input type="hidden" name="company_id" value="{$company->id}">
                     <div class="form-group">
                         <label for="name" class="control-label">Наименование филиала</label>
                         <input type="text" class="form-control" name="name" id="name" value=""/>
@@ -612,7 +624,7 @@
                 <div class="alert" style="display:none"></div>
                 <form method="POST" id="edit_company_form">
                     <input type="hidden" name="action" value="edit_company">
-                    <input type="hidden" name="company_id" value="{$company->com_id}">
+                    <input type="hidden" name="company_id" value="{$company->id}">
                     <div class="form-group">
                         <label for="name" class="control-label">Наименование компании</label>
                         <input type="text" class="form-control" name="name" id="name"
@@ -801,7 +813,7 @@
                 <div class="alert" style="display:none"></div>
                 <form method="POST" id="add_document_form">
                     <input type="hidden" name="action" value="add_document">
-                    <input type="hidden" name="company_id" value="{$company->com_id}">
+                    <input type="hidden" name="company_id" value="{$company->id}">
                     <div class="form-group">
                         <label for="date_doc" class="control-label">Дата документа:</label>
                         <input type="text" class="form-control daterange" name="date_doc" id="date_doc" value=""/>

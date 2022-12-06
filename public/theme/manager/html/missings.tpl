@@ -46,10 +46,15 @@
                                 <div class="js-filter-status mb-2 float-left">
                                     <a href="{if $filter_status=='0'}{url status=null page=null}{else}{url status='0' page=null}{/if}"
                                        class="btn btn-xs {if $filter_status=='0'}btn-success{else}btn-outline-success{/if}">Реанимируемый</a>
-                                    <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 page=null}{/if}"
+                                    <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 stage=null page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==1}btn-danger{else}btn-outline-danger{/if}">Не реанимируемый</a>
+                                    <a href="{if $filter_stage==2 && $filter_status!=1}{url stage=null page=null}{else}{url stage=2 page=null}{/if}"
+                                       class="btn btn-xs {if $filter_stage==2 && $filter_status!=1}btn-success{elseif $filter_status==1}btn-outline-success disabled{else}btn-outline-success{/if}">У андеррайтера</a>
                                     {if $filter_status}
                                         <input type="hidden" value="{$filter_status}" id="filter_status"/>
+                                    {/if}
+                                    {if $filter_stage}
+                                        <input type="hidden" value="{$filter_stage}" id="filter_stage"/>
                                     {/if}
                                 </div>
                             </div>
@@ -135,10 +140,12 @@
                                                 {$client->lastname|escape}
                                                 {$client->firstname|escape}
                                                 {$client->patronymic|escape}<br>
-                                                {if $client->order->unreability == 0}
+                                                {if is_null($client->order) || $client->order->unreability == 1}
+                                                    <span class="badge badge-danger">Не реанимируемый</span>
+                                                {elseif $client->order->unreability == 0 && $client->stage_registration >= 8 }
+                                                    <span class="badge badge-primary">У андеррайтера</span>
+                                                {elseif $client->order->unreability == 0}
                                                     <span class="badge badge-success">Реанимируемый</span>
-                                                {else}
-                                                    <span class="badge badge-danger">Не реанимируюемый</span>
                                                 {/if}
                                             </td>
                                             <td style="width: 100px;" class="jsgrid-cell">

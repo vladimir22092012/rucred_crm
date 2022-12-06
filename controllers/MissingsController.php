@@ -38,8 +38,7 @@ class MissingsController extends Controller
             $this->design->assign('search', array_filter($search));
         }
 
-        $filter['stage_filter'] = 1;
-
+        $stageFilter = $this->request->get('stage', 'integer');
         $current_page = $this->request->get('page', 'integer');
         $current_page = max(1, $current_page);
         $this->design->assign('current_page_num', $current_page);
@@ -48,30 +47,32 @@ class MissingsController extends Controller
 
         $filter['page'] = $current_page;
         $filter['limit'] = $items_per_page;
+        $filter['stage_filter'] = $stageFilter;
 
         $clients = $this->users->get_users($filter);
 
-        $filter_status = $this->request->get('status');
+        $filterStatus = $this->request->get('status', 'integer');
 
         $minusCount = 0;
 
         foreach ($clients as $key => $client) {
             $client->order = $this->orders->get_by_user($client->id);
 
-            if($filter_status == '0' && $client->order->unreability == 1)
+            if($filterStatus == '0' && (int) $client->order?->unreability === 1)
             {
                 unset($clients[$key]);
                 $minusCount++;
             }
 
-            if($filter_status == 1 && $client->order->unreability == 0)
+            if($filterStatus == 1 && $client->order?->unreability == 0)
             {
                 unset($clients[$key]);
                 $minusCount++;
             }
         }
 
-        $this->design->assign('filter_status', $filter_status);
+        $this->design->assign('filter_status', $filterStatus);
+        $this->design->assign('filter_stage', $stageFilter);
 
         $pages_num = ceil(($clients_count - $minusCount) / $items_per_page);
         $this->design->assign('total_pages_num', $pages_num);
