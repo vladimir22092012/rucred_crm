@@ -58,11 +58,6 @@ class MissingsController extends Controller
         foreach ($clients as $key => $client) {
             $client->order = $this->orders->get_by_user($client->id);
 
-            if (is_null($client->order)) {
-                unset($clients[$key]);
-                continue;
-            }
-
             if($filterStatus == '0' && (int) $client->order?->unreability === 1)
             {
                 unset($clients[$key]);
