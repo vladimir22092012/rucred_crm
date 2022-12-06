@@ -3558,6 +3558,8 @@ class OfflineOrderController extends Controller
 
         $actual_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
         $this->PaymentsSchedules->update($actual_schedule->id, ['psk' => $psk, 'schedule' => $schedule]);
+
+        $this->form_docs($order_id);
     }
 
     private function check_pay_date($date)
@@ -5666,7 +5668,7 @@ class OfflineOrderController extends Controller
             $asp_id = $this->AspCodes->add_code($asp_log);
 
             DocumentsORM::where('order_id', $orderId)
-                ->whereNotIn('type', ['INDIVIDUALNIE_USLOVIA_ONL', 'GRAFIK_OBSL_MKR'])
+                ->whereNotIn('type', ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR'])
                 ->update(['asp_id' => $asp_id]);
 
             echo json_encode(['success' => 1]);

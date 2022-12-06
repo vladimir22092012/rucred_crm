@@ -1046,15 +1046,24 @@
                 let that = $(this);
 
                 $.ajax({
+                    dataType: 'JSON',
                     method: 'POST',
                     data: form,
-                    success: function () {
+                    success: function (resp) {
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'ОК'
+                            });
+                        }
 
-                        $('#edit_settings_modal').modal('hide');
-                        $('#sms_confirm_modal').modal();
-                        let order = that.attr('data-order');
+                        if (resp['success'] == 1) {
+                            $('#edit_settings_modal').modal('hide');
+                            $('#sms_confirm_modal').modal();
+                            let order = that.attr('data-order');
 
-                        send_sms(order);
+                            send_sms(order);
+                        }
                     }
                 });
             });
@@ -1070,11 +1079,11 @@
 
             $('.refreshConditions').on('click', function () {
                 $.ajax({
-                   method: 'POST',
-                   data:{
-                       action: 'refreshConditions',
+                    method: 'POST',
+                    data: {
+                        action: 'refreshConditions',
 
-                   }
+                    }
                 });
             });
         });
@@ -1118,6 +1127,7 @@
                 }
             });
         }
+
         function confirm_asp(user, phone, code, order, restruct) {
 
             $.ajax({
@@ -1558,7 +1568,9 @@
                                     </div>
                                     <br>
                                     <div>
-                                        ID клиента: {$order->user_id}{if !empty($order->contract_id)}<br>ID сделки: {$order->contract_id}{/if}
+                                        ID клиента: {$order->user_id}{if !empty($order->contract_id)}
+                                            <br>
+                                            ID сделки: {$order->contract_id}{/if}
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-8 col-lg-6">
