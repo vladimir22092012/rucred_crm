@@ -91,7 +91,7 @@ class CompanyController extends Controller
             $this->design->assign('settlements', $settlements);
         }
 
-        $this->design->assign('company', new CompanyResource($company));
+        $this->design->assign('company', $company);
 
         return $this->design->fetch('company.tpl');
     }
