@@ -4611,6 +4611,23 @@ class OrderController extends Controller
 
         $this->orders->update_order($order_id, ['status' => 2]);
 
+        $loantype = $this->Loantypes->get_loantype($order->loan_type);
+
+        $contracts = $this->contracts->get_contracts(['user_id' => $order->user_id]);
+
+        if (!empty($contracts)) {
+            $count_contracts = count($contracts) + 1;
+            $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
+        } else {
+            $count_contracts = '01';
+        }
+
+        $uid = explode(' ', $order->uid);
+
+        $projectNumber = "$uid[0] $loantype->number $uid[1] $count_contracts";
+
+        ProjectContractNumberORM::updateOrCreate(['orderId' => $order_id, 'userId' => $order->user_id],['uid' => $projectNumber]);
+
         echo json_encode(['success' => 1]);
         exit;
     }
