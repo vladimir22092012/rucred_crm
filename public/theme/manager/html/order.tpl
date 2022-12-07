@@ -1078,11 +1078,17 @@
             });
 
             $('.refreshConditions').on('click', function () {
+
+                let orderId = $(this).attr('data-order');
+
                 $.ajax({
                     method: 'POST',
                     data: {
                         action: 'refreshConditions',
-
+                        orderId: orderId
+                    },
+                    success: function () {
+                        location.reload();
                     }
                 });
             });
@@ -1745,15 +1751,13 @@
                                                 </div>
                                             </div>
                                         {/if}
-                                        {*
-                                        {if $order->status == 0}
+                                        {if $order->status == 0 && $order->probably_start_date|date < $date|date}
                                             <div class="card card-primary">
-                                                <div data-order="" class="btn btn-info btn-block refreshConditions">
+                                                <div data-order="{$order->order_id}" class="btn btn-info btn-block refreshConditions">
                                                     Обновить условия
                                                 </div>
                                             </div>
                                         {/if}
-                                        *}
                                         {if in_array($order->status, [13,14,15]) && $manager->role != 'employer'}
                                             <div>
                                                 <button class="btn btn-success btn-block approve_by_under"

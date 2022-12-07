@@ -4255,7 +4255,6 @@ class OfflineOrderController extends Controller
 
                 $projectNumber = ProjectContractNumberORM::where('orderId', $order->order_id)->first();
 
-
                 $contract =
                     [
                         'order_id' => $order->order_id,

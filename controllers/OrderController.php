@@ -19,6 +19,10 @@ class OrderController extends Controller
                     $this->change_manager_action();
                     break;
 
+                case 'refreshConditions':
+                    $this->actionRefreshConditions();
+                    break;
+
                 case 'form_restruct_docs':
                     $this->action_form_restruct_docs();
                     break;
@@ -1003,9 +1007,9 @@ class OrderController extends Controller
         //отправляем заявку в 1с через крон
         $insert =
             [
-                'orderId'       => $order_id,
-                'userId'        => $order->user_id,
-                'contractId'    => $order->contract_id
+                'orderId' => $order_id,
+                'userId' => $order->user_id,
+                'contractId' => $order->contract_id
             ];
 
         ExchangeCronORM::insert($insert);
@@ -2048,7 +2052,7 @@ class OrderController extends Controller
             }
         }
 
-        if(!empty($update))
+        if (!empty($update))
             UsersORM::where('id', $user_id)->update($update);
 
         $order = $this->orders->get_order($order_id);
@@ -3521,7 +3525,7 @@ class OrderController extends Controller
         exit;
     }
 
-    private function action_reform_schedule($order_id)
+    private function action_reform_schedule($order_id, $formDocs = 1)
     {
         $order = $this->orders->get_order($order_id);
 
@@ -3569,7 +3573,7 @@ class OrderController extends Controller
             $paydate->add(new DateInterval('P1M'));
             $iteration++;
         } elseif (date_diff($paydate, $start_date)->days >= $loan->min_period && date_diff($paydate, $start_date)->days < $count_days_this_month) {
-            $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($paydate, $start_date)->days -1);
+            $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($paydate, $start_date)->days - 1);
             $sum_pay = $annoouitet_pay - round($minus_percents, 2);
             $loan_percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
             $loan_percents_pay = round($loan_percents_pay, 2, PHP_ROUND_HALF_DOWN);
@@ -3685,7 +3689,8 @@ class OrderController extends Controller
         $actual_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
         $this->PaymentsSchedules->update($actual_schedule->id, ['psk' => $psk, 'schedule' => $schedule]);
 
-        $this->form_docs($order_id);
+        if($formDocs == 1)
+            $this->form_docs($order_id);
     }
 
     private function check_pay_date($date)
@@ -4272,9 +4277,9 @@ class OrderController extends Controller
         //отправляем заявку в 1с через крон
         $insert =
             [
-                'orderId'       => $order_id,
-                'userId'        => $order->user_id,
-                'contractId'    => $order->contract_id
+                'orderId' => $order_id,
+                'userId' => $order->user_id,
+                'contractId' => $order->contract_id
             ];
 
         ExchangeCronORM::insert($insert);
@@ -4307,10 +4312,10 @@ class OrderController extends Controller
         $insert =
             [
                 'transaction_id' => $transaction_id,
-                'order_id'       => $order_id,
-                'user_id'        => $order->user_id,
-                'contract_id'    => $order->contract_id,
-                'requisites_id'  => $default_requisit->id
+                'order_id' => $order_id,
+                'user_id' => $order->user_id,
+                'contract_id' => $order->contract_id,
+                'requisites_id' => $default_requisit->id
             ];
 
         SendPaymentCronORM::insert($insert);
@@ -4626,7 +4631,7 @@ class OrderController extends Controller
 
         $projectNumber = "$uid[0] $loantype->number $uid[1] $count_contracts";
 
-        ProjectContractNumberORM::updateOrCreate(['orderId' => $order_id, 'userId' => $order->user_id],['uid' => $projectNumber]);
+        ProjectContractNumberORM::updateOrCreate(['orderId' => $order_id, 'userId' => $order->user_id], ['uid' => $projectNumber]);
 
         echo json_encode(['success' => 1]);
         exit;
@@ -4962,6 +4967,55 @@ class OrderController extends Controller
         }
 
         return $date;
+    }
+
+    private function actionRefreshConditions()
+    {
+        $orderId = $this->request->post('orderId');
+
+        $order = OrdersORM::find($orderId);
+
+        $timeOfTransitionToNextBankingDay = date('H:i', strtotime($this->Settings->time_of_transition_to_the_next_banking_day));
+
+        if ($order->settlement_id == 3 && date('H:i') >= $timeOfTransitionToNextBankingDay)
+            $probably_start_date = date('Y-m-d', strtotime('+1 days'));
+
+        if ($order->settlement_id == 2) {
+            if (date('H:i') >= $timeOfTransitionToNextBankingDay)
+                $probably_start_date = date('Y-m-d', strtotime('+2 days'));
+            else
+                $probably_start_date = date('Y-m-d', strtotime('+1 days'));
+        }
+
+        $check_date = $this->WeekendCalendar->check_date($probably_start_date);
+
+        if (!empty($check_date)) {
+            for ($i = 0; $i <= 15; $i++) {
+
+                $check_date = $this->WeekendCalendar->check_date($probably_start_date);
+
+                if (empty($check_date)) {
+                    if ($order->settlement_id == 2) {
+                        if (date('H:i') >= $timeOfTransitionToNextBankingDay)
+                            $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
+                    }
+                    break;
+                } else {
+                    $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
+                }
+            }
+        }
+
+        OrdersORM::where('id', $orderId)->update(['probably_start_date' => $probably_start_date]);
+
+        $this->action_reform_schedule($orderId, 0);
+
+        $order = $this->orders->get_order($orderId);
+
+        DocumentsORM::where('order_id', $orderId)
+            ->update(['params' => serialize($order)]);
+
+        exit;
     }
 
 }
