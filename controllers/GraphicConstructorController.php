@@ -428,7 +428,7 @@ class GraphicConstructorController extends Controller
 
         $payment_schedule_html .= '<div><br></div>';
 
-        $payment_schedule_html .= '<div class="link-button"><div class="btn btn-outline-primary download">Скачать график</div></div>';
+        $payment_schedule_html .= '<div class="link-button"><div class="btn btn-outline-primary download">Получить ссылку на скачивание графика</div></div>';
 
         echo json_encode(['schedule' => $payment_schedule_html, 'annouitet' => $annoouitet_pay]);
         exit;
