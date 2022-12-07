@@ -728,7 +728,7 @@ $(function () {
                             $('input[name="phone"]').val(user['phone_mobile']);
                             $('input[name="birth_place"]').val(user['birth_place']);
 
-                            if (user['fio_spouse']) {
+                            if (user['sex'] == 1) {
                                 $('#sex1').trigger('click');
                                 $('input[name="fio_spouse[lastname]"]').val(user['spouse_lastname']);
                                 $('input[name="fio_spouse[firstname]"]').val(user['spouse_firstname']);
@@ -746,18 +746,22 @@ $(function () {
                             $('input[name="outcome_medium"]').val(user['expenses']);
                             $('input[name="dependents"]').val(user['dependents']);
 
-                            if(user['foreign_flag'] == 1)
+                            console.log(user['foreign_flag']);
+
+                            if (user['foreign_flag'] == 2) {
                                 $('#foreign2').trigger('click');
-                            if(user['foreign_husb_wife'] == 1)
-                            {
+                            }
+
+                            if (user['foreign_husb_wife'] == 2) {
                                 $('#foreign_husb_wife2').trigger('click');
-                                $('input[name="fio_public_spouse"]').val(user['fio_public_spouse']);
+                                $('.fio_public_spouse').val(order['fio_public_spouse']);
                             }
-                            if(user['foreign_relative'] == 1)
-                            {
+
+                            if (user['foreign_relative'] == 2) {
                                 $('#foreign_relative2').trigger('click');
-                                $('input[name="fio_relative"]').val(user['fio_relative']);
+                                $('.fio_relative').val(order['fio_relative']);
                             }
+
                         }
                     })
                 });
