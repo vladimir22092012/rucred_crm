@@ -5327,6 +5327,7 @@ class OfflineOrderController extends Controller
         $oldProjectNumber = ProjectContractNumberORM::where('orderId', $order_id)->where('userId', $user_id)->first();
 
         ProjectContractNumberORM::updateOrCreate(['orderId' => $order_id, 'userId' => $user_id], ['uid' => $projectNumber]);
+        ContractsORM::where('order_id', $order_id)->update(['number' => $projectNumber]);
 
         $old_regaddress = $this->Addresses->get_address($old_user->regaddress_id);
         $old_faktaddress = $this->Addresses->get_address($old_user->faktaddress_id);
