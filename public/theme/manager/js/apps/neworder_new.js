@@ -762,6 +762,8 @@ $(function () {
                                 $('.fio_relative').val(user['fio_relative']);
                             }
 
+                            $('select[name="timezone"] option[value='+user['timezone']+']').prop('selected', true);
+
                         }
                     })
                 });
