@@ -754,12 +754,12 @@ $(function () {
 
                             if (user['foreign_husb_wife'] == 2) {
                                 $('#foreign_husb_wife2').trigger('click');
-                                $('.fio_public_spouse').val(order['fio_public_spouse']);
+                                $('.fio_public_spouse').val(user['fio_public_spouse']);
                             }
 
                             if (user['foreign_relative'] == 2) {
                                 $('#foreign_relative2').trigger('click');
-                                $('.fio_relative').val(order['fio_relative']);
+                                $('.fio_relative').val(user['fio_relative']);
                             }
 
                         }
