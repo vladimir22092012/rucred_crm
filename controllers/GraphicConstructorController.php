@@ -183,7 +183,7 @@ class GraphicConstructorController extends Controller
         $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date->format('Y-m-d'))));
         $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
 
-        if ($start_date >= $paydate)
+        if ($start_date >= $paydate || date_diff($paydate, $start_date)->days <= $loan->free_period)
             $paydate->add(new DateInterval('P1M'));
 
         $percent_per_month = (($percent / 100) * 365) / 12;
@@ -200,6 +200,8 @@ class GraphicConstructorController extends Controller
 
         $count_days_this_month = date('t', strtotime($start_date->format('Y-m-d')));
 
+        $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
+
         if (date_diff($paydate, $start_date)->days <= $loan->free_period) {
             $plus_loan_percents = round(($percent / 100) * $amount * date_diff($paydate, $start_date)->days, 2);
             $sum_pay = $annoouitet_pay + $plus_loan_percents;
@@ -207,38 +209,23 @@ class GraphicConstructorController extends Controller
             $body_pay = $sum_pay - $loan_percents_pay;
             $paydate->add(new DateInterval('P1M'));
             $iteration++;
-
-        } elseif (date_diff($paydate, $start_date)->days < $loan->min_period) {
-            $sum_pay = ($percent / 100) * $amount * date_diff($paydate, $start_date)->days;
-            $loan_percents_pay = $sum_pay;
-            $body_pay = 0.00;
         } elseif (date_diff($paydate, $start_date)->days >= $loan->min_period && date_diff($paydate, $start_date)->days < $count_days_this_month) {
-            $minus_days = ($loan->id == 1) ? ($count_days_this_month - date_diff($paydate, $start_date)->days - 1) : ($count_days_this_month - date_diff($paydate, $start_date)->days);
-            $minus_percents = ($percent / 100) * $amount * $minus_days;
+            $minus_percents = ($percent / 100) * $amount * ($count_days_this_month - date_diff($paydate, $start_date)->days);
             $sum_pay = $annoouitet_pay - round($minus_percents, 2);
             $loan_percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
             $loan_percents_pay = round($loan_percents_pay, 2, PHP_ROUND_HALF_DOWN);
             $body_pay = $sum_pay - $loan_percents_pay;
             $iteration++;
         } elseif (date_diff($paydate, $start_date)->days >= $count_days_this_month) {
-            if ($loan->id == 1) {
-                $body_pay = $rest_sum;
-                $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
-                $loan_percents_pay = $amount * ($percent/100) * date_diff($paydate, $start_date)->days;
-                $sum_pay = $body_pay + $loan_percents_pay;
-            }else{
-                $sum_pay = $annoouitet_pay;
-                $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
-                $body_pay = round($sum_pay - $loan_percents_pay, 2);
-                $iteration++;
-            }
+            $sum_pay = $annoouitet_pay;
+            $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
+            $body_pay = round($sum_pay - $loan_percents_pay, 2);
+            $iteration++;
         } else {
             $sum_pay = ($percent / 100) * $amount * date_diff($paydate, $start_date)->days;
             $loan_percents_pay = $sum_pay;
             $body_pay = 0.00;
         }
-
-        $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
 
         $payment_schedule[$paydate->format('d.m.Y')] =
             [
@@ -488,7 +475,12 @@ class GraphicConstructorController extends Controller
             $html = "<option value='none'>Выберите группу</option>";
 
             foreach ($groups as $group) {
-                $html .= "<option value='$group->id'>$group->name</option>";
+                if($group->blocked == 'nowhere')
+                    $blockCard = "class='badge-danger'";
+                else
+                    $blockCard = '';
+
+                $html .= "<option $blockCard value='$group->id'>$group->name</option>";
             }
 
             echo $html;

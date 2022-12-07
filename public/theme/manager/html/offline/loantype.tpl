@@ -357,6 +357,9 @@
                                             <div class="col-7 ">
                                                 <select name="online_flag" id="online_flag" class="form-control"
                                                         {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
+                                                    <option value="0" {if $loantype->online_flag == 0}selected{/if}>
+                                                        Нигде
+                                                    </option>
                                                     <option value="1" {if $loantype->online_flag == 1}selected{/if}>
                                                         Онлайн
                                                     </option>

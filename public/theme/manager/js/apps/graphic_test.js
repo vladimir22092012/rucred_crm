@@ -420,14 +420,24 @@ $(function () {
 
                     for (let key in resp['companies']) {
 
-                        $('.my_company').append('<option value="' + resp['companies'][key]['id'] + '">' + resp['companies'][key]['name'] + '</option>')
+                        let blockedCard = '';
+
+                        if(resp['companies'][key]['blocked'] == 1)
+                            blockedCard = "class='badge-danger'";
+
+                        $('.my_company').append('<option '+blockedCard+'value="' + resp['companies'][key]['id'] + '">' + resp['companies'][key]['name'] + '</option>')
                     }
 
                     for (let key in resp['loantypes']) {
 
+                        let blockedCard = '';
+
+                        if(resp['loantypes'][key]['online_flag'] == 0)
+                            blockedCard = "style='background-color: indianred!important'";
+
                         $('#pricelist').append(
                             '<div class="price_container">' +
-                            '<div class="price_basic" data-loan-period="' + resp['loantypes'][key]['max_period'] + '"' +
+                            '<div '+blockedCard+' class="price_basic" data-loan-period="' + resp['loantypes'][key]['max_period'] + '"' +
                             ' data-loan="' + resp['loantypes'][key]['id'] + '"' +
                             ' data-min-amount="' + resp['loantypes'][key]['min_amount'] + '"' +
                             ' data-max-amount="' + resp['loantypes'][key]['max_amount'] + '" data-loan-percents=""' +
