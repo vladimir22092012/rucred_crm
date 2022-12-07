@@ -764,6 +764,25 @@ $(function () {
 
                             $('select[name="timezone"] option[value='+user['timezone']+']').prop('selected', true);
 
+                            if(user['push_not'] == 1)
+                                $('input[name="push_not"]').prop('checked', true);
+                            else
+                                $('input[name="push_not"]').prop('checked', false);
+
+                            if(user['sms_not'] == 1)
+                                $('input[name="sms_not"]').prop('checked', true);
+                            else
+                                $('input[name="sms_not"]').prop('checked', false);
+
+                            if(user['email_not'] == 1)
+                                $('input[name="email_not"]').prop('checked', true);
+                            else
+                                $('input[name="email_not"]').prop('checked', false);
+
+                            if(user['massanger_not'] == 1)
+                                $('input[name="massanger_not"]').prop('checked', true);
+                            else
+                                $('input[name="massanger_not"]').prop('checked', false);
                         }
                     })
                 });
