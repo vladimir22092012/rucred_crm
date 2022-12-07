@@ -4233,11 +4233,13 @@ class OrderController extends Controller
                 $this->db->query($query);
             } else {
 
+                $projectNumber = ProjectContractNumberORM::where('orderId', $order->order_id)->first();
+
                 $contract =
                     [
                         'order_id' => $order->order_id,
                         'user_id' => $order->user_id,
-                        'number' => $order->uid,
+                        'number' => $projectNumber,
                         'amount' => $order->amount,
                         'period' => $order->period,
                         'base_percent' => $order->percent,

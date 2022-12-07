@@ -4253,21 +4253,7 @@ class OfflineOrderController extends Controller
                     }
                 }
 
-                $number = $order->uid;
-                $number = explode(' ', $number);
-
-                $contracts = $this->contracts->get_contracts(['user_id' => $order->user_id]);
-
-                if (!empty($contracts)) {
-                    $count_contracts = count($contracts) + 1;
-                    $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
-                } else {
-                    $count_contracts = '01';
-                }
-
-                $loantype = $this->Loantypes->get_loantype($order->loan_type);
-
-                $new_number = "$number[0] $loantype->number $number[1] $count_contracts";
+                $projectNumber = ProjectContractNumberORM::where('orderId', $order->order_id)->first();
 
 
                 $contract =
@@ -4275,7 +4261,7 @@ class OfflineOrderController extends Controller
                         'order_id' => $order->order_id,
                         'user_id' => $order->user_id,
                         'amount' => $order->amount,
-                        'number' => $new_number,
+                        'number' => $projectNumber->uid,
                         'period' => $order->period,
                         'base_percent' => $order->percent,
                         'peni_percent' => 0,

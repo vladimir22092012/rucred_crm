@@ -602,39 +602,37 @@ class NeworderController extends Controller
             $contact =
                 [
                     'user_id' => $old_user->id,
-                    'type'    => 'email',
-                    'value'   => $user['email']
+                    'type' => 'email',
+                    'value' => $user['email']
                 ];
 
             $this->Contacts->add($contact);
 
-            if(isset($user['telegram_num']))
-            {
+            if (isset($user['telegram_num'])) {
                 $contact =
                     [
                         'user_id' => $old_user->id,
-                        'type'    => 'telegram',
-                        'value'   => $user['telegram_num']
+                        'type' => 'telegram',
+                        'value' => $user['telegram_num']
                     ];
 
                 $this->Contacts->add($contact);
             }
 
-            if(isset($user['viber_num']))
-            {
+            if (isset($user['viber_num'])) {
                 $contact =
                     [
                         'user_id' => $old_user->id,
-                        'type'    => 'viber',
-                        'value'   => $user['viber_num']
+                        'type' => 'viber',
+                        'value' => $user['viber_num']
                     ];
 
                 $this->Contacts->add($contact);
             }
 
-            if(isset($user['faktaddress_id']))
+            if (isset($user['faktaddress_id']))
 
-            $this->users->update_user($user_id, $user);
+                $this->users->update_user($user_id, $user);
             $this->UserContactPreferred->delete($user_id);
 
             if (!empty($user['sms_not']) && $user['sms_not'] == 1) {
@@ -1034,14 +1032,7 @@ class NeworderController extends Controller
 
                     $projectNumber = "$group->number$company->number $loantype->number $personal_number $count_contracts";
 
-                    $insert =
-                        [
-                            'orderId' => $order_id,
-                            'userId'  => $user_id,
-                            'uid'     => $projectNumber
-                        ];
-
-                    ProjectContractNumberORM::insert($insert);
+                    ProjectContractNumberORM::updateOrCreate(['orderId' => $order_id, 'userId' => $user_id],['uid' => $projectNumber]);
 
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                     exit;
@@ -1120,14 +1111,7 @@ class NeworderController extends Controller
 
                     $projectNumber = "$group->number$company->number $loantype->number $personal_number $count_contracts";
 
-                    $insert =
-                        [
-                            'orderId' => $order_id,
-                            'userId'  => $user_id,
-                            'uid'     => $projectNumber
-                        ];
-
-                    ProjectContractNumberORM::insert($insert);
+                    ProjectContractNumberORM::updateOrCreate(['orderId' => $order_id, 'userId' => $user_id],['uid' => $projectNumber]);
 
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                 }
