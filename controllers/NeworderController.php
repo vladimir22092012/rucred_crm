@@ -1335,15 +1335,10 @@ class NeworderController extends Controller
 
     private function check_pay_date($date)
     {
-
-        for ($i = 0; $i <= 15; $i++) {
-            $check_date = $this->WeekendCalendar->check_date($date->format('Y-m-d'));
-
-            if ($check_date == null) {
-                break;
-            } else {
-                $date->sub(new DateInterval('P1D'));
-            }
+        $checkDate = WeekendCalendarORM::where('date', $date->format('Y-m-d'))->first();
+        if (!empty($checkDate)) {
+            $date->sub(new DateInterval('P1D'));
+            $this->check_pay_date($date);
         }
 
         return $date;
