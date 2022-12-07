@@ -59,7 +59,7 @@ class Soap1c extends Core
 
             $item = new StdClass();
 
-            $item->ID = empty($contract) ? $order->id : $contract->id;
+            $item->ID = $contract->id;
             $item->Дата = date('YmdHis', strtotime($order->date));
             $item->Срок = $order->period;
             $item->Периодичность = 'День';

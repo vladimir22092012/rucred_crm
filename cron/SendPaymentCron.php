@@ -1,0 +1,57 @@
+<?php
+
+error_reporting(-1);
+ini_set('display_errors', 'On');
+
+date_default_timezone_set('Europe/Moscow');
+
+chdir(dirname(__FILE__) . '/../');
+
+require __DIR__ . '/../vendor/autoload.php';
+
+class SendPaymentCron extends Core
+{
+    public function __construct()
+    {
+        parent::__construct();
+        $this->sendPayment();
+    }
+
+    private function sendPayment()
+    {
+        $crons = SendPaymentCronORM::where('is_sent', 0)->where('is_loan_sent', 1)->limit(5)->get();
+
+        foreach ($crons as $cron) {
+
+            $order    = OrdersORM::find($cron->order_id);
+            $contract = ContractsORM::find($cron->contract_id);
+            $user     = UsersORM::find($cron->user_id);
+            $requisites = RequisitesORM::find($cron->requisites_id);
+
+            $fio = "$user->lastname $user->firstname $user->patronymic";
+
+            $description = "Оплата по договору микрозайма № $contract->number от $order->probably_start_date
+            // заемщик $fio ИНН $order->inn. Без налога (НДС)";
+
+            $payment = new stdClass();
+            $payment->order_id = $cron->transaction_id;
+            $payment->date = date('Y-m-d H:i:s');
+            $payment->amount = $order->amount;
+            $payment->recepient = 9725055162;
+            $payment->user_id = $order->user->id;
+            $payment->number = '40701810300000000347';
+            $payment->description = $description;
+            $payment->user_acc_number = $requisites->number;
+            $payment->user_bik = $requisites->bik;
+            $payment->users_inn = $user->inn;
+
+            $result = $this->soap1c->send_payment($payment);
+
+            if (isset($result->return) && $result->return == 'OK')
+                ExchangeCronORM::where('id', $cron->id)->update(['is_sent' => 1, 'resp' => 'OK']);
+            else
+                ExchangeCronORM::where('id', $cron->id)->update(['is_sent' => 1, 'is_error' => 1, 'resp' => $result]);
+        }
+    }
+}
+new SendPaymentCron();

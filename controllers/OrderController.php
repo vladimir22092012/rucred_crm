@@ -1000,6 +1000,16 @@ class OrderController extends Controller
 
         $order = $this->orders->get_order($order_id);
 
+        //отправляем заявку в 1с через крон
+        $insert =
+            [
+                'orderId'       => $order_id,
+                'userId'        => $order->user_id,
+                'contractId'    => $order->contract_id
+            ];
+
+        ExchangeCronORM::insert($insert);
+
         $resp = $this->best2pay->issuance($order_id);
 
         if (isset($resp['success']) && $resp['success'] == 1) {
@@ -4257,12 +4267,17 @@ class OrderController extends Controller
         $requisits = $this->Requisites->get_requisites(['user_id' => $order->user_id]);
         $order->probably_start_date = date('d.m.Y', strtotime($order->probably_start_date));
 
-        $fio = "$order->lastname $order->firstname $order->patronymic";
+        //отправляем заявку в 1с через крон
+        $insert =
+            [
+                'orderId'       => $order_id,
+                'userId'        => $order->user_id,
+                'contractId'    => $order->contract_id
+            ];
 
-        if ($order->sent_1c != 2) {
-            echo json_encode(['error' => 'Заявка еще не была отправлена в 1с']);
-            exit;
-        }
+        ExchangeCronORM::insert($insert);
+
+        $fio = "$order->lastname $order->firstname $order->patronymic";
 
         $default_requisit = new stdClass();
 
@@ -4271,7 +4286,7 @@ class OrderController extends Controller
                 $default_requisit = $requisit;
         }
 
-        $description = "Оплата по договору микрозайма № $contract->number от $order->date
+        $description = "Оплата по договору микрозайма № $contract->number от $order->probably_start_date
             // заемщик $fio ИНН $order->inn. Без налога (НДС)";
 
         $transaction =
@@ -4286,19 +4301,17 @@ class OrderController extends Controller
 
         $transaction_id = $this->Transactions->add_transaction($transaction);
 
-        $payment = new stdClass();
-        $payment->order_id = $transaction_id;
-        $payment->date = date('Y-m-d H:i:s');
-        $payment->amount = $order->amount;
-        $payment->recepient = 9725055162;
-        $payment->user_id = $order->user_id;
-        $payment->number = '40701810300000000347';
-        $payment->description = $description;
-        $payment->user_acc_number = $default_requisit->number;
-        $payment->user_bik = $default_requisit->bik;
-        $payment->users_inn = $order->inn;
+        //отправляем платежку в 1с через крон
+        $insert =
+            [
+                'transaction_id' => $transaction_id,
+                'order_id'       => $order_id,
+                'user_id'        => $order->user_id,
+                'contract_id'    => $order->contract_id,
+                'requisites_id'  => $default_requisit->id
+            ];
 
-        $this->Soap1c->send_payment($payment);
+        SendPaymentCronORM::insert($insert);
 
         $asp_log =
             [
