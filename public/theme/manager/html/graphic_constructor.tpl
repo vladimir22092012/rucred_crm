@@ -117,11 +117,6 @@
                                                 <option value="offline">Компании и тарифы в офлайне</option>
                                             </select>
                                         </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" id="showBlocked" class="custom-control-input">
-                                            <label class="custom-control-label" for="showBlocked">Показать
-                                                заблокированные</label>
-                                        </div>
                                     </div>
                                     <br>
                                     <h3>Работодатель</h3><br>
