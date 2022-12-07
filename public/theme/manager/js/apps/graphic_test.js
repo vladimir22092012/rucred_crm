@@ -422,22 +422,22 @@ $(function () {
 
                         let blockedCard = '';
 
-                        if(resp['companies'][key]['blocked'] == 1)
+                        if (resp['companies'][key]['blocked'] == 1)
                             blockedCard = "class='badge-danger'";
 
-                        $('.my_company').append('<option '+blockedCard+'value="' + resp['companies'][key]['id'] + '">' + resp['companies'][key]['name'] + '</option>')
+                        $('.my_company').append('<option ' + blockedCard + 'value="' + resp['companies'][key]['id'] + '">' + resp['companies'][key]['name'] + '</option>')
                     }
 
                     for (let key in resp['loantypes']) {
 
                         let blockedCard = '';
 
-                        if(resp['loantypes'][key]['online_flag'] == 0)
+                        if (resp['loantypes'][key]['online_flag'] == 0)
                             blockedCard = "style='background-color: indianred!important'";
 
                         $('#pricelist').append(
                             '<div class="price_container">' +
-                            '<div '+blockedCard+' class="price_basic" data-loan-period="' + resp['loantypes'][key]['max_period'] + '"' +
+                            '<div ' + blockedCard + ' class="price_basic" data-loan-period="' + resp['loantypes'][key]['max_period'] + '"' +
                             ' data-loan="' + resp['loantypes'][key]['id'] + '"' +
                             ' data-min-amount="' + resp['loantypes'][key]['min_amount'] + '"' +
                             ' data-max-amount="' + resp['loantypes'][key]['max_amount'] + '" data-loan-percents=""' +
@@ -696,5 +696,47 @@ $(function () {
         });
         $('input[name="check_same_users"]').val('1');
     });
+
+    $(document).on('click', '.download', function () {
+        let sum = $('#order_sum').val();
+        let loan_id = Number($('.to_form_loan').attr('data-loan'));
+        let max_amount = Number($('.to_form_loan').attr('data-max-amount'));
+        let min_amount = Number($('.to_form_loan').attr('data-min-amount'));
+
+        sum = sum.replace(/[^0-9]/g, "");
+        sum = Number(sum);
+
+        if (parseInt(sum) >= parseInt(min_amount) && parseInt(sum) <= parseInt(max_amount)) {
+            $('.alert-danger').hide();
+
+            $('.buttons_append').show();
+
+
+            let percents = $('.price_basic[id="' + loan_id + '"]').find('.percents:visible').find('input').val();
+            let date_from = $('#start_date').val();
+            let date_to = $('#end_date').val();
+            let company_id = $('.my_company').val();
+            let branch_id = $('.branches').val();
+            let amount = $('#order_sum').val();
+
+            $.ajax({
+                method: 'POST',
+                data: {
+                    action: 'download_excell',
+                    loan_id: loan_id,
+                    date_from: date_from,
+                    date_to: date_to,
+                    branch_id: branch_id,
+                    amount: amount,
+                    percents: percents,
+                    company_id: company_id
+                },
+                success: function (link) {
+                    $(document).remove('.download');
+                    $('.link-button').html(link);
+                }
+            });
+        }
+    })
 
 });

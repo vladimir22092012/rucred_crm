@@ -4,6 +4,9 @@ error_reporting(-1);
 ini_set('display_errors', 'On');
 date_default_timezone_set('Europe/Moscow');
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 class GraphicConstructorController extends Controller
 {
     public function fetch()
@@ -253,7 +256,7 @@ class GraphicConstructorController extends Controller
                     $rest_sum = 0.00;
                 } elseif ($loan->id == 1) {
                     $loan_body_pay = $rest_sum;
-                    $loan_percents_pay = $amount * ($percent/100) * date_diff($start_date, $date)->days - $loan_percents_pay;
+                    $loan_percents_pay = $amount * ($percent / 100) * date_diff($start_date, $date)->days - $loan_percents_pay;
                     $annoouitet_pay = $loan_body_pay + $loan_percents_pay;
                     $rest_sum = 0.00;
                 } else {
@@ -423,10 +426,213 @@ class GraphicConstructorController extends Controller
         $payment_schedule_html .= "</td>";
         */
 
-        $payment_schedule_html .= '</tbody>
-                                    </table>';
+        $payment_schedule_html .= '<div><br></div>';
+
+        $payment_schedule_html .= '<div class="link-button"><div class="btn btn-outline-primary download">Скачать график</div></div>';
 
         echo json_encode(['schedule' => $payment_schedule_html, 'annouitet' => $annoouitet_pay]);
+        exit;
+    }
+
+    private function action_download_excell()
+    {
+        $loan_id = $this->request->post('loan_id');
+        $amount = $this->request->post('amount');
+        $amount = str_replace(' ', '', $amount);
+        $date_from = date('Y-m-d', strtotime($this->request->post('date_from')));
+        $branch_id = $this->request->post('branch_id');
+        $company_id = $this->request->post('company_id');
+        $percent = $this->request->post('percents');
+
+        $loan = $this->Loantypes->get_loantype($loan_id);
+
+        if (empty($branch_id) || $branch_id == 'none') {
+            $branches = $this->Branches->get_branches(['company_id' => $company_id]);
+
+            foreach ($branches as $branch) {
+                if ($branch->number == '00') {
+                    $first_pay_day = $branch->payday;
+                }
+            }
+        } else {
+            $branch = $this->Branches->get_branch($branch_id);
+            $first_pay_day = $branch->payday;
+        }
+
+        $rest_sum = $amount;
+        $start_date = new DateTime(date('Y-m-d', strtotime($date_from)));
+        $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date->format('Y-m-d'))));
+        $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
+
+        if ($start_date >= $paydate || date_diff($paydate, $start_date)->days <= $loan->free_period)
+            $paydate->add(new DateInterval('P1M'));
+
+        $percent_per_month = (($percent / 100) * 365) / 12;
+        $annoouitet_pay = $amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
+        $annoouitet_pay = round($annoouitet_pay, '2');
+
+        if ($loan_id == 1) {
+            $percent_per_month = (($percent / 100) * 360) / 12;
+            $annoouitet_pay = $amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -1)));
+            $annoouitet_pay = round($annoouitet_pay, '2');
+        }
+
+        $iteration = 0;
+
+        $count_days_this_month = date('t', strtotime($start_date->format('Y-m-d')));
+
+        $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
+
+        if (date_diff($paydate, $start_date)->days <= $loan->free_period) {
+            $plus_loan_percents = round(($percent / 100) * $amount * date_diff($paydate, $start_date)->days, 2);
+            $sum_pay = $annoouitet_pay + $plus_loan_percents;
+            $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2, PHP_ROUND_HALF_DOWN);
+            $body_pay = $sum_pay - $loan_percents_pay;
+            $paydate->add(new DateInterval('P1M'));
+            $iteration++;
+        } elseif (date_diff($paydate, $start_date)->days >= $loan->min_period && date_diff($paydate, $start_date)->days < $count_days_this_month) {
+            $minus_percents = ($percent / 100) * $amount * ($count_days_this_month - date_diff($paydate, $start_date)->days);
+            $sum_pay = $annoouitet_pay - round($minus_percents, 2);
+            $loan_percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
+            $loan_percents_pay = round($loan_percents_pay, 2, PHP_ROUND_HALF_DOWN);
+            $body_pay = $sum_pay - $loan_percents_pay;
+            $iteration++;
+        } elseif (date_diff($paydate, $start_date)->days >= $count_days_this_month) {
+            $sum_pay = $annoouitet_pay;
+            $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
+            $body_pay = round($sum_pay - $loan_percents_pay, 2);
+            $iteration++;
+        } else {
+            $sum_pay = ($percent / 100) * $amount * date_diff($paydate, $start_date)->days;
+            $loan_percents_pay = $sum_pay;
+            $body_pay = 0.00;
+        }
+
+        $payment_schedule[$paydate->format('d.m.Y')] =
+            [
+                'pay_sum' => $sum_pay,
+                'loan_percents_pay' => $loan_percents_pay,
+                'loan_body_pay' => $body_pay,
+                'comission_pay' => 0.00,
+                'rest_pay' => $rest_sum -= $body_pay
+            ];
+        $paydate->add(new DateInterval('P1M'));
+
+
+        $period = $loan->max_period;
+        $period -= $iteration;
+
+        if ($rest_sum != 0) {
+
+            for ($i = 1; $i <= $period; $i++) {
+                $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
+                $date = $this->check_pay_date($paydate);
+
+                if ($i == $period && $loan->id != 1) {
+                    $loan_body_pay = $rest_sum;
+                    $loan_percents_pay = $annoouitet_pay - $loan_body_pay;
+                    $rest_sum = 0.00;
+                } elseif ($loan->id == 1) {
+                    $loan_body_pay = $rest_sum;
+                    $loan_percents_pay = $amount * ($percent / 100) * date_diff($start_date, $date)->days - $loan_percents_pay;
+                    $annoouitet_pay = $loan_body_pay + $loan_percents_pay;
+                    $rest_sum = 0.00;
+                } else {
+                    $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
+                    $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
+                    $rest_sum = round($rest_sum - $loan_body_pay, 2);
+                }
+
+                if (isset($payment_schedule[$date->format('d.m.Y')])) {
+
+                    $date = $this->add_month($date->format('d.m.Y'), 2);
+                    $paydate->setDate($date->format('Y'), $date->format('m'), $first_pay_day);
+                    $date = $this->check_pay_date($paydate);
+                }
+
+                $payment_schedule[$date->format('d.m.Y')] =
+                    [
+                        'pay_sum' => $annoouitet_pay,
+                        'loan_percents_pay' => $loan_percents_pay,
+                        'loan_body_pay' => $loan_body_pay,
+                        'comission_pay' => 0.00,
+                        'rest_pay' => $rest_sum
+                    ];
+
+                $paydate->add(new DateInterval('P1M'));
+            }
+        }
+
+        $payment_schedule['result'] =
+            [
+                'pay_sum' => 0.00,
+                'loan_percents_pay' => 0.00,
+                'loan_body_pay' => 0.00,
+                'comission_pay' => 0.00,
+                'rest_pay' => 0.00
+            ];
+
+        foreach ($payment_schedule as $date => $pay) {
+            if ($date != 'result') {
+                $payment_schedule['result']['pay_sum'] += round($pay['pay_sum'], '2');
+                $payment_schedule['result']['loan_percents_pay'] += round($pay['loan_percents_pay'], '2');
+                $payment_schedule['result']['loan_body_pay'] += round($pay['loan_body_pay'], 2);
+                $payment_schedule['result']['comission_pay'] += round($pay['comission_pay'], '2');
+                $payment_schedule['result']['rest_pay'] = 0.00;
+            }
+        }
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->getDefaultStyle()->getFont()->setName('Times New Roman')->setSize(10);
+
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->getDefaultRowDimension()->setRowHeight(20);
+        $sheet->getColumnDimension('A')->setWidth(40);
+        $sheet->getColumnDimension('B')->setWidth(40);
+        $sheet->getColumnDimension('C')->setWidth(40);
+        $sheet->getColumnDimension('D')->setWidth(40);
+        $sheet->getColumnDimension('E')->setWidth(40);
+        $sheet->getColumnDimension('F')->setWidth(40);
+        $sheet->mergeCells('A1:A2');
+        $sheet->mergeCells('B1:B2');
+        $sheet->mergeCells('C1:E1');
+        $sheet->mergeCells('F1:F2');
+
+        $sheet->setCellValue('A1', 'Дата');
+        $sheet->setCellValue('B1', 'Сумма');
+        $sheet->setCellValue('C1', 'Структура платежа');
+
+        $sheet->setCellValue('C2', 'Осн. долг');
+        $sheet->setCellValue('D2', 'Проценты');
+        $sheet->setCellValue('E2', 'Др. платежи');
+
+        $sheet->setCellValue('F1', 'Остаток долга, руб.');
+
+        $i = 3;
+
+        foreach ($payment_schedule as $date => $pay) {
+            $sheet->setCellValue('A' . $i, ($date != 'result') ? date('d.m.Y', strtotime($date)) : 'ИТОГО');
+            $sheet->setCellValue('B' . $i, number_format($pay['pay_sum']));
+            $sheet->setCellValue('C' . $i, number_format($pay['loan_body_pay']));
+            $sheet->setCellValue('D' . $i, number_format($pay['loan_percents_pay']));;
+            $sheet->setCellValue('E' . $i, number_format($pay['comission_pay']));
+            $sheet->setCellValue('F' . $i, number_format($pay['pay_sum']));
+
+            $i++;
+        }
+
+        $writer = new Xlsx($spreadsheet);
+
+        $writer->save($this->config->root_dir . "files/constructor.xlsx");
+
+        $link = $this->config->back_url . "/files/constructor.xlsx";
+
+        $html = '<a target="_blank" href='.$link.' download>';
+        $html .= '<input type="button"';
+        $html .= 'class="btn btn-outline-info"';
+        $html .= 'value = "Скачать файл" ></a>';
+
+        echo $html;
         exit;
     }
 
@@ -475,7 +681,7 @@ class GraphicConstructorController extends Controller
             $html = "<option value='none'>Выберите группу</option>";
 
             foreach ($groups as $group) {
-                if($group->blocked == 'nowhere')
+                if ($group->blocked == 'nowhere')
                     $blockCard = "class='badge-danger'";
                 else
                     $blockCard = '';
