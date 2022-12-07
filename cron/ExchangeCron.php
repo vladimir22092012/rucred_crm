@@ -29,9 +29,10 @@ class ExchangeCron extends Core
         foreach ($crons as $cron) {
             $result = $this->soap1c->send_loan($cron->order_id);
 
-            if (isset($result->return) && $result->return == 'OK')
+            if (isset($result->return) && $result->return == 'OK') {
                 ExchangeCronORM::where('id', $cron->id)->update(['is_sent' => 1, 'resp' => 'OK']);
-            else
+                SendPaymentCronORM::where('contract_id', $cron->contract_id)->update(['is_loan_sent' => 1]);
+            } else
                 ExchangeCronORM::where('id', $cron->id)->update(['is_sent' => 1, 'is_error' => 1, 'resp' => $result]);
         }
     }
