@@ -119,6 +119,20 @@ class LoantypeController extends Controller
         $group_id = $this->request->post('group_id', 'integer');
         $individual = $this->request->post('individual');
 
+        $loanType = LoantypesORM::find($loantype_id);
+
+        if($individual > $loanType->max_amount)
+        {
+            echo json_encode(['error' => 'Сумма больше максимальной для тарифа']);
+            exit;
+        }
+
+        if($individual < $loanType->min_amount)
+        {
+            echo json_encode(['error' => 'Сумма меньше минимальной для тарифа']);
+            exit;
+        }
+
         $record =
             [
                 'standart_percents' => $standart_percents,
@@ -129,6 +143,9 @@ class LoantypeController extends Controller
             ];
 
         $this->GroupLoanTypes->update_record($record);
+
+        echo json_encode(['success' => 1]);
+        exit;
     }
 
     private function action_change_online_flag()

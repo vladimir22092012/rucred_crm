@@ -6,8 +6,8 @@
 
 {capture name='page_scripts'}
     <!-- jQuery Validation JS -->
-    <script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js'></script>
-
+    <script type="text/javascript"
+            src='https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js'></script>
     <script>
         $(function () {
             let loantype_id = $('#loantype_id').val();
@@ -57,16 +57,16 @@
 
                 errorElement: "em",
 
-                errorPlacement: function ( error, element ) {
+                errorPlacement: function (error, element) {
                     // Add the `invalid-feedback` class to the error element
-                    error.addClass( "invalid-feedback" );
+                    error.addClass("invalid-feedback");
                     error.insertAfter(element);
                 },
-                highlight: function ( element, errorClass, validClass ) {
-                    $( element ).addClass( "is-invalid" ).removeClass( "is-valid" );
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass("is-invalid").removeClass("is-valid");
                 },
                 unhighlight: function (element, errorClass, validClass) {
-                    $( element ).addClass( "is-valid" ).removeClass( "is-invalid" );
+                    $(element).addClass("is-valid").removeClass("is-invalid");
                 },
                 messages: {
                     number: {
@@ -143,6 +143,32 @@
                     },
                     success: function () {
                         that.val(value);
+                    }
+                });
+            });
+
+            $('.saveEdit').on('click', function () {
+                let form = $(this).closest('form').serialize();
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: form,
+                    success: function (resp) {
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+                        if (resp['success']) {
+                            Swal.fire({
+                                title: 'Успешно!',
+                                confirmButtonText: 'ОК'
+                            });
+
+                            location.reload();
+                        }
                     }
                 });
             });
@@ -311,17 +337,19 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <select
-                                                    id="product_type"
-                                                    class="form-control"
-                                                    name="product_type"
-                                                    {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}
-                                                        disabled
-                                                    {/if}
+                                                        id="product_type"
+                                                        class="form-control"
+                                                        name="product_type"
+                                                        {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}
+                                                            disabled
+                                                        {/if}
                                                 >
-                                                    <option value="pdl" {if $loantype->type == 'pdl'}selected{/if}>Payroll PDL
+                                                    <option value="pdl" {if $loantype->type == 'pdl'}selected{/if}>
+                                                        Payroll PDL
                                                     </option>
                                                     <option value="annouitet"
-                                                            {if $loantype->type == 'annouitet'}selected{/if}>Payroll Installment
+                                                            {if $loantype->type == 'annouitet'}selected{/if}>Payroll
+                                                        Installment
                                                     </option>
                                                 </select>
                                             </div>
@@ -381,7 +409,8 @@
                                                 <label class="control-label">Описание</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <textarea class="form-control" name="description">{$loantype->description}</textarea>
+                                                <textarea class="form-control"
+                                                          name="description">{$loantype->description}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -474,12 +503,15 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-5 ">
-                                                <label class="control-label">Льготный период до первой выплаты %, дней</label>
+                                                <label class="control-label">Льготный период до первой выплаты %,
+                                                    дней</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <select class="form-control" name="free_days" {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
+                                                <select class="form-control" name="free_days"
+                                                        {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
                                                     {for $i=1 to 30}
-                                                        <option value="{$i}" {if empty($loantype->free_days) && $i == 3}selected{/if}>{$i}</option>
+                                                        <option value="{$i}"
+                                                                {if empty($loantype->free_days) && $i == 3}selected{/if}>{$i}</option>
                                                     {/for}
                                                 </select>
                                             </div>
@@ -488,12 +520,15 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-5 ">
-                                                <label class="control-label">Льготный период до первой выплаты по осн.долгу, дней</label>
+                                                <label class="control-label">Льготный период до первой выплаты по
+                                                    осн.долгу, дней</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <select class="form-control" name="min_period" {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
+                                                <select class="form-control" name="min_period"
+                                                        {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
                                                     {for $i=1 to 30}
-                                                        <option value="{$i}" {if empty($loantype->free_days) && $i == 20}selected{/if}>{$i}</option>
+                                                        <option value="{$i}"
+                                                                {if empty($loantype->free_days) && $i == 20}selected{/if}>{$i}</option>
                                                     {/for}
                                                 </select>
                                             </div>
@@ -530,12 +565,12 @@
                                             </div>
                                             <div class="col-7 ">
                                                 <input
-                                                    id="number_of_payouts"
-                                                    type="number"
-                                                    class="form-control digitPreg"
-                                                    name="max_period"
-                                                    value="{$loantype->max_period}"
-                                                    {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}
+                                                        id="number_of_payouts"
+                                                        type="number"
+                                                        class="form-control digitPreg"
+                                                        name="max_period"
+                                                        value="{$loantype->max_period}"
+                                                        {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}
                                                 />
                                             </div>
                                         </div>
@@ -603,20 +638,25 @@
                     <input type="hidden" name="group_id" value="">
                     <div class="form-group">
                         <label for="standart_percents" class="control-label">Процентная ставка</label>
-                        <input type="text" class="form-control digitPreg" name="standart_percents" id="standart_percents"
+                        <input type="text" class="form-control digitPreg" name="standart_percents"
+                               id="standart_percents"
                                value=""/>
                     </div>
                     <div class="form-group">
                         <label for="preferential_percents" class="control-label">Льготная ставка</label>
-                        <input type="text" class="form-control digitPreg" name="preferential_percents" id="preferential_percents"
+                        <input type="text" class="form-control digitPreg" name="preferential_percents"
+                               id="preferential_percents"
                                value=""/>
                     </div>
                     <div class="form-group">
-                        <label for="individual" class="control-label">Индивидуальные ограничения по максимальной сумме</label>
+                        <label for="individual" class="control-label">Индивидуальные ограничения по максимальной
+                            сумме</label>
                         <input type="text" class="form-control digitPreg" name="individual" id="individual" value=""/>
                     </div>
-                    <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
-                    <input type="submit" formmethod="post" class="btn btn-success" value="Сохранить">
+                    <div class="form-group" style="display: flex; justify-content: space-between">
+                        <input class="btn btn-danger" data-dismiss="modal" value="Отмена">
+                        <input class="btn btn-success saveEdit" value="Сохранить">
+                    </div>
                 </form>
             </div>
         </div>
