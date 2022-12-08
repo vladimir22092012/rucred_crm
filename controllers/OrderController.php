@@ -276,6 +276,10 @@ class OrderController extends Controller
                     $this->action_confirm_sms();
                     break;
 
+                case 'editPdn':
+                    $this->action_editPdn();
+                    break;
+
 
             endswitch;
 
@@ -3691,7 +3695,7 @@ class OrderController extends Controller
         $actual_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
         $this->PaymentsSchedules->update($actual_schedule->id, ['psk' => $psk, 'schedule' => $schedule]);
 
-        if($formDocs == 1)
+        if ($formDocs == 1)
             $this->form_docs($order_id);
     }
 
@@ -5019,6 +5023,110 @@ class OrderController extends Controller
         DocumentsORM::where('order_id', $orderId)
             ->update(['params' => serialize($order)]);
 
+        exit;
+    }
+
+    private function action_editPdn()
+    {
+        $orderId = $this->request->post('order_id');
+
+        $order = OrdersORM::with('user')->find($orderId);
+
+        $loanType = LoantypesORM::find($order->loan_type);
+
+        $dependents = $this->request->post('dependents');
+
+        $cards_bank_name = $this->request->post('cards_bank_name');
+        $cards_limit = $this->request->post('cards_limit');
+        $cards_rest_sum = $this->request->post('cards_rest_sum');
+        $cards_validity_period = $this->request->post('cards_validity_period');
+        $cards_delay = $this->request->post('cards_delay');
+
+        $credits_bank_name = $this->request->post('credits_bank_name');
+        $credits_rest_sum = $this->request->post('credits_rest_sum');
+        $credits_month_pay = $this->request->post('credits_month_pay');
+        $credits_return_date = $this->request->post('credits_return_date');
+        $credits_percents = $this->request->post('credits_percents');
+        $credits_delay = $this->request->post('credits_delay');
+
+        $credits_story = array_replace_recursive($credits_bank_name, $credits_rest_sum, $credits_month_pay, $credits_return_date, $credits_percents, $credits_delay);
+        $cards_story = array_replace_recursive($cards_bank_name, $cards_limit, $cards_rest_sum, $cards_validity_period, $cards_delay);
+
+        $in = preg_replace("/[^,.0-9]/", '', $this->request->post('in'));
+        $out = preg_replace("/[^,.0-9]/", '', $this->request->post('out'));
+
+        if (empty($in)) {
+            echo json_encode(['error' => 1, 'reason' => 'Отсутствует среднемесячный доход']);
+            exit;
+        }
+
+        if (empty($out)) {
+            echo json_encode(['error' => 1, 'reason' => 'Отсутствует среднемесячный расход']);
+            exit;
+        }
+
+        $all_sum_credits = 0;
+        $sum_credits_pay = 0;
+
+        if (!empty($credits_story)) {
+            foreach ($credits_story as $credit) {
+                $credit['credits_month_pay'] = preg_replace("/[^,.0-9]/", '', $credit['credits_month_pay']);
+                $credit['credits_rest_sum'] = preg_replace("/[^,.0-9]/", '', $credit['credits_rest_sum']);
+
+                if (!empty($credit['credits_month_pay']) && $credit['credits_delay'] == 'Нет')
+                    $sum_credits_pay += $credit['credits_month_pay'];
+
+                if (!empty($credit['credits_rest_sum']) && $credit['credits_delay'] == 'Да')
+                    $sum_credits_pay += $credit['credits_rest_sum'];
+            }
+
+            $all_sum_credits += $sum_credits_pay;
+        }
+
+        if (!empty($cards_story)) {
+            foreach ($cards_story as $card) {
+                $card['cards_rest_sum'] = preg_replace("/[^,.0-9]/", '', $card['cards_rest_sum']);
+                $card['cards_limit'] = preg_replace("/[^,.0-9]/", '', $card['cards_limit']);
+
+                if (!empty($card['cards_limit'])) {
+                    $max = 0.05 * $card['cards_limit'];
+                } else {
+                    $max = 0;
+                }
+                if (!empty($card['cards_rest_sum'])) {
+                    $min = 0.1 * $card['cards_rest_sum'];
+                } else {
+                    $min = 0;
+                }
+
+                $all_sum_credits += min($max, $min);
+            }
+        }
+
+        $paymentsSchedule = PaymentsScheduleORM::where('order_id', $order->id)->where('actual', 1)->first();
+
+        $month_pay = $order->amount * ((1 / $loanType->max_period) + (($paymentsSchedule->psk / 100) / 12));
+
+        $all_sum_credits += $month_pay;
+
+        if ($all_sum_credits != 0)
+            $pdn = round(($all_sum_credits / $in) * 100, 2);
+        else
+            $pdn = 0;
+
+        $update =
+            [
+                'pdn' => $pdn,
+                'credits_story' => json_encode($credits_story),
+                'cards_story' => json_encode($cards_story),
+                'income' => $in,
+                'expenses' => $out,
+                'dependents' => $dependents
+            ];
+
+        UsersORM::where('id', $order->user_id)->update($update);
+
+        echo json_encode(['success' => 1]);
         exit;
     }
 

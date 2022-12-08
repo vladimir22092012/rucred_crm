@@ -3056,14 +3056,6 @@
 
                                             <h6 class="card-header">
                                                 <span class="text-white">Информация о работодателе</span>
-                                                {if in_array($order->status, [0])}
-                                                    <span class="float-right">
-                                                    <a href="javascript:void(0);"
-                                                       class="text-white"
-                                                       data-user="{$order->user_id}">
-                                                        <i class="fas fa-eraser"></i></a>
-                                                        </span>
-                                                {/if}
                                             </h6>
 
                                             <div class="row m-0 pt-2 view-block">
