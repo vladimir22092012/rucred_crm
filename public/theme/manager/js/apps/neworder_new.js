@@ -438,6 +438,11 @@ $(function () {
                         if (resp['loantypes'][key]['online_flag'] == 1)
                             continue;
 
+                        let maxSum = resp['loantypes'][key]['max_amount'];
+
+                        if(resp['loantypes'][key]['individual'])
+                            maxSum = resp['loantypes'][key]['individual'];
+
 
                         $('#pricelist').append(
                             '<div class="price_container">' +
@@ -451,7 +456,7 @@ $(function () {
                             '<h5>от <span' +
                             'class="sum">' + new Intl.NumberFormat().format(resp['loantypes'][key]['min_amount']) + '</span>' +
                             'Р до ' +
-                            '<span class="sum">' + new Intl.NumberFormat().format(resp['loantypes'][key]['max_amount']) + '</span>' +
+                            '<span class="sum">' + new Intl.NumberFormat().format(maxSum) + '</span>' +
                             'Р</h5>' +
                             '</div>' +
                             '<hr style="width: 80%; size: 5px">' +

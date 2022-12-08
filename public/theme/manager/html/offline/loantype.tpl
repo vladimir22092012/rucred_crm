@@ -105,9 +105,11 @@
                 let standart_percents = $(this).attr('data-standart-percents');
                 let preferential_percents = $(this).attr('data-preferential-percents');
                 let group_id = $(this).attr('data-group');
+                let individual = $(this).attr('data-individual');
 
                 $('#standart_percents').val(standart_percents);
                 $('#preferential_percents').val(preferential_percents);
+                $('#individual').val(individual);
                 $('input[name=loantype_id]').val(loantype_id);
                 $('input[name=group_id]').val(group_id);
             });
@@ -391,6 +393,7 @@
                                                     <th align="center">Группа</th>
                                                     <th align="center">Процентная ставка</th>
                                                     <th align="center">Льготная ставка</th>
+                                                    <th align="center">Индивидуальная сумма</th>
                                                     <th align="center">Вкл/Выкл</th>
                                                     <th></th>
                                                 </tr>
@@ -402,6 +405,7 @@
                                                             <td valign="middle">{$group['name']}</td>
                                                             <td valign="middle">{$group['standart_percents']|number_format:3:',':' '}</td>
                                                             <td valign="middle">{$group['preferential_percents']|number_format:3:',':' '}</td>
+                                                            <td valign="middle">{$group['individual']|number_format:2:',':' '}</td>
                                                             <td valign="middle">
                                                                 <div class="clearfix">
                                                                     <div class="float-left">
@@ -426,6 +430,7 @@
                                                                        data-group="{$group['id']}"
                                                                        data-standart-percents="{$group['standart_percents']}"
                                                                        data-preferential-percents="{$group['preferential_percents']}"
+                                                                       data-individual="{$group['individual']}"
                                                                        class="btn btn-outline-warning edit-company-tarif"
                                                                        value="Ред"></td>
                                                             {/if}
@@ -605,6 +610,10 @@
                         <label for="preferential_percents" class="control-label">Льготная ставка</label>
                         <input type="text" class="form-control digitPreg" name="preferential_percents" id="preferential_percents"
                                value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="individual" class="control-label">Индивидуальные ограничения по максимальной сумме</label>
+                        <input type="text" class="form-control digitPreg" name="individual" id="individual" value=""/>
                     </div>
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
                     <input type="submit" formmethod="post" class="btn btn-success" value="Сохранить">

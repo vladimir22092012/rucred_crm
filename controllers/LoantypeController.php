@@ -117,13 +117,15 @@ class LoantypeController extends Controller
         $preferential_percents = $this->request->post('preferential_percents');
         $loantype_id = $this->request->post('loantype_id', 'integer');
         $group_id = $this->request->post('group_id', 'integer');
+        $individual = $this->request->post('individual');
 
         $record =
             [
                 'standart_percents' => $standart_percents,
                 'preferential_percents' => $preferential_percents,
                 'loantype_id' => $loantype_id,
-                'group_id' => $group_id
+                'group_id' => $group_id,
+                'individual' => $individual
             ];
 
         $this->GroupLoanTypes->update_record($record);

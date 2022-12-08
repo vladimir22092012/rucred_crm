@@ -24,6 +24,7 @@ class GroupLoanTypes extends Core
                     'name' => $group->name,
                     'standart_percents' => $result->standart_percents,
                     'preferential_percents' => $result->preferential_percents,
+                    'individual' => $result->individual,
                     'on_off_flag' => $result->on_off_flag
                 ];
         }
@@ -86,7 +87,8 @@ class GroupLoanTypes extends Core
                     'name' => $loantype->name,
                     'standart_percents' => $result->standart_percents,
                     'preferential_percents' => $result->preferential_percents,
-                    'online_flag' => $loantype->online_flag
+                    'online_flag' => $loantype->online_flag,
+                    'individual' => $result->individual
                 ];
         }
 
@@ -119,12 +121,13 @@ class GroupLoanTypes extends Core
         $query = $this->db->placehold(
             "
         UPDATE s_group_loantypes 
-        SET standart_percents = ?, preferential_percents = ?
+        SET standart_percents = ?, preferential_percents = ?, individual = ?
         WHERE group_id = ?
         AND loantype_id = ? 
         ",
             (float)$record['standart_percents'],
             (float)$record['preferential_percents'],
+            (float)$record['individual'],
             $record['group_id'],
             $record['loantype_id']
         );
