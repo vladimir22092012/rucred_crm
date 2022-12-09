@@ -3383,7 +3383,7 @@ class OfflineOrderController extends Controller
         $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date->format('Y-m-d'))));
         $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
 
-        if ($start_date > $paydate)
+        if ($start_date > $paydate || date_diff($paydate, $start_date)->days <= $loan->free_period)
             $paydate->add(new DateInterval('P1M'));
 
         $percent_per_month = (($order['percent'] / 100) * 365) / 12;
@@ -3393,6 +3393,7 @@ class OfflineOrderController extends Controller
         $iteration = 0;
 
         $count_days_this_month = date('t', strtotime($start_date->format('Y-m-d')));
+        $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
 
         if (date_diff($paydate, $start_date)->days <= $loan->free_period) {
             $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days, 2);
@@ -3418,8 +3419,6 @@ class OfflineOrderController extends Controller
             $loan_percents_pay = $sum_pay;
             $body_pay = 0.00;
         }
-
-        $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
 
         $payment_schedule[$paydate->format('d.m.Y')] =
             [

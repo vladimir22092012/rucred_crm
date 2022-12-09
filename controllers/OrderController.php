@@ -3560,7 +3560,7 @@ class OrderController extends Controller
         $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date->format('Y-m-d'))));
         $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
 
-        if ($start_date > $paydate)
+        if ($start_date > $paydate || date_diff($paydate, $start_date)->days <= $loan->free_period)
             $paydate->add(new DateInterval('P1M'));
 
         if($loan->id == 1)
