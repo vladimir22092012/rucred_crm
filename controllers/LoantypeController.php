@@ -75,6 +75,8 @@ class LoantypeController extends Controller
             $this->design->assign('error', 'Укажите наименование вида кредита');
         } elseif (empty($loantype->percent)) {
             $this->design->assign('error', 'Выберите процентную ставку');
+        } elseif ($loantype->max_period > 60) {
+            $this->design->assign('error', 'Для данного типа продукта, данное количество выплат недоступно');
         } elseif (empty($loantype->max_amount)) {
             $this->design->assign('error', 'Укажите максимальную сумму кредита');
         } elseif (mb_strlen($loantype->description) > 20) {
@@ -121,14 +123,12 @@ class LoantypeController extends Controller
 
         $loanType = LoantypesORM::find($loantype_id);
 
-        if($individual > $loanType->max_amount)
-        {
+        if ($individual > $loanType->max_amount) {
             echo json_encode(['error' => 'Сумма больше максимальной для тарифа']);
             exit;
         }
 
-        if($individual < $loanType->min_amount)
-        {
+        if ($individual < $loanType->min_amount) {
             echo json_encode(['error' => 'Сумма меньше минимальной для тарифа']);
             exit;
         }
