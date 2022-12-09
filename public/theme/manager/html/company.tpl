@@ -205,6 +205,9 @@
                                                     <option value="offline"
                                                             {if $company->permissions == 'offline'}selected{/if}>Оффлайн
                                                     </option>
+                                                    <option value="nowhere"
+                                                            {if $company->permissions == 'nowhere'}selected{/if}>Нигде
+                                                    </option>
                                                 </select>
                                             </th>
                                             <th>
