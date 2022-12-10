@@ -48,9 +48,9 @@ class SendPaymentCron extends Core
             $result = $this->soap1c->send_payment($payment);
 
             if (isset($result->return) && $result->return == 'OK')
-                SendPaymentCronORM::where('id', $cron->id)->update(['is_sent' => 1, 'resp' => 'OK']);
+                SendPaymentCronORM::where('id', $cron->id)->update(['is_sent' => 1, 'is_error' => 0, 'resp' => 'OK']);
             else
-                SendPaymentCronORM::where('id', $cron->id)->update(['is_sent' => 1, 'is_error' => 1, 'resp' => json_encode($result)]);
+                SendPaymentCronORM::where('id', $cron->id)->update(['is_sent' => 1, 'is_error' => 1, 'resp' => json_encode($result, JSON_UNESCAPED_UNICODE)]);
         }
     }
 }
