@@ -38,7 +38,7 @@ class SendPaymentCron extends Core
             $payment->date = date('Y-m-d H:i:s');
             $payment->amount = $order->amount;
             $payment->recepient = 9725055162;
-            $payment->user_id = $order->user->id;
+            $payment->user_id = (string)$order->user->id;
             $payment->number = '40701810300000000347';
             $payment->description = $description;
             $payment->user_acc_number = $requisites->number;
@@ -50,7 +50,7 @@ class SendPaymentCron extends Core
             if (isset($result->return) && $result->return == 'OK')
                 SendPaymentCronORM::where('id', $cron->id)->update(['is_sent' => 1, 'resp' => 'OK']);
             else
-                SendPaymentCronORM::where('id', $cron->id)->update(['is_sent' => 1, 'is_error' => 1, 'resp' => $result]);
+                SendPaymentCronORM::where('id', $cron->id)->update(['is_sent' => 1, 'is_error' => 1, 'resp' => json_encode($result)]);
         }
     }
 }
