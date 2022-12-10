@@ -179,8 +179,12 @@ class Users extends Core
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
         }
 
-        if (!empty($filter['stage_filter'])) {
+        if (isset($filter['stage_filter']) && $filter['stage_filter'] == 1) {
             $stage_filter = $this->db->placehold("AND stage_registration != 8");
+        }
+
+        if (isset($filter['stage_filter']) && $filter['stage_filter'] == 2) {
+            $stage_filter = $this->db->placehold("AND stage_registration = 8");
         }
 
         if (isset($filter['keyword'])) {
@@ -242,6 +246,14 @@ class Users extends Core
                     $sort = 'created ASC';
                     break;
 
+                case 'modified_asc':
+                    $sort = 'updated ASC';
+                    break;
+
+                case 'modified_desc':
+                    $sort = 'updated DESC';
+                    break;
+
                 case 'fio_desc':
                     $sort = 'lastname DESC, firstname DESC, patronymic DESC';
                     break;
@@ -293,6 +305,7 @@ class Users extends Core
             ORDER BY $sort
             $sql_limit
         ");
+
         $this->db->query($query);
 
         if ($results = $this->db->results()) {
@@ -316,8 +329,12 @@ class Users extends Core
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('interval', (array)$filter['id']));
         }
 
-        if (!empty($filter['stage_filter'])) {
+        if (isset($filter['stage_filter']) && $filter['stage_filter'] == 1) {
             $stage_filter = $this->db->placehold("AND stage_registration != 8");
+        }
+
+        if (isset($filter['stage_filter']) && $filter['stage_filter'] == 2) {
+            $stage_filter = $this->db->placehold("AND stage_registration = 8");
         }
 
         if (isset($filter['keyword'])) {

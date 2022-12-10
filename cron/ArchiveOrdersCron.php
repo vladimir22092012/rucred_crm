@@ -27,7 +27,7 @@ class ArchiveOrdersCron extends Core
         foreach ($orders as $order) {
             $orderCreationDate = new DateTime(date('Y-m-d H:i:s', strtotime($order->date)));
 
-            if ($orderCreationDate->diff(now())->days >= 3) {
+            if ($orderCreationDate->diff(now())->days >= 2) {
                 $this->Orders->update_order($order->order_id, ['is_archived' => true]);
             }
         }

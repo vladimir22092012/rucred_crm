@@ -59,7 +59,7 @@ class Soap1c extends Core
 
             $item = new StdClass();
 
-            $item->ID = empty($contract) ? $order->uid : $contract->number;
+            $item->ID = $contract->id;
             $item->Дата = date('YmdHis', strtotime($order->date));
             $item->Срок = $order->period;
             $item->Периодичность = 'День';
@@ -135,7 +135,7 @@ class Soap1c extends Core
         $item->Дата = date('YmdHis', strtotime($payment->date));
         $item->Сумма = $payment->amount;
         $item->ИННПлательщика = $payment->recepient;
-        $item->Клиент_id = $payment->user_id;
+        $item->Клиент_id = "$payment->user_id";
         $item->СчетОрганизации = $payment->number;
         $item->НазначениеПлатежа = $payment->description;
         $item->СчетКонтрагента = $payment->user_acc_number;

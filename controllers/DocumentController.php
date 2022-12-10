@@ -29,39 +29,9 @@ class DocumentController extends Controller
         $order = $this->orders->get_order($document->params->order_id);
         $contracts = $this->contracts->get_contracts(['user_id' => $document->params->user_id, 'status' => [2,3,4]]);
         //заглушка для документов с неполными данными
-        $isPlug = false;
-        try {
-            $group = $this->groups->get_group($order->group_id);
-        } catch (\Throwable $th) {
-            $group = '00'; //заглушка, нигде не отображается в реальных документах
-            $isPlug = true;
-        }
 
-        try {
-            $company = $this->companies->get_company($order->company_id);
-        } catch (\Throwable $th) {
-            $company = '00'; //заглушка, нигде не отображается в реальных документах
-            $isPlug = true;
-        }
-
-        if (!empty($contracts)) {
-            $count_contracts = count($contracts);
-            $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
-        } else {
-            $count_contracts = '01';
-        }
-
-        if (isset($order->loan_type)) {
-            $loantype = $this->Loantypes->get_loantype($order->loan_type);
-
-            if ($isPlug) {
-                $uid = "0";
-            } else {
-                $uid = "$group->number$company->number $loantype->number $order->personal_number $count_contracts";
-            }
-
-            $this->design->assign('uid', $uid);
-        }
+        $uid = ProjectContractNumberORM::where('orderId', $order->order_id)->first();
+        $this->design->assign('uid', $uid->uid);
 
 
         $this->design->assign('settlement', $settlement);

@@ -153,7 +153,6 @@ class NeworderController extends Controller
 
     private function action_create_new_order()
     {
-
         $amount = preg_replace("/[^,.0-9]/", '', $this->request->post('amount'));
 
         $percent = (float)$this->request->post('percent');
@@ -419,6 +418,13 @@ class NeworderController extends Controller
             exit;
         }
 
+        $check_same_users = $this->request->post('check_same_users');
+
+        if (empty($check_same_users)) {
+            response_json(['error' => 1, 'reason' => 'Произведите проверку на совпадения']);
+            exit;
+        }
+
         $user['passport_date'] = (string)$this->request->post('passport_date');
 
         $now_date = new DateTime(date('Y-m-d'));
@@ -596,39 +602,37 @@ class NeworderController extends Controller
             $contact =
                 [
                     'user_id' => $old_user->id,
-                    'type'    => 'email',
-                    'value'   => $user['email']
+                    'type' => 'email',
+                    'value' => $user['email']
                 ];
 
             $this->Contacts->add($contact);
 
-            if(isset($user['telegram_num']))
-            {
+            if (isset($user['telegram_num'])) {
                 $contact =
                     [
                         'user_id' => $old_user->id,
-                        'type'    => 'telegram',
-                        'value'   => $user['telegram_num']
+                        'type' => 'telegram',
+                        'value' => $user['telegram_num']
                     ];
 
                 $this->Contacts->add($contact);
             }
 
-            if(isset($user['viber_num']))
-            {
+            if (isset($user['viber_num'])) {
                 $contact =
                     [
                         'user_id' => $old_user->id,
-                        'type'    => 'viber',
-                        'value'   => $user['viber_num']
+                        'type' => 'viber',
+                        'value' => $user['viber_num']
                     ];
 
                 $this->Contacts->add($contact);
             }
 
-            if(isset($user['faktaddress_id']))
+            if (isset($user['faktaddress_id']))
 
-            $this->users->update_user($user_id, $user);
+                $this->users->update_user($user_id, $user);
             $this->UserContactPreferred->delete($user_id);
 
             if (!empty($user['sms_not']) && $user['sms_not'] == 1) {
@@ -717,12 +721,13 @@ class NeworderController extends Controller
             if ($payout_type == 'bank') {
 
                 if (date('Y-m-d') >= date('Y-m-d', strtotime($probably_start_date))) {
+                    $timeOfTransitionToNextBankingDay = date('H:i', strtotime($this->Settings->time_of_transition_to_the_next_banking_day));
 
-                    if ($settlement_id == 3 && date('H') >= 14)
+                    if ($settlement_id == 3 && date('H:i') >= $timeOfTransitionToNextBankingDay)
                         $probably_start_date = date('Y-m-d', strtotime('+1 days'));
 
                     if ($settlement_id == 2) {
-                        if (date('H') >= 14)
+                        if (date('H:i') >= $timeOfTransitionToNextBankingDay)
                             $probably_start_date = date('Y-m-d', strtotime('+2 days'));
                         else
                             $probably_start_date = date('Y-m-d', strtotime('+1 days'));
@@ -737,7 +742,7 @@ class NeworderController extends Controller
 
                             if (empty($check_date)) {
                                 if ($settlement_id == 2) {
-                                    if (date('H') >= 14)
+                                    if (date('H:i') >= $timeOfTransitionToNextBankingDay)
                                         $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
                                 }
                                 break;
@@ -1014,17 +1019,25 @@ class NeworderController extends Controller
 
                     $this->form_docs($order_id);
 
+                    $loantype = $this->Loantypes->get_loantype($order['loan_type']);
+
+                    $contracts = $this->contracts->get_contracts(['user_id' => $user_id]);
+
+                    if (!empty($contracts)) {
+                        $count_contracts = count($contracts) + 1;
+                        $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
+                    } else {
+                        $count_contracts = '01';
+                    }
+
+                    $projectNumber = "$group->number$company->number $loantype->number $personal_number $count_contracts";
+
+                    ProjectContractNumberORM::updateOrCreate(['orderId' => $order_id, 'userId' => $user_id],['uid' => $projectNumber]);
+
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                     exit;
                 }
             } else {
-
-                $check_same_users = $this->request->post('check_same_users');
-
-                if (empty($check_same_users)) {
-                    response_json(['error' => 1, 'reason' => 'Произведите проверку на совпадения']);
-                    exit;
-                }
 
                 $order_id = $this->orders->add_order($order);
 
@@ -1084,6 +1097,21 @@ class NeworderController extends Controller
                     }
 
                     $this->form_docs($order_id);
+
+                    $loantype = $this->Loantypes->get_loantype($order['loan_type']);
+
+                    $contracts = $this->contracts->get_contracts(['user_id' => $user_id]);
+
+                    if (!empty($contracts)) {
+                        $count_contracts = count($contracts) + 1;
+                        $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
+                    } else {
+                        $count_contracts = '01';
+                    }
+
+                    $projectNumber = "$group->number$company->number $loantype->number $personal_number $count_contracts";
+
+                    ProjectContractNumberORM::updateOrCreate(['orderId' => $order_id, 'userId' => $user_id],['uid' => $projectNumber]);
 
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                 }
@@ -1307,15 +1335,10 @@ class NeworderController extends Controller
 
     private function check_pay_date($date)
     {
-
-        for ($i = 0; $i <= 15; $i++) {
-            $check_date = $this->WeekendCalendar->check_date($date->format('Y-m-d'));
-
-            if ($check_date == null) {
-                break;
-            } else {
-                $date->sub(new DateInterval('P1D'));
-            }
+        $checkDate = WeekendCalendarORM::where('date', $date->format('Y-m-d'))->first();
+        if (!empty($checkDate)) {
+            $date->sub(new DateInterval('P1D'));
+            $this->check_pay_date($date);
         }
 
         return $date;

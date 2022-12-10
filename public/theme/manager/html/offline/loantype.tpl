@@ -5,10 +5,97 @@
 {/if}
 
 {capture name='page_scripts'}
+    <!-- jQuery Validation JS -->
+    <script type="text/javascript"
+            src='https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js'></script>
     <script>
         $(function () {
+            let loantype_id = $('#loantype_id').val();
+            let product_type = $('#product_type');
+            let number_of_payouts = $('#number_of_payouts');
 
-            let loantype_id = {{$loantype->id}};
+            if (product_type.val() === 'pdl') {
+                number_of_payouts.val('1').attr('readonly', 'readonly');
+            }
+
+            product_type.on('change', function (e) {
+                if ($(this).val() === 'annouitet') {
+                    number_of_payouts
+                        .val('')
+                        .removeAttr('readonly');
+                } else if ($(this).val() === 'pdl') {
+                    number_of_payouts
+                        .val('1')
+                        .attr('readonly', 'readonly');
+                }
+            });
+
+            $(document).on('input', '.digitPreg', function () {
+                let value = $(this).val();
+                value = value.replace(new RegExp(/[^ \d\s.,]/, 'g'), '');
+                $(this).val(value);
+            });
+
+            $('#loantype_form').validate({
+                rules: {
+                    percent: "required",
+                    online_flag: "required",
+                    max_amount: "required",
+                    min_amount: "required",
+                    free_days: "required",
+                    profunion: "required",
+                    max_period: {
+                        required: true,
+                        min: function () {
+                            return (product_type.val() === 'pdl') ? 1 : 2;
+                        },
+                    },
+                    description: {
+                        maxlength: 20
+                    }
+                },
+
+                errorElement: "em",
+
+                errorPlacement: function (error, element) {
+                    // Add the `invalid-feedback` class to the error element
+                    error.addClass("invalid-feedback");
+                    error.insertAfter(element);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass("is-invalid").removeClass("is-valid");
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).addClass("is-valid").removeClass("is-invalid");
+                },
+                messages: {
+                    number: {
+                        required: "Пожалуйста, укажите номер тарифа"
+                    },
+                    name: {
+                        required: "Пожалуйста, укажите наименование вида кредита"
+                    },
+                    max_amount: {
+                        required: "Пожалуйста, укажите максимальную сумму кредита"
+                    },
+                    min_amount: {
+                        required: "Пожалуйста, укажите минимальную сумму кредита"
+                    },
+                    description: {
+                        maxlength: "Длина описания не может быть более 20 символов"
+                    },
+                    percent: {
+                        required: "Пожалуйста, укажите процентную ставку"
+                    },
+                    profunion: {
+                        required: "Пожалуйста, укажите льготную ставку"
+                    },
+                    max_period: {
+                        required: "Пожалуйста, укажите максимальный срок кредита",
+                        min: "Для данного типа продукта, данное количество выплат недоступно"
+                    }
+                }
+            });
 
             $('.edit-company-tarif').on('click', function (e) {
                 e.preventDefault();
@@ -18,9 +105,11 @@
                 let standart_percents = $(this).attr('data-standart-percents');
                 let preferential_percents = $(this).attr('data-preferential-percents');
                 let group_id = $(this).attr('data-group');
+                let individual = $(this).attr('data-individual');
 
                 $('#standart_percents').val(standart_percents);
                 $('#preferential_percents').val(preferential_percents);
+                $('#individual').val(individual);
                 $('input[name=loantype_id]').val(loantype_id);
                 $('input[name=group_id]').val(group_id);
             });
@@ -57,7 +146,33 @@
                     }
                 });
             });
-        })
+
+            $('.saveEdit').on('click', function () {
+                let form = $(this).closest('form').serialize();
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: form,
+                    success: function (resp) {
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+                        if (resp['success']) {
+                            Swal.fire({
+                                title: 'Успешно!',
+                                confirmButtonText: 'ОК'
+                            });
+
+                            location.reload();
+                        }
+                    }
+                });
+            });
+        });
     </script>
 {/capture}
 
@@ -183,7 +298,7 @@
         <!-- Row -->
         <div class="card card-outline-info">
             <div class="card-body">
-                <form method="POST">
+                <form id="loantype_form" method="POST">
 
                     <input type="hidden" name="action" value="edit_loan"/>
 
@@ -212,7 +327,7 @@
                             <div class="border">
                                 <h5 class="card-header"><span class="text-white">Общие</span></h5>
 
-                                <input type="hidden" name="id" value="{$loantype->id}"/>
+                                <input id="loantype_id" type="hidden" name="id" value="{$loantype->id}"/>
 
                                 <div class="p-2 pt-4">
                                     <div class="form-group">
@@ -221,12 +336,20 @@
                                                 <label class="control-label">Тип продукта</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <select class="form-control"
-                                                        {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
-                                                    <option value="pdl" {if $loantype->type == 'pdl'}selected{/if}>Payroll PDL
+                                                <select
+                                                        id="product_type"
+                                                        class="form-control"
+                                                        name="product_type"
+                                                        {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}
+                                                            disabled
+                                                        {/if}
+                                                >
+                                                    <option value="pdl" {if $loantype->type == 'pdl'}selected{/if}>
+                                                        Payroll PDL
                                                     </option>
                                                     <option value="annouitet"
-                                                            {if $loantype->type == 'annouitet'}selected{/if}>Payroll Installment
+                                                            {if $loantype->type == 'annouitet'}selected{/if}>Payroll
+                                                        Installment
                                                     </option>
                                                 </select>
                                             </div>
@@ -264,6 +387,9 @@
                                             <div class="col-7 ">
                                                 <select name="online_flag" id="online_flag" class="form-control"
                                                         {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
+                                                    <option value="0" {if $loantype->online_flag == 0}selected{/if}>
+                                                        Нигде
+                                                    </option>
                                                     <option value="1" {if $loantype->online_flag == 1}selected{/if}>
                                                         Онлайн
                                                     </option>
@@ -283,7 +409,8 @@
                                                 <label class="control-label">Описание</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <textarea class="form-control" name="description">{$loantype->description}</textarea>
+                                                <textarea class="form-control"
+                                                          name="description">{$loantype->description}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -295,6 +422,7 @@
                                                     <th align="center">Группа</th>
                                                     <th align="center">Процентная ставка</th>
                                                     <th align="center">Льготная ставка</th>
+                                                    <th align="center">Индивидуальная сумма</th>
                                                     <th align="center">Вкл/Выкл</th>
                                                     <th></th>
                                                 </tr>
@@ -306,6 +434,7 @@
                                                             <td valign="middle">{$group['name']}</td>
                                                             <td valign="middle">{$group['standart_percents']|number_format:3:',':' '}</td>
                                                             <td valign="middle">{$group['preferential_percents']|number_format:3:',':' '}</td>
+                                                            <td valign="middle">{$group['individual']|number_format:2:',':' '}</td>
                                                             <td valign="middle">
                                                                 <div class="clearfix">
                                                                     <div class="float-left">
@@ -330,6 +459,7 @@
                                                                        data-group="{$group['id']}"
                                                                        data-standart-percents="{$group['standart_percents']}"
                                                                        data-preferential-percents="{$group['preferential_percents']}"
+                                                                       data-individual="{$group['individual']}"
                                                                        class="btn btn-outline-warning edit-company-tarif"
                                                                        value="Ред"></td>
                                                             {/if}
@@ -354,7 +484,7 @@
                                                 <label class="control-label">Регулярная ставка, % в день</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <input type="text" class="form-control" name="percent"
+                                                <input type="text" class="form-control digitPreg" name="percent"
                                                        {if $loantype}value="{$loantype->percent|number_format:3:',':' '}" {/if} {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}/>
                                             </div>
                                         </div>
@@ -365,7 +495,7 @@
                                                 <label class="control-label">Льготная ставка, % в день</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <input type="text" class="form-control" name="profunion"
+                                                <input type="text" class="form-control digitPreg" name="profunion"
                                                        {if $loantype}value="{$loantype->profunion|number_format:3:',':' '}" {/if} {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}/>
                                             </div>
                                         </div>
@@ -373,12 +503,15 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-5 ">
-                                                <label class="control-label">Льготный период до первой выплаты %, дней</label>
+                                                <label class="control-label">Льготный период до первой выплаты %,
+                                                    дней</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <select class="form-control" name="free_days" {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
+                                                <select class="form-control" name="free_days"
+                                                        {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
                                                     {for $i=1 to 30}
-                                                        <option value="{$i}" {if empty($loantype->free_days) && $i == 3}selected{/if}>{$i}</option>
+                                                        <option value="{$i}"
+                                                                {if empty($loantype->free_days) && $i == 3}selected{/if}>{$i}</option>
                                                     {/for}
                                                 </select>
                                             </div>
@@ -387,12 +520,15 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-5 ">
-                                                <label class="control-label">Льготный период до первой выплаты по осн.долгу, дней</label>
+                                                <label class="control-label">Льготный период до первой выплаты по
+                                                    осн.долгу, дней</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <select class="form-control" name="min_period" {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
+                                                <select class="form-control" name="min_period"
+                                                        {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
                                                     {for $i=1 to 30}
-                                                        <option value="{$i}" {if empty($loantype->free_days) && $i == 20}selected{/if}>{$i}</option>
+                                                        <option value="{$i}"
+                                                                {if empty($loantype->free_days) && $i == 20}selected{/if}>{$i}</option>
                                                     {/for}
                                                 </select>
                                             </div>
@@ -404,7 +540,7 @@
                                                 <label class="control-label">Минимальная сумма, руб</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <input type="text" class="form-control" name="min_amount"
+                                                <input type="text" class="form-control digitPreg" name="min_amount"
                                                        value="{$loantype->min_amount|number_format:0:',':' '}"
                                                        {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}/>
                                             </div>
@@ -416,7 +552,7 @@
                                                 <label class="control-label">Максимальная сумма, руб</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <input type="text" class="form-control" name="max_amount"
+                                                <input type="text" class="form-control digitPreg" name="max_amount"
                                                        value="{$loantype->max_amount|number_format:0:',':' '}"
                                                        {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}/>
                                             </div>
@@ -428,9 +564,14 @@
                                                 <label class="control-label">Количество выплат</label>
                                             </div>
                                             <div class="col-7 ">
-                                                <input type="text" class="form-control" name="max_period"
-                                                       value="{$loantype->max_period}"
-                                                       {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}/>
+                                                <input
+                                                        id="number_of_payouts"
+                                                        type="number"
+                                                        class="form-control digitPreg"
+                                                        name="max_period"
+                                                        value="{$loantype->max_period}"
+                                                        {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -481,12 +622,12 @@
 </div>
 
 <div id="modal_add_item" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+     aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
 
             <div class="modal-header">
-                <h4 class="modal-title">Редактировать компанию</h4>
+                <h4 class="modal-title">Редактировать условия</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
@@ -497,16 +638,25 @@
                     <input type="hidden" name="group_id" value="">
                     <div class="form-group">
                         <label for="standart_percents" class="control-label">Процентная ставка</label>
-                        <input type="text" class="form-control" name="standart_percents" id="standart_percents"
+                        <input type="text" class="form-control digitPreg" name="standart_percents"
+                               id="standart_percents"
                                value=""/>
                     </div>
                     <div class="form-group">
                         <label for="preferential_percents" class="control-label">Льготная ставка</label>
-                        <input type="text" class="form-control" name="preferential_percents" id="preferential_percents"
+                        <input type="text" class="form-control digitPreg" name="preferential_percents"
+                               id="preferential_percents"
                                value=""/>
                     </div>
-                    <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
-                    <input type="submit" formmethod="post" class="btn btn-success" value="Сохранить">
+                    <div class="form-group">
+                        <label for="individual" class="control-label">Индивидуальные ограничения по максимальной
+                            сумме</label>
+                        <input type="text" class="form-control digitPreg" name="individual" id="individual" value=""/>
+                    </div>
+                    <div class="form-group" style="display: flex; justify-content: space-between">
+                        <input class="btn btn-danger" data-dismiss="modal" value="Отмена">
+                        <input class="btn btn-success saveEdit" value="Сохранить">
+                    </div>
                 </form>
             </div>
         </div>

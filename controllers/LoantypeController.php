@@ -52,6 +52,7 @@ class LoantypeController extends Controller
         $loantype->name = $this->request->post('name');
 
         $loantype->percent = $this->request->post('percent');
+        $loantype->type = $this->request->post('product_type');
         $loantype->percent = str_replace(',', '.', $loantype->percent);
         $loantype->profunion = $this->request->post('profunion');
         $loantype->profunion = str_replace(',', '.', $loantype->profunion);
@@ -74,12 +75,18 @@ class LoantypeController extends Controller
             $this->design->assign('error', 'Укажите наименование вида кредита');
         } elseif (empty($loantype->percent)) {
             $this->design->assign('error', 'Выберите процентную ставку');
+        } elseif ($loantype->max_period > 60) {
+            $this->design->assign('error', 'Для данного типа продукта, данное количество выплат недоступно');
         } elseif (empty($loantype->max_amount)) {
             $this->design->assign('error', 'Укажите максимальную сумму кредита');
         } elseif (mb_strlen($loantype->description) > 20) {
             $this->design->assign('error', 'Длина описания не может быть более 20 символов');
         } elseif (empty($loantype->max_period)) {
             $this->design->assign('error', 'Укажите максимальный срок кредита');
+        } elseif ($loantype->type === 'pdl' && $loantype->max_period > 1
+            || $loantype->type === 'annouitet' && $loantype->max_period <= 1
+        ) {
+            $this->design->assign('error', 'Для данного типа продукта, данное количество выплат недоступно');
         } else {
             if (empty($loantype_id)) {
                 $loantype->id = $this->loantypes->add_loantype($loantype);
@@ -112,16 +119,33 @@ class LoantypeController extends Controller
         $preferential_percents = $this->request->post('preferential_percents');
         $loantype_id = $this->request->post('loantype_id', 'integer');
         $group_id = $this->request->post('group_id', 'integer');
+        $individual = $this->request->post('individual');
+
+        $loanType = LoantypesORM::find($loantype_id);
+
+        if ($individual > $loanType->max_amount) {
+            echo json_encode(['error' => 'Сумма больше максимальной для тарифа']);
+            exit;
+        }
+
+        if ($individual < $loanType->min_amount) {
+            echo json_encode(['error' => 'Сумма меньше минимальной для тарифа']);
+            exit;
+        }
 
         $record =
             [
                 'standart_percents' => $standart_percents,
                 'preferential_percents' => $preferential_percents,
                 'loantype_id' => $loantype_id,
-                'group_id' => $group_id
+                'group_id' => $group_id,
+                'individual' => $individual
             ];
 
         $this->GroupLoanTypes->update_record($record);
+
+        echo json_encode(['success' => 1]);
+        exit;
     }
 
     private function action_change_online_flag()

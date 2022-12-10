@@ -74,7 +74,7 @@ class OfflineOrdersController extends Controller
         }
 
         if (!($sort = $this->request->get('sort', 'string'))) {
-            $sort = 'order_id_desc';
+            $sort = 'date_desc';
         }
         $filter['sort'] = $sort;
         $this->design->assign('sort', $sort);

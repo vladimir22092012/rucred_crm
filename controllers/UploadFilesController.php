@@ -114,13 +114,9 @@ class UploadFilesController extends Controller
 
     private function remove()
     {
-        if ($id = $this->request->post('id', 'integer')) {
+        if ($id = $this->request->post('id', 'integer'))
             $this->users->delete_file($id);
 
-            $this->response->success = 'removed';
-
-        } else {
-            $this->response->error = 'empty_file_id';
-        }
+        exit;
     }
 }

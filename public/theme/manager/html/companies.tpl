@@ -14,10 +14,11 @@
     <script src="theme/manager/assets/plugins/moment/moment.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
     <script src="theme/manager/assets/plugins/daterangepicker/daterangepicker.js"></script>
-    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/companies.js"></script>
+    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/companies.js?v=1.02"></script>
     <script src="theme/manager/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
     <script src="https://unpkg.com/validator@latest/validator.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.maskedinput@1.4.1/src/jquery.maskedinput.min.js" type="text/javascript"></script>
     <script>
         $(function () {
 
@@ -46,7 +47,8 @@
                 type: "party",
                 minChars: 3,
                 onSelect: function (suggestion) {
-                    $(this).val(suggestion.data.inn);
+                    $(this).empty();
+                    $(this).trigger('input').val(suggestion.data.inn);
                     $('#kpp').val(suggestion.data.kpp);
                     $('#ogrn').val(suggestion.data.ogrn);
                     $('#name').val(suggestion.value);
@@ -261,7 +263,7 @@
 </div>
 
 <div id="add-company-modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+     aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
 

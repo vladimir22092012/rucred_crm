@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Company;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 class CompanyController extends Controller
 {
     public function fetch()
@@ -49,7 +52,7 @@ class CompanyController extends Controller
                 $this->action_delete_settlement();
                 break;
 
-            case 'import_payments_list':
+            case 'impor_payments_list':
                 $this->action_import_payments_list();
                 break;
 
@@ -74,46 +77,21 @@ class CompanyController extends Controller
                 break;
         endswitch;
 
-        $company_id = $this->request->get('id');
+        $companyId = (int) $this->request->get('id');
 
-        if ($company_id == 2) {
+        $company = Company::with([
+            'docs', 'group', 'branches', 'managers.credentials' => function (HasMany $hasMany) use ($companyId) {
+                $hasMany->where('company_id', '=', $companyId);
+            }
+        ])->find($companyId);
+
+
+        if ($companyId === 2) {
             $settlements = $this->OrganisationSettlements->get_settlements();
             $this->design->assign('settlements', $settlements);
         }
 
-        $company = $this->Companies->get_company_group($company_id);
-        $docs = $this->Docs->get_docs($company_id);
-        $this->design->assign('docs', $docs);
-
-        $branches = $this->Branches->get_company_branches($company_id);
-
-        $companies_managers = $this->ManagersEmployers->get_managers($company_id);
-        $managers_id = [];
-
-        foreach ($companies_managers as $item) {
-            $managers_id[] = $item->manager_id;
-        }
-
-        $managers = $this->managers->get_managers(['id' => $managers_id]);
-
-        foreach ($managers as $manager) {
-
-            $credential = $this->ManagersCredentials->gets(['company_id' => $company_id, 'manager_id' => $manager->id]);
-
-            if(!empty($credential)){
-                if ($credential->type == 'permanently')
-                    $manager->credential_type = 'Постоянный';
-                else
-                    $manager->credential_type = 'Временный по доверенности';
-            }else{
-                $manager->credential_type = 'Нет информации';
-            }
-        }
-
-        $this->design->assign('managers', $managers);
-
         $this->design->assign('company', $company);
-        $this->design->assign('branches', $branches);
 
         return $this->design->fetch('company.tpl');
     }
@@ -552,10 +530,17 @@ class CompanyController extends Controller
 
     private function action_blocked()
     {
-        $company_id = $this->request->post('company');
-        $value      = $this->request->post('value');
+        $companyId = $this->request->post('company');
+        $value = (bool) $this->request->post('value');
 
-        $this->companies->update_company($company_id, ['blocked' => $value]);
+        $company = Company::find($companyId);
+        $company->managers()->where('role', 'employer')->update([
+            'blocked' => $value
+        ]);
+        $company->update([
+            'blocked' => $value
+        ]);
+
         exit;
     }
 

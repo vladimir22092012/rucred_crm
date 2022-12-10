@@ -355,7 +355,7 @@
                                                     <span class="label label-success"
                                                           title="Клиент уже имеет погашенные займы">ПК</span>
                                                 {elseif $order->client_status == 'Новая'}
-                                                    <span class="label label-info" title="Новый клиент">Новая</span>
+                                                    <span class="label label-info" title="Новый клиент">Новый</span>
                                                 {elseif $order->client_status == 'Повтор'}
                                                     <span class="label label-warning"
                                                           title="Клиент уже подавал ранее заявки">Повтор</span>

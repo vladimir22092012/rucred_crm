@@ -286,6 +286,22 @@ class OfflineOrderController extends Controller
                     $this->action_check_restruct_scans();
                     break;
 
+                case 'edit_loan_settings':
+                    $this->action_edit_loan_settings();
+                    break;
+
+                case 'confirm_sms':
+                    $this->action_confirm_sms();
+                    break;
+
+                case 'requisites_edit':
+                    $this->action_requisites_edit();
+                    break;
+
+                case 'personal_edit':
+                    $this->action_personal_edit();
+                    break;
+
 
             endswitch;
 
@@ -319,6 +335,9 @@ class OfflineOrderController extends Controller
 
                     if (!empty($from_registr))
                         $this->design->assign('from_registr', $from_registr);
+
+                    $projectNumber = ProjectContractNumberORM::where('orderId', $order->order_id)->where('userId', $order->user_id)->first();
+                    $this->design->assign('projectNumber', $projectNumber);
 
 
                     $old_orders = $this->orders->get_orders(['user_id' => $order->user_id]);
@@ -1113,6 +1132,16 @@ class OfflineOrderController extends Controller
 
         $order = $this->orders->get_order($order_id);
 
+        //отправляем заявку в 1с через крон
+        $insert =
+            [
+                'orderId'       => $order_id,
+                'userId'        => $order->user_id,
+                'contractId'    => $order->contract_id
+            ];
+
+        ExchangeCronORM::insert($insert);
+
         $resp = $this->best2pay->issuance($order_id);
 
         if (isset($resp['success']) && $resp['success'] == 1) {
@@ -1882,96 +1911,7 @@ class OfflineOrderController extends Controller
         $this->design->assign('order', $order);
     }
 
-    private function fio_action()
-    {
-        $order_id = $this->request->post('order_id', 'integer');
-        $user_id = $this->request->post('user_id', 'integer');
-
-        $order = new StdClass();
-        $order->lastname = trim($this->request->post('lastname'));
-        $order->firstname = trim($this->request->post('firstname'));
-        $order->patronymic = trim($this->request->post('patronymic'));
-        $order->phone_mobile = trim($this->request->post('phone_mobile'));
-
-        $fio_error = array();
-
-        if (empty($order->lastname))
-            $contacts_error[] = 'empty_lastname';
-        if (empty($order->firstname))
-            $contacts_error[] = 'empty_firstname';
-        if (empty($order->patronymic))
-            $contacts_error[] = 'empty_patronymic';
-        if (empty($order->phone_mobile))
-            $contacts_error[] = 'empty_phone_mobile';
-
-        if (empty($fio_error)) {
-            $update = array(
-                'lastname' => $order->lastname,
-                'firstname' => $order->firstname,
-                'patronymic' => $order->patronymic,
-                'phone_mobile' => $order->phone_mobile,
-            );
-
-            $old_user = $this->users->get_user($user_id);
-            $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
-                    $old_values[$key] = $old_user->$key;
-
-            $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
-                    $log_update[$k] = $u;
-
-            $this->changelogs->add_changelog(array(
-                'manager_id' => $this->manager->id,
-                'created' => date('Y-m-d H:i:s'),
-                'type' => 'fio',
-                'old_values' => serialize($old_values),
-                'new_values' => serialize($log_update),
-                'order_id' => $order_id,
-                'user_id' => $user_id,
-            ));
-
-            $this->users->update_user($user_id, $update);
-
-            // редактирование в документах
-            if (!empty($user_id)) {
-                $documents = $this->documents->get_documents(array('user_id' => $user_id));
-                foreach ($documents as $doc) {
-                    if (isset($doc->params['lastname']))
-                        $doc->params['lastname'] = $order->lastname;
-                    if (isset($doc->params['firstname']))
-                        $doc->params['firstname'] = $order->firstname;
-                    if (isset($doc->params['patronymic']))
-                        $doc->params['patronymic'] = $order->patronymic;
-                    if (isset($doc->params['fio']))
-                        $doc->params['fio'] = $order->lastname . ' ' . $order->firstname . ' ' . $order->patronymic;
-                    if (isset($doc->params['phone']))
-                        $doc->params['phone'] = $order->phone_mobile;
-
-                    $this->documents->update_document($doc->id, array('params' => $doc->params));
-                }
-            }
-
-        }
-
-        $this->design->assign('fio_error', $fio_error);
-
-        $order->order_id = $order_id;
-        $order->user_id = $user_id;
-
-        $isset_order = $this->orders->get_order((int)$order_id);
-
-        $order->status = $isset_order->status;
-        $order->manager_id = $isset_order->manager_id;
-        $order->phone_mobile = $isset_order->phone_mobile;
-
-        $this->design->assign('order', $order);
-    }
-
-    private
-    function addresses_action()
+    private function addresses_action()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -2204,8 +2144,7 @@ class OfflineOrderController extends Controller
     }
 
 
-    private
-    function action_personal()
+    private function action_personal()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
@@ -2926,71 +2865,24 @@ class OfflineOrderController extends Controller
 
     private function send_sms_action()
     {
-        $yuk = $this->request->post('yuk', 'integer');
-        $user_id = $this->request->post('user_id', 'integer');
-        $order_id = $this->request->post('order_id', 'integer');
-        $template_id = $this->request->post('template_id', 'integer');
+        $orderId = $this->request->post('order');
 
-        $user = $this->users->get_user((int)$user_id);
+        $order = OrdersORM::find($orderId);
 
-        $template = $this->sms->get_template($template_id);
-
-        if (!empty($order_id)) {
-            $order = $this->orders->get_order($order_id);
-            if (!empty($order->contract_id)) {
-                $code = $this->helpers->c2o_encode($order->contract_id);
-                $payment_link = $this->config->front_url . '/p/' . $code;
-                $template->template = str_replace('{$payment_link}', $payment_link, $template->template);
-            }
-        }
-
-        $resp = $this->sms->send(
-            $user->phone_mobile,
-            $template->template
+        $code = random_int(1000, 9999);
+        $template = $this->sms->get_template(2);
+        $message = str_replace('$code', $code, $template->template);
+        $response = $this->sms->send(
+            $order->user->phone_mobile,
+            $message
         );
+        $this->db->query('
+        INSERT INTO s_sms_messages
+        SET phone = ?, code = ?, response = ?, ip = ?, user_id = ?, created = ?
+        ', $order->user->phone_mobile, $code, $response['resp'], $_SERVER['REMOTE_ADDR'] ?? '', $order->user->id, date('Y-m-d H:i:s'));
 
-        $sms_message_id = $this->sms->add_message(array(
-            'user_id' => $user->id,
-            'order_id' => $order_id,
-            'phone' => $user->phone_mobile,
-            'message' => $template->template,
-            'created' => date('Y-m-d H:i:s'),
-        ));
-
-        $this->communications->add_communication(array(
-            'user_id' => $user->id,
-            'manager_id' => $this->manager->id,
-            'created' => date('Y-m-d H:i:s'),
-            'type' => 'sms',
-            'content' => $template->template,
-            'outer_id' => $sms_message_id,
-            'from_number' => $this->sms->get_originator($yuk),
-            'to_number' => $user->phone_mobile,
-            'yuk' => $yuk,
-            'result' => serialize($resp),
-        ));
-
-        $this->comments->add_comment(array(
-            'user_id' => $user->id,
-            'order_id' => $order_id,
-            'manager_id' => $this->manager->id,
-            'text' => 'Клиенту отправлено смс с текстом: ' . $template->template,
-            'created' => date('Y-m-d H:i:s'),
-            'organization' => empty($yuk) ? 'mkk' : 'yuk',
-            'auto' => 1
-        ));
-
-        $this->changelogs->add_changelog(array(
-            'manager_id' => $this->manager->id,
-            'created' => date('Y-m-d H:i:s'),
-            'type' => 'send_sms',
-            'old_values' => array(),
-            'new_values' => array($template->template),
-            'user_id' => $user->id,
-            'order_id' => $order_id,
-        ));
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';
-        $this->json_output(array('success' => true));
+        echo json_encode(['code' => $code]);
+        exit;
     }
 
     private
@@ -3467,8 +3359,10 @@ class OfflineOrderController extends Controller
     private function action_reform_schedule($order_id)
     {
         $order = $this->orders->get_order($order_id);
+
         $order = (array)$order;
         $loan = $this->Loantypes->get_loantype($order['loan_type']);
+
         $user = $this->users->get_user($order['user_id']);
         $user = (array)$user;
 
@@ -3489,7 +3383,7 @@ class OfflineOrderController extends Controller
         $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date->format('Y-m-d'))));
         $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
 
-        if ($start_date > $paydate)
+        if ($start_date > $paydate || date_diff($paydate, $start_date)->days <= $loan->free_period)
             $paydate->add(new DateInterval('P1M'));
 
         $percent_per_month = (($order['percent'] / 100) * 365) / 12;
@@ -3499,11 +3393,9 @@ class OfflineOrderController extends Controller
         $iteration = 0;
 
         $count_days_this_month = date('t', strtotime($start_date->format('Y-m-d')));
-
         $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
 
         if (date_diff($paydate, $start_date)->days <= $loan->free_period) {
-
             $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days, 2);
             $sum_pay = $annoouitet_pay + $plus_loan_percents;
             $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2, PHP_ROUND_HALF_DOWN);
@@ -3675,6 +3567,8 @@ class OfflineOrderController extends Controller
 
         $actual_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
         $this->PaymentsSchedules->update($actual_schedule->id, ['psk' => $psk, 'schedule' => $schedule]);
+
+        $this->form_docs($order_id);
     }
 
     private function check_pay_date($date)
@@ -4017,8 +3911,7 @@ class OfflineOrderController extends Controller
                 $payments[] = round($pay['pay_sum'], '2');
                 $dates[] = date('d.m.Y', strtotime($date));
 
-                if(!isset($new_shedule[$date]['rest_pay']) && $new_shedule[$date]['loan_body_pay'] != 0)
-                {
+                if (!isset($new_shedule[$date]['rest_pay']) && $new_shedule[$date]['loan_body_pay'] != 0) {
                     $rest_sum -= round($pay['loan_body_pay'], 2);
                     $new_shedule[$date]['rest_pay'] = $rest_sum;
                 }
@@ -4359,29 +4252,14 @@ class OfflineOrderController extends Controller
                     }
                 }
 
-                $number = $order->uid;
-                $number = explode(' ', $number);
-
-                $contracts = $this->contracts->get_contracts(['user_id' => $order->user_id]);
-
-                if (!empty($contracts)) {
-                    $count_contracts = count($contracts);
-                    $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
-                } else {
-                    $count_contracts = '01';
-                }
-
-                $loantype = $this->Loantypes->get_loantype($order->loan_type);
-
-                $new_number = "$number[0] $loantype->number $number[1] $count_contracts";
-
+                $projectNumber = ProjectContractNumberORM::where('orderId', $order->order_id)->first();
 
                 $contract =
                     [
                         'order_id' => $order->order_id,
                         'user_id' => $order->user_id,
                         'amount' => $order->amount,
-                        'number' => $new_number,
+                        'number' => $projectNumber->uid,
                         'period' => $order->period,
                         'base_percent' => $order->percent,
                         'peni_percent' => 0,
@@ -4554,12 +4432,17 @@ class OfflineOrderController extends Controller
         $requisits = $this->Requisites->get_requisites(['user_id' => $order->user_id]);
         $order->probably_start_date = date('d.m.Y', strtotime($order->probably_start_date));
 
-        $fio = "$order->lastname $order->firstname $order->patronymic";
+        //отправляем заявку в 1с через крон
+        $insert =
+            [
+                'orderId'       => $order_id,
+                'userId'        => $order->user_id,
+                'contractId'    => $order->contract_id
+            ];
 
-        if ($order->sent_1c != 2) {
-            echo json_encode(['error' => 'Заявка еще не была отправлена в 1с']);
-            exit;
-        }
+        ExchangeCronORM::insert($insert);
+
+        $fio = "$order->lastname $order->firstname $order->patronymic";
 
         $default_requisit = new stdClass();
 
@@ -4583,26 +4466,17 @@ class OfflineOrderController extends Controller
 
         $transaction_id = $this->Transactions->add_transaction($transaction);
 
-        $payment = new stdClass();
-        $payment->order_id = $transaction_id;
-        $payment->date = date('Y-m-d H:i:s');
-        $payment->amount = $order->amount;
-        $payment->recepient = 9725055162;
-        $payment->user_id = $order->user_id;
-        $payment->number = '40701810300000000347';
-        $payment->description = $description;
-        $payment->user_acc_number = $default_requisit->number;
-        $payment->user_bik = $default_requisit->bik;
-        $payment->users_inn = $order->inn;
+        //отправляем платежку в 1с через крон
+        $insert =
+            [
+                'transaction_id' => $transaction_id,
+                'order_id'       => $order_id,
+                'user_id'        => $order->user_id,
+                'contract_id'    => $order->contract_id,
+                'requisites_id'  => $default_requisit->id
+            ];
 
-        $send_payment = $this->Soap1c->send_payment($payment);
-
-
-        if (!isset($send_payment->return) || $send_payment->return != 'ОК') {
-            echo json_encode(['error' => $send_payment]);
-            exit;
-        }
-
+        SendPaymentCronORM::insert($insert);
 
         $asp_log =
             [
@@ -4627,6 +4501,138 @@ class OfflineOrderController extends Controller
             ];
 
         $this->YaDiskCron->add($cron);
+
+        $communication_theme = $this->CommunicationsThemes->get(17);
+
+
+        $ticket = [
+            'creator' => $order->manager_id,
+            'creator_company' => 2,
+            'client_lastname' => $order->lastname,
+            'client_firstname' => $order->firstname,
+            'client_patronymic' => $order->patronymic,
+            'head' => $communication_theme->head,
+            'text' => $communication_theme->text,
+            'theme_id' => 17,
+            'company_id' => 2,
+            'group_id' => $order->group_id,
+            'order_id' => $order->order_id,
+            'status' => 0
+        ];
+
+        $ticket_id = $this->Tickets->add_ticket($ticket);
+
+        $message =
+            [
+                'message' => $communication_theme->text,
+                'ticket_id' => $ticket_id,
+                'manager_id' => $order->manager_id,
+            ];
+
+        $this->TicketMessages->add_message($message);
+
+        $cron =
+            [
+                'ticket_id' => $ticket_id,
+                'is_complited' => 0
+            ];
+
+        $this->NotificationsCron->add($cron);
+
+        $cron =
+            [
+                'template_id' => 8,
+                'user_id' => $order->user_id,
+            ];
+
+        $this->NotificationsClientsCron->add($cron);
+
+        $this->design->assign('order', $order);
+        $documents = $this->documents->get_documents(['order_id' => $order->order_id]);
+        $docs_email = [];
+
+        foreach ($documents as $document) {
+            if (in_array($document->type, ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR', 'INDIVIDUALNIE_USLOVIA_ONL'])) {
+                $docs_email[$document->type] = $document->hash;
+            }
+        }
+
+        $individ_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['INDIVIDUALNIE_USLOVIA'];
+        $graphic_encrypt = $this->config->back_url . '/online_docs?id=' . $docs_email['GRAFIK_OBSL_MKR'];
+
+        $this->design->assign('individ_encrypt', $individ_encrypt);
+        $this->design->assign('graphic_encrypt', $graphic_encrypt);
+
+        $contracts = $this->contracts->get_contracts(['order_id' => $order->order_id]);
+        $group = $this->groups->get_group($order->group_id);
+        $company = $this->companies->get_company($order->company_id);
+
+        if (!empty($contracts)) {
+            $count_contracts = count($contracts);
+            $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
+        } else {
+            $count_contracts = '01';
+        }
+
+        $loantype = $this->Loantypes->get_loantype($order->loan_type);
+
+        $uid = "$group->number$company->number $loantype->number $order->personal_number $count_contracts";
+        $this->design->assign('uid', $uid);
+
+        $fetch = $this->design->fetch('email/approved.tpl');
+
+        $mail = new PHPMailer(false);
+
+        //Server settings
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->CharSet = 'UTF-8';
+        $mail->Host = 'mail.nic.ru';                          //Set the SMTP server to send through
+        $mail->SMTPAuth = true;                                   //Enable SMTP authentication
+        $mail->Username = 'noreply@re-aktiv.ru';                  //SMTP username
+        $mail->Password = 'HG!_@H#*&!^!HwJSDJ2Wsqgq';             //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         //Enable implicit TLS encryption
+        $mail->Port = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+        //Recipients
+        $mail->setFrom('noreply@re-aktiv.ru');
+        $mail->addAddress($order->email);     //Add a recipient
+
+        //Content
+        $mail->isHTML(true);                                  //Set email format to HTML
+        $mail->Subject = 'RuCred | Уведомление';
+        $mail->Body = $fetch;
+
+        $mail->send();
+
+        $schedule = $this->PaymentsSchedules->get(['actual' => 1, 'order_id' => $order->order_id]);
+        $schedules = json_decode($schedule->schedule, true);
+        unset($schedules['result']);
+
+        uksort($schedules,
+            function ($a, $b) {
+
+                if ($a == $b)
+                    return 0;
+
+                return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+            });
+
+        foreach ($schedules as $date => $payment) {
+            $graphs_payments =
+                [
+                    'order_id' => $order->order_id,
+                    'user_id' => $order->user_id,
+                    'schedules_id' => $schedule->id,
+                    'sum_pay' => $payment['pay_sum'],
+                    'od_pay' => $payment['loan_body_pay'],
+                    'prc_pay' => $payment['loan_percents_pay'],
+                    'com_pay' => $payment['comission_pay'],
+                    'rest_pay' => $payment['rest_pay'],
+                    'pay_date' => date('d.m.Y', strtotime($date))
+                ];
+
+            $this->PaymentsToSchedules->add($graphs_payments);
+        }
 
         $this->tickets->update_by_theme_id(12, ['status' => 4], $order_id);
 
@@ -5234,6 +5240,432 @@ class OfflineOrderController extends Controller
             echo json_encode(['error' => 'Не все сканы приложены']);
         else
             echo json_encode(['success' => 1]);
+
+        exit;
+    }
+
+    private function action_personal_edit()
+    {
+        $order_id = $this->request->post('order_id');
+        $user_id = $this->request->post('user_id');
+        $comment = $this->request->post('comment');
+
+        if (empty($comment)) {
+            echo json_encode(['error' => 'Заполните комментарий!']);
+            exit;
+        }
+        $Regadress = json_decode($this->request->post('Registration'));
+
+        $regaddress = [];
+        $regaddress['adressfull'] = $this->request->post('regaddress');
+        $regaddress['zip'] = $Regadress->data->postal_code ?? '';
+        $regaddress['region'] = $Regadress->data->region ?? '';
+        $regaddress['region_type'] = $Regadress->data->region_type ?? '';
+        $regaddress['city'] = $Regadress->data->city ?? '';
+        $regaddress['city_type'] = $Regadress->data->city_type ?? '';
+        $regaddress['district'] = $Regadress->data->city_district ?? '';
+        $regaddress['district_type'] = $Regadress->data->city_district_type ?? '';
+        $regaddress['locality'] = $Regadress->data->settlement ?? '';
+        $regaddress['locality_type'] = $Regadress->data->settlement_type ?? '';
+        $regaddress['street'] = $Regadress->data->street ?? '';
+        $regaddress['street_type'] = $Regadress->data->street_type ?? '';
+        $regaddress['house'] = $Regadress->data->house ?? '';
+        $regaddress['building'] = $Regadress->data->block ?? '';
+        $regaddress['room'] = $Regadress->data->flat ?? '';
+        $regaddress['okato'] = $Regadress->data->okato ?? '';
+        $regaddress['oktmo'] = $Regadress->data->oktmo ?? '';
+
+        $Fakt_adress = json_decode($this->request->post('Faktadres'));
+
+        $faktaddress = [];
+        $faktaddress['adressfull'] = $this->request->post('faktaddress');
+        $faktaddress['zip'] = $Fakt_adress->data->postal_code ?? '';
+        $faktaddress['region'] = $Fakt_adress->data->region ?? '';
+        $faktaddress['region_type'] = $Fakt_adress->data->region_type ?? '';
+        $faktaddress['city'] = $Fakt_adress->data->city ?? '';
+        $faktaddress['city_type'] = $Fakt_adress->data->city_type ?? '';
+        $faktaddress['district'] = $Fakt_adress->data->city_district ?? '';
+        $faktaddress['district_type'] = $Fakt_adress->data->city_district_type ?? '';
+        $faktaddress['locality'] = $Fakt_adress->data->settlement ?? '';
+        $faktaddress['locality_type'] = $Fakt_adress->data->settlement_type ?? '';
+        $faktaddress['street'] = $Fakt_adress->data->street ?? '';
+        $faktaddress['street_type'] = $Fakt_adress->data->street_type ?? '';
+        $faktaddress['house'] = $Fakt_adress->data->house ?? '';
+        $faktaddress['building'] = $Fakt_adress->data->block ?? '';
+        $faktaddress['room'] = $Fakt_adress->data->flat ?? '';
+        $faktaddress['okato'] = $Fakt_adress->data->okato ?? '';
+        $faktaddress['oktmo'] = $Fakt_adress->data->oktmo ?? '';
+
+        $old_user = $this->users->get_user($user_id);
+
+        $lastname = trim($this->request->post('lastname'));
+        $firstname = trim($this->request->post('firstname'));
+        $patronymic = trim($this->request->post('patronymic'));
+        $birth = trim($this->request->post('birth'));
+        $birth_place = trim($this->request->post('birth_place'));
+        $passport_serial = trim($this->request->post('passport_serial'));
+        $passport_serial = str_replace('-', ' ', $passport_serial);
+        $passport_date = trim($this->request->post('passport_date'));
+        $subdivision_code = trim($this->request->post('subdivision_code'));
+        $passport_issued = trim($this->request->post('passport_issued'));
+        $inn = trim($this->request->post('inn'));
+        $snils = trim($this->request->post('snils'));
+        $personalNumber = trim($this->request->post('personal_number'));
+        $projectNumber = trim($this->request->post('project_number'));
+
+        $sameProjectNumber = ProjectContractNumberORM::where('uid', $projectNumber)
+            ->where('orderId', '!=', $order_id)
+            ->where('userId', '!=', $user_id)
+            ->first();
+
+        if (!empty($sameProjectNumber)) {
+            echo json_encode(['error' => 'Такой проект номера уже есть']);
+            exit;
+        }
+
+        $oldProjectNumber = ProjectContractNumberORM::where('orderId', $order_id)->where('userId', $user_id)->first();
+
+        ProjectContractNumberORM::updateOrCreate(['orderId' => $order_id, 'userId' => $user_id], ['uid' => $projectNumber]);
+        ContractsORM::where('order_id', $order_id)->update(['number' => $projectNumber]);
+
+        $old_regaddress = $this->Addresses->get_address($old_user->regaddress_id);
+        $old_faktaddress = $this->Addresses->get_address($old_user->faktaddress_id);
+
+        $this->Addresses->update_address($old_user->regaddress_id, $regaddress);
+        $this->Addresses->update_address($old_user->faktaddress_id, $faktaddress);
+
+        $new_values = array(
+            'Имя' => $lastname,
+            'Фамилия' => $firstname,
+            'Отчество' => $patronymic,
+            'Дата рождения' => $birth,
+            'Место рождения' => $birth_place,
+            'Серия и номер паспорта' => $passport_serial,
+            'Дата выдачи паспорта' => $passport_date,
+            'Код подразделения' => $subdivision_code,
+            'Кем выдан паспорт' => $passport_issued,
+            'ИНН' => $inn,
+            'СНИЛС' => $snils,
+            'Адрес регистрации' => $regaddress['adressfull'],
+            'Адрес проживания' => $faktaddress['adressfull'],
+            'Персональный номер' => $personalNumber,
+            'Проект номера' => $projectNumber,
+            'Причина' => $comment
+        );
+
+        $old_values = array(
+            'Имя' => $old_user->lastname,
+            'Фамилия' => $old_user->firstname,
+            'Отчество' => $old_user->patronymic,
+            'Дата рождения' => $old_user->birth,
+            'Место рождения' => $old_user->birth_place,
+            'Серия и номер паспорта' => $old_user->passport_serial,
+            'Дата выдачи паспорта' => $old_user->passport_date,
+            'Код подразделения' => $old_user->subdivision_code,
+            'Кем выдан паспорт' => $old_user->passport_issued,
+            'ИНН' => $old_user->inn,
+            'СНИЛС' => $old_user->snils,
+            'Адрес регистрации' => empty($old_regaddress->adressfull) ?? '',
+            'Адрес проживания' => empty($old_faktaddress->adressfull) ?? '',
+            'Персональный номер' => $old_user->personal_number,
+            'Проект номера' => $oldProjectNumber->uid
+        );
+
+        if ($old_user->lastname == $lastname) {
+            unset($new_values['Имя']);
+            unset($old_values['Имя']);
+        }
+
+        if (!empty($oldProjectNumber) && $oldProjectNumber == $projectNumber) {
+            unset($new_values['Проект номера']);
+            unset($old_values['Проект номера']);
+        }
+
+        if ($old_user->firstname == $firstname) {
+            unset($new_values['Фамилия']);
+            unset($old_values['Фамилия']);
+        }
+
+        if ($old_user->patronymic == $patronymic) {
+            unset($new_values['Отчество']);
+            unset($old_values['Отчество']);
+        }
+
+        if ($old_user->personal_number == $personalNumber) {
+            unset($new_values['Персональный номер']);
+            unset($old_values['Персональный номер']);
+        }
+
+        if (strtotime($old_user->birth) == strtotime($birth)) {
+            unset($new_values['Дата рождения']);
+            unset($old_values['Дата рождения']);
+        }
+
+        if ($old_user->birth_place == $birth_place) {
+            unset($new_values['Место рождения']);
+            unset($old_values['Место рождения']);
+        }
+
+        if ($old_user->passport_serial == $passport_serial) {
+            unset($new_values['Серия и номер паспорта']);
+            unset($old_values['Серия и номер паспорта']);
+        }
+
+        if (strtotime($old_user->passport_date) == strtotime($passport_date)) {
+            unset($new_values['Дата выдачи паспорта']);
+            unset($old_values['Дата выдачи паспорта']);
+        }
+
+        if ($old_user->subdivision_code == $subdivision_code) {
+            unset($new_values['Код подразделения']);
+            unset($old_values['Код подразделения']);
+        }
+
+        if ($old_user->passport_issued == $passport_issued) {
+            unset($new_values['Кем выдан паспорт']);
+            unset($old_values['Кем выдан паспорт']);
+        }
+
+        if ($old_user->inn == $inn) {
+            unset($new_values['ИНН']);
+            unset($old_values['ИНН']);
+        }
+
+        if ($old_user->snils == $snils) {
+            unset($new_values['СНИЛС']);
+            unset($old_values['СНИЛС']);
+        }
+
+        if (!empty($old_regaddress) && $old_regaddress->adressfull == $regaddress['adressfull']) {
+            unset($new_values['Адрес регистрации']);
+            unset($old_values['Адрес регистрации']);
+        }
+
+        if (!empty($old_faktaddress) && $old_faktaddress->adressfull == $faktaddress['adressfull']) {
+            unset($new_values['Адрес проживания']);
+            unset($old_values['Адрес проживания']);
+        }
+
+        $this->changelogs->add_changelog(array(
+            'manager_id' => $this->manager->id,
+            'created' => date('Y-m-d H:i:s'),
+            'type' => 'fio',
+            'old_values' => serialize($old_values),
+            'new_values' => serialize($new_values),
+            'order_id' => $order_id,
+            'user_id' => $user_id,
+        ));
+
+        $update = [];
+
+        $keys =
+            [
+                'Имя' => 'lastname',
+                'Фамилия' => 'firstname',
+                'Отчество' => 'patronymic',
+                'Дата рождения' => 'birth',
+                'Место рождения' => 'birth_place',
+                'Серия и номер паспорта' => 'passport_serial',
+                'Дата выдачи паспорта' => 'passport_date',
+                'Код подразделения' => 'subdivision_code',
+                'Кем выдан паспорт' => 'passport_issued',
+                'ИНН' => 'inn',
+                'СНИЛС' => 'snils',
+                'Персональный номер' => 'personal_number'
+            ];
+
+        foreach ($new_values as $key => $value) {
+            if (isset($keys[$key])) {
+                $update[$keys[$key]] = $value;
+            }
+        }
+
+        if (!empty($update))
+            UsersORM::where('id', $user_id)->update($update);
+
+        $order = $this->orders->get_order($order_id);
+
+        $order->payment_schedule = PaymentsScheduleORM::where('order_id', $order_id)->where('actual', 1)->first()->toArray();
+
+        DocumentsORM::where('order_id', $order_id)
+            ->update(['params' => serialize($order)]);
+
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_requisites_edit()
+    {
+        $userId = $this->request->post('user_id');
+        $orderId = $this->request->post('order_id');
+        $hold = $this->request->post('hold');
+        $acc = $this->request->post('acc');
+        $bank = $this->request->post('bank');
+        $bik = $this->request->post('bik');
+        $cor = $this->request->post('cor');
+
+        $update =
+            [
+                'name' => $bank,
+                'bik' => $bik,
+                'number' => $acc,
+                'holder' => $hold,
+                'correspondent_acc' => $cor
+            ];
+
+        $oldRequisites = RequisitesORM::where('user_id', $userId)
+            ->where('default', 1)
+            ->first()->toArray();
+
+        unset($oldRequisites['id']);
+        unset($oldRequisites['default']);
+        unset($oldRequisites['user_id']);
+
+        $newValues = array_diff($update, $oldRequisites);
+        $oldValues = array_intersect_key($oldRequisites, $newValues);
+
+        if (!empty($update))
+            RequisitesORM::where('user_id', $userId)->update($newValues);
+
+        $translate =
+            [
+                'name' => "Наименование банка",
+                'bik' => "Бик банка",
+                'number' => "Номер счета",
+                'holder' => "Держатель счета",
+                'correspondent_acc' => "Кор счет"
+            ];
+
+        foreach ($oldValues as $key => $value) {
+            $oldValues[$translate[$key]] = $value;
+            unset($oldValues[$key]);
+        }
+
+        foreach ($newValues as $key => $value) {
+            $newValues[$translate[$key]] = $value;
+            unset($newValues[$key]);
+        }
+
+        $this->changelogs->add_changelog(array(
+            'manager_id' => $this->manager->id,
+            'created' => date('Y-m-d H:i:s'),
+            'type' => 'requisites',
+            'old_values' => serialize($oldValues),
+            'new_values' => serialize($newValues),
+            'order_id' => $orderId,
+            'user_id' => $userId,
+        ));
+
+        $order = $this->orders->get_order($orderId);
+
+        DocumentsORM::where('order_id', $orderId)
+            ->update(['params' => serialize($order)]);
+
+        exit;
+    }
+
+    private function action_edit_loan_settings()
+    {
+        $orderId = (int)$this->request->post('order_id');
+        $amount = (int)$this->request->post('amount');
+        $userId = (int)$this->request->post('user_id');
+        $loanTypeId = $this->request->post('loan_tarif');
+        $probablyStartDate = $this->request->post('probably_start_date');
+        $profUnion = $this->request->post('profunion');
+        $groupId = $this->request->post('group');
+        $companyId = $this->request->post('company');
+        $brancheId = $this->request->post('branch');
+
+        $branche = BranchesORM::find($brancheId);
+        $loanType = LoantypesORM::find($loanTypeId);
+
+        $probably_return_date = new DateTime(date('Y-m-' . $branche->payday, strtotime($probablyStartDate . '+' . $loanType->max_period . 'month')));
+        $probably_return_date = $this->check_pay_date($probably_return_date);
+
+        if ($amount < $loanType->min_amount || $amount > $loanType->max_amount) {
+            echo json_encode(['error' => 'Проверьте сумму займа']);
+            exit;
+        }
+
+        $groupLoanType = GroupLoanTypesORM::where('group_id', $groupId)->where('loantype_id', $loanTypeId)->first();
+
+        if ($profUnion == 1) {
+            $percent = (float)$groupLoanType->preferential_percents;
+        } else {
+            $percent = (float)$groupLoanType->standart_percents;
+        }
+
+        $order =
+            [
+                'amount' => $amount,
+                'loan_type' => $loanTypeId,
+                'percent' => $percent,
+                'group_id' => $groupId,
+                'company_id' => $companyId,
+                'branche_id' => $brancheId,
+                'probably_start_date' => date('Y-m-d', strtotime($probablyStartDate)),
+                'probably_return_date' => $probably_return_date->format('Y-m-d')
+            ];
+
+        $user =
+            [
+                'group_id' => $groupId,
+                'company_id' => $companyId,
+                'branche_id' => $brancheId
+            ];
+
+        OrdersORM::where('id', $orderId)->update($order);
+        UsersORM::where('id', $userId)->update($user);
+
+        $this->action_reform_schedule($orderId);
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_confirm_sms()
+    {
+        $code = $this->request->post('code');
+        $orderId = $this->request->post('order');
+
+        $order = OrdersORM::find($orderId);
+
+        $this->db->query("
+        SELECT code, created
+        FROM s_sms_messages
+        WHERE phone = ?
+        AND code = ?
+        AND user_id = ?
+        ORDER BY created DESC
+        LIMIT 1
+        ", $order->user->phone_mobile, $code, $order->user->id);
+
+        $results = $this->db->results();
+
+        if (empty($results)) {
+
+            echo json_encode(['error' => 1]);
+
+        } else {
+            $asp_log =
+                [
+                    'user_id' => $order->user->id,
+                    'order_id' => $order->id,
+                    'code' => $code,
+                    'created' => date('Y-m-d H:i:s'),
+                    'type' => 'sms',
+                    'recepient' => $order->user->phone_mobile,
+                    'manager_id' => $this->manager->id
+                ];
+
+
+            $asp_id = $this->AspCodes->add_code($asp_log);
+
+            DocumentsORM::where('order_id', $orderId)
+                ->whereNotIn('type', ['INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR'])
+                ->update(['asp_id' => $asp_id]);
+
+            echo json_encode(['success' => 1]);
+        }
 
         exit;
     }

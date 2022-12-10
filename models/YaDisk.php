@@ -380,7 +380,7 @@ class YaDisk extends Core
             }
 
             if (!empty($contracts)) {
-                $count_contracts = count($contracts);
+                $count_contracts = count($contracts) + 1;
                 $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
             } else {
                 $count_contracts = '01';

@@ -28,7 +28,7 @@ class MissingsController extends Controller
         $filter = array();
 
         if (!($sort = $this->request->get('sort', 'string'))) {
-            $sort = 'id_desc';
+            $sort = 'modified_desc';
         }
         $filter['sort'] = $sort;
         $this->design->assign('sort', $sort);
@@ -38,27 +38,45 @@ class MissingsController extends Controller
             $this->design->assign('search', array_filter($search));
         }
 
-        $filter['stage_filter'] = 1;
-
+        $stageFilter = $this->request->get('stage', 'integer');
         $current_page = $this->request->get('page', 'integer');
         $current_page = max(1, $current_page);
         $this->design->assign('current_page_num', $current_page);
 
         $clients_count = $this->users->count_users($filter);
 
-        $pages_num = ceil($clients_count / $items_per_page);
-        $this->design->assign('total_pages_num', $pages_num);
-        $this->design->assign('total_orders_count', $clients_count);
-
         $filter['page'] = $current_page;
         $filter['limit'] = $items_per_page;
+        $filter['stage_filter'] = $stageFilter;
 
         $clients = $this->users->get_users($filter);
 
-        foreach ($clients as $client)
-        {
+        $filterStatus = $this->request->get('status', 'integer');
+
+        $minusCount = 0;
+
+        foreach ($clients as $key => $client) {
             $client->order = $this->orders->get_by_user($client->id);
+
+            if($filterStatus == '0' && (int) $client->order?->unreability === 1)
+            {
+                unset($clients[$key]);
+                $minusCount++;
+            }
+
+            if($filterStatus == 1 && $client->order?->unreability == 0)
+            {
+                unset($clients[$key]);
+                $minusCount++;
+            }
         }
+
+        $this->design->assign('filter_status', $filterStatus);
+        $this->design->assign('filter_stage', $stageFilter);
+
+        $pages_num = ceil(($clients_count - $minusCount) / $items_per_page);
+        $this->design->assign('total_pages_num', $pages_num);
+        $this->design->assign('total_orders_count', $clients_count);
 
         $this->design->assign('clients', $clients);
 
@@ -123,7 +141,7 @@ class MissingsController extends Controller
             $order = $this->orders->get_order($order_id);
             if (!empty($order->contract_id)) {
                 $code = $this->helpers->c2o_encode($order->contract_id);
-                $payment_link = $this->config->front_url.'/p/'.$code;
+                $payment_link = $this->config->front_url . '/p/' . $code;
                 $template->template = str_replace('{$payment_link}', $payment_link, $template->template);
             }
         }
@@ -158,7 +176,7 @@ class MissingsController extends Controller
             'user_id' => $user->id,
             'order_id' => $order_id,
             'manager_id' => $this->manager->id,
-            'text' => 'Клиенту отправлено смс с текстом: '.$template->template,
+            'text' => 'Клиенту отправлено смс с текстом: ' . $template->template,
             'created' => date('Y-m-d H:i:s'),
             'organization' => empty($yuk) ? 'mkk' : 'yuk',
             'auto' => 1
@@ -174,6 +192,6 @@ class MissingsController extends Controller
             'order_id' => $order_id,
         ));
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';
-        $this->json_output(array('success'=>true));
+        $this->json_output(array('success' => true));
     }
 }

@@ -16,37 +16,58 @@
         $(function () {
 
             $(document).on('click', '.add_group', function () {
-                $('#add_group_modal').modal();
+                let addGroupModal = $('#add_group_modal');
+
+                addGroupModal.find('.modal-title').text("Создать группу");
+                addGroupModal.find('#add-group-btn').show();
+                addGroupModal.find('#edit-group-btn').hide();
+                addGroupModal.find('form')[0].reset()
+
+                addGroupModal.find('#number-input').parent().hide();
+
+                addGroupModal.modal({
+                    backdrop: 'static'
+                }, 'show');
             });
 
             $('.to_edit').on('click', function () {
-                $('.to_edit').hide();
-                $('.group_front').hide();
-                $('.group_edit').show();
+                let group = $(this).parents('tr').first().data('group');
+                let editGroupModal = $('#add_group_modal');
+                let numberInput = editGroupModal.find('#number-input');
+                let nameInput = editGroupModal.find('#name-input');
+                let blockedSelect = editGroupModal.find('#blocked-select');
+
+                editGroupModal.data('group', group.id);
+                numberInput.val(group.number);
+                nameInput.val(group.name).attr('selected', true);
+                blockedSelect.val(group.blocked);
+
+                editGroupModal.find('#number-input').parent().show();
+                editGroupModal.find('.modal-title').text("Редактировать группу");
+                editGroupModal.find('#add-group-btn').hide();
+                editGroupModal.find('#edit-group-btn').show();
+
+                editGroupModal.modal({
+                    backdrop: 'static'
+                }, 'show');
             });
 
-            $('.cancel_edit').on('click', function () {
-                $('.group_edit').hide();
-                $('.group_front').show();
-                $('.to_edit').show();
-            });
-
-            $('.save_edit').on('click', function (e) {
+            $('#edit-group-btn').on('click', function (e) {
                 e.preventDefault();
-
-                let group_name = $(this).prev().val();
-                let group_id = $(this).attr('data-group');
-                let number = $(this).prev().prev().val();
-
+                let editGroupModal = $('#add_group_modal');
+                let nameInput = editGroupModal.find('#name-input').val();
+                let numberInput = editGroupModal.find('#number-input').val();
+                let blockedSelect = editGroupModal.find('#blocked-select').val();
 
                 $.ajax({
                     method: 'POST',
                     dataType: 'JSON',
                     data: {
                         action: 'update_group',
-                        group_name: group_name,
-                        group_id: group_id,
-                        number: number
+                        group_id: editGroupModal.data('group'),
+                        group_name: nameInput,
+                        blocked: blockedSelect,
+                        number: numberInput
                     },
                     success: function (resp) {
                         if (resp['error']) {
@@ -59,18 +80,41 @@
                         }
                     }
                 })
+
             });
 
-            $('.action_add_group').on('click', function (e) {
+            $('.cancel_edit').on('click', function () {
+                $('.group_edit').hide();
+                $('.group_front').show();
+                $('.to_edit').show();
+            });
+
+            $('#add-group-btn').on('click', function (e) {
                 e.preventDefault();
+                let addGroupModal = $('#add_group_modal');
+                let nameInput = addGroupModal.find('#name-input').val();
+                let blockedSelect = addGroupModal.find('#blocked-select').val();
 
                 $.ajax({
                     method: 'POST',
-                    data: $('#add_group').serialize(),
-                    success: function () {
-                        location.reload();
+                    dataType: 'JSON',
+                    data: {
+                        action: 'add_group',
+                        group_name: nameInput,
+                        blocked: blockedSelect,
+                    },
+                    success: function (resp) {
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'ОК'
+                            });
+                        } else {
+                            location.reload();
+                        }
                     }
                 })
+
             });
 
             $('.delete_group').on('click', function () {
@@ -153,52 +197,43 @@
                                     <thead>
                                     <tr>
                                         <th class="" style="width: 150px">Номер группы</th>
-                                        <th class="">Наименование группы</th>
-                                        <th></th>
+                                        <th>Наименование группы</th>
                                         <th>Доступность</th>
+                                        <th>Действия</th>
                                     </tr>
                                     </thead>
                                     <tbody id="table-body">
                                     {if !empty($groups)}
                                         {foreach $groups as $group}
-                                            <tr>
+                                            <tr data-group='{$group|json_encode}'>
                                                 <td class="group_front">{$group->number}</td>
                                                 <td class="group_front">{$group->name}</td>
-                                                <td class="group_edit" style="display: none">
-                                                    <input type="text" class="form-control number"
-                                                           style="width: 150px" value="{$group->number}">
-                                                </td>
-                                                <td class="group_edit" style="display: none">
-                                                    <input type="text" class="form-control group_name"
-                                                           style="width: 300px" value="{$group->name}">
-                                                    <input type="button" data-group="{$group->id}"
-                                                           class="btn btn-outline-success save_edit"
-                                                           value="Сохранить">
-                                                    <input type="button" class="btn btn-outline-danger cancel_edit"
-                                                           value="Отменить">
+                                                <td>
+                                                    {if $group->blocked === 'all'}
+                                                        Везде
+                                                    {elseif $group->blocked === 'online'}
+                                                        Онлайн
+                                                    {elseif $group->blocked === 'offline'}
+                                                        Оффлайн
+                                                    {elseif $group->blocked === 'nowhere'}
+                                                        Нигде
+                                                    {/if}
                                                 </td>
                                                 {if in_array($manager->role,['admin', 'developer'])}
                                                     <td>
                                                         <div class="btn btn-outline-warning to_edit">
                                                             Редактировать
                                                         </div>
-                                                    </td>
-                                                    <td>
-                                                        <select data-group="{$group->id}" class="form-control blocked">
-                                                            <option value="1" {if $group->blocked == 'all'}selected{/if}>Везде</option>
-                                                            <option value="2" {if $group->blocked == 'online'}selected{/if}>Онлайн</option>
-                                                            <option value="3" {if $group->blocked == 'offline'}selected{/if}>Оффлайн</option>
-                                                            <option value="4" {if $group->blocked == 'nowhere'}selected{/if}>Нигде</option>
-                                                        </select>
-                                                    </td>
-                                                    <td>
-                                                        {if $group->number != '00'}<input type="button"
-                                                                                          data-group="{$group->id}"
-                                                                                          class="btn btn-outline-danger delete_group"
-                                                                                          value="Удалить">
+                                                        {if $group->number != '00'}
+                                                            <input type="button"
+                                                                data-group="{$group->id}"
+                                                                class="btn btn-outline-danger delete_group"
+                                                                value="Удалить"
+                                                            >
                                                         {/if}
                                                     </td>
                                                 {/if}
+
                                             </tr>
                                         {/foreach}
                                     {/if}
@@ -218,34 +253,44 @@
 
 </div>
 
-<div id="add_group_modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+<div
+    id="add_group_modal"
+    class="modal fade bd-example-modal-sm"
+    tabindex="-1"
+    role="dialog"
+    data-group=""
+    aria-labelledby="mySmallModalLabel"
+    aria-hidden="true"
+>
     <div class="modal-dialog modal-md">
         <div class="modal-content">
-
             <div class="modal-header">
                 <h4 class="modal-title">Добавить группу</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
                 <div class="alert" style="display:none"></div>
-                <form method="POST" id="add_group">
-                    <input type="hidden" name="action" value="add_group">
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="number-input" class="control-label">Номер группы</label>
+                        <input id="number-input" type="text" class="form-control" name="number" value=""/>
+                    </div>
                     <div class="form-group">
                         <label for="name" class="control-label">Наименование группы</label>
-                        <input type="text" class="form-control" name="name" id="name" value=""/>
+                        <input id="name-input" type="text" class="form-control" name="name" value=""/>
                     </div>
                     <div class="form-group">
                         <label class="control-label">Доступность</label>
-                        <select class="form-control" name="blocked">
-                            <option value="1">Везде</option>
-                            <option value="2">Онлайн</option>
-                            <option value="3">Оффлайн</option>
-                            <option value="4">Нигде</option>
+                        <select id="blocked-select" class="form-control" name="blocked">
+                            <option value="all">Везде</option>
+                            <option value="online">Онлайн</option>
+                            <option value="offline">Оффлайн</option>
+                            <option value="nowhere">Нигде</option>
                         </select>
                     </div>
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
-                    <input type="button" class="btn btn-success action_add_group" value="Сохранить">
+                    <input id="add-group-btn" type="button" class="btn btn-success" value="Создать">
+                    <input id="edit-group-btn" type="button" class="btn btn-success" value="Редактировать">
                 </form>
             </div>
         </div>

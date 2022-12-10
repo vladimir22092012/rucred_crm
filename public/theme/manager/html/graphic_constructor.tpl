@@ -7,8 +7,6 @@
     <script src="theme/{$settings->theme|escape}/assets/plugins/bootstrap/js/bootstrap.js?v=1.01"></script>
     <script src="theme/{$settings->theme|escape}/assets/plugins/sticky-kit-master/dist/sticky-kit.min.js?v=1.01"></script>
     <script src="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
-    <script
-            src="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     <script src="theme/manager/assets/plugins/moment/moment.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
     <script src="theme/manager/assets/plugins/daterangepicker/daterangepicker.js"></script>
@@ -21,305 +19,12 @@
     <script src="theme/{$settings->theme|escape}/assets/plugins/inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
-    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/graphic_test.js"></script>
+    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/graphic_test.js?v=1.02"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery.maskedinput@1.4.1/src/jquery.maskedinput.min.js"
             type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
     <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
-    <script>
-        $(function () {
-
-            $('.show_phone_code').hide();
-            $('.show_phone_confirmed').hide();
-
-            $('.accept_edit').click(function (e) {
-                e.preventDefault();
-
-                let phone = $('input[class="form-control phone_num"]').val();
-                let user_id = $(this).attr('data-user');
-
-                $.ajax({
-                    method: 'POST',
-                    dataType: 'JSON',
-                    data: {
-                        action: 'edit_phone',
-                        phone: phone,
-                        user_id: user_id
-                    },
-                    success: function (response) {
-                        if (response['error']) {
-                            Swal.fire({
-                                title: response['error'],
-                                confirmButtonText: 'ОК'
-                            });
-                        }
-                        else {
-                            $('.show_phone_code').show();
-                        }
-                    }
-                })
-            });
-
-            $('.accept_edit_with_code').click(function (e) {
-                e.preventDefault();
-
-                let phone = $('input[class="form-control phone_num"]').val();
-                let phone_code = $('input[class="form-control phone_code"]').val();
-
-                $.ajax({
-                    method: 'POST',
-                    data: {
-                        action: 'edit_phone_with_code',
-                        phone: phone,
-                        code: phone_code,
-                    },
-                    success: function (response) {
-                        if (response.error === 1) {
-                            Swal.fire({
-                                title: response.reason,
-                                confirmButtonText: 'ОК'
-                            });
-                        } else {
-                            $('.show_phone_code').hide();
-                            $('.show_phone_confirmed').show();
-                            $('.accept_edit').hide();
-                            $('.phone_confirmed').val('1');
-                        }
-                    }
-                })
-            });
-
-            $('.show_email_code').hide();
-            $('.show_email_confirmed').hide();
-
-            $('.accept_email_edit').click(function (e) {
-                e.preventDefault();
-
-                let email = $('input[class="form-control email"]').val();
-                let user_id = $(this).attr('data-user');
-
-                $.ajax({
-                    method: 'POST',
-                    dataType: 'JSON',
-                    data: {
-                        action: 'edit_email',
-                        email: email,
-                        user_id: user_id
-                    },
-                    success: function (response) {
-                        if (response['error']) {
-                            Swal.fire({
-                                title: response['error'],
-                                confirmButtonText: 'ОК'
-                            });
-                        }
-                        else {
-                            $('.show_email_code').show();
-                        }
-                    }
-                })
-            });
-
-            $('.accept_edit_email_with_code').click(function (e) {
-                e.preventDefault();
-
-                let email = $('input[class="form-control email"]').val();
-                let email_code = $('input[class="form-control email_code"]').val();
-
-                $.ajax({
-                    method: 'POST',
-                    data: {
-                        action: 'edit_email_with_code',
-                        email: email,
-                        code: email_code,
-                    },
-                    success: function (response) {
-                        if (response.error === 1) {
-                            Swal.fire({
-                                title: response.reason,
-                                confirmButtonText: 'ОК'
-                            });
-                        } else {
-                            $('.show_email_code').hide();
-                            $('.show_email_confirmed').show();
-                            $('.accept_email_edit').hide();
-                            $('.email_confirmed').val('1');
-                        }
-                    }
-                })
-            });
-
-            let order = {{json_encode($order)}};
-            if (order) {
-
-                if (order['prev_fio'] != null) {
-                    $('input[id="change_fio2"]').trigger('click');
-                }
-                else {
-                    $('input[id="change_fio1"]').trigger('click');
-                }
-
-                $('input[id="sex' + order['sex'] + '"]').trigger('click');
-
-                if (order['push_not'] == 1)
-                    $('input[name="push_not"]').prop('checked', true);
-                else
-                    $('input[name="push_not"]').prop('checked', false);
-
-                if (order['sms_not'] == 1)
-                    $('input[name="sms_not"]').prop('checked', true);
-                else
-                    $('input[name="sms_not"]').prop('checked', false);
-
-                if (order['email_not'] == 1)
-                    $('input[name="email_not"]').prop('checked', true);
-                else
-                    $('input[name="email_not"]').prop('checked', false);
-
-                if (order['massanger_not'] == 1)
-                    $('input[name="massanger_not"]').prop('checked', true);
-                else
-                    $('input[name="massanger_not"]').prop('checked', false);
-
-                $('input[id="foreign' + order['foreign_flag'] + '"]').trigger('click');
-                $('input[id="foreign_husb_wife' + order['foreign_husb_wife'] + '"]').trigger('click');
-                $('input[id="foreign_relative' + order['foreign_relative'] + '"]').trigger('click');
-
-                $('select[name="group"] option[value="' + order['group_id'] + '"]').prop('selected', true);
-                $('select[name="group"] option[value="' + order['group_id'] + '"]').change();
-
-                setTimeout(function () {
-                    $('select[name="company"] option[value="' + order['company_id'] + '"]').prop('selected', true);
-                    $('select[name="company"] option[value="' + order['company_id'] + '"]').change();
-                }, 500);
-
-                setTimeout(function () {
-                    $('#' + order['loan_type'] + '').trigger('click');
-
-                    if (order['profunion'] == 2) {
-                        $('input[id="profunion2"]').trigger('click');
-                        $('input[id="want_profunion"]').trigger('click');
-                    }
-                    if (order['profunion'] == 0) {
-                        $('input[id="profunion2"]').trigger('click');
-                    }
-                    if (order['profunion'] == 1) {
-                        $('input[id="profunion1"]').trigger('click');
-                    }
-
-                    $('.to_form_loan').trigger('click');
-
-                    if (order['branche_id'].length < 2)
-                        $('select[name="branch"] option[value="4"]').prop('selected', true);
-                    else
-                        $('select[name="branch"] option[value="' + order['branche_id'] + '"]').prop('selected', true);
-
-                }, 900);
-            }
-
-            $('.create_new_order, .create_new_draft').click(function (e) {
-                e.preventDefault();
-
-                let form = $('#forms').serialize() + '&action=create_new_order';
-
-                if ($(this).hasClass('create_new_draft')) {
-                    form = form + '&draft=1';
-                }
-
-                $.ajax({
-                    method: 'POST',
-                    data: form,
-                    success: function (response) {
-                        if (response.error === 1) {
-                            Swal.fire({
-                                title: response.reason,
-                                confirmButtonText: 'ОК'
-                            });
-                        } else {
-                            window.location.replace(response.redirect);
-                        }
-                    }
-                })
-            });
-
-            $('input[name="viber_same"], input[name="telegram_same"], input[name="whatsapp_same"]').on('click', function () {
-                let attr = $(this).attr('name');
-                let phone = $('input[name="phone"]').val();
-
-                console.log(phone);
-
-                $('.' + attr + '').toggle();
-
-                if ($(this).is(':checked')) {
-                    if ($(this).attr('name') == 'viber_same')
-                        $('.confirm_viber').attr('data-phone', phone);
-
-                    if ($(this).attr('name') == 'telegram_same')
-                        $('.confirm_telegram').attr('data-phone', phone);
-                }
-            });
-
-            $(document).on('click', '.confirm_telegram, .confirm_viber', function (e) {
-
-                let user_id = $(this).attr('data-user');
-                let type = '';
-                let same_flag = 0;
-                let phone = $(this).parent().find('.phone_num').val();
-
-                if ($(this).hasClass('confirm_telegram')) {
-                    if ($('input[name="telegram_same"]').is(':checked')) {
-                        phone = $(this).attr('data-phone');
-                    }
-
-                    type = 'telegram';
-                }
-
-                if ($(this).hasClass('confirm_viber')) {
-                    if ($('input[name="viber_same"]').is(':checked')) {
-                        phone = $(this).attr('data-phone');
-                    }
-
-                    type = 'viber';
-                }
-
-                $.ajax({
-                    method: 'POST',
-                    dataType: 'JSON',
-                    data: {
-                        action: 'confirm_messengers',
-                        type: type,
-                        phone: phone,
-                        user_id: user_id
-                    },
-                    success: function (resp) {
-                        if (resp['success']) {
-                            switch (resp['type']) {
-                                case 'telegram':
-                                    $('input[name="telegram_same"]').fadeOut();
-                                    $('.telegram_same_label').fadeOut();
-                                    $('.confirm_telegram').fadeOut();
-                                    setTimeout(function () {
-                                        $('.telegram_confirmed').fadeIn();
-                                    }, 500);
-                                    break;
-                            }
-                        } else {
-                            Swal.fire({
-                                title: 'Произошла ошибка',
-                                confirmButtonText: 'ОК'
-                            });
-                        }
-                    }
-                });
-            });
-
-            $(document).on('input', '.fio', function () {
-                let val = $(this).val().toUpperCase();
-                $(this).val(val);
-            })
-        });
-    </script>
 {/capture}
 
 {capture name='page_styles'}
@@ -382,10 +87,10 @@
 
         <div class="row page-titles">
             <div class="col-md-6 col-8 align-self-center">
-                <h3 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i>Тест-калькулятор</h3>
+                <h3 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i>Демонстратор калькулятора</h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
-                    <li class="breadcrumb-item active">Тест-калькулятор</li>
+                    <li class="breadcrumb-item active">Демонстратор калькулятора</li>
                 </ol>
             </div>
             <div class="col-md-6 col-4 align-self-center">
@@ -403,14 +108,17 @@
                                 <hr style="width: 100%; size: 5px">
                                 <form method="POST" id="forms" style="width: 100%">
                                     <h3>Доступность</h3><br>
-                                    <div style="width: 100%; margin-left: 25px">
-                                        <select style="width: 300px" class="form-control permission">
-                                            <option value="none">Выберите режим</option>
-                                            <option value="all">Все компании и тарифы</option>
-                                            <option value="online">Компании и тарифы в онлайне</option>
-                                            <option value="offline">Компании и тарифы в офлайне</option>
-                                        </select>
-                                    </div><br>
+                                    <div style="display: flex">
+                                        <div style="margin-left: 25px">
+                                            <select style="width: 300px" class="form-control permission">
+                                                <option value="none">Выберите режим</option>
+                                                <option value="all">Все компании и тарифы</option>
+                                                <option value="online">Компании и тарифы в онлайне</option>
+                                                <option value="offline">Компании и тарифы в офлайне</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <br>
                                     <h3>Работодатель</h3><br>
                                     <div style="width: 100%; margin-left: 25px">
                                         <select style="width: 500px; display: none;"
@@ -448,6 +156,7 @@
                                                     Я не являюсь членом профсоюза
                                                 </label>
                                             </div>
+                                            {*
                                             <div class="form-check" style="margin-left: 25px"
                                                  id="profunion_toggle">
                                                 <input class="form-check-input want_profunion" type="checkbox"
@@ -457,6 +166,7 @@
                                                     Оповестить о желании вступления в профсоюз
                                                 </label>
                                             </div>
+                                            *}
                                         </div>
                                     </div>
                                     <br>
@@ -521,3 +231,5 @@
             {include file='footer.tpl'}
 
         </div>
+    </div>
+</div>

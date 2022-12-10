@@ -85,7 +85,7 @@
 {/capture}
 
 
-<div class="page-wrapper js-event-add-load"  data-event="1" data-manager="{$manager->id}" data-order="{$order->order_id}" data-user="{$order->user_id}">
+<div class="page-wrapper"  data-event="1" data-manager="{$manager->id}" data-order="{$order->order_id}" data-user="{$order->user_id}">
     <!-- ============================================================== -->
     <!-- Container fluid  -->
     <!-- ============================================================== -->

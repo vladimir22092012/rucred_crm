@@ -240,8 +240,7 @@
                                                      {if $count_in != 0}data-badge="{$count_in}"{/if}></i><span>Входящие запросы</span></a>
                     </li>
                     <li {if $out}class="active"{/if}><a
-                                href="tickets?out=true"><i class="mdi mdi-email-variant badge1"
-                                                           {if $count_out != 0}data-badge="{$count_out}"{/if}></i><span>Исходящие запросы</span></a>
+                                href="tickets?out=true"><i class="mdi mdi-email-variant"></i><span>Исходящие запросы</span></a>
                     </li>
                     <li {if $archive}class="active"{/if}><a
                                 href="tickets?archive=true"><i
@@ -257,30 +256,17 @@
                             <a class="" href="orders?archive=true" aria-expanded="false"><i class="mdi mdi-animation"></i><span
                                         class="hide-menu">Архив заявок</span></a>
                         </li>
-                        {if $manager->role != 'employer'}
-                            <li {if in_array($module, ['MissingController'])}class="active"{/if}>
-                                <a class="" href="missings/" aria-expanded="false"><i class="mdi mdi-sleep"></i><span
-                                            class="hide-menu">Отвалы</span></a>
-                            </li>
-                        {/if}
-                        {if $manager->role != 'employer'}
-                            <li{if $drafts_online == 1} class="active"{/if}>
-                                <a class="" href="drafts?online=1" aria-expanded="false"><i
-                                            class="mdi mdi-database"></i><span
-                                            class="hide-menu">Черновики</span></a>
-                            </li>
-                        {/if}
                     {/if}
                     {if in_array('offline_settings', $manager->permissions) || in_array('offline', $manager->permissions)}
                         <li class="nav-small-cap">Оффлайн заявки</li>
                         {if in_array('offline', $manager->permissions)}
-                            <li {if in_array($module, ['OfflineOrdersController']) && !isset($drafts) && !isset($archived)}class="active"{/if}>
+                            <li {if in_array($module, ['OfflineOrdersController']) && !is_null($drafts) && !is_null($archived)}class="active"{/if}>
                                 <a class="" href="offline_orders/" aria-expanded="false"><i
                                             class="mdi mdi-animation"></i><span class="hide-menu">Заявки</span></a>
                             </li>
                         {/if}
                         {if in_array('offline', $manager->permissions)}
-                            <li {if in_array($module, ['OfflineOrdersController']) && isset($archived)}class="active"{/if}>
+                            <li {if in_array($module, ['OfflineOrdersController']) && is_null($archived)}class="active"{/if}>
                                 <a class="" href="offline_orders?archive=true" aria-expanded="false"><i
                                             class="mdi mdi-animation"></i><span class="hide-menu">Архив заявок</span></a>
                             </li>
@@ -296,6 +282,12 @@
                     {/if}
                     {if in_array('managers', $manager->permissions)}
                         <li class="nav-small-cap">Сделки</li>
+                        {if $manager->role != 'employer'}
+                            <li {if in_array($module, ['MissingController'])}class="active"{/if}>
+                                <a class="" href="missings/" aria-expanded="false"><i class="mdi mdi-sleep"></i><span
+                                            class="hide-menu">Взаимодействия с клиентами</span></a>
+                            </li>
+                        {/if}
                         <li {if in_array($module, ['ClientController', 'ClientsController'])}class="active"{/if}>
                             <a class="" href="clients/" aria-expanded="false"><i
                                         class="mdi mdi-chart-bubble"></i><span
@@ -318,10 +310,6 @@
                         <li {if in_array($module, ['ManagerController', 'ManagersController'])}class="active"{/if}>
                             <a class="" href="managers/" aria-expanded="false"><i
                                         class="mdi mdi-account-multiple-outline"></i><span class="hide-menu">Пользователи</span></a>
-                        </li>
-                        <li {if in_array($module, ['GraphicConstructorController'])}class="active"{/if}>
-                            <a class="" href="graphic_constructor/" aria-expanded="false"><i
-                                        class="mdi mdi-react"></i><span class="hide-menu">Тест-калькулятор</span></a>
                         </li>
                     {/if}
                     {if in_array('managers', $manager->permissions)}
@@ -354,7 +342,7 @@
                         <li {if in_array($module, ['CompaniesController'])}class="active"{/if}><a
                                     href="companies"><i class="mdi mdi-compass"></i>Компании</a></li>
                         <li {if in_array($module, ['LoantypesController','LoantypeController'])}class="active"{/if}>
-                            <a href="loantypes"><i class="mdi mdi-magnet"></i>Продукты</a></li>
+                            <a href="loantypes"><i class="mdi mdi-magnet"></i>Тарифы и условия</a></li>
                         {if in_array($manager->role, ['developer', 'admin'])}
                             <li {if in_array($module, ['WhitelistController'])}class="active"{/if}>
                                 <a href="/whitelist"><i class="mdi mdi-tooltip"></i>Whitelist</a></li>
@@ -389,6 +377,10 @@
                             <li {if in_array($module, ['SettingsController'])}class="active"{/if}><a
                                         href="settings/"><i class="mdi mdi-settings"></i>Общие</a></li>
                         {/if}
+                        <li {if in_array($module, ['GraphicConstructorController'])}class="active"{/if}>
+                            <a class="" href="graphic_constructor/" aria-expanded="false"><i
+                                        class="mdi mdi-react"></i><span class="hide-menu">Демонстратор калькулятора</span></a>
+                        </li>
                         {if in_array($manager->role, ['developer', 'admin'])}
                             <li {if in_array($module, ['DeleteUsersController'])}class="active"{/if}>
                                 <a href="delete_users/"><i class="mdi mdi-account-location"></i>Удаление тестовых

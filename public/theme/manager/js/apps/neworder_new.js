@@ -438,6 +438,11 @@ $(function () {
                         if (resp['loantypes'][key]['online_flag'] == 1)
                             continue;
 
+                        let maxSum = resp['loantypes'][key]['max_amount'];
+
+                        if(resp['loantypes'][key]['individual'])
+                            maxSum = resp['loantypes'][key]['individual'];
+
 
                         $('#pricelist').append(
                             '<div class="price_container">' +
@@ -451,7 +456,7 @@ $(function () {
                             '<h5>от <span' +
                             'class="sum">' + new Intl.NumberFormat().format(resp['loantypes'][key]['min_amount']) + '</span>' +
                             'Р до ' +
-                            '<span class="sum">' + new Intl.NumberFormat().format(resp['loantypes'][key]['max_amount']) + '</span>' +
+                            '<span class="sum">' + new Intl.NumberFormat().format(maxSum) + '</span>' +
                             'Р</h5>' +
                             '</div>' +
                             '<hr style="width: 80%; size: 5px">' +
@@ -728,7 +733,7 @@ $(function () {
                             $('input[name="phone"]').val(user['phone_mobile']);
                             $('input[name="birth_place"]').val(user['birth_place']);
 
-                            if (user['fio_spouse']) {
+                            if (user['sex'] == 1) {
                                 $('#sex1').trigger('click');
                                 $('input[name="fio_spouse[lastname]"]').val(user['spouse_lastname']);
                                 $('input[name="fio_spouse[firstname]"]').val(user['spouse_firstname']);
@@ -746,18 +751,43 @@ $(function () {
                             $('input[name="outcome_medium"]').val(user['expenses']);
                             $('input[name="dependents"]').val(user['dependents']);
 
-                            if(user['foreign_flag'] == 1)
+                            console.log(user['foreign_flag']);
+
+                            if (user['foreign_flag'] == 2) {
                                 $('#foreign2').trigger('click');
-                            if(user['foreign_husb_wife'] == 1)
-                            {
+                            }
+
+                            if (user['foreign_husb_wife'] == 2) {
                                 $('#foreign_husb_wife2').trigger('click');
-                                $('input[name="fio_public_spouse"]').val(user['fio_public_spouse']);
+                                $('.fio_public_spouse').val(user['fio_public_spouse']);
                             }
-                            if(user['foreign_relative'] == 1)
-                            {
+
+                            if (user['foreign_relative'] == 2) {
                                 $('#foreign_relative2').trigger('click');
-                                $('input[name="fio_relative"]').val(user['fio_relative']);
+                                $('.fio_relative').val(user['fio_relative']);
                             }
+
+                            $('select[name="timezone"] option[value='+user['timezone']+']').prop('selected', true);
+
+                            if(user['push_not'] == 1)
+                                $('input[name="push_not"]').prop('checked', true);
+                            else
+                                $('input[name="push_not"]').prop('checked', false);
+
+                            if(user['sms_not'] == 1)
+                                $('input[name="sms_not"]').prop('checked', true);
+                            else
+                                $('input[name="sms_not"]').prop('checked', false);
+
+                            if(user['email_not'] == 1)
+                                $('input[name="email_not"]').prop('checked', true);
+                            else
+                                $('input[name="email_not"]').prop('checked', false);
+
+                            if(user['massanger_not'] == 1)
+                                $('input[name="massanger_not"]').prop('checked', true);
+                            else
+                                $('input[name="massanger_not"]').prop('checked', false);
                         }
                     })
                 });
