@@ -3500,16 +3500,18 @@ class OfflineOrderController extends Controller
 
         $count_days_this_month = date('t', strtotime($start_date->format('Y-m-d')));
 
+        $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
+
         if (date_diff($paydate, $start_date)->days <= $loan->free_period) {
 
-            $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * (date_diff($paydate, $start_date)->days-1), 2);
+            $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days, 2);
             $sum_pay = $annoouitet_pay + $plus_loan_percents;
             $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2, PHP_ROUND_HALF_DOWN);
             $body_pay = $sum_pay - $loan_percents_pay;
             $paydate->add(new DateInterval('P1M'));
             $iteration++;
         } elseif (date_diff($paydate, $start_date)->days >= $loan->min_period && date_diff($paydate, $start_date)->days < $count_days_this_month) {
-            $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - (date_diff($paydate, $start_date)->days-1));
+            $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($paydate, $start_date)->days);
             $sum_pay = $annoouitet_pay - round($minus_percents, 2);
             $loan_percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
             $loan_percents_pay = round($loan_percents_pay, 2, PHP_ROUND_HALF_DOWN);
@@ -3521,12 +3523,10 @@ class OfflineOrderController extends Controller
             $body_pay = round($sum_pay - $loan_percents_pay, 2);
             $iteration++;
         } else {
-            $sum_pay = ($order['percent'] / 100) * $order['amount'] * (date_diff($paydate, $start_date)->days-1);
+            $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days;
             $loan_percents_pay = $sum_pay;
             $body_pay = 0.00;
         }
-
-        $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
 
         $payment_schedule[$paydate->format('d.m.Y')] =
             [
