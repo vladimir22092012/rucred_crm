@@ -457,9 +457,9 @@
                                                             <td>{if !in_array($manager->role, ['employer', 'underwriter', 'middle'])}
                                                                 <input type="button"
                                                                        data-group="{$group['id']}"
-                                                                       data-standart-percents="{$group['standart_percents']}"
-                                                                       data-preferential-percents="{$group['preferential_percents']}"
-                                                                       data-individual="{$group['individual']}"
+                                                                       data-standart-percents="{$group['standart_percents']|number_format:3:',':' '}"
+                                                                       data-preferential-percents="{$group['preferential_percents']|number_format:3:',':' '}"
+                                                                       data-individual="{$group['individual']|number_format:2:',':' '}"
                                                                        class="btn btn-outline-warning edit-company-tarif"
                                                                        value="Ред"></td>
                                                             {/if}

@@ -83,10 +83,8 @@ class LoantypeController extends Controller
             $this->design->assign('error', 'Длина описания не может быть более 20 символов');
         } elseif (empty($loantype->max_period)) {
             $this->design->assign('error', 'Укажите максимальный срок кредита');
-        } elseif ($loantype->type === 'pdl' && $loantype->max_period > 1
-            || $loantype->type === 'annouitet' && $loantype->max_period <= 1
-        ) {
-            $this->design->assign('error', 'Для данного типа продукта, данное количество выплат недоступно');
+        }elseif ($loantype->profunion > $loantype->percent) {
+            $this->design->assign('error', 'Льготный процент не может быть больше основного');
         } else {
             if (empty($loantype_id)) {
                 $loantype->id = $this->loantypes->add_loantype($loantype);
@@ -121,6 +119,11 @@ class LoantypeController extends Controller
         $group_id = $this->request->post('group_id', 'integer');
         $individual = $this->request->post('individual');
 
+        $individual = str_replace(',', '.', $individual);
+        $individual = str_replace(' ', '', $individual);
+        $standart_percents = str_replace(',', '.', $standart_percents);
+        $preferential_percents = str_replace(',', '.', $preferential_percents);
+
         $loanType = LoantypesORM::find($loantype_id);
 
         if ($individual > $loanType->max_amount) {
@@ -130,6 +133,11 @@ class LoantypeController extends Controller
 
         if ($individual < $loanType->min_amount) {
             echo json_encode(['error' => 'Сумма меньше минимальной для тарифа']);
+            exit;
+        }
+
+        if ($preferential_percents > $standart_percents) {
+            echo json_encode(['error' => 'Льготный процент не может быть больше основного']);
             exit;
         }
 
