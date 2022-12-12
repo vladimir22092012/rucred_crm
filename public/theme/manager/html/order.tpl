@@ -1174,6 +1174,15 @@
                 value = value.replace(new RegExp(/[^. \d\s-]/, 'g'), '');
                 $(this).val(value);
             });
+
+            $(document).on('input', '.fioValidate', function () {
+                let value = $(this).val();
+                value = value.replace(new RegExp(/[^а-яёА-ЯЁ\s-]+$/, 'g'), '');
+                $(this).val(value);
+            });
+
+            $('.acc-num-edit, .cor-acc').mask('99999999999999999999');
+            $('.bik-edit').mask('999999999');
         });
     </script>
     <script>
@@ -4388,7 +4397,7 @@
                             <div class="form-group">
                                 <label>ФИО держателя счета:</label>
                                 <input type="text" name="hold"
-                                       class="form-control fio-hold-edit"/>
+                                       class="form-control fio-hold-edit fioValidate"/>
                             </div>
                             <div class="form-group">
                                 <label>Номер счета:</label>
@@ -4532,17 +4541,17 @@
                             <div class="form-group">
                                 <label>Фамилия</label>
                                 <input type="text" name="lastname" value="{$order->lastname}"
-                                       class="form-control"/>
+                                       class="form-control fioValidate"/>
                             </div>
                             <div class="form-group">
                                 <label>Имя</label>
                                 <input type="text" name="firstname" value="{$order->firstname}"
-                                       class="form-control"/>
+                                       class="form-control fioValidate"/>
                             </div>
                             <div class="form-group">
                                 <label>Отчество</label>
                                 <input type="text" name="patronymic" value="{$order->patronymic}"
-                                       class="form-control"/>
+                                       class="form-control fioValidate"/>
                             </div>
                             <div class="form-group">
                                 <label>Дата рождения</label>
@@ -4551,7 +4560,7 @@
                             <div class="form-group">
                                 <label>Место рождения</label>
                                 <input type="text" name="birth_place" value="{$order->birth_place}"
-                                       class="form-control"/>
+                                       class="form-control fioValidate"/>
                             </div>
                             <div class="form-group">
                                 <label>Паспорт: серия/номер</label>
