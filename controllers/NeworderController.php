@@ -820,7 +820,7 @@ class NeworderController extends Controller
             $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date->format('Y-m-d'))));
             $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
 
-            if ($start_date > $paydate)
+            if ($start_date > $paydate || date_diff($paydate, $start_date)->days <= $loan->free_period)
                 $paydate->add(new DateInterval('P1M'));
 
             $percent_per_month = (($order['percent'] / 100) * 365) / 12;
@@ -830,22 +830,17 @@ class NeworderController extends Controller
             $iteration = 0;
 
             $count_days_this_month = date('t', strtotime($start_date->format('Y-m-d')));
+            $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
 
             if (date_diff($paydate, $start_date)->days <= $loan->free_period) {
-
-                $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * (date_diff($paydate, $start_date)->days - 1), 2);
+                $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days, 2);
                 $sum_pay = $annoouitet_pay + $plus_loan_percents;
                 $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2, PHP_ROUND_HALF_DOWN);
                 $body_pay = $sum_pay - $loan_percents_pay;
                 $paydate->add(new DateInterval('P1M'));
                 $iteration++;
-
-            } elseif (date_diff($paydate, $start_date)->days < $loan->min_period) {
-                $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days;
-                $loan_percents_pay = $sum_pay;
-                $body_pay = 0.00;
             } elseif (date_diff($paydate, $start_date)->days >= $loan->min_period && date_diff($paydate, $start_date)->days < $count_days_this_month) {
-                $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - (date_diff($paydate, $start_date)->days - 1));
+                $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($paydate, $start_date)->days);
                 $sum_pay = $annoouitet_pay - round($minus_percents, 2);
                 $loan_percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
                 $loan_percents_pay = round($loan_percents_pay, 2, PHP_ROUND_HALF_DOWN);
@@ -861,8 +856,6 @@ class NeworderController extends Controller
                 $loan_percents_pay = $sum_pay;
                 $body_pay = 0.00;
             }
-
-            $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
 
             $payment_schedule[$paydate->format('d.m.Y')] =
                 [
@@ -1032,7 +1025,7 @@ class NeworderController extends Controller
 
                     $projectNumber = "$group->number$company->number $loantype->number $personal_number $count_contracts";
 
-                    ProjectContractNumberORM::updateOrCreate(['orderId' => $order_id, 'userId' => $user_id],['uid' => $projectNumber]);
+                    ProjectContractNumberORM::updateOrCreate(['orderId' => $order_id, 'userId' => $user_id], ['uid' => $projectNumber]);
 
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                     exit;
@@ -1111,7 +1104,7 @@ class NeworderController extends Controller
 
                     $projectNumber = "$group->number$company->number $loantype->number $personal_number $count_contracts";
 
-                    ProjectContractNumberORM::updateOrCreate(['orderId' => $order_id, 'userId' => $user_id],['uid' => $projectNumber]);
+                    ProjectContractNumberORM::updateOrCreate(['orderId' => $order_id, 'userId' => $user_id], ['uid' => $projectNumber]);
 
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                 }
