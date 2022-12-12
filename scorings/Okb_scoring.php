@@ -7,7 +7,7 @@ class Okb_scoring extends Core
     private $audit_id;
     private $type;
 
-    private $url = "http://151.248.125.86/user-data";
+    private $url = "http://51.250.106.75/user-data";
 
 
     public function run_scoring($scoring_id)

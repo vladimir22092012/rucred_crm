@@ -1256,7 +1256,22 @@
                         location.reload();
                     }
                 });
-            })
+            });
+
+            $(document).on('input', '.credit_procents, .daterange, .mask_number', function () {
+                let value = $(this).val();
+                value = value.replace(new RegExp(/[^. \d\s-]/, 'g'), '');
+                $(this).val(value);
+            });
+
+            $(document).on('input', '.fioValidate', function () {
+                let value = $(this).val();
+                value = value.replace(new RegExp(/[^а-яёА-ЯЁ\s-]+$/, 'g'), '');
+                $(this).val(value);
+            });
+
+            $('.acc-num-edit, .cor-acc').mask('99999999999999999999');
+            $('.bik-edit').mask('999999999');
         });
     </script>
     <script>
@@ -1766,7 +1781,9 @@
                                         </div>
                                         <br>
                                         <div>
-                                            ID клиента: {$order->user_id}{if !empty($order->contract_id)}<br>ID сделки: {$order->contract_id}{/if}
+                                            ID клиента: {$order->user_id}{if !empty($order->contract_id)}
+                                                <br>
+                                                ID сделки: {$order->contract_id}{/if}
                                         </div>
                                     </form>
                                 </div>
@@ -4654,7 +4671,8 @@
                             </div>
                             <div class="form-group">
                                 <label>Подтвержденная дата по графику</label>
-                                <select data-order="{$order->order_id}" name="last_pay_date" class="form-control next_pay_date">
+                                <select data-order="{$order->order_id}" name="last_pay_date"
+                                        class="form-control next_pay_date">
                                     {foreach $payment_schedule->schedule as $date => $payment}
                                         {if $date != 'result'}
                                             <option value="{$date}">{$date}</option>
@@ -4783,12 +4801,12 @@
                             <div class="form-group">
                                 <label>ФИО держателя счета:</label>
                                 <input type="text" name="hold"
-                                       class="form-control fio-hold-edit"/>
+                                       class="form-control fio-hold-edit fioValidate"/>
                             </div>
                             <div class="form-group">
                                 <label>Номер счета:</label>
                                 <input type="text" name="acc"
-                                       class="form-control acc-num-edit"/>
+                                       class="form-control acc-num-edit mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Наименование банка:</label>
@@ -4798,12 +4816,12 @@
                             <div class="form-group">
                                 <label>БИК:</label>
                                 <input type="text" name="bik"
-                                       class="form-control bik-edit"/>
+                                       class="form-control bik-edit mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Кор. счет:</label>
                                 <input type="text" name="cor"
-                                       class="form-control cor-acc"/>
+                                       class="form-control cor-acc mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Причина редактирования</label>
@@ -4836,7 +4854,7 @@
                             <div class="form-group">
                                 <label>Сумма займа:</label>
                                 <input type="text" name="amount"
-                                       class="form-control" value="{$order->amount}"/>
+                                       class="form-control mask_number" value="{$order->amount}"/>
                             </div>
                             <div class="form-group">
                                 <label>Тариф:</label>
@@ -4927,40 +4945,41 @@
                             <div class="form-group">
                                 <label>Фамилия</label>
                                 <input type="text" name="lastname" value="{$order->lastname}"
-                                       class="form-control"/>
+                                       class="form-control fioValidate"/>
                             </div>
                             <div class="form-group">
                                 <label>Имя</label>
                                 <input type="text" name="firstname" value="{$order->firstname}"
-                                       class="form-control"/>
+                                       class="form-control fioValidate"/>
                             </div>
                             <div class="form-group">
                                 <label>Отчество</label>
                                 <input type="text" name="patronymic" value="{$order->patronymic}"
-                                       class="form-control"/>
+                                       class="form-control fioValidate"/>
                             </div>
                             <div class="form-group">
                                 <label>Дата рождения</label>
-                                <input class="form-control" name="birth" value="{$order->birth|date}"/>
+                                <input class="form-control mask_number" name="birth" value="{$order->birth|date}"/>
                             </div>
                             <div class="form-group">
                                 <label>Место рождения</label>
                                 <input type="text" name="birth_place" value="{$order->birth_place}"
-                                       class="form-control"/>
+                                       class="form-control fioValidate"/>
                             </div>
                             <div class="form-group">
                                 <label>Паспорт: серия/номер</label>
                                 <input type="text" name="passport_serial" value="{$order->passport_serial}"
-                                       class="form-control"/>
+                                       class="form-control mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Паспорт: Дата выдачи</label>
-                                <input name="passport_date" value="{$order->passport_date|date}" class="form-control"/>
+                                <input name="passport_date" value="{$order->passport_date|date}"
+                                       class="form-control mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Паспорт: Код подразделения</label>
                                 <input type="text" name="subdivision_code" value="{$order->subdivision_code}"
-                                       class="form-control"/>
+                                       class="form-control mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Паспорт: Кем выдан</label>
@@ -4970,12 +4989,12 @@
                             <div class="form-group">
                                 <label>ИНН</label>
                                 <input type="text" name="inn" value="{$order->inn}"
-                                       class="form-control"/>
+                                       class="form-control mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>СНИЛС</label>
                                 <input type="text" name="snils" value="{$order->snils}"
-                                       class="form-control"/>
+                                       class="form-control mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Адрес прописки</label>
@@ -4992,12 +5011,12 @@
                             <div class="form-group">
                                 <label>Номер клиента</label>
                                 <input type="text" name="personal_number" value="{$order->personal_number}"
-                                       class="form-control"/>
+                                       class="form-control mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Проект номера договора</label>
                                 <input type="text" name="project_number" value="{$projectNumber->uid}"
-                                       class="form-control"/>
+                                       class="form-control mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Причина редактирования</label>
