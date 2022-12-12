@@ -1168,6 +1168,12 @@
                     }
                 });
             });
+
+            $(document).on('input', '.credit_procents, .daterange, .mask_number', function () {
+                let value = $(this).val();
+                value = value.replace(new RegExp(/[^. \d\s-]/, 'g'), '');
+                $(this).val(value);
+            });
         });
     </script>
     <script>
@@ -4387,7 +4393,7 @@
                             <div class="form-group">
                                 <label>Номер счета:</label>
                                 <input type="text" name="acc"
-                                       class="form-control acc-num-edit"/>
+                                       class="form-control acc-num-edit mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Наименование банка:</label>
@@ -4397,12 +4403,12 @@
                             <div class="form-group">
                                 <label>БИК:</label>
                                 <input type="text" name="bik"
-                                       class="form-control bik-edit"/>
+                                       class="form-control bik-edit mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Кор. счет:</label>
                                 <input type="text" name="cor"
-                                       class="form-control cor-acc"/>
+                                       class="form-control cor-acc mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Причина редактирования</label>
@@ -4435,7 +4441,7 @@
                             <div class="form-group">
                                 <label>Сумма займа:</label>
                                 <input type="text" name="amount"
-                                       class="form-control" value="{$order->amount}"/>
+                                       class="form-control mask_number" value="{$order->amount}"/>
                             </div>
                             <div class="form-group">
                                 <label>Тариф:</label>
@@ -4540,7 +4546,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Дата рождения</label>
-                                <input class="form-control" name="birth" value="{$order->birth|date}"/>
+                                <input class="form-control mask_number" name="birth" value="{$order->birth|date}"/>
                             </div>
                             <div class="form-group">
                                 <label>Место рождения</label>
@@ -4550,16 +4556,16 @@
                             <div class="form-group">
                                 <label>Паспорт: серия/номер</label>
                                 <input type="text" name="passport_serial" value="{$order->passport_serial}"
-                                       class="form-control"/>
+                                       class="form-control mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Паспорт: Дата выдачи</label>
-                                <input name="passport_date" value="{$order->passport_date|date}" class="form-control"/>
+                                <input name="passport_date" value="{$order->passport_date|date}" class="form-control mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Паспорт: Код подразделения</label>
                                 <input type="text" name="subdivision_code" value="{$order->subdivision_code}"
-                                       class="form-control"/>
+                                       class="form-control mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Паспорт: Кем выдан</label>
@@ -4569,12 +4575,12 @@
                             <div class="form-group">
                                 <label>ИНН</label>
                                 <input type="text" name="inn" value="{$order->inn}"
-                                       class="form-control"/>
+                                       class="form-control mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>СНИЛС</label>
                                 <input type="text" name="snils" value="{$order->snils}"
-                                       class="form-control"/>
+                                       class="form-control mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Адрес прописки</label>
@@ -4591,7 +4597,12 @@
                             <div class="form-group">
                                 <label>Номер клиента</label>
                                 <input type="text" name="personal_number" value="{$order->personal_number}"
-                                       class="form-control"/>
+                                       class="form-control mask_number"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Проект номера договора</label>
+                                <input type="text" name="project_number" value="{$projectNumber->uid}"
+                                       class="form-control mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Причина редактирования</label>
