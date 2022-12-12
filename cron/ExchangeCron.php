@@ -30,10 +30,10 @@ class ExchangeCron extends Core
             $result = $this->soap1c->send_loan($cron->orderId);
 
             if (isset($result->return) && $result->return == 'OK') {
-                ExchangeCronORM::where('id', $cron->id)->update(['is_sent' => 1, 'resp' => 'OK']);
+                ExchangeCronORM::where('id', $cron->id)->update(['is_sent' => 1, 'is_error' => 0, 'resp' => 'OK']);
                 SendPaymentCronORM::where('contract_id', $cron->contractId)->update(['is_loan_sent' => 1]);
             } else
-                ExchangeCronORM::where('id', $cron->id)->update(['is_sent' => 1, 'is_error' => 1, 'resp' => $result]);
+                ExchangeCronORM::where('id', $cron->id)->update(['is_sent' => 1, 'is_error' => 1, 'resp' => json_encode($result, JSON_UNESCAPED_UNICODE)]);
         }
     }
 
