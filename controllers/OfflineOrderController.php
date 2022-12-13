@@ -5346,8 +5346,8 @@ class OfflineOrderController extends Controller
             'Кем выдан паспорт' => $passport_issued,
             'ИНН' => $inn,
             'СНИЛС' => $snils,
-            'Адрес регистрации' => $regaddress['adressfull'],
-            'Адрес проживания' => $faktaddress['adressfull'],
+            'Адрес регистрации' => $old_user->regaddress_id,
+            'Адрес проживания' => $old_user->faktaddress_id,
             'Персональный номер' => $personalNumber,
             'Проект номера' => $projectNumber,
             'Причина' => $comment
@@ -5471,7 +5471,9 @@ class OfflineOrderController extends Controller
                 'Кем выдан паспорт' => 'passport_issued',
                 'ИНН' => 'inn',
                 'СНИЛС' => 'snils',
-                'Персональный номер' => 'personal_number'
+                'Персональный номер' => 'personal_number',
+                'Адрес регистрации' => 'regaddress_id',
+                'Адрес проживания' => 'faktaddress_id'
             ];
 
         foreach ($new_values as $key => $value) {
