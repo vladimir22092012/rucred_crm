@@ -5331,8 +5331,8 @@ class OfflineOrderController extends Controller
         $old_regaddress = $this->Addresses->get_address($old_user->regaddress_id);
         $old_faktaddress = $this->Addresses->get_address($old_user->faktaddress_id);
 
-        $this->Addresses->update_address($old_user->regaddress_id, $regaddress);
-        $this->Addresses->update_address($old_user->faktaddress_id, $faktaddress);
+        Addresses::updateOrCreate(['id' => $old_user->regaddress_id], $regaddress);
+        Addresses::updateOrCreate(['id' => $old_user->faktaddress_id], $faktaddress);
 
         $new_values = array(
             'Имя' => $lastname,
