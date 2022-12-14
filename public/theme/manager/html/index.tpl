@@ -240,7 +240,8 @@
                                                      {if $count_in != 0}data-badge="{$count_in}"{/if}></i><span>Входящие запросы</span></a>
                     </li>
                     <li {if $out}class="active"{/if}><a
-                                href="tickets?out=true"><i class="mdi mdi-email-variant"></i><span>Исходящие запросы</span></a>
+                                href="tickets?out=true"><i
+                                    class="mdi mdi-email-variant"></i><span>Исходящие запросы</span></a>
                     </li>
                     <li {if $archive}class="active"{/if}><a
                                 href="tickets?archive=true"><i
@@ -252,10 +253,12 @@
                             <a class="" href="orders/" aria-expanded="false"><i class="mdi mdi-animation"></i><span
                                         class="hide-menu">Заявки</span></a>
                         </li>
+                        {*
                         <li {if $archive}class="active"{/if}>
                             <a class="" href="orders?archive=true" aria-expanded="false"><i class="mdi mdi-animation"></i><span
                                         class="hide-menu">Архив заявок</span></a>
                         </li>
+                        *}
                     {/if}
                     {if in_array('offline_settings', $manager->permissions) || in_array('offline', $manager->permissions)}
                         <li class="nav-small-cap">Оффлайн заявки</li>
@@ -268,7 +271,8 @@
                         {if in_array('offline', $manager->permissions)}
                             <li {if in_array($module, ['OfflineOrdersController']) && is_null($archived)}class="active"{/if}>
                                 <a class="" href="offline_orders?archive=true" aria-expanded="false"><i
-                                            class="mdi mdi-animation"></i><span class="hide-menu">Архив заявок</span></a>
+                                            class="mdi mdi-animation"></i><span
+                                            class="hide-menu">Архив заявок</span></a>
                             </li>
                         {/if}
                         {if in_array('offline', $manager->permissions) && $manager->role != 'employer'}
@@ -379,7 +383,8 @@
                         {/if}
                         <li {if in_array($module, ['GraphicConstructorController'])}class="active"{/if}>
                             <a class="" href="graphic_constructor/" aria-expanded="false"><i
-                                        class="mdi mdi-react"></i><span class="hide-menu">Демонстратор калькулятора</span></a>
+                                        class="mdi mdi-react"></i><span
+                                        class="hide-menu">Демонстратор калькулятора</span></a>
                         </li>
                         {if in_array($manager->role, ['developer', 'admin'])}
                             <li {if in_array($module, ['DeleteUsersController'])}class="active"{/if}>
