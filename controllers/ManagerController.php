@@ -104,7 +104,7 @@ class ManagerController extends Controller
                 $user->name = $this->request->post('name');
                 $user->name_1c = $this->request->post('name_1c');
                 $user->email = $this->request->post('email');
-                $user->phone = $this->request->post('phone');
+                $user->phone = preg_replace('/[^0-9]/', '', $this->request->post('phone'));
                 $user->login = $this->request->post('login');
                 $user->mango_number = $this->request->post('mango_number');
                 $user->telegram_note = $this->request->post('telegram_note');

@@ -8,6 +8,8 @@
     <script src="theme/manager/assets/plugins/moment/moment.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
     <script src="theme/manager/assets/plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.maskedinput@1.4.1/src/jquery.maskedinput.min.js"
+            type="text/javascript"></script>
     <script>
         $(function () {
 
@@ -616,6 +618,20 @@
                     }
                 })
             });
+
+            $(document).on('input', '.mask_number', function () {
+                let value = $(this).val();
+                value = value.replace(new RegExp(/[^.\d]/, 'g'), '');
+                $(this).val(value);
+            });
+
+            $(document).on('input', '.mask_email', function () {
+                let value = $(this).val();
+                value = value.replace(new RegExp(/[^a-zA-Z0-9.@]/, 'g'), '');
+                $(this).val(value);
+            });
+
+            $('.mask_number').click().mask('+7(999)999-99-99');
         });
     </script>
     <script>
@@ -1034,7 +1050,7 @@
                                             <label class="col-md-5">Email</label>
                                             <div style="display: flex">
                                                 <input type="text" name="email" value="{$user->email|default: ""}"
-                                                       class="form-control"
+                                                       class="form-control mask_email"
                                                        style="width: 500px; margin-left: 15px"
                                                        placeholder="Например: test@mail.ru">
                                                 <input type="hidden" name="email_linked" value="">
@@ -1122,7 +1138,7 @@
                                             <label class="col-md-5">Телефон</label>
                                             <div style="display: flex">
                                                 <input type="text" name="phone" value="{$user->phone|default: ""}"
-                                                       class="form-control" autocomplete="off"
+                                                       class="form-control mask_number" autocomplete="off"
                                                        style="width: 500px; margin-left: 15px"
                                                        placeholder="Например: 71112223333">
                                                 <input type="hidden" name="phone_linked">
