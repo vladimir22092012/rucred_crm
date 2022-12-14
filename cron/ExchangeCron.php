@@ -27,6 +27,15 @@ class ExchangeCron extends Core
         $crons = ExchangeCronORM::where('is_sent', 0)->limit(5)->get();
 
         foreach ($crons as $cron) {
+
+            $canSendYaDiskOrder = OrdersORM::select('id', 'canSendOnec')->where('id', $cron->orderId)->first();
+            $canSendYaDiskUser = UsersORM::select('id', 'canSendOnec')->where('id', $cron->userId)->first();
+
+            if ($canSendYaDiskUser->canSendOnec == 0 || $canSendYaDiskOrder->canSendOnec == 0) {
+                ExchangeCronORM::where('id', $cron->id)->update(['is_sent' => 1, 'is_error' => 1, 'resp' => 'Запрет отправки']);
+                continue;
+            }
+
             $result = $this->soap1c->send_loan($cron->orderId);
 
             if (isset($result->return) && $result->return == 'OK') {

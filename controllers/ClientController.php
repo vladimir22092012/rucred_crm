@@ -83,6 +83,14 @@ class ClientController extends Controller
                     $this->action_blacklist();
                     break;
 
+                case 'sendOnecTrigger':
+                    $this->actionSendOnecTrigger();
+                    break;
+
+                case 'sendYaDiskTrigger':
+                    $this->actionSendYaDiskTrigger();
+                    break;
+
             endswitch;
         } else {
             if (!($id = $this->request->get('id', 'integer'))) {
@@ -1185,6 +1193,24 @@ class ClientController extends Controller
             $this->blacklist->add_person($person);
         }
 
+        exit;
+    }
+
+    private function actionSendOnecTrigger()
+    {
+        $userId = $this->request->post('userId');
+        $value = $this->request->post('value');
+
+        UsersORM::where('id', $userId)->update(['canSendOnec' => $value]);
+        exit;
+    }
+
+    private function actionSendYaDiskTrigger()
+    {
+        $userId = $this->request->post('userId');
+        $value = $this->request->post('value');
+
+        UsersORM::where('id', $userId)->update(['canSendYaDisk' => $value]);
         exit;
     }
 }

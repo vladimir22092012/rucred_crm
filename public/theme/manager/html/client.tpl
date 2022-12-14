@@ -143,7 +143,29 @@
                         }
                     }
                 })
-            })
+            });
+
+            $('#canSendOnec, #canSendYaDisk').on('click', function () {
+
+                let value = 0;
+                let userId = $(this).attr('data-user');
+                let action = 'sendOnecTrigger';
+
+                if($(this).attr('id') == 'canSendYaDisk')
+                    action = 'sendYaDiskTrigger';
+
+                if($(this).is(':checked'))
+                    value = 1;
+
+                $.ajax({
+                    method: 'POST',
+                    data:{
+                        action: action,
+                        userId: userId,
+                        value: value
+                    }
+                });
+            });
         })
     </script>
 {/capture}
@@ -254,6 +276,19 @@
                                             </h3>
                                             {/if}
                                         </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input"
+                                                   data-user="{$client->id}" id="canSendOnec"
+                                                   {if $client->canSendOnec}checked{/if}>
+                                            <label class="custom-control-label" for="canSendOnec"><strong class="text-danger">Отравлять в 1с</strong></label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input"
+                                                   data-user="{$client->id}" id="canSendYaDisk"
+                                                   {if $client->canSendYaDisk}checked{/if}>
+                                            <label class="custom-control-label" for="canSendYaDisk"><strong class="text-danger">Отравлять в Я.Диск</strong></label>
+                                        </div>
+                                    </div>
                                     </div>
                                 </div>
                             </div>

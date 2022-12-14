@@ -280,6 +280,14 @@ class OrderController extends Controller
                     $this->action_editPdn();
                     break;
 
+                case 'sendOnecTrigger':
+                    $this->actionSendOnecTrigger();
+                    break;
+
+                case 'sendYaDiskTrigger':
+                    $this->actionSendYaDiskTrigger();
+                    break;
+
 
             endswitch;
 
@@ -3563,7 +3571,7 @@ class OrderController extends Controller
         if ($start_date > $paydate || date_diff($paydate, $start_date)->days <= $loan->free_period)
             $paydate->add(new DateInterval('P1M'));
 
-        if($loan->id == 1)
+        if ($loan->id == 1)
             $percent_per_month = (($order['percent'] / 100) * 360) / 12;
         else
             $percent_per_month = (($order['percent'] / 100) * 365) / 12;
@@ -3635,10 +3643,10 @@ class OrderController extends Controller
                     $rest_sum = 0.00;
                 } elseif ($loan->id == 1) {
                     $loan_body_pay = $rest_sum;
-                    $loan_percents_pay = $order['amount'] * ($order['percent']/100) * date_diff($start_date, $date)->days - $loan_percents_pay;
+                    $loan_percents_pay = $order['amount'] * ($order['percent'] / 100) * date_diff($start_date, $date)->days - $loan_percents_pay;
                     $annoouitet_pay = $loan_body_pay + $loan_percents_pay;
                     $rest_sum = 0.00;
-                }else {
+                } else {
                     $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
                     $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
                     $rest_sum = round($rest_sum - $loan_body_pay, 2);
@@ -5136,6 +5144,24 @@ class OrderController extends Controller
         UsersORM::where('id', $order->user_id)->update($update);
 
         echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function actionSendOnecTrigger()
+    {
+        $orderId = $this->request->post('orderId');
+        $value = $this->request->post('value');
+
+        OrdersORM::where('id', $orderId)->update(['canSendOnec' => $value]);
+        exit;
+    }
+
+    private function actionSendYaDiskTrigger()
+    {
+        $orderId = $this->request->post('orderId');
+        $value = $this->request->post('value');
+
+        OrdersORM::where('id', $orderId)->update(['canSendYaDisk' => $value]);
         exit;
     }
 

@@ -92,6 +92,8 @@ class Orders extends Core
                 o.settlement_id,
                 o.requisite_id,
                 o.is_archived,
+                o.canSendOnec,
+                o.canSendYaDisk,
                 u.UID AS user_uid,
                 u.service_sms,
                 u.service_insurance,

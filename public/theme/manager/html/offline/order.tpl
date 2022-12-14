@@ -1272,6 +1272,28 @@
 
             $('.acc-num-edit, .cor-acc').mask('99999999999999999999');
             $('.bik-edit').mask('999999999');
+
+            $('#canSendOnec, #canSendYaDisk').on('click', function () {
+
+                let value = 0;
+                let orderId = $(this).attr('data-order');
+                let action = 'sendOnecTrigger';
+
+                if($(this).attr('id') == 'canSendYaDisk')
+                    action = 'sendYaDiskTrigger';
+
+                if($(this).is(':checked'))
+                    value = 1;
+
+                $.ajax({
+                    method: 'POST',
+                    data:{
+                        action: action,
+                        orderId: orderId,
+                        value: value
+                    }
+                });
+            });
         });
     </script>
     <script>
@@ -1784,6 +1806,18 @@
                                             ID клиента: {$order->user_id}{if !empty($order->contract_id)}
                                                 <br>
                                                 ID сделки: {$order->contract_id}{/if}
+                                            <br><br><div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input"
+                                                       data-order="{$order->order_id}" id="canSendOnec"
+                                                       {if $order->canSendOnec}checked{/if}>
+                                                <label class="custom-control-label" for="canSendOnec"><strong class="text-danger">Отравлять в 1с</strong></label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input"
+                                                       data-order="{$order->order_id}" id="canSendYaDisk"
+                                                       {if $order->canSendYaDisk}checked{/if}>
+                                                <label class="custom-control-label" for="canSendYaDisk"><strong class="text-danger">Отравлять в Я.Диск</strong></label>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>

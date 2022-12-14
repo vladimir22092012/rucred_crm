@@ -302,6 +302,14 @@ class OfflineOrderController extends Controller
                     $this->action_personal_edit();
                     break;
 
+                case 'sendOnecTrigger':
+                    $this->actionSendOnecTrigger();
+                    break;
+
+                case 'sendYaDiskTrigger':
+                    $this->actionSendYaDiskTrigger();
+                    break;
+
 
             endswitch;
 
@@ -5669,6 +5677,24 @@ class OfflineOrderController extends Controller
             echo json_encode(['success' => 1]);
         }
 
+        exit;
+    }
+
+    private function actionSendOnecTrigger()
+    {
+        $orderId = $this->request->post('orderId');
+        $value = $this->request->post('value');
+
+        OrdersORM::where('id', $orderId)->update(['canSendOnec' => $value]);
+        exit;
+    }
+
+    private function actionSendYaDiskTrigger()
+    {
+        $orderId = $this->request->post('orderId');
+        $value = $this->request->post('value');
+
+        OrdersORM::where('id', $orderId)->update(['canSendYaDisk' => $value]);
         exit;
     }
 

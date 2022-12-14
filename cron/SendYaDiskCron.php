@@ -22,30 +22,37 @@ class SendYaDiskCron extends Core
 
         $crons = $this->YaDiskCron->gets();
 
-        foreach ($crons as $cron){
+        foreach ($crons as $cron) {
 
             $order = $this->orders->get_order($cron->order_id);
 
-            if(empty($order))
-            {
-                $update =
-                    [
-                        'is_complited' => 1
-                    ];
+            $canSendYaDiskOrder = OrdersORM::select('id', 'canSendYaDisk')->where('id', $cron->order_id)->first();
+            $canSendYaDiskUser = UsersORM::select('id', 'canSendYaDisk')->where('id', $order->user_id)->first();
 
-                $this->YaDiskCron->update($update, $cron->id);
+            if (empty($order)) {
+                $this->complete($cron->id);
                 continue;
             }
 
             $type = '';
             $pak = explode('_', $cron->pak);
 
-            if($cron->pak == 'first_pak'){
+            if ($cron->pak == 'first_pak') {
                 $type = $this->db->placehold("AND `type` not in ('individualnie_usloviya.tpl', 'grafik_obsl_mkr.tpl')");
+
+                if ($canSendYaDiskUser->canSendYaDisk == 0 || $canSendYaDiskOrder->canSendYaDisk == 0) {
+                    $this->complete($cron->id);
+                    continue;
+                }
             }
 
-            if($cron->pak == 'second_pak'){
+            if ($cron->pak == 'second_pak') {
                 $type = $this->db->placehold("AND `type` in ('individualnie_usloviya.tpl', 'grafik_obsl_mkr.tpl')");
+
+                if ($canSendYaDiskUser->canSendYaDisk == 0 || $canSendYaDiskOrder->canSendYaDisk == 0) {
+                    $this->complete($cron->id);
+                    continue;
+                }
             }
 
             $query = $this->db->placehold("
@@ -64,13 +71,18 @@ class SendYaDiskCron extends Core
 
             }
 
-            $update =
-                [
-                    'is_complited' => 1
-                ];
-
-            $this->YaDiskCron->update($update, $cron->id);
+            $this->complete($cron->id);
         }
+    }
+
+    private function complete($cronId)
+    {
+        $update =
+            [
+                'is_complited' => 1
+            ];
+
+        $this->YaDiskCron->update($update, $cronId);
     }
 }
 
