@@ -276,7 +276,7 @@
                                             </h3>
                                             {/if}
                                         </div>
-                                        {if $manager->role == 'admin'}
+                                        {if in_array($manager->role, ['admin', 'developer'])}
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" class="custom-control-input"
                                                        data-user="{$client->id}" id="canSendOnec"

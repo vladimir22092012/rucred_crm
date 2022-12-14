@@ -1695,7 +1695,7 @@
                                         {if !empty($order->contract_id)}
                                             <br>
                                             ID сделки: {$order->contract_id}{/if}
-                                        {if $manager->role == 'admin'}
+                                        {if in_array($manager->role, ['admin', 'developer'])}
                                         <br><br><div class="custom-control custom-checkbox">
                                             <input type="checkbox" class="custom-control-input"
                                                    data-order="{$order->order_id}" id="canSendOnec"
