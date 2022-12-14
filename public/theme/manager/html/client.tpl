@@ -276,18 +276,20 @@
                                             </h3>
                                             {/if}
                                         </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input"
-                                                   data-user="{$client->id}" id="canSendOnec"
-                                                   {if $client->canSendOnec}checked{/if}>
-                                            <label class="custom-control-label" for="canSendOnec"><strong class="text-danger">Отравлять в 1с</strong></label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input"
-                                                   data-user="{$client->id}" id="canSendYaDisk"
-                                                   {if $client->canSendYaDisk}checked{/if}>
-                                            <label class="custom-control-label" for="canSendYaDisk"><strong class="text-danger">Отравлять в Я.Диск</strong></label>
-                                        </div>
+                                        {if $manager->role == 'admin'}
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input"
+                                                       data-user="{$client->id}" id="canSendOnec"
+                                                       {if $client->canSendOnec}checked{/if}>
+                                                <label class="custom-control-label" for="canSendOnec"><strong class="text-danger">Отравлять в 1с</strong></label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input"
+                                                       data-user="{$client->id}" id="canSendYaDisk"
+                                                       {if $client->canSendYaDisk}checked{/if}>
+                                                <label class="custom-control-label" for="canSendYaDisk"><strong class="text-danger">Отравлять в Я.Диск</strong></label>
+                                            </div>
+                                        {/if}
                                     </div>
                                     </div>
                                 </div>

@@ -1695,6 +1695,7 @@
                                         {if !empty($order->contract_id)}
                                             <br>
                                             ID сделки: {$order->contract_id}{/if}
+                                        {if $manager->role == 'admin'}
                                         <br><br><div class="custom-control custom-checkbox">
                                             <input type="checkbox" class="custom-control-input"
                                                    data-order="{$order->order_id}" id="canSendOnec"
@@ -1707,6 +1708,7 @@
                                                    {if $order->canSendYaDisk}checked{/if}>
                                             <label class="custom-control-label" for="canSendYaDisk"><strong class="text-danger">Отравлять в Я.Диск</strong></label>
                                         </div>
+                                        {/if}
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-8 col-lg-6">
