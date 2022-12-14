@@ -85,6 +85,9 @@ class CompanyController extends Controller
             }
         ])->find($companyId);
 
+        $groups = GroupsORM::get();
+        $this->design->assign('groups', $groups);
+
 
         if ($companyId === 2) {
             $settlements = $this->OrganisationSettlements->get_settlements();
@@ -140,6 +143,8 @@ class CompanyController extends Controller
         $jur_address = $this->request->post('jur_address');
         $phys_address = $this->request->post('phys_address');
         $payday = $this->request->post('payday');
+        $groupId = $this->request->post('group');
+        $number = $this->request->post('number');
 
         $company =
             [
@@ -150,7 +155,9 @@ class CompanyController extends Controller
                 'ogrn' => $ogrn,
                 'kpp' => $kpp,
                 'jur_address' => $jur_address,
-                'phys_address' => $phys_address
+                'phys_address' => $phys_address,
+                'group_id' => $groupId,
+                'number' => $number
             ];
 
         $this->Companies->update_company($company_id, $company);

@@ -629,6 +629,19 @@
                     <input type="hidden" name="action" value="edit_company">
                     <input type="hidden" name="company_id" value="{$company->id}">
                     <div class="form-group">
+                        <label for="name" class="control-label">Группа</label>
+                        <select class="form-control" name="group">
+                           {foreach $groups as $group}
+                               <option value="{$group->id}" {if $group->id == $company->group_id}selected{/if}>{$group->name}</option>
+                           {/foreach}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="control-label">Номер компании</label>
+                        <input type="text" class="form-control" name="number"
+                               value="{$company->number|escape}"/>
+                    </div>
+                    <div class="form-group">
                         <label for="name" class="control-label">Наименование компании</label>
                         <input type="text" class="form-control" name="name" id="name"
                                value="{$company->com_name|escape}"/>
