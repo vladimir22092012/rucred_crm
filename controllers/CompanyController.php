@@ -146,6 +146,14 @@ class CompanyController extends Controller
         $groupId = $this->request->post('group');
         $number = $this->request->post('number');
 
+        $isExistInn = CompaniesORM::where('inn', $inn)->where('id', '!=', $company_id)->first();
+
+        if(!empty($isExistInn))
+        {
+            echo json_encode(['error' => 'Такой ИНН уже имеется']);
+            exit;
+        }
+
         $company =
             [
                 'name' => $name,
@@ -169,6 +177,9 @@ class CompanyController extends Controller
                 $this->Branches->update_branch(['payday' => $payday], $branch->id);
             }
         }
+
+        echo json_encode(['success' => 1]);
+        exit;
     }
 
     private function action_delete_branche()

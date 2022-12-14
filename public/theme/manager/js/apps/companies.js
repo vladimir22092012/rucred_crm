@@ -50,9 +50,18 @@ $(function () {
 
         $.ajax({
             method: 'POST',
+            dataType: 'JSON',
             data: form,
-            success: function () {
-                location.reload();
+            success: function (resp) {
+                if (resp['error']) {
+                    Swal.fire({
+                        title: resp['error'],
+                        confirmButtonText: 'ОК'
+                    });
+                }
+                else if (resp['success']) {
+                    location.reload();
+                }
             }
         })
 
@@ -301,7 +310,7 @@ $(function () {
 
         $.ajax({
             method: 'POST',
-            data:{
+            data: {
                 action: 'blocked',
                 value: value,
                 company: company
@@ -315,7 +324,7 @@ $(function () {
 
         $.ajax({
             method: 'POST',
-            data:{
+            data: {
                 action: 'change_permission',
                 permission: permission,
                 com_id: com_id

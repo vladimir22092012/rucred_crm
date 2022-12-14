@@ -290,7 +290,7 @@
                     </div>
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
                     <input id="add-group-btn" type="button" class="btn btn-success" value="Создать">
-                    <input id="edit-group-btn" type="button" class="btn btn-success" value="Редактировать">
+                    <input id="edit-group-btn" type="button" class="btn btn-success" value="Сохранить">
                 </form>
             </div>
         </div>
