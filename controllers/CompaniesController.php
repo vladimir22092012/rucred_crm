@@ -12,10 +12,12 @@ class CompaniesController extends Controller
 
         $filter = array();
 
-        if ($this->request->get('sort', 'string')) {
-            $filter['sort'] = $this->request->get('sort', 'string');
-            $this->design->assign('sort', $filter['sort']);
-        }
+        $filter['sort'] = $this->request->get('sort', 'string');
+
+        if(empty($filter['sort']))
+            $filter['sort'] = 'companyGroupSort';
+
+        $this->design->assign('sort', $filter['sort']);
 
         if ($this->manager->role == 'employer') {
             $managers_company = $this->ManagersEmployers->get_records($this->manager->id);

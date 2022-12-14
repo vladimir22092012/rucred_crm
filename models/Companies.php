@@ -216,6 +216,9 @@ class Companies extends Core
                 case 'fakt_desc':
                     $sort = 'com.phys_address DESC';
                     break;
+
+                case 'companyGroupSort':
+                    $sort = 'gr.number asc, com.number asc';
             endswitch;
         }
 
