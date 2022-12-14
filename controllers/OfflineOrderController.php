@@ -5331,8 +5331,8 @@ class OfflineOrderController extends Controller
         $old_regaddress = $this->Addresses->get_address($old_user->regaddress_id);
         $old_faktaddress = $this->Addresses->get_address($old_user->faktaddress_id);
 
-        Addresses::updateOrCreate(['id' => $old_user->regaddress_id], $regaddress);
-        Addresses::updateOrCreate(['id' => $old_user->faktaddress_id], $faktaddress);
+        AdressesORM::updateOrCreate(['id' => $old_user->regaddress_id], $regaddress);
+        AdressesORM::updateOrCreate(['id' => $old_user->faktaddress_id], $faktaddress);
 
         $new_values = array(
             'Имя' => $lastname,
@@ -5346,8 +5346,8 @@ class OfflineOrderController extends Controller
             'Кем выдан паспорт' => $passport_issued,
             'ИНН' => $inn,
             'СНИЛС' => $snils,
-            'Адрес регистрации' => $regaddress['adressfull'],
-            'Адрес проживания' => $faktaddress['adressfull'],
+            'Адрес регистрации' => $old_user->regaddress_id,
+            'Адрес проживания' => $old_user->faktaddress_id,
             'Персональный номер' => $personalNumber,
             'Проект номера' => $projectNumber,
             'Причина' => $comment
@@ -5471,7 +5471,9 @@ class OfflineOrderController extends Controller
                 'Кем выдан паспорт' => 'passport_issued',
                 'ИНН' => 'inn',
                 'СНИЛС' => 'snils',
-                'Персональный номер' => 'personal_number'
+                'Персональный номер' => 'personal_number',
+                'Адрес регистрации' => 'regaddress_id',
+                'Адрес проживания' => 'faktaddress_id'
             ];
 
         foreach ($new_values as $key => $value) {
