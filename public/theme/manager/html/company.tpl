@@ -644,7 +644,7 @@
                     <div class="form-group">
                         <label for="name" class="control-label">Наименование компании</label>
                         <input type="text" class="form-control" name="name" id="name"
-                               value="{$company->com_name|escape}"/>
+                               value="{$company->name|escape}"/>
                     </div>
                     <div class="form-group">
                         <label for="eio_position" class="control-label">Должность ЕИО:</label>
