@@ -172,6 +172,8 @@ class NeworderController extends Controller
         $user['user_id'] = intval($this->request->post('user_id'));
 
         $user['firstname'] = trim($this->request->post('firstname'));
+        $user['canSendOnec'] = 1;
+        $user['canSendYaDisk'] = 1;
 
         if (empty($user['firstname'])) {
             response_json(['error' => 1, 'reason' => 'Отсутствует имя']);
