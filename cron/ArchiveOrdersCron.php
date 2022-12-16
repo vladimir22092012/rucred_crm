@@ -22,7 +22,7 @@ class ArchiveOrdersCron extends Core
      */
     private function run()
     {
-        $orders = $this->Orders->get_orders(['status' => [0,1,2,4,8,11,13,14,15,20]]);
+        $orders = $this->Orders->get_orders(['status' => [0,1,2,8,11,13,14,15,20]]);
 
         foreach ($orders as $order) {
             $orderCreationDate = new DateTime(date('Y-m-d H:i:s', strtotime($order->date)));
