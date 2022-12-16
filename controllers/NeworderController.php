@@ -537,9 +537,10 @@ class NeworderController extends Controller
             $user['personal_number'] = $last_personal_number + 1;
             $user['original'] = 1;
 
+            $user['regaddress_id'] = $this->Addresses->add_address($regaddress);
+            $user['faktaddress_id'] = $this->Addresses->add_address($faktaddress);
+
             if ($user['user_id'] = $this->users->add_user($user)) {
-                $user['regaddress_id'] = $this->Addresses->add_address($regaddress);
-                $user['faktaddress_id'] = $this->Addresses->add_address($faktaddress);
 
                 $this->UserContactPreferred->delete($user['user_id']);
 
