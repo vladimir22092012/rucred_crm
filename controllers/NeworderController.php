@@ -527,6 +527,9 @@ class NeworderController extends Controller
             exit;
         }
 
+        $user['regaddress_id'] = $this->Addresses->add_address($regaddress);
+        $user['faktaddress_id'] = $this->Addresses->add_address($faktaddress);
+
 
         if (empty($user['user_id'])) {
             $user['stage_registration'] = '8';
@@ -536,9 +539,6 @@ class NeworderController extends Controller
 
             $user['personal_number'] = $last_personal_number + 1;
             $user['original'] = 1;
-
-            $user['regaddress_id'] = $this->Addresses->add_address($regaddress);
-            $user['faktaddress_id'] = $this->Addresses->add_address($faktaddress);
 
             if ($user['user_id'] = $this->users->add_user($user)) {
 
@@ -590,16 +590,6 @@ class NeworderController extends Controller
             $user['original'] = 1;
             $user['stage_registration'] = '8';
 
-            if (!empty($old_user->regaddress_id))
-                $this->Addresses->update_address($old_user->regaddress_id, $regaddress);
-            else
-                $user['regaddress_id'] = $this->Addresses->add_address($regaddress);
-
-            if (!empty($old_user->faktaddress_id))
-                $this->Addresses->update_address($old_user->faktaddress_id, $faktaddress);
-            else
-                $user['faktaddress_id'] = $this->Addresses->add_address($faktaddress);
-
             $this->Contacts->delete($old_user->id);
 
             $contact =
@@ -633,9 +623,6 @@ class NeworderController extends Controller
                 $this->Contacts->add($contact);
             }
 
-            if (isset($user['faktaddress_id']))
-
-                $this->users->update_user($user_id, $user);
             $this->UserContactPreferred->delete($user_id);
 
             if (!empty($user['sms_not']) && $user['sms_not'] == 1) {
