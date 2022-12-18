@@ -1069,10 +1069,6 @@ class NeworderController extends Controller
 
                     $old_orders = $this->orders->get_orders(['user_id' => $user_id]);
 
-                    if (count($old_orders) > 1) {
-                        $this->users->update_user($user_id, ['regaddress_id' => 0, 'faktaddress_id' => 0]);
-                    }
-
                     $this->form_docs($order_id);
 
                     $loantype = $this->Loantypes->get_loantype($order['loan_type']);
