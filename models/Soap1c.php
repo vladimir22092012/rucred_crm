@@ -113,7 +113,7 @@ class Soap1c extends Core
             $passport->Номер = $passport_number;
             $passport->КемВыдан = $order->passport_issued;
             $passport->КодПодразделения = $order->subdivision_code;
-            $passport->ДатаВыдачи = $order->passport_date;
+            $passport->ДатаВыдачи = date('Ymd000000', strtotime($order->passport_date));
 
             $client->Паспорт = $passport;
 
