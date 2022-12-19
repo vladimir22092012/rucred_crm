@@ -61,7 +61,7 @@ class Soap1c extends Core
 
             $item->ID = (string)$contract->id;
             $item->НомерДоговора = $contract->number;
-            $item->Дата = date('YmdHis', strtotime($order->date));
+            $item->Дата = date('YmdHis', strtotime($order->probably_start_date));
             $item->Срок = $order->period;
             $item->Периодичность = 'День';
             $item->ПроцентнаяСтавка = $order->percent;
@@ -106,6 +106,7 @@ class Soap1c extends Core
             $client->СНИЛС = $order->snils;
             $client->ОКАТО = $order->regaddress->okato;
             $client->ОКТМО = $order->regaddress->oktmo;
+            $client->Email = $order->email;
 
             $passport = new StdClass();
             $passport->Серия = $passport_series;
