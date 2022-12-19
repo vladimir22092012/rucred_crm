@@ -657,6 +657,8 @@ class NeworderController extends Controller
                 $this->UserContactPreferred->add($preferred);
             }
 
+            $this->users->update_user($user_id, $user);
+
             $card_id = $this->request->post('card_id');
 
             if ($payout_type == 'bank' || $settlement_id == 3) {
