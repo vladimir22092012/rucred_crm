@@ -102,6 +102,8 @@ class Soap1c extends Core
             $client->АдресРегистрации = $order->regaddress->adressfull;
             $client->АдресПроживания = $order->faktaddress->adressfull;
             $client->Телефон = $this->format_phone($order->phone_mobile);
+            $client->ИНН = $order->inn;
+            $client->СНИЛС = $order->snils;
             $client->ОКАТО = $order->regaddress->okato;
             $client->ОКТМО = $order->regaddress->oktmo;
 
