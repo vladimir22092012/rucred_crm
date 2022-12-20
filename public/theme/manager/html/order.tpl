@@ -3830,7 +3830,7 @@
                                                             <th class="text-right">Статус</th>
                                                         </tr>
                                                         {foreach $orders as $o}
-                                                            {if $o->contract->type != 'onec'}
+                                                            {if !in_array($o->status, [5,7])}
                                                                 <tr>
                                                                     <td>{$o->date|date} {$o->date|time}</td>
                                                                     <td>
@@ -3858,57 +3858,43 @@
                                         <div id="navpills-loans" class="tab-pane active">
                                             <div class="card">
                                                 <div class="card-body">
-                                                    <h4>Кредитная история 1С</h4>
-                                                    {if $client->loan_history|count > 0}
-                                                        <table class="table">
-                                                            <tr>
-                                                                <th>Дата</th>
-                                                                <th>Договор</th>
-                                                                <th class="text-right">Статус</th>
-                                                                <th class="text-center">Сумма</th>
-                                                                <th class="text-center">Остаток ОД</th>
-                                                                <th class="text-right">Остаток процентов</th>
-                                                                <th>&nbsp;</th>
-                                                            </tr>
-                                                            {foreach $client->loan_history as $loan_history_item}
+                                                    <h4>Кредиты</h4>
+                                                    <table class="table">
+                                                        <tr>
+                                                            <th>Дата</th>
+                                                            <th>Заявка</th>
+                                                            <th>Договор</th>
+                                                            <th class="text-center">Сумма</th>
+                                                            <th class="text-center">Период</th>
+                                                            <th class="text-right">Статус</th>
+                                                        </tr>
+                                                        {foreach $orders as $o}
+                                                            {if in_array($o->status, [5,7])}
                                                                 <tr>
+                                                                    <td>{$o->date|date} {$o->date|time}</td>
                                                                     <td>
-                                                                        {$loan_history_item->date|date}
+                                                                        <a href="order/{$o->order_id}"
+                                                                           target="_blank">{$o->uid}</a>
                                                                     </td>
                                                                     <td>
-                                                                        {$loan_history_item->number}
+                                                                        {$o->contract->number}
                                                                     </td>
+                                                                    <td class="text-center">{$o->amount}</td>
+                                                                    <td class="text-center">{$o->period}</td>
                                                                     <td class="text-right">
-                                                                        {if $loan_history_item->loan_percents_summ > 0 || $loan_history_item->loan_body_summ > 0}
-                                                                            <span
-                                                                                    class="label label-success">Активный</span>
-                                                                        {else}
-                                                                            <span
-                                                                                    class="label label-danger">Закрыт</span>
-                                                                        {/if}
-                                                                    </td>
-                                                                    <td class="text-center">{$loan_history_item->amount}</td>
-                                                                    <td class="text-center">{$loan_history_item->loan_body_summ}</td>
-                                                                    <td class="text-right">{$loan_history_item->loan_percents_summ}</td>
-                                                                    <td>
-                                                                        <button type="button"
-                                                                                class="btn btn-xs btn-info js-get-movements"
-                                                                                data-number="{$loan_history_item->number}">
-                                                                            Операции
-                                                                        </button>
+                                                                        {$order_statuses[$o->status]}
+                                                                        {if $o->contract->status==3}
+                                                                            <br/>
+                                                                            <small>{$o->contract->close_date|date} {$o->contract->close_date|time}</small>{/if}
                                                                     </td>
                                                                 </tr>
-                                                            {/foreach}
-                                                        </table>
-                                                    {else}
-                                                        <h4>Нет кредитов</h4>
-                                                    {/if}
+                                                            {/if}
+                                                        {/foreach}
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
-
                                 </div>
                             </div>
                         </div>
