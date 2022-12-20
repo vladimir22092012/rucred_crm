@@ -312,6 +312,15 @@ class OrderController extends Controller
 
                     $client_status = 'Повтор';
 
+                    $uploadsLoanOnec = ExchangeCronORM::where('orderId', $order->order_id)->get();
+                    $this->design->assign('uploadsLoanOnec', $uploadsLoanOnec);
+
+                    $uploadsPaymentOnec = SendPaymentCronORM::where('order_id', $order->order_id)->get();
+                    $this->design->assign('uploadsPaymentOnec', $uploadsPaymentOnec);
+
+                    $uploadsDocsYaDisk = YaDiskCronORM::where('order_id', $order->order_id)->get();
+                    $this->design->assign('uploadsDocsYaDisk', $uploadsDocsYaDisk);
+
                     if (count($old_orders) > 1) {
                         foreach ($old_orders as $old_order) {
                             if (in_array($old_order->status, [5, 7]))
