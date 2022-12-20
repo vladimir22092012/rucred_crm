@@ -2265,6 +2265,15 @@
                                         <span class="hidden-xs-down">Графики платежей</span>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#uploads"
+                                       role="tab"
+                                       aria-selected="true" data-event="25" data-user="{$order->user_id}"
+                                       data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                        <span class="hidden-sm-up"><i class="ti-save-alt"></i></span>
+                                        <span class="hidden-xs-down">Выгрузки</span>
+                                    </a>
+                                </li>
                             {/if}
                         </ul>
 
@@ -4342,6 +4351,65 @@
                             </div>
 
 
+                        </div>
+                        <div id="uploads" class="tab-pane" role="tabpanel">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="tab-content br-n pn">
+                                        <div id="navpills-orders" class="tab-pane active">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h4>1с</h4>
+                                                    <table class="table">
+                                                        <tr>
+                                                            <th>Дата</th>
+                                                            <th>Тип выгрузки</th>
+                                                            <th>Статус</th>
+                                                        </tr>
+                                                        {foreach $uploadsLoanOnec as $upload}
+                                                            <tr>
+                                                                <td>{$upload->updated}</td>
+                                                                <td>Клиент/Сделка</td>
+                                                                <td>{if $upload->resp == 'OK'}Успешно{else}Ошибка{/if}</td>
+                                                            </tr>
+                                                        {/foreach}
+                                                        {foreach $uploadsPaymentOnec as $upload}
+                                                            <tr>
+                                                                <td>{$upload->updated}</td>
+                                                                <td>Клиент/Сделка</td>
+                                                                <td>{if $upload->resp == 'OK'}Успешно{else}Ошибка{/if}</td>
+                                                            </tr>
+                                                        {/foreach}
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="navpills-loans" class="tab-pane active">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h4>Яндекс диск</h4>
+                                                    <table class="table">
+                                                        <tr>
+                                                            <th>Дата</th>
+                                                            <th>Тип выгрузки</th>
+                                                            <th>Статус</th>
+                                                        </tr>
+                                                        {foreach $uploadsDocsYaDisk as $upload}
+                                                            <tr>
+                                                                <td>{$upload->updated}</td>
+                                                                <td>{if $upload->pak == 'first_pak'}Первая подпись клиента{else}Заключение договора{/if}</td>
+                                                                <td>{if $upload->is_complited == 1}Успешно{else}Не успешно{/if}</td>
+                                                            </tr>
+                                                        {/foreach}
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

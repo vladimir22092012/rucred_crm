@@ -347,6 +347,15 @@ class OfflineOrderController extends Controller
                     $projectNumber = ProjectContractNumberORM::where('orderId', $order->order_id)->where('userId', $order->user_id)->first();
                     $this->design->assign('projectNumber', $projectNumber);
 
+                    $uploadsLoanOnec = ExchangeCronORM::where('orderId', $order->order_id)->get();
+                    $this->design->assign('uploadsLoanOnec', $uploadsLoanOnec);
+
+                    $uploadsPaymentOnec = SendPaymentCronORM::where('order_id', $order->order_id)->get();
+                    $this->design->assign('uploadsPaymentOnec', $uploadsPaymentOnec);
+
+                    $uploadsDocsYaDisk = YaDiskCronORM::where('order_id', $order->order_id)->get();
+                    $this->design->assign('uploadsDocsYaDisk', $uploadsDocsYaDisk);
+
 
                     $old_orders = $this->orders->get_orders(['user_id' => $order->user_id]);
 
