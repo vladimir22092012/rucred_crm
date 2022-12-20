@@ -4048,14 +4048,14 @@
                                                             <tr>
                                                                 <td>{$upload->updated}</td>
                                                                 <td>Клиент/Сделка</td>
-                                                                <td>{if $upload->resp == 'OK'}Успешно{else}Ошибка{/if}</pre></td>
+                                                                <td>{if $upload->resp == 'OK'}Успешно{else}Ошибка{/if}</td>
                                                             </tr>
                                                         {/foreach}
                                                         {foreach $uploadsPaymentOnec as $upload}
                                                             <tr>
                                                                 <td>{$upload->updated}</td>
                                                                 <td>Клиент/Сделка</td>
-                                                                <td><pre>{json_decode($upload->resp)}</pre></td>
+                                                                <td>{if $upload->resp == 'OK'}Успешно{else}Ошибка{/if}</td>
                                                             </tr>
                                                         {/foreach}
                                                     </table>
