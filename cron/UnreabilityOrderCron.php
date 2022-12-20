@@ -23,7 +23,7 @@ class UnreabilityOrderCron extends Core
 
                 if (date_diff($now, $createDate)->days > 3) {
                     OrdersORM::where('id', $order->id)->update(['unreability' => 1]);
-                    UsersORM::where('id', $order->user_id)->update(['stage_registration' => 8]);
+                    UsersORM::where('id', $order->user_id)->update(['stage_registration' => 1]);
                 }
             }
         }
