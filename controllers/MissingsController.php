@@ -51,28 +51,31 @@ class MissingsController extends Controller
 
         $clients = $this->users->get_users($filter);
 
-        $filterStatus = $this->request->get('status', 'integer');
-
         $minusCount = 0;
+        $filter['stage_filter'] = $this->request->get('status');
 
         foreach ($clients as $key => $client) {
             $client->order = $this->orders->get_by_user($client->id);
 
-            if($filterStatus == '0' && (int) $client->order?->unreability === 1)
+            if (empty($filter['stage_filter']) && $client->order ?->unreability == 0 || empty($filter['stage_filter']) && $client->stage_registration == 8)
             {
                 unset($clients[$key]);
                 $minusCount++;
             }
 
-            if($filterStatus == 1 && $client->order?->unreability == 0)
+            if ($filter['stage_filter'] == 1 && $client->order ?->unreability == 1 || $filter['stage_filter'] == 1 && $client->stage_registration == 8)
             {
+                unset($clients[$key]);
+                $minusCount++;
+            }
+
+            if ($filter['stage_filter'] == 2 && $client->stage_registration != 8) {
                 unset($clients[$key]);
                 $minusCount++;
             }
         }
 
-        $this->design->assign('filter_status', $filterStatus);
-        $this->design->assign('filter_stage', $stageFilter);
+        $this->design->assign('filter_status', $filter['stage_filter']);
 
         $pages_num = ceil(($clients_count - $minusCount) / $items_per_page);
         $this->design->assign('total_pages_num', $pages_num);

@@ -48,13 +48,10 @@
                                        class="btn btn-xs {if $filter_status=='0'}btn-success{else}btn-outline-success{/if}">Реанимируемый</a>
                                     <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 stage=null page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==1}btn-danger{else}btn-outline-danger{/if}">Не реанимируемый</a>
-                                    <a href="{if $filter_stage==2 && $filter_status!=1}{url stage=null page=null}{else}{url stage=2 page=null}{/if}"
-                                       class="btn btn-xs {if $filter_stage==2 && $filter_status!=1}btn-success{elseif $filter_status==1}btn-outline-success disabled{else}btn-outline-success{/if}">У андеррайтера</a>
+                                    <a href="{if $filter_status==2}{url status=null page=null}{else}{url status=2 stage=null page=null}{/if}"
+                                       class="btn btn-xs {if $filter_status==2}btn-primary{else}btn-outline-primary{/if}">У Андерайтера</a>
                                     {if $filter_status}
                                         <input type="hidden" value="{$filter_status}" id="filter_status"/>
-                                    {/if}
-                                    {if $filter_stage}
-                                        <input type="hidden" value="{$filter_stage}" id="filter_stage"/>
                                     {/if}
                                 </div>
                             </div>
