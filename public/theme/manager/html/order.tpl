@@ -199,9 +199,20 @@
 
                     $.ajax({
                         method: 'POST',
+                        dataType: 'JSON',
                         data: $form.serialize(),
-                        success: function () {
-                            location.reload();
+                        success: function (resp) {
+
+                            if (resp['error']) {
+                                Swal.fire({
+                                    title: resp['error'],
+                                    confirmButtonText: 'ОК'
+                                });
+                            }
+
+                            if (resp['success']) {
+                                location.reload();
+                            }
                         }
                     });
                 })
@@ -1190,15 +1201,15 @@
                 let orderId = $(this).attr('data-order');
                 let action = 'sendOnecTrigger';
 
-                if($(this).attr('id') == 'canSendYaDisk')
+                if ($(this).attr('id') == 'canSendYaDisk')
                     action = 'sendYaDiskTrigger';
 
-                if($(this).is(':checked'))
+                if ($(this).is(':checked'))
                     value = 1;
 
                 $.ajax({
                     method: 'POST',
-                    data:{
+                    data: {
                         action: action,
                         orderId: orderId,
                         value: value
@@ -1696,18 +1707,22 @@
                                             <br>
                                             ID сделки: {$order->contract_id}{/if}
                                         {if in_array($manager->role, ['admin', 'developer'])}
-                                        <br><br><div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input"
-                                                   data-order="{$order->order_id}" id="canSendOnec"
-                                                   {if $order->canSendOnec}checked{/if}>
-                                            <label class="custom-control-label" for="canSendOnec"><strong class="text-danger">Отравлять в 1с</strong></label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input"
-                                                   data-order="{$order->order_id}" id="canSendYaDisk"
-                                                   {if $order->canSendYaDisk}checked{/if}>
-                                            <label class="custom-control-label" for="canSendYaDisk"><strong class="text-danger">Отравлять в Я.Диск</strong></label>
-                                        </div>
+                                            <br>
+                                            <br>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input"
+                                                       data-order="{$order->order_id}" id="canSendOnec"
+                                                       {if $order->canSendOnec}checked{/if}>
+                                                <label class="custom-control-label" for="canSendOnec"><strong
+                                                            class="text-danger">Отравлять в 1с</strong></label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input"
+                                                       data-order="{$order->order_id}" id="canSendYaDisk"
+                                                       {if $order->canSendYaDisk}checked{/if}>
+                                                <label class="custom-control-label" for="canSendYaDisk"><strong
+                                                            class="text-danger">Отравлять в Я.Диск</strong></label>
+                                            </div>
                                         {/if}
                                     </div>
                                 </div>
@@ -4654,7 +4669,8 @@
                             </div>
                             <div class="form-group">
                                 <label>Паспорт: Дата выдачи</label>
-                                <input name="passport_date" value="{$order->passport_date|date}" class="form-control mask_number"/>
+                                <input name="passport_date" value="{$order->passport_date|date}"
+                                       class="form-control mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Паспорт: Код подразделения</label>
@@ -4746,7 +4762,6 @@
             </div>
         </div>
     </div>
-
     <div id="pdnModal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
          aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-lg">
@@ -4772,7 +4787,8 @@
                             </div>
                             <div class="form-group" style="width: 350px">
                                 <label>Количество иждивенцев</label>
-                                <input type="text" name="dependents" class="form-control" placeholder="необязательно" value="{$order->dependents}">
+                                <input type="text" name="dependents" class="form-control" placeholder="необязательно"
+                                       value="{$order->dependents}">
                             </div>
                         </div>
                         <label>Используемые банковские карты:</label>

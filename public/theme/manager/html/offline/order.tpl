@@ -1251,9 +1251,20 @@
 
                 $.ajax({
                     method: 'POST',
+                    dataType: 'JSON',
                     data: form.serialize(),
-                    success: function () {
-                        location.reload();
+                    success: function (resp) {
+
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+
+                        if (resp['success']) {
+                            location.reload();
+                        }
                     }
                 });
             });
