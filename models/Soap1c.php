@@ -62,6 +62,7 @@ class Soap1c extends Core
             $item->ID = (string)$contract->id;
             $item->НомерДоговора = $contract->number;
             $item->Дата = date('YmdHis', strtotime($order->probably_start_date));
+            $item->ДатаЗаявки = date('YmdHis', strtotime($order->date));
             $item->Срок = $order->period;
             $item->Периодичность = 'День';
             $item->ПроцентнаяСтавка = $order->percent;
@@ -113,7 +114,7 @@ class Soap1c extends Core
             $passport->Номер = $passport_number;
             $passport->КемВыдан = $order->passport_issued;
             $passport->КодПодразделения = $order->subdivision_code;
-            $passport->ДатаВыдачи = $order->passport_date;
+            $passport->ДатаВыдачи = date('Ymd000000', strtotime($order->passport_date));
 
             $client->Паспорт = $passport;
 
