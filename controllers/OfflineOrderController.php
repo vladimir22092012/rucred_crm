@@ -3488,9 +3488,13 @@ class OfflineOrderController extends Controller
                         'rest_pay' => $rest_sum
                     ];
 
+                $probablyReturnDate = $date->format('d.m.Y');
+
                 $paydate->add(new DateInterval('P1M'));
             }
         }
+
+        OrdersORM::where('id', $order_id)->update(['probably_return_date' => date('Y-m-d H:i:s', strtotime($probablyReturnDate))]);
 
         $payment_schedule['result'] =
             [
@@ -5635,7 +5639,6 @@ class OfflineOrderController extends Controller
                 'company_id' => $companyId,
                 'branche_id' => $brancheId,
                 'probably_start_date' => date('Y-m-d', strtotime($probablyStartDate)),
-                'probably_return_date' => $probably_return_date->format('Y-m-d')
             ];
 
         $user =

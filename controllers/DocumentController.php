@@ -195,7 +195,7 @@ class DocumentController extends Controller
             $percents_per_day_str_part_one = 0;
             $percents_per_day_str_part_two = 0;
         } else {
-            $percents_per_day_str = explode('.', $document->params->percent);
+            $percents_per_day_str = explode('.', number_format($document->params->percent, 3, '.', ''));
             $percents_per_day_str_part_one = $this->num2str($percents_per_day_str[0]);
             $percents_per_day_str_part_two = $this->num2str($percents_per_day_str[1]);
         }
