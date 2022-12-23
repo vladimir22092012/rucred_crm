@@ -22,7 +22,7 @@ class DeleteExpiredDraftsCron extends Core
         foreach ($drafts as $draft) {
             $createDate = new DateTime(date('Y-m-d', strtotime($draft->date)));
 
-            if(date_diff($now, $createDate)->days > 3)
+            if(date_diff($now, $createDate)->days >= 365)
                 OrdersORM::destroy($draft->id);
         }
     }
