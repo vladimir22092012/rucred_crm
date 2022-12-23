@@ -4656,6 +4656,7 @@ class OfflineOrderController extends Controller
         }
 
         $this->tickets->update_by_theme_id(12, ['status' => 4], $order_id);
+        $this->orders->update_order($order_id, ['status' => 5]);
 
         echo json_encode(['success' => 1]);
         exit;
