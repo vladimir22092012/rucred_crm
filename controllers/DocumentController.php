@@ -26,8 +26,7 @@ class DocumentController extends Controller
         $this->design->assign('doc_created', $document->created);
 
         $settlement = $this->OrganisationSettlements->get_settlement($document->params->settlement_id);
-        $order = $this->orders->get_order($document->params->order_id);
-        $contracts = $this->contracts->get_contracts(['user_id' => $document->params->user_id, 'status' => [2,3,4]]);
+        $order = $this->orders->get_order($document->order_id);
         //заглушка для документов с неполными данными
 
         $uid = ProjectContractNumberORM::where('orderId', $order->order_id)->first();
@@ -46,7 +45,7 @@ class DocumentController extends Controller
             $this->design->assign('faktadress', $faktadress);
         }
 
-        $requisite = $this->Requisites->getDefault($document->params->user_id);
+        $requisite = $this->Requisites->getDefault($document->user_id);
         $this->design->assign('requisite', $requisite);
 
         if (is_null($document->params->company_id)) {

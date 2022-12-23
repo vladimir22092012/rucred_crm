@@ -347,6 +347,15 @@ class OfflineOrderController extends Controller
                     $projectNumber = ProjectContractNumberORM::where('orderId', $order->order_id)->where('userId', $order->user_id)->first();
                     $this->design->assign('projectNumber', $projectNumber);
 
+                    $uploadsLoanOnec = ExchangeCronORM::where('orderId', $order->order_id)->get();
+                    $this->design->assign('uploadsLoanOnec', $uploadsLoanOnec);
+
+                    $uploadsPaymentOnec = SendPaymentCronORM::where('order_id', $order->order_id)->get();
+                    $this->design->assign('uploadsPaymentOnec', $uploadsPaymentOnec);
+
+                    $uploadsDocsYaDisk = YaDiskCronORM::where('order_id', $order->order_id)->get();
+                    $this->design->assign('uploadsDocsYaDisk', $uploadsDocsYaDisk);
+
 
                     $old_orders = $this->orders->get_orders(['user_id' => $order->user_id]);
 
@@ -4647,6 +4656,7 @@ class OfflineOrderController extends Controller
         }
 
         $this->tickets->update_by_theme_id(12, ['status' => 4], $order_id);
+        $this->orders->update_order($order_id, ['status' => 5]);
 
         echo json_encode(['success' => 1]);
         exit;
@@ -5517,6 +5527,11 @@ class OfflineOrderController extends Controller
         $bank = $this->request->post('bank');
         $bik = $this->request->post('bik');
         $cor = $this->request->post('cor');
+        $comment = $this->request->post('comment');
+
+        if (empty($comment)) {
+            echo json_encode(['error' => 'Заполните комментарий']);
+        }
 
         $update =
             [
@@ -5538,8 +5553,7 @@ class OfflineOrderController extends Controller
         $newValues = array_diff($update, $oldRequisites);
         $oldValues = array_intersect_key($oldRequisites, $newValues);
 
-        if (!empty($update))
-            RequisitesORM::where('user_id', $userId)->update($newValues);
+        RequisitesORM::where('user_id', $userId)->update($newValues);
 
         $translate =
             [
@@ -5560,6 +5574,8 @@ class OfflineOrderController extends Controller
             unset($newValues[$key]);
         }
 
+        $newValues['Причина'] = $comment;
+
         $this->changelogs->add_changelog(array(
             'manager_id' => $this->manager->id,
             'created' => date('Y-m-d H:i:s'),
@@ -5575,6 +5591,7 @@ class OfflineOrderController extends Controller
         DocumentsORM::where('order_id', $orderId)
             ->update(['params' => serialize($order)]);
 
+        echo json_encode(['success' => 1]);
         exit;
     }
 
@@ -5589,6 +5606,11 @@ class OfflineOrderController extends Controller
         $groupId = $this->request->post('group');
         $companyId = $this->request->post('company');
         $brancheId = $this->request->post('branch');
+        $comment = $this->request->post('comment');
+
+        if (empty($comment)) {
+            echo json_encode(['error' => 'Заполните комментарий']);
+        }
 
         $branche = BranchesORM::find($brancheId);
         $loanType = LoantypesORM::find($loanTypeId);

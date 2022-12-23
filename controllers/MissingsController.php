@@ -7,191 +7,159 @@ class MissingsController extends Controller
 
     public function fetch()
     {
-        if ($this->request->method('post')) {
-            switch ($this->request->post('action', 'string')) :
-                case 'set_manager':
-                    $this->set_manager_action();
-                    break;
+        $status = $this->request->get('status');
+        $page = $this->request->get('page');
+        $sort = $this->request->get('sort');
 
-                case 'close_missing':
-                    $this->close_missing_action();
-                    break;
+        if(empty($sort))
+            $sort = 'modified desc';
 
-                case 'send_sms':
-                    $this->send_sms_action();
-                    break;
-            endswitch;
+        switch ($status) {
+
+            case 2:
+                $this->getUnreable($sort, $page);
+                break;
+
+            case 3:
+                $this->getUsersToUnder($sort, $page);
+                break;
+
+            default:
+                $this->getReable($sort, $page);
+                break;
         }
 
+        return $this->design->fetch('missings.tpl');
+    }
+
+    private function getUnreable($sort, $page = 1)
+    {
         $items_per_page = 20;
 
-        $filter = array();
+        $limit = ($page - 1) * $items_per_page;
 
-        if (!($sort = $this->request->get('sort', 'string'))) {
-            $sort = 'modified_desc';
-        }
-        $filter['sort'] = $sort;
+        $sorting = explode(' ', $sort);
+
+        $current_page = $this->request->get('page', 'integer');
+        $current_page = max(1, $current_page);
+        $this->design->assign('current_page_num', $current_page);
+
+        $clients_count = OrdersORM::with('user')
+            ->where('status', 12)
+            ->where('unreability', 0)
+            ->get()->count();
+
+        if(in_array($sorting[0], ['lastname', 'phone_mobile']))
+            $modifier = 's_users.';
+        else
+            $modifier = 's_orders.';
+
+        $clients = OrdersORM::select('s_orders.*')
+            ->join('s_users', 's_orders.user_id', '=', 's_users.id')
+            ->where('s_orders.status', 12)
+            ->where('s_orders.unreability', 1)
+            ->orderBy($modifier.$sorting[0], $sorting[1])
+            ->offset($limit)
+            ->limit($items_per_page)
+            ->get();
+
+        $this->design->assign('filter_status', 2);
+
+        $pages_num = ceil($clients_count / $items_per_page);
+        $this->design->assign('total_pages_num', $pages_num);
+        $this->design->assign('total_orders_count', $clients_count);
         $this->design->assign('sort', $sort);
+        $this->design->assign('clients', $clients);
+    }
 
-        if ($search = $this->request->get('search')) {
-            $filter['search'] = array_filter($search);
-            $this->design->assign('search', array_filter($search));
-        }
+    private function getReable($sort, $page = 1)
+    {
+        $items_per_page = 20;
+
+        $limit = ($page - 1) * $items_per_page;
+
+        $sorting = explode(' ', $sort);
 
         $stageFilter = $this->request->get('stage', 'integer');
         $current_page = $this->request->get('page', 'integer');
         $current_page = max(1, $current_page);
         $this->design->assign('current_page_num', $current_page);
 
-        $clients_count = $this->users->count_users($filter);
+        $clients_count = OrdersORM::with('user')
+            ->where('status', 12)
+            ->where('unreability', 0)
+            ->get()->count();
 
         $filter['page'] = $current_page;
         $filter['limit'] = $items_per_page;
         $filter['stage_filter'] = $stageFilter;
 
-        $clients = $this->users->get_users($filter);
+        if(in_array($sorting[0], ['lastname', 'phone_mobile']))
+            $modifier = 's_users.';
+        else
+            $modifier = 's_orders.';
 
-        $filterStatus = $this->request->get('status', 'integer');
+        $clients = OrdersORM::select('s_orders.*')
+            ->join('s_users', 's_orders.user_id', '=', 's_users.id')
+            ->where('s_orders.status', 12)
+            ->where('s_orders.unreability', 0)
+            ->orderBy($modifier.$sorting[0], $sorting[1])
+            ->offset($limit)
+            ->limit($items_per_page)
+            ->get();
 
-        $minusCount = 0;
+        $this->design->assign('filter_status', 1);
 
-        foreach ($clients as $key => $client) {
-            $client->order = $this->orders->get_by_user($client->id);
-
-            if($filterStatus == '0' && (int) $client->order?->unreability === 1)
-            {
-                unset($clients[$key]);
-                $minusCount++;
-            }
-
-            if($filterStatus == 1 && $client->order?->unreability == 0)
-            {
-                unset($clients[$key]);
-                $minusCount++;
-            }
-        }
-
-        $this->design->assign('filter_status', $filterStatus);
-        $this->design->assign('filter_stage', $stageFilter);
-
-        $pages_num = ceil(($clients_count - $minusCount) / $items_per_page);
+        $pages_num = ceil($clients_count / $items_per_page);
         $this->design->assign('total_pages_num', $pages_num);
         $this->design->assign('total_orders_count', $clients_count);
+        $this->design->assign('sort', $sort);
+        $this->design->assign('clients', $clients);
+    }
+
+    private function getUsersToUnder($sort, $page = 1)
+    {
+        $items_per_page = 20;
+
+        $limit = ($page - 1) * $items_per_page;
+
+        $sorting = explode(' ', $sort);
+
+        $stageFilter = $this->request->get('stage', 'integer');
+        $current_page = $this->request->get('page', 'integer');
+        $current_page = max(1, $current_page);
+        $this->design->assign('current_page_num', $current_page);
+
+        $clients_count = OrdersORM::with('user')
+            ->where('status', '>=', 0)
+            ->where('unreability', 0)
+            ->get()->count();
+
+        $filter['page'] = $current_page;
+        $filter['limit'] = $items_per_page;
+        $filter['stage_filter'] = $stageFilter;
+
+        if(in_array($sorting[0], ['lastname', 'phone_mobile']))
+            $modifier = 's_users.';
+        else
+            $modifier = 's_orders.';
+
+        $clients = OrdersORM::select('s_orders.*')
+            ->join('s_users', 's_orders.user_id', '=', 's_users.id')
+            ->where('s_orders.status', '>=', 0)
+            ->where('s_orders.unreability', 0)
+            ->orderBy($modifier.$sorting[0], $sorting[1])
+            ->offset($limit)
+            ->limit($items_per_page)
+            ->get();
+
+        $this->design->assign('filter_status', 3);
+
+        $pages_num = ceil($clients_count / $items_per_page);
+        $this->design->assign('total_pages_num', $pages_num);
+        $this->design->assign('total_orders_count', $clients_count);
+        $this->design->assign('sort', $sort);
 
         $this->design->assign('clients', $clients);
-
-
-        return $this->design->fetch('missings.tpl');
-    }
-
-    public function set_manager_action()
-    {
-        if ($user_id = $this->request->post('user_id', 'integer')) {
-            if ($user = $this->users->get_user($user_id)) {
-                if (empty($user->missing_manager_id)) {
-                    $this->users->update_user($user_id, array(
-                        'missing_manager_id' => $this->manager->id
-                    ));
-
-                    $this->json_output(array('success' => 1, 'manager_name' => $this->manager->name));
-                } else {
-                    $this->json_output(array('error' => 'Заявка уже принята'));
-                }
-            } else {
-                $this->json_output(array('error' => 'UNDEFINED_USER'));
-            }
-        } else {
-            $this->json_output(array('error' => 'EMPTY_USER_ID'));
-        }
-    }
-
-    public function close_missing_action()
-    {
-        if ($user_id = $this->request->post('user_id', 'integer')) {
-            if ($user = $this->users->get_user($user_id)) {
-                if (empty($user->missing_status)) {
-                    $this->users->update_user($user_id, array(
-                        'missing_status' => 1
-                    ));
-
-                    $this->json_output(array('success' => 1));
-                } else {
-                    $this->json_output(array('error' => 'Заявка уже завершена'));
-                }
-            } else {
-                $this->json_output(array('error' => 'UNDEFINED_USER'));
-            }
-        } else {
-            $this->json_output(array('error' => 'EMPTY_USER_ID'));
-        }
-    }
-
-    private function send_sms_action()
-    {
-        $yuk = $this->request->post('yuk', 'integer');
-        $user_id = $this->request->post('user_id', 'integer');
-        $order_id = $this->request->post('order_id', 'integer');
-        $template_id = $this->request->post('template_id', 'integer');
-
-        $user = $this->users->get_user((int)$user_id);
-
-        $template = $this->sms->get_template($template_id);
-
-        if (!empty($order_id)) {
-            $order = $this->orders->get_order($order_id);
-            if (!empty($order->contract_id)) {
-                $code = $this->helpers->c2o_encode($order->contract_id);
-                $payment_link = $this->config->front_url . '/p/' . $code;
-                $template->template = str_replace('{$payment_link}', $payment_link, $template->template);
-            }
-        }
-
-        $resp = $this->sms->send(
-            $user->phone_mobile,
-            $template->template
-        );
-
-        $sms_message_id = $this->sms->add_message(array(
-            'user_id' => $user->id,
-            'order_id' => $order_id,
-            'phone' => $user->phone_mobile,
-            'message' => $template->template,
-            'created' => date('Y-m-d H:i:s'),
-        ));
-
-        $this->communications->add_communication(array(
-            'user_id' => $user->id,
-            'manager_id' => $this->manager->id,
-            'created' => date('Y-m-d H:i:s'),
-            'type' => 'sms',
-            'content' => $template->template,
-            'outer_id' => $sms_message_id,
-            'from_number' => $this->sms->get_originator($yuk),
-            'to_number' => $user->phone_mobile,
-            'yuk' => $yuk,
-            'result' => serialize($resp),
-        ));
-
-        $this->comments->add_comment(array(
-            'user_id' => $user->id,
-            'order_id' => $order_id,
-            'manager_id' => $this->manager->id,
-            'text' => 'Клиенту отправлено смс с текстом: ' . $template->template,
-            'created' => date('Y-m-d H:i:s'),
-            'organization' => empty($yuk) ? 'mkk' : 'yuk',
-            'auto' => 1
-        ));
-
-        $this->changelogs->add_changelog(array(
-            'manager_id' => $this->manager->id,
-            'created' => date('Y-m-d H:i:s'),
-            'type' => 'send_sms',
-            'old_values' => array(),
-            'new_values' => array($template->template),
-            'user_id' => $user->id,
-            'order_id' => $order_id,
-        ));
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';
-        $this->json_output(array('success' => true));
     }
 }

@@ -199,9 +199,20 @@
 
                     $.ajax({
                         method: 'POST',
+                        dataType: 'JSON',
                         data: $form.serialize(),
-                        success: function () {
-                            location.reload();
+                        success: function (resp) {
+
+                            if (resp['error']) {
+                                Swal.fire({
+                                    title: resp['error'],
+                                    confirmButtonText: 'ОК'
+                                });
+                            }
+
+                            if (resp['success']) {
+                                location.reload();
+                            }
                         }
                     });
                 })
@@ -1190,15 +1201,15 @@
                 let orderId = $(this).attr('data-order');
                 let action = 'sendOnecTrigger';
 
-                if($(this).attr('id') == 'canSendYaDisk')
+                if ($(this).attr('id') == 'canSendYaDisk')
                     action = 'sendYaDiskTrigger';
 
-                if($(this).is(':checked'))
+                if ($(this).is(':checked'))
                     value = 1;
 
                 $.ajax({
                     method: 'POST',
-                    data:{
+                    data: {
                         action: action,
                         orderId: orderId,
                         value: value
@@ -1696,18 +1707,22 @@
                                             <br>
                                             ID сделки: {$order->contract_id}{/if}
                                         {if in_array($manager->role, ['admin', 'developer'])}
-                                        <br><br><div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input"
-                                                   data-order="{$order->order_id}" id="canSendOnec"
-                                                   {if $order->canSendOnec}checked{/if}>
-                                            <label class="custom-control-label" for="canSendOnec"><strong class="text-danger">Отравлять в 1с</strong></label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input"
-                                                   data-order="{$order->order_id}" id="canSendYaDisk"
-                                                   {if $order->canSendYaDisk}checked{/if}>
-                                            <label class="custom-control-label" for="canSendYaDisk"><strong class="text-danger">Отравлять в Я.Диск</strong></label>
-                                        </div>
+                                            <br>
+                                            <br>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input"
+                                                       data-order="{$order->order_id}" id="canSendOnec"
+                                                       {if $order->canSendOnec}checked{/if}>
+                                                <label class="custom-control-label" for="canSendOnec"><strong
+                                                            class="text-danger">Отравлять в 1с</strong></label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input"
+                                                       data-order="{$order->order_id}" id="canSendYaDisk"
+                                                       {if $order->canSendYaDisk}checked{/if}>
+                                                <label class="custom-control-label" for="canSendYaDisk"><strong
+                                                            class="text-danger">Отравлять в Я.Диск</strong></label>
+                                            </div>
                                         {/if}
                                     </div>
                                 </div>
@@ -2195,6 +2210,15 @@
                                        data-order="{$order->order_id}" data-manager="{$manager->id}">
                                         <span class="hidden-sm-up"><i class="ti-save-alt"></i></span>
                                         <span class="hidden-xs-down">Графики платежей</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#uploads"
+                                       role="tab"
+                                       aria-selected="true" data-event="25" data-user="{$order->user_id}"
+                                       data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                        <span class="hidden-sm-up"><i class="ti-save-alt"></i></span>
+                                        <span class="hidden-xs-down">Выгрузки</span>
                                     </a>
                                 </li>
                             {/if}
@@ -3806,12 +3830,6 @@
                         <div id="history" class="tab-pane" role="tabpanel">
                             <div class="row">
                                 <div class="col-12">
-                                    {*}
-                                    <ul class="nav nav-pills mt-4 mb-4">
-                                        <li class=" nav-item"> <a href="#navpills-orders" class="nav-link active" data-toggle="tab" aria-expanded="false">Заявки</a> </li>
-                                        <li class="nav-item"> <a href="#navpills-loans" class="nav-link" data-toggle="tab" aria-expanded="false">Кредиты</a> </li>
-                                    </ul>
-                                    {*}
                                     <div class="tab-content br-n pn">
                                         <div id="navpills-orders" class="tab-pane active">
                                             <div class="card">
@@ -3827,7 +3845,7 @@
                                                             <th class="text-right">Статус</th>
                                                         </tr>
                                                         {foreach $orders as $o}
-                                                            {if $o->contract->type != 'onec'}
+                                                            {if !in_array($o->status, [5,7])}
                                                                 <tr>
                                                                     <td>{$o->date|date} {$o->date|time}</td>
                                                                     <td>
@@ -3855,57 +3873,43 @@
                                         <div id="navpills-loans" class="tab-pane active">
                                             <div class="card">
                                                 <div class="card-body">
-                                                    <h4>Кредитная история 1С</h4>
-                                                    {if $client->loan_history|count > 0}
-                                                        <table class="table">
-                                                            <tr>
-                                                                <th>Дата</th>
-                                                                <th>Договор</th>
-                                                                <th class="text-right">Статус</th>
-                                                                <th class="text-center">Сумма</th>
-                                                                <th class="text-center">Остаток ОД</th>
-                                                                <th class="text-right">Остаток процентов</th>
-                                                                <th>&nbsp;</th>
-                                                            </tr>
-                                                            {foreach $client->loan_history as $loan_history_item}
+                                                    <h4>Кредиты</h4>
+                                                    <table class="table">
+                                                        <tr>
+                                                            <th>Дата</th>
+                                                            <th>Заявка</th>
+                                                            <th>Договор</th>
+                                                            <th class="text-center">Сумма</th>
+                                                            <th class="text-center">Период</th>
+                                                            <th class="text-right">Статус</th>
+                                                        </tr>
+                                                        {foreach $orders as $o}
+                                                            {if in_array($o->status, [5,7])}
                                                                 <tr>
+                                                                    <td>{$o->date|date} {$o->date|time}</td>
                                                                     <td>
-                                                                        {$loan_history_item->date|date}
+                                                                        <a href="order/{$o->order_id}"
+                                                                           target="_blank">{$o->uid}</a>
                                                                     </td>
                                                                     <td>
-                                                                        {$loan_history_item->number}
+                                                                        {$o->contract->number}
                                                                     </td>
+                                                                    <td class="text-center">{$o->amount}</td>
+                                                                    <td class="text-center">{$o->period}</td>
                                                                     <td class="text-right">
-                                                                        {if $loan_history_item->loan_percents_summ > 0 || $loan_history_item->loan_body_summ > 0}
-                                                                            <span
-                                                                                    class="label label-success">Активный</span>
-                                                                        {else}
-                                                                            <span
-                                                                                    class="label label-danger">Закрыт</span>
-                                                                        {/if}
-                                                                    </td>
-                                                                    <td class="text-center">{$loan_history_item->amount}</td>
-                                                                    <td class="text-center">{$loan_history_item->loan_body_summ}</td>
-                                                                    <td class="text-right">{$loan_history_item->loan_percents_summ}</td>
-                                                                    <td>
-                                                                        <button type="button"
-                                                                                class="btn btn-xs btn-info js-get-movements"
-                                                                                data-number="{$loan_history_item->number}">
-                                                                            Операции
-                                                                        </button>
+                                                                        {$order_statuses[$o->status]}
+                                                                        {if $o->contract->status==3}
+                                                                            <br/>
+                                                                            <small>{$o->contract->close_date|date} {$o->contract->close_date|time}</small>{/if}
                                                                     </td>
                                                                 </tr>
-                                                            {/foreach}
-                                                        </table>
-                                                    {else}
-                                                        <h4>Нет кредитов</h4>
-                                                    {/if}
+                                                            {/if}
+                                                        {/foreach}
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
-
                                 </div>
                             </div>
                         </div>
@@ -4026,6 +4030,65 @@
                             </div>
 
 
+                        </div>
+                        <div id="uploads" class="tab-pane" role="tabpanel">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="tab-content br-n pn">
+                                        <div id="navpills-orders" class="tab-pane active">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h4>1с</h4>
+                                                    <table class="table">
+                                                        <tr>
+                                                            <th>Дата</th>
+                                                            <th>Тип выгрузки</th>
+                                                            <th>Статус</th>
+                                                        </tr>
+                                                        {foreach $uploadsLoanOnec as $upload}
+                                                            <tr>
+                                                                <td>{$upload->updated}</td>
+                                                                <td>Клиент/Сделка</td>
+                                                                <td>{if $upload->resp == 'OK'}Успешно{else}Ошибка{/if}</td>
+                                                            </tr>
+                                                        {/foreach}
+                                                        {foreach $uploadsPaymentOnec as $upload}
+                                                            <tr>
+                                                                <td>{$upload->updated}</td>
+                                                                <td>Клиент/Сделка</td>
+                                                                <td>{if $upload->resp == 'OK'}Успешно{else}Ошибка{/if}</td>
+                                                            </tr>
+                                                        {/foreach}
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="navpills-loans" class="tab-pane active">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h4>Яндекс диск</h4>
+                                                    <table class="table">
+                                                        <tr>
+                                                            <th>Дата</th>
+                                                            <th>Тип выгрузки</th>
+                                                            <th>Статус</th>
+                                                        </tr>
+                                                        {foreach $uploadsDocsYaDisk as $upload}
+                                                            <tr>
+                                                                <td>{$upload->updated}</td>
+                                                                <td>{if $upload->pak == 'first_pak'}Первая подпись клиента{else}Заключение договора{/if}</td>
+                                                                <td>{if $upload->is_complited == 1}Успешно{else}Не успешно{/if}</td>
+                                                            </tr>
+                                                        {/foreach}
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -4606,7 +4669,8 @@
                             </div>
                             <div class="form-group">
                                 <label>Паспорт: Дата выдачи</label>
-                                <input name="passport_date" value="{$order->passport_date|date}" class="form-control mask_number"/>
+                                <input name="passport_date" value="{$order->passport_date|date}"
+                                       class="form-control mask_number"/>
                             </div>
                             <div class="form-group">
                                 <label>Паспорт: Код подразделения</label>
@@ -4698,7 +4762,6 @@
             </div>
         </div>
     </div>
-
     <div id="pdnModal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
          aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-lg">
@@ -4724,7 +4787,8 @@
                             </div>
                             <div class="form-group" style="width: 350px">
                                 <label>Количество иждивенцев</label>
-                                <input type="text" name="dependents" class="form-control" placeholder="необязательно" value="{$order->dependents}">
+                                <input type="text" name="dependents" class="form-control" placeholder="необязательно"
+                                       value="{$order->dependents}">
                             </div>
                         </div>
                         <label>Используемые банковские карты:</label>

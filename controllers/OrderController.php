@@ -312,6 +312,15 @@ class OrderController extends Controller
 
                     $client_status = 'Повтор';
 
+                    $uploadsLoanOnec = ExchangeCronORM::where('orderId', $order->order_id)->get();
+                    $this->design->assign('uploadsLoanOnec', $uploadsLoanOnec);
+
+                    $uploadsPaymentOnec = SendPaymentCronORM::where('order_id', $order->order_id)->get();
+                    $this->design->assign('uploadsPaymentOnec', $uploadsPaymentOnec);
+
+                    $uploadsDocsYaDisk = YaDiskCronORM::where('order_id', $order->order_id)->get();
+                    $this->design->assign('uploadsDocsYaDisk', $uploadsDocsYaDisk);
+
                     if (count($old_orders) > 1) {
                         foreach ($old_orders as $old_order) {
                             if (in_array($old_order->status, [5, 7]))
@@ -3065,6 +3074,11 @@ class OrderController extends Controller
         $bank = $this->request->post('bank');
         $bik = $this->request->post('bik');
         $cor = $this->request->post('cor');
+        $comment = $this->request->post('comment');
+
+        if (empty($comment)) {
+            echo json_encode(['error' => 'Заполните комментарий']);
+        }
 
         $update =
             [
@@ -3107,6 +3121,8 @@ class OrderController extends Controller
             unset($newValues[$key]);
         }
 
+        $newValues['Причина'] = $comment;
+
         $this->changelogs->add_changelog(array(
             'manager_id' => $this->manager->id,
             'created' => date('Y-m-d H:i:s'),
@@ -3122,6 +3138,7 @@ class OrderController extends Controller
         DocumentsORM::where('order_id', $orderId)
             ->update(['params' => serialize($order)]);
 
+        echo json_encode(['success' => 1]);
         exit;
     }
 
@@ -3492,6 +3509,11 @@ class OrderController extends Controller
         $groupId = $this->request->post('group');
         $companyId = $this->request->post('company');
         $brancheId = $this->request->post('branch');
+        $comment = $this->request->post('comment');
+
+        if (empty($comment)) {
+            echo json_encode(['error' => 'Заполните комментарий']);
+        }
 
         $branche = BranchesORM::find($brancheId);
         $loanType = LoantypesORM::find($loanTypeId);
@@ -4503,6 +4525,7 @@ class OrderController extends Controller
         }
 
         $this->tickets->update_by_theme_id(12, ['status' => 4], $order_id);
+        $this->orders->update_order($order_id, ['status' => 5]);
 
         echo json_encode(['success' => 1]);
         exit;
