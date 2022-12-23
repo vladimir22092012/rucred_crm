@@ -62,33 +62,33 @@
                                 <table class="jsgrid-table table table-striped table-hover">
                                     <tr class="jsgrid-header-row">
                                         <th style="width: 100px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'id_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'id_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'id_asc'}<a href="{url page=null sort='id_desc'}">ID</a>
-                                            {else}<a href="{url page=null sort='id_asc'}">ID</a>{/if}
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'id asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'id desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'id asc'}<a href="{url page=null sort='id desc'}">ID</a>
+                                            {else}<a href="{url page=null sort='id asc'}">ID</a>{/if}
                                         </th>
                                         <th style="width: 100px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'date_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'date_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'date_asc'}<a href="{url page=null sort='date_desc'}">
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'begin_registration asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'begin_registration desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'begin_registration asc'}<a href="{url page=null sort='begin_registration desc'}">
                                                     Регистрация</a>
-                                            {else}<a href="{url page=null sort='date_asc'}">Регистрация</a>{/if}
+                                            {else}<a href="{url page=null sort='begin_registration asc'}">Регистрация</a>{/if}
                                         </th>
                                         <th style="width: 100px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'modified_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'modified_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'modified_asc'}<a href="{url page=null sort='modified_desc'}">
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'modified asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'modified desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'modified asc'}<a href="{url page=null sort='modified desc'}">
                                                     Посл.
                                                     действие</a>
-                                            {else}<a href="{url page=null sort='modified_asc'}">Посл. действие</a>{/if}
+                                            {else}<a href="{url page=null sort='modified asc'}">Посл. действие</a>{/if}
                                         </th>
                                         <th style="width: 200px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'fio_asc'}<a href="{url page=null sort='fio_desc'}">ФИО</a>
-                                            {else}<a href="{url page=null sort='fio_asc'}">ФИО</a>{/if}
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'lastname asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'lastname desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'lastname asc'}<a href="{url page=null sort='lastname desc'}">ФИО</a>
+                                            {else}<a href="{url page=null sort='lastname asc'}">ФИО</a>{/if}
                                         </th>
                                         <th style="width: 100px;"
-                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'phone_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'phone_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'phone_asc'}<a href="{url page=null sort='phone_desc'}">
+                                            class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'phone_mobile asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'phone_mobile desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'phone_mobile asc'}<a href="{url page=null sort='phone_mobile desc'}">
                                                     Телефон</a>
-                                            {else}<a href="{url page=null sort='phone_asc'}">Телефон</a>{/if}
+                                            {else}<a href="{url page=null sort='phone_mobile asc'}">Телефон</a>{/if}
                                         </th>
                                         <th style="width:280px" class="jsgrid-header-cell ">
                                             Этапы

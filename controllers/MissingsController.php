@@ -9,30 +9,36 @@ class MissingsController extends Controller
     {
         $status = $this->request->get('status');
         $page = $this->request->get('page');
+        $sort = $this->request->get('sort');
+
+        if(empty($sort))
+            $sort = 'modified desc';
 
         switch ($status) {
 
             case 2:
-                $this->getUnreable($page);
+                $this->getUnreable($sort, $page);
                 break;
 
             case 3:
-                $this->getUsersToUnder($page);
+                $this->getUsersToUnder($sort, $page);
                 break;
 
             default:
-                $this->getReable($page);
+                $this->getReable($sort, $page);
                 break;
         }
 
         return $this->design->fetch('missings.tpl');
     }
 
-    private function getUnreable($page = 1)
+    private function getUnreable($sort, $page = 1)
     {
         $items_per_page = 20;
 
         $limit = ($page - 1) * $items_per_page;
+
+        $sorting = explode(' ', $sort);
 
         $current_page = $this->request->get('page', 'integer');
         $current_page = max(1, $current_page);
@@ -43,9 +49,16 @@ class MissingsController extends Controller
             ->where('unreability', 0)
             ->get()->count();
 
-        $clients = OrdersORM::with('user')
-            ->where('status', 12)
-            ->where('unreability', 1)
+        if(in_array($sorting[0], ['lastname', 'phone_mobile']))
+            $modifier = 's_users.';
+        else
+            $modifier = 's_orders.';
+
+        $clients = OrdersORM::select('s_orders.*')
+            ->join('s_users', 's_orders.user_id', '=', 's_users.id')
+            ->where('s_orders.status', 12)
+            ->where('s_orders.unreability', 1)
+            ->orderBy($modifier.$sorting[0], $sorting[1])
             ->offset($limit)
             ->limit($items_per_page)
             ->get();
@@ -55,15 +68,17 @@ class MissingsController extends Controller
         $pages_num = ceil($clients_count / $items_per_page);
         $this->design->assign('total_pages_num', $pages_num);
         $this->design->assign('total_orders_count', $clients_count);
-
+        $this->design->assign('sort', $sort);
         $this->design->assign('clients', $clients);
     }
 
-    private function getReable($page = 1)
+    private function getReable($sort, $page = 1)
     {
         $items_per_page = 20;
 
         $limit = ($page - 1) * $items_per_page;
+
+        $sorting = explode(' ', $sort);
 
         $stageFilter = $this->request->get('stage', 'integer');
         $current_page = $this->request->get('page', 'integer');
@@ -79,9 +94,16 @@ class MissingsController extends Controller
         $filter['limit'] = $items_per_page;
         $filter['stage_filter'] = $stageFilter;
 
-        $clients = OrdersORM::with('user')
-            ->where('status', 12)
-            ->where('unreability', 0)
+        if(in_array($sorting[0], ['lastname', 'phone_mobile']))
+            $modifier = 's_users.';
+        else
+            $modifier = 's_orders.';
+
+        $clients = OrdersORM::select('s_orders.*')
+            ->join('s_users', 's_orders.user_id', '=', 's_users.id')
+            ->where('s_orders.status', 12)
+            ->where('s_orders.unreability', 0)
+            ->orderBy($modifier.$sorting[0], $sorting[1])
             ->offset($limit)
             ->limit($items_per_page)
             ->get();
@@ -91,15 +113,17 @@ class MissingsController extends Controller
         $pages_num = ceil($clients_count / $items_per_page);
         $this->design->assign('total_pages_num', $pages_num);
         $this->design->assign('total_orders_count', $clients_count);
-
+        $this->design->assign('sort', $sort);
         $this->design->assign('clients', $clients);
     }
 
-    private function getUsersToUnder($page = 1)
+    private function getUsersToUnder($sort, $page = 1)
     {
         $items_per_page = 20;
 
         $limit = ($page - 1) * $items_per_page;
+
+        $sorting = explode(' ', $sort);
 
         $stageFilter = $this->request->get('stage', 'integer');
         $current_page = $this->request->get('page', 'integer');
@@ -115,9 +139,16 @@ class MissingsController extends Controller
         $filter['limit'] = $items_per_page;
         $filter['stage_filter'] = $stageFilter;
 
-        $clients = OrdersORM::with('user')
-            ->where('status', '>=', 0)
-            ->where('unreability', 0)
+        if(in_array($sorting[0], ['lastname', 'phone_mobile']))
+            $modifier = 's_users.';
+        else
+            $modifier = 's_orders.';
+
+        $clients = OrdersORM::select('s_orders.*')
+            ->join('s_users', 's_orders.user_id', '=', 's_users.id')
+            ->where('s_orders.status', '>=', 0)
+            ->where('s_orders.unreability', 0)
+            ->orderBy($modifier.$sorting[0], $sorting[1])
             ->offset($limit)
             ->limit($items_per_page)
             ->get();
@@ -127,6 +158,7 @@ class MissingsController extends Controller
         $pages_num = ceil($clients_count / $items_per_page);
         $this->design->assign('total_pages_num', $pages_num);
         $this->design->assign('total_orders_count', $clients_count);
+        $this->design->assign('sort', $sort);
 
         $this->design->assign('clients', $clients);
     }
