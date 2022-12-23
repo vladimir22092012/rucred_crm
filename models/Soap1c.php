@@ -59,11 +59,15 @@ class Soap1c extends Core
 
             $item = new StdClass();
 
+            $startDate = new DateTime(date('Y-m-d', strtotime($order->probably_start_date)));
+            $endDate = new DateTime(date('Y-m-d', strtotime($order->probably_end_date)));
+            $period = date_diff($startDate, $endDate)->days;
+
             $item->ID = (string)$contract->id;
             $item->НомерДоговора = $contract->number;
             $item->Дата = date('YmdHis', strtotime($order->probably_start_date));
             $item->ДатаЗаявки = date('YmdHis', strtotime($order->date));
-            $item->Срок = $order->period;
+            $item->Срок = $period;
             $item->Периодичность = 'День';
             $item->ПроцентнаяСтавка = $order->percent;
             $item->ИдентификаторФормыВыдачи = 'Безналичная';
