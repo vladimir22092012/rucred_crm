@@ -42,19 +42,21 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Отвалы клиентов</h4>
-                            <div class="clearfix">
-                                <div class="js-filter-status mb-2 float-left">
-                                    <a href="{if $filter_status=='0'}{url status=null page=null}{else}{url status='0' page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status=='0'}btn-success{else}btn-outline-success{/if}">Реанимируемый</a>
-                                    <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 stage=null page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status==1}btn-danger{else}btn-outline-danger{/if}">Не реанимируемый</a>
-                                    <a href="{if $filter_status==2}{url status=null page=null}{else}{url status=2 stage=null page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status==2}btn-primary{else}btn-outline-primary{/if}">У Андерайтера</a>
-                                    {if $filter_status}
-                                        <input type="hidden" value="{$filter_status}" id="filter_status"/>
-                                    {/if}
-                                </div>
+                        <div class="clearfix">
+                            <div class="js-filter-status mb-2 float-left">
+                                <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 page=null}{/if}"
+                                   class="btn btn-xs {if $filter_status==1}btn-success{else}btn-outline-success{/if}">Реанимируемый</a>
+                                <a href="{if $filter_status==2}{url status=null page=null}{else}{url status=2 stage=null page=null}{/if}"
+                                   class="btn btn-xs {if $filter_status==2}btn-danger{else}btn-outline-danger{/if}">Не
+                                    реанимируемый</a>
+                                <a href="{if $filter_status==3}{url status=null page=null}{else}{url status=3 stage=null page=null}{/if}"
+                                   class="btn btn-xs {if $filter_status==3}btn-primary{else}btn-outline-primary{/if}">У
+                                    Андерайтера</a>
+                                {if $filter_status}
+                                    <input type="hidden" value="{$filter_status}" id="filter_status"/>
+                                {/if}
                             </div>
+                        </div>
                         <div id="basicgrid" class="jsgrid" style="position: relative; width: 100%;">
                             <div class="jsgrid-grid-header jsgrid-header-scrollbar">
                                 <table class="jsgrid-table table table-striped table-hover">
@@ -72,8 +74,9 @@
                                         </th>
                                         <th style="width: 100px;"
                                             class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'modified_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'modified_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'modified_asc'}<a href="{url page=null sort='modified_desc'}">Посл.
-                                                действие</a>
+                                            {if $sort == 'modified_asc'}<a href="{url page=null sort='modified_desc'}">
+                                                    Посл.
+                                                    действие</a>
                                             {else}<a href="{url page=null sort='modified_asc'}">Посл. действие</a>{/if}
                                         </th>
                                         <th style="width: 200px;"
@@ -123,25 +126,25 @@
                                     {foreach $clients as $client}
                                         <tr class="jsgrid-row">
                                             <td style="width: 100px;" class="jsgrid-cell jsgrid-align-right">
-                                                <a href="neworder/draft/{$client->order->id}">{$client->order->id}</a>
+                                                <a href="neworder/draft/{$client->id}">{$client->id}</a>
                                             </td>
                                             <td style="width: 100px;" class="jsgrid-cell">
-                                                <span>{$client->created|date}</span>
-                                                {$client->created|time}
+                                                <span>{$client->date|date}</span>
+                                                {$client->date|time}
                                             </td>
                                             <td style="width: 100px;" class="jsgrid-cell">
-                                                <span>{$client->order->updated|date}</span>
-                                                {$client->order->updated|time}
+                                                <span>{$client->updated|date}</span>
+                                                {$client->updated|time}
                                             </td>
                                             <td style="width: 200px;" class="jsgrid-cell">
-                                                {$client->lastname|escape}
-                                                {$client->firstname|escape}
-                                                {$client->patronymic|escape}<br>
-                                                {if is_null($client->order) || $client->order->unreability == 1}
+                                                {$client->user->lastname|escape}
+                                                {$client->user->firstname|escape}
+                                                {$client->user->patronymic|escape}<br>
+                                                {if $filter_status == 2}
                                                     <span class="badge badge-danger">Не реанимируемый</span>
-                                                {elseif $client->order->unreability == 0 && $client->stage_registration >= 8 }
+                                                {elseif $filter_status == 3}
                                                     <span class="badge badge-primary">У андеррайтера</span>
-                                                {elseif $client->order->unreability == 0}
+                                                {else}
                                                     <span class="badge badge-success">Реанимируемый</span>
                                                 {/if}
                                             </td>
@@ -150,13 +153,13 @@
                                             </td>
                                             <td style="width: 280px;" class="jsgrid-cell">
                                                 <span class="label label-success">Телефон</span>
-                                                <span class="label {if $client->stage_registration > 1}label-success{else}label-inverse{/if}">Анкета</span>
-                                                <span class="label {if $client->stage_registration > 2}label-success{else}label-inverse{/if}">Контакты</span>
-                                                <span class="label {if $client->stage_registration > 3}label-success{else}label-inverse{/if}">Работодатель</span><br>
-                                                <span class="label {if $client->stage_registration > 4}label-success{else}label-inverse{/if}">Реквизиты</span>
-                                                <span class="label {if $client->stage_registration > 5}label-success{else}label-inverse{/if}">Профсоюз</span>
-                                                <span class="label {if $client->stage_registration > 6}label-success{else}label-inverse{/if}">Фото</span>
-                                                <span class="label {if $client->stage_registration > 7}label-success{else}label-inverse{/if}">Подписание</span>
+                                                <span class="label {if $client->user->stage_registration > 1}label-success{else}label-inverse{/if}">Анкета</span>
+                                                <span class="label {if $client->user->stage_registration > 2}label-success{else}label-inverse{/if}">Контакты</span>
+                                                <span class="label {if $client->user->stage_registration > 3}label-success{else}label-inverse{/if}">Работодатель</span><br>
+                                                <span class="label {if $client->user->stage_registration > 4}label-success{else}label-inverse{/if}">Реквизиты</span>
+                                                <span class="label {if $client->user->stage_registration > 5}label-success{else}label-inverse{/if}">Профсоюз</span>
+                                                <span class="label {if $client->user->stage_registration > 6}label-success{else}label-inverse{/if}">Фото</span>
+                                                <span class="label {if $client->user->stage_registration > 7}label-success{else}label-inverse{/if}">Подписание</span>
                                             </td>
                                         </tr>
                                     {/foreach}
