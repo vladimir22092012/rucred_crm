@@ -149,7 +149,7 @@
                                                 {/if}
                                             </td>
                                             <td style="width: 100px;" class="jsgrid-cell">
-                                                {$client->phone_mobile|escape}
+                                                {$client->user->phone_mobile|escape}
                                             </td>
                                             <td style="width: 280px;" class="jsgrid-cell">
                                                 <span class="label label-success">Телефон</span>
