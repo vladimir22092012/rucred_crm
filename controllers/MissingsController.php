@@ -132,6 +132,7 @@ class MissingsController extends Controller
 
         $clients_count = OrdersORM::with('user')
             ->where('status', '>=', 0)
+            ->where('s_orders.status', '!=', 12)
             ->where('unreability', 0)
             ->get()->count();
 
@@ -147,6 +148,7 @@ class MissingsController extends Controller
         $clients = OrdersORM::select('s_orders.*')
             ->join('s_users', 's_orders.user_id', '=', 's_users.id')
             ->where('s_orders.status', '>=', 0)
+            ->where('s_orders.status', '!=', 12)
             ->where('s_orders.unreability', 0)
             ->orderBy($modifier.$sorting[0], $sorting[1])
             ->offset($limit)
