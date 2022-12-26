@@ -29,6 +29,7 @@ class ArchiveOrdersCron extends Core
 
             if ($orderCreationDate->diff(now())->days >= 2) {
                 $this->Orders->update_order($order->order_id, ['is_archived' => true]);
+                UsersORM::where('id', $order->user_id)->update(['stage_registration' => 1]);
             }
         }
     }
