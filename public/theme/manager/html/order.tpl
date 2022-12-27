@@ -819,7 +819,7 @@
                         order_id: order_id
                     },
                     success: function () {
-
+                        location.reload();
                     }
                 })
             });
