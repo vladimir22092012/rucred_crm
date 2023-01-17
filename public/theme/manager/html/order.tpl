@@ -177,46 +177,33 @@
             $('.edit_requisites').on('click', function (e) {
                 e.preventDefault();
 
-                let fio_hold_front = $('.fio-hold-front').text();
-                let acc_num_front = $('.acc-num-front').text();
-                let bank_name_front = $('.bank-name-front').text();
-                let bik_front_name = $('.bik-front-name').text();
-                let cor_account = $('.cor-account').text();
-
                 $('#edit_requisites_modal').modal();
-
-
-                $('.fio-hold-edit').val(fio_hold_front);
-                $('.acc-num-edit').val(acc_num_front);
-                $('.bank-name-edit').val(bank_name_front);
-                $('.bik-edit').val(bik_front_name);
-                $('.cor-acc').val(cor_account);
-
-                $('.save_req').on('click', function () {
-                    e.preventDefault();
-
-                    var $form = $(this).closest('form');
-
-                    $.ajax({
-                        method: 'POST',
-                        dataType: 'JSON',
-                        data: $form.serialize(),
-                        success: function (resp) {
-
-                            if (resp['error']) {
-                                Swal.fire({
-                                    title: resp['error'],
-                                    confirmButtonText: 'ОК'
-                                });
-                            }
-
-                            if (resp['success']) {
-                                location.reload();
-                            }
-                        }
-                    });
-                })
             });
+
+            $('.save_req').on('click', function () {
+                e.preventDefault();
+
+                var $form = $(this).closest('form');
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: $form.serialize(),
+                    success: function (resp) {
+
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+
+                        if (resp['success']) {
+                            location.reload();
+                        }
+                    }
+                });
+            })
 
             $('.snils-edit').on('click', function (e) {
                 e.preventDefault();

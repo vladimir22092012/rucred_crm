@@ -40,7 +40,7 @@
 <table border="1" cellpadding="5">
     <tr>
         <td style="width: 30%">Получатель:</td>
-        <td style="width: 70%"><strong>{$requisite->holder}</strong></td>
+        <td style="width: 70%"><strong>{$requisite->holder|upper}</strong></td>
     </tr>
     <tr>
         <td style="width: 30%">Р/с получателя</td>
