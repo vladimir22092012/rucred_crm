@@ -3547,6 +3547,7 @@
                                                 </div>
                                             {/if}
                                         </form>
+                                        {if $manager->role != 'employer'}
                                         <form class="mb-4 border">
                                             <h6 class="card-header text-white">
                                                 <span>ПДН</span>
@@ -3567,6 +3568,7 @@
                                                 </div>
                                             </div>
                                         </form>
+                                        {/if}
                                     </div>
                                 </div>
                                 <!-- -->

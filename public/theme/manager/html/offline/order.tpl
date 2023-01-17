@@ -1305,6 +1305,82 @@
                     }
                 });
             });
+
+            $('.editPdn').on('click', function () {
+                $('#pdnModal').modal();
+            });
+
+            $('.add_to_credits_table').on('click', function (e) {
+                e.preventDefault();
+
+                let html = $(
+                    '<tr>' +
+                    '<td><input class="form-control bank_validate" name="credits_bank_name[][credits_bank_name]" type="text" value=""></td>' +
+                    '<td><input class="form-control mask_number" name="credits_rest_sum[][credits_rest_sum]" type="text" value=""></td>' +
+                    '<td><input class="form-control mask_number" name="credits_month_pay[][credits_month_pay]" type="text" value=""></td>' +
+                    '<td><input class="form-control validity_period" name="credits_return_date[][credits_return_date]" type="text" value=""></td>' +
+                    '<td><input class="form-control credit_procents" name="credits_percents[][credits_percents]" type="text" value=""></td>' +
+                    '<td><select class="form-control" name="credits_delay[][credits_delay]"><option value="Да">Да</option>' +
+                    '<option value="Нет" selected>Нет</option></select></td>' +
+                    '<td><div class="btn btn-outline-danger delete_credit">-</div></td>' +
+                    '</tr>'
+                );
+
+                $('#credits_table').append(html);
+
+                $('.validity_period').click(function () {
+                    $(this).setCursorPosition(0);
+                }).mask('99/99');
+            });
+
+            $('.add_to_cards_table').on('click', function (e) {
+                e.preventDefault();
+
+                $('#cards_table').append(
+                    '<tr>' +
+                    '<td><input class="form-control bank_validate" name="cards_bank_name[][cards_bank_name]" type="text" value=""></td>' +
+                    '<td><input class="form-control mask_number" name="cards_limit[][cards_limit]" type="text" value=""></td>' +
+                    '<td><input class="form-control mask_number" name="cards_rest_sum[][cards_rest_sum]" type="text" value=""></td>' +
+                    '<td><input class="form-control validity_period" name="cards_validity_period[][cards_validity_period]" type="text" value=""></td>' +
+                    '<td><select class="form-control" name="cards_delay[][cards_delay]"><option value="Да">Да</option>' +
+                    '<option value="Нет" selected>Нет</option></select></td>' +
+                    '<td><div class="btn btn-outline-danger delete_card">-</div></td>' +
+                    '</tr>');
+
+                $('.validity_period').click(function () {
+                    $(this).setCursorPosition(0);
+                }).mask('99/99');
+            });
+
+            $(document).on('click', '.delete_credit, .delete_card', function () {
+                $(this).closest('tr').remove();
+            });
+
+            $('.savePdn').on('click', function () {
+                let form = $(this).closest('form').serialize();
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: form,
+                    success: function (resp) {
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+                        if (resp['success']) {
+                            Swal.fire({
+                                title: 'Успешно!',
+                                confirmButtonText: 'ОК'
+                            });
+
+                            location.reload();
+                        }
+                    }
+                });
+            });
         });
     </script>
     <script>
@@ -3865,6 +3941,13 @@
                                             <form class="mb-4 border">
                                                 <h6 class="card-header text-white">
                                                     <span>ПДН</span>
+                                                    {if $order->status == 0}
+                                                        <span class="float-right editPdn">
+                                                    <a href="javascript:void(0);"
+                                                       class="text-white"
+                                                       data-user="{$order->user_id}">
+                                                        <i class="fas fa-edit"></i></a></span>
+                                                    {/if}
                                                 </h6>
                                                 <div class="row view-block p-2 snils-front">
                                                     <div class="col-md-12">
@@ -4971,8 +5054,8 @@
                             <div class="form-group">
                                 <label>Состоит в профсоюзе:</label>
                                 <select name="profunion" class="form-control">
-                                    <option value="0">Нет</option>
-                                    <option value="1">Да</option>
+                                    <option value="0" {if $order->profunion == 0}selected{/if}>Нет</option>
+                                    <option value="1" {if $order->profunion == 1}selected{/if}>Да</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -5126,6 +5209,199 @@
                         <div>
                             <input type="button" class="btn btn-danger cancel" data-dismiss="modal" value="Отмена">
                             <input type="button" class="btn btn-success float-right save_fio" value="Сохранить">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="pdnModal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Пересчет ПДН</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="alert" style="display:none"></div>
+                    <form id="pdnModalForm">
+                        <input type="hidden" name="action" value="editPdn">
+                        <input type="hidden" name="order_id" value="{$order->order_id}">
+                        <div class="form-group" style="display:flex; justify-content: space-between">
+                            <div class="form-group" style="width: 350px">
+                                <label>Среднемесячный доход руб.</label>
+                                <input type="text" name="in" class="form-control" value="{$order->income}">
+                            </div>
+                            <div class="form-group" style="width: 350px">
+                                <label>Среднемесячные расходы руб.</label>
+                                <input type="text" name="out" class="form-control" value="{$order->expenses}">
+                            </div>
+                            <div class="form-group" style="width: 350px">
+                                <label>Количество иждивенцев</label>
+                                <input type="text" name="dependents" class="form-control" placeholder="необязательно"
+                                       value="{$order->dependents}">
+                            </div>
+                        </div>
+                        <label>Используемые банковские карты:</label>
+                        <div class="form-group" style="display: flex">
+                            <table class="jsgrid-table table table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Банк / МФО</th>
+                                    <th>Лимит по банковской карте, руб.</th>
+                                    <th>Текущая задолженность, руб.</th>
+                                    <th>Срок действия карты, месяц и год</th>
+                                    <th>Наличие просрочек</th>
+                                    <th><input type="button"
+                                               class="btn btn-outline-success add_to_cards_table"
+                                               value="+"></th>
+                                </tr>
+                                </thead>
+                                <tbody id="cards_table">
+                                {if !empty($order->cards_story)}
+                                    {foreach json_decode($order->cards_story) as $cards_story}
+                                        <tr>
+                                            <td><input class="form-control bank_validate"
+                                                       name="cards_bank_name[][cards_bank_name]" type="text"
+                                                       value="{$cards_story->cards_bank_name}"></td>
+                                            <td><input class="form-control mask_number"
+                                                       name="cards_limit[][cards_limit]"
+                                                       type="text"
+                                                       value="{$cards_story->cards_limit}"></td>
+                                            <td><input class="form-control mask_number"
+                                                       name="cards_rest_sum[][cards_rest_sum]"
+                                                       type="text"
+                                                       value="{$cards_story->cards_rest_sum}"></td>
+                                            <td><input class="form-control validity_period"
+                                                       name="cards_validity_period[][cards_validity_period]"
+                                                       type="text"
+                                                       value="{$cards_story->cards_validity_period}"></td>
+                                            <td><select class="form-control"
+                                                        name="cards_delay[][cards_delay]">
+                                                    <option value="Да">Да</option>
+                                                    <option value="Нет" selected>Нет</option>
+                                                </select
+                                            </td>
+                                            <td>
+                                                <div class="btn btn-outline-danger delete_card">-</div>
+                                            </td>
+                                        </tr>
+                                    {/foreach}
+                                {else}
+                                    <tr>
+                                        <td><input class="form-control bank_validate"
+                                                   name="cards_bank_name[][cards_bank_name]" type="text"
+                                                   value=""></td>
+                                        <td><input class="form-control mask_number"
+                                                   name="cards_limit[][cards_limit]"
+                                                   type="text"
+                                                   value=""></td>
+                                        <td><input class="form-control mask_number"
+                                                   name="cards_rest_sum[][cards_rest_sum]"
+                                                   type="text"
+                                                   value=""></td>
+                                        <td><input class="form-control validity_period"
+                                                   name="cards_validity_period[][cards_validity_period]"
+                                                   type="text" value=""></td>
+                                        <td><select class="form-control" name="cards_delay[][cards_delay]">
+                                                <option value="Да">Да</option>
+                                                <option value="Нет" selected>Нет</option>
+                                            </select
+                                        </td>
+                                        <td>
+                                            <div class="btn btn-outline-danger delete_card">-</div>
+                                        </td>
+                                    </tr>
+                                {/if}
+                                </tbody>
+                            </table>
+                        </div>
+                        <label>Текущие банковские кредиты и займы:</label>
+                        <div class="form-group" style="display: flex">
+                            <table class="jsgrid-table table table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Банк / МФО</th>
+                                    <th>Текущий долг, руб.</th>
+                                    <th>Ежемесячный платеж, руб.</th>
+                                    <th>Срок погашения, месяц и год</th>
+                                    <th>Ставка, % годовых</th>
+                                    <th>Наличие просрочек</th>
+                                    <th><input type="button"
+                                               class="btn btn-outline-success add_to_credits_table"
+                                               value="+"></th>
+                                </tr>
+                                </thead>
+                                <tbody id="credits_table">
+                                {if !empty($order->credits_story)}
+                                    {foreach json_decode($order->credits_story) as $credits_story}
+                                        <tr>
+                                            <td><input class="form-control bank_validate"
+                                                       name="credits_bank_name[][credits_bank_name]"
+                                                       type="text"
+                                                       value="{$credits_story->credits_bank_name}"></td>
+                                            <td><input class="form-control mask_number"
+                                                       name="credits_rest_sum[][credits_rest_sum]"
+                                                       type="text"
+                                                       value="{$credits_story->credits_rest_sum}"></td>
+                                            <td><input class="form-control mask_number"
+                                                       name="credits_month_pay[][credits_month_pay]"
+                                                       type="text"
+                                                       value="{$credits_story->credits_month_pay}"></td>
+                                            <td><input class="form-control validity_period"
+                                                       name="credits_return_date[][credits_return_date]"
+                                                       type="text"
+                                                       value="{$credits_story->credits_return_date}"></td>
+                                            <td><input class="form-control credit_procents"
+                                                       name="credits_percents[][credits_percents]"
+                                                       type="text"
+                                                       value="{$credits_story->credits_percents}"></td>
+                                            <td><select class="form-control"
+                                                        name="credits_delay[][credits_delay]">
+                                                    <option value="Да">Да</option>
+                                                    <option value="Нет" selected>Нет</option>
+                                                </select></td>
+                                            <td>
+                                                <div class="btn btn-outline-danger delete_credit">-</div>
+                                            </td>
+                                        </tr>
+                                    {/foreach}
+                                {else}
+                                    <tr>
+                                        <td><input class="form-control bank_validate"
+                                                   name="credits_bank_name[][credits_bank_name]" type="text"
+                                                   value=""></td>
+                                        <td><input class="form-control mask_number"
+                                                   name="credits_rest_sum[][credits_rest_sum]" type="text"
+                                                   value=""></td>
+                                        <td><input class="form-control mask_number"
+                                                   name="credits_month_pay[][credits_month_pay]" type="text"
+                                                   value=""></td>
+                                        <td><input class="form-control validity_period"
+                                                   name="credits_return_date[][credits_return_date]"
+                                                   type="text"
+                                                   value=""></td>
+                                        <td><input class="form-control credit_procents"
+                                                   name="credits_percents[][credits_percents]" type="text"
+                                                   value=""></td>
+                                        <td><select class="form-control"
+                                                    name="credits_delay[][credits_delay]">
+                                                <option value="Да">Да</option>
+                                                <option value="Нет" selected>Нет</option>
+                                            </select></td>
+                                        <td>
+                                            <div class="btn btn-outline-danger delete_credit">-</div>
+                                        </td>
+                                    </tr>
+                                {/if}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <input type="button" class="btn btn-danger cancel" data-dismiss="modal" value="Отмена">
+                            <input type="button" class="btn btn-success float-right savePdn" value="Сохранить">
                         </div>
                     </form>
                 </div>
