@@ -3407,7 +3407,11 @@ class OfflineOrderController extends Controller
         if ($start_date > $paydate || date_diff($paydate, $start_date)->days <= $loan->free_period)
             $paydate->add(new DateInterval('P1M'));
 
-        $percent_per_month = (($order['percent'] / 100) * 365) / 12;
+        if ($loan->id == 1)
+            $percent_per_month = (($order['percent'] / 100) * 360) / 12;
+        else
+            $percent_per_month = (($order['percent'] / 100) * 365) / 12;
+
         $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
         $annoouitet_pay = round($annoouitet_pay, '2');
 
