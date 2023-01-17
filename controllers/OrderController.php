@@ -3549,7 +3549,8 @@ class OrderController extends Controller
             [
                 'group_id' => $groupId,
                 'company_id' => $companyId,
-                'branche_id' => $brancheId
+                'branche_id' => $brancheId,
+                'profunion' => $profUnion
             ];
 
         OrdersORM::where('id', $orderId)->update($order);
