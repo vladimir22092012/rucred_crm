@@ -4499,27 +4499,27 @@
                             <div class="form-group">
                                 <label>ФИО держателя счета:</label>
                                 <input type="text" name="hold"
-                                       class="form-control fio-hold-edit fioValidate"/>
+                                       class="form-control fio-hold-edit fioValidate" value="{$order->requisite->holder}"/>
                             </div>
                             <div class="form-group">
                                 <label>Номер счета:</label>
                                 <input type="text" name="acc"
-                                       class="form-control acc-num-edit mask_number"/>
+                                       class="form-control acc-num-edit mask_number" value="{$order->requisite->number}"/>
                             </div>
                             <div class="form-group">
                                 <label>Наименование банка:</label>
                                 <input type="text" name="bank"
-                                       class="form-control bank-name-edit"/>
+                                       class="form-control bank-name-edit" value="{$order->requisite->name}"/>
                             </div>
                             <div class="form-group">
                                 <label>БИК:</label>
                                 <input type="text" name="bik"
-                                       class="form-control bik-edit mask_number"/>
+                                       class="form-control bik-edit mask_number" value="{$order->requisite->bik}"/>
                             </div>
                             <div class="form-group">
                                 <label>Кор. счет:</label>
                                 <input type="text" name="cor"
-                                       class="form-control cor-acc mask_number"/>
+                                       class="form-control cor-acc mask_number" value="{$order->requisite->correspondent_acc}"/>
                             </div>
                             <div class="form-group">
                                 <label>Причина редактирования</label>
