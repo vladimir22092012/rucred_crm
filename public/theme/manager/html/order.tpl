@@ -4568,8 +4568,8 @@
                             <div class="form-group">
                                 <label>Состоит в профсоюзе:</label>
                                 <select name="profunion" class="form-control">
-                                    <option value="0">Нет</option>
-                                    <option value="1">Да</option>
+                                    <option value="0" {if $order->profunion == 0}selected{/if}>Нет</option>
+                                    <option value="1" {if $order->profunion == 1}selected{/if}>Да</option>
                                 </select>
                             </div>
                             <div class="form-group">

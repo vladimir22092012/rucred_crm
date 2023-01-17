@@ -168,7 +168,7 @@
     </tr>
     <br>
     <tr>
-        <td style="width: 45%">ОГРН 121770033532</td>
+        <td style="width: 45%">ОГРН 1217700334532</td>
         <td style="width: 10%"></td>
         <td style="width: 45%"><u>фактический адрес проживания</u><br>{$faktadress->adressfull}
         </td>
