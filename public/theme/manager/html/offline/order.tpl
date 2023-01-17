@@ -5266,8 +5266,8 @@
                                                        value="{$cards_story->cards_validity_period}"></td>
                                             <td><select class="form-control"
                                                         name="cards_delay[][cards_delay]">
-                                                    <option value="Да">Да</option>
-                                                    <option value="Нет" selected>Нет</option>
+                                                    <option value="Да" {if $cards_story->cards_delay == 'Да'}selected{/if}>Да</option>
+                                                    <option value="Нет" {if $cards_story->cards_delay == 'Нет'}selected{/if}>Нет</option>
                                                 </select
                                             </td>
                                             <td>
@@ -5346,8 +5346,8 @@
                                                        value="{$credits_story->credits_percents}"></td>
                                             <td><select class="form-control"
                                                         name="credits_delay[][credits_delay]">
-                                                    <option value="Да">Да</option>
-                                                    <option value="Нет" selected>Нет</option>
+                                                    <option value="Да" {if $credits_story->cards_delay == 'Да'}selected{/if}>Да</option>
+                                                    <option value="Нет" {if $credits_story->cards_delay == 'Нет'}selected{/if}>Нет</option>
                                                 </select></td>
                                             <td>
                                                 <div class="btn btn-outline-danger delete_credit">-</div>
