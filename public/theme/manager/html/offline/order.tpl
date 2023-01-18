@@ -3115,7 +3115,7 @@
                                                             иностранным публичным должностным лицом:</label>
                                                         <div class="col-md-2">
                                                             <p class="form-control-static">
-                                                                {if $order->foreign_flag == 1}
+                                                                {if in_array($order->foreign_flag, [0,1])}
                                                                     Не является
                                                                 {elseif $order->foreign_flag == 2}
                                                                     Является
@@ -3131,7 +3131,7 @@
                                                             лица:</label>
                                                         <div class="col-md-2">
                                                             <p class="form-control-static">
-                                                                {if $order->foreign_husb_wife == 1}
+                                                                {if in_array($order->foreign_husb_wife, [0,1])}
                                                                     Не является
                                                                 {elseif $order->foreign_husb_wife == 2}
                                                                     Является
@@ -3160,7 +3160,7 @@
                                                             лица:</label>
                                                         <div class="col-md-2">
                                                             <p class="form-control-static">
-                                                                {if $order->foreign_relative == 1}
+                                                                {if in_array($order->foreign_relative, [0,1])}
                                                                     Не является
                                                                 {elseif $order->foreign_relative == 2}
                                                                     Является
