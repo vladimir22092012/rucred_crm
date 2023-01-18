@@ -1156,9 +1156,9 @@ class OfflineOrderController extends Controller
         //отправляем заявку в 1с через крон
         $insert =
             [
-                'orderId'       => $order_id,
-                'userId'        => $order->user_id,
-                'contractId'    => $order->contract_id
+                'orderId' => $order_id,
+                'userId' => $order->user_id,
+                'contractId' => $order->contract_id
             ];
 
         ExchangeCronORM::insert($insert);
@@ -3428,12 +3428,20 @@ class OfflineOrderController extends Controller
             $paydate->add(new DateInterval('P1M'));
             $iteration++;
         } elseif (date_diff($paydate, $start_date)->days >= $loan->min_period && date_diff($paydate, $start_date)->days < $count_days_this_month) {
-            $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($paydate, $start_date)->days);
-            $sum_pay = $annoouitet_pay - round($minus_percents, 2);
-            $loan_percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
-            $loan_percents_pay = round($loan_percents_pay, 2, PHP_ROUND_HALF_DOWN);
-            $body_pay = $sum_pay - $loan_percents_pay;
-            $iteration++;
+
+            if ($loan->id == 1) {
+                $loan_percents_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days;
+                $body_pay = $order['amount'];
+                $sum_pay = $loan_percents_pay + $body_pay;
+                $iteration++;
+            } else {
+                $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($paydate, $start_date)->days);
+                $sum_pay = $annoouitet_pay - round($minus_percents, 2);
+                $loan_percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
+                $loan_percents_pay = round($loan_percents_pay, 2, PHP_ROUND_HALF_DOWN);
+                $body_pay = $sum_pay - $loan_percents_pay;
+                $iteration++;
+            }
         } elseif (date_diff($paydate, $start_date)->days >= $count_days_this_month) {
             $sum_pay = $annoouitet_pay;
             $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
@@ -3453,6 +3461,8 @@ class OfflineOrderController extends Controller
                 'comission_pay' => 0.00,
                 'rest_pay' => $rest_sum -= $body_pay
             ];
+        $probablyReturnDate = $paydate->format('d.m.Y');
+
         $paydate->add(new DateInterval('P1M'));
 
         $period = $loan->max_period;
@@ -3471,10 +3481,10 @@ class OfflineOrderController extends Controller
                     $rest_sum = 0.00;
                 } elseif ($loan->id == 1) {
                     $loan_body_pay = $rest_sum;
-                    $loan_percents_pay = $order['amount'] * ($order['percent']/100) * date_diff($start_date, $date)->days - $loan_percents_pay;
+                    $loan_percents_pay = $order['amount'] * ($order['percent'] / 100) * date_diff($start_date, $date)->days - $loan_percents_pay;
                     $annoouitet_pay = $loan_body_pay + $loan_percents_pay;
                     $rest_sum = 0.00;
-                }else {
+                } else {
                     $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
                     $loan_body_pay = round($annoouitet_pay - $loan_percents_pay, 2);
                     $rest_sum = round($rest_sum - $loan_body_pay, 2);
@@ -4464,9 +4474,9 @@ class OfflineOrderController extends Controller
         //отправляем заявку в 1с через крон
         $insert =
             [
-                'orderId'       => $order_id,
-                'userId'        => $order->user_id,
-                'contractId'    => $order->contract_id
+                'orderId' => $order_id,
+                'userId' => $order->user_id,
+                'contractId' => $order->contract_id
             ];
 
         ExchangeCronORM::insert($insert);
@@ -4499,10 +4509,10 @@ class OfflineOrderController extends Controller
         $insert =
             [
                 'transaction_id' => $transaction_id,
-                'order_id'       => $order_id,
-                'user_id'        => $order->user_id,
-                'contract_id'    => $order->contract_id,
-                'requisites_id'  => $default_requisit->id
+                'order_id' => $order_id,
+                'user_id' => $order->user_id,
+                'contract_id' => $order->contract_id,
+                'requisites_id' => $default_requisit->id
             ];
 
         SendPaymentCronORM::insert($insert);
