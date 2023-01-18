@@ -71,18 +71,20 @@
 
                 $.ajax({
                     method: 'POST',
+                    dataType: 'JSON',
                     data: {
                         action: 'edit_phone_with_code',
                         phone: phone,
                         code: phone_code,
                     },
-                    success: function (response) {
-                        if (response.error === 1) {
+                    success: function (resp) {
+                        if (resp['error'] == 1) {
                             Swal.fire({
                                 title: response.reason,
                                 confirmButtonText: 'ОК'
                             });
-                        } else {
+                        }
+                        if (resp['success'] == 1) {
                             $('.show_phone_code').hide();
                             $('.show_phone_confirmed').show();
                             $('.accept_edit').hide();
