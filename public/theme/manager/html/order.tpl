@@ -28,6 +28,8 @@
                 },
             });
 
+            $('.modalStartDate').click().mask('99.99.9999');
+
             $('input[name="snils"]').click(function () {
                 $(this).setCursorPosition(0);
             }).mask('999-999-999 99');
@@ -1051,11 +1053,9 @@
                         if (resp['error']) {
                             Swal.fire({
                                 title: resp['error'],
-                                confirmButtonText: 'ОК'
-                            });
-                        }
-
-                        if (resp['success'] == 1) {
+                                confirmButtonText: 'Ок'
+                            })
+                        } else if (resp['success']) {
                             $('#edit_settings_modal').modal('hide');
                             $('#sms_confirm_modal').modal();
                             let order = that.attr('data-order');
@@ -4552,7 +4552,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Дата выдачи:</label>
-                                <input class="form-control daterange" name="probably_start_date">
+                                <input class="form-control modalStartDate" name="probably_start_date" value="{$order->probably_start_date|date}">
                             </div>
                             <div class="form-group">
                                 <label>Состоит в профсоюзе:</label>

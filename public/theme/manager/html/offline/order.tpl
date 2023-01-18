@@ -33,7 +33,7 @@
                 showDropdowns: true,
                 locale: {
                     format: 'DD.MM.YYYY'
-                },
+                }
             });
 
             $('input[name="subdivision_code"]').suggestions({
@@ -1204,14 +1204,22 @@
 
                 $.ajax({
                     method: 'POST',
+                    dataType: 'JSON',
                     data: form,
-                    success: function () {
+                    success: function (resp) {
 
-                        $('#edit_settings_modal').modal('hide');
-                        $('#sms_confirm_modal').modal();
-                        let order = that.attr('data-order');
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'Ок'
+                            })
+                        } else if (resp['success']) {
+                            $('#edit_settings_modal').modal('hide');
+                            $('#sms_confirm_modal').modal();
+                            let order = that.attr('data-order');
 
-                        send_sms(order);
+                            send_sms(order);
+                        }
                     }
                 });
             });
@@ -1367,6 +1375,8 @@
                     }
                 });
             });
+
+            $('.modalStartDate').click().mask('99.99.9999');
         });
     </script>
     <script>
@@ -4969,12 +4979,14 @@
                             <div class="form-group">
                                 <label>ФИО держателя счета:</label>
                                 <input type="text" name="hold"
-                                       class="form-control fio-hold-edit fioValidate" value="{$order->requisite->holder}"/>
+                                       class="form-control fio-hold-edit fioValidate"
+                                       value="{$order->requisite->holder}"/>
                             </div>
                             <div class="form-group">
                                 <label>Номер счета:</label>
                                 <input type="text" name="acc"
-                                       class="form-control acc-num-edit mask_number" value="{$order->requisite->number}"/>
+                                       class="form-control acc-num-edit mask_number"
+                                       value="{$order->requisite->number}"/>
                             </div>
                             <div class="form-group">
                                 <label>Наименование банка:</label>
@@ -4989,7 +5001,8 @@
                             <div class="form-group">
                                 <label>Кор. счет:</label>
                                 <input type="text" name="cor"
-                                       class="form-control cor-acc mask_number" value="{$order->requisite->correspondent_acc}"/>
+                                       class="form-control cor-acc mask_number"
+                                       value="{$order->requisite->correspondent_acc}"/>
                             </div>
                             <div class="form-group">
                                 <label>Причина редактирования</label>
@@ -5035,7 +5048,8 @@
                             </div>
                             <div class="form-group">
                                 <label>Дата выдачи:</label>
-                                <input class="form-control daterange" name="probably_start_date">
+                                <input class="form-control modalStartDate" name="probably_start_date"
+                                       value="{$order->probably_start_date|date}">
                             </div>
                             <div class="form-group">
                                 <label>Состоит в профсоюзе:</label>
@@ -5266,8 +5280,12 @@
                                                        value="{$cards_story->cards_validity_period}"></td>
                                             <td><select class="form-control"
                                                         name="cards_delay[][cards_delay]">
-                                                    <option value="Да" {if $cards_story->cards_delay == 'Да'}selected{/if}>Да</option>
-                                                    <option value="Нет" {if $cards_story->cards_delay == 'Нет'}selected{/if}>Нет</option>
+                                                    <option value="Да"
+                                                            {if $cards_story->cards_delay == 'Да'}selected{/if}>Да
+                                                    </option>
+                                                    <option value="Нет"
+                                                            {if $cards_story->cards_delay == 'Нет'}selected{/if}>Нет
+                                                    </option>
                                                 </select
                                             </td>
                                             <td>
@@ -5346,8 +5364,12 @@
                                                        value="{$credits_story->credits_percents}"></td>
                                             <td><select class="form-control"
                                                         name="credits_delay[][credits_delay]">
-                                                    <option value="Да" {if $credits_story->cards_delay == 'Да'}selected{/if}>Да</option>
-                                                    <option value="Нет" {if $credits_story->cards_delay == 'Нет'}selected{/if}>Нет</option>
+                                                    <option value="Да"
+                                                            {if $credits_story->cards_delay == 'Да'}selected{/if}>Да
+                                                    </option>
+                                                    <option value="Нет"
+                                                            {if $credits_story->cards_delay == 'Нет'}selected{/if}>Нет
+                                                    </option>
                                                 </select></td>
                                             <td>
                                                 <div class="btn btn-outline-danger delete_credit">-</div>

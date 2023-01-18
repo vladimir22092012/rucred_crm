@@ -411,21 +411,38 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group row m-0">
-                                                            <label class="control-label col-md-4">Соцсети:</label>
-                                                            <div class="col-md-8">
-                                                                <ul class="list-unstyled form-control-static pl-0">
-                                                                    {if $client->social}
-                                                                        <li>
-                                                                            <a target="_blank"
-                                                                               href="{$client->social|escape}">{$client->social|escape}</a>
-                                                                        </li>
-                                                                    {/if}
-                                                                </ul>
+                                                    {if $client->viber_num}
+                                                        <div class="col-md-12">
+                                                            <div class="form-group row m-0">
+                                                                <label class="control-label col-md 4">Viber:</label><br>
+                                                                <div class="col-md-8">
+                                                                    <p class="form-control-static">{$client->viber_num}</p>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    {/if}
+                                                    {if $client->telegram_num}
+                                                        <div class="col-md-12">
+                                                            <div class="form-group row m-0">
+                                                                <label
+                                                                        class="control-label col-md 4">Telegram:</label><br>
+                                                                <div class="col-md-8">
+                                                                    <p class="form-control-static">{$client->telegram_num}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {/if}
+                                                    {if $client->whatsapp_num}
+                                                        <div class="col-md-12">
+                                                            <div class="form-group row m-0">
+                                                                <label
+                                                                        class="control-label col-md 4">WhatsApp:</label><br>
+                                                                <div class="col-md-8">
+                                                                    <p class="form-control-static">{$client->whatsapp_num}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {/if}
                                                 </div>
 
 

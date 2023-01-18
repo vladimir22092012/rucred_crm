@@ -348,6 +348,16 @@ class NeworderController extends Controller
             exit;
         }
 
+        if (empty($this->request->post('phone_confirmed'))) {
+            response_json(['error' => 1, 'reason' => 'Номер телефона не подтвержден']);
+            exit;
+        }
+
+        if (empty($this->request->post('email_confirmed'))) {
+            response_json(['error' => 1, 'reason' => 'Почта не подтверждена']);
+            exit;
+        }
+
         $user['phone_mobile_confirmed'] = (int)$this->request->post('phone_confirmed');
         $user['email_confirmed'] = (int)$this->request->post('email_confirmed');
 
@@ -1150,11 +1160,11 @@ class NeworderController extends Controller
         $code = $this->request->post('code');
 
         $this->db->query("
-        SELECT code, created
+        SELECT code
         FROM s_sms_messages
         WHERE phone = ?
         AND code = ?
-        ORDER BY created DESC
+        ORDER BY id DESC
         LIMIT 1
         ", $phone, $code);
 
@@ -1382,12 +1392,12 @@ class NeworderController extends Controller
                 $iteration++;
             } elseif (date_diff($paydate, $start_date)->days >= $loan->min_period && date_diff($paydate, $start_date)->days < $count_days_this_month) {
                 $body_pay = $rest_sum;
-                $loan_percents_pay = $amount * ($percent/100) * date_diff($paydate, $start_date)->days;
+                $loan_percents_pay = $amount * ($percent / 100) * date_diff($paydate, $start_date)->days;
                 $sum_pay = $body_pay + $loan_percents_pay;
                 $iteration++;
             } elseif (date_diff($paydate, $start_date)->days >= $count_days_this_month) {
                 $body_pay = $rest_sum;
-                $loan_percents_pay = $amount * ($percent/100) * date_diff($paydate, $start_date)->days;
+                $loan_percents_pay = $amount * ($percent / 100) * date_diff($paydate, $start_date)->days;
                 $sum_pay = $body_pay + $loan_percents_pay;
             } else {
                 $sum_pay = ($percent / 100) * $amount * date_diff($paydate, $start_date)->days;
