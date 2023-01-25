@@ -5626,8 +5626,16 @@ class OfflineOrderController extends Controller
         $brancheId = $this->request->post('branch');
         $comment = $this->request->post('comment');
 
+        $isHoliday = WeekendCalendarORM::where('date', date('Y-m-d', strtotime($probablyStartDate)))->first();
+
+        if (!empty($isHoliday)) {
+            echo json_encode(['error' => 'Дата выпала на выходной день']);
+            exit;
+        }
+
         if (empty($comment)) {
             echo json_encode(['error' => 'Заполните комментарий']);
+            exit;
         }
 
         $branche = BranchesORM::find($brancheId);

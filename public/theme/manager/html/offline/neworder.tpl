@@ -80,7 +80,7 @@
                     success: function (resp) {
                         if (resp['error'] == 1) {
                             Swal.fire({
-                                title: response.reason,
+                                title: 'Код не верный',
                                 confirmButtonText: 'ОК'
                             });
                         }
