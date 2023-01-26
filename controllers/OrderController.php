@@ -1935,9 +1935,9 @@ class OrderController extends Controller
         $this->Addresses->update_address($old_user->faktaddress_id, $faktaddress);
 
         $new_values = array(
-            'Имя' => $lastname,
-            'Фамилия' => $firstname,
-            'Отчество' => $patronymic,
+            'Имя' => strtoupper($lastname),
+            'Фамилия' => strtoupper($firstname),
+            'Отчество' => strtoupper($patronymic),
             'Дата рождения' => $birth,
             'Место рождения' => $birth_place,
             'Серия и номер паспорта' => $passport_serial,
