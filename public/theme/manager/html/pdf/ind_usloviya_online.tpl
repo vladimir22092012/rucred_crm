@@ -88,7 +88,7 @@
     ясной памяти,
 </div>
 <br><br><br>
-{if !isset($code_asp->code)}
+{if !isset($rucred_asp)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -215,7 +215,7 @@
 <div>
 
 </div>
-{if !isset($code_asp->code)}
+{if !isset($rucred_asp)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -338,7 +338,7 @@
         </tr>
     </table>
 </div>
-{if !isset($code_asp->code)}
+{if !isset($rucred_asp)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -456,7 +456,7 @@
 <div>
     <br><br><br><br><br><br>
 </div>
-{if !isset($code_asp->code)}
+{if !isset($rucred_asp)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -562,7 +562,7 @@
 <div>
     <br><br><br><br><br>
 </div>
-{if !isset($code_asp->code)}
+{if !isset($rucred_asp)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -696,7 +696,7 @@
         </tr>
     </table>
     <div></div>
-    {if !isset($code_asp->code)}
+    {if !isset($rucred_asp)}
         <footer>
             <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
                 <tr style="width: 100%">
@@ -839,7 +839,7 @@
 <div>
 
 </div>
-{if !isset($code_asp->code)}
+{if !isset($rucred_asp)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -966,7 +966,7 @@
 <div>
     <br><br><br><br><br>
 </div>
-{if !isset($code_asp->code)}
+{if !isset($rucred_asp)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -1070,7 +1070,7 @@
 <div>
     <br><br><br><br><br><br><br>
 </div>
-{if !isset($code_asp->code)}
+{if !isset($rucred_asp)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -1194,7 +1194,7 @@
     </tr>
 </table>
 <div></div>
-{if !isset($code_asp->code)}
+{if !isset($rucred_asp)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -1297,7 +1297,7 @@
     <br>
     <br>
     <tr>
-        {if !isset($rucred_asp->code)}
+        {if !isset($rucred_asp)}
             <td style="width: 45%">
                 __________________/<strong>А.В.Лоскутов/</strong>
             </td>

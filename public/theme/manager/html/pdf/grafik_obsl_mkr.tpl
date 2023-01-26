@@ -78,7 +78,7 @@
 </table>
 <div>
 </div>
-{if !isset($code_asp->code)}
+{if !isset($rucred_asp)}
     <footer>
         <table style="width: 100%; font-size: 8px; page-break-after: always;" border="1">
             <tr style="width: 100%">
@@ -198,7 +198,7 @@
     <br>
     <br>
     <tr>
-        {if !isset($rucred_asp->code)}
+        {if !isset($rucred_asp)}
             <td style="width: 45%">
                 __________________/<strong>А.В.Лоскутов/</strong>
             </td>
