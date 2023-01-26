@@ -26,6 +26,12 @@
                 });
             });
 
+            $('input, textarea').on('input', function () {
+                let value = $(this).val();
+                value = value.toUpperCase();
+                $(this).val(value);
+            });
+
             moment.locale('ru');
 
             $('.daterange').daterangepicker({
@@ -44,7 +50,7 @@
                 onSelect: function (suggestion) {
                     $('textarea[name="passport_issued"]').empty();
                     $(this).empty();
-                    $('textarea[name="passport_issued"]').val(suggestion.value);
+                    $('textarea[name="passport_issued"]').val(suggestion.value.toUpperCase());
                     $(this).trigger('input').val(suggestion.data.code);
                 }
             });
@@ -55,7 +61,7 @@
                 minChars: 3,
                 /* Вызывается, когда пользователь выбирает одну из подсказок */
                 onSelect: function (suggestion) {
-                    $(this).val(suggestion.value);
+                    $(this).val(suggestion.value.toUpperCase());
                     $('.Registration').val(JSON.stringify(suggestion));
                 }
             });
@@ -66,7 +72,7 @@
                 minChars: 3,
                 /* Вызывается, когда пользователь выбирает одну из подсказок */
                 onSelect: function (suggestion) {
-                    $(this).val(suggestion.value);
+                    $(this).val(suggestion.value.toUpperCase());
                     $('.Faktadres').val(JSON.stringify(suggestion));
                 }
             });
