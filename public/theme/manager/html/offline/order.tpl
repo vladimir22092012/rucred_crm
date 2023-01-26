@@ -1203,11 +1203,10 @@
                 let that = $(this);
 
                 $.ajax({
-                    method: 'POST',
                     dataType: 'JSON',
+                    method: 'POST',
                     data: form,
                     success: function (resp) {
-
                         if (resp['error']) {
                             Swal.fire({
                                 title: resp['error'],
@@ -1216,9 +1215,13 @@
                         } else if (resp['success']) {
                             $('#edit_settings_modal').modal('hide');
                             $('#sms_confirm_modal').modal();
-                            let order = that.attr('data-order');
 
-                            send_sms(order);
+                            if (resp['success'] == 'needSms') {
+                                let order = that.attr('data-order');
+                                send_sms(order);
+                            } else if (resp['success'] == 'notNeedSms') {
+                                location.reload();
+                            }
                         }
                     }
                 });

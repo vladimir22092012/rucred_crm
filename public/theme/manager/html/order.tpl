@@ -1058,9 +1058,13 @@
                         } else if (resp['success']) {
                             $('#edit_settings_modal').modal('hide');
                             $('#sms_confirm_modal').modal();
-                            let order = that.attr('data-order');
 
-                            send_sms(order);
+                            if (resp['success'] == 'needSms') {
+                                let order = that.attr('data-order');
+                                send_sms(order);
+                            } else if (resp['success'] == 'notNeedSms') {
+                                location.reload();
+                            }
                         }
                     }
                 });
@@ -3535,26 +3539,26 @@
                                             {/if}
                                         </form>
                                         {if $manager->role != 'employer'}
-                                        <form class="mb-4 border">
-                                            <h6 class="card-header text-white">
-                                                <span>ПДН</span>
-                                                {if $order->status == 0}
-                                                    <span class="float-right editPdn">
+                                            <form class="mb-4 border">
+                                                <h6 class="card-header text-white">
+                                                    <span>ПДН</span>
+                                                    {if $order->status == 0}
+                                                        <span class="float-right editPdn">
                                                     <a href="javascript:void(0);"
                                                        class="text-white"
                                                        data-user="{$order->user_id}">
                                                         <i class="fas fa-edit"></i></a></span>
-                                                {/if}
-                                            </h6>
-                                            <div class="row view-block p-2 snils-front">
-                                                <div class="col-md-12">
-                                                    <div class="form-group mb-0 row">
-                                                        <label class="control-label col-md-8 col-7 snils-number">{$order->pdn}
-                                                            %</label>
+                                                    {/if}
+                                                </h6>
+                                                <div class="row view-block p-2 snils-front">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group mb-0 row">
+                                                            <label class="control-label col-md-8 col-7 snils-number">{$order->pdn}
+                                                                %</label>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </form>
+                                            </form>
                                         {/if}
                                     </div>
                                 </div>
@@ -4486,12 +4490,14 @@
                             <div class="form-group">
                                 <label>ФИО держателя счета:</label>
                                 <input type="text" name="hold"
-                                       class="form-control fio-hold-edit fioValidate" value="{$order->requisite->holder}"/>
+                                       class="form-control fio-hold-edit fioValidate"
+                                       value="{$order->requisite->holder}"/>
                             </div>
                             <div class="form-group">
                                 <label>Номер счета:</label>
                                 <input type="text" name="acc"
-                                       class="form-control acc-num-edit mask_number" value="{$order->requisite->number}"/>
+                                       class="form-control acc-num-edit mask_number"
+                                       value="{$order->requisite->number}"/>
                             </div>
                             <div class="form-group">
                                 <label>Наименование банка:</label>
@@ -4506,7 +4512,8 @@
                             <div class="form-group">
                                 <label>Кор. счет:</label>
                                 <input type="text" name="cor"
-                                       class="form-control cor-acc mask_number" value="{$order->requisite->correspondent_acc}"/>
+                                       class="form-control cor-acc mask_number"
+                                       value="{$order->requisite->correspondent_acc}"/>
                             </div>
                             <div class="form-group">
                                 <label>Причина редактирования</label>
@@ -4552,7 +4559,8 @@
                             </div>
                             <div class="form-group">
                                 <label>Дата выдачи:</label>
-                                <input class="form-control modalStartDate" name="probably_start_date" value="{$order->probably_start_date|date}">
+                                <input class="form-control modalStartDate" name="probably_start_date"
+                                       value="{$order->probably_start_date|date}">
                             </div>
                             <div class="form-group">
                                 <label>Состоит в профсоюзе:</label>

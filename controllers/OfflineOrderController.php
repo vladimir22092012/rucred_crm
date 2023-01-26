@@ -5657,7 +5657,7 @@ class OfflineOrderController extends Controller
             $percent = (float)$groupLoanType->standart_percents;
         }
 
-        $order =
+        $newOrder =
             [
                 'amount' => $amount,
                 'loan_type' => $loanTypeId,
@@ -5665,8 +5665,20 @@ class OfflineOrderController extends Controller
                 'group_id' => $groupId,
                 'company_id' => $companyId,
                 'branche_id' => $brancheId,
-                'probably_start_date' => date('Y-m-d', strtotime($probablyStartDate)),
+                'probably_start_date' => date('Y-m-d', strtotime($probablyStartDate))
             ];
+
+        $oldOrder = OrdersORM::find($orderId)->toArray();
+
+        $needSms = 0;
+
+        foreach ($oldOrder as $oldKey => $oldValue) {
+            foreach ($newOrder as $newKey => $newValue) {
+                if ($oldKey == $newKey && $oldValue != $newValue && !in_array($newKey, ['probably_start_date', 'branche_id']))
+                    $needSms = 1;
+            }
+        }
+
 
         $user =
             [
@@ -5676,12 +5688,22 @@ class OfflineOrderController extends Controller
                 'profunion' => $profUnion
             ];
 
-        OrdersORM::where('id', $orderId)->update($order);
+        OrdersORM::where('id', $orderId)->update($newOrder);
         UsersORM::where('id', $userId)->update($user);
 
-        $this->action_reform_schedule($orderId);
-        echo json_encode(['success' => 1]);
-        exit;
+        if ($needSms == 1) {
+            $this->action_reform_schedule($orderId);
+            echo json_encode(['success' => 'needSms']);
+            exit;
+        } else {
+            $order = $this->orders->get_order($orderId);
+
+            DocumentsORM::where('order_id', $orderId)
+                ->update(['params' => serialize($order)]);
+
+            echo json_encode(['success' => 'notNeedSms']);
+            exit;
+        }
     }
 
     private function action_confirm_sms()
