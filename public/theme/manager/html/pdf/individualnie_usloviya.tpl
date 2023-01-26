@@ -85,7 +85,7 @@
     Заимодавцем Заёмщику на сайте http://www.рукред.рф/ до подписания настоящего Договора микрозайма и заключает
     настоящий Договор микрозайма (далее – «Договор») на следующих Индивидуальных условиях.<br>
 </div>
-{if !isset($rucred_asp)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -199,7 +199,7 @@
 <div>
     <br><br><br><br><br>
 </div>
-{if !isset($rucred_asp)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -317,7 +317,7 @@
         </tr>
     </table>
 </div>
-{if !isset($rucred_asp)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -431,7 +431,7 @@
 <div>
     <br><br><br><br><br><br>
 </div>
-{if !isset($rucred_asp)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -532,7 +532,7 @@
 <div>
     <br><br><br><br><br>
 </div>
-{if !isset($rucred_asp)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -645,7 +645,7 @@
         </tr>
     </table>
 </div>
-{if !isset($rucred_asp)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -739,7 +739,7 @@
 <div>
     <br><br><br><br><br><br><br><br><br><br>
 </div>
-{if !isset($rucred_asp)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -840,7 +840,7 @@
 <div>
     <br><br><br><br><br><br><br><br><br>
 </div>
-{if !isset($rucred_asp)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -939,7 +939,7 @@
 <div>
     <br><br><br><br><br><br><br>
 </div>
-{if !isset($rucred_asp)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">
@@ -1059,7 +1059,7 @@
     </tr>
 </table>
 <div></div>
-{if !isset($rucred_asp)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; page-break-after: always; font-size: 8px" border="1">
             <tr style="width: 100%">

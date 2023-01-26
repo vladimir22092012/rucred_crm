@@ -78,7 +78,7 @@
 </table>
 <div>
 </div>
-{if !isset($rucred_asp)}
+{if !isset($code_asp->code)}
     <footer>
         <table style="width: 100%; font-size: 8px; page-break-after: always;" border="1">
             <tr style="width: 100%">
