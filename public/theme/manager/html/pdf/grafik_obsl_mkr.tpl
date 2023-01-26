@@ -198,7 +198,7 @@
     <br>
     <br>
     <tr>
-        {if !isset($code_asp->code)}
+        {if !isset($rucred_asp->code)}
             <td style="width: 45%">
                 __________________/<strong>А.В.Лоскутов/</strong>
             </td>
