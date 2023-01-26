@@ -3135,6 +3135,8 @@ class OrderController extends Controller
 
         $order = $this->orders->get_order($orderId);
 
+        $order->payment_schedule = PaymentsScheduleORM::where('order_id', $orderId)->where('actual', 1)->first()->toArray();
+
         DocumentsORM::where('order_id', $orderId)
             ->update(['params' => serialize($order)]);
 
@@ -3535,6 +3537,8 @@ class OrderController extends Controller
             exit;
         } else {
             $order = $this->orders->get_order($orderId);
+
+            $order->payment_schedule = PaymentsScheduleORM::where('order_id', $orderId)->where('actual', 1)->first()->toArray();
 
             DocumentsORM::where('order_id', $orderId)
                 ->update(['params' => serialize($order)]);
