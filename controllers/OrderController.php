@@ -3451,53 +3451,6 @@ class OrderController extends Controller
         }
     }
 
-    private function action_change_loan_settings()
-    {
-        $order_id = (int)$this->request->post('order_id');
-        $amount = $this->request->post('amount');
-        $loan_tarif = $this->request->post('loan_tarif');
-        $probably_start_date = $this->request->post('probably_start_date');
-        $profUnion = $this->request->post('profunion');
-
-        $loantype = $this->Loantypes->get_loantype((int)$loan_tarif);
-        $order = $this->orders->get_order($order_id);
-
-        if (empty($order->branche_id)) {
-            $branches = $this->Branches->get_branches(['group_id' => $order->group_id]);
-
-            foreach ($branches as $branch) {
-                if ($branch->number == '00') {
-                    $first_pay_day = $branch->payday;
-                    $user['branche_id'] = $branch->id;
-                }
-            }
-        } else {
-            $branch = $this->Branches->get_branch($order->branche_id);
-            $first_pay_day = $branch->payday;
-        }
-
-        $probably_return_date = new DateTime(date('Y-m-' . $first_pay_day, strtotime($probably_start_date . '+' . $loantype->max_period . 'month')));
-        $probably_return_date = $this->check_pay_date($probably_return_date);
-
-        if ($amount < $loantype->min_amount || $amount > $loantype->max_amount) {
-            echo json_encode(['error' => 'Проверьте сумму займа']);
-            exit;
-        }
-
-        $order =
-            [
-                'amount' => $amount,
-                'loan_type' => (int)$loan_tarif,
-                'probably_start_date' => date('Y-m-d', strtotime($probably_start_date)),
-                'probably_return_date' => $probably_return_date->format('Y-m-d')
-            ];
-
-        $this->orders->update_order($order_id, $order);
-        $this->action_reform_schedule($order_id);
-        echo json_encode(['success' => 1]);
-        exit;
-    }
-
     private function action_edit_loan_settings()
     {
         $orderId = (int)$this->request->post('order_id');

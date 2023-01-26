@@ -182,7 +182,7 @@
                 $('#edit_requisites_modal').modal();
             });
 
-            $('.save_req').on('click', function () {
+            $('.save_req').on('click', function (e) {
                 e.preventDefault();
 
                 var $form = $(this).closest('form');
@@ -205,7 +205,7 @@
                         }
                     }
                 });
-            })
+            });
 
             $('.snils-edit').on('click', function (e) {
                 e.preventDefault();
