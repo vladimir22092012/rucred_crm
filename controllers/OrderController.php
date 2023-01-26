@@ -1914,9 +1914,9 @@ class OrderController extends Controller
 
         $old_user = $this->users->get_user($user_id);
 
-        $lastname = trim($this->request->post('lastname'));
-        $firstname = trim($this->request->post('firstname'));
-        $patronymic = trim($this->request->post('patronymic'));
+        $lastname = trim(strtoupper($this->request->post('lastname')));
+        $firstname = trim(strtoupper($this->request->post('firstname')));
+        $patronymic = trim(strtoupper($this->request->post('patronymic')));
         $birth = trim($this->request->post('birth'));
         $birth_place = trim($this->request->post('birth_place'));
         $passport_serial = trim($this->request->post('passport_serial'));
@@ -1935,9 +1935,9 @@ class OrderController extends Controller
         $this->Addresses->update_address($old_user->faktaddress_id, $faktaddress);
 
         $new_values = array(
-            'Имя' => strtoupper($lastname),
-            'Фамилия' => strtoupper($firstname),
-            'Отчество' => strtoupper($patronymic),
+            'Имя' => $lastname,
+            'Фамилия' => $firstname,
+            'Отчество' => $patronymic,
             'Дата рождения' => $birth,
             'Место рождения' => $birth_place,
             'Серия и номер паспорта' => $passport_serial,
