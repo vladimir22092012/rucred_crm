@@ -4324,6 +4324,7 @@ class OfflineOrderController extends Controller
                 $asp_id = $this->db->result('id');
 
                 $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'first_pak' => 1]);
+                $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'second_pak' => 1]);
 
                 $cron =
                     [
