@@ -23,39 +23,9 @@ class OnlineDocsController extends Controller
 
         $settlement = $this->OrganisationSettlements->get_settlement($document->params->settlement_id);
         $order = $this->orders->get_order($document->params->order_id);
-        $contracts = $this->contracts->get_contracts(['order_id' => $document->params->order_id]);
-        //заглушка для документов с неполными данными
-        $isPlug = false;
-        try {
-            $group = $this->groups->get_group($order->group_id);
-        } catch (\Throwable $th) {
-            $group = '00'; //заглушка, нигде не отображается в реальных документах
-            $isPlug = true;
-        }
 
-        try {
-            $company = $this->companies->get_company($order->company_id);
-        } catch (\Throwable $th) {
-            $company = '00'; //заглушка, нигде не отображается в реальных документах
-            $isPlug = true;
-        }
-
-        if (!empty($contracts)) {
-            $count_contracts = count($contracts);
-            $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
-        } else {
-            $count_contracts = '01';
-        }
-
-        $loantype = $this->Loantypes->get_loantype($order->loan_type);
-
-        if ($isPlug) {
-            $uid = "0";
-        } else {
-            $uid = "$group->number$company->number $loantype->number $order->personal_number $count_contracts";
-        }
-
-        $this->design->assign('uid', $uid);
+        $uid = ProjectContractNumberORM::where('orderId', $order->order_id)->first();
+        $this->design->assign('uid', $uid->uid);
 
 
         $this->design->assign('settlement', $settlement);
