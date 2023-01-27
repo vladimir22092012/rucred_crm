@@ -375,8 +375,7 @@ class YaDisk extends Core
             $faktadress = $this->Addresses->get_address($document->params->faktaddress_id);
             $this->design->assign('faktadress', $faktadress);
 
-            $requisite = $this->Requisites->get_requisites(['user_id' => $document->params->user_id]);
-            $requisite = end($requisite);
+            $requisite = $this->Requisites->getDefault($document->user_id);
             $this->design->assign('requisite', $requisite);
 
             if (is_null($document->params->company_id)) {
