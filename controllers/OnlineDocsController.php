@@ -1,7 +1,7 @@
 <?php
 
 error_reporting(-1);
-ini_set('display_errors', 'on');
+ini_set('display_errors', 'Off');
 
 use App\Services\Encryption;
 
@@ -20,19 +20,31 @@ class OnlineDocsController extends Controller
         $order = $this->orders->get_order($document->order_id);
         $this->design->assign('created_date', $order->date);
 
-        $settlement = $this->OrganisationSettlements->get_settlement($document->params->settlement_id);
-        $order = $this->orders->get_order($document->   order_id);
+        $phone = preg_replace('/(\d)(\d\d\d)(\d\d\d)(\d\d)(\d\d)/', '+$1 ($2) $3-$4-$5', $order->phone_mobile);
+        $this->design->assign('phone_mobile', $phone);
 
-        $uid = ProjectContractNumberORM::where('orderId', $document->order_id)->first();
+        $this->design->assign('doc_type', $document->type);
+        $this->design->assign('doc_created', $document->created);
+
+        $settlement = $this->OrganisationSettlements->get_settlement($document->params->settlement_id);
+        $order = $this->orders->get_order($document->order_id);
+        //заглушка для документов с неполными данными
+
+        $uid = ProjectContractNumberORM::where('orderId', $order->order_id)->first();
         $this->design->assign('uid', $uid->uid);
+
 
         $this->design->assign('settlement', $settlement);
 
-        $regadress = $this->Addresses->get_address($document->params->regaddress_id);
-        $this->design->assign('regadress', $regadress);
+        if (isset($document->params->regaddress_id)) {
+            $regadress = $this->Addresses->get_address($document->params->regaddress_id);
+            $this->design->assign('regadress', $regadress);
+        }
 
-        $faktadress = $this->Addresses->get_address($document->params->faktaddress_id);
-        $this->design->assign('faktadress', $faktadress);
+        if (isset($document->params->faktaddress_id)) {
+            $faktadress = $this->Addresses->get_address($document->params->faktaddress_id);
+            $this->design->assign('faktadress', $faktadress);
+        }
 
         $requisite = $this->Requisites->getDefault($document->user_id);
         $this->design->assign('requisite', $requisite);
@@ -100,17 +112,69 @@ class OnlineDocsController extends Controller
             });
 
         if ($document->type == 'ZAYAVLENIE_RESTRUCT') {
-            array_pop($payment_schedule);
-            $last_pay = array_pop($payment_schedule);
-            $annouitet = $last_pay['pay_sum'];
+            $old_schedule = (array)$this->PaymentsSchedules->get(['actual' => 0, 'order_id' => $document->params->order_id]);
+            $old_schedule = json_decode($old_schedule['schedule'], true);
 
-            list($annouitet_first_part, $annouitet_second_part) = explode('.', $annouitet);
+            unset($old_schedule['result']);
 
-            $annouitet_first_part = $this->num2str($annouitet_first_part);
+            $current_schedule = (array)$this->PaymentsSchedules->get(['actual' => 1, 'order_id' => $document->params->order_id]);
+            $current_schedule = json_decode($current_schedule['schedule'], true);
 
-            $this->design->assign('annouitet', $annouitet);
-            $this->design->assign('annouitet_first_part', $annouitet_first_part);
-            $this->design->assign('annouitet_second_part', $annouitet_second_part);
+            unset($current_schedule['result']);
+
+            $term = (count($current_schedule) > count($old_schedule)) ? count($current_schedule) - count($old_schedule) : 'no';
+
+            if ($term == 'no')
+                $term = 0;
+
+            $string_term = $this->num2str($term);
+            $this->design->assign('term', $term);
+            $this->design->assign('string_term', $string_term);
+
+            foreach ($current_schedule as $schedule) {
+                if (isset($schedule['last_pay'])) {
+                    $pay_sum = number_format(floatval($schedule['pay_sum']), 2, ',', '');
+                    $loan_body_pay = number_format(floatval($schedule['loan_body_pay']), 2, ',', '');
+                    $loan_percents_pay = number_format(floatval($schedule['loan_percents_pay']), 2, ',', '');
+                    $comission_pay = number_format(floatval($schedule['comission_pay']), 2, ',', '');
+                }
+            }
+
+            $pay_sum = explode(',', $pay_sum);
+            $loan_body_pay = explode(',', $loan_body_pay);
+            $loan_percents_pay = explode(',', $loan_percents_pay);
+            $comission_pay = explode(',', $comission_pay);
+
+            $pay_sum_string =
+                [
+                    0 => $this->num2str($pay_sum[0]),
+                    1 => $this->num2str($pay_sum[1])
+                ];
+            $loan_body_pay_string =
+                [
+                    0 => $this->num2str($loan_body_pay[0]),
+                    1 => $this->num2str($loan_body_pay[1])
+                ];
+            $loan_percents_pay_string =
+                [
+                    0 => $this->num2str($loan_percents_pay[0]),
+                    1 => $this->num2str($loan_percents_pay[1])
+                ];
+            $comission_pay_string =
+                [
+                    0 => $this->num2str($comission_pay[0]),
+                    1 => $this->num2str($comission_pay[1])
+                ];
+
+            $this->design->assign('pay_sum', $pay_sum);
+            $this->design->assign('loan_body_pay', $loan_body_pay);
+            $this->design->assign('loan_percents_pay', $loan_percents_pay);
+            $this->design->assign('comission_pay', $comission_pay);
+
+            $this->design->assign('pay_sum_string', $pay_sum_string);
+            $this->design->assign('loan_body_pay_string', $loan_body_pay_string);
+            $this->design->assign('loan_percents_pay_string', $loan_percents_pay_string);
+            $this->design->assign('comission_pay_string', $comission_pay_string);
         }
 
         $all_pay_sum_string = explode('.', $payment_schedule['result']['all_sum_pay']);
@@ -132,7 +196,7 @@ class OnlineDocsController extends Controller
             $percents_per_day_str_part_one = 0;
             $percents_per_day_str_part_two = 0;
         } else {
-            $percents_per_day_str = explode('.', $document->params->percent);
+            $percents_per_day_str = explode('.', number_format($document->params->percent, 3, '.', ''));
             $percents_per_day_str_part_one = $this->num2str($percents_per_day_str[0]);
             $percents_per_day_str_part_two = $this->num2str($percents_per_day_str[1]);
         }
@@ -210,7 +274,6 @@ class OnlineDocsController extends Controller
         $this->design->assign('$period_days', $period_days);
 
         $tpl = $this->design->fetch('pdf/' . $document->template);
-
         $contract = $this->contracts->get_contract($order->contract_id);
 
         if (!empty($contract->number)) {
