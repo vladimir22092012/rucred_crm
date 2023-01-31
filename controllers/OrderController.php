@@ -3536,6 +3536,7 @@ class OrderController extends Controller
             echo json_encode(['success' => 'needSms']);
             exit;
         } else {
+            $this->action_reform_schedule($orderId, 0);
             $order = $this->orders->get_order($orderId);
 
             $order->payment_schedule = PaymentsScheduleORM::where('order_id', $orderId)->where('actual', 1)->first()->toArray();

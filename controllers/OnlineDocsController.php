@@ -267,7 +267,9 @@ class OnlineDocsController extends Controller
         $this->design->assign('passport_number', $passport_number);
 
         $created_date = new DateTime(date('Y-m-d', strtotime($document->params->date)));
-        $probably_return_date = new DateTime(date('Y-m-d', strtotime($document->params->probably_return_date)));
+        $probably_return_date = new DateTime(date('Y-m-d', strtotime($order->probably_return_date)));
+
+        $this->design->assign('probably_return_date', $order->probably_return_date);
 
         $period_days = date_diff($created_date, $probably_return_date)->days;
 
