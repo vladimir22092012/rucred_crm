@@ -3377,7 +3377,7 @@ class OfflineOrderController extends Controller
         exit;
     }
 
-    private function action_reform_schedule($order_id)
+    private function action_reform_schedule($order_id, $formDocs = 1)
     {
         $order = $this->orders->get_order($order_id);
 
@@ -3607,7 +3607,8 @@ class OfflineOrderController extends Controller
         $actual_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
         $this->PaymentsSchedules->update($actual_schedule->id, ['psk' => $psk, 'schedule' => $schedule]);
 
-        $this->form_docs($order_id);
+        if ($formDocs == 1)
+            $this->form_docs($order_id);
     }
 
     private function check_pay_date($date)
@@ -4324,6 +4325,7 @@ class OfflineOrderController extends Controller
                 $asp_id = $this->db->result('id');
 
                 $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'first_pak' => 1]);
+                $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'second_pak' => 1]);
 
                 $cron =
                     [
@@ -5698,6 +5700,7 @@ class OfflineOrderController extends Controller
             echo json_encode(['success' => 'needSms']);
             exit;
         } else {
+            $this->action_reform_schedule($orderId, 0);
             $order = $this->orders->get_order($orderId);
 
             $order->payment_schedule = PaymentsScheduleORM::where('order_id', $orderId)->where('actual', 1)->first()->toArray();

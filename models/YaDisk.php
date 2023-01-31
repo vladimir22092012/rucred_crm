@@ -375,8 +375,7 @@ class YaDisk extends Core
             $faktadress = $this->Addresses->get_address($document->params->faktaddress_id);
             $this->design->assign('faktadress', $faktadress);
 
-            $requisite = $this->Requisites->get_requisites(['user_id' => $document->params->user_id]);
-            $requisite = end($requisite);
+            $requisite = $this->Requisites->getDefault($document->user_id);
             $this->design->assign('requisite', $requisite);
 
             if (is_null($document->params->company_id)) {
@@ -401,7 +400,7 @@ class YaDisk extends Core
             $this->design->assign('loan', $loan);
 
             $start_date = new DateTime(date('Y-m-d', strtotime($order->probably_start_date)));
-            $end_date = new DateTime(date('Y-m-10', strtotime($order->probably_return_date)));
+            $end_date = new DateTime(date('Y-m-d', strtotime($order->probably_return_date)));
 
             $period = date_diff($start_date, $end_date)->days;
 
