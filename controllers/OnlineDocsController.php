@@ -1,7 +1,7 @@
 <?php
 
 error_reporting(-1);
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'on');
 
 use App\Services\Encryption;
 
@@ -20,13 +20,11 @@ class OnlineDocsController extends Controller
         $order = $this->orders->get_order($document->order_id);
         $this->design->assign('created_date', $order->date);
 
-
         $settlement = $this->OrganisationSettlements->get_settlement($document->params->settlement_id);
-        $order = $this->orders->get_order($document->params->order_id);
+        $order = $this->orders->get_order($document->   order_id);
 
-        $uid = ProjectContractNumberORM::where('orderId', $order->order_id)->first();
+        $uid = ProjectContractNumberORM::where('orderId', $document->order_id)->first();
         $this->design->assign('uid', $uid->uid);
-
 
         $this->design->assign('settlement', $settlement);
 
@@ -36,7 +34,7 @@ class OnlineDocsController extends Controller
         $faktadress = $this->Addresses->get_address($document->params->faktaddress_id);
         $this->design->assign('faktadress', $faktadress);
 
-        $requisite = $this->Requisites->getDefault($document->params->user_id);
+        $requisite = $this->Requisites->getDefault($document->user_id);
         $this->design->assign('requisite', $requisite);
 
         if (is_null($document->params->company_id)) {
