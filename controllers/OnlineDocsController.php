@@ -73,6 +73,8 @@ class OnlineDocsController extends Controller
         $start_date = new DateTime(date('Y-m-d', strtotime($order->probably_start_date)));
         $end_date = new DateTime(date('Y-m-d', strtotime($order->probably_return_date)));
 
+        $this->design->assign('probably_start_date', $order->probably_start_date);
+
         $period = date_diff($start_date, $end_date)->days;
 
         $this->design->assign('period', $period);
