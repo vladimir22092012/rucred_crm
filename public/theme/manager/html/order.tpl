@@ -514,7 +514,7 @@
                             }, 3000);
                         }
                         if (resp['success']) {
-                            location.reload();
+                            //location.reload();
                         }
                     }
                 })
