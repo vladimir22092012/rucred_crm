@@ -86,8 +86,6 @@ class Soap1c extends Core
             $payment_schedules = array();
             $item->ПСК = $order->payment_schedule->psk;
 
-            $item->ПСКВРублях = 0;
-
             if ($order_payment_schedule = (array)json_decode($order->payment_schedule->schedule)) {
                 foreach ($order_payment_schedule as $key_date => $payment_schedule) {
                     if ($key_date != 'result') {
@@ -97,9 +95,10 @@ class Soap1c extends Core
                         $payment_schedule_item->СуммаОД = $payment_schedule->loan_body_pay;
                         $payment_schedule_item->СуммаПроцентов = $payment_schedule->loan_percents_pay;
 
-                        $item->ПСКВРублях += $payment_schedule->loan_percents_pay;
-
                         $payment_schedules[] = $payment_schedule_item;
+                    }
+                    if($key_date == 'result') {
+                        $item->ПСКВРублях = round($payment_schedule->all_loan_percents_pay, 3);
                     }
                 }
                 $item->ГрафикПлатежей = $payment_schedules;
