@@ -1183,6 +1183,7 @@ class OfflineOrderController extends Controller
 
             $contract =
                 [
+                    'issuance_date' => date('Y-m-d H:i:s'),
                     'loan_body_summ' => $order->amount,
                     'status' => 2,
                     'return_date' => $next_payday
@@ -4677,6 +4678,14 @@ class OfflineOrderController extends Controller
 
         $this->tickets->update_by_theme_id(12, ['status' => 4], $order_id);
         $this->orders->update_order($order_id, ['status' => 5]);
+
+        $contract =
+            [
+                'issuance_date' => date('Y-m-d H:i:s'),
+                'status' => 2,
+            ];
+
+        $this->contracts->update_contract($order->contract_id, $contract);
 
         echo json_encode(['success' => 1]);
         exit;

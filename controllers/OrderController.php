@@ -1055,6 +1055,7 @@ class OrderController extends Controller
 
             $contract =
                 [
+                    'issuance_date' => date('Y-m-d H:i:s'),
                     'loan_body_summ' => $order->amount,
                     'status' => 2,
                     'return_date' => $next_payday
@@ -4518,6 +4519,7 @@ class OrderController extends Controller
 
         $contract =
             [
+                'issuance_date' => date('Y-m-d H:i:s'),
                 'status' => 2,
             ];
 
