@@ -5651,16 +5651,31 @@ class OfflineOrderController extends Controller
             exit;
         }
 
-        $branche = BranchesORM::find($brancheId);
         $loanType = LoantypesORM::find($loanTypeId);
-
-        $probably_return_date = new DateTime(date('Y-m-' . $branche->payday, strtotime($probablyStartDate . '+' . $loanType->max_period . 'month')));
-        $probably_return_date = $this->check_pay_date($probably_return_date);
 
         if ($amount < $loanType->min_amount || $amount > $loanType->max_amount) {
             echo json_encode(['error' => 'Проверьте сумму займа']);
             exit;
         }
+
+        $count_contracts = ContractsORM::where('user_id', $userId)->whereIn('status', [2, 3, 4])->count();
+
+        if (!empty($count_contracts)) {
+            $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
+        } else {
+            $count_contracts = '01';
+        }
+
+        $group = GroupsORM::find($groupId);
+        $company = CompaniesORM::find($companyId);
+        $order = OrdersORM::find($orderId);
+        $user = UsersORM::find($userId);
+
+        $new_number = $group->number . $company->number . ' ' . $loanType->number . ' ' . $user->personal_number . ' ' . $count_contracts;
+
+        ProjectContractNumberORM::updateOrCreate(['orderId' => $order->id, 'userId' => $userId], ['uid' => $new_number]);
+
+        ContractsORM::where('id', $order->contract_id)->update(['number' => $new_number]);
 
         $groupLoanType = GroupLoanTypesORM::where('group_id', $groupId)->where('loantype_id', $loanTypeId)->first();
 
