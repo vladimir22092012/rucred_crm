@@ -219,16 +219,27 @@ class Documents extends Core
         $rucred_asp = '';
         $sort = $this->db->placehold("ORDER BY doc.id");
 
-
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND doc.id IN (?@)", array_map('intval', (array)$filter['id']));
         }
 
         if(isset($filter['first_pak']))
-            $first_pak = $this->db->placehold("AND doc.`type` not in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
+            $first_pak = $this->db->placehold("AND doc.`type` not in (
+            'INDIVIDUALNIE_USLOVIA', 
+            'GRAFIK_OBSL_MKR', 
+            'INDIVIDUALNIE_USLOVIA_ONL', 
+            'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR',
+            'PERECHISLENIE_ZAEMN_SREDSTV',
+            'OBSHIE_USLOVIYA')");
 
         if(isset($filter['second_pak']))
-            $second_pak = $this->db->placehold("AND doc.`type` in ('INDIVIDUALNIE_USLOVIA', 'GRAFIK_OBSL_MKR')");
+            $second_pak = $this->db->placehold("AND doc.`type` in (
+            'INDIVIDUALNIE_USLOVIA', 
+            'GRAFIK_OBSL_MKR', 
+            'INDIVIDUALNIE_USLOVIA_ONL', 
+            'ZAYAVLENIE_ZP_V_SCHET_POGASHENIYA_MKR',
+            'PERECHISLENIE_ZAEMN_SREDSTV',
+            'OBSHIE_USLOVIYA')");
 
         if(isset($filter['asp_flag']))
             $asp_flag = $this->db->placehold("AND asp_id = ?", $filter['asp_flag']);

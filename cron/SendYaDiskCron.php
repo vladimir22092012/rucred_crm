@@ -38,7 +38,13 @@ class SendYaDiskCron extends Core
             $pak = explode('_', $cron->pak);
 
             if ($cron->pak == 'first_pak') {
-                $type = $this->db->placehold("AND `type` not in ('individualnie_usloviya.tpl', 'grafik_obsl_mkr.tpl')");
+                $type = $this->db->placehold("AND `type` not in (
+                'individualnie_usloviya.tpl', 
+                'grafik_obsl_mkr.tpl', 
+                'ind_usloviya_online.tpl',
+                'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl',
+                'perechislenie_zaemnih_sredstv.tpl',
+                'obshie_uslovia.tpl')");
 
                 if ($canSendYaDiskUser->canSendYaDisk == 0 || $canSendYaDiskOrder->canSendYaDisk == 0) {
                     $this->complete($cron->id);
@@ -47,7 +53,13 @@ class SendYaDiskCron extends Core
             }
 
             if ($cron->pak == 'second_pak') {
-                $type = $this->db->placehold("AND `type` in ('individualnie_usloviya.tpl', 'grafik_obsl_mkr.tpl')");
+                $type = $this->db->placehold("AND `type` in (
+                'individualnie_usloviya.tpl', 
+                'grafik_obsl_mkr.tpl', 
+                'ind_usloviya_online.tpl',
+                'zayavlenie_zp_v_schet_pogasheniya_mrk.tpl',
+                'perechislenie_zaemnih_sredstv.tpl',
+                'obshie_uslovia.tpl')");
 
                 if ($canSendYaDiskUser->canSendYaDisk == 0 || $canSendYaDiskOrder->canSendYaDisk == 0) {
                     $this->complete($cron->id);
@@ -77,12 +89,7 @@ class SendYaDiskCron extends Core
 
     private function complete($cronId)
     {
-        $update =
-            [
-                'is_complited' => 1
-            ];
-
-        $this->YaDiskCron->update($update, $cronId);
+        $this->YaDiskCron->update(['is_complited' => 1], $cronId);
     }
 }
 
