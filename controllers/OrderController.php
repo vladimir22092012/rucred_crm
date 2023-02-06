@@ -4681,7 +4681,7 @@ class OrderController extends Controller
                 'online' => 1
             ];
 
-        YaDiskCron::insert($cron);
+        $this->YaDiskCron->add($cron);
 
         echo json_encode(['success' => 1]);
         exit;
