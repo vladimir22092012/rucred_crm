@@ -4674,6 +4674,15 @@ class OrderController extends Controller
 
         $this->orders->update_order($order_id, ['status' => 2]);
 
+        $cron =
+            [
+                'order_id' => $order->id,
+                'pak' => 'first_pak',
+                'online' => 1
+            ];
+
+        YaDiskCron::insert($cron);
+
         echo json_encode(['success' => 1]);
         exit;
     }
