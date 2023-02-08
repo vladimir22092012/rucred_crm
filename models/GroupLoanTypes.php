@@ -75,12 +75,7 @@ class GroupLoanTypes extends Core
         foreach ($results as $result) {
             $loantype = $this->Loantypes->get_loantype($result->loantype_id, $flag);
 
-            if (in_array($loantype->online_flag, [0])) {
-                continue;
-            }
-
-
-            if(empty($loantype))
+            if(empty($loantype) && $loantype->online_flag == 0)
                 continue;
 
             $loantypes[] =
