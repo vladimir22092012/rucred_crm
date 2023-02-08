@@ -3593,10 +3593,7 @@ class OrderController extends Controller
         if ($start_date > $paydate)
             $paydate->add(new DateInterval('P1M'));
 
-        if ($loan->id == 1)
-            $percent_per_month = (($order['percent'] / 100) * 360) / 12;
-        else
-            $percent_per_month = (($order['percent'] / 100) * 365) / 12;
+        $percent_per_month = (($order['percent'] / 100) * 365) / 12;
 
         $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
         $annoouitet_pay = round($annoouitet_pay, '2');
@@ -3640,6 +3637,9 @@ class OrderController extends Controller
                 'comission_pay' => 0.00,
                 'rest_pay' => $rest_sum -= $body_pay
             ];
+
+        $probablyReturnDate = $paydate->format('d.m.Y');
+
         $paydate->add(new DateInterval('P1M'));
 
         $period = $loan->max_period;
