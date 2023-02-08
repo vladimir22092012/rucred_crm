@@ -4676,7 +4676,7 @@ class OrderController extends Controller
 
         $cron =
             [
-                'order_id' => $order->id,
+                'order_id' => $order->order_id,
                 'pak' => 'first_pak',
                 'online' => 1
             ];
