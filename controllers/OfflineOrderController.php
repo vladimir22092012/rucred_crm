@@ -3389,7 +3389,7 @@ class OfflineOrderController extends Controller
         $user = (array)$user;
 
         if (empty($user['branche_id'])) {
-            $branches = $this->Branches->get_branches(['company_id' => $user['company_id']]);
+            $branches = $this->Branches->get_branches(['group_id' => $user['group_id']]);
 
             foreach ($branches as $branch) {
                 if ($branch->number == '00')
@@ -3398,6 +3398,8 @@ class OfflineOrderController extends Controller
         } else {
             $branch = $this->Branches->get_branch($user['branche_id']);
             $first_pay_day = $branch->payday;
+
+
         }
 
         $rest_sum = $order['amount'];
@@ -3405,13 +3407,10 @@ class OfflineOrderController extends Controller
         $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date->format('Y-m-d'))));
         $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
 
-        if ($start_date > $paydate || date_diff($paydate, $start_date)->days <= $loan->free_period)
+        if ($start_date > $paydate)
             $paydate->add(new DateInterval('P1M'));
 
-        if ($loan->id == 1)
-            $percent_per_month = (($order['percent'] / 100) * 360) / 12;
-        else
-            $percent_per_month = (($order['percent'] / 100) * 365) / 12;
+        $percent_per_month = (($order['percent'] / 100) * 365) / 12;
 
         $annoouitet_pay = $order['amount'] * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
         $annoouitet_pay = round($annoouitet_pay, '2');
@@ -3419,39 +3418,48 @@ class OfflineOrderController extends Controller
         $iteration = 0;
 
         $count_days_this_month = date('t', strtotime($start_date->format('Y-m-d')));
+
         $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
 
-        if (date_diff($paydate, $start_date)->days <= $loan->free_period) {
-            $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days, 2);
-            $sum_pay = $annoouitet_pay + $plus_loan_percents;
-            $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2, PHP_ROUND_HALF_DOWN);
-            $body_pay = $sum_pay - $loan_percents_pay;
-            $paydate->add(new DateInterval('P1M'));
-            $iteration++;
-        } elseif (date_diff($paydate, $start_date)->days >= $loan->min_period && date_diff($paydate, $start_date)->days < $count_days_this_month) {
+        if ($loan->type == 'pdl') {
 
-            if ($loan->id == 1) {
-                $loan_percents_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days;
+            if(date_diff($paydate, $start_date)->days <= $loan->free_period)
+                $paydate->add(new DateInterval('P1M'));
+
+            if (date_diff($paydate, $start_date)->days > $loan->free_period && date_diff($paydate, $start_date)->days < $loan->min_period) {
+                $loan_percents_pay = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days, 2);
+                $body_pay = 0;
+                $sum_pay = $loan_percents_pay;
+            } else {
+                $loan_percents_pay = round($order['amount'] * ($order['percent'] / 100) * date_diff($paydate, $start_date)->days);
                 $body_pay = $order['amount'];
                 $sum_pay = $loan_percents_pay + $body_pay;
+            }
+        } else {
+            if (date_diff($paydate, $start_date)->days <= $loan->free_period) {
+                $plus_loan_percents = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days, 2);
+                $sum_pay = $annoouitet_pay + $plus_loan_percents;
+                $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2, PHP_ROUND_HALF_DOWN);
+                $body_pay = $sum_pay - $loan_percents_pay;
+                $paydate->add(new DateInterval('P1M'));
                 $iteration++;
-            } else {
+            } elseif (date_diff($paydate, $start_date)->days >= $loan->min_period && date_diff($paydate, $start_date)->days < $count_days_this_month) {
                 $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($paydate, $start_date)->days);
                 $sum_pay = $annoouitet_pay - round($minus_percents, 2);
                 $loan_percents_pay = ($rest_sum * $percent_per_month) - $minus_percents;
                 $loan_percents_pay = round($loan_percents_pay, 2, PHP_ROUND_HALF_DOWN);
                 $body_pay = $sum_pay - $loan_percents_pay;
                 $iteration++;
+            } elseif (date_diff($paydate, $start_date)->days >= $count_days_this_month) {
+                $sum_pay = $annoouitet_pay;
+                $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
+                $body_pay = round($sum_pay - $loan_percents_pay, 2);
+                $iteration++;
+            } else {
+                $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days;
+                $loan_percents_pay = $sum_pay;
+                $body_pay = 0.00;
             }
-        } elseif (date_diff($paydate, $start_date)->days >= $count_days_this_month) {
-            $sum_pay = $annoouitet_pay;
-            $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
-            $body_pay = round($sum_pay - $loan_percents_pay, 2);
-            $iteration++;
-        } else {
-            $sum_pay = ($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days;
-            $loan_percents_pay = $sum_pay;
-            $body_pay = 0.00;
         }
 
         $payment_schedule[$paydate->format('d.m.Y')] =
@@ -3462,7 +3470,8 @@ class OfflineOrderController extends Controller
                 'comission_pay' => 0.00,
                 'rest_pay' => $rest_sum -= $body_pay
             ];
-        $probablyReturnDate = $paydate->format('d.m.Y');
+
+        OrdersORM::where('id', $order_id)->update(['probably_return_date' => date('Y-m-d H:i:s', strtotime($paydate->format('d.m.Y')))]);
 
         $paydate->add(new DateInterval('P1M'));
 
@@ -3475,6 +3484,13 @@ class OfflineOrderController extends Controller
             for ($i = 1; $i <= $period; $i++) {
                 $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
                 $date = $this->check_pay_date($paydate);
+
+                if (isset($payment_schedule[$date->format('d.m.Y')])) {
+
+                    $date = $this->add_month($date->format('d.m.Y'), 2);
+                    $paydate->setDate($date->format('Y'), $date->format('m'), $first_pay_day);
+                    $date = $this->check_pay_date($paydate);
+                }
 
                 if ($i == $period && $loan->id != 1) {
                     $loan_body_pay = $rest_sum;
@@ -3491,13 +3507,6 @@ class OfflineOrderController extends Controller
                     $rest_sum = round($rest_sum - $loan_body_pay, 2);
                 }
 
-                if (isset($payment_schedule[$date->format('d.m.Y')])) {
-
-                    $date = $this->add_month($date->format('d.m.Y'), 2);
-                    $paydate->setDate($date->format('Y'), $date->format('m'), $first_pay_day);
-                    $date = $this->check_pay_date($paydate);
-                }
-
                 $payment_schedule[$date->format('d.m.Y')] =
                     [
                         'pay_sum' => $annoouitet_pay,
@@ -3509,11 +3518,11 @@ class OfflineOrderController extends Controller
 
                 $probablyReturnDate = $date->format('d.m.Y');
 
+                OrdersORM::where('id', $order_id)->update(['probably_return_date' => date('Y-m-d H:i:s', strtotime($probablyReturnDate))]);
+
                 $paydate->add(new DateInterval('P1M'));
             }
         }
-
-        OrdersORM::where('id', $order_id)->update(['probably_return_date' => date('Y-m-d H:i:s', strtotime($probablyReturnDate))]);
 
         $payment_schedule['result'] =
             [
@@ -3556,52 +3565,6 @@ class OfflineOrderController extends Controller
         $xirr /= 100;
 
         $psk = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
-
-        $all_sum_credits = 0;
-        $sum_credits_pay = 0;
-        $credits_story = json_decode($user['credits_story']);
-        $cards_story = json_decode($user['cards_story']);
-
-        if (!empty($credits_story)) {
-            foreach ($credits_story as $credit) {
-                $credit->credits_month_pay = preg_replace("/[^,.0-9]/", '', $credit->credits_month_pay);
-                if (!empty($credit->credits_month_pay))
-                    $sum_credits_pay += $credit->credits_month_pay;
-            }
-
-            $all_sum_credits += $sum_credits_pay;
-        }
-
-        if (!empty($cards_story)) {
-            foreach ($cards_story as $card) {
-                $card->cards_rest_sum = preg_replace("/[^,.0-9]/", '', $card->cards_rest_sum);
-                $card->cards_limit = preg_replace("/[^,.0-9]/", '', $card->cards_limit);
-
-                if (!empty($card->cards_limit)) {
-                    $max = 0.05 * $card->cards_limit;
-                } else {
-                    $max = 0;
-                }
-                if (!empty($card->cards_rest_sum)) {
-                    $min = 0.1 * $card->cards_rest_sum;
-                } else {
-                    $min = 0;
-                }
-
-                $all_sum_credits += min($max, $min);
-            }
-        }
-
-        $month_pay = $order['amount'] * ((1 / $loan->max_period) + (($psk / 100) / 12));
-
-        $all_sum_credits += $month_pay;
-
-        if ($all_sum_credits != 0)
-            $pdn = round(($all_sum_credits / $user['income']) * 100, 2);
-        else
-            $pdn = 0;
-
-        $this->users->update_user($user['id'], ['pdn' => $pdn]);
 
         $schedule = json_encode($payment_schedule);
 
