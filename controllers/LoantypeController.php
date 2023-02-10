@@ -16,7 +16,6 @@ class LoantypeController extends Controller
         if ($id = $this->request->get('id', 'integer')) {
 
             $loantype = $this->loantypes->get_loantype($id);
-
             $groups = $this->GroupLoanTypes->get_loantype_groups($id);
 
             $this->design->assign('groups', $groups);
@@ -65,6 +64,8 @@ class LoantypeController extends Controller
         $loantype->online_flag = $this->request->post('online_flag', 'integer');
         $loantype->reason_flag = $this->request->post('reason_flag');
         $loantype->description = $this->request->post('description');
+        $loantype->free_period = $this->request->post('free_days');
+        $loantype->min_period = $this->request->post('min_period');
 
         $check_uniq = $this->Loantypes->check_uniq_number($loantype->number, $loantype_id);
 
