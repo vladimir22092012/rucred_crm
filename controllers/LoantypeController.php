@@ -98,7 +98,8 @@ class LoantypeController extends Controller
                             'group_id' => $group->id,
                             'loantype_id' => $loantype->id,
                             'standart_percents' => $loantype->percent,
-                            'preferential_percents' => $loantype->profunion
+                            'preferential_percents' => $loantype->profunion,
+                            'individual' => $loantype->max_amount
                         ];
 
                     $this->GroupLoanTypes->add_group($group);
@@ -148,7 +149,7 @@ class LoantypeController extends Controller
                 'preferential_percents' => $preferential_percents,
                 'loantype_id' => $loantype_id,
                 'group_id' => $group_id,
-                'individual' => $individual
+                'individual' => $individual != '' ? $individual :$loanType->max_amount
             ];
 
         $this->GroupLoanTypes->update_record($record);
