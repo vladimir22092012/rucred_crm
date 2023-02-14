@@ -48,6 +48,33 @@ class CompaniesController extends Controller
         $phys_address = $this->request->post('phys_address');
         $payday = $this->request->post('payday', 'integer');
 
+        $errors = [];
+        $existCompany = CompaniesORM::query()
+            ->where('inn', '=', $inn)
+            ->orWhere('ogrn', '=', $ogrn)
+            ->first();
+        if ($existCompany) {
+            if ($existCompany->inn == $inn) {
+                $errors[] = [
+                    'field' => 'inn',
+                    'text' => 'Компания с указанным ИНН уже существует!'
+                ];
+            }
+            if ($existCompany->ogrn == $ogrn) {
+                $errors[] = [
+                    'field' => 'ogrn',
+                    'text' => 'Компания с указанным ОГРН уже существует!'
+                ];
+            }
+        }
+
+        if (count($errors) > 0) {
+            if ($existCompany->inn == $inn) {
+                echo json_encode(['status' => 'error', 'errors' => $errors]);
+                exit;
+            }
+        }
+
         $last_number = $this->Companies->last_number($group_id);
 
         if ($last_number && $last_number < 10) {
@@ -75,10 +102,10 @@ class CompaniesController extends Controller
                 'jur_address' => $jur_address,
                 'phys_address' => $phys_address
             ];
-
         $company_id = $this->Companies->add_company($company);
 
         $this->action_add_brunch($group_id, $company_id, 'По умолчанию', $payday);
+        echo json_encode(['status' => 'ok']);
         exit;
     }
 

@@ -30,10 +30,13 @@
                 $.ajax({
                     method: 'POST',
                     data: $('#add_company_form').serialize(),
+                    dataType: 'json',
                     success: function (resp) {
-                        if (resp) {
-                            $('.alert-danger').text(resp);
-                            $('.alert-danger').fadeIn();
+                        if (resp.status == 'error') {
+                            resp.errors.map((error) => {
+                                $('#' + error.field).addClass('is-invalid');
+                                $('#' + error.field + '-error').html(error.text);
+                            });
                         }
                         else {
                             location.reload();
@@ -299,10 +302,12 @@
                     <div class="form-group">
                         <label for="inn" class="control-label">ИНН:</label>
                         <input type="text" class="form-control" name="inn" id="inn" value=""/>
+                        <div class="invalid-feedback" id="inn-error"></div>
                     </div>
                     <div class="form-group">
                         <label for="ogrn" class="control-label">ОГРН:</label>
                         <input type="text" class="form-control" name="ogrn" id="ogrn" value=""/>
+                        <div class="invalid-feedback" id="ogrn-error"></div>
                     </div>
                     <div class="form-group">
                         <label for="kpp" class="control-label">КПП:</label>
