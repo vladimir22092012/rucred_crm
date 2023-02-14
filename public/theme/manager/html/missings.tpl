@@ -52,6 +52,8 @@
                                 <a href="{if $filter_status==3}{url status=null page=null}{else}{url status=3 stage=null page=null}{/if}"
                                    class="btn btn-xs {if $filter_status==3}btn-primary{else}btn-outline-primary{/if}">У
                                     Андерайтера</a>
+                                <a href="{if $filter_status=='all'}{url status=null page=null}{else}{url status='all' stage=null page=null}{/if}"
+                                   class="btn btn-xs {if $filter_status=='all'}btn-primary{else}btn-outline-primary{/if}">Все заявки</a>
                                 {if $filter_status}
                                     <input type="hidden" value="{$filter_status}" id="filter_status"/>
                                 {/if}
@@ -126,7 +128,11 @@
                                     {foreach $clients as $client}
                                         <tr class="jsgrid-row">
                                             <td style="width: 100px;" class="jsgrid-cell jsgrid-align-right">
-                                                <a href="neworder/draft/{$client->id}">{$client->id}</a>
+                                                {if !empty($manager) && $manager->role == 'developer'}
+                                                    <a href="neworder/draft/{$client->id}">{$client->id}</a>
+                                                {else}
+                                                    {$client->id}
+                                                {/if}
                                             </td>
                                             <td style="width: 100px;" class="jsgrid-cell">
                                                 <span>{$client->date|date}</span>
@@ -140,12 +146,14 @@
                                                 {$client->user->lastname|escape}
                                                 {$client->user->firstname|escape}
                                                 {$client->user->patronymic|escape}<br>
-                                                {if $filter_status == 2}
-                                                    <span class="badge badge-danger">Не реанимируемый</span>
-                                                {elseif $filter_status == 3}
-                                                    <span class="badge badge-primary">У андеррайтера</span>
-                                                {else}
+                                                {if $client->status == 12 && $client->unreability == 0}
                                                     <span class="badge badge-success">Реанимируемый</span>
+                                                {/if}
+                                                {if $client->status == 12 && $client->unreability == 1}
+                                                    <span class="badge badge-danger">Не реанимируемый</span>
+                                                {/if}
+                                                {if $client->status >= 0 && $client->status != 12 && $client->unreability == 0}
+                                                    <span class="badge badge-primary">У андеррайтера</span>
                                                 {/if}
                                             </td>
                                             <td style="width: 100px;" class="jsgrid-cell">
