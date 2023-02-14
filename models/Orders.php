@@ -1,5 +1,7 @@
 <?php
 
+use App\Helpers\PhoneHelpers;
+
 class Orders extends Core
 {
     private $statuses = array(
@@ -176,7 +178,9 @@ class Orders extends Core
 
         $this->db->query($query);
         $result = $this->db->result();
-
+        if (!empty($result->phone_mobile)) {
+            $result->phone_mobile = PhoneHelpers::format($result->phone_mobile);
+        }
         return $result;
     }
 
@@ -612,6 +616,9 @@ class Orders extends Core
         $this->db->query($query);
         if ($results = $this->db->results()) {
             foreach ($results as $result) {
+                if (!empty($result->phone_mobile)) {
+                    $result->phone_mobile = PhoneHelpers::format($result->phone_mobile);
+                }
                 if (!empty($result->loan_history))
                     $result->loan_history = json_decode($result->loan_history);
             }

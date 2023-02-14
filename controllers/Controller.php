@@ -68,7 +68,6 @@ class Controller extends Core
             }
             $this->design->assign('offline_points', $offline_points);
 
-
             $this->design->assign('manager', $this->manager);
 
             $this->design->assign('config', $this->config);

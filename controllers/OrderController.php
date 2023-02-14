@@ -3653,7 +3653,7 @@ class OrderController extends Controller
                 'comission_pay' => 0.00,
                 'rest_pay' => $rest_sum -= $body_pay
             ];
-        
+
         OrdersORM::where('id', $order_id)->update(['probably_return_date' => date('Y-m-d H:i:s', strtotime($paydate->format('d.m.Y')))]);
 
         $paydate->add(new DateInterval('P1M'));
