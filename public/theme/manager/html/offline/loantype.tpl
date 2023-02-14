@@ -511,7 +511,7 @@
                                                         {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
                                                     {for $i=1 to 30}
                                                         <option value="{$i}"
-                                                                {if empty($loantype->free_days) && $i == 3}selected{/if}>{$i}</option>
+                                                                {if $loantype->free_period == $i}selected{/if}>{$i}</option>
                                                     {/for}
                                                 </select>
                                             </div>
@@ -528,7 +528,7 @@
                                                         {if in_array($manager->role, ['employer', 'underwriter', 'middle'])}disabled{/if}>
                                                     {for $i=1 to 30}
                                                         <option value="{$i}"
-                                                                {if empty($loantype->free_days) && $i == 20}selected{/if}>{$i}</option>
+                                                                {if $loantype->min_period == $i}selected{/if}>{$i}</option>
                                                     {/for}
                                                 </select>
                                             </div>
