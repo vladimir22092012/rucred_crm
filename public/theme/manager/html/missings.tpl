@@ -1,6 +1,11 @@
 {$meta_title='Отвалы клиентов' scope=parent}
 
 {capture name='page_scripts'}
+    <script src="theme/manager/assets/plugins/moment/moment.js"></script>
+    <script src="theme/manager/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+    <!-- Date range Plugin JavaScript -->
+    <script src="theme/manager/assets/plugins/timepicker/bootstrap-timepicker.min.js"></script>
+    <script src="theme/manager/assets/plugins/daterangepicker/daterangepicker.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/clients.js"></script>
 {/capture}
 
@@ -8,6 +13,11 @@
     <link type="text/css" rel="stylesheet" href="theme/{$settings->theme|escape}/assets/plugins/jsgrid/jsgrid.min.css"/>
     <link type="text/css" rel="stylesheet"
           href="theme/{$settings->theme|escape}/assets/plugins/jsgrid/jsgrid-theme.min.css"/>
+    <link href="theme/manager/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet"
+          type="text/css"/>
+    <!-- Daterange picker plugins css -->
+    <link href="theme/manager/assets/plugins/timepicker/bootstrap-timepicker.min.css" rel="stylesheet">
+    <link href="theme/manager/assets/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
 {/capture}
 
 <div class="page-wrapper">
@@ -43,23 +53,73 @@
                     <div class="card-body">
                         <h4 class="card-title">Отвалы клиентов</h4>
                         <div class="clearfix">
-                            <div class="js-filter-status mb-2 float-left">
-                                <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status==1}btn-success{else}btn-outline-success{/if}">Реанимируемый</a>
-                                <a href="{if $filter_status==2}{url status=null page=null}{else}{url status=2 stage=null page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status==2}btn-danger{else}btn-outline-danger{/if}">Не
-                                    реанимируемый</a>
-                                <a href="{if $filter_status==3}{url status=null page=null}{else}{url status=3 stage=null page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status==3}btn-primary{else}btn-outline-primary{/if}">У
-                                    Андерайтера</a>
-                                <a href="{if $filter_status=='all'}{url status=null page=null}{else}{url status='all' stage=null page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status=='all'}btn-primary{else}btn-outline-primary{/if}">Все заявки</a>
-                                {if $filter_status}
-                                    <input type="hidden" value="{$filter_status}" id="filter_status"/>
-                                {/if}
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <div class="js-filter-status mb-2 float-left">
+                                        <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 page=null}{/if}"
+                                           class="btn btn-xs {if $filter_status==1}btn-success{else}btn-outline-success{/if}">Реанимируемый</a>
+                                        <a href="{if $filter_status==2}{url status=null page=null}{else}{url status=2 stage=null page=null}{/if}"
+                                           class="btn btn-xs {if $filter_status==2}btn-danger{else}btn-outline-danger{/if}">Не
+                                            реанимируемый</a>
+                                        <a href="{if $filter_status==3}{url status=null page=null}{else}{url status=3 stage=null page=null}{/if}"
+                                           class="btn btn-xs {if $filter_status==3}btn-primary{else}btn-outline-primary{/if}">У
+                                            Андерайтера</a>
+                                        <a href="{if $filter_status=='all'}{url status=null page=null}{else}{url status='all' stage=null page=null}{/if}"
+                                           class="btn btn-xs {if $filter_status=='all'}btn-primary{else}btn-outline-primary{/if}">Все заявки</a>
+                                        {if $filter_status}
+                                            <input type="hidden" value="{$filter_status}" id="filter_status"/>
+                                        {/if}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="col-12 dropdown text-right hidden-sm-down js-period-filter">
+                                        <input type="hidden" value="{$period}" id="filter_period"/>
+                                        <button class="btn btn-xs btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            <span class="js-period-filter-text">
+                                                {if $period == 'today'}Сегодня
+                                                {elseif $period == 'yesterday'}Вчера
+                                                {elseif $period == 'week'}На этой неделе
+                                                {elseif $period == 'month'}В этом месяце
+                                                {elseif $period == 'year'}В этом году
+                                                {elseif $period == 'all'}За все время
+                                                {elseif $period == 'optional'}Произвольный
+                                                {else}{$period}{/if}
+                                            </span>
+
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item js-period-link {if $period == 'today'}active{/if}"
+                                               href="{url period='today' page=null}">Сегодня</a>
+                                            <a class="dropdown-item js-period-link {if $period == 'yesterday'}active{/if}"
+                                               href="{url period='yesterday' page=null}">Вчера</a>
+                                            <a class="dropdown-item js-period-link {if $period == 'month'}active{/if}"
+                                               href="{url period='month' page=null}">В этом месяце</a>
+                                            <a class="dropdown-item js-period-link {if $period == 'year'}active{/if}"
+                                               href="{url period='year' page=null}">В этом году</a>
+                                            <a class="dropdown-item js-period-link {if $period == 'all'}active{/if}"
+                                               href="{url period='all' page=null}">За все время</a>
+                                            <a class="dropdown-item js-open-daterange {if $period == 'optional'}active{/if}"
+                                               href="{url period='optional' page=null}">Произвольный</a>
+                                        </div>
+
+                                        <div class="js-daterange-filter input-group mt-3"
+                                             {if $period!='optional'}style="display:none"{/if}>
+                                            <input type="text" name="daterange" class="form-control daterange js-daterange-input"
+                                                   value="{if $from && $to}{$from}-{$to}{/if}">
+                                            <div class="input-group-append">
+                                        <span class="input-group-text">
+                                            <span class="ti-calendar"></span>
+                                        </span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div id="basicgrid" class="jsgrid" style="position: relative; width: 100%;">
+                        <div id="basicgrid" class="jsgrid" style="position: relative; top:15px; width: 100%;">
                             <div class="jsgrid-grid-header jsgrid-header-scrollbar">
                                 <table class="jsgrid-table table table-striped table-hover">
                                     <tr class="jsgrid-header-row">
