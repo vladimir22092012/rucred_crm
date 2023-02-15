@@ -606,12 +606,6 @@
 
                                             <h5 class="card-header">
                                                 <span class="text-white">Адрес</span>
-                                                {if $manager->role != 'employer'}
-                                                    <a href="javascript:void(0);"
-                                                       class="text-white float-right js-edit-form"><i
-                                                                class=" fas fa-edit"></i></a>
-                                                    </h3>
-                                                {/if}
                                             </h5>
 
                                             <div class="row view-block {if $addresses_error}hide{/if}">
@@ -1174,14 +1168,6 @@
 
                                             <h6 class="card-header">
                                                 <span class="text-white">Информация о работодателе</span>
-                                                {if $manager->role != 'employer'}
-                                                    <span class="float-right">
-                                                    <a href="javascript:void(0);"
-                                                       class="text-white"
-                                                       data-user="{$client->id}"><i
-                                                                class="fas fa-eraser"></i></a>
-                                                        </span>
-                                                {/if}
                                             </h6>
 
                                             <div class="row m-0 pt-2 view-block">
@@ -1478,12 +1464,14 @@
                                     </div>
                                 </div>
                                 <!-- -->
+                                {*
                                 <div style="display: flex; justify-content: right">
                                     <div type="button" class="btn btn-outline-danger delete_client"
                                          data-user="{$client->id}" style="height: 38px;">
                                         Удалить клиента
                                     </div>
                                 </div>
+                                *}
                             </div>
                         </div>
 
