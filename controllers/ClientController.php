@@ -2,6 +2,7 @@
 
 error_reporting(-1);
 ini_set('display_errors', 'On');
+
 class ClientController extends Controller
 {
     public function fetch()
@@ -108,7 +109,7 @@ class ClientController extends Controller
 
             $blacklist_id = $this->blacklist->search($phone, $fio);
 
-            if(!empty($blacklist_id))
+            if (!empty($blacklist_id))
                 $in_blacklist = 1;
 
             $this->design->assign('in_blacklist', $in_blacklist);
@@ -242,12 +243,9 @@ class ClientController extends Controller
                 }
             }
 
-            if (!empty($client->company_id)) {
-                foreach ($companies as $company) {
-                    if ($client->company_id == $company->id)
-                        $company_name = $company->name;
-                }
-            }
+            $company = CompaniesORM::find($client->company_id);
+            $company_name = $company->name;
+
         }
 
         if (!isset($group_name))
@@ -1186,9 +1184,9 @@ class ClientController extends Controller
 
         $blacklist_id = $this->blacklist->search($phone, $fio);
 
-        if(!empty($blacklist_id))
+        if (!empty($blacklist_id))
             $this->blacklist->delete_person($blacklist_id);
-        else{
+        else {
             $person =
                 [
                     'fio' => $fio,
