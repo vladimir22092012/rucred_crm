@@ -6,7 +6,7 @@ class Request extends Core
     public function __construct()
     {
         parent::__construct();
-        
+
         $_POST = $this->stripslashes_recursive($_POST);
         $_GET = $this->stripslashes_recursive($_GET);
     }
@@ -25,16 +25,16 @@ class Request extends Core
         if (isset($_GET[$name])) {
             $val = $_GET[$name];
         }
-            
+
         if (!empty($type) && is_array($val)) {
             $val = reset($val);
         }
-        
+
         if ($type == 'string') {
             return strval($val);
 //            return strval(preg_replace('/[^\p{L}\p{Nd}\d\s_\-\.\%\s]/ui', '', $val));
         }
-            
+
         if ($type == 'integer') {
             return intval($val);
         }
@@ -42,7 +42,7 @@ class Request extends Core
         if ($type == 'boolean') {
             return !empty($val);
         }
-            
+
         return $val;
     }
 
@@ -54,11 +54,11 @@ class Request extends Core
         } elseif (empty($name)) {
             $val = file_get_contents('php://input');
         }
-            
+
         if ($type == 'string') {
             return strval(preg_replace('/[^\p{L}\p{Nd}\d\s_\-\.\%\s]/ui', '', $val));
         }
-            
+
         if ($type == 'integer') {
             return intval($val);
         }
@@ -97,8 +97,8 @@ class Request extends Core
         }
         return $res;
     }
-    
-        
+
+
     public function check_session()
     {
         if (!empty($_POST)) {
@@ -110,12 +110,12 @@ class Request extends Core
         return true;
     }
 
-    
+
     public function url($params = array())
     {
         $url = @parse_url($_SERVER["REQUEST_URI"]);
         parse_str($url['query'], $query);
-        
+
         if (false) {
             foreach ($query as &$v) {
                 if (!is_array($v)) {
@@ -134,13 +134,13 @@ class Request extends Core
                 $query_is_empty = false;
             }
         }
-        
+
         if (!$query_is_empty) {
             $url['query'] = http_build_query($query);
         } else {
             $url['query'] = null;
         }
-            
+
         $result = http_build_url(null, $url);
         return $result;
     }
@@ -159,7 +159,7 @@ if (!function_exists('http_build_url')) {
     define('HTTP_URL_STRIP_QUERY', 256);        // Strip query string
     define('HTTP_URL_STRIP_FRAGMENT', 512);     // Strip any fragments (#identifier)
     define('HTTP_URL_STRIP_ALL', 1024);         // Strip anything but scheme and host
-    
+
     // Build an URL
     // The parts of the second URL will be merged into the first according to the flags argument.
     //
@@ -170,7 +170,7 @@ if (!function_exists('http_build_url')) {
     function http_build_url($url, $parts = array(), $flags = HTTP_URL_REPLACE, &$new_url = false)
     {
         $keys = array('user','pass','port','path','query','fragment');
-        
+
         // HTTP_URL_STRIP_ALL becomes all the HTTP_URL_STRIP_Xs
         if ($flags & HTTP_URL_STRIP_ALL) {
             $flags |= HTTP_URL_STRIP_USER;
@@ -185,10 +185,10 @@ if (!function_exists('http_build_url')) {
             $flags |= HTTP_URL_STRIP_USER;
             $flags |= HTTP_URL_STRIP_PASS;
         }
-        
+
         // Parse the original URL
         $parse_url = parse_url($url);
-        
+
         // Scheme and Host are always replaced
         if (isset($parts['scheme'])) {
             $parse_url['scheme'] = $parts['scheme'];
@@ -196,7 +196,7 @@ if (!function_exists('http_build_url')) {
         if (isset($parts['host'])) {
             $parse_url['host'] = $parts['host'];
         }
-        
+
         // (If applicable) Replace the original URL with it's new parts
         if ($flags & HTTP_URL_REPLACE) {
             foreach ($keys as $key) {
@@ -213,7 +213,7 @@ if (!function_exists('http_build_url')) {
                     $parse_url['path'] = $parts['path'];
                 }
             }
-            
+
             // Join the original query string with the new query string
             if (isset($parts['query']) && ($flags & HTTP_URL_JOIN_QUERY)) {
                 if (isset($parse_url['query'])) {
@@ -223,7 +223,7 @@ if (!function_exists('http_build_url')) {
                 }
             }
         }
-            
+
         // Strips all the applicable sections of the URL
         // Note: Scheme and Host are never stripped
         foreach ($keys as $key) {
@@ -231,10 +231,10 @@ if (!function_exists('http_build_url')) {
                 unset($parse_url[$key]);
             }
         }
-        
-        
+
+
         $new_url = $parse_url;
-        
+
         return
              ((isset($parse_url['scheme'])) ? $parse_url['scheme'] . '://' : '')
             .((isset($parse_url['user'])) ? $parse_url['user'] . ((isset($parse_url['pass'])) ? ':' . $parse_url['pass'] : '') .'@' : '')

@@ -1,5 +1,7 @@
 <?php
 
+use App\Helpers\PhoneHelpers;
+
 class DeleteUsersController extends Controller
 {
     public function fetch()
@@ -20,11 +22,13 @@ class DeleteUsersController extends Controller
     private function action_delete_user()
     {
         $phone = $this->request->post('phone');
-
+        if (!empty($phone)) {
+            $phone = PhoneHelpers::format($phone, 'long_to_small');
+        }
         if(strlen($phone) > 11 || strlen($phone) < 11){
             echo json_encode(['error' => 'Проверьте правильность номера, не соответствует кол-во цифр']);
             exit;
-        }else{
+        } else {
 
             $users = $this->users->get_users_by_phone($phone);
 

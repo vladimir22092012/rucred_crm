@@ -1,5 +1,7 @@
 <?php
 
+use App\Helpers\PhoneHelpers;
+
 class Users extends Core
 {
 
@@ -129,7 +131,9 @@ class Users extends Core
         if ($result = $this->db->result()) {
             $result->loan_history = empty($result->loan_history) ? array() : json_decode($result->loan_history);
         }
-
+        if (!empty($result->phone_mobile)) {
+            $result->phone_mobile = PhoneHelpers::format($result->phone_mobile);
+        }
         return $result;
     }
 
@@ -149,6 +153,9 @@ class Users extends Core
         ", (int)$phone);
         $this->db->query($query);
         $result = $this->db->result();
+        if (!empty($result->phone_mobile)) {
+            $result->phone_mobile = PhoneHelpers::format($result->phone_mobile);
+        }
         return $result;
     }
 
@@ -310,6 +317,9 @@ class Users extends Core
 
         if ($results = $this->db->results()) {
             foreach ($results as $result) {
+                if (!empty($result->phone_mobile)) {
+                    $result->phone_mobile = PhoneHelpers::format($result->phone_mobile);
+                }
                 $result->loan_history = empty($result->loan_history) ? array() : json_decode($result->loan_history);
             }
         }
@@ -543,8 +553,8 @@ class Users extends Core
             $id_filter = $this->db->placehold("AND id != ?", $id);
 
         $query = $this->db->placehold("
-            SELECT id 
-            FROM __users 
+            SELECT id
+            FROM __users
             WHERE phone_mobile = ?
             $id_filter
         ", (string)$phone);
@@ -561,8 +571,8 @@ class Users extends Core
             $id_filter = $this->db->placehold("AND id != ?", $id);
 
         $query = $this->db->placehold("
-            SELECT id 
-            FROM __users 
+            SELECT id
+            FROM __users
             WHERE email = ?
             $id_filter
         ", (string)$email);
