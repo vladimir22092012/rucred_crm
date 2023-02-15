@@ -201,6 +201,11 @@ class ClientController extends Controller
                 }
             }
 
+            $client->requisite = RequisitesORM::where('user_id', $client->id)->where('default', 1)->first();
+
+            $settlement = $this->OrganisationSettlements->get_std_settlement();
+            $this->design->assign('settlement', $settlement);
+
             $this->design->assign('client', $client);
 
             $order_statuses = $this->orders->get_statuses();
