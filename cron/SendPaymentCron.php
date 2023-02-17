@@ -30,7 +30,7 @@ class SendPaymentCron extends Core
 
             $fio = "$user->lastname $user->firstname $user->patronymic";
 
-            $description = "Оплата по договору микрозайма № $contract->number от $order->probably_start_date
+            $description = "Выдача средств по договору микрозайма № $contract->number от $order->probably_start_date
             // заемщик $fio ИНН $order->inn. Без налога (НДС)";
 
             $payment = new stdClass();

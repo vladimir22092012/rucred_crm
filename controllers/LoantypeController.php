@@ -99,7 +99,8 @@ class LoantypeController extends Controller
                             'loantype_id' => $loantype->id,
                             'standart_percents' => $loantype->percent,
                             'preferential_percents' => $loantype->profunion,
-                            'individual' => $loantype->max_amount
+                            'individual' => $loantype->max_amount,
+                            'on_off_flag' => 0,
                         ];
 
                     $this->GroupLoanTypes->add_group($group);

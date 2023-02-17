@@ -3,11 +3,11 @@
 class Settings extends Core
 {
     private $vars = array();
-    
+
     function __construct()
     {
         parent::__construct();
-        
+
         // Выбираем из базы настройки
         $this->db->query('SELECT name, value FROM __settings');
 
@@ -17,23 +17,22 @@ class Settings extends Core
                 $this->vars[$result->name] = $result->value;
             }
         }
-
         $this->vars['theme'] = 'manager';
     }
-    
+
     public function __get($name)
     {
         if ($res = parent::__get($name)) {
             return $res;
         }
-        
+
         if (isset($this->vars[$name])) {
             return $this->vars[$name];
         } else {
             return null;
         }
     }
-    
+
     public function __set($name, $value)
     {
         $this->vars[$name] = $value;
@@ -43,7 +42,7 @@ class Settings extends Core
         } else {
             $value = (string) $value;
         }
-            
+
         $this->db->query('SELECT count(*) as count FROM __settings WHERE name=?', $name);
         if ($this->db->result('count')>0) {
             $this->db->query('UPDATE __settings SET value=? WHERE name=?', $value, $name);

@@ -208,6 +208,23 @@ class ClientController extends Controller
 
             $cards = $this->cards->get_cards(array('user_id' => $client->id));
             $this->design->assign('cards', $cards);
+
+            $lastUpdateOnec = '';
+            $lastUploadDisk = '';
+
+            $uploadLoanOnec = ExchangeCronORM::where('userId', $id)->orderByRaw('id DESC')->first();
+            if ($uploadLoanOnec) {
+                $lastUpdateOnec = $uploadLoanOnec->updated;
+            }
+
+            $ordersIds = OrdersORM::where('user_id', $id)->pluck('id');
+            $uploadLoanDisk = YaDiskCronORM::whereIn('order_id', $ordersIds)->orderByRaw('id DESC')->first();
+            if ($uploadLoanDisk) {
+                $lastUploadDisk = $uploadLoanDisk->updated;
+            }
+            $this->design->assign('lastUpdateOnec', $lastUpdateOnec);
+            $this->design->assign('lastUploadDisk', $lastUploadDisk);
+
         }
 
         $scoring_types = array();

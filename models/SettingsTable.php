@@ -21,6 +21,17 @@ class SettingsTable extends Core
         $results = $this->db->results();
         return $results;
     }
+
+    public function create($setting){
+        $query = $this->db->placehold("
+            INSERT INTO s_settings SET ?%
+        ", (array)$setting);
+        $this->db->query($query);
+        $id = $this->db->insert_id();
+
+        return $id;
+    }
+
     public function update($name , $value){
         $query = $this->db->placehold("
         UPDATE s_settings

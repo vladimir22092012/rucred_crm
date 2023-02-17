@@ -5,7 +5,7 @@ class GroupLoanTypes extends Core
     public function get_loantype_groups($loantype_id)
     {
         $query = $this->db->placehold("
-        SELECT * 
+        SELECT *
         FROM s_group_loantypes
         WHERE loantype_id = ?
         ", $loantype_id);
@@ -46,7 +46,7 @@ class GroupLoanTypes extends Core
             $where .= $this->db->placehold("AND loantype_id = ?", $params['loantype_id']);
 
         $query = $this->db->placehold("
-        SELECT * 
+        SELECT *
         FROM s_group_loantypes
         WHERE 1
         $where
@@ -61,7 +61,7 @@ class GroupLoanTypes extends Core
     public function get_loantypes_on($group_id, $flag = 2)
     {
         $query = $this->db->placehold("
-        SELECT * 
+        SELECT *
         FROM s_group_loantypes
         WHERE group_id = ?
         and on_off_flag = 1
@@ -80,6 +80,7 @@ class GroupLoanTypes extends Core
 
             $loantypes[] =
                 [
+                    'number' => $loantype->number,
                     'max_period' => $loantype->max_period,
                     'id' => $loantype->id,
                     'min_amount' => $loantype->min_amount,
@@ -91,7 +92,9 @@ class GroupLoanTypes extends Core
                     'individual' => $result->individual
                 ];
         }
-
+        usort($loantypes, function($a, $b){
+            return ($a['number'] - $b['number']);
+        });
         return $loantypes;
     }
 
@@ -110,7 +113,7 @@ class GroupLoanTypes extends Core
     public function delete_group($id)
     {
         $query = $this->db->placehold("
-        DELETE FROM s_group_loantypes 
+        DELETE FROM s_group_loantypes
         WHERE group_id = ?", $id);
 
         $this->db->query($query);
@@ -120,10 +123,10 @@ class GroupLoanTypes extends Core
     {
         $query = $this->db->placehold(
             "
-        UPDATE s_group_loantypes 
+        UPDATE s_group_loantypes
         SET standart_percents = ?, preferential_percents = ?, individual = ?
         WHERE group_id = ?
-        AND loantype_id = ? 
+        AND loantype_id = ?
         ",
             (float)$record['standart_percents'],
             (float)$record['preferential_percents'],
@@ -138,7 +141,7 @@ class GroupLoanTypes extends Core
     public function change_on_off_flag($record_id, $flag)
     {
         $query = $this->db->placehold("
-        UPDATE s_group_loantypes 
+        UPDATE s_group_loantypes
         SET on_off_flag = ?
         WHERE id = ?
         ", (int)$flag, (int)$record_id);

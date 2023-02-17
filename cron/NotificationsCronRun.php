@@ -58,6 +58,11 @@ class NotificationsCronRun extends Core
             $managers = $this->managers->get_managers(['role' => $roles_name]);
 
             foreach ($managers as $manager) {
+
+                if (isset($manager->blocked) && $manager->blocked == 1) {
+                    continue;
+                }
+
                 if ($manager->role == 'employer')
                 {
                     $skip = 1;
@@ -75,16 +80,16 @@ class NotificationsCronRun extends Core
                         continue;
                 }
 
-                if ($manager->telegram_note == 1) {
+                if ($manager->telegram_note == 1 && $this->settings->messenger_notify_manager_status) {
                     $this->telegram_note($manager->id, $ticket, 1);
                 }
-                if ($manager->viber_note == 1) {
+                if ($manager->viber_note == 1 && $this->settings->messenger_notify_manager_status) {
                     $this->viber_note($manager->id, $ticket, 1);
                 }
-                if ($manager->sms_note == 1) {
+                if ($manager->sms_note == 1 && $this->settings->phone_notify_manager_status == true) {
                     $this->sms_note($manager->id, $manager->phone, $ticket);
                 }
-                if ($manager->email_note == 1) {
+                if ($manager->email_note == 1 && $this->settings->mail_notify_manager_status == true) {
                     $this->mail_note($manager->id, $manager->email, $ticket);
                 }
             }

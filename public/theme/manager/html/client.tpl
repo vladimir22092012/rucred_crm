@@ -281,13 +281,15 @@
                                                 <input type="checkbox" class="custom-control-input"
                                                        data-user="{$client->id}" id="canSendOnec"
                                                        {if $client->canSendOnec}checked{/if}>
-                                                <label class="custom-control-label" for="canSendOnec"><strong class="text-danger">Отравлять в 1с</strong></label>
+                                                <label class="custom-control-label" for="canSendOnec"><strong class="text-danger">Отправлять в 1с</strong></label>
+                                                <span style="position: relative;font-size: 13px;left: 10px;">{$lastUpdateOnec}</span>
                                             </div>
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" class="custom-control-input"
                                                        data-user="{$client->id}" id="canSendYaDisk"
                                                        {if $client->canSendYaDisk}checked{/if}>
-                                                <label class="custom-control-label" for="canSendYaDisk"><strong class="text-danger">Отравлять в Я.Диск</strong></label>
+                                                <label class="custom-control-label" for="canSendYaDisk"><strong class="text-danger">Отправлять в Я.Диск</strong></label>
+                                                <span style="position: relative;font-size: 13px;left: 10px;">{$lastUploadDisk}</span>
                                             </div>
                                         {/if}
                                     </div>
@@ -303,6 +305,13 @@
                                    aria-selected="false">
                                     <span class="hidden-sm-up"><i class="ti-home"></i></span>
                                     <span class="hidden-xs-down">Общая информация</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#contact-info" role="tab"
+                                   aria-selected="false">
+                                    <span class="hidden-sm-up"><i class="ti-home"></i></span>
+                                    <span class="hidden-xs-down">Контактная информация</span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -354,7 +363,7 @@
                                                     {if $manager->role != 'employer'}
                                                         <a href="javascript:void(0);"
                                                            class="float-right text-white js-edit-form"><i
-                                                                    class=" fas fa-edit"></i></a>
+                                                                class=" fas fa-edit"></i></a>
                                                         </h3>
                                                     {/if}
                                                 </h5>
@@ -362,9 +371,13 @@
                                                 <div class="row pt-2 view-block {if $contactdata_error}hide{/if}">
                                                     <div class="col-md-12">
                                                         <div class="form-group row m-0">
-                                                            <label class="control-label col-md-4">Email:</label>
+                                                            <label class="control-label col-md-4">ФИО:</label>
                                                             <div class="col-md-8">
-                                                                <p class="form-control-static">{$client->email|escape}</p>
+                                                                <p class="form-control-static">
+                                                                    {$client->lastname|escape}
+                                                                    {$client->firstname|escape}
+                                                                    {$client->patronymic|escape}
+                                                                </p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -399,50 +412,22 @@
                                                             <label class="control-label col-md-4">Код
                                                                 подразделения:</label>
                                                             <div class="col-md-8">
-                                                                <p class="form-control-static">{$client->subdivision_code|escape}</p>
+                                                                <p class="form-control-static"></p>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12">
                                                         <div class="form-group row m-0">
-                                                            <label class="control-label col-md-4">Кем выдан:</label>
+                                                            <label class="control-label col-md-4">Кем выдан, код
+                                                                подразделения:</label>
                                                             <div class="col-md-8">
-                                                                <p class="form-control-static">{$client->passport_issued|escape}</p>
+                                                                <p class="form-control-static">
+                                                                    {$client->passport_issued|escape}
+                                                                    {$client->subdivision_code|escape}
+                                                                </p>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    {if $client->viber_num}
-                                                        <div class="col-md-12">
-                                                            <div class="form-group row m-0">
-                                                                <label class="control-label col-md 4">Viber:</label><br>
-                                                                <div class="col-md-8">
-                                                                    <p class="form-control-static">{$client->viber_num}</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    {/if}
-                                                    {if $client->telegram_num}
-                                                        <div class="col-md-12">
-                                                            <div class="form-group row m-0">
-                                                                <label
-                                                                        class="control-label col-md 4">Telegram:</label><br>
-                                                                <div class="col-md-8">
-                                                                    <p class="form-control-static">{$client->telegram_num}</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    {/if}
-                                                    {if $client->whatsapp_num}
-                                                        <div class="col-md-12">
-                                                            <div class="form-group row m-0">
-                                                                <label
-                                                                        class="control-label col-md 4">WhatsApp:</label><br>
-                                                                <div class="col-md-8">
-                                                                    <p class="form-control-static">{$client->whatsapp_num}</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    {/if}
                                                 </div>
 
 
@@ -580,7 +565,7 @@
                                                     <div class="col-md-12">
                                                         <div class="form-actions">
                                                             <button type="submit" class="btn btn-success"><i
-                                                                        class="fa fa-check"></i> Сохранить
+                                                                    class="fa fa-check"></i> Сохранить
                                                             </button>
                                                             <button type="button"
                                                                     class="btn btn-inverse js-cancel-edit">Отмена
@@ -626,7 +611,7 @@
                                                                    href="javascript:void(0)"
                                                                    onclick="window.open('{$config->back_url}/files/users/{$client->id}/{$file->name}')">
                                                                     <div class="ribbon ribbon-corner {$ribbon_class}"><i
-                                                                                class="{$ribbon_icon}"></i></div>
+                                                                            class="{$ribbon_icon}"></i></div>
                                                                     <img src="{$config->back_url}/files/users/{$file->name}"
                                                                          alt="" class="img-responsive" style=""/>
                                                                 </a>
@@ -691,7 +676,7 @@
                                                     <div class="col-md-12">
                                                         <div class="form-actions">
                                                             <button type="submit" class="btn btn-success"><i
-                                                                        class="fa fa-check"></i> Сохранить
+                                                                    class="fa fa-check"></i> Сохранить
                                                             </button>
                                                             <button type="button"
                                                                     class="btn btn-inverse js-cancel-edit">
@@ -714,7 +699,7 @@
                                                     {if $manager->role != 'employer'}
                                                         <a href="javascript:void(0);"
                                                            class="text-white float-right js-edit-form"><i
-                                                                    class=" fas fa-edit"></i></a>
+                                                                class=" fas fa-edit"></i></a>
                                                         </h3>
                                                     {/if}
                                                 </h5>
@@ -723,7 +708,7 @@
                                                     <div class="col-md-12">
                                                         <table class="table table-hover mb-0">
                                                             <tr>
-                                                                <td>Адрес прописки</td>
+                                                                <td>Адрес регистрации</td>
                                                                 <td>
                                                                     {$client->regaddress->adressfull}
                                                                 </td>
@@ -741,7 +726,7 @@
                                                 <div class="edit-block m-0 {if !$addresses_error}hide{/if}">
 
                                                     <div class="row m-0 mb-2 mt-2 js-dadata-address">
-                                                        <h6 class="col-12 nav-small-cap">Адрес прописки</h6>
+                                                        <h6 class="col-12 nav-small-cap">Адрес регистрации</h6>
                                                         {if $addresses_error}
                                                             <div class="col-md-12">
                                                                 <ul class="alert alert-danger">
@@ -995,7 +980,7 @@
                                                         <div class="col-md-12">
                                                             <div class="form-actions">
                                                                 <button type="submit" class="btn btn-success"><i
-                                                                            class="fa fa-check"></i> Сохранить
+                                                                        class="fa fa-check"></i> Сохранить
                                                                 </button>
                                                                 <button type="button"
                                                                         class="btn btn-inverse js-cancel-edit">Отмена
@@ -1022,7 +1007,7 @@
                                                     <a href="javascript:void(0);"
                                                        class="text-white"
                                                        data-user="{$client->id}"><i
-                                                                class="fas fa-eraser"></i></a>
+                                                            class="fas fa-eraser"></i></a>
                                                         </span>
                                                     {/if}
                                                 </h6>
@@ -1193,6 +1178,85 @@
                                         <div type="button" class="btn btn-outline-danger delete_client"
                                              data-user="{$client->id}" style="height: 38px;">
                                             Удалить клиента
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane active" id="contact-info" role="tabpanel">
+                                <div class="form-body p-2 pt-3">
+                                    <div class="row">
+                                        <div class="col-md-8 ">
+
+                                            <!-- Контакты -->
+                                            <form action="{url}" class="mb-3 border js-order-item-form"
+                                                  id="personal_data_form">
+
+                                                <input type="hidden" name="action" value="contactdata"/>
+                                                <input type="hidden" name="user_id" value="{$client->id}"/>
+
+                                                <h5 class="card-header">
+                                                    <span class="text-white ">Контактная информация</span>
+                                                </h5>
+
+                                                <div class="row pt-2 view-block {if $contactdata_error}hide{/if}">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label class="control-label col-md-4">Телефон:</label>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$client->phone_mobile|escape}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label class="control-label col-md-4">Email:</label>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$client->email|escape}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {if $client->viber_num}
+                                                        <div class="col-md-12">
+                                                            <div class="form-group row m-0">
+                                                                <label class="control-label col-md 4">Viber:</label><br>
+                                                                <div class="col-md-8">
+                                                                    <p class="form-control-static">{$client->viber_num}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {/if}
+                                                    {if $client->telegram_num}
+                                                        <div class="col-md-12">
+                                                            <div class="form-group row m-0">
+                                                                <label
+                                                                    class="control-label col-md 4">Telegram:</label><br>
+                                                                <div class="col-md-8">
+                                                                    <p class="form-control-static">{$client->telegram_num}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {/if}
+                                                    {if $client->whatsapp_num}
+                                                        <div class="col-md-12">
+                                                            <div class="form-group row m-0">
+                                                                <label
+                                                                    class="control-label col-md 4">WhatsApp:</label><br>
+                                                                <div class="col-md-8">
+                                                                    <p class="form-control-static">{$client->whatsapp_num}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {/if}
+                                                </div>
+
+                                            </form>
+                                            <!-- / Контакты-->
+
+                                            <!--
+                                            <h3 class="box-title mt-5">UTM-метки</h3>
+                                            <hr>
+                                            -->
                                         </div>
                                     </div>
                                 </div>

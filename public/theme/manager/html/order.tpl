@@ -1711,14 +1711,16 @@
                                                        data-order="{$order->order_id}" id="canSendOnec"
                                                        {if $order->canSendOnec}checked{/if}>
                                                 <label class="custom-control-label" for="canSendOnec"><strong
-                                                            class="text-danger">Отравлять в 1с</strong></label>
+                                                            class="text-danger">Отправлять в 1с</strong></label>
+                                                <span style="position: relative;font-size: 13px;top: -3px;left: 10px;">{$lastUpdateOnec}</span>
                                             </div>
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" class="custom-control-input"
                                                        data-order="{$order->order_id}" id="canSendYaDisk"
                                                        {if $order->canSendYaDisk}checked{/if}>
                                                 <label class="custom-control-label" for="canSendYaDisk"><strong
-                                                            class="text-danger">Отравлять в Я.Диск</strong></label>
+                                                            class="text-danger">Отправлять в Я.Диск</strong></label>
+                                                <span style="position: relative;font-size: 13px;top: -3px;left: 10px;">{$lastUploadDisk}</span>
                                             </div>
                                         {/if}
                                     </div>

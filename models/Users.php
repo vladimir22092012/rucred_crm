@@ -662,4 +662,18 @@ class Users extends Core
 
         return $result;
     }
+
+    public function get_users_by_params($params) {
+
+        $queryParams = [];
+        foreach ($params as $field => $value) {
+            $queryParams[] = "($field = '$value')";
+        }
+        $query = $this->db->placehold("SELECT * FROM s_users WHERE " . join(' OR ', $queryParams));
+        $this->db->query($query);
+
+        $result = $this->db->results();
+
+        return $result;
+    }
 }

@@ -8,15 +8,18 @@
         $('.delete').on('click', function (e) {
             e.preventDefault();
 
-            let phone = $('input[name="phone"]').val();
+            let fields = $('.js-search-fields input'),
+                data = {
+                action: 'delete_user',
+            }
 
+            fields.map((key, field) => {
+                data[$(field).attr('name')] = $(field).val();
+            })
             $.ajax({
                 method: 'POST',
                 dataType: 'JSON',
-                data: {
-                    action: 'delete_user',
-                    phone: phone
-                },
+                data: data,
                 success: function (resp) {
                     if(resp['error']){
                         Swal.fire({
@@ -25,7 +28,7 @@
                         });
                     }else{
                         Swal.fire({
-                            title: 'Клиент успешно удален',
+                            title: 'Клиенты успешно удалены',
                             confirmButtonText: 'ОК'
                         });
                     }
@@ -79,19 +82,47 @@
         <!-- Row -->
 
             <div class="card">
-                <div class="card-body">
+                <div class="card-body js-search-fields">
 
                     <div class="row">
                         <div class="col-md-12">
                             <h3 class="box-title">
-                                Введите номер клиента в формате 79999999999
+                                Введите данные клиента
                             </h3><br>
-                            <div class="col-3" style="display: flex">
-                                <input type="text" name="phone" class="form-control mask_number" autocomplete="off"
-                                    style="width: 500px"
-                                >
-                                <div class="btn btn-outline-danger delete" style="margin-left: 25px">Удалить</div>
-                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <input type="text" placeholder="Телефон" name="phone_mobile" class="form-control mask_number" autocomplete="off">
+                            <p style="text-align: center; margin-top: 10px;margin-bottom: 10px;">ИЛИ</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <input type="text" name="email" class="form-control" placeholder="Email" autocomplete="off">
+                            <p style="text-align: center; margin-top: 10px;margin-bottom: 10px;">ИЛИ</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <input type="text" name="passport_serial" class="form-control" placeholder="Паспортные данные" autocomplete="off">
+                            <p style="text-align: center; margin-top: 10px;margin-bottom: 10px;">ИЛИ</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <input type="text" name="inn" class="form-control" placeholder="ИНН" autocomplete="off">
+                            <p style="text-align: center; margin-top: 10px;margin-bottom: 10px;">ИЛИ</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <input type="text" name="snils" class="form-control" placeholder="Снилс" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <div class="btn btn-outline-danger delete" style="margin-top: 15px">Удалить</div>
                         </div>
                     </div>
                 </div>

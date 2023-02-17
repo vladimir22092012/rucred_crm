@@ -647,7 +647,7 @@ $(function () {
 
     $('.check_users').on('click', function (e) {
         e.preventDefault();
-
+        $('.js-show-hide-block').hide();
         let lastname = $('input[name="lastname"]').val();
         let firstname = $('input[name="firstname"]').val();
         let patronymic = $('input[name="patronymic"]').val();
@@ -672,7 +672,7 @@ $(function () {
                         '<label class="control-label" style="color: #880000">Совпадений не найдено</label>';
 
                     $('#users_same').append(html);
-
+                    $('.js-show-hide-block').show();
                     setTimeout(function () {
                         $('#users_same').fadeOut();
                         $('#users_same').empty();
@@ -688,6 +688,7 @@ $(function () {
                 }
 
                 $('.choose_user').on('click', function () {
+                    $('.js-show-hide-block').show();
                     let user_id = $(this).attr('data-user');
 
 
@@ -747,11 +748,6 @@ $(function () {
                                 }
                             }
 
-                            $('input[name="income_medium"]').val(user['income']);
-                            $('input[name="outcome_medium"]').val(user['expenses']);
-                            $('input[name="dependents"]').val(user['dependents']);
-
-                            console.log(user['foreign_flag']);
 
                             if (user['foreign_flag'] == 2) {
                                 $('#foreign2').trigger('click');

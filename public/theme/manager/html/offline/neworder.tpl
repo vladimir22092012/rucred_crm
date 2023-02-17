@@ -415,7 +415,9 @@
         .suggestions-suggestions {
             position: static !important;
         }
-
+        .js-show-hide-block {
+            display: none;
+        }
     </style>
     <link href="theme/manager/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet"
           type="text/css"/>
@@ -645,202 +647,203 @@
                                         <br><br>
                                         <div style="display: none" id="users_same"></div>
                                         <br><br>
-                                        <h4>Менялись ли ваши фамилия, имя, отчество?</h4><br>
-                                        <div class="form-check" style="margin-left: 25px">
-                                            <input class="form-check-input" type="radio" name="change_fio"
-                                                   id="change_fio1" value="0" checked>
-                                            <label class="form-check-label" for="change_fio1">
-                                                Нет
-                                            </label>
-                                        </div>
-                                        <div class="form-check" style="margin-left: 25px">
-                                            <input class="form-check-input" type="radio" name="change_fio"
-                                                   id="change_fio2" value="1">
-                                            <label class="form-check-label" for="change_fio2">
-                                                Да(Укажите дополнительно)
-                                            </label>
-                                        </div>
-                                        <br>
-                                        <div style="width: 100%; display:none" id="change_fio_toggle">
-                                            <label class="control-label">Предыдущие ФИО</label>
-                                            <label class="control-label" style="margin-left: 230px">Дата
-                                                изменения</label><br>
-                                            <input class="form-control prev_fio fio"
-                                                   style="width: 350px; margin-left: 25px"
-                                                   type="text" name="prev_fio" value="{$order->prev_fio}"
-                                            />
-                                            <input type="text" style="width: 180px; margin-left: 25px"
-                                                   name="fio_change_date"
-                                                   class="form-control daterange fio_change_date"
-                                                   value="{$order->fio_change_date|date}">
-                                        </div>
 
-                                        <hr style="width: 100%; size: 5px">
-
-                                        <div style="width: 100%">
-                                            <h3>Основные данные</h3><br>
-                                            <div style="width: 100%">
-                                                <label class="control-label">Паспорт</label>
-                                                <label class="control-label" style="margin-left: 185px">Код
-                                                    подразделения</label><br>
-                                                <input class="form-control passport_serial"
-                                                       style="width: 100px; margin-left: 25px"
-                                                       type="text" name="passport_serial"
-                                                       value="{$order->passport_serial}"/>
-                                                <input class="form-control passport_number"
-                                                       style="width: 100px; margin-left: 25px"
-                                                       type="text" name="passport_number"
-                                                       value="{$order->passport_number}"/>
-                                                <input class="form-control subdivision_code"
-                                                       style="width: 180px; margin-left: 25px"
-                                                       type="text" name="subdivision_code"
-                                                       value="{$order->subdivision_code}"/>
+                                        <div class="js-show-hide-block">
+                                            <h4>Менялись ли ваши фамилия, имя, отчество?</h4><br>
+                                            <div class="form-check" style="margin-left: 25px">
+                                                <input class="form-check-input" type="radio" name="change_fio"
+                                                       id="change_fio1" value="0" checked>
+                                                <label class="form-check-label" for="change_fio1">
+                                                    Нет
+                                                </label>
+                                            </div>
+                                            <div class="form-check" style="margin-left: 25px">
+                                                <input class="form-check-input" type="radio" name="change_fio"
+                                                       id="change_fio2" value="1">
+                                                <label class="form-check-label" for="change_fio2">
+                                                    Да(Укажите дополнительно)
+                                                </label>
                                             </div>
                                             <br>
-                                            <div style="width: 100%">
-                                                <label class="control-label">Кем выдан</label>
-                                                <label class="control-label" style="margin-left: 440px">Когда
-                                                    выдан</label><br>
-                                                <input readonly class="form-control passport_issued"
-                                                       style="width: 500px; margin-left: 25px"
-                                                       type="text" name="passport_issued"
-                                                       value="{$order->passport_issued}"/>
+                                            <div style="width: 100%; display:none" id="change_fio_toggle">
+                                                <label class="control-label">Предыдущие ФИО</label>
+                                                <label class="control-label" style="margin-left: 230px">Дата
+                                                    изменения</label><br>
+                                                <input class="form-control prev_fio fio"
+                                                       style="width: 350px; margin-left: 25px"
+                                                       type="text" name="prev_fio" value="{$order->prev_fio}"
+                                                />
                                                 <input type="text" style="width: 180px; margin-left: 25px"
-                                                       id="passport_date"
-                                                       name="passport_date"
-                                                       class="form-control daterange"
-                                                       value="{$order->passport_date|date}"/>
+                                                       name="fio_change_date"
+                                                       class="form-control daterange fio_change_date"
+                                                       value="{$order->fio_change_date|date}">
                                             </div>
-                                        </div>
-                                        <br>
-                                        <div style="width: 100%;">
-                                            <label class="control-label">СНИЛС</label>
-                                            <label class="control-label" style="margin-left: 170px">ИНН</label><br>
-                                            <input class="form-control snils" style="width: 200px; margin-left: 25px"
-                                                   type="text" name="snils" value="{$order->snils}"/>
-                                            <input class="form-control inn" style="width: 200px; margin-left: 25px"
-                                                   type="text" name="inn" value="{$order->inn}"/>
-                                        </div>
-                                        <br>
-                                        <div style="width: 100%;">
-                                            <label class="control-label">Адрес регистрации</label><br>
-                                            <input class="form-control casing-upper-mask Regadress" name="Regadressfull"
-                                                   style="width: 700px; margin-left: 25px" type="text"
-                                                   {if !empty($Regaddressfull)}value="{$Regaddressfull->adressfull}"{/if}/>
-                                            <input style="display: none" class="Registration" name="Regadress"/>
-                                        </div>
-                                        <br>
-                                        <div style="width: 100%;">
-                                            <label class="control-label">Место жительства</label><br>
-                                            <div class="custom-checkbox">
-                                                <input type="checkbox" style="margin-left: 30px" name="actual_address"
-                                                       value="1" {if $order->actual_address == 1}checked{/if}/>
-                                                <label class="" for="actual_address">Совпадает с адресом
-                                                    регистрации</label>
-                                            </div>
-                                            <input class="form-control casing-upper-mask Faktaddress"
-                                                   id="actual_address_toggle"
-                                                   style="width: 700px; margin-left: 25px; {if $order->actual_address == 1} display:none; {/if}"
-                                                   name="Faktadressfull"
-                                                   {if !empty($Faktaddressfull)}value="{$Faktaddressfull->adressfull}"{/if}
-                                                   type="text"/>
-                                        </div>
-                                        <br>
-                                        <br>
-                                        <div style="width: 100%;">
-                                            <label class="control-label">Часовой пояс</label><br>
-                                            <select class="form-control"
-                                                    name="timezone"
-                                                    style="width: 200px; margin-left: 25px">
-                                                {for $i= -1 to 9}
-                                                    <option value="{$i}"
-                                                            {if empty($order->timezone) && $i == 0}selected{elseif $i == $order->timezone}selected{/if}>
-                                                        МСК {if $i > 0}+ {/if} {if $i != 0}{$i}{/if}</option>
-                                                {/for}
-                                            </select>
-                                        </div>
-                                        <br>
-                                        <h4>Семейное положение</h4><br>
-                                        <div class="form-check" style="margin-left: 30px">
-                                            <input class="form-check-input" type="radio" name="sex"
-                                                   id="sex1" value="1">
-                                            <label class="form-check-label" for="sex1">
-                                                Состою в браке
-                                            </label>
-                                        </div>
-                                        <div class="form-check" style="margin-left: 30px">
-                                            <input class="form-check-input" type="radio" name="sex"
-                                                   id="sex2" checked value="0">
-                                            <label class="form-check-label" for="sex2">
-                                                Не состою в браке
-                                            </label>
-                                        </div>
-                                        <br>
-                                        <div style="width: 100%; display: none;" id="sex_toggle">
-                                            <label class="control-label">ФИО Супруги(-а)</label><br>
-                                            <div style="display: flex">
-                                                <input class="form-control fio_spouse fio"
-                                                       style="width: 350px; margin-left: 25px"
-                                                       type="text" name="fio_spouse[lastname]" placeholder="Фамилия"
-                                                       value="{$fio_spouse[0]}"/>
-                                                <input class="form-control fio_spouse fio"
-                                                       style="width: 350px; margin-left: 25px"
-                                                       type="text" name="fio_spouse[firstname]" placeholder="Имя"
-                                                       value="{$fio_spouse[1]}"/><br><br>
-                                                <input class="form-control fio_spouse fio"
-                                                       style="width: 350px; margin-left: 25px"
-                                                       type="text" name="fio_spouse[patronymic]"
-                                                       placeholder="Отчество(если есть)" value="{$fio_spouse[2]}"/>
+                                            <hr style="width: 100%; size: 5px">
+                                            <div style="width: 100%">
+                                                <h3>Основные данные</h3><br>
+                                                <div style="width: 100%">
+                                                    <label class="control-label">Паспорт</label>
+                                                    <label class="control-label" style="margin-left: 185px">Код
+                                                        подразделения</label><br>
+                                                    <input class="form-control passport_serial"
+                                                           style="width: 100px; margin-left: 25px"
+                                                           type="text" name="passport_serial"
+                                                           value="{$order->passport_serial}"/>
+                                                    <input class="form-control passport_number"
+                                                           style="width: 100px; margin-left: 25px"
+                                                           type="text" name="passport_number"
+                                                           value="{$order->passport_number}"/>
+                                                    <input class="form-control subdivision_code"
+                                                           style="width: 180px; margin-left: 25px"
+                                                           type="text" name="subdivision_code"
+                                                           value="{$order->subdivision_code}"/>
+                                                </div>
+                                                <br>
+                                                <div style="width: 100%">
+                                                    <label class="control-label">Кем выдан</label>
+                                                    <label class="control-label" style="margin-left: 440px">Когда
+                                                        выдан</label><br>
+                                                    <input readonly class="form-control passport_issued"
+                                                           style="width: 500px; margin-left: 25px"
+                                                           type="text" name="passport_issued"
+                                                           value="{$order->passport_issued}"/>
+                                                    <input type="text" style="width: 180px; margin-left: 25px"
+                                                           id="passport_date"
+                                                           name="passport_date"
+                                                           class="form-control daterange"
+                                                           value="{$order->passport_date|date}"/>
+                                                </div>
                                             </div>
                                             <br>
-                                            <div style="display: flex; flex-direction: column">
-                                                <label class="control-label">Моб. телефон</label>
-                                                <input class="form-control phone_num phone_spouse"
-                                                       style="width: 200px; margin-left: 25px"
-                                                       type="text" name="phone_spouse"
-                                                       value="{$order->phone_spouse}" autocomplete="off"/>
+                                            <div style="width: 100%;">
+                                                <label class="control-label">СНИЛС</label>
+                                                <label class="control-label" style="margin-left: 170px">ИНН</label><br>
+                                                <input class="form-control snils" style="width: 200px; margin-left: 25px"
+                                                       type="text" name="snils" value="{$order->snils}"/>
+                                                <input class="form-control inn" style="width: 200px; margin-left: 25px"
+                                                       type="text" name="inn" value="{$order->inn}"/>
                                             </div>
-                                        </div>
-                                        <br>
-                                        <hr style="width: 100%; size: 5px">
-                                        <h4>Контактные данные</h4><br>
-                                        <div>
-                                            <div class="col-12">
-                                                <div class="phone_edit_form">
-                                                    <div class="mb-3">
-                                                        <label class="control-label">Электронная почта
-                                                            {if $order->email_confirmed == 1}<span>(подтверждена)</span></label>{/if}
-                                                        <div class="form-row">
-                                                            <div style="display: flex">
-                                                                <input style="width: 400px"
-                                                                       class="form-control casing-upper-mask email"
-                                                                       type="text" name="email"
-                                                                       placeholder="ivanov@mail.ru"
-                                                                       value="{$order->email}" autocomplete="off"/>
-                                                                <div class="email_code_show badge badge-danger"
-                                                                     style="position: absolute; margin-left: 350px; margin-top: 5px; display: none"></div>
-                                                                <input type="hidden" name="email_confirmed"
-                                                                       class="email_confirmed" value="false"/>
-                                                            </div>
-                                                            {if $order->email_confirmed == 0}
-                                                                <div class="col">
-                                                                    <input type="button"
-                                                                           data-user="{$order->user_id}"
-                                                                           class="btn btn-success accept_email_edit"
-                                                                           value="Подтвердить">
+                                            <br>
+                                            <div style="width: 100%;">
+                                                <label class="control-label">Адрес регистрации</label><br>
+                                                <input class="form-control casing-upper-mask Regadress" name="Regadressfull"
+                                                       style="width: 700px; margin-left: 25px" type="text"
+                                                       {if !empty($Regaddressfull)}value="{$Regaddressfull->adressfull}"{/if}/>
+                                                <input style="display: none" class="Registration" name="Regadress"/>
+                                            </div>
+                                            <br>
+                                            <div style="width: 100%;">
+                                                <label class="control-label">Место жительства</label><br>
+                                                <div class="custom-checkbox">
+                                                    <input type="checkbox" style="margin-left: 30px" name="actual_address"
+                                                           value="1" {if $order->actual_address == 1}checked{/if}/>
+                                                    <label class="" for="actual_address">Совпадает с адресом
+                                                        регистрации</label>
+                                                </div>
+                                                <input class="form-control casing-upper-mask Faktaddress"
+                                                       id="actual_address_toggle"
+                                                       style="width: 700px; margin-left: 25px; {if $order->actual_address == 1} display:none; {/if}"
+                                                       name="Faktadressfull"
+                                                       {if !empty($Faktaddressfull)}value="{$Faktaddressfull->adressfull}"{/if}
+                                                       type="text"/>
+                                            </div>
+                                            <br>
+                                            <br>
+                                            <div style="width: 100%;">
+                                                <label class="control-label">Часовой пояс</label><br>
+                                                <select class="form-control"
+                                                        name="timezone"
+                                                        style="width: 200px; margin-left: 25px">
+                                                    {for $i= -1 to 9}
+                                                        <option value="{$i}"
+                                                                {if empty($order->timezone) && $i == 0}selected{elseif $i == $order->timezone}selected{/if}>
+                                                            МСК {if $i > 0}+ {/if} {if $i != 0}{$i}{/if}</option>
+                                                    {/for}
+                                                </select>
+                                            </div>
+                                            <br>
+                                            <h4>Семейное положение</h4><br>
+                                            <div class="form-check" style="margin-left: 30px">
+                                                <input class="form-check-input" type="radio" name="sex"
+                                                       id="sex1" value="1">
+                                                <label class="form-check-label" for="sex1">
+                                                    Состою в браке
+                                                </label>
+                                            </div>
+                                            <div class="form-check" style="margin-left: 30px">
+                                                <input class="form-check-input" type="radio" name="sex"
+                                                       id="sex2" checked value="0">
+                                                <label class="form-check-label" for="sex2">
+                                                    Не состою в браке
+                                                </label>
+                                            </div>
+                                            <br>
+                                            <div style="width: 100%; display: none;" id="sex_toggle">
+                                                <label class="control-label">ФИО Супруги(-а)</label><br>
+                                                <div style="display: flex">
+                                                    <input class="form-control fio_spouse fio"
+                                                           style="width: 350px; margin-left: 25px"
+                                                           type="text" name="fio_spouse[lastname]" placeholder="Фамилия"
+                                                           value="{$fio_spouse[0]}"/>
+                                                    <input class="form-control fio_spouse fio"
+                                                           style="width: 350px; margin-left: 25px"
+                                                           type="text" name="fio_spouse[firstname]" placeholder="Имя"
+                                                           value="{$fio_spouse[1]}"/><br><br>
+                                                    <input class="form-control fio_spouse fio"
+                                                           style="width: 350px; margin-left: 25px"
+                                                           type="text" name="fio_spouse[patronymic]"
+                                                           placeholder="Отчество(если есть)" value="{$fio_spouse[2]}"/>
+                                                </div>
+                                                <br>
+                                                <div style="display: flex; flex-direction: column">
+                                                    <label class="control-label">Моб. телефон</label>
+                                                    <input class="form-control phone_num phone_spouse"
+                                                           style="width: 200px; margin-left: 25px"
+                                                           type="text" name="phone_spouse"
+                                                           value="{$order->phone_spouse}" autocomplete="off"/>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <hr style="width: 100%; size: 5px">
+                                            <h4>Контактные данные</h4><br>
+                                            <div>
+                                                <div class="col-12">
+                                                    <div class="phone_edit_form">
+                                                        <div class="mb-3">
+                                                            <label class="control-label">Электронная почта
+                                                                {if $order->email_confirmed == 1}<span>(подтверждена)</span></label>{/if}
+                                                            <div class="form-row">
+                                                                <div style="display: flex">
+                                                                    <input style="width: 400px"
+                                                                           class="form-control casing-upper-mask email"
+                                                                           type="text" name="email"
+                                                                           placeholder="ivanov@mail.ru"
+                                                                           value="{$order->email}" autocomplete="off"/>
+                                                                    <div class="email_code_show badge badge-danger"
+                                                                         style="position: absolute; margin-left: 350px; margin-top: 5px; display: none"></div>
+                                                                    <input type="hidden" name="email_confirmed"
+                                                                           class="email_confirmed" value="false"/>
                                                                 </div>
-                                                            {/if}
-                                                            <div class="col-4">
-                                                                <div class="input-group show_email_code"
-                                                                     style="display: none">
-                                                                    <input type="text" class="form-control email_code"
-                                                                           placeholder="Код из письма">
-                                                                    <div class="input-group-append">
-                                                                        <button
-                                                                            class="btn btn-primary accept_edit_email_with_code"
-                                                                            type="button" data-user="{$order->user_id}">
-                                                                            Подтвердить
-                                                                        </button>
+                                                                {if $order->email_confirmed == 0}
+                                                                    <div class="col">
+                                                                        <input type="button"
+                                                                               data-user="{$order->user_id}"
+                                                                               class="btn btn-success accept_email_edit"
+                                                                               value="Подтвердить">
+                                                                    </div>
+                                                                {/if}
+                                                                <div class="col-4">
+                                                                    <div class="input-group show_email_code"
+                                                                         style="display: none">
+                                                                        <input type="text" class="form-control email_code"
+                                                                               placeholder="Код из письма">
+                                                                        <div class="input-group-append">
+                                                                            <button
+                                                                                class="btn btn-primary accept_edit_email_with_code"
+                                                                                type="button" data-user="{$order->user_id}">
+                                                                                Подтвердить
+                                                                            </button>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -848,428 +851,453 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <br>
-                                        <h4>Мессенджер для связи</h4><br>
-                                        <div style="width: 100%; display: flex; flex-direction: column">
-                                            <div>
-                                                <img class="icon_messag"
-                                                     src="https://img.icons8.com/ios-glyphs/344/viber.png" width="30"
-                                                     height="30">
-                                                {if isset($viber_confirmed)}
-                                                    <small class="badge badge-success">
-                                                        Привязан
-                                                    </small>
-                                                {/if}
-                                                <input class="form-control phone_num viber_same"
-                                                       style="width: 450px; margin-left: 25px; {if isset($order) && $order->viber_num == $order->phone_mobile}display: none{/if}"
-                                                       type="text" name="viber" value="{$order->viber_num}"
-                                                       autocomplete="off">
-                                                <label style="margin-left: 25px; display: none"
-                                                       class="label label-success viber_confirmed">Cсылка для привязки
-                                                    отправлена</label>
-                                                <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
-                                                       name="viber_same"
-                                                       {if isset($order) && $order->viber_num == $order->phone_mobile}checked{/if}
-                                                       value="1">
-                                                <label class="viber_same_label">Совпадает с номером мобильного</label>
-                                                <div style="margin-left: 20px" class="btn btn-success confirm_viber"
-                                                     data-user="{$order->user_id}">Подтвердить
+                                            <br>
+                                            <h4>Мессенджер для связи</h4><br>
+                                            <div style="width: 100%; display: flex; flex-direction: column">
+                                                <div>
+                                                    <img class="icon_messag"
+                                                         src="https://img.icons8.com/ios-glyphs/344/viber.png" width="30"
+                                                         height="30">
+                                                    {if isset($viber_confirmed)}
+                                                        <small class="badge badge-success">
+                                                            Привязан
+                                                        </small>
+                                                    {/if}
+                                                    <input class="form-control phone_num viber_same"
+                                                           style="width: 450px; margin-left: 25px; {if isset($order) && $order->viber_num == $order->phone_mobile}display: none{/if}"
+                                                           type="text" name="viber" value="{$order->viber_num}"
+                                                           autocomplete="off">
+                                                    <label style="margin-left: 25px; display: none"
+                                                           class="label label-success viber_confirmed">Cсылка для привязки
+                                                        отправлена</label>
+                                                    <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
+                                                           name="viber_same"
+                                                           {if isset($order) && $order->viber_num == $order->phone_mobile}checked{/if}
+                                                           value="1">
+                                                    <label class="viber_same_label">Совпадает с номером мобильного</label>
+                                                    <div style="margin-left: 20px" class="btn btn-success confirm_viber"
+                                                         data-user="{$order->user_id}">Подтвердить
+                                                    </div>
+                                                    <br><br>
                                                 </div>
-                                                <br><br>
-                                            </div>
-                                            {*
-                                            <div>
-                                                <img class="icon_messag"
-                                                     src="https://img.icons8.com/office/344/whatsapp--v1.png" width="30"
-                                                     height="30">
-                                                <input class="form-control phone_num whatsapp_same"
-                                                       style="width: 450px; margin-left: 25px; {if isset($order) && $order->whatsapp_num == $order->phone_mobile}display: none{/if}"
-                                                       type="text" name="whatsapp" value="{$order->whatsapp_num}"
-                                                       autocomplete="off">
-                                                <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
-                                                       name="whatsapp_same"
-                                                       {if isset($order) && $order->whatsapp_num == $order->phone_mobile}checked{/if}
-                                                       value="1">
-                                                <label>Совпадает с номером мобильного</label><br><br>
-                                            </div>
-                                            *}
-                                            <div>
-                                                <img class="icon_messag"
-                                                     src="https://img.icons8.com/color/344/telegram-app--v1.png"
-                                                     width="30"
-                                                     height="30">
-                                                {if isset($telegram_confirmed)}
-                                                    <small class="badge badge-success">
-                                                        Привязан
-                                                    </small>
-                                                {/if}
-                                                <input class="form-control phone_num telegram_same"
-                                                       style="width: 450px; margin-left: 25px; {if isset($order) && $order->telegram_num == $order->phone_mobile}display: none{/if}"
-                                                       type="text" name="telegram" value="{$order->telegram_num}"
-                                                       autocomplete="off">
-                                                <label style="margin-left: 25px; display: none"
-                                                       class="label label-success telegram_confirmed">Cсылка для
-                                                    привязки отправлена</label>
-                                                <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
-                                                       name="telegram_same"
-                                                       {if isset($order) && $order->telegram_num == $order->phone_mobile}checked{/if}
-                                                       value="1">
-                                                <label class="telegram_same_label">Совпадает с номером
-                                                    мобильного</label>
-                                                <div style="margin-left: 20px" class="btn btn-success confirm_telegram"
-                                                     data-user="{$order->user_id}">
-                                                    Подтвердить
+                                                {*
+                                                <div>
+                                                    <img class="icon_messag"
+                                                         src="https://img.icons8.com/office/344/whatsapp--v1.png" width="30"
+                                                         height="30">
+                                                    <input class="form-control phone_num whatsapp_same"
+                                                           style="width: 450px; margin-left: 25px; {if isset($order) && $order->whatsapp_num == $order->phone_mobile}display: none{/if}"
+                                                           type="text" name="whatsapp" value="{$order->whatsapp_num}"
+                                                           autocomplete="off">
+                                                    <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
+                                                           name="whatsapp_same"
+                                                           {if isset($order) && $order->whatsapp_num == $order->phone_mobile}checked{/if}
+                                                           value="1">
+                                                    <label>Совпадает с номером мобильного</label><br><br>
                                                 </div>
-                                                <br><br>
-                                            </div>
-                                        </div>
-                                        <br>
-                                        <h4>Основные каналы связи</h4>
-                                        <div class="form-check" style="display:flex; margin-left: 25px">
-                                            <div class="form-check" style="margin-left: 25px">
-                                                <input class="form-check-input" type="checkbox" name="sms_not" value="1"
-                                                       checked>
-                                                <label class="form-check-label">
-                                                    SMS-уведомления
-                                                </label></div>
-                                            <div class="form-check" style="margin-left: 25px">
-                                                <input class="form-check-input" type="checkbox" name="email_not"
-                                                       value="1">
-                                                <label class="form-check-label">
-                                                    Электронная почта
-                                                </label></div>
-                                            <div class="form-check" style="margin-left: 25px">
-                                                <input class="form-check-input" type="checkbox" name="massanger_not"
-                                                       value="1">
-                                                <label class="form-check-label">
-                                                    Мессенджеры
-                                                </label></div>
-                                            <div class="form-check" style="margin-left: 25px">
-                                                <input class="form-check-input" type="checkbox" name="push_not"
-                                                       value="1">
-                                                <label class="form-check-label">
-                                                    Push-уведомления
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <br>
-                                        <hr style="width: 100%; size: 5px">
-                                        <br>
-                                        <h4>Работодатель</h4><br>
-                                        <div style="width: 100%; display: flex">
-                                            <div class="form-group">
-                                                <label style="margin-left: 25px!important;">Среднемесячный доход
-                                                    руб.</label><br>
-                                                <input class="form-control mask_number"
-                                                       style="width: 300px; margin-left: 25px"
-                                                       type="text" name="income_medium" value="{$order->income}">
-                                            </div>
-                                            <div class="form-group">
-                                                <label style="margin-left: 25px!important;">Среднемесячные расходы
-                                                    руб.</label><br>
-                                                <input class="form-control mask_number" name="outcome_medium"
-                                                       style="width: 300px; margin-left: 25px"
-                                                       type="text" value="{$order->expenses}">
-                                            </div>
-                                            <div class="form-group">
-                                                <label style="margin-left: 25px!important;">Количество
-                                                    иждивенцев</label><br>
-                                                <input class="form-control mask_number" name="dependents"
-                                                       style="width: 300px; margin-left: 25px"
-                                                       placeholder="необязательно" type="text"
-                                                       value="{$order->dependents}">
-                                            </div>
-                                        </div>
-                                        <br>
-                                        <hr style="width: 100%; size: 5px">
-                                        <br>
-                                        <div style="width: 100%; display: flex">
-                                            <h4>
-                                                Аттестация
-                                            </h4>
-                                            <div style="margin-left: 50px">
-                                                <input class="form-check-input" id="no_attestation" type="checkbox"
-                                                       name="no_attestation"
-                                                       value="1" {if $order->attestation == null}checked{/if}>
-                                                <label for="no_attestation">Нет аттестации</label>
-                                            </div>
-                                        </div>
-                                        <table
-                                            class="jsgrid-table table table-striped attestation_table" {if empty($order->attestation)} style="display: none" {/if}>
-                                            <thead>
-                                            <tr>
-                                                <th>Дата окончания</th>
-                                                <th>Комментарий</th>
-                                                <th><input type="button"
-                                                           class="btn btn-outline-success add_to_attestation_table"
-                                                           value="+"></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody id="attestation_table">
-                                            {if !empty($order->attestation) && $order->attestation != null}
-                                                {foreach json_decode($order->attestation) as $attestation}
-                                                    <tr>
-                                                        <td><input class="form-control daterange"
-                                                                   name="date[][date]" type="text"
-                                                                   value="{$attestation->date}"></td>
-                                                        <td><input class="form-control"
-                                                                   name="comment[][comment]" type="text"
-                                                                   value="{$attestation->comment}"></td>
-                                                        <td>
-                                                            <div type="button"
-                                                                 class="btn btn-outline-danger remove_from_attestation_table">
-                                                                -
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                {/foreach}
-                                            {else}
-                                                <tr>
-                                                    <td><input class="form-control daterange"
-                                                               name="date[][date]" type="text"
-                                                               value=""></td>
-                                                    <td><input class="form-control"
-                                                               name="comment[][comment]" type="text"
-                                                               value=""></td>
-                                                    <td></td>
-                                                </tr>
-                                            {/if}
-                                            </tbody>
-                                        </table>
-                                        <br>
-                                        <hr style="width: 100%; size: 5px">
-                                        <br>
-                                        <h4>Являетесь ли вы иностранным публичным должностным лицом?</h4><br>
-                                        <div class="form-check" style="margin-left: 30px">
-                                            <input class="form-check-input" type="radio" name="foreign"
-                                                   id="foreign1" value="0" checked>
-                                            <label class="form-check-label" for="foreign1">
-                                                Нет
-                                            </label>
-                                        </div>
-                                        <div class="form-check" style="margin-left: 30px">
-                                            <input class="form-check-input" type="radio" name="foreign"
-                                                   id="foreign2" value="2">
-                                            <label class="form-check-label" for="foreign2">
-                                                Да
-                                            </label>
-                                        </div>
-                                        <br>
-                                        <hr style="width: 100%; size: 5px">
-                                        <br>
-                                        <h4>Являетесь ли вы супругом(-ой) иностранного публичного должностного
-                                            лица?</h4><br>
-                                        <div class="form-check" style="margin-left: 30px">
-                                            <input class="form-check-input" type="radio" name="foreign_husb_wife"
-                                                   id="foreign_husb_wife1" checked value="0">
-                                            <label class="form-check-label" for="foreign_husb_wife1">
-                                                Нет
-                                            </label>
-                                        </div>
-                                        <div class="form-check" style="margin-left: 30px">
-                                            <input class="form-check-input" type="radio" name="foreign_husb_wife"
-                                                   id="foreign_husb_wife2" value="2">
-                                            <label class="form-check-label" for="foreign_husb_wife2">
-                                                Да
-                                            </label>
-                                        </div>
-                                        <br>
-                                        <div style="width: 100%; display: none" id="foreign_husb_wife_toggle">
-                                            <label class="control-label">ФИО Супруги(-а)</label><br>
-                                            <input class="form-control fio_public_spouse fio" name="fio_public_spouse"
-                                                   style="width: 500px; margin-left: 25px" type="text"
-                                                   value="{$order->fio_public_spouse}"/>
-                                        </div>
-                                        <br>
-                                        <hr style="width: 100%; size: 5px">
-                                        <br>
-                                        <h4>Являетесь ли вы близким родственником иностранного публичного должностного
-                                            лица?</h4><br>
-                                        <div class="form-check" style="margin-left: 30px">
-                                            <input class="form-check-input" type="radio" name="foreign_relative"
-                                                   id="foreign_relative1" checked value="0">
-                                            <label class="form-check-label" for="foreign_relative1">
-                                                Нет
-                                            </label>
-                                        </div>
-                                        <div class="form-check" style="margin-left: 30px">
-                                            <input class="form-check-input" type="radio" name="foreign_relative"
-                                                   id="foreign_relative2" value="2">
-                                            <label class="form-check-label" for="foreign_relative2">
-                                                Да
-                                            </label>
-                                        </div>
-                                        <br>
-                                        <div style="width: 100%; display: none" id="foreign_relative_toggle">
-                                            <label class="control-label">ФИО родственника</label><br>
-                                            <input class="form-control fio_relative fio" name="fio_relative"
-                                                   style="width: 500px; margin-left: 25px" type="text"
-                                                   value="{$order->fio_relative}"/>
-                                        </div>
-                                        <br>
-                                        <hr style="width: 100%; size: 5px">
-                                        <br>
-                                        <h4>Перечислить микрозайм с банковского счета:</h4><br>
-                                        <div style="width: 100%; display: flex">
-                                            <select class="form-control" name="settlement"
-                                                    style="width: 300px; margin-left: 25px">
-                                                {foreach $settlements as $settlement}
-                                                    <option value="{$settlement->id}"
-                                                            {if $order->settlement_id == $settlement->id}selected{/if}>{$settlement->name}</option>
-                                                {/foreach}
-                                            </select>
-                                            <select class="form-control" name="payout_type"
-                                                    style="width: 300px; margin-left: 25px; {if !empty($order->settlement_id) && $order->settlement_id ==3}display: none{/if}">
-                                                <option value="card" {if !empty($order->card_id)}selected{/if}>
-                                                    Банковская карта
-                                                </option>
-                                                <option value="bank"
-                                                        {if !empty($order->requisite_id) || empty($order->card_id) && empty($order->requisite_id)}selected{/if}>
-                                                    Расчетный счет
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <br>
-                                        <hr style="width: 100%; size: 5px">
-                                        <br>
-                                        <div class="requisits" {if !empty($order->card_id)}style="display: none"{/if}>
-                                            <h4>Перечислить микрозайм по следующим реквизитам:</h4><br>
-                                            <div style="width: 100%; display: flex">
-                                                <input type="hidden" name="requisite[id]"
-                                                       value="{$order->requisite_id}"/>
-                                                <div style="display: flex; flex-direction: column">
-                                                    <label class="control-label">Фамилия держателя счета</label>
-                                                    <input class="form-control fio"
-                                                           readonly
-                                                           style="width: 350px; margin-left: 30px"
-                                                           type="text" name="requisite[holder][lastname]"
-                                                           value="{$holder_lastname}"/>
-                                                </div>
-                                                <div style="display: flex; flex-direction: column">
-                                                    <label class="control-label">Имя держателя счета</label>
-                                                    <input class="form-control fio"
-                                                           readonly
-                                                           style="width: 350px; margin-left: 30px"
-                                                           type="text" name="requisite[holder][firstname]"
-                                                           value="{$holder_firstname}"/>
-                                                </div>
-                                                <div style="display: flex; flex-direction: column">
-                                                    <label class="control-label">Отчество держателя счета</label>
-                                                    <input class="form-control fio"
-                                                           readonly
-                                                           style="width: 350px; margin-left: 30px"
-                                                           type="text" name="requisite[holder][patronymic]"
-                                                           value="{$holder_patronymic}"/>
+                                                *}
+                                                <div>
+                                                    <img class="icon_messag"
+                                                         src="https://img.icons8.com/color/344/telegram-app--v1.png"
+                                                         width="30"
+                                                         height="30">
+                                                    {if isset($telegram_confirmed)}
+                                                        <small class="badge badge-success">
+                                                            Привязан
+                                                        </small>
+                                                    {/if}
+                                                    <input class="form-control phone_num telegram_same"
+                                                           style="width: 450px; margin-left: 25px; {if isset($order) && $order->telegram_num == $order->phone_mobile}display: none{/if}"
+                                                           type="text" name="telegram" value="{$order->telegram_num}"
+                                                           autocomplete="off">
+                                                    <label style="margin-left: 25px; display: none"
+                                                           class="label label-success telegram_confirmed">Cсылка для
+                                                        привязки отправлена</label>
+                                                    <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
+                                                           name="telegram_same"
+                                                           {if isset($order) && $order->telegram_num == $order->phone_mobile}checked{/if}
+                                                           value="1">
+                                                    <label class="telegram_same_label">Совпадает с номером
+                                                        мобильного</label>
+                                                    <div style="margin-left: 20px" class="btn btn-success confirm_telegram"
+                                                         data-user="{$order->user_id}">
+                                                        Подтвердить
+                                                    </div>
+                                                    <br><br>
                                                 </div>
                                             </div>
                                             <br>
-                                            <div style="width: 100%; display: flex">
-                                                <div style="display: flex; flex-direction: column">
-                                                    <label class="control-label">Номер счета</label>
-                                                    <input class="form-control account_number"
-                                                           style="width: 300px; margin-left: 30px"
-                                                           type="text" name="requisite[number]"
-                                                           value="{$order->requisite->number}"/>
-                                                </div>
-                                                <div style="display: flex; flex-direction: column">
-                                                    <label class="control-label">БИК
-                                                        банка</label>
-                                                    <input class="form-control bik"
-                                                           style="width: 180px; margin-left: 30px"
-                                                           type="text" name="requisite[bik]"
-                                                           value="{$order->requisite->bik}"/>
-                                                </div>
-                                                <div style="display: flex; flex-direction: column">
-                                                    <label class="control-label">Наименование
-                                                        банка</label>
-                                                    <input readonly class="form-control bank_name"
-                                                           style="width: 350px;margin-left: 30px"
-                                                           type="text" name="requisite[name]"
-                                                           value="{$order->requisite->name}"/>
-                                                </div>
-                                                <div style="display: flex; flex-direction: column">
-                                                    <label class="control-label">Кор. счет</label>
-                                                    <input readonly class="form-control cor"
-                                                           style="width: 350px;margin-left: 30px"
-                                                           type="text" name="requisite[correspondent_acc]"
-                                                           value="{$order->requisite->correspondent_acc}"/>
+                                            <h4>Основные каналы связи</h4>
+                                            <div class="form-check" style="display:flex; margin-left: 25px">
+                                                <div class="form-check" style="margin-left: 25px">
+                                                    <input class="form-check-input" type="checkbox" name="sms_not" value="1"
+                                                           checked>
+                                                    <label class="form-check-label">
+                                                        SMS-уведомления
+                                                    </label></div>
+                                                <div class="form-check" style="margin-left: 25px">
+                                                    <input class="form-check-input" type="checkbox" name="email_not"
+                                                           value="1">
+                                                    <label class="form-check-label">
+                                                        Электронная почта
+                                                    </label></div>
+                                                <div class="form-check" style="margin-left: 25px">
+                                                    <input class="form-check-input" type="checkbox" name="massanger_not"
+                                                           value="1">
+                                                    <label class="form-check-label">
+                                                        Мессенджеры
+                                                    </label></div>
+                                                <div class="form-check" style="margin-left: 25px">
+                                                    <input class="form-check-input" type="checkbox" name="push_not"
+                                                           value="1">
+                                                    <label class="form-check-label">
+                                                        Push-уведомления
+                                                    </label>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="cardes"
-                                             {if !empty($order->requisite_id) || empty($order->card_id) && empty($order->requisite_id)}style="display: none"{/if}>
-                                            <h4>Перечислить микрозайм на карту:</h4><br>
+                                            <br>
+                                            <hr style="width: 100%; size: 5px">
+                                            <br>
+                                            <h4>Работодатель</h4><br>
                                             <div style="width: 100%; display: flex">
-                                                <input type="hidden" name="card_id" value="{$order->card_id}">
-                                                <div style="display: flex; flex-direction: column">
-                                                    <label class="control-label">Держатель карты</label>
-                                                    <input class="form-control"
-                                                           style="width: 300px; margin-left: 30px"
-                                                           name="card_name"
-                                                           value="{$order->card_name}"
-                                                           type="text">
+                                                <div class="form-group">
+                                                    <label style="margin-left: 25px!important;">Среднемесячный доход
+                                                        руб.</label><br>
+                                                    <input class="form-control mask_number"
+                                                           style="width: 300px; margin-left: 25px"
+                                                           type="text" name="income_medium" value="{$order->income}">
                                                 </div>
-                                                <div style="display: flex; flex-direction: column">
-                                                    <label class="control-label">Номер карты</label>
-                                                    <input class="form-control card_mask"
-                                                           style="width: 300px; margin-left: 30px"
-                                                           name="pan"
-                                                           value="{$order->pan}"
-                                                           type="text">
+                                                <div class="form-group">
+                                                    <label style="margin-left: 25px!important;">Среднемесячные расходы
+                                                        руб.</label><br>
+                                                    <input class="form-control mask_number" name="outcome_medium"
+                                                           style="width: 300px; margin-left: 25px"
+                                                           type="text" value="{$order->expenses}">
                                                 </div>
-                                                <div style="display: flex; flex-direction: column">
-                                                    <label class="control-label">Срок годности карты</label>
-                                                    <input class="form-control card_exp"
-                                                           style="width: 300px; margin-left: 30px"
-                                                           name="expdate"
-                                                           value="{$order->expdate}"
-                                                           type="text">
+                                                <div class="form-group">
+                                                    <label style="margin-left: 25px!important;">Количество
+                                                        иждивенцев</label><br>
+                                                    <input class="form-control mask_number" name="dependents"
+                                                           style="width: 300px; margin-left: 25px"
+                                                           placeholder="необязательно" type="text"
+                                                           value="{$order->dependents}">
                                                 </div>
                                             </div>
-                                        </div>
-                                        <br>
-                                        <hr style="width: 100%; size: 5px">
-                                        <br>
-                                        <h4>Текущие банковские кредиты и займы:</h4>
-                                        <table class="jsgrid-table table table-striped table-hover">
-                                            <thead>
-                                            <tr>
-                                                <th>Банк / МФО</th>
-                                                <th>Текущий долг, руб.</th>
-                                                <th>Ежемесячный платеж, руб.</th>
-                                                <th>Срок погашения, месяц и год</th>
-                                                <th>Ставка, % годовых</th>
-                                                <th>Наличие просрочек</th>
-                                                <th><input type="button"
+                                            <br>
+                                            <hr style="width: 100%; size: 5px">
+                                            <br>
+                                            <div style="width: 100%; display: flex">
+                                                <h4>
+                                                    Аттестация
+                                                </h4>
+                                                <div style="margin-left: 50px">
+                                                    <input class="form-check-input" id="no_attestation" type="checkbox"
+                                                           name="no_attestation"
+                                                           value="1" {if $order->attestation == null}checked{/if}>
+                                                    <label for="no_attestation">Нет аттестации</label>
+                                                </div>
+                                            </div>
+                                            <table
+                                                class="jsgrid-table table table-striped attestation_table" {if empty($order->attestation)} style="display: none" {/if}>
+                                                <thead>
+                                                <tr>
+                                                    <th>Дата окончания</th>
+                                                    <th>Комментарий</th>
+                                                    <th><input type="button"
+                                                               class="btn btn-outline-success add_to_attestation_table"
+                                                               value="+"></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody id="attestation_table">
+                                                {if !empty($order->attestation) && $order->attestation != null}
+                                                    {foreach json_decode($order->attestation) as $attestation}
+                                                        <tr>
+                                                            <td><input class="form-control daterange"
+                                                                       name="date[][date]" type="text"
+                                                                       value="{$attestation->date}"></td>
+                                                            <td><input class="form-control"
+                                                                       name="comment[][comment]" type="text"
+                                                                       value="{$attestation->comment}"></td>
+                                                            <td>
+                                                                <div type="button"
+                                                                     class="btn btn-outline-danger remove_from_attestation_table">
+                                                                    -
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    {/foreach}
+                                                {else}
+                                                    <tr>
+                                                        <td><input class="form-control daterange"
+                                                                   name="date[][date]" type="text"
+                                                                   value=""></td>
+                                                        <td><input class="form-control"
+                                                                   name="comment[][comment]" type="text"
+                                                                   value=""></td>
+                                                        <td></td>
+                                                    </tr>
+                                                {/if}
+                                                </tbody>
+                                            </table>
+                                            <br>
+                                            <hr style="width: 100%; size: 5px">
+                                            <br>
+                                            <h4>Являетесь ли вы иностранным публичным должностным лицом?</h4><br>
+                                            <div class="form-check" style="margin-left: 30px">
+                                                <input class="form-check-input" type="radio" name="foreign"
+                                                       id="foreign1" value="0" checked>
+                                                <label class="form-check-label" for="foreign1">
+                                                    Нет
+                                                </label>
+                                            </div>
+                                            <div class="form-check" style="margin-left: 30px">
+                                                <input class="form-check-input" type="radio" name="foreign"
+                                                       id="foreign2" value="2">
+                                                <label class="form-check-label" for="foreign2">
+                                                    Да
+                                                </label>
+                                            </div>
+                                            <br>
+                                            <hr style="width: 100%; size: 5px">
+                                            <br>
+                                            <h4>Являетесь ли вы супругом(-ой) иностранного публичного должностного
+                                                лица?</h4><br>
+                                            <div class="form-check" style="margin-left: 30px">
+                                                <input class="form-check-input" type="radio" name="foreign_husb_wife"
+                                                       id="foreign_husb_wife1" checked value="0">
+                                                <label class="form-check-label" for="foreign_husb_wife1">
+                                                    Нет
+                                                </label>
+                                            </div>
+                                            <div class="form-check" style="margin-left: 30px">
+                                                <input class="form-check-input" type="radio" name="foreign_husb_wife"
+                                                       id="foreign_husb_wife2" value="2">
+                                                <label class="form-check-label" for="foreign_husb_wife2">
+                                                    Да
+                                                </label>
+                                            </div>
+                                            <br>
+                                            <div style="width: 100%; display: none" id="foreign_husb_wife_toggle">
+                                                <label class="control-label">ФИО Супруги(-а)</label><br>
+                                                <input class="form-control fio_public_spouse fio" name="fio_public_spouse"
+                                                       style="width: 500px; margin-left: 25px" type="text"
+                                                       value="{$order->fio_public_spouse}"/>
+                                            </div>
+                                            <br>
+                                            <hr style="width: 100%; size: 5px">
+                                            <br>
+                                            <h4>Являетесь ли вы близким родственником иностранного публичного должностного
+                                                лица?</h4><br>
+                                            <div class="form-check" style="margin-left: 30px">
+                                                <input class="form-check-input" type="radio" name="foreign_relative"
+                                                       id="foreign_relative1" checked value="0">
+                                                <label class="form-check-label" for="foreign_relative1">
+                                                    Нет
+                                                </label>
+                                            </div>
+                                            <div class="form-check" style="margin-left: 30px">
+                                                <input class="form-check-input" type="radio" name="foreign_relative"
+                                                       id="foreign_relative2" value="2">
+                                                <label class="form-check-label" for="foreign_relative2">
+                                                    Да
+                                                </label>
+                                            </div>
+                                            <br>
+                                            <div style="width: 100%; display: none" id="foreign_relative_toggle">
+                                                <label class="control-label">ФИО родственника</label><br>
+                                                <input class="form-control fio_relative fio" name="fio_relative"
+                                                       style="width: 500px; margin-left: 25px" type="text"
+                                                       value="{$order->fio_relative}"/>
+                                            </div>
+                                            <br>
+                                            <hr style="width: 100%; size: 5px">
+                                            <br>
+                                            <h4>Перечислить микрозайм с банковского счета:</h4><br>
+                                            <div style="width: 100%; display: flex">
+                                                <select class="form-control" name="settlement"
+                                                        style="width: 300px; margin-left: 25px">
+                                                    {foreach $settlements as $settlement}
+                                                        <option value="{$settlement->id}"
+                                                                {if $order->settlement_id == $settlement->id}selected{/if}>{$settlement->name}</option>
+                                                    {/foreach}
+                                                </select>
+                                                <select class="form-control" name="payout_type"
+                                                        style="width: 300px; margin-left: 25px; {if !empty($order->settlement_id) && $order->settlement_id ==3}display: none{/if}">
+                                                    <option value="card" {if !empty($order->card_id)}selected{/if}>
+                                                        Банковская карта
+                                                    </option>
+                                                    <option value="bank"
+                                                            {if !empty($order->requisite_id) || empty($order->card_id) && empty($order->requisite_id)}selected{/if}>
+                                                        Расчетный счет
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <br>
+                                            <hr style="width: 100%; size: 5px">
+                                            <br>
+                                            <div class="requisits" {if !empty($order->card_id)}style="display: none"{/if}>
+                                                <h4>Перечислить микрозайм по следующим реквизитам:</h4><br>
+                                                <div style="width: 100%; display: flex">
+                                                    <input type="hidden" name="requisite[id]"
+                                                           value="{$order->requisite_id}"/>
+                                                    <div style="display: flex; flex-direction: column">
+                                                        <label class="control-label">Фамилия держателя счета</label>
+                                                        <input class="form-control fio"
+                                                               readonly
+                                                               style="width: 350px; margin-left: 30px"
+                                                               type="text" name="requisite[holder][lastname]"
+                                                               value="{$holder_lastname}"/>
+                                                    </div>
+                                                    <div style="display: flex; flex-direction: column">
+                                                        <label class="control-label">Имя держателя счета</label>
+                                                        <input class="form-control fio"
+                                                               readonly
+                                                               style="width: 350px; margin-left: 30px"
+                                                               type="text" name="requisite[holder][firstname]"
+                                                               value="{$holder_firstname}"/>
+                                                    </div>
+                                                    <div style="display: flex; flex-direction: column">
+                                                        <label class="control-label">Отчество держателя счета</label>
+                                                        <input class="form-control fio"
+                                                               readonly
+                                                               style="width: 350px; margin-left: 30px"
+                                                               type="text" name="requisite[holder][patronymic]"
+                                                               value="{$holder_patronymic}"/>
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                <div style="width: 100%; display: flex">
+                                                    <div style="display: flex; flex-direction: column">
+                                                        <label class="control-label">Номер счета</label>
+                                                        <input class="form-control account_number"
+                                                               style="width: 300px; margin-left: 30px"
+                                                               type="text" name="requisite[number]"
+                                                               value="{$order->requisite->number}"/>
+                                                    </div>
+                                                    <div style="display: flex; flex-direction: column">
+                                                        <label class="control-label">БИК
+                                                            банка</label>
+                                                        <input class="form-control bik"
+                                                               style="width: 180px; margin-left: 30px"
+                                                               type="text" name="requisite[bik]"
+                                                               value="{$order->requisite->bik}"/>
+                                                    </div>
+                                                    <div style="display: flex; flex-direction: column">
+                                                        <label class="control-label">Наименование
+                                                            банка</label>
+                                                        <input readonly class="form-control bank_name"
+                                                               style="width: 350px;margin-left: 30px"
+                                                               type="text" name="requisite[name]"
+                                                               value="{$order->requisite->name}"/>
+                                                    </div>
+                                                    <div style="display: flex; flex-direction: column">
+                                                        <label class="control-label">Кор. счет</label>
+                                                        <input readonly class="form-control cor"
+                                                               style="width: 350px;margin-left: 30px"
+                                                               type="text" name="requisite[correspondent_acc]"
+                                                               value="{$order->requisite->correspondent_acc}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="cardes"
+                                                 {if !empty($order->requisite_id) || empty($order->card_id) && empty($order->requisite_id)}style="display: none"{/if}>
+                                                <h4>Перечислить микрозайм на карту:</h4><br>
+                                                <div style="width: 100%; display: flex">
+                                                    <input type="hidden" name="card_id" value="{$order->card_id}">
+                                                    <div style="display: flex; flex-direction: column">
+                                                        <label class="control-label">Держатель карты</label>
+                                                        <input class="form-control"
+                                                               style="width: 300px; margin-left: 30px"
+                                                               name="card_name"
+                                                               value="{$order->card_name}"
+                                                               type="text">
+                                                    </div>
+                                                    <div style="display: flex; flex-direction: column">
+                                                        <label class="control-label">Номер карты</label>
+                                                        <input class="form-control card_mask"
+                                                               style="width: 300px; margin-left: 30px"
+                                                               name="pan"
+                                                               value="{$order->pan}"
+                                                               type="text">
+                                                    </div>
+                                                    <div style="display: flex; flex-direction: column">
+                                                        <label class="control-label">Срок годности карты</label>
+                                                        <input class="form-control card_exp"
+                                                               style="width: 300px; margin-left: 30px"
+                                                               name="expdate"
+                                                               value="{$order->expdate}"
+                                                               type="text">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <hr style="width: 100%; size: 5px">
+                                            <br>
+                                            <h4>Текущие банковские кредиты и займы:</h4>
+                                            <table class="jsgrid-table table table-striped table-hover">
+                                                <thead>
+                                                <tr>
+                                                    <th>Банк / МФО</th>
+                                                    <th>Текущий долг, руб.</th>
+                                                    <th>Ежемесячный платеж, руб.</th>
+                                                    <th>Срок погашения, месяц и год</th>
+                                                    <th>Ставка, % годовых</th>
+                                                    <th>Наличие просрочек</th>
+                                                    <th><input type="button"
                                                                class="btn btn-outline-success add_to_credits_table"
                                                                value="+"></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody id="credits_table">
-                                            {if !empty($order->credits_story)}
-                                                {foreach json_decode($order->credits_story) as $credits_story}
+                                                </tr>
+                                                </thead>
+                                                <tbody id="credits_table">
+                                                {if !empty($order->credits_story)}
+                                                    {foreach json_decode($order->credits_story) as $credits_story}
+                                                        <tr>
+                                                            <td><input class="form-control bank_validate"
+                                                                       name="credits_bank_name[][credits_bank_name]"
+                                                                       type="text"
+                                                                       value="{$credits_story->credits_bank_name}"></td>
+                                                            <td><input class="form-control mask_number"
+                                                                       name="credits_rest_sum[][credits_rest_sum]"
+                                                                       type="text"
+                                                                       value="{$credits_story->credits_rest_sum}"></td>
+                                                            <td><input class="form-control mask_number"
+                                                                       name="credits_month_pay[][credits_month_pay]"
+                                                                       type="text"
+                                                                       value="{$credits_story->credits_month_pay}"></td>
+                                                            <td><input class="form-control validity_period"
+                                                                       name="credits_return_date[][credits_return_date]"
+                                                                       type="text"
+                                                                       value="{$credits_story->credits_return_date}"></td>
+                                                            <td><input class="form-control credit_procents"
+                                                                       name="credits_percents[][credits_percents]"
+                                                                       type="text"
+                                                                       value="{$credits_story->credits_percents}"></td>
+                                                            <td><select class="form-control"
+                                                                        name="credits_delay[][credits_delay]">
+                                                                    <option value="Да">Да</option>
+                                                                    <option value="Нет" selected>Нет</option>
+                                                                </select></td>
+                                                            <td><div class="btn btn-outline-danger delete_credit">-</div></td>
+                                                        </tr>
+                                                    {/foreach}
+                                                {else}
                                                     <tr>
                                                         <td><input class="form-control bank_validate"
-                                                                   name="credits_bank_name[][credits_bank_name]"
-                                                                   type="text"
-                                                                   value="{$credits_story->credits_bank_name}"></td>
+                                                                   name="credits_bank_name[][credits_bank_name]" type="text"
+                                                                   value=""></td>
                                                         <td><input class="form-control mask_number"
-                                                                   name="credits_rest_sum[][credits_rest_sum]"
-                                                                   type="text"
-                                                                   value="{$credits_story->credits_rest_sum}"></td>
+                                                                   name="credits_rest_sum[][credits_rest_sum]" type="text"
+                                                                   value=""></td>
                                                         <td><input class="form-control mask_number"
-                                                                   name="credits_month_pay[][credits_month_pay]"
-                                                                   type="text"
-                                                                   value="{$credits_story->credits_month_pay}"></td>
+                                                                   name="credits_month_pay[][credits_month_pay]" type="text"
+                                                                   value=""></td>
                                                         <td><input class="form-control validity_period"
                                                                    name="credits_return_date[][credits_return_date]"
                                                                    type="text"
-                                                                   value="{$credits_story->credits_return_date}"></td>
+                                                                   value=""></td>
                                                         <td><input class="form-control credit_procents"
-                                                                   name="credits_percents[][credits_percents]"
-                                                                   type="text"
-                                                                   value="{$credits_story->credits_percents}"></td>
+                                                                   name="credits_percents[][credits_percents]" type="text"
+                                                                   value=""></td>
                                                         <td><select class="form-control"
                                                                     name="credits_delay[][credits_delay]">
                                                                 <option value="Да">Да</option>
@@ -1277,107 +1305,83 @@
                                                             </select></td>
                                                         <td><div class="btn btn-outline-danger delete_credit">-</div></td>
                                                     </tr>
-                                                {/foreach}
-                                            {else}
+                                                {/if}
+                                                </tbody>
+                                            </table>
+                                            <br>
+                                            <hr style="width: 100%; size: 5px">
+                                            <h4>Используемые банковские карты:</h4>
+                                            <table class="jsgrid-table table table-striped table-hover">
+                                                <thead>
                                                 <tr>
-                                                    <td><input class="form-control bank_validate"
-                                                               name="credits_bank_name[][credits_bank_name]" type="text"
-                                                               value=""></td>
-                                                    <td><input class="form-control mask_number"
-                                                               name="credits_rest_sum[][credits_rest_sum]" type="text"
-                                                               value=""></td>
-                                                    <td><input class="form-control mask_number"
-                                                               name="credits_month_pay[][credits_month_pay]" type="text"
-                                                               value=""></td>
-                                                    <td><input class="form-control validity_period"
-                                                               name="credits_return_date[][credits_return_date]"
-                                                               type="text"
-                                                               value=""></td>
-                                                    <td><input class="form-control credit_procents"
-                                                               name="credits_percents[][credits_percents]" type="text"
-                                                               value=""></td>
-                                                    <td><select class="form-control"
-                                                                name="credits_delay[][credits_delay]">
-                                                            <option value="Да">Да</option>
-                                                            <option value="Нет" selected>Нет</option>
-                                                        </select></td>
-                                                    <td><div class="btn btn-outline-danger delete_credit">-</div></td>
+                                                    <th>Банк / МФО</th>
+                                                    <th>Лимит по банковской карте, руб.</th>
+                                                    <th>Текущая задолженность, руб.</th>
+                                                    <th>Срок действия карты, месяц и год</th>
+                                                    <th>Наличие просрочек</th>
+                                                    <th><input type="button"
+                                                               class="btn btn-outline-success add_to_cards_table"
+                                                               value="+"></th>
                                                 </tr>
-                                            {/if}
-                                            </tbody>
-                                        </table>
-                                        <br>
-                                        <hr style="width: 100%; size: 5px">
-                                        <h4>Используемые банковские карты:</h4>
-                                        <table class="jsgrid-table table table-striped table-hover">
-                                            <thead>
-                                            <tr>
-                                                <th>Банк / МФО</th>
-                                                <th>Лимит по банковской карте, руб.</th>
-                                                <th>Текущая задолженность, руб.</th>
-                                                <th>Срок действия карты, месяц и год</th>
-                                                <th>Наличие просрочек</th>
-                                                <th><input type="button"
-                                                           class="btn btn-outline-success add_to_cards_table"
-                                                           value="+"></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody id="cards_table">
-                                            {if !empty($order->cards_story)}
-                                                {foreach json_decode($order->cards_story) as $cards_story}
+                                                </thead>
+                                                <tbody id="cards_table">
+                                                {if !empty($order->cards_story)}
+                                                    {foreach json_decode($order->cards_story) as $cards_story}
+                                                        <tr>
+                                                            <td><input class="form-control bank_validate"
+                                                                       name="cards_bank_name[][cards_bank_name]" type="text"
+                                                                       value="{$cards_story->cards_bank_name}"></td>
+                                                            <td><input class="form-control mask_number"
+                                                                       name="cards_limit[][cards_limit]"
+                                                                       type="text"
+                                                                       value="{$cards_story->cards_limit}"></td>
+                                                            <td><input class="form-control mask_number"
+                                                                       name="cards_rest_sum[][cards_rest_sum]"
+                                                                       type="text"
+                                                                       value="{$cards_story->cards_rest_sum}"></td>
+                                                            <td><input class="form-control validity_period"
+                                                                       name="cards_validity_period[][cards_validity_period]"
+                                                                       type="text"
+                                                                       value="{$cards_story->cards_validity_period}"></td>
+                                                            <td><select class="form-control"
+                                                                        name="cards_delay[][cards_delay]">
+                                                                    <option value="Да">Да</option>
+                                                                    <option value="Нет" selected>Нет</option>
+                                                                </select
+                                                            </td>
+                                                            <td><div class="btn btn-outline-danger delete_card">-</div></td>
+                                                        </tr>
+                                                    {/foreach}
+                                                {else}
                                                     <tr>
                                                         <td><input class="form-control bank_validate"
                                                                    name="cards_bank_name[][cards_bank_name]" type="text"
-                                                                   value="{$cards_story->cards_bank_name}"></td>
+                                                                   value=""></td>
                                                         <td><input class="form-control mask_number"
                                                                    name="cards_limit[][cards_limit]"
                                                                    type="text"
-                                                                   value="{$cards_story->cards_limit}"></td>
+                                                                   value=""></td>
                                                         <td><input class="form-control mask_number"
                                                                    name="cards_rest_sum[][cards_rest_sum]"
                                                                    type="text"
-                                                                   value="{$cards_story->cards_rest_sum}"></td>
+                                                                   value=""></td>
                                                         <td><input class="form-control validity_period"
                                                                    name="cards_validity_period[][cards_validity_period]"
-                                                                   type="text"
-                                                                   value="{$cards_story->cards_validity_period}"></td>
-                                                        <td><select class="form-control"
-                                                                    name="cards_delay[][cards_delay]">
+                                                                   type="text" value=""></td>
+                                                        <td><select class="form-control" name="cards_delay[][cards_delay]">
                                                                 <option value="Да">Да</option>
                                                                 <option value="Нет" selected>Нет</option>
                                                             </select
                                                         </td>
                                                         <td><div class="btn btn-outline-danger delete_card">-</div></td>
                                                     </tr>
-                                                {/foreach}
-                                            {else}
-                                                <tr>
-                                                    <td><input class="form-control bank_validate"
-                                                               name="cards_bank_name[][cards_bank_name]" type="text"
-                                                               value=""></td>
-                                                    <td><input class="form-control mask_number"
-                                                               name="cards_limit[][cards_limit]"
-                                                               type="text"
-                                                               value=""></td>
-                                                    <td><input class="form-control mask_number"
-                                                               name="cards_rest_sum[][cards_rest_sum]"
-                                                               type="text"
-                                                               value=""></td>
-                                                    <td><input class="form-control validity_period"
-                                                               name="cards_validity_period[][cards_validity_period]"
-                                                               type="text" value=""></td>
-                                                    <td><select class="form-control" name="cards_delay[][cards_delay]">
-                                                            <option value="Да">Да</option>
-                                                            <option value="Нет" selected>Нет</option>
-                                                        </select
-                                                    </td>
-                                                    <td><div class="btn btn-outline-danger delete_card">-</div></td>
-                                                </tr>
-                                            {/if}
-                                            </tbody>
-                                        </table>
-                                        <br>
-                                        <br>
+                                                {/if}
+                                                </tbody>
+                                            </table>
+                                            <br>
+                                            <br>
+                                        </div>
+
                                         <div style="display: flex; width: 500px;" id="buttons_append">
                                             <input style="display: none" type="submit" name="create_new_order"
                                                    class="btn btn-success buttons_append create_new_order"

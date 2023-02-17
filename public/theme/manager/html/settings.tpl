@@ -3,7 +3,6 @@
 {capture name='page_scripts'}
     <script src="https://cdn.jsdelivr.net/npm/jquery.maskedinput@1.4.1/src/jquery.maskedinput.min.js"
             type="text/javascript"></script>
-
     <script>
         $(function () {
             $('.time_of_transition_to_the_next_banking_day').mask('99:99', { completed: function () {
@@ -45,6 +44,13 @@
 
                 change_type(type, value);
             });
+
+            $('.notify-setting').on('change', function() {
+                let type = $(this).attr('id'),
+                    value = $(this).prop('checked') ? 1 : 0;
+
+                change_type(type, value);
+            })
         });
     </script>
     <script>
@@ -174,7 +180,62 @@
 
                         </div>
                     </div>
-
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3 class="box-title">
+                                Каналы коммуникаций:
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h3 class="box-title">
+                                Для пользователей
+                            </h3>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" id="phone_notify_manager_status" name="phone_notify_manager_status"
+                                       {if $settings->phone_notify_manager_status == true}checked="checked"{/if} {if !in_array($manager->role, ['admin', 'developer'])}disabled{/if}
+                                       class="custom-control-input notify-setting">
+                                <label class="custom-control-label" for="phone_notify_manager_status">Телефон</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" id="mail_notify_manager_status" name="mail_notify_manager_status"
+                                       {if $settings->mail_notify_manager_status == true}checked="checked"{/if} {if !in_array($manager->role, ['admin', 'developer'])}disabled{/if}
+                                       class="custom-control-input notify-setting">
+                                <label class="custom-control-label" for="mail_notify_manager_status">Мэйл</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" id="messenger_notify_manager_status" name="messenger_notify_manager_status"
+                                       {if $settings->messenger_notify_manager_status == true}checked="checked"{/if} {if !in_array($manager->role, ['admin', 'developer'])}disabled{/if}
+                                       class="custom-control-input notify-setting">
+                                <label class="custom-control-label" for="messenger_notify_manager_status">Мессенджеры</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h3 class="box-title">
+                                Для клиентов
+                            </h3>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" id="phone_notify_user_status" name="phone_notify_user_status"
+                                       {if $settings->phone_notify_user_status == true}checked="checked"{/if} {if !in_array($manager->role, ['admin', 'developer'])}disabled{/if}
+                                       class="custom-control-input notify-setting">
+                                <label class="custom-control-label" for="phone_notify_user_status">Телефон</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" id="mail_notify_user_status" name="mail_notify_user_status"
+                                       {if $settings->mail_notify_user_status == true}checked="checked"{/if} {if !in_array($manager->role, ['admin', 'developer'])}disabled{/if}
+                                       class="custom-control-input notify-setting">
+                                <label class="custom-control-label" for="mail_notify_user_status">Мэйл</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" id="messenger_notify_user_status" name="messenger_notify_user_status"
+                                       {if $settings->messenger_notify_user_status == true}checked="checked"{/if} {if !in_array($manager->role, ['admin', 'developer'])}disabled{/if}
+                                       class="custom-control-input notify-setting">
+                                <label class="custom-control-label" for="messenger_notify_user_status">Мессенджеры</label>
+                            </div>
+                        </div>
+                    </div>
                     <!--
                     <div class="row">
                         <div class="col-12">
