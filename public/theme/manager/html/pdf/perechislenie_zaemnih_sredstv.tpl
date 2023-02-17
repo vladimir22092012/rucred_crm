@@ -34,7 +34,7 @@
 </div>
 <div style="width: 100%; font-size: 10px" align="justify"><span>Прошу причитающиеся мне заёмные денежные средства
         в размере  <strong>{$amount|number_format:0:',':' '}</strong> (<strong>{$amount_string}</strong>) рублей <strong>00</strong> копеек по Договору микрозайма № <strong>{$uid}</strong>,
-        заключённому <strong>{$created_date|date}</strong> года с Обществом с ограниченной ответственностью Микрокредитная компания «Русское кредитное общество», перечислить по следующим реквизитам:
+        заключённому <strong>{if isset($code_asp->code)}{$code_asp->created|date}{else}ХХ.ХХ.ХХХХ{/if}</strong> года с Обществом с ограниченной ответственностью Микрокредитная компания «Русское кредитное общество», перечислить по следующим реквизитам:
 </span><br>
 </div>
 <table border="1" cellpadding="5">
@@ -50,7 +50,7 @@
     </tr>
     <tr>
         <td style="width: 30%">Назначение платежа:</td>
-        <td style="width: 70%">Выдача средств по договору микрозайма № <strong>{$uid}</strong> от <strong>{$date|date}</strong>
+        <td style="width: 70%">Выдача средств по договору микрозайма № <strong>{$uid}</strong> от <strong>{if isset($code_asp->code)}{$code_asp->created|date}{else}ХХ.ХХ.ХХХХ{/if}</strong>
             // заемщик <strong>{$lastname|upper} {$firstname|upper} {$patronymic|upper}</strong> ИНН <strong>{$inn}</strong>
         </td>
     </tr>

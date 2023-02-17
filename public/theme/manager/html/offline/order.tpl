@@ -3188,7 +3188,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {if $order->foreign_relative == 1}
+                                                {if $order->foreign_relative == 2}
                                                     <div class="col-md-12">
                                                         <div class="form-group  mb-2 row">
                                                             <label class="control-label col-md-8">ФИО

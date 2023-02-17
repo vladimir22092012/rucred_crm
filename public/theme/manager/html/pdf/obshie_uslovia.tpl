@@ -25,7 +25,7 @@
                 <tr>
                     <td>
                         <span>Номер и дата договора микрозайма:</span><br>
-                        <span><strong>№ {$uid} от {$date|date}</strong></span>
+                        <span><strong>№ {$uid} от {if isset($code_asp->code)}{$code_asp->created|date}{else}ХХ.ХХ.ХХХХ{/if}</strong></span>
                     </td>
                 </tr>
             </table>
@@ -148,7 +148,7 @@
             - БИК: 044525600<br>
             - к/с 30101810300000000600 в ГУ Банка России по ЦФО<br>
             - назначение платежа «Оплата по договору микрозайма № <strong>{$uid}</strong> от
-            <strong>{$date|date}</strong> года
+            <strong>{if isset($code_asp->code)}{$code_asp->created|date}{else}ХХ.ХХ.ХХХХ{/if}</strong> года
             // заемщик <strong>{$lastname|upper} {$firstname|upper} {$patronymic|upper}</strong> ИНН
             <strong>{$inn}</strong><br><br>{if $settlement_id == 3}&#x2611;{else}&#10065;{/if} <u>в ПАО «РосДорБанк»</u><br><br>
             - получатель ООО МКК «Русское кредитное общество»<br>
@@ -156,7 +156,7 @@
             - БИК: 044525666<br>
             - к/с 30101810945250000666 в ГУ Банка России по ЦФО<br>
             - назначение платежа «Оплата по договору микрозайма № <strong>{$uid}</strong> от
-            <strong>{$date|date}</strong> года
+            <strong>{if isset($code_asp->code)}{$code_asp->created|date}{else}ХХ.ХХ.ХХХХ{/if}</strong> года
             // заемщик <strong>{$lastname|upper} {$firstname|upper} {$patronymic|upper}</strong> ИНН
             <strong>{$inn}</strong><br><br><strong>ВНИМАНИЕ!</strong> При обслуживании путём осуществления
             самостоятельного безналичного
