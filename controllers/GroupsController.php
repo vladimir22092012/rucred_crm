@@ -62,7 +62,8 @@ class GroupsController extends Controller
                     'group_id' => $group_id,
                     'loantype_id' => $loantype->id,
                     'standart_percents' => $loantype->percent,
-                    'preferential_percents' => $loantype->profunion
+                    'preferential_percents' => $loantype->profunion,
+                    'on_off_flag' => 0,
                 ];
 
             $this->GroupLoanTypes->add_group($group);

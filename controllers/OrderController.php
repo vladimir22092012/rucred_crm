@@ -284,6 +284,13 @@ class OrderController extends Controller
                     $this->actionSendYaDiskTrigger();
                     break;
 
+                case 'sendDataOnec':
+                    echo json_encode($this->actionSendOnec());
+                    die();
+
+                case 'sendDataDisk':
+                    echo json_encode($this->actionSendYaDisk());
+                    die();
 
             endswitch;
 
@@ -490,7 +497,7 @@ class OrderController extends Controller
                     ));
                     $order->have_crm_closed = !empty($user_close_orders);
 
-
+                    $showUploadButtons = false;
                     if (!empty($order->contract_id)) {
                         if ($contract_operations = $this->operations->get_operations(array('contract_id' => $order->contract_id)))
                             foreach ($contract_operations as $contract_operation)
@@ -500,8 +507,9 @@ class OrderController extends Controller
 
                         $contract = $this->contracts->get_contract((int)$order->contract_id);
                         $this->design->assign('contract', $contract);
+                        $showUploadButtons = $order->status == 5 && $contract->status == 2 ? true : false;
                     }
-
+                    $this->design->assign('showUploadButtons', $showUploadButtons);
 
                     $need_update_scorings = 0;
                     $inactive_run_scorings = 0;
@@ -5224,6 +5232,43 @@ class OrderController extends Controller
 
         OrdersORM::where('id', $orderId)->update(['canSendYaDisk' => $value]);
         exit;
+    }
+
+    private function actionSendOnec()
+    {
+        $orderId = $this->request->post('orderId');
+        $order = $this->orders->get_order($orderId);
+        if ($order) {
+            $insert =
+                [
+                    'orderId' => $orderId,
+                    'userId' => $order->user_id,
+                    'contractId' => $order->contract_id
+                ];
+
+            ExchangeCronORM::insert($insert);
+        }
+        return array('success' => 1);
+    }
+
+    private function actionSendYaDisk()
+    {
+        $orderId = $this->request->post('orderId');
+        $queues = [
+            'first_pak',
+            'second_pak',
+        ];
+        foreach ($queues as $queue) {
+            $cron =
+                [
+                    'order_id' => $orderId,
+                    'pak' => $queue,
+                    'online' => 1
+                ];
+
+            $this->YaDiskCron->add($cron);
+        }
+        return array('success' => 1);
     }
 
 }
