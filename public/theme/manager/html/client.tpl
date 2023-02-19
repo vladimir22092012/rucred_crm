@@ -1310,8 +1310,7 @@
                                             <div class="row view-block p-2 snils-front">
                                                 <div class="col-md-12">
                                                     <div class="form-group mb-0 row">
-                                                        <label class="control-label col-md-8 col-7 snils-number">{$client->pdn}
-                                                            %</label>
+                                                        <label class="control-label col-md-8 col-7 snils-number">{$client->pdn}% {if $client->pdn_time != null} <span>({date('d.m.Y', $client->pdn_time)})</span> {/if}</label>
                                                     </div>
                                                 </div>
                                             </div>
