@@ -303,28 +303,28 @@
                     </div>
 
 
-                        <ul class="mt-2 nav nav-tabs" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" data-toggle="tab" href="#info" role="tab"
-                                   aria-selected="false">
-                                    <span class="hidden-sm-up"><i class="ti-home"></i></span>
-                                    <span class="hidden-xs-down">Общая информация</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#contact-info" role="tab"
-                                   aria-selected="false">
-                                    <span class="hidden-sm-up"><i class="ti-home"></i></span>
-                                    <span class="hidden-xs-down">Контактная информация</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#comments" role="tab" aria-selected="false">
-                                    <span class="hidden-sm-up"><i class="ti-user"></i></span>
-                                    <span class="hidden-xs-down">
-                                            Комментарии {if $comments|count>0}<span
-                                            class="label label-rounded label-primary">{$comments|count}</span>{/if}
-                                        </span>
+                    <ul class="mt-2 nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#info" role="tab"
+                               aria-selected="false">
+                                <span class="hidden-sm-up"><i class="ti-home"></i></span>
+                                <span class="hidden-xs-down">Общая информация</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#contact-info" role="tab"
+                               aria-selected="false">
+                                <span class="hidden-sm-up"><i class="ti-home"></i></span>
+                                <span class="hidden-xs-down">Контактная информация</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#comments" role="tab" aria-selected="false">
+                                <span class="hidden-sm-up"><i class="ti-user"></i></span>
+                                <span class="hidden-xs-down">
+                                        Комментарии {if $comments|count>0}<span
+                                        class="label label-rounded label-primary">{$comments|count}</span>{/if}
+                                    </span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -402,15 +402,6 @@
                                                             <div class="col-md-8">
                                                                 <p class="form-control-static">{$client->passport_serial}
                                                                     от {$client->passport_date|date}</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group row m-0">
-                                                            <label class="control-label col-md-4">Код
-                                                                подразделения:</label>
-                                                            <div class="col-md-8">
-                                                                <p class="form-control-static"></p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1447,6 +1438,85 @@
                                     </div>
                                 </div>
                                 *}
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="contact-info" role="tabpanel">
+                            <div class="form-body p-2 pt-3">
+                                <div class="row">
+                                    <div class="col-md-8 ">
+
+                                        <!-- Контакты -->
+                                        <form action="{url}" class="mb-3 border js-order-item-form"
+                                              id="personal_data_form">
+
+                                            <input type="hidden" name="action" value="contactdata"/>
+                                            <input type="hidden" name="user_id" value="{$client->id}"/>
+
+                                            <h5 class="card-header">
+                                                <span class="text-white ">Контактная информация</span>
+                                            </h5>
+
+                                            <div class="row pt-2 view-block {if $contactdata_error}hide{/if}">
+                                                <div class="col-md-12">
+                                                    <div class="form-group row m-0">
+                                                        <label class="control-label col-md-4">Телефон:</label>
+                                                        <div class="col-md-8">
+                                                            <p class="form-control-static">{$client->phone_mobile|escape}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="form-group row m-0">
+                                                        <label class="control-label col-md-4">Email:</label>
+                                                        <div class="col-md-8">
+                                                            <p class="form-control-static">{$client->email|escape}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {if $client->viber_num}
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label class="control-label col-md 4">Viber:</label><br>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$client->viber_num}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {/if}
+                                                {if $client->telegram_num}
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label
+                                                                class="control-label col-md 4">Telegram:</label><br>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$client->telegram_num}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {/if}
+                                                {if $client->whatsapp_num}
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
+                                                            <label
+                                                                class="control-label col-md 4">WhatsApp:</label><br>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$client->whatsapp_num}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {/if}
+                                            </div>
+
+                                        </form>
+                                        <!-- / Контакты-->
+
+                                        <!--
+                                        <h3 class="box-title mt-5">UTM-метки</h3>
+                                        <hr>
+                                        -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
