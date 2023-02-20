@@ -70,7 +70,7 @@ class Soap1c extends Core
             $item->ID = (string)$contract->id;
             $item->НомерДоговора = $contract->number;
             $item->Дата = date('YmdHis', strtotime($asp->created));
-            $item->ДатаЗаявки = date('YmdHis', strtotime($contract->issuance_date));
+            $item->ДатаЗаявки = date('YmdHis', strtotime($contract->deal_date));
             $item->Срок = $period;
             $item->Периодичность = 'День';
             $item->ПроцентнаяСтавка = $order->percent;
