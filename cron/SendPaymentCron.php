@@ -27,15 +27,16 @@ class SendPaymentCron extends Core
             $contract = ContractsORM::find($cron->contract_id);
             $user     = UsersORM::find($cron->user_id);
             $requisites = RequisitesORM::find($cron->requisites_id);
+            $dealDate = date('Y-m-d', strtotime($contract->deal_date));
 
             $fio = "$user->lastname $user->firstname $user->patronymic";
 
-            $description = "Выдача средств по договору микрозайма № $contract->number от $order->probably_start_date
+            $description = "Оплата по договору микрозайма № $contract->number от $dealDate
             // заемщик $fio ИНН $order->inn. Без налога (НДС)";
 
             $payment = new stdClass();
             $payment->order_id = $cron->transaction_id;
-            $payment->date = date('Y-m-d H:i:s');
+            $payment->date = date('Y-m-d H:i:s', strtotime($contract->deal_date));
             $payment->amount = $order->amount;
             $payment->recepient = 9725055162;
             $payment->user_id = (string)$order->user->id;
