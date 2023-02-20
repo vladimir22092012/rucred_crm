@@ -64,7 +64,8 @@ class Soap1c extends Core
             $period = date_diff($startDate, $endDate)->days;
 
             $asp = AspCodesORM::where('order_id', $order->order_id)
-                ->where('type', 'rucred_sms')
+                ->where('type', 'sms')
+                ->orderBy('id', 'asc')
                 ->first();
 
             $item->ID = (string)$contract->id;
