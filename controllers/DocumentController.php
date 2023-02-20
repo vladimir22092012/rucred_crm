@@ -191,6 +191,8 @@ class DocumentController extends Controller
         $this->design->assign('all_percents_string_part_two', $all_percents_string_part_two);
         $this->design->assign('all_percents_string', $all_percents_string);
 
+        $this->design->assign('percent_day', $document->params->percent ?? 0);
+
         if (is_null($document->params->percent)) {
             $percents_per_day_str_part_one = 0;
             $percents_per_day_str_part_two = 0;
@@ -216,7 +218,6 @@ class DocumentController extends Controller
         $this->design->assign('payment_schedule', $payment_schedule);
         $this->design->assign('first_part_all_sum_pay', $first_part_all_sum_pay);
 
-
         if (isset($document->params->payment_schedule['psk'])) {
             $percents_per_year = $document->params->payment_schedule['psk'];
         } else {
@@ -226,7 +227,6 @@ class DocumentController extends Controller
 
         $percents = number_format($percents, 3, ',', ' ');
         $percents = str_pad($percents, 6, '0', STR_PAD_RIGHT);
-
         $this->design->assign('percents', $percents);
         $percents_str = explode(',', $percents);
 
@@ -280,7 +280,6 @@ class DocumentController extends Controller
         } else {
             $order->uid = "$order->uid ({$order->order_id})";
         }
-
         $fio = $document->params->lastname . ' ' . mb_substr($document->params->firstname, 0, 1) . mb_substr($document->params->patronymic, 0, 1);
         $uid = $document->params->uid;
         $employer = explode(' ', $uid);

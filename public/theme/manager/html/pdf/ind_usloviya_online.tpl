@@ -304,7 +304,7 @@
             <td style="width: 30%; background-color: #b3b2ab">2.4. Процентная ставка (процентные ставки) в процентах
                 годовых, а при применении переменной процентной ставки ‒ порядок её определения, соответствующий
                 требованиям Федерального закона от 21 декабря 2013 года №353-ФЗ «О потребительском кредите (займе)», её
-                значение на дату предоставления заёмщику Индивидуальных условий
+                значение на дату предоставления заёмщику Индивидуальных условий {$percent_day|upper}% ({$percents_per_day_str_part_one|upper} {if $percents_per_day_str_part_two|upper} ЦЕЛЫХ И {$percents_per_day_str_part_two|upper} ТЫСЯЧНЫХ ПРОЦЕНТОВ{/if})
             </td>
             <td style="width: 70%" align="left"><strong>{$percents}%
                     ({$percents_per_year|upper}{if $second_part_percents|upper} ЦЕЛЫХ И {$second_part_percents|upper} ТЫСЯЧНЫХ
