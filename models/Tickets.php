@@ -98,7 +98,7 @@ class Tickets extends Core
         $executor
         $creator
         $theme
-        GROUP BY $group_by
+
         ORDER BY $sort
         ");
 
