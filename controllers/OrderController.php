@@ -3678,7 +3678,9 @@ class OrderController extends Controller
                 'rest_pay' => $rest_sum -= $body_pay
             ];
 
-        OrdersORM::where('id', $order_id)->update(['probably_return_date' => date('Y-m-d H:i:s', strtotime($paydate->format('d.m.Y')))]);
+        $probablyReturnDate = $paydate->format('d.m.Y');
+
+        OrdersORM::where('id', $order_id)->update(['probably_return_date' => date('Y-m-d H:i:s', strtotime($probablyReturnDate))]);
 
         $paydate->add(new DateInterval('P1M'));
 
