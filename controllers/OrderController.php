@@ -3788,7 +3788,7 @@ class OrderController extends Controller
         $startDate = new DateTime(date('Y-m-d', strtotime($order->probably_start_date)));
         $returnDate = new DateTime(date('Y-m-d', strtotime($probablyReturnDate)));
 
-        Contracts::where('order_id', $order_id)->update(['period' => date_diff($startDate, $returnDate)->days]);
+        ContractsORM::where('order_id', $order_id)->update(['period' => date_diff($startDate, $returnDate)->days]);
     }
 
     private function check_pay_date($date)
