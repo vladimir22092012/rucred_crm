@@ -3780,6 +3780,13 @@ class OrderController extends Controller
 
         if ($formDocs == 1)
             $this->form_docs($order_id);
+
+        $order = OrdersORM::find($order_id);
+
+        $startDate = new DateTime(date('Y-m-d', strtotime($order->probably_start_date)));
+        $returnDate = new DateTime(date('Y-m-d', strtotime($probablyReturnDate)));
+
+        Contracts::where('order_id', $order_id)->update(['period' => date_diff($startDate, $returnDate)->days]);
     }
 
     private function check_pay_date($date)
@@ -5067,38 +5074,44 @@ class OrderController extends Controller
 
         $timeOfTransitionToNextBankingDay = date('H:i', strtotime($this->Settings->time_of_transition_to_the_next_banking_day));
 
-        if ($order->settlement_id == 3 && date('H:i') >= $timeOfTransitionToNextBankingDay)
-            $probably_start_date = date('Y-m-d', strtotime('+1 days'));
-        else
-            $probably_start_date = date('Y-m-d');
+        $start_date = date('Y-m-d');
 
-        if ($order->settlement_id == 2) {
-            if (date('H:i') >= $timeOfTransitionToNextBankingDay)
-                $probably_start_date = date('Y-m-d', strtotime('+2 days'));
-            else
-                $probably_start_date = date('Y-m-d', strtotime('+1 days'));
+        if ($order->settlement_id == 3 && date('H:i') >= $timeOfTransitionToNextBankingDay) {
+            $start_date = date('Y-m-d', strtotime($start_date.'+1 days'));
         }
 
-        $check_date = $this->WeekendCalendar->check_date($probably_start_date);
+        if ($order->settlement_id == 2) {
+            if (date('H:i') >= $timeOfTransitionToNextBankingDay) {
+                $start_date = date('Y-m-d', strtotime($start_date.'+2 days'));
+            } else {
+                $start_date = date('Y-m-d', strtotime($start_date.'+1 days'));
+            }
+        }
+
+        $middleDate = date('Y-m-d', strtotime($start_date.'-1 days'));
+
+        $check_date = WeekendCalendar::checkDate($start_date);
 
         if (!empty($check_date)) {
             for ($i = 0; $i <= 15; $i++) {
-
-                $check_date = $this->WeekendCalendar->check_date($probably_start_date);
+                $check_date = WeekendCalendar::checkDate($start_date);
 
                 if (empty($check_date)) {
                     if ($order->settlement_id == 2) {
-                        if (date('H:i') >= $timeOfTransitionToNextBankingDay)
-                            $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
+
+                        $middleDate = WeekendCalendar::checkDate($middleDate);
+
+                        if (date('H:i') >= $timeOfTransitionToNextBankingDay && !empty($middleDate))
+                            $start_date = date('Y-m-d', strtotime($start_date . '+1 days'));
                     }
                     break;
                 } else {
-                    $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
+                    $start_date = date('Y-m-d', strtotime($start_date . '+1 days'));
                 }
             }
         }
 
-        OrdersORM::where('id', $orderId)->update(['probably_start_date' => $probably_start_date]);
+        OrdersORM::where('id', $orderId)->update(['probably_start_date' => $start_date]);
 
         $this->action_reform_schedule($orderId, 0);
 

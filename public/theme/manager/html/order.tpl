@@ -1950,7 +1950,7 @@
                                                 </div>
                                             </div>
                                         {/if}
-                                        {if $order->status == 0 && $order->probably_start_date|date < $date|date}
+                                        {if in_array($order->status, [0,1,2,10,13,14])}
                                             <div class="card card-primary">
                                                 <div data-order="{$order->order_id}"
                                                      class="btn btn-info btn-block refreshConditions">
