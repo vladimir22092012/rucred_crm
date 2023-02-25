@@ -5092,16 +5092,16 @@ class OrderController extends Controller
 
         $middleDate = date('Y-m-d', strtotime($start_date.'-1 days'));
 
-        $check_date = WeekendCalendar::checkDate($start_date);
+        $check_date = WeekendCalendarORM::checkDate($start_date);
 
         if (!empty($check_date)) {
             for ($i = 0; $i <= 15; $i++) {
-                $check_date = WeekendCalendar::checkDate($start_date);
+                $check_date = WeekendCalendarORM::checkDate($start_date);
 
                 if (empty($check_date)) {
                     if ($order->settlement_id == 2) {
 
-                        $middleDate = WeekendCalendar::checkDate($middleDate);
+                        $middleDate = WeekendCalendarORM::checkDate($middleDate);
 
                         if (date('H:i') >= $timeOfTransitionToNextBankingDay && !empty($middleDate))
                             $start_date = date('Y-m-d', strtotime($start_date . '+1 days'));
