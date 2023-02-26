@@ -12,7 +12,6 @@ class OrderController extends Controller
         if ($this->request->method('post')) {
             $order_id = $this->request->post('order_id', 'integer');
             $action = $this->request->post('action', 'string');
-
             switch ($action):
 
                 case 'change_manager':
@@ -283,6 +282,10 @@ class OrderController extends Controller
                 case 'sendYaDiskTrigger':
                     $this->actionSendYaDiskTrigger();
                     break;
+
+                case 'edit_user_pdn':
+                    echo $this->action_editUserPdn();
+                    exit;
 
 
             endswitch;
@@ -5208,6 +5211,24 @@ class OrderController extends Controller
 
         OrdersORM::where('id', $orderId)->update(['canSendYaDisk' => $value]);
         exit;
+    }
+
+    private function action_editUserPdn() {
+        try {
+            $userId = $this->request->post('userId');
+            $pdn = $this->request->post('pdn');
+            if (empty($userId) && empty($pdn)) {
+                return json_encode(['error' => 1, 'message' => 'Не верные входные данные']);
+            }
+            $newPdn = [
+                'pdn' => floatval($pdn),
+                'pdn_time' => time(),
+            ];
+            $result = $this->users->update_user($userId, $newPdn);
+            return json_encode(['success' => 1, 'result' => $result]);
+        } catch (Exception $exception) {
+            return json_encode(['error' => 1, 'message' => $exception->getMessage()]);
+        }
     }
 
 }

@@ -18,8 +18,25 @@ class ArchiveTicketsCron extends Core
 
     private function run()
     {
-        $tickets = $this->Tickets->gets();
-        $now = new DateTime(date('Y-m-d'));
+
+        //$tickets = $this->Tickets->gets();
+
+        //Текущая дата и время
+        $now  = time();
+        $nowStr = date('Y-m-d 18:00:00', $now);
+
+        //Дата и время тикета
+        $created = '2023-02-17 17:00:00';
+        $ticket_created = strtotime($created);
+
+        //Получаем кол-во не рабочих дней
+        $datesArray = \App\Helpers\DateTimeHelpers::getDatesArray($created, $nowStr);
+        $weekendCalendarDays = WeekendCalendarORM::query()->whereIn('date', $datesArray)->get();
+
+        $hours = round((($now - $ticket_created) / 60) / 60, 0) - (count($weekendCalendarDays) * 24);
+        var_dump($hours >= 72);
+
+        die();
 
         foreach ($tickets as $ticket) {
 
@@ -27,7 +44,14 @@ class ArchiveTicketsCron extends Core
             $ticket_created = new DateTime($created);
             $archive = 0;
 
-            if (date_diff($now, $ticket_created)->days >= 3) {
+            $days = date_diff($now, $ticket_created)->days;
+            $datesArray = \App\Helpers\DateTimeHelpers::getDatesArray($created, $nowStr);
+            $weekendCalendarDays = WeekendCalendarORM::query()->whereIn('date', $datesArray)->get();
+            if (count($weekendCalendarDays) > 0) {
+                $days -= count($weekendCalendarDays);
+            }
+
+            if ($days >= 3) {
                 $need_response = $this->CommunicationsThemes->get($ticket->theme_id);
 
                 if (empty($need_response->need_response)) {
