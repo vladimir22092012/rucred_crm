@@ -57,15 +57,15 @@
                                 <div class="col-md-9">
                                     <div class="js-filter-status mb-2 float-left">
                                         <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 page=null}{/if}"
-                                           class="btn btn-xs {if $filter_status==1}btn-success{else}btn-outline-success{/if}">Реанимируемый</a>
+                                           class="btn btn-xs {if $filter_status==1}btn-success{else}btn-outline-success{/if}">Реанимируемый ({$clients_reable})</a>
                                         <a href="{if $filter_status==2}{url status=null page=null}{else}{url status=2 stage=null page=null}{/if}"
                                            class="btn btn-xs {if $filter_status==2}btn-danger{else}btn-outline-danger{/if}">Не
-                                            реанимируемый</a>
+                                            реанимируемый ({$clients_unreable})</a>
                                         <a href="{if $filter_status==3}{url status=null page=null}{else}{url status=3 stage=null page=null}{/if}"
                                            class="btn btn-xs {if $filter_status==3}btn-primary{else}btn-outline-primary{/if}">У
-                                            Андерайтера</a>
+                                            Андерайтера ({$clients_to_under})</a>
                                         <a href="{if $filter_status=='all'}{url status=null page=null}{else}{url status='all' stage=null page=null}{/if}"
-                                           class="btn btn-xs {if $filter_status=='all'}btn-primary{else}btn-outline-primary{/if}">Все заявки</a>
+                                           class="btn btn-xs {if $filter_status=='all'}btn-primary{else}btn-outline-primary{/if}">Все заявки ({$clients_all})</a>
                                         {if $filter_status}
                                             <input type="hidden" value="{$filter_status}" id="filter_status"/>
                                         {/if}

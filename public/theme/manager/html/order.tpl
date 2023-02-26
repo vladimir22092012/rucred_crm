@@ -1214,6 +1214,46 @@
                 });
             });
 
+            $('.showEditPdnForm').click(function() {
+                $(this).hide();
+                $('.js-edit-pdn-form').show();
+            });
+            $('.js-close-edit-pdn-form').click(function() {
+                $('.showEditPdnForm').show();
+                $('.js-edit-pdn-form').hide();
+            });
+            $('.js-save-edit-pdn-form').click(function() {
+                let userId = $('#formUserIdValue').val(),
+                    pdn = $('#formPdnValue').val();
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'edit_user_pdn',
+                        userId: userId,
+                        pdn: pdn,
+                    },
+                    success: function (resp) {
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+                        if (resp['success']) {
+                            Swal.fire({
+                                title: 'Успешно!',
+                                confirmButtonText: 'ОК'
+                            });
+
+                            location.reload();
+                        }
+                    }
+                });
+                $('.showEditPdnForm').show();
+                $('.js-edit-pdn-form').hide();
+            });
+
             $('.startUpload').click(function() {
                 console.log($(this));
                 let button = $(this),
@@ -3615,6 +3655,30 @@
                                                         <div class="form-group mb-0 row">
                                                             <label class="control-label col-md-8 col-7 snils-number">{$order->pdn}
                                                                 %</label>
+                                                            {if $order->status == 0}
+                                                                <span>
+                                                                <a href="javascript:void(0);"
+                                                                   style="margin-left: 15px;"
+                                                                   class="btn btn-outline-primary btn-xs showEditPdnForm"
+                                                                   data-user="{$order->user_id}">
+                                                                    Редактировать
+                                                                </a>
+                                                                <div class="js-edit-pdn-form" style="padding:15px;display: none;">
+                                                                    <input type="hidden" value="{$order->user_id}" id="formUserIdValue" style="margin-bottom: 10px;">
+                                                                    <input class="form-control" type="text" value="{$order->pdn}" id="formPdnValue" style="margin-bottom: 10px;">
+                                                                    <span>
+                                                                        <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-save-edit-pdn-form">
+                                                                            Отправить
+                                                                        </a>
+                                                                    </span>
+                                                                    <span>
+                                                                        <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-edit-pdn-form">
+                                                                           Отмена
+                                                                        </a>
+                                                                    </span>
+                                                                </div>
+                                                            </span>
+                                                            {/if}
                                                         </div>
                                                     </div>
                                                 </div>
