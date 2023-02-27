@@ -3094,6 +3094,7 @@ class OrderController extends Controller
         $userId = $this->request->post('user_id');
         $orderId = $this->request->post('order_id');
         $hold = $this->request->post('hold');
+        $hold = strtoupper($hold);
         $acc = $this->request->post('acc');
         $bank = $this->request->post('bank');
         $bik = $this->request->post('bik');
@@ -3104,6 +3105,14 @@ class OrderController extends Controller
         if (empty($comment)) {
             echo json_encode(['error' => 'Заполните комментарий']);
         }
+
+        //Проверка чтобы не совпадал ИНН клиента и Держателя счета
+        $user = UsersORM::find($userId);
+        $userFio = $user->lastname.' '.$user->firstname.' '.$user->patronymic;
+
+        if ($user->inn == $inn_holder && $userFio != $hold)
+            echo json_encode(['error' => 'При получении займа на счет третьего лица, ваш ИНН не должен совпадать с ИНН держателя счета']);
+
 
         $update =
             [
