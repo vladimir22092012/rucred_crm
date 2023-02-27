@@ -3062,6 +3062,14 @@ class OfflineOrderController extends Controller
             ];
 
         $this->PaymentsSchedules->update($schedule_id, $update);
+
+        $order = $this->orders->get_order($order_id);
+
+        $order->payment_schedule = PaymentsScheduleORM::where('order_id', $order_id)->where('actual', 1)->first()->toArray();
+
+        DocumentsORM::where('order_id', $order_id)
+            ->update(['params' => serialize($order)]);
+
         exit;
     }
 
