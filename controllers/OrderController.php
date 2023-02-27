@@ -3104,14 +3104,17 @@ class OrderController extends Controller
 
         if (empty($comment)) {
             echo json_encode(['error' => 'Заполните комментарий']);
+            exit;
         }
 
         //Проверка чтобы не совпадал ИНН клиента и Держателя счета
         $user = UsersORM::find($userId);
-        $userFio = $user->lastname.' '.$user->firstname.' '.$user->patronymic;
+        $userFio = $user->lastname . ' ' . $user->firstname . ' ' . $user->patronymic;
 
-        if ($user->inn == $inn_holder && $userFio != $hold)
+        if ($user->inn == $inn_holder && $userFio != $hold) {
             echo json_encode(['error' => 'При получении займа на счет третьего лица, ваш ИНН не должен совпадать с ИНН держателя счета']);
+            exit;
+        }
 
 
         $update =
@@ -3645,7 +3648,7 @@ class OrderController extends Controller
 
         if ($loan->type == 'pdl') {
 
-            if(date_diff($paydate, $start_date)->days <= $loan->free_period)
+            if (date_diff($paydate, $start_date)->days <= $loan->free_period)
                 $paydate->add(new DateInterval('P1M'));
 
             if (date_diff($paydate, $start_date)->days > $loan->free_period && date_diff($paydate, $start_date)->days < $loan->min_period) {
@@ -5094,18 +5097,18 @@ class OrderController extends Controller
         $start_date = date('Y-m-d');
 
         if ($order->settlement_id == 3 && date('H:i') >= $timeOfTransitionToNextBankingDay) {
-            $start_date = date('Y-m-d', strtotime($start_date.'+1 days'));
+            $start_date = date('Y-m-d', strtotime($start_date . '+1 days'));
         }
 
         if ($order->settlement_id == 2) {
             if (date('H:i') >= $timeOfTransitionToNextBankingDay) {
-                $start_date = date('Y-m-d', strtotime($start_date.'+2 days'));
+                $start_date = date('Y-m-d', strtotime($start_date . '+2 days'));
             } else {
-                $start_date = date('Y-m-d', strtotime($start_date.'+1 days'));
+                $start_date = date('Y-m-d', strtotime($start_date . '+1 days'));
             }
         }
 
-        $middleDate = date('Y-m-d', strtotime($start_date.'-1 days'));
+        $middleDate = date('Y-m-d', strtotime($start_date . '-1 days'));
 
         $check_date = WeekendCalendarORM::checkDate($start_date);
 
@@ -5264,7 +5267,8 @@ class OrderController extends Controller
         exit;
     }
 
-    private function action_editUserPdn() {
+    private function action_editUserPdn()
+    {
         try {
             $userId = $this->request->post('userId');
             $pdn = $this->request->post('pdn');

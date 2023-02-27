@@ -2937,7 +2937,6 @@ class OfflineOrderController extends Controller
 
     private function action_edit_schedule()
     {
-
         $date = $this->request->post('date');
         $schedule_id = $this->request->post('schedule_id');
         $pay_sum = $this->request->post('pay_sum');
@@ -2956,12 +2955,21 @@ class OfflineOrderController extends Controller
         $payment_schedule = array_replace_recursive($date, $pay_sum, $loan_percents_pay, $loan_body_pay, $comission_pay, $rest_pay);
 
         foreach ($payment_schedule as $date => $payment) {
+
+            if (date('Y-m-d', strtotime($payment['date']) <= date('Y-m-d', strtotime($order->probably_start_date))))
+                $error = 'Дата в графике не может быть раньше даты выдачи займа';
+
             $payment_schedule[$payment['date']] = array_slice($payment, 1);
             $payment_schedule[$payment['date']]['pay_sum'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['pay_sum']);
             $payment_schedule[$payment['date']]['loan_percents_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['loan_percents_pay']);
             $payment_schedule[$payment['date']]['loan_body_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['loan_body_pay']);
             $payment_schedule[$payment['date']]['rest_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['rest_pay']);
             unset($payment_schedule[$date]);
+        }
+
+        if (isset($error)) {
+            echo json_encode(['error' => $error]);
+            exit;
         }
 
         foreach ($results as $key => $result) {
@@ -3424,7 +3432,7 @@ class OfflineOrderController extends Controller
 
         if ($loan->type == 'pdl') {
 
-            if(date_diff($paydate, $start_date)->days <= $loan->free_period)
+            if (date_diff($paydate, $start_date)->days <= $loan->free_period)
                 $paydate->add(new DateInterval('P1M'));
 
             if (date_diff($paydate, $start_date)->days > $loan->free_period && date_diff($paydate, $start_date)->days < $loan->min_period) {

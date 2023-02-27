@@ -1606,9 +1606,19 @@
             } else {
                 $.ajax({
                     method: 'POST',
+                    dataType: 'JSON',
                     data: form,
-                    success: function () {
-                        location.reload();
+                    success: function (resp) {
+
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+                        else if (!resp) {
+                            location.reload();
+                        }
                     }
                 });
             }
