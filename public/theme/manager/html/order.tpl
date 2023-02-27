@@ -1192,6 +1192,8 @@
             $('.acc-num-edit, .cor-acc').mask('99999999999999999999');
             $('.bik-edit').mask('999999999');
 
+            $('input[name="inn_holder"]').mask('999999999999');
+
             $('#canSendOnec, #canSendYaDisk').on('click', function () {
 
                 let value = 0;
@@ -4642,7 +4644,7 @@
                             <div class="form-group">
                                 <label>ИНН держателя счета:</label>
                                 <input type="text" name="inn_holder"
-                                       class="form-control"
+                                       class="form-control mask_number"
                                        value="{$order->requisite->inn_holder}"/>
                             </div>
                             <div class="form-group">
