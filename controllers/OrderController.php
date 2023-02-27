@@ -3095,6 +3095,7 @@ class OrderController extends Controller
         $bank = $this->request->post('bank');
         $bik = $this->request->post('bik');
         $cor = $this->request->post('cor');
+        $inn_holder = $this->request->post('inn_holder');
         $comment = $this->request->post('comment');
 
         if (empty($comment)) {
@@ -3107,7 +3108,8 @@ class OrderController extends Controller
                 'bik' => $bik,
                 'number' => $acc,
                 'holder' => $hold,
-                'correspondent_acc' => $cor
+                'correspondent_acc' => $cor,
+                'inn_holder' => $inn_holder
             ];
 
         $oldRequisites = RequisitesORM::where('user_id', $userId)
@@ -3129,7 +3131,8 @@ class OrderController extends Controller
                 'bik' => "Бик банка",
                 'number' => "Номер счета",
                 'holder' => "Держатель счета",
-                'correspondent_acc' => "Кор счет"
+                'correspondent_acc' => "Кор счет",
+                'inn_holder' => 'ИНН держателя счета'
             ];
 
         foreach ($oldValues as $key => $value) {

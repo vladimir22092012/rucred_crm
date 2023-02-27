@@ -4576,6 +4576,12 @@
                                        value="{$order->requisite->correspondent_acc}"/>
                             </div>
                             <div class="form-group">
+                                <label>ИНН держателя счета:</label>
+                                <input type="text" name="inn_holder"
+                                       class="form-control"
+                                       value="{$order->requisite->inn_holder}"/>
+                            </div>
+                            <div class="form-group">
                                 <label>Причина редактирования</label>
                                 <textarea name="comment"
                                           class="form-control"></textarea>
