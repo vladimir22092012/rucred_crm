@@ -1619,7 +1619,8 @@
                                 }
                             });
                         }
-                        else if (!resp) {
+
+                        if (resp['success']) {
                             location.reload();
                         }
                     }
