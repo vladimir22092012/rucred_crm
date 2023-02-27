@@ -2956,7 +2956,7 @@ class OfflineOrderController extends Controller
 
         foreach ($payment_schedule as $date => $payment) {
 
-            if (date('Y-m-d', strtotime($payment['date']) <= date('Y-m-d', strtotime($order->probably_start_date))))
+            if (date('Y-m-d', strtotime($payment['date'])) <= date('Y-m-d', strtotime($order->probably_start_date)))
                 $error = 'Дата в графике не может быть раньше даты выдачи займа';
 
             $payment_schedule[$payment['date']] = array_slice($payment, 1);
@@ -3070,6 +3070,7 @@ class OfflineOrderController extends Controller
         DocumentsORM::where('order_id', $order_id)
             ->update(['params' => serialize($order)]);
 
+        echo json_encode(['success' => 1]);
         exit;
     }
 
