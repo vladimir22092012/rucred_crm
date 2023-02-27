@@ -526,13 +526,14 @@ class OfflineOrderController extends Controller
                     }
                     $this->design->assign('comments', $comments);
 
-                    $files = $this->users->get_files(array('user_id' => $order->user_id));
+                    /*$files = $this->users->get_files(array('user_id' => $order->user_id));
                     foreach ($files as $file) {
                         $format = explode('.', $file->name);
 
                         if ($format[1] == 'pdf')
                             $file->format = 'PDF';
-                    }
+                    }*/
+                    $files = [];
 
                     $this->design->assign('files', $files);
 
@@ -3368,7 +3369,7 @@ class OfflineOrderController extends Controller
             UPDATE s_payments_schedules
             SET actual = 1
             WHERE order_id = ?
-            ORDER BY id DESC 
+            ORDER BY id DESC
             LIMIT 1
             ", $order_id);
 

@@ -64,6 +64,49 @@ class MissingsController extends Controller
         if(empty($sort))
             $sort = 'modified desc';
 
+        $clients_all = OrdersORM::with('user')
+            ->where(function($query) {
+                if ($this->filter['date_from'] && $this->filter['date_to']) {
+                    $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
+                }
+            })
+            ->get()->count();
+        $this->design->assign('clients_all', $clients_all);
+
+        $clients_unreable = OrdersORM::with('user')
+            ->where('status', 12)
+            ->where('unreability', 0)
+            ->where(function($query) {
+                if ($this->filter['date_from'] && $this->filter['date_to']) {
+                    $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
+                }
+            })
+            ->get()->count();
+        $this->design->assign('clients_unreable', $clients_unreable);
+
+        $clients_to_under = OrdersORM::with('user')
+            ->where('status', '>=', 0)
+            ->where('s_orders.status', '!=', 12)
+            ->where('unreability', 0)
+            ->where(function($query) {
+                if ($this->filter['date_from'] && $this->filter['date_to']) {
+                    $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
+                }
+            })
+            ->get()->count();
+        $this->design->assign('clients_to_under', $clients_to_under);
+
+        $clients_reable = OrdersORM::with('user')
+            ->where('status', 12)
+            ->where('unreability', 0)
+            ->where(function($query) {
+                if ($this->filter['date_from'] && $this->filter['date_to']) {
+                    $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
+                }
+            })
+            ->get()->count();
+        $this->design->assign('clients_reable', $clients_reable);
+
         switch ($status) {
 
             case 'all':
