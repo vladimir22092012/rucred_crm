@@ -1609,11 +1609,14 @@
                     dataType: 'JSON',
                     data: form,
                     success: function (resp) {
-
                         if (resp['error']) {
                             Swal.fire({
                                 title: resp['error'],
                                 confirmButtonText: 'ОК'
+                            }).then((result) => {
+                                if (result.value) {
+                                    location.reload();
+                                }
                             });
                         }
                         else if (!resp) {
