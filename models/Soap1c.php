@@ -63,15 +63,11 @@ class Soap1c extends Core
             $endDate = new DateTime(date('Y-m-d', strtotime($order->probably_return_date)));
             $period = date_diff($startDate, $endDate)->days;
 
-            $asp = AspCodesORM::where('order_id', $order->order_id)
-                ->where('type', 'sms')
-                ->orderBy('id', 'asc')
-                ->first();
-
             $item->ID = (string)$contract->id;
             $item->НомерДоговора = $contract->number;
-            $item->Дата = date('YmdHis', strtotime($asp->created));
-            $item->ДатаЗаявки = date('YmdHis', strtotime($contract->deal_date));
+            $item->Дата = date('YmdHis', strtotime($contract->deal_date));
+            $item->ДатаЗаявки = date('YmdHis', strtotime($order->date));
+            $item->ДатаВыдачи = date('YmdHis', strtotime($contract->issuance_date));
             $item->Срок = $period;
             $item->Периодичность = 'День';
             $item->ПроцентнаяСтавка = $order->percent;
