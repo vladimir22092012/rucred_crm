@@ -3570,6 +3570,7 @@ class OrderController extends Controller
                 'group_id' => $groupId,
                 'company_id' => $companyId,
                 'branche_id' => $brancheId,
+                'uid' => $new_number,
                 'probably_start_date' => date('Y-m-d', strtotime($probablyStartDate))
             ];
 
