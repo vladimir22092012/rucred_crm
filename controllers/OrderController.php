@@ -3544,6 +3544,12 @@ class OrderController extends Controller
             $new_number = $contract_number;
         }
 
+        $issetContract = ContractsORM::query()->where('number', '=', $new_number)->first();
+        if ($issetContract && $issetContract->id != $order->contract_id) {
+            echo json_encode(['error' => 'Договор с таким номером уже существует!']);
+            exit;
+        }
+
         ProjectContractNumberORM::updateOrCreate(['orderId' => $order->id, 'userId' => $userId], ['uid' => $new_number]);
 
         ContractsORM::where('id', $order->contract_id)->update(['number' => $new_number]);
@@ -5278,9 +5284,14 @@ class OrderController extends Controller
             $userId = $this->request->post('userId');
             $orderId = $this->request->post('orderId');
             $pdn = $this->request->post('pdn');
+            $comment = $this->request->post('comment');
+            if (empty($comment)) {
+                return json_encode(['error' => 1, 'message' => 'Введите причину редактирования']);
+            }
             if (empty($userId) && empty($pdn) && empty($orderId)) {
                 return json_encode(['error' => 1, 'message' => 'Не верные входные данные']);
             }
+            $pdn = str_replace(',', '.', $pdn);
             $user = $this->users->get_user($userId);
             if (!$user) {
                 return json_encode(['error' => 1, 'message' => 'Пользователь не найден']);
@@ -5296,8 +5307,8 @@ class OrderController extends Controller
                     'manager_id' => $this->manager->id,
                     'created' => date('Y-m-d H:i:s'),
                     'type' => 'pdn',
-                    'old_values' => serialize(array('pdn' => $user->pdn)),
-                    'new_values' => serialize(array('pdn' => $pdn)),
+                    'old_values' => serialize(array('ПДН' => $user->pdn)),
+                    'new_values' => serialize(array('ПДН' => $pdn, 'Причина редактирования' => $comment)),
                     'order_id' => $orderId,
                     'user_id' => $userId,
                 ));

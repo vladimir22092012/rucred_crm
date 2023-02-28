@@ -1177,6 +1177,12 @@
                 });
             });
 
+            $(document).on('input', '.mask_number_pdn', function () {
+                let value = $(this).val();
+                value = value.replace(new RegExp(/[^. \d\s-]/, 'g'), '');
+                $(this).val(value);
+            });
+
             $(document).on('input', '.credit_procents, .daterange, .mask_number', function () {
                 let value = $(this).val();
                 value = value.replace(new RegExp(/[^, \d\s-]/, 'g'), '');
@@ -1227,7 +1233,8 @@
             $('.js-save-edit-pdn-form').click(function() {
                 let userId = $('#formUserIdValue').val(),
                     orderId = $('#formOrderIdValue').val(),
-                    pdn = $('#formPdnValue').val();
+                    pdn = $('#formPdnValue').val(),
+                    comment = $('#formPdnComment').val();
                 $.ajax({
                     method: 'POST',
                     dataType: 'JSON',
@@ -1236,6 +1243,7 @@
                         userId: userId,
                         orderId: orderId,
                         pdn: pdn,
+                        comment: comment,
                     },
                     success: function (resp) {
                         if (resp['error']) {
@@ -3661,28 +3669,31 @@
                                                                 %</label>
                                                             {if $order->status == 0}
                                                                 <span>
-                                                                <a href="javascript:void(0);"
-                                                                   style="margin-left: 15px;"
-                                                                   class="btn btn-outline-primary btn-xs showEditPdnForm"
-                                                                   data-user="{$order->user_id}">
-                                                                    Редактировать
-                                                                </a>
-                                                                <div class="js-edit-pdn-form" style="padding:15px;display: none;">
-                                                                    <input type="hidden" value="{$order->user_id}" id="formUserIdValue" style="margin-bottom: 10px;">
-                                                                    <input type="hidden" value="{$order->order_id}" id="formOrderIdValue">
-                                                                    <input class="form-control" type="text" value="{$order->pdn}" id="formPdnValue" style="margin-bottom: 10px;">
-                                                                    <span>
-                                                                        <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-save-edit-pdn-form">
-                                                                            Отправить
-                                                                        </a>
-                                                                    </span>
-                                                                    <span>
-                                                                        <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-edit-pdn-form">
-                                                                           Отмена
-                                                                        </a>
-                                                                    </span>
-                                                                </div>
-                                                            </span>
+                                                                    <a href="javascript:void(0);"
+                                                                       style="margin-left: 15px;"
+                                                                       class="btn btn-outline-primary btn-xs showEditPdnForm"
+                                                                       data-user="{$order->user_id}">
+                                                                        Редактировать
+                                                                    </a>
+                                                                    <div class="js-edit-pdn-form" style="padding:15px;display: none;">
+                                                                        <input type="hidden" value="{$order->user_id}" id="formUserIdValue" style="margin-bottom: 10px;">
+                                                                        <input type="hidden" value="{$order->order_id}" id="formOrderIdValue">
+                                                                        <label for="formPdnValue">ПДН</label>
+                                                                        <input class="form-control mask_number_pdn" type="text" value="{$order->pdn}" id="formPdnValue" style="margin-bottom: 10px;">
+                                                                        <label for="formPdnComment">Причина редактирования</label>
+                                                                        <textarea id="formPdnComment" class="form-control" style="margin-bottom:10px;" rows="3"></textarea>
+                                                                        <span>
+                                                                            <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-save-edit-pdn-form">
+                                                                                Отправить
+                                                                            </a>
+                                                                        </span>
+                                                                        <span>
+                                                                            <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-edit-pdn-form">
+                                                                               Отмена
+                                                                            </a>
+                                                                        </span>
+                                                                    </div>
+                                                                </span>
                                                             {/if}
                                                         </div>
                                                     </div>

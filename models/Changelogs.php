@@ -21,7 +21,7 @@ class Changelogs extends Core
             'approve_order' => 'Заявка одобрена',
             'order_status' => 'Статус заявки',
             'contactdata' => 'Контактные данные',
-            'pdn' => 'ПДН'
+            'pdn' => 'ПДН',
         );
 
         return $types;

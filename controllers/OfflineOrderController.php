@@ -310,6 +310,10 @@ class OfflineOrderController extends Controller
                     $this->actionSendYaDiskTrigger();
                     break;
 
+                case 'edit_user_pdn':
+                    echo $this->action_editUserPdn();
+                    exit;
+
                 case 'editPdn':
                     $this->action_editPdn();
                     break;
@@ -526,14 +530,13 @@ class OfflineOrderController extends Controller
                     }
                     $this->design->assign('comments', $comments);
 
-                    /*$files = $this->users->get_files(array('user_id' => $order->user_id));
+                    $files = $this->users->get_files(array('user_id' => $order->user_id));
                     foreach ($files as $file) {
                         $format = explode('.', $file->name);
 
                         if ($format[1] == 'pdf')
                             $file->format = 'PDF';
-                    }*/
-                    $files = [];
+                    }
 
                     $this->design->assign('files', $files);
 
@@ -5787,6 +5790,47 @@ class OfflineOrderController extends Controller
 
         OrdersORM::where('id', $orderId)->update(['canSendYaDisk' => $value]);
         exit;
+    }
+
+    private function action_editUserPdn()
+    {
+        try {
+            $userId = $this->request->post('userId');
+            $orderId = $this->request->post('orderId');
+            $pdn = $this->request->post('pdn');
+            $comment = $this->request->post('comment');
+            if (empty($comment)) {
+                return json_encode(['error' => 1, 'message' => 'Введите причину редактирования']);
+            }
+            if (empty($userId) && empty($pdn) && empty($orderId)) {
+                return json_encode(['error' => 1, 'message' => 'Не верные входные данные']);
+            }
+            $pdn = str_replace(',', '.', $pdn);
+            $user = $this->users->get_user($userId);
+            if (!$user) {
+                return json_encode(['error' => 1, 'message' => 'Пользователь не найден']);
+            }
+            $result = '';
+            if ($user->pdn != $pdn) {
+                $newPdn = [
+                    'pdn' => $pdn,
+                    'pdn_time' => time(),
+                ];
+                $result = $this->users->update_user($userId, $newPdn);
+                $this->changelogs->add_changelog(array(
+                    'manager_id' => $this->manager->id,
+                    'created' => date('Y-m-d H:i:s'),
+                    'type' => 'pdn',
+                    'old_values' => serialize(array('ПДН' => $user->pdn)),
+                    'new_values' => serialize(array('ПДН' => $pdn, 'Причина редактирования' => $comment)),
+                    'order_id' => $orderId,
+                    'user_id' => $userId,
+                ));
+            }
+            return json_encode(['success' => 1, 'result' => $result]);
+        } catch (Exception $exception) {
+            return json_encode(['error' => 1, 'message' => $exception->getMessage()]);
+        }
     }
 
     private function action_editPdn()
