@@ -7,6 +7,19 @@ class Request extends Core
     {
         parent::__construct();
 
+        if (isset($_GET['clear_cache'])) {
+            try {
+                $this->design->smarty->clearAllCache();
+                echo "<h1>Кэш успешно сброшен</h1>";
+            } catch (Exception $exception) {
+                echo "<h1>Ошибка сброса кэша</h1>";
+                echo "<pre>";
+                print_r($exception);
+                echo "</pre>";
+            }
+            die();
+        }
+
         $_POST = $this->stripslashes_recursive($_POST);
         $_GET = $this->stripslashes_recursive($_GET);
     }

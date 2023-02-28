@@ -373,20 +373,42 @@ $(function () {
         });
     });
 
-    $(document).on('input', '.credit_procents, .daterange, .mask_number', function () {
-        let value = $(this).val();
-        value = value.replace(new RegExp(/[^.\d]/, 'g'), '');
-        $(this).val(value);
+  $(document).on('input', '.daterange', function () {
+    let value = $(this).val();
+    value = value.replace(new RegExp(/[^.\d]/, 'g'), '');
+    $(this).val(value);
 
-        if ($(this).hasClass('daterange')) {
+    if ($(this).hasClass('daterange')) {
 
-        } else {
-            new Cleave(this, {
-                numeral: true,
-                numeralThousandsGroupStyle: 'thousand',
-                delimiter: ' ',
-            });
-        }
+    } else {
+      new Cleave(this, {
+        numeral: true,
+        numeralThousandsGroupStyle: 'thousand',
+        delimiter: ' ',
+      });
+    }
+  });
+
+  $(document).on('input', '.credit_procents', function () {
+    let value = $(this).val();
+    value = value.replace(new RegExp(/[^,\d]/, 'g'), '');
+    $(this).val(value);
+  });
+
+    $(document).on('input', '.mask_number', function () {
+      let value = $(this).val();
+      value = value.replace(new RegExp(/[^\d\d]/, 'g'), '');
+      $(this).val(value);
+
+      if ($(this).hasClass('daterange')) {
+
+      } else {
+        new Cleave(this, {
+          numeral: true,
+          numeralThousandsGroupStyle: 'thousand',
+          delimiter: ' ',
+        });
+      }
     });
 
 

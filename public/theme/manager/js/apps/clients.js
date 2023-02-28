@@ -91,7 +91,7 @@ function ClientsApp()
             beforeSend: function(){
             },
             success: function(resp){
-
+                $('#blockstatuses').html($(resp).find('#blockstatuses').html());
                 $('#basicgrid .jsgrid-grid-body').html($(resp).find('#basicgrid .jsgrid-grid-body').html());
                 $('#basicgrid .jsgrid-pager-container').html($(resp).find('#basicgrid .jsgrid-pager-container').html());
 
@@ -112,7 +112,7 @@ function ClientsApp()
                 }
             },
             success: function(resp){
-
+                $('#blockstatuses').html($(resp).find('#blockstatuses').html());
                 $('#basicgrid').html($(resp).find('#basicgrid').html());
 
                 if (loading)
