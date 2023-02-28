@@ -1179,7 +1179,7 @@
 
             $(document).on('input', '.credit_procents, .daterange, .mask_number', function () {
                 let value = $(this).val();
-                value = value.replace(new RegExp(/[^. \d\s-]/, 'g'), '');
+                value = value.replace(new RegExp(/[^, \d\s-]/, 'g'), '');
                 $(this).val(value);
             });
 
@@ -1226,6 +1226,7 @@
             });
             $('.js-save-edit-pdn-form').click(function() {
                 let userId = $('#formUserIdValue').val(),
+                    orderId = $('#formOrderIdValue').val(),
                     pdn = $('#formPdnValue').val();
                 $.ajax({
                     method: 'POST',
@@ -1233,6 +1234,7 @@
                     data: {
                         action: 'edit_user_pdn',
                         userId: userId,
+                        orderId: orderId,
                         pdn: pdn,
                     },
                     success: function (resp) {
@@ -3667,6 +3669,7 @@
                                                                 </a>
                                                                 <div class="js-edit-pdn-form" style="padding:15px;display: none;">
                                                                     <input type="hidden" value="{$order->user_id}" id="formUserIdValue" style="margin-bottom: 10px;">
+                                                                    <input type="hidden" value="{$order->order_id}" id="formOrderIdValue">
                                                                     <input class="form-control" type="text" value="{$order->pdn}" id="formPdnValue" style="margin-bottom: 10px;">
                                                                     <span>
                                                                         <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-save-edit-pdn-form">
@@ -4675,6 +4678,11 @@
                         <input type="hidden" name="order_id" value="{$order->order_id}">
                         <input type="hidden" name="user_id" value="{$order->user_id}">
                         <div class="form-group" style="display:flex; flex-direction: column">
+                            <div class="form-group">
+                                <label>Номер договора:</label>
+                                <input type="text" name="contract_number"
+                                       class="form-control" value="{$contract->number}"/>
+                            </div>
                             <div class="form-group">
                                 <label>Сумма займа:</label>
                                 <input type="text" name="amount"

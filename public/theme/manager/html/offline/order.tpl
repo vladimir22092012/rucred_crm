@@ -5056,6 +5056,11 @@
                         <input type="hidden" name="user_id" value="{$order->user_id}">
                         <div class="form-group" style="display:flex; flex-direction: column">
                             <div class="form-group">
+                                <label>Номер договора:</label>
+                                <input type="text" name="contract_number"
+                                       class="form-control" value="{$contract->number}"/>
+                            </div>
+                            <div class="form-group">
                                 <label>Сумма займа:</label>
                                 <input type="text" name="amount"
                                        class="form-control mask_number" value="{$order->amount}"/>

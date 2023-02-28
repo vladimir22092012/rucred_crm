@@ -55,7 +55,7 @@
                         <div class="clearfix">
                             <div class="row">
                                 <div class="col-md-9">
-                                    <div class="js-filter-status mb-2 float-left">
+                                    <div id="blockstatuses" class="js-filter-status mb-2 float-left">
                                         <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 page=null}{/if}"
                                            class="btn btn-xs {if $filter_status==1}btn-success{else}btn-outline-success{/if}">Реанимируемый ({$clients_reable})</a>
                                         <a href="{if $filter_status==2}{url status=null page=null}{else}{url status=2 stage=null page=null}{/if}"

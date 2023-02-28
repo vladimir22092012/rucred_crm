@@ -5619,6 +5619,7 @@ class OfflineOrderController extends Controller
         $companyId = $this->request->post('company');
         $brancheId = $this->request->post('branch');
         $comment = $this->request->post('comment');
+        $contract_number = $this->request->post('contract_number');
 
         $isHoliday = WeekendCalendarORM::where('date', date('Y-m-d', strtotime($probablyStartDate)))->first();
 
@@ -5652,7 +5653,11 @@ class OfflineOrderController extends Controller
         $order = OrdersORM::find($orderId);
         $user = UsersORM::find($userId);
 
-        $new_number = $group->number . $company->number . ' ' . $loanType->number . ' ' . $user->personal_number . ' ' . $count_contracts;
+        if (empty($contract_number)) {
+            $new_number = $group->number . $company->number . ' ' . $loanType->number . ' ' . $user->personal_number . ' ' . $count_contracts;
+        } else {
+            $new_number = $contract_number;
+        }
 
         ProjectContractNumberORM::updateOrCreate(['orderId' => $order->id, 'userId' => $userId], ['uid' => $new_number]);
 
