@@ -3116,6 +3116,12 @@ class OrderController extends Controller
             exit;
         }
 
+        if ($user->inn != $inn_holder && $userFio == $hold)
+        {
+            echo json_encode(['error' => 'ФИО владельца счёта совпадает с ФИО заёмщика, в таком случае, ИНН заёмщика и ИНН держателя счёта должны совпадать']);
+            exit;
+        }
+
 
         $update =
             [
