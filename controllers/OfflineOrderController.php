@@ -2965,7 +2965,7 @@ class OfflineOrderController extends Controller
             $checkDate = WeekendCalendarORM::where('date', date('Y-m-d', strtotime($payment['date'])))->first();
 
             if(!empty($checkDate))
-                $error = 'Дата платежа '.$checkDate->date.' выпала на выходной день';
+                $error = 'Дата платежа '.date('d.m.Y', strtotime($checkDate->date)).' выпала на выходной день';
 
             $payment_schedule[$payment['date']] = array_slice($payment, 1);
             $payment_schedule[$payment['date']]['pay_sum'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['pay_sum']);
