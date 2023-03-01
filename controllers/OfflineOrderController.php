@@ -2988,7 +2988,10 @@ class OfflineOrderController extends Controller
         }
 
         if ($bodyPay > $order->amount)
-            $error = 'Сумма основного долга не может быть суммы первоначального займа';
+            $error = 'Сумма основного долга не может быть больше суммы первоначального займа';
+
+        if ($bodyPay < $order->amount)
+            $error = 'Сумма основного долга не может быть меньше суммы первоначального займа';
 
         if (isset($error)) {
             echo json_encode(['error' => $error]);
