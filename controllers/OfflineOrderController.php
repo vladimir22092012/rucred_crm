@@ -2962,6 +2962,11 @@ class OfflineOrderController extends Controller
             if (date('Y-m-d', strtotime($payment['date'])) <= date('Y-m-d', strtotime($order->probably_start_date)))
                 $error = 'Дата в графике не может быть раньше даты выдачи займа';
 
+            $checkDate = WeekendCalendarORM::where('date', date('Y-m-d', strtotime($payment['date'])))->first();
+
+            if(!empty($checkDate))
+                $error = 'Дата платежа '.$checkDate->date.' выпала на выходной день';
+
             $payment_schedule[$payment['date']] = array_slice($payment, 1);
             $payment_schedule[$payment['date']]['pay_sum'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['pay_sum']);
             $payment_schedule[$payment['date']]['loan_percents_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['loan_percents_pay']);
@@ -2970,10 +2975,7 @@ class OfflineOrderController extends Controller
             unset($payment_schedule[$date]);
         }
 
-        if (isset($error)) {
-            echo json_encode(['error' => $error]);
-            exit;
-        }
+        $bodyPay = 0;
 
         foreach ($results as $key => $result) {
             $results[$key]['all_sum_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_sum_pay']);
@@ -2981,6 +2983,16 @@ class OfflineOrderController extends Controller
             $results[$key]['all_loan_body_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_loan_body_pay']);
             $results[$key]['all_comission_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_comission_pay']);
             $results[$key]['all_rest_pay_sum'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_rest_pay_sum']);
+
+            $bodyPay = str_replace([" ", " ", ","], ['', '', '.'], $result['all_loan_body_pay']);
+        }
+
+        if ($bodyPay > $order->amount)
+            $error = 'Сумма основного долга не может быть суммы первоначального займа';
+
+        if (isset($error)) {
+            echo json_encode(['error' => $error]);
+            exit;
         }
 
         $dates[0] = date('d.m.Y', strtotime($order->probably_start_date));
