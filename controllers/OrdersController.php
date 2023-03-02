@@ -8,7 +8,7 @@ class OrdersController extends Controller
 
         $filter = array();
 
-        $filter['offline'] = 1;
+        $filter['offline'] = 0;
         $filter['archived'] = $this->request->get('archive') === 'true';
 
         $this->design->assign('offline', $filter['offline']);
