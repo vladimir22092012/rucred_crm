@@ -32,6 +32,22 @@
                 $(this).setCursorPosition(3);
             }).mask('+7(999)999-99-99');
 
+            $('#editinnValue').click(function() {
+                $(this).setCursorPosition(0);
+            }).mask('999999999999');
+
+            $('#editsnilsValue').click(function () {
+                $(this).setCursorPosition(0);
+            }).mask('999-999-999 99');
+
+            $('.subdivision_code').click(function () {
+                $(this).setCursorPosition(0);
+            }).mask('999-999');
+
+            $('.passport_serial').click(function () {
+                $(this).setCursorPosition(0);
+            }).mask('99 99 999999');
+
             Inputmask({
                 casing: 'upper'
             }).mask($('.casing-upper-mask'));
@@ -270,7 +286,7 @@
             $(document).on('click', '.delete-photo', function() {
                 let file_id = $(this).attr('data-file-id');
                 if (file_id.length) {
-                    $(this).parent().remove()
+                    $('.fileContainer[data-file-id="'+file_id+'"]').remove()
                     $.ajax({
                         url: '/upload_files',
                         method: 'POST',
@@ -1583,7 +1599,7 @@
                                                             {$ribbon_class="ribbon-info"}
                                                             {$ribbon_icon="fab fa-cloudversify"}
                                                         {/if}
-                                                        <div style="display: flex; flex-direction: column; margin-left: 15px">
+                                                        <div data-file-id="{$file->id}" class="fileContainer" style="display: flex; flex-direction: column; margin-left: 15px">
                                                             {if isset($file->format)}
                                                                 <label class="badge badge-danger">Это PDF</label>
                                                             {else}
@@ -1663,7 +1679,7 @@
                                                                         </div>
                                                                     {/if}
                                                                 </div>
-                                                                <button data-file-id="2093" class="delete-photo btn btn-danger">Удалить</button>
+                                                                <button data-file-id="{$file->id}" class="delete-photo btn btn-danger">Удалить</button>
                                                             </li>
                                                             <select class="form-control photo_status"
                                                                     data-file="{$file->id}"
@@ -1688,6 +1704,18 @@
                                                         </div>
                                                     {/foreach}
                                                 </ul>
+                                                <div class="col-md-12">
+                                                    <div class="form_file_item">
+                                                        <input type="file" name="new_file" class="new_file"
+                                                               id="new_file"
+                                                               data-user="{$client->id}" value=""
+                                                               style="display:none"/>
+                                                        <label for="new_file" class="btn btn-large btn-primary">
+                                                            <i class="fa fa-plus-circle"></i>
+                                                            <span>Добавить фото</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         {else}
                                             <form action="{url}" class="border js-order-item-form mb-3"

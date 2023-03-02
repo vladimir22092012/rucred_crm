@@ -200,7 +200,7 @@
                                 <label class="custom-control-label" for="phone_notify_manager_status">Телефон</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" id="mail_notify_manager_status" name="mail_notify_manager_status"
+                                <input disabled="true" type="checkbox" id="mail_notify_manager_status" name="mail_notify_manager_status"
                                        {if $settings->mail_notify_manager_status == true}checked="checked"{/if} {if !in_array($manager->role, ['admin', 'developer'])}disabled{/if}
                                        class="custom-control-input notify-setting">
                                 <label class="custom-control-label" for="mail_notify_manager_status">Мэйл</label>
@@ -223,7 +223,7 @@
                                 <label class="custom-control-label" for="phone_notify_user_status">Телефон</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" id="mail_notify_user_status" name="mail_notify_user_status"
+                                <input disabled="true" type="checkbox" id="mail_notify_user_status" name="mail_notify_user_status"
                                        {if $settings->mail_notify_user_status == true}checked="checked"{/if} {if !in_array($manager->role, ['admin', 'developer'])}disabled{/if}
                                        class="custom-control-input notify-setting">
                                 <label class="custom-control-label" for="mail_notify_user_status">Мэйл</label>
