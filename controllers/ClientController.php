@@ -1328,6 +1328,9 @@ class ClientController extends Controller
                 }
             }
             if (!empty($updateData)) {
+                if ($field == 'passport') {
+                    FilesORM::where('user_id', $user_id)->delete();
+                }
                 $this->users->update_user($user_id, $updateData);
             }
         }
