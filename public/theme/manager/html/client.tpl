@@ -6,6 +6,7 @@
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/order.js?v=1.16"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/movements.app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
+    <script src="theme/manager/assets/plugins/moment/moment.js"></script>
     <script src="theme/manager/assets/plugins/daterangepicker/daterangepicker.js"></script>
     <script
         src="theme/{$settings->theme|escape}/assets/plugins/inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
@@ -15,6 +16,14 @@
             let token_dadata = "25c845f063f9f3161487619f630663b2d1e4dcd7";
 
         $(function () {
+
+            $('.daterange').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true,
+                locale: {
+                    format: 'DD.MM.YYYY'
+                },
+            });
 
             $.fn.setCursorPosition = function (pos) {
                 if ($(this).get(0).setSelectionRange) {
@@ -841,7 +850,7 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group mb-1">
                                                                 <label class="control-label">Дата выдачи:</label>
-                                                                <input type="text" name="passport_date" value="{$client->passport_date|escape}" class="form-control daterange" required="true"/>
+                                                                <input type="text" name="passport_date" value="{$client->passport_date|date}" class="form-control daterange" required="true"/>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
