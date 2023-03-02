@@ -1366,7 +1366,7 @@ class OfflineOrderController extends Controller
                 $this->PaymentsToSchedules->add($graphs_payments);
             }
 
-            UsersORM::where('id', $order->user_id)->update(['is_client', 1]);
+            UsersORM::where('id', $order->user_id)->update(['is_client' => 1]);
 
             echo json_encode(['success' => 1]);
             exit;
@@ -4695,7 +4695,7 @@ class OfflineOrderController extends Controller
 
         $this->contracts->update_contract($order->contract_id, $contract);
 
-        UsersORM::where('id', $order->user_id)->update(['is_client', 1]);
+        UsersORM::where('id', $order->user_id)->update(['is_client' => 1]);
 
         echo json_encode(['success' => 1]);
         exit;
