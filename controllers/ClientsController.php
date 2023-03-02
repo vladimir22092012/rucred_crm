@@ -24,6 +24,7 @@ class ClientsController extends Controller
             $filter['employer'] = $this->manager->group_id;
 
         $filter['stage_filter'] = 2;
+        $filter['is_client'] = 1;
 
         $current_page = $this->request->get('page', 'integer');
         $current_page = max(1, $current_page);

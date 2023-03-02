@@ -181,6 +181,7 @@ class Users extends Core
         $page = 1;
         $sort = 'id DESC';
         $employer_filter = '';
+        $is_client = '';
 
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
@@ -188,6 +189,10 @@ class Users extends Core
 
         if (isset($filter['stage_filter']) && $filter['stage_filter'] == 1) {
             $stage_filter = $this->db->placehold("AND stage_registration != 8");
+        }
+
+        if (isset($filter['is_client'])) {
+            $is_client = $this->db->placehold("AND is_client = ?", $filter['is_client']);
         }
 
         if (isset($filter['stage_filter']) && $filter['stage_filter'] == 2) {
@@ -309,6 +314,7 @@ class Users extends Core
                 $keyword_filter
                 $employer_filter
                 $stage_filter
+                $is_client
             ORDER BY $sort
             $sql_limit
         ");
@@ -334,6 +340,7 @@ class Users extends Core
         $keyword_filter = '';
         $search_filter = '';
         $employer_filter = '';
+        $is_client = '';
 
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('interval', (array)$filter['id']));
@@ -341,6 +348,10 @@ class Users extends Core
 
         if (isset($filter['stage_filter']) && $filter['stage_filter'] == 1) {
             $stage_filter = $this->db->placehold("AND stage_registration != 8");
+        }
+
+        if (isset($filter['is_client'])) {
+            $is_client = $this->db->placehold("AND is_client = ?", $filter['is_client']);
         }
 
         if (isset($filter['stage_filter']) && $filter['stage_filter'] == 2) {
@@ -400,6 +411,7 @@ class Users extends Core
                 $search_filter
                 $keyword_filter
                 $employer_filter
+                $is_client
         ");
         $this->db->query($query);
         $count = $this->db->result('count');

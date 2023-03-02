@@ -1257,6 +1257,8 @@ class OrderController extends Controller
                 $this->PaymentsToSchedules->add($graphs_payments);
             }
 
+            UsersORM::where('id', $order->user_id)->update(['is_client', 1]);
+
             return ['success' => 1];
         } else {
             return $resp;
@@ -4620,6 +4622,8 @@ class OrderController extends Controller
             ];
 
         $this->contracts->update_contract($order->contract_id, $contract);
+
+        UsersORM::where('id', $order->user_id)->update(['is_client', 1]);
 
         echo json_encode(['success' => 1]);
         exit;
