@@ -96,156 +96,154 @@ class ClientController extends Controller
                     echo $this->actionEditUserValue();
                     exit;
 
-
             endswitch;
-        } else {
-            if (!($id = $this->request->get('id', 'integer'))) {
-                return false;
-            }
-
-            if (!($client = $this->users->get_user($id))) {
-                return false;
-            }
-
-            $in_blacklist = 0;
-
-            $fio = "$client->lastname $client->firstname $client->patronymic";
-            $phone = $client->phone_mobile;
-
-            $blacklist_id = $this->blacklist->search($phone, $fio);
-
-            if (!empty($blacklist_id))
-                $in_blacklist = 1;
-
-            $this->design->assign('in_blacklist', $in_blacklist);
-
-            $client->regaddress = $this->addresses->get_address($client->regaddress_id);
-            $client->faktaddress = $this->addresses->get_address($client->faktaddress_id);
-
-            $user_close_orders = $this->orders->get_orders(array(
-                'user_id' => $client->id,
-                'type' => 'base',
-                'status' => array(7)
-            ));
-            $client->have_crm_closed = !empty($user_close_orders);
-
-            $managers_roles = $this->ManagerRoles->get();
-
-            foreach ($managers_roles as $role) {
-                if ($this->manager->role == $role->name)
-                    $filter['role_id'] = $role->id;
-            }
-
-            $filter['user_id'] = $client->id;
-
-
-            $documents = $this->documents->get_documents($filter);
-            $sort_docs = [];
-
-            if (!empty($documents)) {
-                foreach ($documents as $document) {
-                    $order = $this->orders->get_order($document->order_id);
-
-                    if (empty($order)) {
-                        unset($document);
-                        continue;
-                    }
-
-                    $sort_docs[$document->order_id][$order->uid][] = $document;
-                }
-                $this->design->assign('sort_docs', $sort_docs);
-            }
-
-            $managers = array();
-            foreach ($this->managers->get_managers() as $m) {
-                $managers[$m->id] = $m;
-            }
-            $this->design->assign('managers', $managers);
-
-            $files = $this->users->get_files(array('user_id' => $id));
-            $this->design->assign('files', $files);
-
-            $comments = $this->comments->get_comments(array('user_id' => $client->id));
-            foreach ($comments as $comment) {
-                if (!empty($comment->manager_id)) {
-                    $comment->letter = mb_substr($managers[$comment->manager_id]->name, 0, 1);
-                }
-            }
-            $this->design->assign('comments', $comments);
-
-
-            $scorings = array();
-            foreach ($this->scorings->get_scorings(array('user_id' => $client->id)) as $scoring) {
-                if ($scoring->type == 'juicescore') {
-                    $scoring->body = unserialize($scoring->body);
-                }
-                if ($scoring->type == 'scorista') {
-                    $scoring->body = json_decode($scoring->body);
-                }
-
-                $scorings[$scoring->type] = $scoring;
-            }
-            $this->design->assign('scorings', $scorings);
-
-            $changelogs = $this->changelogs->get_changelogs(array('user_id' => $client->id));
-            foreach ($changelogs as $changelog) {
-                $changelog->user = $client;
-                if (!empty($changelog->manager_id) && !empty($managers[$changelog->manager_id])) {
-                    $changelog->manager = $managers[$changelog->manager_id];
-                }
-            }
-            $changelog_types = $this->changelogs->get_types();
-
-            $this->design->assign('changelog_types', $changelog_types);
-            $this->design->assign('changelogs', $changelogs);
-
-            if ($client->orders = $this->orders->get_orders(array('user_id' => $client->id))) {
-                foreach ($client->orders as $o) {
-                    if ($o->contract_id) {
-                        $o->contract = $this->contracts->get_contract($o->contract_id);
-                    }
-                }
-            }
-
-            $client->requisite = RequisitesORM::where('user_id', $client->id)->where('default', 1)->first();
-
-            $settlement = $this->OrganisationSettlements->get_std_settlement();
-            $this->design->assign('settlement', $settlement);
-
-            $this->design->assign('client', $client);
-
-            $order_statuses = $this->orders->get_statuses();
-            $this->design->assign('order_statuses', $order_statuses);
-
-            $cards = $this->cards->get_cards(array('user_id' => $client->id));
-            $this->design->assign('cards', $cards);
-
-            $lastUpdateOnec = '';
-            $lastUploadDisk = '';
-
-            $uploadLoanOnec = ExchangeCronORM::where('userId', $id)->orderByRaw('id DESC')->first();
-            if ($uploadLoanOnec) {
-                $lastUpdateOnec = $uploadLoanOnec->updated;
-            }
-
-            $ordersIds = OrdersORM::where('user_id', $id)->pluck('id');
-            $uploadLoanDisk = YaDiskCronORM::whereIn('order_id', $ordersIds)->orderByRaw('id DESC')->first();
-            if ($uploadLoanDisk) {
-                $lastUploadDisk = $uploadLoanDisk->updated;
-            }
-            $this->design->assign('lastUpdateOnec', $lastUpdateOnec);
-            $this->design->assign('lastUploadDisk', $lastUploadDisk);
-
-            $telegram_confirmed = $this->TelegramUsers->get($id, 0);
-            $viber_confirmed = $this->ViberUsers->get($id, 0);
-
-            if (!empty($telegram_confirmed))
-                $this->design->assign('telegram_confirmed', '1');
-
-            if (!empty($viber_confirmed))
-                $this->design->assign('viber_confirmed', '1');
-
         }
+
+        if (!($id = $this->request->get('id', 'integer'))) {
+            return false;
+        }
+
+        if (!($client = $this->users->get_user($id))) {
+            return false;
+        }
+
+        $in_blacklist = 0;
+
+        $fio = "$client->lastname $client->firstname $client->patronymic";
+        $phone = $client->phone_mobile;
+
+        $blacklist_id = $this->blacklist->search($phone, $fio);
+
+        if (!empty($blacklist_id))
+            $in_blacklist = 1;
+
+        $this->design->assign('in_blacklist', $in_blacklist);
+
+        $client->regaddress = $this->addresses->get_address($client->regaddress_id);
+        $client->faktaddress = $this->addresses->get_address($client->faktaddress_id);
+
+        $user_close_orders = $this->orders->get_orders(array(
+            'user_id' => $client->id,
+            'type' => 'base',
+            'status' => array(7)
+        ));
+        $client->have_crm_closed = !empty($user_close_orders);
+
+        $managers_roles = $this->ManagerRoles->get();
+
+        foreach ($managers_roles as $role) {
+            if ($this->manager->role == $role->name)
+                $filter['role_id'] = $role->id;
+        }
+
+        $filter['user_id'] = $client->id;
+
+
+        $documents = $this->documents->get_documents($filter);
+        $sort_docs = [];
+
+        if (!empty($documents)) {
+            foreach ($documents as $document) {
+                $order = $this->orders->get_order($document->order_id);
+
+                if (empty($order)) {
+                    unset($document);
+                    continue;
+                }
+
+                $sort_docs[$document->order_id][$order->uid][] = $document;
+            }
+            $this->design->assign('sort_docs', $sort_docs);
+        }
+
+        $managers = array();
+        foreach ($this->managers->get_managers() as $m) {
+            $managers[$m->id] = $m;
+        }
+        $this->design->assign('managers', $managers);
+
+        $files = $this->users->get_files(array('user_id' => $id));
+        $this->design->assign('files', $files);
+
+        $comments = $this->comments->get_comments(array('user_id' => $client->id));
+        foreach ($comments as $comment) {
+            if (!empty($comment->manager_id)) {
+                $comment->letter = mb_substr($managers[$comment->manager_id]->name, 0, 1);
+            }
+        }
+        $this->design->assign('comments', $comments);
+
+
+        $scorings = array();
+        foreach ($this->scorings->get_scorings(array('user_id' => $client->id)) as $scoring) {
+            if ($scoring->type == 'juicescore') {
+                $scoring->body = unserialize($scoring->body);
+            }
+            if ($scoring->type == 'scorista') {
+                $scoring->body = json_decode($scoring->body);
+            }
+
+            $scorings[$scoring->type] = $scoring;
+        }
+        $this->design->assign('scorings', $scorings);
+
+        $changelogs = $this->changelogs->get_changelogs(array('user_id' => $client->id));
+        foreach ($changelogs as $changelog) {
+            $changelog->user = $client;
+            if (!empty($changelog->manager_id) && !empty($managers[$changelog->manager_id])) {
+                $changelog->manager = $managers[$changelog->manager_id];
+            }
+        }
+        $changelog_types = $this->changelogs->get_types();
+
+        $this->design->assign('changelog_types', $changelog_types);
+        $this->design->assign('changelogs', $changelogs);
+
+        if ($client->orders = $this->orders->get_orders(array('user_id' => $client->id))) {
+            foreach ($client->orders as $o) {
+                if ($o->contract_id) {
+                    $o->contract = $this->contracts->get_contract($o->contract_id);
+                }
+            }
+        }
+
+        $client->requisite = RequisitesORM::where('user_id', $client->id)->where('default', 1)->first();
+
+        $settlement = $this->OrganisationSettlements->get_std_settlement();
+        $this->design->assign('settlement', $settlement);
+
+        $this->design->assign('client', $client);
+
+        $order_statuses = $this->orders->get_statuses();
+        $this->design->assign('order_statuses', $order_statuses);
+
+        $cards = $this->cards->get_cards(array('user_id' => $client->id));
+        $this->design->assign('cards', $cards);
+
+        $lastUpdateOnec = '';
+        $lastUploadDisk = '';
+
+        $uploadLoanOnec = ExchangeCronORM::where('userId', $id)->orderByRaw('id DESC')->first();
+        if ($uploadLoanOnec) {
+            $lastUpdateOnec = $uploadLoanOnec->updated;
+        }
+
+        $ordersIds = OrdersORM::where('user_id', $id)->pluck('id');
+        $uploadLoanDisk = YaDiskCronORM::whereIn('order_id', $ordersIds)->orderByRaw('id DESC')->first();
+        if ($uploadLoanDisk) {
+            $lastUploadDisk = $uploadLoanDisk->updated;
+        }
+        $this->design->assign('lastUpdateOnec', $lastUpdateOnec);
+        $this->design->assign('lastUploadDisk', $lastUploadDisk);
+
+        $telegram_confirmed = $this->TelegramUsers->get($id, 0);
+        $viber_confirmed = $this->ViberUsers->get($id, 0);
+
+        if (!empty($telegram_confirmed))
+            $this->design->assign('telegram_confirmed', '1');
+
+        if (!empty($viber_confirmed))
+            $this->design->assign('viber_confirmed', '1');
 
         $scoring_types = array();
         foreach ($this->scorings->get_types(array('active' => true)) as $type) {
@@ -1347,4 +1345,6 @@ class ClientController extends Controller
         }
         return json_encode(['success' => 1]);
     }
+
+
 }
