@@ -5826,15 +5826,15 @@ class OfflineOrderController extends Controller
             $pdn = $this->request->post('pdn');
             $comment = $this->request->post('comment');
             if (empty($comment)) {
-                return json_encode(['error' => 1, 'message' => 'Введите причину редактирования']);
+                return json_encode(['error' => 'Введите причину редактирования']);
             }
             if (empty($userId) && empty($pdn) && empty($orderId)) {
-                return json_encode(['error' => 1, 'message' => 'Не верные входные данные']);
+                return json_encode(['error' => 'Не верные входные данные']);
             }
             $pdn = str_replace(',', '.', $pdn);
             $user = $this->users->get_user($userId);
             if (!$user) {
-                return json_encode(['error' => 1, 'message' => 'Пользователь не найден']);
+                return json_encode(['error' => 'Пользователь не найден']);
             }
             $result = '';
             if ($user->pdn != $pdn) {
@@ -5855,7 +5855,7 @@ class OfflineOrderController extends Controller
             }
             return json_encode(['success' => 1, 'result' => $result]);
         } catch (Exception $exception) {
-            return json_encode(['error' => 1, 'message' => $exception->getMessage()]);
+            return json_encode(['error' => $exception->getMessage()]);
         }
     }
 

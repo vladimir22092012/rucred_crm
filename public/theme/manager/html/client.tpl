@@ -5,8 +5,395 @@
     <script src="theme/{$settings->theme|escape}/assets/plugins/fancybox3/dist/jquery.fancybox.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/order.js?v=1.16"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/movements.app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
+    <script src="theme/manager/assets/plugins/daterangepicker/daterangepicker.js"></script>
+    <script
+        src="theme/{$settings->theme|escape}/assets/plugins/inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.maskedinput@1.4.1/src/jquery.maskedinput.min.js"
+            type="text/javascript"></script>
     <script>
+            let token_dadata = "25c845f063f9f3161487619f630663b2d1e4dcd7";
+
         $(function () {
+
+            $.fn.setCursorPosition = function (pos) {
+                if ($(this).get(0).setSelectionRange) {
+                    $(this).get(0).setSelectionRange(pos, pos);
+                } else if ($(this).get(0).createTextRange) {
+                    var range = $(this).get(0).createTextRange();
+                    range.collapse(true);
+                    range.moveEnd('character', pos);
+                    range.moveStart('character', pos);
+                    range.select();
+                }
+            };
+
+            $('.phone_num').click(function () {
+                $(this).setCursorPosition(3);
+            }).mask('+7(999)999-99-99');
+
+            Inputmask({
+                casing: 'upper'
+            }).mask($('.casing-upper-mask'));
+
+            $('.show_phone_code').hide();
+            $('.show_phone_confirmed').hide();
+
+            $('.accept_edit').click(function (e) {
+                e.preventDefault();
+
+                let phone = $('input[class="form-control phone_num"]').val();
+                let user_id = $(this).attr('data-user');
+
+                $.ajax({
+                    url: '/neworder',
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'edit_phone',
+                        phone: phone,
+                        user_id: user_id
+                    },
+                    success: function (response) {
+                        if (response['error']) {
+                            Swal.fire({
+                                title: response['error'],
+                                confirmButtonText: 'ОК'
+                            });
+                        } else {
+                            let code = response['code'];
+                            $('.phone_send_code').show().text(code);
+                            $('.show_phone_code').show();
+                        }
+                    }
+                })
+            });
+
+            $('.accept_edit_with_code').click(function (e) {
+                e.preventDefault();
+
+                let phone = $('input[class="form-control phone_num"]').val();
+                let phone_code = $('input[class="form-control phone_code"]').val();
+
+                $.ajax({
+                    url: '/neworder',
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'edit_phone_with_code',
+                        phone: phone,
+                        code: phone_code,
+                    },
+                    success: function (resp) {
+                        if (resp['error'] == 1) {
+                            Swal.fire({
+                                title: 'Код не верный',
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+                        if (resp['success'] == 1) {
+                            $('.show_phone_code').hide();
+                            $('.show_phone_confirmed').show();
+                            $('.accept_edit').hide();
+                            $('.phone_confirmed').val('1');
+                        }
+                    }
+                })
+            });
+
+            $('.show_email_code').hide();
+            $('.show_email_confirmed').hide();
+
+            $('.accept_email_edit').click(function (e) {
+                e.preventDefault();
+
+                let email = $('input[class="form-control casing-upper-mask email"]').val().toLowerCase();
+                let user_id = $(this).attr('data-user');
+
+                $.ajax({
+                    url: '/neworder',
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'edit_email',
+                        email: email,
+                        user_id: user_id
+                    },
+                    success: function (response) {
+                        if (response['error']) {
+                            Swal.fire({
+                                title: response['error'],
+                                confirmButtonText: 'ОК'
+                            });
+                        } else {
+                            $('.show_email_code').show();
+                            $('.email_code_show').text(response['success']);
+                            $('.email_code_show').show();
+                        }
+                    }
+                })
+            });
+
+            $('.accept_edit_email_with_code').click(function (e) {
+                e.preventDefault();
+
+                let email = $('input[class="form-control casing-upper-mask email"]').val();
+                let email_code = $('input[class="form-control email_code"]').val();
+
+                $.ajax({
+                    url: '/neworder',
+                    method: 'POST',
+                    data: {
+                        action: 'edit_email_with_code',
+                        email: email,
+                        code: email_code,
+                    },
+                    success: function (response) {
+                        if (response.error === 1) {
+                            Swal.fire({
+                                title: response.reason,
+                                confirmButtonText: 'ОК'
+                            });
+                        } else {
+                            $('.show_email_code').hide();
+                            $('.show_email_confirmed').show();
+                            $('.accept_email_edit').hide();
+                            $('.email_confirmed').val('1');
+                        }
+                    }
+                })
+            });
+
+            $('input[name="viber_same"], input[name="telegram_same"], input[name="whatsapp_same"]').on('click', function () {
+                let attr = $(this).attr('name');
+                let phone = $('input[name="phone"]').val();
+
+                $('.' + attr + '').toggle();
+
+                if ($(this).is(':checked')) {
+                    if ($(this).attr('name') == 'viber_same')
+                        $('.confirm_viber').attr('data-phone', phone);
+
+                    if ($(this).attr('name') == 'telegram_same')
+                        $('.confirm_telegram').attr('data-phone', phone);
+                }
+            });
+
+            $(document).on('click', '.confirm_telegram, .confirm_viber', function (e) {
+
+                let user_id = $('input[name="user_id"]').val();
+                let type = '';
+                let same_flag = 0;
+                let phone = $(this).parent().find('.phone_num').val();
+                let email = $('input[name="email"]').val();
+
+                if ($(this).hasClass('confirm_telegram')) {
+                    if ($('input[name="telegram_same"]').is(':checked')) {
+                        phone = $(this).attr('data-phone');
+                    }
+
+                    type = 'telegram';
+                }
+
+                if ($(this).hasClass('confirm_viber')) {
+                    if ($('input[name="viber_same"]').is(':checked')) {
+                        phone = $(this).attr('data-phone');
+                    }
+
+                    type = 'viber';
+                }
+
+                $.ajax({
+                    url: '/neworder',
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'confirm_messengers',
+                        type: type,
+                        phone: phone,
+                        user_id: user_id,
+                        email: email
+                    },
+                    success: function (resp) {
+                        if (resp['success']) {
+                            switch (resp['type']) {
+                                case 'telegram':
+                                    $('input[name="telegram_same"]').fadeOut();
+                                    $('.telegram_same_label').fadeOut();
+                                    $('.confirm_telegram').fadeOut();
+                                    setTimeout(function () {
+                                        $('.telegram_confirmed').fadeIn();
+                                    }, 1500);
+                                    break;
+
+                                case 'viber':
+                                    $('input[name="viber_same"]').fadeOut();
+                                    $('.viber_same_label').fadeOut();
+                                    $('.confirm_viber').fadeOut();
+                                    setTimeout(function () {
+                                        $('.viber_confirmed').fadeIn();
+                                    }, 1500);
+                                    break;
+                            }
+                            $('input[name="user_id"]').attr('value', resp['user_id'])
+                        } else {
+                            Swal.fire({
+                                title: 'Произошла ошибка',
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+                    }
+                });
+            });
+
+            $(document).on('change', '.photo_status', function () {
+
+                if ($(this).val() != 1)
+                    $('div[class="order-image-actions"]').show();
+                else
+                    $('div[class="order-image-actions"]').hide();
+
+                let status = $(this).val();
+                let file_id = $(this).attr('data-file');
+
+                $.ajax({
+                    url: '/order',
+                    method: 'POST',
+                    data: {
+                        action: 'change_photo_status',
+                        status: status,
+                        file_id: file_id
+                    }
+                });
+            });
+
+            $(document).on('click', '.delete-photo', function() {
+                let file_id = $(this).attr('data-file-id');
+                if (file_id.length) {
+                    $(this).parent().remove()
+                    $.ajax({
+                        url: '/upload_files',
+                        method: 'POST',
+                        dataType: 'JSON',
+                        data: {
+                            action: 'remove',
+                            id: file_id,
+                        },
+                        success: function (resp) {
+
+                        }
+                    })
+                }
+            });
+
+            $('.findRegAddress').suggestions({
+                token: token_dadata,
+                type: "ADDRESS",
+                minChars: 3,
+                onSelect: function (suggestion) {
+                    $(this).val(suggestion.value.toUpperCase());
+                    $('.reg_address_json').val(JSON.stringify(suggestion.data))
+                }
+            });
+
+            $('.findFaktAddress').suggestions({
+                token: token_dadata,
+                type: "ADDRESS",
+                minChars: 3,
+                onSelect: function (suggestion) {
+                    $(this).val(suggestion.value.toUpperCase());
+                    $('.fakt_address_json').val(JSON.stringify(suggestion.data))
+                }
+            });
+
+            $('.js-open-user-data-form').on('click', function() {
+                let field = $(this).attr('data-type');
+                if (field.length) {
+                    $('.show_view_block_' + field).hide();
+                    $('.show_edit_block_' + field).show();
+                }
+            });
+
+            $('.js-close-user-data-form').on('click', function() {
+                let field = $(this).attr('data-type');
+                if (field.length) {
+                    $('.show_view_block_' + field).show();
+                    $('.show_edit_block_' + field).hide();
+                }
+            });
+
+            $('.js-save-user-data-form').on('click', function() {
+                let field = $(this).attr('data-type');
+                if (field.length) {
+
+                    let data = {
+                        action: 'edit_user_value',
+                        field: field,
+                        user_id: $('#js-user-id').val(),
+                        comment: $('#edit'+field+'CommentValue').val()
+                    };
+
+                    if (field == 'inn' || field == 'snils') {
+                        data.values = [];
+                        data.values.push(
+                            {
+                                field: field,
+                                value: $('#edit'+field+'Value').val()
+                            }
+                        );
+                    }
+                    if (field == 'passport') {
+                        let form_fields = $('#'+field+'Form').find('input');
+                        data.values = [];
+                        form_fields.each((key, item) => {
+                            data.values.push({
+                                field: $(item).attr('name'),
+                                value: $(item).val()
+                            });
+                        });
+                    }
+                    if (field == 'addresses') {
+                        let form_fields = $('#'+field+'Form').find('input');
+                        data.values = {};
+                        form_fields.each((key, item) => {
+                            data.values[$(item).attr('name')] = $(item).val();
+                        });
+                    }
+
+                    $.ajax({
+                        method: 'POST',
+                        dataType: 'JSON',
+                        data: data,
+                        success: function (resp) {
+                            if (resp['error']) {
+                                Swal.fire({
+                                    title: resp['error'],
+                                    confirmButtonText: 'Ок',
+                                })
+                            } else {
+                                let message = 'Данные успешно изменены';
+                                if (field == 'addresses') {
+                                    message = 'Адреса успешно изменены';
+                                }
+                                if (field == 'passport') {
+                                    message = 'Паспортные данные успешно изменены';
+                                }
+                                if (field == 'snils') {
+                                    message = 'СНИЛС успешно изменён';
+                                }
+                                if (field == 'inn') {
+                                    message = 'ИНН успешно изменён';
+                                }
+                                Swal.fire({
+                                    title: message,
+                                }).then((result) => {
+                                    location.reload();
+                                });
+                            }
+                        }
+                    })
+                }
+            });
 
             $('#blacklist').on('click', function () {
                 let user_id = $(this).attr('data-user');
@@ -172,9 +559,11 @@
 
 
 {capture name='page_styles'}
+    <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet"/>
     <link href="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/magnific-popup.css"
           rel="stylesheet"/>
     <link href="theme/{$settings->theme|escape}/assets/plugins/fancybox3/dist/jquery.fancybox.css" rel="stylesheet"/>
+    <link href="theme/manager/assets/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
 {/capture}
 
 
@@ -237,6 +626,7 @@
                                                 {/if}
                                             </h3>
                                             <div class="col-md-4">
+                                                <input type="hidden" id="js-user-id" value="{$client->id}"/>
                                                 <h3>
                                                     {$client->lastname|escape}
                                                     {$client->firstname|escape}
@@ -357,9 +747,16 @@
 
                                             <h5 class="card-header">
                                                 <span class="text-white ">Общая информация</span>
+                                                {if in_array($manager->role, ['admin', 'middle'])}
+                                                <span class="float-right">
+                                                    <a href="javascript:void(0);" class="text-white js-open-user-data-form" data-type="passport">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                </span>
+                                                {/if}
                                             </h5>
 
-                                                <div class="row pt-2 view-block {if $contactdata_error}hide{/if}">
+                                                <div class="row pt-2 show_view_block_passport view-block {if $contactdata_error}hide{/if}">
                                                     <div class="col-md-12">
                                                         <div class="form-group row m-0">
                                                             <label class="control-label col-md-4">ФИО:</label>
@@ -411,7 +808,48 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
+                                                <div class="row pt-2 show_edit_block_passport" style="padding: 20px; display: none;">
+                                                    <span id="passportForm" style="display: flex; flex-wrap: wrap;">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group mb-1">
+                                                                <label class="control-label">Паспорт:</label>
+                                                                <input type="text" name="passport_serial" value="{$client->passport_serial|escape}" class="form-control passport_serial" required="true"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group mb-1">
+                                                                <label class="control-label">Код подразделения:</label>
+                                                                <input type="text" name="subdivision_code" value="{$client->subdivision_code|escape}" class="form-control subdivision_code" required="true"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group mb-1">
+                                                                <label class="control-label">Дата выдачи:</label>
+                                                                <input type="text" name="passport_date" value="{$client->passport_date|escape}" class="form-control daterange" required="true"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group mb-1">
+                                                                <label class="control-label">Кем выдано:</label>
+                                                                <input type="text" name="passport_issued" value="{$client->passport_issued|escape}" class="form-control passport_issued" required="true"/>
+                                                            </div>
+                                                        </div>
+                                                    </span>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label for="editpassportCommentValue">Комментарий</label>
+                                                            <textarea id="editpassportCommentValue" class="form-control"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                            <span>
+                                                                <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-save-user-data-form" data-type="passport">Отправить</a>
+                                                            </span>
+                                                        <span>
+                                                                <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-user-data-form" data-type="passport">Отмена</a>
+                                                            </span>
+                                                    </div>
+                                                </div>
 
                                             <div class="row p-2 edit-block {if !$contactdata_error}hide{/if}">
                                                 {if $contactdata_error}
@@ -566,7 +1004,165 @@
                                             <h5 class="card-header">
                                                 <span class="text-white ">Контактная информация</span>
                                             </h5>
-
+                                            {if in_array($manager->role, ['admin', 'middle'])}
+                                                <div class="row pt-2 view-block" style="padding:20px;">
+                                                    <div class="col-md-12">
+                                                        <div class="form-row" style="margin-bottom: 10px;">
+                                                            <div class="col-3">
+                                                                <label class="control-label">
+                                                                    Телефон
+                                                                    {if $client->phone_mobile_confirmed == 1}
+                                                                        <span>(подтвержден)</span>
+                                                                    {/if}
+                                                                    :
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-4" style="position: relative">
+                                                                <input class="form-control phone_num"
+                                                                       type="text"
+                                                                       name="phone"
+                                                                       placeholder="+7(900)000-00-00"
+                                                                       value="{$client->phone_mobile}"
+                                                                       autocomplete="off"/>
+                                                                <div class="phone_send_code badge badge-danger"
+                                                                     style="position: absolute; margin-left: 265px; margin-top: 5px;right: 8px;display: none">
+                                                                </div>
+                                                                <input type="hidden" name="phone_confirmed"
+                                                                       class="phone_confirmed" value="false"/>
+                                                            </div>
+                                                            <div class="col-2">
+                                                                <input type="button"
+                                                                       data-user="{$client->id}"
+                                                                       class="btn btn-success accept_edit"
+                                                                       value="Сохранить">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-row" style="margin-bottom: 10px;">
+                                                            <div class="col-3"></div>
+                                                            <div class="col-4">
+                                                                <div class="input-group show_phone_code"
+                                                                     style="display: none">
+                                                                    <input type="text" class="form-control phone_code"
+                                                                           placeholder="Введите код из смс">
+                                                                    <div class="input-group-append">
+                                                                        <button class="btn btn-primary accept_edit_with_code"
+                                                                                type="button" data-user="{$client->id}">
+                                                                            Подтвердить
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-row" style="margin-bottom: 10px;">
+                                                            <div class="col-3">
+                                                                <label class="control-label">
+                                                                    Электронная почта
+                                                                    {if $client->email_confirmed == 1}
+                                                                        <span>(подтверждена)</span>
+                                                                    {/if}
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div style="display: flex">
+                                                                    <input class="form-control casing-upper-mask email"
+                                                                           type="text" name="email"
+                                                                           placeholder="ivanov@mail.ru"
+                                                                           value="{$client->email}" autocomplete="off"/>
+                                                                    <div class="email_code_show badge badge-danger"
+                                                                         style="position: absolute; margin-left: 265px; margin-top: 5px; display: none"></div>
+                                                                    <input type="hidden" name="email_confirmed"
+                                                                           class="email_confirmed" value="false"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-2">
+                                                                <input type="button"
+                                                                       data-user="{$client->id}"
+                                                                       class="btn btn-success accept_email_edit"
+                                                                       value="Сохранить">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-row" style="margin-bottom: 10px;">
+                                                            <div class="col-3"></div>
+                                                            <div class="col-4">
+                                                                <div class="input-group show_email_code"
+                                                                     style="display: none">
+                                                                    <input type="text" class="form-control email_code"
+                                                                           placeholder="Код из письма">
+                                                                    <div class="input-group-append">
+                                                                        <button
+                                                                            class="btn btn-primary accept_edit_email_with_code"
+                                                                            type="button" data-user="{$client->user_id}">
+                                                                            Подтвердить
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <h4>Мессенджеры для связи</h4><br>
+                                                        <div style="width: 100%; display: flex; flex-direction: column">
+                                                            <div>
+                                                                <img class="icon_messag"
+                                                                     src="https://img.icons8.com/ios-glyphs/344/viber.png" width="30"
+                                                                     height="30">
+                                                                {if isset($viber_confirmed)}
+                                                                    <small class="badge badge-success">
+                                                                        Привязан
+                                                                    </small>
+                                                                {/if}
+                                                                <input class="form-control phone_num viber_same"
+                                                                       style="width: 180px; margin-left: 10px; {if isset($order) && $order->viber_num == $order->phone_mobile}display: none{/if}"
+                                                                       type="text" name="viber" value="{$client->viber_num}"
+                                                                       autocomplete="off">
+                                                                <label style="margin-left: 25px; display: none"
+                                                                       class="label label-success viber_confirmed">Cсылка для привязки
+                                                                    отправлена</label>
+                                                                <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
+                                                                       name="viber_same"
+                                                                       {if $client->viber_num == $client->phone_mobile}checked{/if}
+                                                                       value="1">
+                                                                <label class="viber_same_label">Совпадает с номером мобильного</label>
+                                                                <div style="margin-left: 20px" class="btn btn-success confirm_viber"
+                                                                     data-user="{$client->user_id}">Подтвердить
+                                                                </div>
+                                                                <br><br>
+                                                            </div>
+                                                            <div>
+                                                                <img class="icon_messag"
+                                                                     src="https://img.icons8.com/color/344/telegram-app--v1.png"
+                                                                     width="30"
+                                                                     height="30">
+                                                                {if isset($telegram_confirmed)}
+                                                                    <small class="badge badge-success">
+                                                                        Привязан
+                                                                    </small>
+                                                                {/if}
+                                                                <input class="form-control phone_num telegram_same"
+                                                                       style="width: 180px; margin-left: 10px; {if isset($order) && $order->telegram_num == $order->phone_mobile}display: none{/if}"
+                                                                       type="text" name="telegram" value="{$client->telegram_num}"
+                                                                       autocomplete="off">
+                                                                <label style="margin-left: 25px; display: none"
+                                                                       class="label label-success telegram_confirmed">Cсылка для
+                                                                    привязки отправлена</label>
+                                                                <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
+                                                                       name="telegram_same"
+                                                                       {if $client->telegram_num == $client->phone_mobile}checked{/if}
+                                                                       value="1">
+                                                                <label class="telegram_same_label">Совпадает с номером
+                                                                    мобильного</label>
+                                                                <div style="margin-left: 20px" class="btn btn-success confirm_telegram"
+                                                                     data-user="{$client->user_id}">
+                                                                    Подтвердить
+                                                                </div>
+                                                                <br><br>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {else}
                                             <div class="row pt-2 view-block {if $contactdata_error}hide{/if}">
                                                 <div class="col-md-12">
                                                     <div class="form-group row m-0">
@@ -617,7 +1213,7 @@
                                                     </div>
                                                 {/if}
                                             </div>
-
+                                            {/if}
                                         </form>
                                         <!-- / Контакты-->
                                         <!-- / Адреса-->
@@ -629,9 +1225,16 @@
 
                                             <h5 class="card-header">
                                                 <span class="text-white">Адрес</span>
+                                                {if in_array($manager->role, ['admin', 'middle'])}
+                                                <span class="float-right">
+                                                    <a href="javascript:void(0);" class="text-white js-open-user-data-form" data-type="addresses">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                </span>
+                                                {/if}
                                             </h5>
 
-                                                <div class="row view-block {if $addresses_error}hide{/if}">
+                                                <div class="row show_view_block_addresses view-block {if $addresses_error}hide{/if}">
                                                     <div class="col-md-12">
                                                         <table class="table table-hover mb-0">
                                                             <tr>
@@ -649,6 +1252,39 @@
                                                         </table>
                                                     </div>
                                                 </div>
+
+                                            <div class="row pt-2 show_edit_block_addresses" style="padding: 20px; display: none;">
+                                                    <span id="addressesForm" style="display: flex; flex-wrap: wrap;">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group mb-1">
+                                                                <label class="control-label">Адрес регистрации:</label>
+                                                                <input type="hidden" class="reg_address_json" name="reg_address_json" value="">
+                                                                <input type="text" name="reg_address" value="{$client->regaddress->adressfull}" class="findRegAddress form-control" required="true"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group mb-1">
+                                                                <label class="control-label">Адрес проживания:</label>
+                                                                <input type="hidden" class="fakt_address_json" name="fakt_address_json" value="">
+                                                                <input type="text" name="fakt_address" value="{$client->faktaddress->adressfull}" class="findFaktAddress form-control" required="true"/>
+                                                            </div>
+                                                        </div>
+                                                    </span>
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="editaddressesCommentValue">Комментарий</label>
+                                                        <textarea id="editaddressesCommentValue" class="form-control"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <span>
+                                                        <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-save-user-data-form" data-type="addresses">Отправить</a>
+                                                    </span>
+                                                    <span>
+                                                        <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-user-data-form" data-type="addresses">Отмена</a>
+                                                    </span>
+                                                </div>
+                                            </div>
 
                                             <div class="edit-block m-0 {if !$addresses_error}hide{/if}">
 
@@ -918,19 +1554,13 @@
                                             </div>
                                         </form>
                                         <!-- / Фото-->
-                                        <form action="{url}" class="border js-order-item-form mb-3"
-                                              id="images_form">
-
-                                            <input type="hidden" name="action" value="images"/>
-                                            <input type="hidden" name="user_id" value="{$client->id}"/>
-
+                                        {if in_array($manager->role, ['admin', 'middle'])}
                                             <h5 class="card-header">
-                                                <span class="text-white">Фотографии</span>
-
+                                                <span class="text-white">Фото</span>
                                             </h5>
-
-                                            <div class="row p-2 view-block {if $socials_error}hide{/if}">
-                                                <ul class="col-md-12 list-inline">
+                                            <div class="row p-2 view-block">
+                                                <ul class="col-md-12 list-inline"
+                                                    style="display: flex; justify-content: left">
                                                     {foreach $files as $file}
                                                         {if $file->status == 0}
                                                             {$item_class="border-warning"}
@@ -948,87 +1578,230 @@
                                                             {$item_class="border-danger border"}
                                                             {$ribbon_class="ribbon-danger"}
                                                             {$ribbon_icon="fas fa-times-circle"}
+                                                        {elseif $file->status == 4}
+                                                            {$item_class="border-info border"}
+                                                            {$ribbon_class="ribbon-info"}
+                                                            {$ribbon_icon="fab fa-cloudversify"}
                                                         {/if}
-                                                        <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
-                                                            <a class="image-popup-fit-width"
-                                                               href="javascript:void(0)"
-                                                               onclick="window.open('{$config->back_url}/files/users/{$client->id}/{$file->name}')">
-                                                                <div class="ribbon ribbon-corner {$ribbon_class}"><i
+                                                        <div style="display: flex; flex-direction: column; margin-left: 15px">
+                                                            {if isset($file->format)}
+                                                                <label class="badge badge-danger">Это PDF</label>
+                                                            {else}
+                                                                <label class="badge badge-primary">Это фото</label>
+                                                            {/if}
+                                                            <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
+                                                                <a class="image-popup-fit-width js-event-add-click"
+                                                                   href="javascript:void(0);"
+                                                                   onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$file->name}');"
+                                                                   data-event="50" data-manager="{$manager->id}"
+                                                                   data-order="{$order->order_id}"
+                                                                   data-user="{$order->user_id}">
+                                                                    <div class="ribbon ribbon-corner {$ribbon_class}">
+                                                                        <i
                                                                             class="{$ribbon_icon}"></i></div>
-                                                                <img src="{$config->back_url}/files/users/{$file->name}"
-                                                                     alt="" class="img-responsive" style=""/>
-                                                            </a>
-                                                            <div class="order-image-actions">
-                                                                <div class="dropdown mr-1 show ">
-                                                                    <button type="button"
-                                                                            class="btn {if $file->status==2}btn-success{elseif $file->status==3}btn-danger{else}btn-secondary{/if} dropdown-toggle"
-                                                                            id="dropdownMenuOffset"
-                                                                            data-toggle="dropdown"
-                                                                            aria-haspopup="true"
-                                                                            aria-expanded="true">
-                                                                        {if $file->status == 2}Принят
-                                                                        {elseif $file->status == 3}Отклонен
-                                                                        {else}Статус
-                                                                        {/if}
-                                                                    </button>
-                                                                    <div class="dropdown-menu"
-                                                                         aria-labelledby="dropdownMenuOffset"
-                                                                         x-placement="bottom-start">
-                                                                        <div class="p-1 dropdown-item">
-                                                                            <button class="btn btn-sm btn-block btn-success js-image-accept"
-                                                                                    data-id="{$file->id}"
-                                                                                    type="button">
-                                                                                <i class="fas fa-check-circle"></i>
-                                                                                <span>Принят</span>
+                                                                    <img src="{$config->back_url}/files/users/{$order->user_id}/{$file->name}"
+                                                                         alt="" class="img-responsive" style=""/>
+                                                                </a>
+                                                                <div class="order-image-actions"
+                                                                     {if !in_array($order->status, [0]) || $file->type == 'document'}style="display: none"{/if}>
+                                                                    {if $manager->role != 'employer'}
+                                                                        <div class="dropdown mr-1 show ">
+                                                                            <button type="button"
+                                                                                    class="btn {if $file->status==2}btn-success{elseif $file->status==3}btn-danger{else}btn-secondary{/if} dropdown-toggle"
+                                                                                    id="dropdownMenuOffset"
+                                                                                    data-toggle="dropdown"
+                                                                                    aria-haspopup="true"
+                                                                                    aria-expanded="true">
+                                                                                {if $file->status == 2}Принят
+                                                                                {elseif $file->status == 3}Отклонен
+                                                                                {else}Статус
+                                                                                {/if}
                                                                             </button>
+                                                                            <div class="dropdown-menu"
+                                                                                 aria-labelledby="dropdownMenuOffset"
+                                                                                 x-placement="bottom-start">
+                                                                                <div class="p-1 dropdown-item">
+                                                                                    <button
+                                                                                        class="btn btn-sm btn-block btn-outline-success js-image-accept js-event-add-click"
+                                                                                        data-event="51"
+                                                                                        data-manager="{$manager->id}"
+                                                                                        data-order="{$order->order_id}"
+                                                                                        data-user="{$order->user_id}"
+                                                                                        data-id="{$file->id}"
+                                                                                        type="button">
+                                                                                        <i class="fas fa-check-circle"></i>
+                                                                                        <span>Принять</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div class="p-1 dropdown-item">
+                                                                                    <button
+                                                                                        class="btn btn-sm btn-block btn-outline-danger js-image-reject js-event-add-click"
+                                                                                        data-event="52"
+                                                                                        data-manager="{$manager->id}"
+                                                                                        data-order="{$order->order_id}"
+                                                                                        data-user="{$order->user_id}"
+                                                                                        data-id="{$file->id}"
+                                                                                        type="button">
+                                                                                        <i class="fas fa-times-circle"></i>
+                                                                                        <span>Отклонить</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div class="p-1 pt-3 dropdown-item">
+                                                                                    <button
+                                                                                        class="btn btn-sm btn-block btn-danger js-image-remove js-event-add-click"
+                                                                                        data-event="53"
+                                                                                        data-manager="{$manager->id}"
+                                                                                        data-order="{$order->order_id}"
+                                                                                        data-user="{$order->user_id}"
+                                                                                        data-id="{$file->id}"
+                                                                                        type="button">
+                                                                                        <i class="fas fa-trash"></i>
+                                                                                        <span>Удалить</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
-                                                                        <div class="p-1 dropdown-item">
-                                                                            <button class="btn btn-sm btn-block btn-danger js-image-reject"
-                                                                                    data-id="{$file->id}"
-                                                                                    type="button">
-                                                                                <i class="fas fa-times-circle"></i>
-                                                                                <span>Отклонен</span>
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
+                                                                    {/if}
                                                                 </div>
-                                                            </div>
-                                                        </li>
+                                                                <button data-file-id="2093" class="delete-photo btn btn-danger">Удалить</button>
+                                                            </li>
+                                                            <select class="form-control photo_status"
+                                                                    data-file="{$file->id}"
+                                                                    name="photo_status">
+                                                                <option value="1"
+                                                                        {if $file->type == 'document'}selected{/if}>
+                                                                    Выберите тип документа
+                                                                </option>
+                                                                <option value="2"
+                                                                        {if $file->type == 'Паспорт: разворот'}selected{/if}>
+                                                                    Паспорт: разворот
+                                                                </option>
+                                                                <option value="3"
+                                                                        {if $file->type == 'Паспорт: регистрация'}selected{/if}>
+                                                                    Паспорт: регистрация
+                                                                </option>
+                                                                <option value="4"
+                                                                        {if $file->type == 'Селфи с паспортом'}selected{/if}>
+                                                                    Селфи с паспортом
+                                                                </option>
+                                                            </select>
+                                                        </div>
                                                     {/foreach}
                                                 </ul>
                                             </div>
+                                        {else}
+                                            <form action="{url}" class="border js-order-item-form mb-3"
+                                                  id="images_form">
 
-                                            <div class="row edit-block {if !$images_error}hide{/if}">
-                                                {foreach $files as $file}
-                                                    <div class="col-md-4 col-lg-3 col-xlg-3">
-                                                        <div class="card card-body">
-                                                            <div class="row">
+                                                <input type="hidden" name="action" value="images"/>
+                                                <input type="hidden" name="user_id" value="{$client->id}"/>
 
-                                                                <div class="col-md-6 col-lg-8">
-                                                                    <div class="form-group">
-                                                                        <label class="control-label">Статус</label>
-                                                                        <input type="text" id="status_{$file->id}"
-                                                                               name="status[{$file->id}]"
-                                                                               value="{$file->status}"/>
+                                                <h5 class="card-header">
+                                                    <span class="text-white">Фотографии</span>
+
+                                                </h5>
+
+                                                <div class="row p-2 view-block {if $socials_error}hide{/if}">
+                                                    <ul class="col-md-12 list-inline">
+                                                        {foreach $files as $file}
+                                                            {if $file->status == 0}
+                                                                {$item_class="border-warning"}
+                                                                {$ribbon_class="ribbon-warning"}
+                                                                {$ribbon_icon="fas fa-question"}
+                                                            {elseif $file->status == 1}
+                                                                {$item_class="border-primary"}
+                                                                {$ribbon_class="ribbon-primary"}
+                                                                {$ribbon_icon="fas fa-clock"}
+                                                            {elseif $file->status == 2}
+                                                                {$item_class="border-success border border-bg"}
+                                                                {$ribbon_class="ribbon-success"}
+                                                                {$ribbon_icon="fa fa-check-circle"}
+                                                            {elseif $file->status == 3}
+                                                                {$item_class="border-danger border"}
+                                                                {$ribbon_class="ribbon-danger"}
+                                                                {$ribbon_icon="fas fa-times-circle"}
+                                                            {/if}
+                                                            <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
+                                                                <a class="image-popup-fit-width"
+                                                                   href="javascript:void(0)"
+                                                                   onclick="window.open('{$config->back_url}/files/users/{$client->id}/{$file->name}')">
+                                                                    <div class="ribbon ribbon-corner {$ribbon_class}"><i
+                                                                            class="{$ribbon_icon}"></i></div>
+                                                                    <img src="{$config->back_url}/files/users/{$file->name}"
+                                                                         alt="" class="img-responsive" style=""/>
+                                                                </a>
+                                                                <div class="order-image-actions">
+                                                                    <div class="dropdown mr-1 show ">
+                                                                        <button type="button"
+                                                                                class="btn {if $file->status==2}btn-success{elseif $file->status==3}btn-danger{else}btn-secondary{/if} dropdown-toggle"
+                                                                                id="dropdownMenuOffset"
+                                                                                data-toggle="dropdown"
+                                                                                aria-haspopup="true"
+                                                                                aria-expanded="true">
+                                                                            {if $file->status == 2}Принят
+                                                                            {elseif $file->status == 3}Отклонен
+                                                                            {else}Статус
+                                                                            {/if}
+                                                                        </button>
+                                                                        <div class="dropdown-menu"
+                                                                             aria-labelledby="dropdownMenuOffset"
+                                                                             x-placement="bottom-start">
+                                                                            <div class="p-1 dropdown-item">
+                                                                                <button class="btn btn-sm btn-block btn-success js-image-accept"
+                                                                                        data-id="{$file->id}"
+                                                                                        type="button">
+                                                                                    <i class="fas fa-check-circle"></i>
+                                                                                    <span>Принят</span>
+                                                                                </button>
+                                                                            </div>
+                                                                            <div class="p-1 dropdown-item">
+                                                                                <button class="btn btn-sm btn-block btn-danger js-image-reject"
+                                                                                        data-id="{$file->id}"
+                                                                                        type="button">
+                                                                                    <i class="fas fa-times-circle"></i>
+                                                                                    <span>Отклонен</span>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        {/foreach}
+                                                    </ul>
+                                                </div>
+
+                                                <div class="row edit-block {if !$images_error}hide{/if}">
+                                                    {foreach $files as $file}
+                                                        <div class="col-md-4 col-lg-3 col-xlg-3">
+                                                            <div class="card card-body">
+                                                                <div class="row">
+
+                                                                    <div class="col-md-6 col-lg-8">
+                                                                        <div class="form-group">
+                                                                            <label class="control-label">Статус</label>
+                                                                            <input type="text" id="status_{$file->id}"
+                                                                                   name="status[{$file->id}]"
+                                                                                   value="{$file->status}"/>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                {/foreach}
-                                                <div class="col-md-12">
-                                                    <div class="form-actions">
-                                                        <button type="submit" class="btn btn-success"><i
+                                                    {/foreach}
+                                                    <div class="col-md-12">
+                                                        <div class="form-actions">
+                                                            <button type="submit" class="btn btn-success"><i
                                                                     class="fa fa-check"></i> Сохранить
-                                                        </button>
-                                                        <button type="button"
-                                                                class="btn btn-inverse js-cancel-edit">
-                                                            Отмена
-                                                        </button>
+                                                            </button>
+                                                            <button type="button"
+                                                                    class="btn btn-inverse js-cancel-edit">
+                                                                Отмена
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </form>
+                                            </form>
+                                        {/if}
                                         <!-- Дополнительная информация -->
                                         <form action="{url}"
                                               class="border js-order-item-form mb-3" id="work_data_form">
@@ -1330,11 +2103,32 @@
                                         <div class="mb-3 border">
                                             <h6 class="card-header text-white">
                                                 <span>ИНН</span>
+                                                {if in_array($manager->role, ['admin', 'middle'])}
+                                                <span class="float-right">
+                                                    <a href="javascript:void(0);" class="text-white js-open-user-data-form" data-type="inn">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                </span>
+                                                {/if}
                                             </h6>
                                             <div class="row view-block p-2 inn-front">
-                                                <div class="col-md-12">
+                                                <div class="col-md-12 show_view_block_inn">
                                                     <div class="form-group mb-0 row">
                                                         <label class="control-label col-md-8 col-7 inn-number">{$client->inn}</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 show_edit_block_inn" style="display: none;padding: 0 30px;">
+                                                    <div class="form-group mb-0 row">
+                                                        <label for="editinnValue">ИНН</label>
+                                                        <input type="text" class="form-control" style="margin-bottom:10px;" id="editinnValue" value="{$client->inn}">
+                                                        <label for="editinnCommentValue">Комментарий</label>
+                                                        <textarea id="editinnCommentValue" style="margin-bottom:10px;" class="form-control"></textarea>
+                                                        <span>
+                                                            <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-save-user-data-form" data-type="inn">Отправить</a>
+                                                        </span>
+                                                        <span>
+                                                            <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-user-data-form" data-type="inn">Отмена</a>
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1342,12 +2136,32 @@
                                         <div class="mb-4 border">
                                             <h6 class="card-header text-white">
                                                 <span>СНИЛС</span>
+                                                {if in_array($manager->role, ['admin', 'middle'])}
+                                                <span class="float-right">
+                                                    <a href="javascript:void(0);" class="text-white js-open-user-data-form" data-type="snils">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                </span>
+                                                {/if}
                                             </h6>
                                             <div class="row view-block p-2 snils-front">
-                                                <div class="col-md-12">
+                                                <div class="col-md-12 show_view_block_snils">
                                                     <div class="form-group mb-0 row">
-                                                        <label
-                                                                class="control-label col-md-8 col-7 snils-number">{$client->snils}</label>
+                                                        <label class="control-label col-md-8 col-7 snils-number">{$client->snils}</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 show_edit_block_snils" style="display: none;padding: 0 30px;">
+                                                    <div class="form-group mb-0 row">
+                                                        <label for="editsnilsValue">СНИЛС</label>
+                                                        <input type="text" class="form-control" style="margin-bottom:10px;" id="editsnilsValue" value="{$client->snils}">
+                                                        <label for="editsnilsCommentValue">Комментарий</label>
+                                                        <textarea id="editsnilsCommentValue" style="margin-bottom:10px;" class="form-control"></textarea>
+                                                        <span>
+                                                            <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-save-user-data-form" data-type="snils">Отправить</a>
+                                                        </span>
+                                                        <span>
+                                                            <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-user-data-form" data-type="snils">Отмена</a>
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>

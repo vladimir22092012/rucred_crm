@@ -92,6 +92,11 @@ class ClientController extends Controller
                     $this->actionSendYaDiskTrigger();
                     break;
 
+                case 'edit_user_value':
+                    echo $this->actionEditUserValue();
+                    exit;
+
+
             endswitch;
         } else {
             if (!($id = $this->request->get('id', 'integer'))) {
@@ -230,6 +235,15 @@ class ClientController extends Controller
             }
             $this->design->assign('lastUpdateOnec', $lastUpdateOnec);
             $this->design->assign('lastUploadDisk', $lastUploadDisk);
+
+            $telegram_confirmed = $this->TelegramUsers->get($id, 0);
+            $viber_confirmed = $this->ViberUsers->get($id, 0);
+
+            if (!empty($telegram_confirmed))
+                $this->design->assign('telegram_confirmed', '1');
+
+            if (!empty($viber_confirmed))
+                $this->design->assign('viber_confirmed', '1');
 
         }
 
@@ -1232,5 +1246,102 @@ class ClientController extends Controller
 
         UsersORM::where('id', $userId)->update(['canSendYaDisk' => $value]);
         exit;
+    }
+
+    private function actionEditUserValue() {
+
+        $oldValues = [];
+        $newValues = [];
+        $updateData = [];
+
+        $fieldNames = [
+            'inn' => "ИНН",
+            'snils' => "СНИЛС",
+            'passport_serial' => 'Паспорт',
+            'subdivision_code' => 'Код подразделения',
+            'passport_date' => 'Дата выдачи',
+            'passport_issued' => 'Кем выдано',
+            'reg_address' => 'Адрес регистрации',
+            'fakt_address' => 'Адрес проживания',
+        ];
+
+        $comment = $this->request->post('comment');
+        if (empty($comment)) {
+            return json_encode(['error' => 'Введите причину редактирования']);
+        }
+        $newValues['Комментарий'] = $comment;
+
+        $user_id = $this->request->post('user_id');
+        $user = $this->users->get_user($user_id);
+        if (!$user) {
+            return json_encode(['error' => 'Пользователь не найден']);
+        }
+
+        $values = $this->request->post('values');
+        $field = $this->request->post('field');
+
+        if ($field == 'addresses') {
+
+            $regaddress = $this->addresses->get_address($user->regaddress_id);
+            if ($regaddress->adressfull !== $values['reg_address']) {
+                if (empty($regaddress)) {
+                    return json_encode(['error' => 'Заполните адрес регистрации!']);
+                }
+                $regaddress_array = json_decode($values['reg_address_json'], true);
+                AdressesORM::where('id', $regaddress->id)->update(AdressesORM::prepareData($regaddress_array, $values['reg_address']));
+                $oldValues[$fieldNames['reg_address']] = $regaddress->adressfull;
+                $newValues[$fieldNames['reg_address']] = $values['reg_address'];
+            }
+
+            $faktaddress = $this->addresses->get_address($user->faktaddress_id);
+            if ($faktaddress->adressfull !== $values['fakt_address']) {
+                if (empty($faktaddress)) {
+                    return json_encode(['error' => 'Заполните адрес проживания!']);
+                }
+                $faktaddress_array = json_decode($values['fakt_address_json'], true);
+                AdressesORM::where('id', $faktaddress->id)->update(AdressesORM::prepareData($faktaddress_array, $values['fakt_address']));
+                $oldValues[$fieldNames['fakt_address']] = $faktaddress->adressfull;
+                $newValues[$fieldNames['fakt_address']] = $values['fakt_address'];
+            }
+
+        } else {
+            foreach ($values as $value) {
+                if (empty($value['value'])) {
+                    return json_encode(['error' => 'Поле ' . $fieldNames[$value['field']] . ' не может быть пустым!']);
+                }
+                if (!isset($user->{$value['field']})) {
+                    return json_encode(['error' => 'Поле ' . $fieldNames[$value['field']] . ' не найдено в базе данных!']);
+                }
+                if (in_array($value['field'], ['inn', 'snils'])) {
+                    $checkUser = UsersORM::query()
+                        ->whereNotIn('id', [$user_id])
+                        ->where($value['field'], '=', $value['value'])
+                        ->first();
+                    if ($checkUser) {
+                        return json_encode(['error' => 'Пользователь с таким ' . $fieldNames[$value['field']] . ' уже существует!']);
+                    }
+                }
+                if ($user->{$value['field']} != $value['value']) {
+                    $oldValues[$fieldNames[$value['field']]] = $user->{$value['field']};
+                    $newValues[$fieldNames[$value['field']]] = $value['value'];
+                    $updateData[$value['field']] = $value['value'];
+                }
+            }
+            if (!empty($updateData)) {
+                $this->users->update_user($user_id, $updateData);
+            }
+        }
+
+        if (!empty($oldValues) && !empty($newValues)) {
+            $this->changelogs->add_changelog(array(
+                'manager_id' => $this->manager->id,
+                'created' => date('Y-m-d H:i:s'),
+                'type' => 'personal',
+                'old_values' => serialize($oldValues),
+                'new_values' => serialize($newValues),
+                'user_id' => $user_id,
+            ));
+        }
+        return json_encode(['success' => 1]);
     }
 }

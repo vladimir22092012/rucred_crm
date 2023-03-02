@@ -1127,6 +1127,10 @@ class NeworderController extends Controller
             exit;
         }
 
+        UsersORM::where('id', $user_id)->update([
+            'phone_mobile' => \App\Helpers\PhoneHelpers::format($phone, 'long_to_small'),
+        ]);
+
         $code = random_int(1000, 9999);
 
         $template = $this->sms->get_template(4);
@@ -1167,6 +1171,10 @@ class NeworderController extends Controller
             echo json_encode(['error' => 1]);
             exit;
         }
+
+        UsersORM::where('phone_mobile', \App\Helpers\PhoneHelpers::format($phone, 'long_to_small'))->update([
+            'phone_mobile_confirmed' =>  1,
+        ]);
 
         echo json_encode(['success' => 1]);
         exit;
@@ -1229,6 +1237,8 @@ class NeworderController extends Controller
 
         $mail->send();
 
+        UsersORM::where('id', $user_id)->update(['email' => $email]);
+
         echo json_encode(['success' => $code]);
         exit;
     }
@@ -1253,6 +1263,7 @@ class NeworderController extends Controller
             echo json_encode(['error' => 1]);
             exit;
         }
+        UsersORM::where('email', $email)->update(['email_confirmed' => 1]);
         echo json_encode(['success' => 1]);
         exit;
     }
@@ -1530,7 +1541,9 @@ class NeworderController extends Controller
                     ];
 
                 $this->NotificationsLogs->add($log);
-
+                UsersORM::where('id', $user_id)->update([
+                    'telegram_num' => \App\Helpers\PhoneHelpers::format($phone, 'long_to_small'),
+                ]);
                 break;
 
             case 'viber':
@@ -1564,7 +1577,9 @@ class NeworderController extends Controller
                         'token' => $user_token,
                         'is_manager' => 0
                     ];
-
+                UsersORM::where('id', $user_id)->update([
+                    'viber_num' => \App\Helpers\PhoneHelpers::format($phone, 'long_to_small'),
+                ]);
                 $this->ViberUsers->add($user);
                 break;
         endswitch;

@@ -1,5 +1,3 @@
-;
-
 function OrderApp() {
     var app = this;
 
@@ -33,7 +31,7 @@ function OrderApp() {
         form_data.append('notreplace', '1');
 
         $.ajax({
-            url: '/upload_file',
+            url: '/upload_files',
             data: form_data,
             type: 'POST',
             dataType: 'json',
@@ -1186,7 +1184,7 @@ function OrderApp() {
     ;(function () {
 
         _init_toggle_form();
-        _init_submit_form();
+        //_init_submit_form();
         _init_open_image_popup();
         _init_mango_call();
         _init_open_order();
