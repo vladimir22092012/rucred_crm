@@ -3193,7 +3193,6 @@ class OrderController extends Controller
 
     private function action_edit_schedule()
     {
-
         $date = $this->request->post('date');
         $schedule_id = $this->request->post('schedule_id');
         $pay_sum = $this->request->post('pay_sum');
@@ -3203,12 +3202,26 @@ class OrderController extends Controller
         $rest_pay = $this->request->post('rest_pay');
         $order_id = $this->request->post('order_id');
         $order = $this->orders->get_order($order_id);
+        $user = $this->users->get_user($order->user_id);
+        $user = (array)$user;
+        $loan = $this->loantypes->get_loantype($order->loan_type);
 
         $results['result'] = $this->request->post('result');
 
         $payment_schedule = array_replace_recursive($date, $pay_sum, $loan_percents_pay, $loan_body_pay, $comission_pay, $rest_pay);
 
         foreach ($payment_schedule as $date => $payment) {
+
+            if (date('Y-m-d', strtotime($payment['date'])) <= date('Y-m-d', strtotime($order->probably_start_date)))
+                $error = 'Дата в графике не может быть раньше даты выдачи займа';
+
+            $checkDate = WeekendCalendarORM::where('date', date('Y-m-d', strtotime($payment['date'])))->first();
+
+            if (!empty($checkDate))
+                $error = 'Дата платежа ' . date('d.m.Y', strtotime($checkDate->date)) . ' выпала на выходной день';
+
+            $returnDate = date('Y-m-d', strtotime($payment['date']));
+
             $payment_schedule[$payment['date']] = array_slice($payment, 1);
             $payment_schedule[$payment['date']]['pay_sum'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['pay_sum']);
             $payment_schedule[$payment['date']]['loan_percents_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['loan_percents_pay']);
@@ -3217,12 +3230,27 @@ class OrderController extends Controller
             unset($payment_schedule[$date]);
         }
 
+        $bodyPay = 0;
+
         foreach ($results as $key => $result) {
             $results[$key]['all_sum_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_sum_pay']);
             $results[$key]['all_loan_percents_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_loan_percents_pay']);
             $results[$key]['all_loan_body_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_loan_body_pay']);
             $results[$key]['all_comission_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_comission_pay']);
             $results[$key]['all_rest_pay_sum'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_rest_pay_sum']);
+
+            $bodyPay = str_replace([" ", " ", ","], ['', '', '.'], $result['all_loan_body_pay']);
+        }
+
+        if ($bodyPay > $order->amount)
+            $error = 'Сумма основного долга не может быть больше суммы первоначального займа';
+
+        if ($bodyPay < $order->amount)
+            $error = 'Сумма основного долга не может быть меньше суммы первоначального займа';
+
+        if (isset($error)) {
+            echo json_encode(['error' => $error]);
+            exit;
         }
 
         $dates[0] = date('d.m.Y', strtotime($order->probably_start_date));
@@ -3234,6 +3262,11 @@ class OrderController extends Controller
         }
 
         $payment_schedule = array_merge($payment_schedule, $results);
+
+        $startDate = new DateTime(date('Y-m-d', strtotime($order->probably_start_date)));
+        $endDate = new DateTime($returnDate);
+
+        OrdersORM::where('id', $order_id)->update(['probably_return_date' => $returnDate, 'period' => date_diff($startDate, $endDate)->days]);
 
         foreach ($dates as $date) {
 
@@ -3254,6 +3287,52 @@ class OrderController extends Controller
 
         $psk = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
 
+        $all_sum_credits = 0;
+        $sum_credits_pay = 0;
+        $credits_story = json_decode($user['credits_story']);
+        $cards_story = json_decode($user['cards_story']);
+
+        if (!empty($credits_story)) {
+            foreach ($credits_story as $credit) {
+                $credit->credits_month_pay = preg_replace("/[^,.0-9]/", '', $credit->credits_month_pay);
+                if (!empty($credit->credits_month_pay))
+                    $sum_credits_pay += $credit->credits_month_pay;
+            }
+
+            $all_sum_credits += $sum_credits_pay;
+        }
+
+        if (!empty($cards_story)) {
+            foreach ($cards_story as $card) {
+                $card->cards_rest_sum = preg_replace("/[^,.0-9]/", '', $card->cards_rest_sum);
+                $card->cards_limit = preg_replace("/[^,.0-9]/", '', $card->cards_limit);
+
+                if (!empty($card->cards_limit)) {
+                    $max = 0.05 * $card->cards_limit;
+                } else {
+                    $max = 0;
+                }
+                if (!empty($card->cards_rest_sum)) {
+                    $min = 0.1 * $card->cards_rest_sum;
+                } else {
+                    $min = 0;
+                }
+
+                $all_sum_credits += min($max, $min);
+            }
+        }
+
+        $month_pay = $order->amount * ((1 / $loan->max_period) + (($psk / 100) / 12));
+
+        $all_sum_credits += $month_pay;
+
+        if ($all_sum_credits != 0)
+            $pdn = round(($all_sum_credits / $user['income']) * 100, 2);
+        else
+            $pdn = 0;
+
+        $this->users->update_user($user['id'], ['pdn' => $pdn]);
+
         $update =
             [
                 'psk' => $psk,
@@ -3261,6 +3340,15 @@ class OrderController extends Controller
             ];
 
         $this->PaymentsSchedules->update($schedule_id, $update);
+
+        $order = $this->orders->get_order($order_id);
+
+        $order->payment_schedule = PaymentsScheduleORM::where('order_id', $order_id)->where('actual', 1)->first()->toArray();
+
+        DocumentsORM::where('order_id', $order_id)
+            ->update(['params' => serialize($order)]);
+
+        echo json_encode(['success' => 1]);
         exit;
     }
 

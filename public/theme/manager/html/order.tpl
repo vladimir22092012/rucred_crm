@@ -2885,12 +2885,12 @@
                                                                 Подписать документы о реструктуризации</a>
                                                         </div>
                                                     {/if}
-                                                    {*
+                                                    {if in_array($order->status, [0])}
                                                         <input style="margin-left: 30px" type="button"
                                                                data-schedule="{$payment_schedule->id}"
                                                                class="btn btn-warning reform"
                                                                value="Редактировать">
-                                                    *}
+                                                    {/if}
                                                 {/if}
                                             </h6>
 

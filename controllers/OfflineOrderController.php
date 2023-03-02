@@ -5562,15 +5562,34 @@ class OfflineOrderController extends Controller
         $userId = $this->request->post('user_id');
         $orderId = $this->request->post('order_id');
         $hold = $this->request->post('hold');
+        $hold = strtoupper($hold);
         $acc = $this->request->post('acc');
         $bank = $this->request->post('bank');
         $bik = $this->request->post('bik');
         $cor = $this->request->post('cor');
+        $inn_holder = $this->request->post('inn_holder');
         $comment = $this->request->post('comment');
 
         if (empty($comment)) {
             echo json_encode(['error' => 'Заполните комментарий']);
+            exit;
         }
+
+        //Проверка чтобы не совпадал ИНН клиента и Держателя счета
+        $user = UsersORM::find($userId);
+        $userFio = $user->lastname . ' ' . $user->firstname . ' ' . $user->patronymic;
+
+        if ($user->inn == $inn_holder && $userFio != $hold) {
+            echo json_encode(['error' => 'При получении займа на счет третьего лица, ваш ИНН не должен совпадать с ИНН держателя счета']);
+            exit;
+        }
+
+        if ($user->inn != $inn_holder && $userFio == $hold)
+        {
+            echo json_encode(['error' => 'ФИО владельца счёта совпадает с ФИО заёмщика, в таком случае, ИНН заёмщика и ИНН держателя счёта должны совпадать']);
+            exit;
+        }
+
 
         $update =
             [
@@ -5578,7 +5597,8 @@ class OfflineOrderController extends Controller
                 'bik' => $bik,
                 'number' => $acc,
                 'holder' => $hold,
-                'correspondent_acc' => $cor
+                'correspondent_acc' => $cor,
+                'inn_holder' => $inn_holder
             ];
 
         $oldRequisites = RequisitesORM::where('user_id', $userId)
@@ -5600,7 +5620,8 @@ class OfflineOrderController extends Controller
                 'bik' => "Бик банка",
                 'number' => "Номер счета",
                 'holder' => "Держатель счета",
-                'correspondent_acc' => "Кор счет"
+                'correspondent_acc' => "Кор счет",
+                'inn_holder' => 'ИНН держателя счета'
             ];
 
         foreach ($oldValues as $key => $value) {
