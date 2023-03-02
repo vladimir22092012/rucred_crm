@@ -2966,8 +2966,10 @@ class OfflineOrderController extends Controller
 
             $checkDate = WeekendCalendarORM::where('date', date('Y-m-d', strtotime($payment['date'])))->first();
 
-            if(!empty($checkDate))
-                $error = 'Дата платежа '.date('d.m.Y', strtotime($checkDate->date)).' выпала на выходной день';
+            if (!empty($checkDate))
+                $error = 'Дата платежа ' . date('d.m.Y', strtotime($checkDate->date)) . ' выпала на выходной день';
+
+            $returnDate = date('Y-m-d', strtotime($payment['date']));
 
             $payment_schedule[$payment['date']] = array_slice($payment, 1);
             $payment_schedule[$payment['date']]['pay_sum'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['pay_sum']);
@@ -3009,6 +3011,11 @@ class OfflineOrderController extends Controller
         }
 
         $payment_schedule = array_merge($payment_schedule, $results);
+
+        $startDate = new DateTime(date('Y-m-d', strtotime($order->probably_start_date)));
+        $endDate = new DateTime($returnDate);
+
+        OrdersORM::where('id', $order_id)->update(['probably_return_date' => $returnDate, 'period' => date_diff($startDate, $endDate)->days]);
 
         foreach ($dates as $date) {
 
