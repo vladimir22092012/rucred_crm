@@ -4317,7 +4317,8 @@ class OfflineOrderController extends Controller
                         'loan_percents_summ' => 0,
                         'loan_peni_summ' => 0,
                         'issuance_date' => date('Y-m-d H:i:s'),
-                        'return_date' => $next_payment
+                        'return_date' => $next_payment,
+                        'deal_date' => date('Y-m-d H:i:s')
                     ];
 
                 $contract_id = $this->Contracts->add_contract($contract);
@@ -4346,7 +4347,6 @@ class OfflineOrderController extends Controller
 
                 $this->orders->update_order($order->order_id, ['status' => 1, 'contract_id' => $contract_id]);
                 $this->add_first_ticket($order->order_id, $order->user_id);
-
 
                 echo json_encode(['success' => 1]);
                 exit;
