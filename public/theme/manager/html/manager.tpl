@@ -598,7 +598,7 @@
 
             $(document).on('click', '.add_to_teh_chat', function () {
                 let manager_id = $(this).attr('data-manager');
-                
+
                 $.ajax({
                     method: 'POST',
                     data:{
@@ -625,11 +625,11 @@
                 $(this).val(value);
             });
 
-            $(document).on('input', '.mask_email', function () {
+            /*$(document).on('input', '.mask_email', function () {
                 let value = $(this).val();
-                value = value.replace(new RegExp(/[^a-zA-Z0-9.@]/, 'g'), '');
+                value = value.replace(new RegExp(/[^a-zA-Z0-9_\-.@]/, 'g'), '');
                 $(this).val(value);
-            });
+            });*/
 
             $('.mask_number').click().mask('+7(999)999-99-99');
         });
