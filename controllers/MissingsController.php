@@ -76,6 +76,7 @@ class MissingsController extends Controller
         $clients_unreable = OrdersORM::with('user')
             ->where('status', 12)
             ->where('unreability', 0)
+            ->where('first_loan', 1)
             ->where(function($query) {
                 if ($this->filter['date_from'] && $this->filter['date_to']) {
                     $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
