@@ -339,7 +339,7 @@ class MissingsController extends Controller
                     $query->whereBetween('s_orders.begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
                 }
             })
-            ->where('first_loan', 1)
+            ->where('s_orders.first_loan', 1)
             ->orderBy($modifier.$sorting[0], $sorting[1])
             ->offset($limit)
             ->limit($items_per_page)
