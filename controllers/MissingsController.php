@@ -70,6 +70,7 @@ class MissingsController extends Controller
                     $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
                 }
             })
+            ->where('first_loan', 1)
             ->get()->count();
         $this->design->assign('clients_all', $clients_all);
 
@@ -89,6 +90,7 @@ class MissingsController extends Controller
             ->where('status', '>=', 0)
             ->where('s_orders.status', '!=', 12)
             ->where('unreability', 0)
+            ->where('first_loan', 1)
             ->where(function($query) {
                 if ($this->filter['date_from'] && $this->filter['date_to']) {
                     $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
@@ -100,6 +102,7 @@ class MissingsController extends Controller
         $clients_reable = OrdersORM::with('user')
             ->where('status', 12)
             ->where('unreability', 0)
+            ->where('first_loan', 1)
             ->where(function($query) {
                 if ($this->filter['date_from'] && $this->filter['date_to']) {
                     $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
