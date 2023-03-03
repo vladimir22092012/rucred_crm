@@ -148,6 +148,7 @@ class MissingsController extends Controller
         $clients_count = OrdersORM::with('user')
             ->where('status', 12)
             ->where('unreability', 0)
+            ->where('first_loan', 1)
             ->where(function($query) {
                 if ($this->filter['date_from'] && $this->filter['date_to']) {
                     $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
@@ -164,6 +165,7 @@ class MissingsController extends Controller
             ->join('s_users', 's_orders.user_id', '=', 's_users.id')
             ->where('s_orders.status', 12)
             ->where('s_orders.unreability', 1)
+            ->where('first_loan', 1)
             ->where(function($query) {
                 if ($this->filter['date_from'] && $this->filter['date_to']) {
                     $query->whereBetween('s_orders.begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
@@ -199,6 +201,7 @@ class MissingsController extends Controller
         $clients_count = OrdersORM::with('user')
             ->where('status', 12)
             ->where('unreability', 0)
+            ->where('first_loan', 1)
             ->where(function($query) {
                 if ($this->filter['date_from'] && $this->filter['date_to']) {
                     $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
@@ -219,6 +222,7 @@ class MissingsController extends Controller
             ->join('s_users', 's_orders.user_id', '=', 's_users.id')
             ->where('s_orders.status', 12)
             ->where('s_orders.unreability', 0)
+            ->where('first_loan', 1)
             ->where(function($query) {
                 if ($this->filter['date_from'] && $this->filter['date_to']) {
                     $query->whereBetween('s_orders.begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
@@ -255,6 +259,7 @@ class MissingsController extends Controller
             ->where('status', '>=', 0)
             ->where('s_orders.status', '!=', 12)
             ->where('unreability', 0)
+            ->where('first_loan', 1)
             ->where(function($query) {
                 if ($this->filter['date_from'] && $this->filter['date_to']) {
                     $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
@@ -276,6 +281,7 @@ class MissingsController extends Controller
             ->where('s_orders.status', '>=', 0)
             ->where('s_orders.status', '!=', 12)
             ->where('s_orders.unreability', 0)
+            ->where('first_loan', 1)
             ->where(function($query) {
                 if ($this->filter['date_from'] && $this->filter['date_to']) {
                     $query->whereBetween('s_orders.begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
@@ -314,6 +320,7 @@ class MissingsController extends Controller
                     $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
                 }
             })
+            ->where('first_loan', 1)
             ->get()->count();
 
         $filter['page'] = $current_page;
@@ -332,6 +339,7 @@ class MissingsController extends Controller
                     $query->whereBetween('s_orders.begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
                 }
             })
+            ->where('first_loan', 1)
             ->orderBy($modifier.$sorting[0], $sorting[1])
             ->offset($limit)
             ->limit($items_per_page)
