@@ -334,16 +334,16 @@
             $('.js-open-user-data-form').on('click', function() {
                 let field = $(this).attr('data-type');
                 if (field.length) {
-                    $('.show_view_block_' + field).hide();
                     $('.show_edit_block_' + field).show();
+                    $('#editClientDataModal').modal();
                 }
             });
 
             $('.js-close-user-data-form').on('click', function() {
                 let field = $(this).attr('data-type');
                 if (field.length) {
-                    $('.show_view_block_' + field).show();
                     $('.show_edit_block_' + field).hide();
+                    $('#editClientDataModal').modal('hide');
                 }
             });
 
@@ -384,6 +384,9 @@
                             data.values[$(item).attr('name')] = $(item).val();
                         });
                     }
+
+                    $('.show_edit_block_' + field).hide();
+                    $('#editClientDataModal').modal('hide');
 
                     $.ajax({
                         method: 'POST',
@@ -833,48 +836,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="row pt-2 show_edit_block_passport" style="padding: 20px; display: none;">
-                                                    <span id="passportForm" style="display: flex; flex-wrap: wrap;">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group mb-1">
-                                                                <label class="control-label">Паспорт:</label>
-                                                                <input type="text" name="passport_serial" value="{$client->passport_serial|escape}" class="form-control passport_serial" required="true"/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group mb-1">
-                                                                <label class="control-label">Код подразделения:</label>
-                                                                <input type="text" name="subdivision_code" value="{$client->subdivision_code|escape}" class="form-control subdivision_code" required="true"/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group mb-1">
-                                                                <label class="control-label">Дата выдачи:</label>
-                                                                <input type="text" name="passport_date" value="{$client->passport_date|date}" class="form-control daterange" required="true"/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group mb-1">
-                                                                <label class="control-label">Кем выдано:</label>
-                                                                <input type="text" name="passport_issued" value="{$client->passport_issued|escape}" class="form-control passport_issued" required="true"/>
-                                                            </div>
-                                                        </div>
-                                                    </span>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label for="editpassportCommentValue">Комментарий</label>
-                                                            <textarea id="editpassportCommentValue" class="form-control"></textarea>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                            <span>
-                                                                <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-save-user-data-form" data-type="passport">Отправить</a>
-                                                            </span>
-                                                        <span>
-                                                                <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-user-data-form" data-type="passport">Отмена</a>
-                                                            </span>
-                                                    </div>
-                                                </div>
 
                                             <div class="row p-2 edit-block {if !$contactdata_error}hide{/if}">
                                                 {if $contactdata_error}
@@ -1277,40 +1238,6 @@
                                                         </table>
                                                     </div>
                                                 </div>
-
-                                            <div class="row pt-2 show_edit_block_addresses" style="padding: 20px; display: none;">
-                                                    <span id="addressesForm" style="display: flex; flex-wrap: wrap;">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group mb-1">
-                                                                <label class="control-label">Адрес регистрации:</label>
-                                                                <input type="hidden" class="reg_address_json" name="reg_address_json" value="">
-                                                                <input type="text" name="reg_address" value="{$client->regaddress->adressfull}" class="findRegAddress form-control" required="true"/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group mb-1">
-                                                                <label class="control-label">Адрес проживания:</label>
-                                                                <input type="hidden" class="fakt_address_json" name="fakt_address_json" value="">
-                                                                <input type="text" name="fakt_address" value="{$client->faktaddress->adressfull}" class="findFaktAddress form-control" required="true"/>
-                                                            </div>
-                                                        </div>
-                                                    </span>
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <label for="editaddressesCommentValue">Комментарий</label>
-                                                        <textarea id="editaddressesCommentValue" class="form-control"></textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <span>
-                                                        <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-save-user-data-form" data-type="addresses">Отправить</a>
-                                                    </span>
-                                                    <span>
-                                                        <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-user-data-form" data-type="addresses">Отмена</a>
-                                                    </span>
-                                                </div>
-                                            </div>
-
                                             <div class="edit-block m-0 {if !$addresses_error}hide{/if}">
 
                                                     <div class="row m-0 mb-2 mt-2 js-dadata-address">
@@ -2190,20 +2117,6 @@
                                                         <label class="control-label col-md-8 col-7 inn-number">{$client->inn}</label>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-12 show_edit_block_inn" style="display: none;padding: 0 30px;">
-                                                    <div class="form-group mb-0 row">
-                                                        <label for="editinnValue">ИНН</label>
-                                                        <input type="text" class="form-control" style="margin-bottom:10px;" id="editinnValue" value="{$client->inn}">
-                                                        <label for="editinnCommentValue">Комментарий</label>
-                                                        <textarea id="editinnCommentValue" style="margin-bottom:10px;" class="form-control"></textarea>
-                                                        <span>
-                                                            <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-save-user-data-form" data-type="inn">Отправить</a>
-                                                        </span>
-                                                        <span>
-                                                            <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-user-data-form" data-type="inn">Отмена</a>
-                                                        </span>
-                                                    </div>
-                                                </div>
                                             </div>
                                         </div>
                                         <div class="mb-4 border">
@@ -2221,20 +2134,6 @@
                                                 <div class="col-md-12 show_view_block_snils">
                                                     <div class="form-group mb-0 row">
                                                         <label class="control-label col-md-8 col-7 snils-number">{$client->snils}</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 show_edit_block_snils" style="display: none;padding: 0 30px;">
-                                                    <div class="form-group mb-0 row">
-                                                        <label for="editsnilsValue">СНИЛС</label>
-                                                        <input type="text" class="form-control" style="margin-bottom:10px;" id="editsnilsValue" value="{$client->snils}">
-                                                        <label for="editsnilsCommentValue">Комментарий</label>
-                                                        <textarea id="editsnilsCommentValue" style="margin-bottom:10px;" class="form-control"></textarea>
-                                                        <span>
-                                                            <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-save-user-data-form" data-type="snils">Отправить</a>
-                                                        </span>
-                                                        <span>
-                                                            <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-user-data-form" data-type="snils">Отмена</a>
-                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -2685,6 +2584,138 @@
 {include file='footer.tpl'}
 
 </div>
+<div class="modal fade" id="loan_operations" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loan_operations_title">Операции по договору</h5>
+                <button type="button" class="btn-close btn" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times text-white"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editClientDataModal" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loan_operations_title">Редактирование данных</h5>
+                <button type="button" class="btn-close btn" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times text-white"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row pt-2 show_edit_block_passport" style="padding: 20px;display: none;">
+                    <span id="passportForm" style="display: flex; flex-wrap: wrap;">
+                        <div class="col-md-6">
+                            <div class="form-group mb-1">
+                                <label class="control-label">Паспорт:</label>
+                                <input type="text" name="passport_serial" value="{$client->passport_serial|escape}" class="form-control passport_serial" required="true"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-1">
+                                <label class="control-label">Код подразделения:</label>
+                                <input type="text" name="subdivision_code" value="{$client->subdivision_code|escape}" class="form-control subdivision_code" required="true"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-1">
+                                <label class="control-label">Дата выдачи:</label>
+                                <input type="text" name="passport_date" value="{$client->passport_date|date}" class="form-control daterange" required="true"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-1">
+                                <label class="control-label">Кем выдано:</label>
+                                <input type="text" name="passport_issued" value="{$client->passport_issued|escape}" class="form-control passport_issued" required="true"/>
+                            </div>
+                        </div>
+                    </span>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="editpassportCommentValue">Комментарий</label>
+                            <textarea id="editpassportCommentValue" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <span>
+                            <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-save-user-data-form" data-type="passport">Отправить</a>
+                        </span>
+                        <span>
+                            <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-user-data-form" data-type="passport">Отмена</a>
+                        </span>
+                    </div>
+                </div>
+                <div class="row pt-2 show_edit_block_addresses" style="padding: 20px; display: none;">
+                    <span id="addressesForm" style="display: flex; flex-wrap: wrap;">
+                        <div class="col-md-6">
+                            <div class="form-group mb-1">
+                                <label class="control-label">Адрес регистрации:</label>
+                                <input type="hidden" class="reg_address_json" name="reg_address_json" value="">
+                                <input type="text" name="reg_address" value="{$client->regaddress->adressfull}" class="findRegAddress form-control" required="true"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-1">
+                                <label class="control-label">Адрес проживания:</label>
+                                <input type="hidden" class="fakt_address_json" name="fakt_address_json" value="">
+                                <input type="text" name="fakt_address" value="{$client->faktaddress->adressfull}" class="findFaktAddress form-control" required="true"/>
+                            </div>
+                        </div>
+                    </span>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="editaddressesCommentValue">Комментарий</label>
+                            <textarea id="editaddressesCommentValue" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <span>
+                            <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-save-user-data-form" data-type="addresses">Отправить</a>
+                        </span>
+                        <span>
+                            <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-user-data-form" data-type="addresses">Отмена</a>
+                        </span>
+                    </div>
+                </div>
+                <div class="row pt-2 show_edit_block_inn" style="display: none;padding: 0 30px;">
+                    <div class="form-group mb-0 row">
+                        <label for="editinnValue">ИНН</label>
+                        <input type="text" class="form-control" style="margin-bottom:10px;" id="editinnValue" value="{$client->inn}">
+                        <label for="editinnCommentValue">Комментарий</label>
+                        <textarea id="editinnCommentValue" style="margin-bottom:10px;" class="form-control"></textarea>
+                        <span>
+                            <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-save-user-data-form" data-type="inn">Отправить</a>
+                        </span>
+                        <span>
+                            <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-user-data-form" data-type="inn">Отмена</a>
+                        </span>
+                    </div>
+                </div>
+                <div class="row pt-2 show_edit_block_snils" style="display: none;padding: 0 30px;">
+                    <div class="form-group mb-0 row">
+                        <label for="editsnilsValue">СНИЛС</label>
+                        <input type="text" class="form-control" style="margin-bottom:10px;" id="editsnilsValue" value="{$client->snils}">
+                        <label for="editsnilsCommentValue">Комментарий</label>
+                        <textarea id="editsnilsCommentValue" style="margin-bottom:10px;" class="form-control"></textarea>
+                        <span>
+                            <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-save-user-data-form" data-type="snils">Отправить</a>
+                        </span>
+                        <span>
+                            <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-user-data-form" data-type="snils">Отмена</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="loan_operations" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
