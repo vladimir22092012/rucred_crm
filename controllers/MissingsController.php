@@ -64,6 +64,53 @@ class MissingsController extends Controller
         if(empty($sort))
             $sort = 'modified desc';
 
+        $clients_all = OrdersORM::with('user')
+            ->where(function($query) {
+                if ($this->filter['date_from'] && $this->filter['date_to']) {
+                    $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
+                }
+            })
+            ->where('first_loan', 1)
+            ->get()->count();
+        $this->design->assign('clients_all', $clients_all);
+
+        $clients_unreable = OrdersORM::with('user')
+            ->where('status', 12)
+            ->where('unreability', 0)
+            ->where('first_loan', 1)
+            ->where(function($query) {
+                if ($this->filter['date_from'] && $this->filter['date_to']) {
+                    $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
+                }
+            })
+            ->get()->count();
+        $this->design->assign('clients_unreable', $clients_unreable);
+
+        $clients_to_under = OrdersORM::with('user')
+            ->where('status', '>=', 0)
+            ->where('s_orders.status', '!=', 12)
+            ->where('unreability', 0)
+            ->where('first_loan', 1)
+            ->where(function($query) {
+                if ($this->filter['date_from'] && $this->filter['date_to']) {
+                    $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
+                }
+            })
+            ->get()->count();
+        $this->design->assign('clients_to_under', $clients_to_under);
+
+        $clients_reable = OrdersORM::with('user')
+            ->where('status', 12)
+            ->where('unreability', 0)
+            ->where('first_loan', 1)
+            ->where(function($query) {
+                if ($this->filter['date_from'] && $this->filter['date_to']) {
+                    $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
+                }
+            })
+            ->get()->count();
+        $this->design->assign('clients_reable', $clients_reable);
+
         switch ($status) {
 
             case 'all':
@@ -101,6 +148,7 @@ class MissingsController extends Controller
         $clients_count = OrdersORM::with('user')
             ->where('status', 12)
             ->where('unreability', 0)
+            ->where('first_loan', 1)
             ->where(function($query) {
                 if ($this->filter['date_from'] && $this->filter['date_to']) {
                     $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
@@ -117,6 +165,7 @@ class MissingsController extends Controller
             ->join('s_users', 's_orders.user_id', '=', 's_users.id')
             ->where('s_orders.status', 12)
             ->where('s_orders.unreability', 1)
+            ->where('s_orders.first_loan', 1)
             ->where(function($query) {
                 if ($this->filter['date_from'] && $this->filter['date_to']) {
                     $query->whereBetween('s_orders.begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
@@ -152,6 +201,7 @@ class MissingsController extends Controller
         $clients_count = OrdersORM::with('user')
             ->where('status', 12)
             ->where('unreability', 0)
+            ->where('first_loan', 1)
             ->where(function($query) {
                 if ($this->filter['date_from'] && $this->filter['date_to']) {
                     $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
@@ -172,6 +222,7 @@ class MissingsController extends Controller
             ->join('s_users', 's_orders.user_id', '=', 's_users.id')
             ->where('s_orders.status', 12)
             ->where('s_orders.unreability', 0)
+            ->where('s_orders.first_loan', 1)
             ->where(function($query) {
                 if ($this->filter['date_from'] && $this->filter['date_to']) {
                     $query->whereBetween('s_orders.begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
@@ -208,6 +259,7 @@ class MissingsController extends Controller
             ->where('status', '>=', 0)
             ->where('s_orders.status', '!=', 12)
             ->where('unreability', 0)
+            ->where('first_loan', 1)
             ->where(function($query) {
                 if ($this->filter['date_from'] && $this->filter['date_to']) {
                     $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
@@ -229,6 +281,7 @@ class MissingsController extends Controller
             ->where('s_orders.status', '>=', 0)
             ->where('s_orders.status', '!=', 12)
             ->where('s_orders.unreability', 0)
+            ->where('s_orders.first_loan', 1)
             ->where(function($query) {
                 if ($this->filter['date_from'] && $this->filter['date_to']) {
                     $query->whereBetween('s_orders.begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
@@ -262,6 +315,7 @@ class MissingsController extends Controller
         $this->design->assign('current_page_num', $current_page);
 
         $clients_count = OrdersORM::with('user')
+            ->where('first_loan', 1)
             ->where(function($query) {
                 if ($this->filter['date_from'] && $this->filter['date_to']) {
                     $query->whereBetween('begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);
@@ -280,6 +334,7 @@ class MissingsController extends Controller
 
         $clients = OrdersORM::select('s_orders.*')
             ->join('s_users', 's_orders.user_id', '=', 's_users.id')
+            ->where('s_orders.first_loan', 1)
             ->where(function($query) {
                 if ($this->filter['date_from'] && $this->filter['date_to']) {
                     $query->whereBetween('s_orders.begin_registration', [$this->filter['date_from'], $this->filter['date_to']]);

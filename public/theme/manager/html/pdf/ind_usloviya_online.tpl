@@ -306,9 +306,9 @@
                 требованиям Федерального закона от 21 декабря 2013 года №353-ФЗ «О потребительском кредите (займе)», её
                 значение на дату предоставления заёмщику Индивидуальных условий
             </td>
-            <td style="width: 70%" align="left"><strong>{$percents}%
-                    ({$percents_per_year|upper}{if $second_part_percents|upper} ЦЕЛЫХ И {$second_part_percents|upper} ТЫСЯЧНЫХ
-                <br>ПРОЦЕНТОВ{/if})</strong> годовых
+            <td style="width: 70%" align="left"><strong>{$percent_day|upper}% ({$percents_per_day_str_part_one|upper}
+                    {if $percents_per_day_str_part_two|upper} ЦЕЛЫХ И {$percents_per_day_str_part_two|upper}
+                    ТЫСЯЧНЫХ ПРОЦЕНТОВ{/if})</strong> в день
             </td>
         </tr>
         <tr style="width: 100%;">

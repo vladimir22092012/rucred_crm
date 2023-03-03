@@ -17,7 +17,7 @@ class CommunicationsThemes extends Core
     public function get($id)
     {
         $query = $this->db->placehold("
-        SELECT * 
+        SELECT *
         FROM s_communications_themes
         WHERE id = ?
         ", $id);
@@ -52,7 +52,7 @@ class CommunicationsThemes extends Core
             $unique_filter = $this->db->placehold("AND id != ?", $filter['id']);
 
         $query = $this->db->placehold("
-        SELECT * 
+        SELECT *
         FROM s_communications_themes
         WHERE 1
         $name_filter

@@ -1177,9 +1177,15 @@
                 });
             });
 
+            $(document).on('input', '.mask_number_pdn', function () {
+                let value = $(this).val();
+                value = value.replace(new RegExp(/[^, \d\s-]/, 'g'), '');
+                $(this).val(value);
+            });
+
             $(document).on('input', '.credit_procents, .daterange, .mask_number', function () {
                 let value = $(this).val();
-                value = value.replace(new RegExp(/[^. \d\s-]/, 'g'), '');
+                value = value.replace(new RegExp(/[^, \d\s-]/, 'g'), '');
                 $(this).val(value);
             });
 
@@ -1191,6 +1197,8 @@
 
             $('.acc-num-edit, .cor-acc').mask('99999999999999999999');
             $('.bik-edit').mask('999999999');
+
+            $('input[name="inn_holder"]').mask('999999999999');
 
             $('#canSendOnec, #canSendYaDisk').on('click', function () {
 
@@ -1210,6 +1218,86 @@
                         action: action,
                         orderId: orderId,
                         value: value
+                    }
+                });
+            });
+
+            $('.showEditPdnForm').click(function() {
+                $(this).hide();
+                $('.js-edit-pdn-form').show();
+            });
+            $('.js-close-edit-pdn-form').click(function() {
+                $('.showEditPdnForm').show();
+                $('.js-edit-pdn-form').hide();
+            });
+            $('.js-save-edit-pdn-form').click(function() {
+                let userId = $('#formUserIdValue').val(),
+                    orderId = $('#formOrderIdValue').val(),
+                    pdn = $('#formPdnValue').val(),
+                    comment = $('#formPdnComment').val();
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'edit_user_pdn',
+                        userId: userId,
+                        orderId: orderId,
+                        pdn: pdn,
+                        comment: comment,
+                    },
+                    success: function (resp) {
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+                        if (resp['success']) {
+                            Swal.fire({
+                                title: 'Успешно!',
+                                confirmButtonText: 'ОК'
+                            });
+
+                            location.reload();
+                        }
+                    }
+                });
+                $('.showEditPdnForm').show();
+                $('.js-edit-pdn-form').hide();
+            });
+
+            $('.startUpload').click(function() {
+                console.log($(this));
+                let button = $(this),
+                    type = button.attr('data-type'),
+                    data = {
+                        orderId: button.attr('data-order-id'),
+                    };
+
+                if (type == 'onec') {
+                    data.action = 'sendDataOnec'
+                } else {
+                    data.action = 'sendDataDisk'
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: data,
+                    success: function (resp) {
+                        console.log(resp)
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+                        if (resp['success']) {
+                            Swal.fire({
+                                title: 'Успешно!',
+                                confirmButtonText: 'ОК'
+                            });
+                        }
                     }
                 });
             });
@@ -1711,15 +1799,34 @@
                                                        data-order="{$order->order_id}" id="canSendOnec"
                                                        {if $order->canSendOnec}checked{/if}>
                                                 <label class="custom-control-label" for="canSendOnec"><strong
-                                                            class="text-danger">Отравлять в 1с</strong></label>
+                                                            class="text-danger">Отправлять в 1с</strong></label>
+                                                <span style="position: relative;font-size: 13px;top: -3px;left: 10px;">{$lastUpdateOnec}</span>
                                             </div>
+                                            {if $showUploadButtons && in_array($manager->role, ['admin'])}
+                                                <button
+                                                    data-type="onec"
+                                                    data-order-id="{$order->order_id}"
+                                                    type="button"
+                                                    class="btn btn-xs btn-outline-success startUpload"
+                                                    >Запустить передачу в 1С</button>
+                                                <br><br>
+                                            {/if}
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" class="custom-control-input"
                                                        data-order="{$order->order_id}" id="canSendYaDisk"
                                                        {if $order->canSendYaDisk}checked{/if}>
                                                 <label class="custom-control-label" for="canSendYaDisk"><strong
-                                                            class="text-danger">Отравлять в Я.Диск</strong></label>
+                                                            class="text-danger">Отправлять в Я.Диск</strong></label>
+                                                <span style="position: relative;font-size: 13px;top: -3px;left: 10px;">{$lastUploadDisk}</span>
                                             </div>
+                                            {if $showUploadButtons && in_array($manager->role, ['admin'])}
+                                                <button
+                                                    data-type="disk"
+                                                    data-order-id="{$order->order_id}"
+                                                    type="button"
+                                                    class="btn btn-xs btn-outline-success startUpload"
+                                                >Запустить выгрузку на Я.Диск</button>
+                                            {/if}
                                         {/if}
                                     </div>
                                 </div>
@@ -1895,7 +2002,7 @@
                                                 </div>
                                             </div>
                                         {/if}
-                                        {if $order->status == 0 && $order->probably_start_date|date < $date|date}
+                                        {if in_array($order->status, [0,1,2,10,13,14])}
                                             <div class="card card-primary">
                                                 <div data-order="{$order->order_id}"
                                                      class="btn btn-info btn-block refreshConditions">
@@ -2778,12 +2885,12 @@
                                                                 Подписать документы о реструктуризации</a>
                                                         </div>
                                                     {/if}
-                                                    {*
+                                                    {if in_array($order->status, [0])}
                                                         <input style="margin-left: 30px" type="button"
                                                                data-schedule="{$payment_schedule->id}"
                                                                class="btn btn-warning reform"
                                                                value="Редактировать">
-                                                    *}
+                                                    {/if}
                                                 {/if}
                                             </h6>
 
@@ -3558,8 +3665,36 @@
                                                 <div class="row view-block p-2 snils-front">
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-0 row">
-                                                            <label class="control-label col-md-8 col-7 snils-number">{$order->pdn}
-                                                                %</label>
+                                                            <label class="control-label col-md-8 col-7 snils-number">{$order->pdn|replace:'.':','}% {if $client->pdn_time != null} <span>({date('d.m.Y', $client->pdn_time)})</span> {/if}
+                                                                </label>
+                                                            {if $order->status == 0}
+                                                                <span>
+                                                                    <a href="javascript:void(0);"
+                                                                       style="margin-left: 15px;"
+                                                                       class="btn btn-outline-primary btn-xs showEditPdnForm"
+                                                                       data-user="{$order->user_id}">
+                                                                        Редактировать
+                                                                    </a>
+                                                                    <div class="js-edit-pdn-form" style="padding:15px;display: none;">
+                                                                        <input type="hidden" value="{$order->user_id}" id="formUserIdValue" style="margin-bottom: 10px;">
+                                                                        <input type="hidden" value="{$order->order_id}" id="formOrderIdValue">
+                                                                        <label for="formPdnValue">ПДН</label>
+                                                                        <input class="form-control mask_number_pdn" type="text" value="{$order->pdn|replace:'.':','}" id="formPdnValue" style="margin-bottom: 10px;">
+                                                                        <label for="formPdnComment">Причина редактирования</label>
+                                                                        <textarea id="formPdnComment" class="form-control" style="margin-bottom:10px;" rows="3"></textarea>
+                                                                        <span>
+                                                                            <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-save-edit-pdn-form">
+                                                                                Отправить
+                                                                            </a>
+                                                                        </span>
+                                                                        <span>
+                                                                            <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-edit-pdn-form">
+                                                                               Отмена
+                                                                            </a>
+                                                                        </span>
+                                                                    </div>
+                                                                </span>
+                                                            {/if}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -4521,6 +4656,12 @@
                                        value="{$order->requisite->correspondent_acc}"/>
                             </div>
                             <div class="form-group">
+                                <label>ИНН держателя счета:</label>
+                                <input type="text" name="inn_holder"
+                                       class="form-control mask_number"
+                                       value="{$order->requisite->inn_holder}"/>
+                            </div>
+                            <div class="form-group">
                                 <label>Причина редактирования</label>
                                 <textarea name="comment"
                                           class="form-control"></textarea>
@@ -4548,6 +4689,11 @@
                         <input type="hidden" name="order_id" value="{$order->order_id}">
                         <input type="hidden" name="user_id" value="{$order->user_id}">
                         <div class="form-group" style="display:flex; flex-direction: column">
+                            <div class="form-group">
+                                <label>Номер договора:</label>
+                                <input type="text" name="contract_number"
+                                       class="form-control" value="{$contract->number}"/>
+                            </div>
                             <div class="form-group">
                                 <label>Сумма займа:</label>
                                 <input type="text" name="amount"
@@ -4672,7 +4818,7 @@
                             <div class="form-group">
                                 <label>Паспорт: Дата выдачи</label>
                                 <input name="passport_date" value="{$order->passport_date|date}"
-                                       class="form-control mask_number"/>
+                                       class="form-control daterange"/>
                             </div>
                             <div class="form-group">
                                 <label>Паспорт: Код подразделения</label>

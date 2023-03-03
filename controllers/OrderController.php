@@ -12,7 +12,6 @@ class OrderController extends Controller
         if ($this->request->method('post')) {
             $order_id = $this->request->post('order_id', 'integer');
             $action = $this->request->post('action', 'string');
-
             switch ($action):
 
                 case 'change_manager':
@@ -284,6 +283,17 @@ class OrderController extends Controller
                     $this->actionSendYaDiskTrigger();
                     break;
 
+                case 'edit_user_pdn':
+                    echo $this->action_editUserPdn();
+                    exit;
+
+                case 'sendDataOnec':
+                    echo json_encode($this->actionSendOnec());
+                    die();
+
+                case 'sendDataDisk':
+                    echo json_encode($this->actionSendYaDisk());
+                    die();
 
             endswitch;
 
@@ -309,13 +319,29 @@ class OrderController extends Controller
                     $client_status = 'Повтор';
 
                     $uploadsLoanOnec = ExchangeCronORM::where('orderId', $order->order_id)->get();
+
+                    $uploadLoanOnec = ExchangeCronORM::where('orderId', $order->order_id)->orderByRaw('id DESC')->first();
+                    $lastUpdateOnec = '';
+                    if ($uploadLoanOnec) {
+                        $lastUpdateOnec = $uploadLoanOnec->updated;
+                    }
+
                     $this->design->assign('uploadsLoanOnec', $uploadsLoanOnec);
+                    $this->design->assign('lastUpdateOnec', $lastUpdateOnec);
 
                     $uploadsPaymentOnec = SendPaymentCronORM::where('order_id', $order->order_id)->get();
                     $this->design->assign('uploadsPaymentOnec', $uploadsPaymentOnec);
 
                     $uploadsDocsYaDisk = YaDiskCronORM::where('order_id', $order->order_id)->get();
+
+                    $uploadDocsYaDisk = YaDiskCronORM::where('order_id', $order->order_id)->orderByRaw('id DESC')->first();
+                    $lastUploadDisk = '';
+                    if ($uploadDocsYaDisk) {
+                        $lastUploadDisk = $uploadDocsYaDisk->updated;
+                    }
+
                     $this->design->assign('uploadsDocsYaDisk', $uploadsDocsYaDisk);
+                    $this->design->assign('lastUploadDisk', $lastUploadDisk);
 
                     if (count($old_orders) > 1) {
                         foreach ($old_orders as $old_order) {
@@ -474,7 +500,7 @@ class OrderController extends Controller
                     ));
                     $order->have_crm_closed = !empty($user_close_orders);
 
-
+                    $showUploadButtons = false;
                     if (!empty($order->contract_id)) {
                         if ($contract_operations = $this->operations->get_operations(array('contract_id' => $order->contract_id)))
                             foreach ($contract_operations as $contract_operation)
@@ -484,8 +510,9 @@ class OrderController extends Controller
 
                         $contract = $this->contracts->get_contract((int)$order->contract_id);
                         $this->design->assign('contract', $contract);
+                        $showUploadButtons = $order->status == 5 && $contract->status == 2 ? true : false;
                     }
-
+                    $this->design->assign('showUploadButtons', $showUploadButtons);
 
                     $need_update_scorings = 0;
                     $inactive_run_scorings = 0;
@@ -1229,6 +1256,8 @@ class OrderController extends Controller
 
                 $this->PaymentsToSchedules->add($graphs_payments);
             }
+
+            UsersORM::where('id', $order->user_id)->update(['is_client' => 1]);
 
             return ['success' => 1];
         } else {
@@ -3067,15 +3096,34 @@ class OrderController extends Controller
         $userId = $this->request->post('user_id');
         $orderId = $this->request->post('order_id');
         $hold = $this->request->post('hold');
+        $hold = strtoupper($hold);
         $acc = $this->request->post('acc');
         $bank = $this->request->post('bank');
         $bik = $this->request->post('bik');
         $cor = $this->request->post('cor');
+        $inn_holder = $this->request->post('inn_holder');
         $comment = $this->request->post('comment');
 
         if (empty($comment)) {
             echo json_encode(['error' => 'Заполните комментарий']);
+            exit;
         }
+
+        //Проверка чтобы не совпадал ИНН клиента и Держателя счета
+        $user = UsersORM::find($userId);
+        $userFio = $user->lastname . ' ' . $user->firstname . ' ' . $user->patronymic;
+
+        if ($user->inn == $inn_holder && $userFio != $hold) {
+            echo json_encode(['error' => 'При получении займа на счет третьего лица, ваш ИНН не должен совпадать с ИНН держателя счета']);
+            exit;
+        }
+
+        if ($user->inn != $inn_holder && $userFio == $hold)
+        {
+            echo json_encode(['error' => 'ФИО владельца счёта совпадает с ФИО заёмщика, в таком случае, ИНН заёмщика и ИНН держателя счёта должны совпадать']);
+            exit;
+        }
+
 
         $update =
             [
@@ -3083,7 +3131,8 @@ class OrderController extends Controller
                 'bik' => $bik,
                 'number' => $acc,
                 'holder' => $hold,
-                'correspondent_acc' => $cor
+                'correspondent_acc' => $cor,
+                'inn_holder' => $inn_holder
             ];
 
         $oldRequisites = RequisitesORM::where('user_id', $userId)
@@ -3105,7 +3154,8 @@ class OrderController extends Controller
                 'bik' => "Бик банка",
                 'number' => "Номер счета",
                 'holder' => "Держатель счета",
-                'correspondent_acc' => "Кор счет"
+                'correspondent_acc' => "Кор счет",
+                'inn_holder' => 'ИНН держателя счета'
             ];
 
         foreach ($oldValues as $key => $value) {
@@ -3143,7 +3193,6 @@ class OrderController extends Controller
 
     private function action_edit_schedule()
     {
-
         $date = $this->request->post('date');
         $schedule_id = $this->request->post('schedule_id');
         $pay_sum = $this->request->post('pay_sum');
@@ -3153,12 +3202,26 @@ class OrderController extends Controller
         $rest_pay = $this->request->post('rest_pay');
         $order_id = $this->request->post('order_id');
         $order = $this->orders->get_order($order_id);
+        $user = $this->users->get_user($order->user_id);
+        $user = (array)$user;
+        $loan = $this->loantypes->get_loantype($order->loan_type);
 
         $results['result'] = $this->request->post('result');
 
         $payment_schedule = array_replace_recursive($date, $pay_sum, $loan_percents_pay, $loan_body_pay, $comission_pay, $rest_pay);
 
         foreach ($payment_schedule as $date => $payment) {
+
+            if (date('Y-m-d', strtotime($payment['date'])) <= date('Y-m-d', strtotime($order->probably_start_date)))
+                $error = 'Дата в графике не может быть раньше даты выдачи займа';
+
+            $checkDate = WeekendCalendarORM::where('date', date('Y-m-d', strtotime($payment['date'])))->first();
+
+            if (!empty($checkDate))
+                $error = 'Дата платежа ' . date('d.m.Y', strtotime($checkDate->date)) . ' выпала на выходной день';
+
+            $returnDate = date('Y-m-d', strtotime($payment['date']));
+
             $payment_schedule[$payment['date']] = array_slice($payment, 1);
             $payment_schedule[$payment['date']]['pay_sum'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['pay_sum']);
             $payment_schedule[$payment['date']]['loan_percents_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $payment['loan_percents_pay']);
@@ -3167,12 +3230,27 @@ class OrderController extends Controller
             unset($payment_schedule[$date]);
         }
 
+        $bodyPay = 0;
+
         foreach ($results as $key => $result) {
             $results[$key]['all_sum_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_sum_pay']);
             $results[$key]['all_loan_percents_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_loan_percents_pay']);
             $results[$key]['all_loan_body_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_loan_body_pay']);
             $results[$key]['all_comission_pay'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_comission_pay']);
             $results[$key]['all_rest_pay_sum'] = str_replace([" ", " ", ","], ['', '', '.'], $result['all_rest_pay_sum']);
+
+            $bodyPay = str_replace([" ", " ", ","], ['', '', '.'], $result['all_loan_body_pay']);
+        }
+
+        if ($bodyPay > $order->amount)
+            $error = 'Сумма основного долга не может быть больше суммы первоначального займа';
+
+        if ($bodyPay < $order->amount)
+            $error = 'Сумма основного долга не может быть меньше суммы первоначального займа';
+
+        if (isset($error)) {
+            echo json_encode(['error' => $error]);
+            exit;
         }
 
         $dates[0] = date('d.m.Y', strtotime($order->probably_start_date));
@@ -3184,6 +3262,11 @@ class OrderController extends Controller
         }
 
         $payment_schedule = array_merge($payment_schedule, $results);
+
+        $startDate = new DateTime(date('Y-m-d', strtotime($order->probably_start_date)));
+        $endDate = new DateTime($returnDate);
+
+        OrdersORM::where('id', $order_id)->update(['probably_return_date' => $returnDate, 'period' => date_diff($startDate, $endDate)->days]);
 
         foreach ($dates as $date) {
 
@@ -3204,6 +3287,52 @@ class OrderController extends Controller
 
         $psk = round(((pow((1 + $xirr), (1 / 12)) - 1) * 12) * 100, 3);
 
+        $all_sum_credits = 0;
+        $sum_credits_pay = 0;
+        $credits_story = json_decode($user['credits_story']);
+        $cards_story = json_decode($user['cards_story']);
+
+        if (!empty($credits_story)) {
+            foreach ($credits_story as $credit) {
+                $credit->credits_month_pay = preg_replace("/[^,.0-9]/", '', $credit->credits_month_pay);
+                if (!empty($credit->credits_month_pay))
+                    $sum_credits_pay += $credit->credits_month_pay;
+            }
+
+            $all_sum_credits += $sum_credits_pay;
+        }
+
+        if (!empty($cards_story)) {
+            foreach ($cards_story as $card) {
+                $card->cards_rest_sum = preg_replace("/[^,.0-9]/", '', $card->cards_rest_sum);
+                $card->cards_limit = preg_replace("/[^,.0-9]/", '', $card->cards_limit);
+
+                if (!empty($card->cards_limit)) {
+                    $max = 0.05 * $card->cards_limit;
+                } else {
+                    $max = 0;
+                }
+                if (!empty($card->cards_rest_sum)) {
+                    $min = 0.1 * $card->cards_rest_sum;
+                } else {
+                    $min = 0;
+                }
+
+                $all_sum_credits += min($max, $min);
+            }
+        }
+
+        $month_pay = $order->amount * ((1 / $loan->max_period) + (($psk / 100) / 12));
+
+        $all_sum_credits += $month_pay;
+
+        if ($all_sum_credits != 0)
+            $pdn = round(($all_sum_credits / $user['income']) * 100, 2);
+        else
+            $pdn = 0;
+
+        $this->users->update_user($user['id'], ['pdn' => $pdn]);
+
         $update =
             [
                 'psk' => $psk,
@@ -3211,6 +3340,15 @@ class OrderController extends Controller
             ];
 
         $this->PaymentsSchedules->update($schedule_id, $update);
+
+        $order = $this->orders->get_order($order_id);
+
+        $order->payment_schedule = PaymentsScheduleORM::where('order_id', $order_id)->where('actual', 1)->first()->toArray();
+
+        DocumentsORM::where('order_id', $order_id)
+            ->update(['params' => serialize($order)]);
+
+        echo json_encode(['success' => 1]);
         exit;
     }
 
@@ -3462,6 +3600,7 @@ class OrderController extends Controller
         $companyId = $this->request->post('company');
         $brancheId = $this->request->post('branch');
         $comment = $this->request->post('comment');
+        $contract_number = $this->request->post('contract_number');
 
         $isHoliday = WeekendCalendarORM::where('date', date('Y-m-d', strtotime($probablyStartDate)))->first();
 
@@ -3495,7 +3634,17 @@ class OrderController extends Controller
         $order = OrdersORM::find($orderId);
         $user = UsersORM::find($userId);
 
-        $new_number = $group->number . $company->number . ' ' . $loanType->number . ' ' . $user->personal_number . ' ' . $count_contracts;
+        if (empty($contract_number)) {
+            $new_number = $group->number . $company->number . ' ' . $loanType->number . ' ' . $user->personal_number . ' ' . $count_contracts;
+        } else {
+            $new_number = $contract_number;
+        }
+
+        $issetContract = ContractsORM::query()->where('number', '=', $new_number)->first();
+        if ($issetContract && $issetContract->id != $order->contract_id) {
+            echo json_encode(['error' => 'Договор с таким номером уже существует!']);
+            exit;
+        }
 
         ProjectContractNumberORM::updateOrCreate(['orderId' => $order->id, 'userId' => $userId], ['uid' => $new_number]);
 
@@ -3517,6 +3666,7 @@ class OrderController extends Controller
                 'group_id' => $groupId,
                 'company_id' => $companyId,
                 'branche_id' => $brancheId,
+                'uid' => $new_number,
                 'probably_start_date' => date('Y-m-d', strtotime($probablyStartDate))
             ];
 
@@ -3606,7 +3756,7 @@ class OrderController extends Controller
 
         if ($loan->type == 'pdl') {
 
-            if(date_diff($paydate, $start_date)->days <= $loan->free_period)
+            if (date_diff($paydate, $start_date)->days <= $loan->free_period)
                 $paydate->add(new DateInterval('P1M'));
 
             if (date_diff($paydate, $start_date)->days > $loan->free_period && date_diff($paydate, $start_date)->days < $loan->min_period) {
@@ -3654,7 +3804,9 @@ class OrderController extends Controller
                 'rest_pay' => $rest_sum -= $body_pay
             ];
 
-        OrdersORM::where('id', $order_id)->update(['probably_return_date' => date('Y-m-d H:i:s', strtotime($paydate->format('d.m.Y')))]);
+        $probablyReturnDate = $paydate->format('d.m.Y');
+
+        OrdersORM::where('id', $order_id)->update(['probably_return_date' => date('Y-m-d H:i:s', strtotime($probablyReturnDate))]);
 
         $paydate->add(new DateInterval('P1M'));
 
@@ -3756,6 +3908,13 @@ class OrderController extends Controller
 
         if ($formDocs == 1)
             $this->form_docs($order_id);
+
+        $order = OrdersORM::find($order_id);
+
+        $startDate = new DateTime(date('Y-m-d', strtotime($order->probably_start_date)));
+        $returnDate = new DateTime(date('Y-m-d', strtotime($probablyReturnDate)));
+
+        ContractsORM::where('order_id', $order_id)->update(['period' => date_diff($startDate, $returnDate)->days]);
     }
 
     private function check_pay_date($date)
@@ -4552,6 +4711,8 @@ class OrderController extends Controller
 
         $this->contracts->update_contract($order->contract_id, $contract);
 
+        UsersORM::where('id', $order->user_id)->update(['is_client' => 1]);
+
         echo json_encode(['success' => 1]);
         exit;
     }
@@ -5043,38 +5204,44 @@ class OrderController extends Controller
 
         $timeOfTransitionToNextBankingDay = date('H:i', strtotime($this->Settings->time_of_transition_to_the_next_banking_day));
 
-        if ($order->settlement_id == 3 && date('H:i') >= $timeOfTransitionToNextBankingDay)
-            $probably_start_date = date('Y-m-d', strtotime('+1 days'));
-        else
-            $probably_start_date = date('Y-m-d');
+        $start_date = date('Y-m-d');
 
-        if ($order->settlement_id == 2) {
-            if (date('H:i') >= $timeOfTransitionToNextBankingDay)
-                $probably_start_date = date('Y-m-d', strtotime('+2 days'));
-            else
-                $probably_start_date = date('Y-m-d', strtotime('+1 days'));
+        if ($order->settlement_id == 3 && date('H:i') >= $timeOfTransitionToNextBankingDay) {
+            $start_date = date('Y-m-d', strtotime($start_date . '+1 days'));
         }
 
-        $check_date = $this->WeekendCalendar->check_date($probably_start_date);
+        if ($order->settlement_id == 2) {
+            if (date('H:i') >= $timeOfTransitionToNextBankingDay) {
+                $start_date = date('Y-m-d', strtotime($start_date . '+2 days'));
+            } else {
+                $start_date = date('Y-m-d', strtotime($start_date . '+1 days'));
+            }
+        }
+
+        $middleDate = date('Y-m-d', strtotime($start_date . '-1 days'));
+
+        $check_date = WeekendCalendarORM::checkDate($start_date);
 
         if (!empty($check_date)) {
             for ($i = 0; $i <= 15; $i++) {
-
-                $check_date = $this->WeekendCalendar->check_date($probably_start_date);
+                $check_date = WeekendCalendarORM::checkDate($start_date);
 
                 if (empty($check_date)) {
                     if ($order->settlement_id == 2) {
-                        if (date('H:i') >= $timeOfTransitionToNextBankingDay)
-                            $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
+
+                        $middleDate = WeekendCalendarORM::checkDate($middleDate);
+
+                        if (date('H:i') >= $timeOfTransitionToNextBankingDay && !empty($middleDate))
+                            $start_date = date('Y-m-d', strtotime($start_date . '+1 days'));
                     }
                     break;
                 } else {
-                    $probably_start_date = date('Y-m-d H:i:s', strtotime($probably_start_date . '+1 days'));
+                    $start_date = date('Y-m-d', strtotime($start_date . '+1 days'));
                 }
             }
         }
 
-        OrdersORM::where('id', $orderId)->update(['probably_start_date' => $probably_start_date]);
+        OrdersORM::where('id', $orderId)->update(['probably_start_date' => $start_date]);
 
         $this->action_reform_schedule($orderId, 0);
 
@@ -5208,6 +5375,84 @@ class OrderController extends Controller
 
         OrdersORM::where('id', $orderId)->update(['canSendYaDisk' => $value]);
         exit;
+    }
+
+    private function action_editUserPdn()
+    {
+        try {
+            $userId = $this->request->post('userId');
+            $orderId = $this->request->post('orderId');
+            $pdn = $this->request->post('pdn');
+            $comment = $this->request->post('comment');
+            if (empty($comment)) {
+                return json_encode(['error' => 'Введите причину редактирования']);
+            }
+            if (empty($userId) && empty($pdn) && empty($orderId)) {
+                return json_encode(['error' => 'Не верные входные данные']);
+            }
+            $pdn = str_replace(',', '.', $pdn);
+            $user = $this->users->get_user($userId);
+            if (!$user) {
+                return json_encode(['error' => 'Пользователь не найден']);
+            }
+            $result = '';
+            if ($user->pdn != $pdn) {
+                $newPdn = [
+                    'pdn' => $pdn,
+                    'pdn_time' => time(),
+                ];
+                $result = $this->users->update_user($userId, $newPdn);
+                $this->changelogs->add_changelog(array(
+                    'manager_id' => $this->manager->id,
+                    'created' => date('Y-m-d H:i:s'),
+                    'type' => 'pdn',
+                    'old_values' => serialize(array('ПДН' => $user->pdn)),
+                    'new_values' => serialize(array('ПДН' => $pdn, 'Причина редактирования' => $comment)),
+                    'order_id' => $orderId,
+                    'user_id' => $userId,
+                ));
+            }
+            return json_encode(['success' => 1, 'result' => $result]);
+        } catch (Exception $exception) {
+            return json_encode(['error' => $exception->getMessage()]);
+        }
+    }
+
+    private function actionSendOnec()
+    {
+        $orderId = $this->request->post('orderId');
+        $order = $this->orders->get_order($orderId);
+        if ($order) {
+            $insert =
+                [
+                    'orderId' => $orderId,
+                    'userId' => $order->user_id,
+                    'contractId' => $order->contract_id
+                ];
+
+            ExchangeCronORM::insert($insert);
+        }
+        return array('success' => 1);
+    }
+
+    private function actionSendYaDisk()
+    {
+        $orderId = $this->request->post('orderId');
+        $queues = [
+            'first_pak',
+            'second_pak',
+        ];
+        foreach ($queues as $queue) {
+            $cron =
+                [
+                    'order_id' => $orderId,
+                    'pak' => $queue,
+                    'online' => 1
+                ];
+
+            $this->YaDiskCron->add($cron);
+        }
+        return array('success' => 1);
     }
 
 }

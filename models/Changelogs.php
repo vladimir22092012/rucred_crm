@@ -20,25 +20,26 @@ class Changelogs extends Core
             'reject_order' => 'Заявка отклонена',
             'approve_order' => 'Заявка одобрена',
             'order_status' => 'Статус заявки',
-            'contactdata' => 'Контактные данные'
+            'contactdata' => 'Контактные данные',
+            'pdn' => 'ПДН',
         );
-    
+
         return $types;
     }
-    
+
     public function get_changelog($id)
     {
         $query = $this->db->placehold("
-            SELECT * 
+            SELECT *
             FROM __changelogs
             WHERE id = ?
         ", (int)$id);
         $this->db->query($query);
         $result = $this->db->result();
-    
+
         return $result;
     }
-    
+
     public function get_changelogs($filter = array())
     {
         $id_filter = '';
@@ -52,27 +53,27 @@ class Changelogs extends Core
         $sort = 'cl.id DESC';
         $join = '';
         $search_filter = '';
-        
+
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND cl.id IN (?@)", array_map('intval', (array)$filter['id']));
         }
-            
+
         if (!empty($filter['manager_id'])) {
             $manager_filter = $this->db->placehold("AND cl.manager_id = ?", (int)$filter['id']);
         }
-        
+
         if (!empty($filter['order_id'])) {
             $order_filter = $this->db->placehold("AND cl.order_id  IN (?@)", (array)$filter['order_id']);
         }
-        
+
         if (!empty($filter['user_id'])) {
             $user_filter = $this->db->placehold("AND cl.user_id = ?", (int)$filter['user_id']);
         }
-        
+
         if (!empty($filter['date_from'])) {
             $date_from_filter = $this->db->placehold("AND DATE(cl.created) >= ?", $filter['date_from']);
         }
-            
+
         if (!empty($filter['date_to'])) {
             $date_to_filter = $this->db->placehold("AND DATE(cl.created) <= ?", $filter['date_to']);
         }
@@ -91,10 +92,10 @@ class Changelogs extends Core
                 $search_filter .= $this->db->placehold(' AND cl.order_id = ?', (int)$filter['search']['order']);
             }
             if (!empty($filter['search']['user'])) {
-                $search_filter .= $this->db->placehold(' 
+                $search_filter .= $this->db->placehold('
                     AND cl.user_id IN (
-                        SELECT id 
-                        FROM __users 
+                        SELECT id
+                        FROM __users
                         WHERE lastname LIKE "%'.$this->db->escape($filter['search']['user']).'%"
                         OR firstname LIKE "%'.$this->db->escape($filter['search']['user']).'%"
                         OR patronymic LIKE "%'.$this->db->escape($filter['search']['user']).'%"
@@ -148,57 +149,57 @@ class Changelogs extends Core
                 case 'id_desc':
                     $sort = 'cl.id DESC';
                     break;
-            
+
                 case 'date_desc':
                     $sort = 'cl.created DESC';
                     break;
-            
+
                 case 'type_asc':
                     $sort = 'cl.type ASC';
                     break;
-            
+
                 case 'type_desc':
                     $sort = 'cl.type DESC';
                     break;
-            
+
                 case 'manager_asc':
                     $join = $this->db->placehold('LEFT JOIN __managers AS m ON m.id = cl.manager_id');
                     $sort = 'm.name ASC';
                     break;
-            
+
                 case 'manager_desc':
                     $join = $this->db->placehold('LEFT JOIN __managers AS m ON m.id = cl.manager_id');
                     $sort = 'm.name DESC';
                     break;
-            
+
                 case 'order_asc':
                     $sort = 'cl.order_id ASC';
                     break;
-            
+
                 case 'order_desc':
                     $sort = 'cl.order_id DESC';
                     break;
-                
+
                 case 'user_asc':
                     $join = $this->db->placehold("LEFT JOIN __users AS u ON u.id = cl.user_id");
                     $sort = 'u.lastname ASC';
                     break;
-            
+
                 case 'user_desc':
                     $join = $this->db->placehold("LEFT JOIN __users AS u ON u.id = cl.user_id");
                     $sort = 'u.lastname DESC';
                     break;
-                
+
                 case 'files_asc':
                     $sort = 'cl.file_id ASC';
                     break;
-            
+
                 case 'files_desc':
                     $sort = 'cl.file_id DESC';
                     break;
             endswitch;
         }
-        
+
         if (isset($filter['limit'])) {
             $limit = max(1, intval($filter['limit']));
         }
@@ -206,11 +207,11 @@ class Changelogs extends Core
         if (isset($filter['page'])) {
             $page = max(1, intval($filter['page']));
         }
-            
+
         $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page-1)*$limit, $limit);
 
         $query = $this->db->placehold("
-            SELECT * 
+            SELECT *
             FROM __changelogs AS cl
             $join
             WHERE 1
@@ -235,7 +236,7 @@ class Changelogs extends Core
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($query, $results);echo '</pre><hr />';
         return $results;
     }
-    
+
     public function count_changelogs($filter = array())
     {
         $id_filter = '';
@@ -245,32 +246,32 @@ class Changelogs extends Core
         $search_filter = '';
         $date_from_filter = '';
         $date_to_filter = '';
-        
+
         if (!empty($filter['id'])) {
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
         }
-            
+
         if (!empty($filter['manager_id'])) {
             $manager_filter = $this->db->placehold("AND manager_id = ?", (int)$filter['id']);
         }
-        
+
         if (!empty($filter['order_id'])) {
             $order_filter = $this->db->placehold("AND order_id = ?", (int)$filter['order_id']);
         }
-        
+
         if (!empty($filter['user_id'])) {
             $user_filter = $this->db->placehold("AND user_id = ?", (int)$filter['user_id']);
         }
-        
+
         if (!empty($filter['date_from'])) {
             $date_from_filter = $this->db->placehold("AND DATE(cl.created) >= ?", $filter['date_from']);
         }
-            
+
         if (!empty($filter['date_to'])) {
             $date_to_filter = $this->db->placehold("AND DATE(cl.created) <= ?", $filter['date_to']);
         }
 
-        
+
         $query = $this->db->placehold("
             SELECT COUNT(id) AS count
             FROM __changelogs
@@ -285,10 +286,10 @@ class Changelogs extends Core
         ");
         $this->db->query($query);
         $count = $this->db->result('count');
-    
+
         return $count;
     }
-    
+
     public function add_changelog($changelog)
     {
         $query = $this->db->placehold("
@@ -296,20 +297,20 @@ class Changelogs extends Core
         ", (array)$changelog);
         $this->db->query($query);
         $id = $this->db->insert_id();
-        
+
         return $id;
     }
-    
+
     public function update_changelog($id, $changelog)
     {
         $query = $this->db->placehold("
             UPDATE __changelogs SET ?% WHERE id = ?
         ", (array)$changelog, (int)$id);
         $this->db->query($query);
-        
+
         return $id;
     }
-    
+
     public function delete_changelog($id)
     {
         $query = $this->db->placehold("
