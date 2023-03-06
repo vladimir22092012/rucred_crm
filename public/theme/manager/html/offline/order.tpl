@@ -17,6 +17,42 @@
 
             let token_dadata = "25c845f063f9f3161487619f630663b2d1e4dcd7";
 
+            $('.startUpload').click(function() {
+                console.log($(this));
+                let button = $(this),
+                    type = button.attr('data-type'),
+                    data = {
+                        orderId: button.attr('data-order-id'),
+                    };
+
+                if (type == 'onec') {
+                    data.action = 'sendDataOnec'
+                } else {
+                    data.action = 'sendDataDisk'
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: data,
+                    success: function (resp) {
+                        console.log(resp)
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+                        if (resp['success']) {
+                            Swal.fire({
+                                title: 'Успешно!',
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+                    }
+                });
+            });
+
             $('.cleaves').each(function () {
                 new Cleave(this, {
                     numeral: true,
