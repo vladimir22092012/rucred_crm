@@ -548,7 +548,7 @@ class OfflineOrderController extends Controller
                     ));
                     $order->have_crm_closed = !empty($user_close_orders);
 
-
+                    $showUploadButtons = false;
                     if (!empty($order->contract_id)) {
                         if ($contract_operations = $this->operations->get_operations(array('contract_id' => $order->contract_id)))
                             foreach ($contract_operations as $contract_operation)
@@ -558,7 +558,9 @@ class OfflineOrderController extends Controller
 
                         $contract = $this->contracts->get_contract((int)$order->contract_id);
                         $this->design->assign('contract', $contract);
+                        $showUploadButtons = $order->status == 5 && $contract->status == 2 ? true : false;
                     }
+                    $this->design->assign('showUploadButtons', $showUploadButtons);
 
 
                     $need_update_scorings = 0;
@@ -5674,8 +5676,8 @@ class OfflineOrderController extends Controller
         $isHoliday = WeekendCalendarORM::where('date', date('Y-m-d', strtotime($probablyStartDate)))->first();
 
         if (!empty($isHoliday)) {
-            echo json_encode(['error' => 'Дата выпала на выходной день']);
-            exit;
+            //echo json_encode(['error' => 'Дата выпала на выходной день']);
+            //exit;
         }
 
         if (empty($comment)) {
@@ -5738,11 +5740,17 @@ class OfflineOrderController extends Controller
 
         foreach ($oldOrder as $oldKey => $oldValue) {
             foreach ($newOrder as $newKey => $newValue) {
-                if ($oldKey == $newKey && $oldValue != $newValue && !in_array($newKey, ['probably_start_date', 'branche_id']))
+                if (in_array($newKey, ['company_id', 'amount', 'loan_type']) && $oldKey == $newKey && $oldValue != $newValue)
                     $needSms = 1;
             }
         }
 
+        $oldUser = UsersORM::find($userId);
+        if ($oldUser) {
+            if ($oldUser->profunion != $profUnion) {
+                $needSms = 1;
+            }
+        }
 
         $user =
             [

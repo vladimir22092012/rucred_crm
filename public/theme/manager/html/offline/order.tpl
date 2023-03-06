@@ -1972,6 +1972,15 @@
                                                     <label class="custom-control-label" for="canSendOnec"><strong
                                                                 class="text-danger">Отравлять в 1с</strong></label>
                                                 </div>
+                                                {if $showUploadButtons && in_array($manager->role, ['admin'])}
+                                                    <button
+                                                        data-type="onec"
+                                                        data-order-id="{$order->order_id}"
+                                                        type="button"
+                                                        class="btn btn-xs btn-outline-success startUpload"
+                                                    >Запустить передачу в 1С</button>
+                                                    <br><br>
+                                                {/if}
                                                 <div class="custom-control custom-checkbox">
                                                     <input type="checkbox" class="custom-control-input"
                                                            data-order="{$order->order_id}" id="canSendYaDisk"
@@ -1979,6 +1988,14 @@
                                                     <label class="custom-control-label" for="canSendYaDisk"><strong
                                                                 class="text-danger">Отравлять в Я.Диск</strong></label>
                                                 </div>
+                                                {if $showUploadButtons && in_array($manager->role, ['admin'])}
+                                                    <button
+                                                        data-type="disk"
+                                                        data-order-id="{$order->order_id}"
+                                                        type="button"
+                                                        class="btn btn-xs btn-outline-success startUpload"
+                                                    >Запустить выгрузку на Я.Диск</button>
+                                                {/if}
                                             {/if}
                                         </div>
                                     </form>
