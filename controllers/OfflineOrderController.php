@@ -318,6 +318,14 @@ class OfflineOrderController extends Controller
                     $this->action_editPdn();
                     break;
 
+                case 'sendDataOnec':
+                    echo json_encode($this->actionSendOnec());
+                    die();
+
+                case 'sendDataDisk':
+                    echo json_encode($this->actionSendYaDisk());
+                    die();
+
 
             endswitch;
 
@@ -5990,6 +5998,43 @@ class OfflineOrderController extends Controller
 
         echo json_encode(['success' => 1]);
         exit;
+    }
+
+    private function actionSendOnec()
+    {
+        $orderId = $this->request->post('orderId');
+        $order = $this->orders->get_order($orderId);
+        if ($order) {
+            $insert =
+                [
+                    'orderId' => $orderId,
+                    'userId' => $order->user_id,
+                    'contractId' => $order->contract_id
+                ];
+
+            ExchangeCronORM::insert($insert);
+        }
+        return array('success' => 1);
+    }
+
+    private function actionSendYaDisk()
+    {
+        $orderId = $this->request->post('orderId');
+        $queues = [
+            'first_pak',
+            'second_pak',
+        ];
+        foreach ($queues as $queue) {
+            $cron =
+                [
+                    'order_id' => $orderId,
+                    'pak' => $queue,
+                    'online' => 1
+                ];
+
+            $this->YaDiskCron->add($cron);
+        }
+        return array('success' => 1);
     }
 
 }
