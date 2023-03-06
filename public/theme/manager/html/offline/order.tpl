@@ -2007,6 +2007,7 @@
                                                            {if $order->canSendOnec}checked{/if}>
                                                     <label class="custom-control-label" for="canSendOnec"><strong
                                                                 class="text-danger">Отравлять в 1с</strong></label>
+                                                    <span style="position: relative;font-size: 13px;top: -3px;left: 10px;">{$lastUpdateOnec}</span>
                                                 </div>
                                                 {if $showUploadButtons && in_array($manager->role, ['admin'])}
                                                     <button
@@ -2023,6 +2024,7 @@
                                                            {if $order->canSendYaDisk}checked{/if}>
                                                     <label class="custom-control-label" for="canSendYaDisk"><strong
                                                                 class="text-danger">Отравлять в Я.Диск</strong></label>
+                                                    <span style="position: relative;font-size: 13px;top: -3px;left: 10px;">{$lastUploadDisk}</span>
                                                 </div>
                                                 {if $showUploadButtons && in_array($manager->role, ['admin'])}
                                                     <button

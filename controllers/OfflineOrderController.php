@@ -364,13 +364,29 @@ class OfflineOrderController extends Controller
                     $this->design->assign('projectNumber', $projectNumber);
 
                     $uploadsLoanOnec = ExchangeCronORM::where('orderId', $order->order_id)->get();
+
+                    $uploadLoanOnec = ExchangeCronORM::where('orderId', $order->order_id)->orderByRaw('id DESC')->first();
+                    $lastUpdateOnec = '';
+                    if ($uploadLoanOnec) {
+                        $lastUpdateOnec = $uploadLoanOnec->updated;
+                    }
+
                     $this->design->assign('uploadsLoanOnec', $uploadsLoanOnec);
+                    $this->design->assign('lastUpdateOnec', $lastUpdateOnec);
 
                     $uploadsPaymentOnec = SendPaymentCronORM::where('order_id', $order->order_id)->get();
                     $this->design->assign('uploadsPaymentOnec', $uploadsPaymentOnec);
 
                     $uploadsDocsYaDisk = YaDiskCronORM::where('order_id', $order->order_id)->get();
+
+                    $uploadDocsYaDisk = YaDiskCronORM::where('order_id', $order->order_id)->orderByRaw('id DESC')->first();
+                    $lastUploadDisk = '';
+                    if ($uploadDocsYaDisk) {
+                        $lastUploadDisk = $uploadDocsYaDisk->updated;
+                    }
+
                     $this->design->assign('uploadsDocsYaDisk', $uploadsDocsYaDisk);
+                    $this->design->assign('lastUploadDisk', $lastUploadDisk);
 
 
                     $old_orders = $this->orders->get_orders(['user_id' => $order->user_id]);
