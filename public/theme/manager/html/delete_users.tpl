@@ -10,10 +10,14 @@
 
         $(document).on('click', '.delete_user', function() {
             let email = $(this).attr('data-email'),
-                id = $(this).attr('data-id');
+                id = $(this).attr('data-id'),
+                data = {
+                    action: 'delete_user',
+                    userId: id
+                }
 
             Swal.fire({
-                title: 'Вы действительно хотите удалить пользователя <strong>' + email + '</strong>?',
+                title: 'Вы действительно хотите удалить пользователя ' + email + '?',
                 showCloseButton: true,
                 showCancelButton: true,
                 confirmButtonText: "Удалить",
@@ -21,7 +25,23 @@
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
             }).then((result) => {
-                console.log(result)
+                if (result.value !== undefined) {
+                    $.ajax({
+                        method: 'POST',
+                        dataType: 'JSON',
+                        data: data,
+                        success: function (resp) {
+                            if(resp['error']){
+                                Swal.fire({
+                                    title: resp['error'],
+                                    confirmButtonText: 'ОК'
+                                });
+                            } else {
+                                $('#user_'+id).remove();
+                            }
+                        }
+                    })
+                }
             });
         })
 
@@ -53,9 +73,8 @@
                     }else{
                         if (resp.users.length > 0) {
                             resp.users.forEach((client) => {
-                                console.log(client)
                                 let html = `
-                                    <tr>
+                                    <tr id='user_`+client.id+`'>
                                         <td>`+client.personal_number+`</td>
                                         <td>`+client.firstname+` `+client.lastname+` `+client.patronymic+`</td>
                                         <td>`+client.phone_mobile+` / `+client.email+`</td>
@@ -73,7 +92,7 @@
                                         <td>
                                             <button class='btn btn-xs btn-danger delete_user'
                                                     data-email='`+client.email+`'
-                                                    data-id='`+client.id+`'
+                                                    data-id='`+client.id+`'>
                                                 Удалить
                                             </button>
                                         </td>

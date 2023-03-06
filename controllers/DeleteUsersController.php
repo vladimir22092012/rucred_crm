@@ -15,8 +15,32 @@ class DeleteUsersController extends Controller
             }
         }
 
-
         return $this->design->fetch('delete_users.tpl');
+    }
+
+    private function action_delete_user() {
+        $userId = $this->request->post('userId');
+        if ($userId) {
+            $user = UsersORM::find($userId);
+            if ($user) {
+                $orders = $this->orders->get_orders(['user_id' => $user->id]);
+                $this->orders->delete_orders_by_user_id($user->id);
+                $this->contracts->delete_contracts_by_user_id($user->id);
+                $this->users->delete_user($user->id);
+                $this->contacts->delete($user->id);
+                foreach ($orders as $order){
+                    $tickets = $this->tickets->get_by_order_id($order->order_id);
+
+                    foreach ($tickets as $ticket){
+                        $this->NotificationsCron->delete_by_ticket_id($ticket->id);
+                    }
+
+                    $this->tickets->delete_by_order($order->order_id);
+                }
+            }
+        }
+        echo json_encode(['success' => 1]);
+        exit;
     }
 
     private function action_search_users()
@@ -56,20 +80,7 @@ class DeleteUsersController extends Controller
             exit;
         } else {
             foreach ($users as $user){
-                /*$orders = $this->orders->get_orders(['user_id' => $user->id]);
-                $this->orders->delete_orders_by_user_id($user->id);
-                $this->contracts->delete_contracts_by_user_id($user->id);
-                $this->users->delete_user($user->id);
-                $this->contacts->delete($user->id);
-                foreach ($orders as $order){
-                    $tickets = $this->tickets->get_by_order_id($order->order_id);
-
-                    foreach ($tickets as $ticket){
-                        $this->NotificationsCron->delete_by_ticket_id($ticket->id);
-                    }
-
-                    $this->tickets->delete_by_order($order->order_id);
-                }*/
+                /**/
             }
             echo json_encode(['success' => 1, 'users' => $users]);
             exit;
