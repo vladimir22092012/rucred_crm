@@ -19,9 +19,10 @@ class DeleteUsersController extends Controller
         return $this->design->fetch('delete_users.tpl');
     }
 
-    private function action_delete_user()
+    private function action_search_users()
     {
         $params = [];
+        $query = UsersORM::query();
         $phone = $this->request->post('phone_mobile');
         if (!empty($phone)) {
             $phone = PhoneHelpers::format($phone, 'long_to_small');
@@ -29,10 +30,9 @@ class DeleteUsersController extends Controller
                 echo json_encode(['error' => 'Проверьте правильность номера, не соответствует кол-во цифр']);
                 exit;
             } else {
-                $params['phone_mobile'] = $phone;
+                $query->where('phone_mobile', '=', $phone);
             }
         }
-
         $fields = [
             'email',
             'passport_serial',
@@ -41,18 +41,22 @@ class DeleteUsersController extends Controller
         ];
         foreach ($fields as $field) {
             if ($param = $this->request->post($field)) {
-                $params[$field] = $param;
+                if (!empty($param)) {
+                    $query->where($field, '=', $param);
+                }
             }
         }
 
-        $users = $this->users->get_users_by_params($params);
+        $query->limit = 50;
 
-        if (empty($users)) {
-            echo json_encode(['error' => 'Такого юзера нет']);
+        $users = $query->get();
+
+        if (count($users) == 0) {
+            echo json_encode(['query' => $query->toSql(), 'users' => $users, 'error' => 'Пользователей по заданным параметрам, не найдено, попробуйте изменить условия поиска.']);
             exit;
         } else {
             foreach ($users as $user){
-                $orders = $this->orders->get_orders(['user_id' => $user->id]);
+                /*$orders = $this->orders->get_orders(['user_id' => $user->id]);
                 $this->orders->delete_orders_by_user_id($user->id);
                 $this->contracts->delete_contracts_by_user_id($user->id);
                 $this->users->delete_user($user->id);
@@ -65,9 +69,9 @@ class DeleteUsersController extends Controller
                     }
 
                     $this->tickets->delete_by_order($order->order_id);
-                }
+                }*/
             }
-            echo json_encode(['success' => 1]);
+            echo json_encode(['success' => 1, 'users' => $users]);
             exit;
         }
     }

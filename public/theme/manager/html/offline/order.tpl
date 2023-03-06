@@ -1825,7 +1825,7 @@
     <!-- ============================================================== -->
     <div class="container-fluid">
         <div class="row page-titles">
-            <div class="col-md-6 col-8 align-self-center">
+            <div class="col-md-8 col-8 align-self-center">
                 <h4 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i> Заявка
                     № {if !empty($contract->number)}{$contract->number}{else}{$order->group_number}{$order->company_number} {$order->personal_number}{/if}
                     ({$order->order_id})</h4>
@@ -1835,7 +1835,7 @@
                         {if isset($from_registr)}
                             <a href="registr">Реестр сделок</a>
                         {else}
-                            <a href="offline_orders">Заявки</a>
+                            <a href="offline_orders">Реестр офлайн-заявок</a>
                         {/if}</li>
                     <li class="breadcrumb-item active">Заявка
                         № {if !empty($contract->number)}{$contract->number}{else}{$order->group_number}{$order->company_number} {$order->personal_number}{/if}

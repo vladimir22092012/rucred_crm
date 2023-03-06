@@ -607,7 +607,7 @@
                 </h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
-                    <li class="breadcrumb-item"><a href="clients">Клиенты</a></li>
+                    <li class="breadcrumb-item"><a href="clients">Реестр клиентов</a></li>
                     <li class="breadcrumb-item active">Карточка клиента</li>
                 </ol>
             </div>
