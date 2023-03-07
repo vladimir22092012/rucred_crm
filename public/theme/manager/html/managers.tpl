@@ -82,17 +82,17 @@
                                     </tr>
 
                                     <tr class="jsgrid-filter-row" id="search_form">
-                                        <td style="width: 60px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 60px;" class="jsgrid-cell">
                                             <input type="hidden" name="sort" value="{$sort}" />
                                             <input type="text" name="user_id" value="{$search['user_id']}" class="form-control input-sm">
                                         </td>
-                                        <td style="width: 80px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 80px;" class="jsgrid-cell">
                                             <input type="text" name="name" value="{$search['name']}" class="form-control input-sm">
                                         </td>
-                                        <td style="width: 120px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 120px;" class="jsgrid-cell">
                                             <input type="text" name="company_name" value="{$search['company_name']}" class="form-control input-sm">
                                         </td>
-                                        <td style="width: 80px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 80px;" class="jsgrid-cell">
                                             <input type="text" name="last_ip" value="{$search['last_ip']}" class="form-control input-sm">
                                         </td>
                                         <td style="width: 100px;" class="jsgrid-cell">

@@ -124,7 +124,7 @@
                                     </tr>
                                     <tr class="jsgrid-filter-row" id="search_form">
 
-                                        <td style="width: 70px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 70px;" class="jsgrid-cell">
                                             <input type="hidden" name="sort" value="{$sort}" />
                                             <input type="text" name="order_id" value="{$search['order_id']}" class="form-control input-sm">
                                         </td>

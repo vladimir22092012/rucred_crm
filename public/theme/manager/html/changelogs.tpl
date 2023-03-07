@@ -1,9 +1,9 @@
 {$meta_title='Лог изменений' scope=parent}
 
 {capture name='page_scripts'}
-    
+
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/changelogs.js"></script>
-    
+
 {/capture}
 
 {capture name='page_styles'}
@@ -32,8 +32,8 @@
             </div>
             <div class="col-md-6 col-4 align-self-center">
                 <div class="dropdown float-right mr-2 hidden-sm-down js-period-filter">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
-                        <i class="fas fa-calendar-alt"></i> 
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-calendar-alt"></i>
                         {if $period == 'today'}Сегодня
                         {elseif $period == 'yesterday'}Вчера
                         {elseif $period == 'week'}На этой неделе
@@ -41,11 +41,11 @@
                         {elseif $period == 'year'}В этом году
                         {else}{$period}{/if}
                     </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"> 
-                        <a class="dropdown-item js-period-link {if $period == 'today'}active{/if}" href="{url period='today'}">Сегодня</a> 
-                        <a class="dropdown-item js-period-link {if $period == 'yesterday'}active{/if}" href="{url period='yesterday'}">Вчера</a> 
-                        <a class="dropdown-item js-period-link {if $period == 'month'}active{/if}" href="{url period='month'}">В этом месяце</a> 
-                        <a class="dropdown-item js-period-link {if $period == 'year'}active{/if}" href="{url period='year'}">В этом году</a> 
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item js-period-link {if $period == 'today'}active{/if}" href="{url period='today'}">Сегодня</a>
+                        <a class="dropdown-item js-period-link {if $period == 'yesterday'}active{/if}" href="{url period='yesterday'}">Вчера</a>
+                        <a class="dropdown-item js-period-link {if $period == 'month'}active{/if}" href="{url period='month'}">В этом месяце</a>
+                        <a class="dropdown-item js-period-link {if $period == 'year'}active{/if}" href="{url period='year'}">В этом году</a>
                     </div>
                 </div>
             </div>
@@ -88,8 +88,8 @@
                                         </th>
                                     </tr>
                                     <tr class="jsgrid-filter-row" id="search_form">
-                                    
-                                        <td style="width: 80px;" class="jsgrid-cell jsgrid-align-right">
+
+                                        <td style="width: 80px;" class="jsgrid-cell">
                                             <input type="hidden" name="sort" value="{$sort}" />
                                             <input type="text" name="date" value="{$search['date']}" class="form-control input-sm">
                                         </td>
@@ -123,7 +123,7 @@
                                     <tbody>
                                     {foreach $changelogs as $changelog}
                                         <tr class="jsgrid-row">
-                                            <td style="width: 80px;" class="jsgrid-cell jsgrid-align-right">                                                
+                                            <td style="width: 80px;" class="jsgrid-cell">
                                                 <div class="button-toggle-wrapper">
                                                     <button class="js-open-order button-toggle" data-id="{$changelog->id}" type="button" title="Подробнее"></button>
                                                 </div>
@@ -142,8 +142,8 @@
                                             </td>
                                             <td style="width: 120px;" class="jsgrid-cell">
                                                 <a href="client/{$changelog->user->id}">
-                                                    {$changelog->user->lastname|escape} 
-                                                    {$changelog->user->firstname|escape} 
+                                                    {$changelog->user->lastname|escape}
+                                                    {$changelog->user->firstname|escape}
                                                     {$changelog->user->patronymic|escape}
                                                 </a>
                                             </td>
@@ -154,7 +154,7 @@
                                                     <ul class="dtr-details col-md-6 list-unstyled">
                                                         {foreach $changelog->old_values as $field => $old_value}
                                                         <li>
-                                                            <strong>{$field}: </strong> 
+                                                            <strong>{$field}: </strong>
                                                             <span>{$old_value}</span>
                                                         </li>
                                                         {/foreach}
@@ -162,11 +162,11 @@
                                                     <ul class="col-md-6 dtr-details list-unstyled">
                                                         {foreach $changelog->new_values as $field => $new_value}
                                                         <li>
-                                                            <strong>{$field}: </strong> 
+                                                            <strong>{$field}: </strong>
                                                             <span>{$new_value}</span>
                                                         </li>
                                                         {/foreach}
-                                                    </ul> 
+                                                    </ul>
                                                 </div>
                                             </td>
                                         </tr>
@@ -174,33 +174,33 @@
                                     </tbody>
                                 </table>
                             </div>
-                            
+
                             {if $total_pages_num>1}
-                           	
+
                             {* Количество выводимых ссылок на страницы *}
                         	{$visible_pages = 11}
                         	{* По умолчанию начинаем вывод со страницы 1 *}
                         	{$page_from = 1}
-                        	
+
                         	{* Если выбранная пользователем страница дальше середины "окна" - начинаем вывод уже не с первой *}
                         	{if $current_page_num > floor($visible_pages/2)}
                         		{$page_from = max(1, $current_page_num-floor($visible_pages/2)-1)}
-                        	{/if}	
-                        	
+                        	{/if}
+
                         	{* Если выбранная пользователем страница близка к концу навигации - начинаем с "конца-окно" *}
                         	{if $current_page_num > $total_pages_num-ceil($visible_pages/2)}
                         		{$page_from = max(1, $total_pages_num-$visible_pages-1)}
                         	{/if}
-                        	
+
                         	{* До какой страницы выводить - выводим всё окно, но не более ощего количества страниц *}
                         	{$page_to = min($page_from+$visible_pages, $total_pages_num-1)}
-                        
+
                             <div class="jsgrid-pager-container" style="">
                                 <div class="jsgrid-pager">
-                                    Страницы: 
+                                    Страницы:
 
                                     {if $current_page_num == 2}
-                                    <span class="jsgrid-pager-nav-button "><a href="{url page=null}">Пред.</a></span> 
+                                    <span class="jsgrid-pager-nav-button "><a href="{url page=null}">Пред.</a></span>
                                     {elseif $current_page_num > 2}
                                     <span class="jsgrid-pager-nav-button "><a href="{url page=$current_page_num-1}">Пред.</a></span>
                                     {/if}
@@ -209,10 +209,10 @@
                                         {if $current_page_num==1}1{else}<a href="{url page=null}">1</a>{/if}
                                     </span>
                                    	{section name=pages loop=$page_to start=$page_from}
-                                		{* Номер текущей выводимой страницы *}	
-                                		{$p = $smarty.section.pages.index+1}	
-                                		{* Для крайних страниц "окна" выводим троеточие, если окно не возле границы навигации *}	
-                                		{if ($p == $page_from + 1 && $p != 2) || ($p == $page_to && $p != $total_pages_num-1)}	
+                                		{* Номер текущей выводимой страницы *}
+                                		{$p = $smarty.section.pages.index+1}
+                                		{* Для крайних страниц "окна" выводим троеточие, если окно не возле границы навигации *}
+                                		{if ($p == $page_from + 1 && $p != 2) || ($p == $page_to && $p != $total_pages_num-1)}
                                 		<span class="jsgrid-pager-page {if $p==$current_page_num}jsgrid-pager-current-page{/if}">
                                             <a href="{url page=$p}">...</a>
                                         </span>
@@ -227,13 +227,13 @@
                                     </span>
 
                                     {if $current_page_num<$total_pages_num}
-                                    <span class="jsgrid-pager-nav-button"><a href="{url page=$current_page_num+1}">След.</a></span>  
+                                    <span class="jsgrid-pager-nav-button"><a href="{url page=$current_page_num+1}">След.</a></span>
                                     {/if}
                                     &nbsp;&nbsp; {$current_page_num} из {$total_pages_num}
                                 </div>
                             </div>
                             {/if}
-                            
+
                             <div class="jsgrid-load-shader" style="display: none; position: absolute; inset: 0px; z-index: 10;">
                             </div>
                             <div class="jsgrid-load-panel" style="display: none; position: absolute; top: 50%; left: 50%; z-index: 1000;">

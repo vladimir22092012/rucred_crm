@@ -1,9 +1,9 @@
 {$meta_title='Клиенты' scope=parent}
 
 {capture name='page_scripts'}
-    
+
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/clients.js"></script>
-    
+
 
 {/capture}
 
@@ -74,18 +74,18 @@
                                         </th>
                                     </tr>
 
-                                    <tr class="jsgrid-filter-row" id="search_form">                                    
-                                        <td style="width: 60px;" class="jsgrid-cell jsgrid-align-right">
+                                    <tr class="jsgrid-filter-row" id="search_form">
+                                        <td style="width: 60px;" class="jsgrid-cell">
                                             <input type="hidden" name="sort" value="{$sort}" />
                                             <input type="text" name="user_id" value="{$search['user_id']}" class="form-control input-sm">
                                         </td>
-                                        <td style="width: 80px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 80px;" class="jsgrid-cell">
                                             <input type="text" name="created" value="{$search['created']}" class="form-control input-sm">
                                         </td>
-                                        <td style="width: 120px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 120px;" class="jsgrid-cell">
                                             <input type="text" name="fio" value="{$search['fio']}" class="form-control input-sm">
                                         </td>
-                                        <td style="width: 80px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 80px;" class="jsgrid-cell">
                                             <input type="text" name="birth" value="{$search['birth']}" class="form-control input-sm">
                                         </td>
                                         <td style="width: 100px;" class="jsgrid-cell">
@@ -156,33 +156,33 @@
                                     </tbody>
                                 </table>
                             </div>
-                            
+
                             {if $total_pages_num>1}
-                           	
+
                             {* Количество выводимых ссылок на страницы *}
                         	{$visible_pages = 11}
                         	{* По умолчанию начинаем вывод со страницы 1 *}
                         	{$page_from = 1}
-                        	
+
                         	{* Если выбранная пользователем страница дальше середины "окна" - начинаем вывод уже не с первой *}
                         	{if $current_page_num > floor($visible_pages/2)}
                         		{$page_from = max(1, $current_page_num-floor($visible_pages/2)-1)}
-                        	{/if}	
-                        	
+                        	{/if}
+
                         	{* Если выбранная пользователем страница близка к концу навигации - начинаем с "конца-окно" *}
                         	{if $current_page_num > $total_pages_num-ceil($visible_pages/2)}
                         		{$page_from = max(1, $total_pages_num-$visible_pages-1)}
                         	{/if}
-                        	
+
                         	{* До какой страницы выводить - выводим всё окно, но не более ощего количества страниц *}
                         	{$page_to = min($page_from+$visible_pages, $total_pages_num-1)}
-                        
+
                             <div class="jsgrid-pager-container" style="">
                                 <div class="jsgrid-pager">
-                                    Страницы: 
+                                    Страницы:
 
                                     {if $current_page_num == 2}
-                                    <span class="jsgrid-pager-nav-button "><a href="{url page=null}">Пред.</a></span> 
+                                    <span class="jsgrid-pager-nav-button "><a href="{url page=null}">Пред.</a></span>
                                     {elseif $current_page_num > 2}
                                     <span class="jsgrid-pager-nav-button "><a href="{url page=$current_page_num-1}">Пред.</a></span>
                                     {/if}
@@ -191,10 +191,10 @@
                                         {if $current_page_num==1}1{else}<a href="{url page=null}">1</a>{/if}
                                     </span>
                                    	{section name=pages loop=$page_to start=$page_from}
-                                		{* Номер текущей выводимой страницы *}	
-                                		{$p = $smarty.section.pages.index+1}	
-                                		{* Для крайних страниц "окна" выводим троеточие, если окно не возле границы навигации *}	
-                                		{if ($p == $page_from + 1 && $p != 2) || ($p == $page_to && $p != $total_pages_num-1)}	
+                                		{* Номер текущей выводимой страницы *}
+                                		{$p = $smarty.section.pages.index+1}
+                                		{* Для крайних страниц "окна" выводим троеточие, если окно не возле границы навигации *}
+                                		{if ($p == $page_from + 1 && $p != 2) || ($p == $page_to && $p != $total_pages_num-1)}
                                 		<span class="jsgrid-pager-page {if $p==$current_page_num}jsgrid-pager-current-page{/if}">
                                             <a href="{url page=$p}">...</a>
                                         </span>
@@ -209,13 +209,13 @@
                                     </span>
 
                                     {if $current_page_num<$total_pages_num}
-                                    <span class="jsgrid-pager-nav-button"><a href="{url page=$current_page_num+1}">След.</a></span>  
+                                    <span class="jsgrid-pager-nav-button"><a href="{url page=$current_page_num+1}">След.</a></span>
                                     {/if}
                                     &nbsp;&nbsp; {$current_page_num} из {$total_pages_num}
                                 </div>
                             </div>
                             {/if}
-                            
+
                             <div class="jsgrid-load-shader" style="display: none; position: absolute; inset: 0px; z-index: 10;">
                             </div>
                             <div class="jsgrid-load-panel" style="display: none; position: absolute; top: 50%; left: 50%; z-index: 1000;">
