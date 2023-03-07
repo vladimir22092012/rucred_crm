@@ -1346,6 +1346,14 @@ class OfflineOrderController extends Controller
 
             $cron =
                 [
+                    'order_id' => $order->order_id,
+                    'pak' => 'first_pak'
+                ];
+
+            $this->YaDiskCron->add($cron);
+
+            $cron =
+                [
                     'order_id' => $order_id,
                     'pak' => 'second_pak'
                 ];
@@ -4363,14 +4371,6 @@ class OfflineOrderController extends Controller
                 $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'first_pak' => 1]);
                 $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'second_pak' => 1]);
 
-                $cron =
-                    [
-                        'order_id' => $order_id,
-                        'pak' => 'first_pak'
-                    ];
-
-                $this->YaDiskCron->add($cron);
-
                 $this->orders->update_order($order->order_id, ['status' => 1, 'contract_id' => $contract_id]);
                 $this->add_first_ticket($order->order_id, $order->user_id);
 
@@ -4569,6 +4569,14 @@ class OfflineOrderController extends Controller
         $this->documents->update_asp(['order_id' => $order_id, 'rucred_asp_id' => $asp_id, 'second_pak' => 1]);
         $asp_id = $this->AspCodes->get_code(['order_id' => $order_id, 'type' => 'sms']);
         $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id->id, 'second_pak' => 1]);
+
+        $cron =
+            [
+                'order_id' => $order->order_id,
+                'pak' => 'first_pak'
+            ];
+
+        $this->YaDiskCron->add($cron);
 
         $cron =
             [

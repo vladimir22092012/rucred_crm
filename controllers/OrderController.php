@@ -1210,6 +1210,15 @@ class OrderController extends Controller
 
             $cron =
                 [
+                    'order_id' => $order->order_id,
+                    'pak' => 'first_pak',
+                    'online' => 1
+                ];
+
+            $this->YaDiskCron->add($cron);
+
+            $cron =
+                [
                     'order_id' => $order_id,
                     'pak' => 'second_pak',
                     'online' => 1
@@ -4569,12 +4578,22 @@ class OrderController extends Controller
 
         $cron =
             [
+                'order_id' => $order->order_id,
+                'pak' => 'first_pak',
+                'online' => 1
+            ];
+
+        $this->YaDiskCron->add($cron);
+
+        $cron =
+            [
                 'order_id' => $order_id,
                 'pak' => 'second_pak',
                 'online' => 1
             ];
 
         $this->YaDiskCron->add($cron);
+
         $communication_theme = $this->CommunicationsThemes->get(17);
 
 
@@ -4857,15 +4876,6 @@ class OrderController extends Controller
         }
 
         $this->orders->update_order($order_id, ['status' => 2]);
-
-        $cron =
-            [
-                'order_id' => $order->order_id,
-                'pak' => 'first_pak',
-                'online' => 1
-            ];
-
-        $this->YaDiskCron->add($cron);
 
         echo json_encode(['success' => 1]);
         exit;
