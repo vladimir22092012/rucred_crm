@@ -134,6 +134,12 @@ class Users extends Core
         if (!empty($result->phone_mobile)) {
             $result->phone_mobile = PhoneHelpers::format($result->phone_mobile);
         }
+        if (!empty($result->viber_num)) {
+            $result->viber_num = PhoneHelpers::format($result->viber_num);
+        }
+        if (!empty($result->telegram_num)) {
+            $result->telegram_num = PhoneHelpers::format($result->telegram_num);
+        }
         return $result;
     }
 

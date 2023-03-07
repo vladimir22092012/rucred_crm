@@ -17,6 +17,42 @@
 
             let token_dadata = "25c845f063f9f3161487619f630663b2d1e4dcd7";
 
+            $('.startUpload').click(function() {
+                console.log($(this));
+                let button = $(this),
+                    type = button.attr('data-type'),
+                    data = {
+                        orderId: button.attr('data-order-id'),
+                    };
+
+                if (type == 'onec') {
+                    data.action = 'sendDataOnec'
+                } else {
+                    data.action = 'sendDataDisk'
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: data,
+                    success: function (resp) {
+                        console.log(resp)
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+                        if (resp['success']) {
+                            Swal.fire({
+                                title: 'Успешно!',
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+                    }
+                });
+            });
+
             $('.cleaves').each(function () {
                 new Cleave(this, {
                     numeral: true,
@@ -1971,14 +2007,33 @@
                                                            {if $order->canSendOnec}checked{/if}>
                                                     <label class="custom-control-label" for="canSendOnec"><strong
                                                                 class="text-danger">Отравлять в 1с</strong></label>
+                                                    <span style="position: relative;font-size: 13px;top: -3px;left: 10px;">{$lastUpdateOnec}</span>
                                                 </div>
+                                                {if $showUploadButtons && in_array($manager->role, ['admin'])}
+                                                    <button
+                                                        data-type="onec"
+                                                        data-order-id="{$order->order_id}"
+                                                        type="button"
+                                                        class="btn btn-xs btn-outline-success startUpload"
+                                                    >Запустить передачу в 1С</button>
+                                                    <br><br>
+                                                {/if}
                                                 <div class="custom-control custom-checkbox">
                                                     <input type="checkbox" class="custom-control-input"
                                                            data-order="{$order->order_id}" id="canSendYaDisk"
                                                            {if $order->canSendYaDisk}checked{/if}>
                                                     <label class="custom-control-label" for="canSendYaDisk"><strong
                                                                 class="text-danger">Отравлять в Я.Диск</strong></label>
+                                                    <span style="position: relative;font-size: 13px;top: -3px;left: 10px;">{$lastUploadDisk}</span>
                                                 </div>
+                                                {if $showUploadButtons && in_array($manager->role, ['admin'])}
+                                                    <button
+                                                        data-type="disk"
+                                                        data-order-id="{$order->order_id}"
+                                                        type="button"
+                                                        class="btn btn-xs btn-outline-success startUpload"
+                                                    >Запустить выгрузку на Я.Диск</button>
+                                                {/if}
                                             {/if}
                                         </div>
                                     </form>

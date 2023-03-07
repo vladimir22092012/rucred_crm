@@ -989,166 +989,14 @@
 
                                             <h5 class="card-header">
                                                 <span class="text-white ">Контактная информация</span>
+                                                {if in_array($manager->role, ['admin', 'middle'])}
+                                                    <span class="float-right">
+                                                    <a href="javascript:void(0);" class="text-white js-open-user-data-form" data-type="numbers">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                </span>
+                                                {/if}
                                             </h5>
-                                            {if in_array($manager->role, ['admin', 'middle'])}
-                                                <div class="row pt-2 view-block" style="padding:20px;">
-                                                    <div class="col-md-12">
-                                                        <div class="form-row" style="margin-bottom: 10px;">
-                                                            <div class="col-3">
-                                                                <label class="control-label">
-                                                                    Телефон
-                                                                    {if $client->phone_mobile_confirmed == 1}
-                                                                        <span>(подтвержден)</span>
-                                                                    {/if}
-                                                                    :
-                                                                </label>
-                                                            </div>
-                                                            <div class="col-4" style="position: relative">
-                                                                <input class="form-control phone_num"
-                                                                       type="text"
-                                                                       name="phone"
-                                                                       placeholder="+7(900)000-00-00"
-                                                                       value="{$client->phone_mobile}"
-                                                                       autocomplete="off"/>
-                                                                <div class="phone_send_code badge badge-danger"
-                                                                     style="position: absolute; margin-left: 265px; margin-top: 5px;right: 8px;display: none">
-                                                                </div>
-                                                                <input type="hidden" name="phone_confirmed"
-                                                                       class="phone_confirmed" value="false"/>
-                                                            </div>
-                                                            <div class="col-2">
-                                                                <input type="button"
-                                                                       data-user="{$client->id}"
-                                                                       class="btn btn-success accept_edit"
-                                                                       value="Сохранить">
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-row" style="margin-bottom: 10px;">
-                                                            <div class="col-3"></div>
-                                                            <div class="col-4">
-                                                                <div class="input-group show_phone_code"
-                                                                     style="display: none">
-                                                                    <input type="text" class="form-control phone_code"
-                                                                           placeholder="Введите код из смс">
-                                                                    <div class="input-group-append">
-                                                                        <button class="btn btn-primary accept_edit_with_code"
-                                                                                type="button" data-user="{$client->id}">
-                                                                            Подтвердить
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-row" style="margin-bottom: 10px;">
-                                                            <div class="col-3">
-                                                                <label class="control-label">
-                                                                    Электронная почта
-                                                                    {if $client->email_confirmed == 1}
-                                                                        <span>(подтверждена)</span>
-                                                                    {/if}
-                                                                </label>
-                                                            </div>
-                                                            <div class="col-4">
-                                                                <div style="display: flex">
-                                                                    <input class="form-control casing-upper-mask email"
-                                                                           type="text" name="email"
-                                                                           placeholder="ivanov@mail.ru"
-                                                                           value="{$client->email}" autocomplete="off"/>
-                                                                    <div class="email_code_show badge badge-danger"
-                                                                         style="position: absolute; margin-left: 265px; margin-top: 5px; display: none"></div>
-                                                                    <input type="hidden" name="email_confirmed"
-                                                                           class="email_confirmed" value="false"/>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-2">
-                                                                <input type="button"
-                                                                       data-user="{$client->id}"
-                                                                       class="btn btn-success accept_email_edit"
-                                                                       value="Сохранить">
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-row" style="margin-bottom: 10px;">
-                                                            <div class="col-3"></div>
-                                                            <div class="col-4">
-                                                                <div class="input-group show_email_code"
-                                                                     style="display: none">
-                                                                    <input type="text" class="form-control email_code"
-                                                                           placeholder="Код из письма">
-                                                                    <div class="input-group-append">
-                                                                        <button
-                                                                            class="btn btn-primary accept_edit_email_with_code"
-                                                                            type="button" data-user="{$client->user_id}">
-                                                                            Подтвердить
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <h4>Мессенджеры для связи</h4><br>
-                                                        <div style="width: 100%; display: flex; flex-direction: column">
-                                                            <div>
-                                                                <img class="icon_messag"
-                                                                     src="https://img.icons8.com/ios-glyphs/344/viber.png" width="30"
-                                                                     height="30">
-                                                                {if isset($viber_confirmed)}
-                                                                    <small class="badge badge-success">
-                                                                        Привязан
-                                                                    </small>
-                                                                {/if}
-                                                                <input class="form-control phone_num viber_same"
-                                                                       style="width: 180px; margin-left: 10px; {if isset($order) && $order->viber_num == $order->phone_mobile}display: none{/if}"
-                                                                       type="text" name="viber" value="{$client->viber_num}"
-                                                                       autocomplete="off">
-                                                                <label style="margin-left: 25px; display: none"
-                                                                       class="label label-success viber_confirmed">Cсылка для привязки
-                                                                    отправлена</label>
-                                                                <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
-                                                                       name="viber_same"
-                                                                       {if $client->viber_num == $client->phone_mobile}checked{/if}
-                                                                       value="1">
-                                                                <label class="viber_same_label">Совпадает с номером мобильного</label>
-                                                                <div style="margin-left: 20px" class="btn btn-success confirm_viber"
-                                                                     data-user="{$client->user_id}">Подтвердить
-                                                                </div>
-                                                                <br><br>
-                                                            </div>
-                                                            <div>
-                                                                <img class="icon_messag"
-                                                                     src="https://img.icons8.com/color/344/telegram-app--v1.png"
-                                                                     width="30"
-                                                                     height="30">
-                                                                {if isset($telegram_confirmed)}
-                                                                    <small class="badge badge-success">
-                                                                        Привязан
-                                                                    </small>
-                                                                {/if}
-                                                                <input class="form-control phone_num telegram_same"
-                                                                       style="width: 180px; margin-left: 10px; {if isset($order) && $order->telegram_num == $order->phone_mobile}display: none{/if}"
-                                                                       type="text" name="telegram" value="{$client->telegram_num}"
-                                                                       autocomplete="off">
-                                                                <label style="margin-left: 25px; display: none"
-                                                                       class="label label-success telegram_confirmed">Cсылка для
-                                                                    привязки отправлена</label>
-                                                                <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
-                                                                       name="telegram_same"
-                                                                       {if $client->telegram_num == $client->phone_mobile}checked{/if}
-                                                                       value="1">
-                                                                <label class="telegram_same_label">Совпадает с номером
-                                                                    мобильного</label>
-                                                                <div style="margin-left: 20px" class="btn btn-success confirm_telegram"
-                                                                     data-user="{$client->user_id}">
-                                                                    Подтвердить
-                                                                </div>
-                                                                <br><br>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            {else}
                                             <div class="row pt-2 view-block {if $contactdata_error}hide{/if}">
                                                 <div class="col-md-12">
                                                     <div class="form-group row m-0">
@@ -1199,7 +1047,6 @@
                                                     </div>
                                                 {/if}
                                             </div>
-                                            {/if}
                                         </form>
                                         <!-- / Контакты-->
                                         <!-- / Адреса-->
@@ -2708,6 +2555,171 @@
                         </span>
                         <span>
                             <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-user-data-form" data-type="snils">Отмена</a>
+                        </span>
+                    </div>
+                </div>
+                <div class="row pt-2 show_edit_block_numbers" style="display: none;padding: 0 30px;">
+                    <div class="col-md-12">
+                        <div class="form-row" style="margin-bottom: 10px;">
+                            <div class="col-3">
+                                <label class="control-label">
+                                    Телефон
+                                    {if $client->phone_mobile_confirmed == 1}
+                                        <span>(подтвержден)</span>
+                                    {/if}
+                                    :
+                                </label>
+                            </div>
+                            <div class="col-4" style="position: relative">
+                                <input class="form-control phone_num"
+                                       type="text"
+                                       name="phone"
+                                       placeholder="+7(900)000-00-00"
+                                       value="{$client->phone_mobile}"
+                                       autocomplete="off"/>
+                                <div class="phone_send_code badge badge-danger"
+                                     style="position: absolute; margin-left: 265px; margin-top: 5px;right: 8px;display: none">
+                                </div>
+                                <input type="hidden" name="phone_confirmed"
+                                       class="phone_confirmed" value="false"/>
+                            </div>
+                            <div class="col-2">
+                                <input type="button"
+                                       data-user="{$client->id}"
+                                       class="btn btn-success accept_edit"
+                                       value="Сохранить">
+                            </div>
+                        </div>
+                        <div class="form-row" style="margin-bottom: 10px;">
+                            <div class="col-3"></div>
+                            <div class="col-4">
+                                <div class="input-group show_phone_code"
+                                     style="display: none">
+                                    <input type="text" class="form-control phone_code"
+                                           placeholder="Введите код из смс">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary accept_edit_with_code"
+                                                type="button" data-user="{$client->id}">
+                                            Подтвердить
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-row" style="margin-bottom: 10px;">
+                            <div class="col-3">
+                                <label class="control-label">
+                                    Электронная почта
+                                    {if $client->email_confirmed == 1}
+                                        <span>(подтверждена)</span>
+                                    {/if}
+                                </label>
+                            </div>
+                            <div class="col-4">
+                                <div style="display: flex">
+                                    <input class="form-control casing-upper-mask email"
+                                           type="text" name="email"
+                                           placeholder="ivanov@mail.ru"
+                                           value="{$client->email}" autocomplete="off"/>
+                                    <div class="email_code_show badge badge-danger"
+                                         style="position: absolute; margin-left: 265px; margin-top: 5px; display: none"></div>
+                                    <input type="hidden" name="email_confirmed"
+                                           class="email_confirmed" value="false"/>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <input type="button"
+                                       data-user="{$client->id}"
+                                       class="btn btn-success accept_email_edit"
+                                       value="Сохранить">
+                            </div>
+                        </div>
+                        <div class="form-row" style="margin-bottom: 10px;">
+                            <div class="col-3"></div>
+                            <div class="col-4">
+                                <div class="input-group show_email_code"
+                                     style="display: none">
+                                    <input type="text" class="form-control email_code"
+                                           placeholder="Код из письма">
+                                    <div class="input-group-append">
+                                        <button
+                                            class="btn btn-primary accept_edit_email_with_code"
+                                            type="button" data-user="{$client->user_id}">
+                                            Подтвердить
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <h4>Мессенджеры для связи</h4><br>
+                        <div style="width: 100%; display: flex; flex-direction: column">
+                            <div>
+                                <img class="icon_messag"
+                                     src="https://img.icons8.com/ios-glyphs/344/viber.png" width="30"
+                                     height="30">
+                                {if isset($viber_confirmed)}
+                                    <small class="badge badge-success">
+                                        Привязан
+                                    </small>
+                                {/if}
+                                <input class="form-control phone_num viber_same"
+                                       style="width: 180px; margin-left: 10px; {if isset($order) && $order->viber_num == $order->phone_mobile}display: none{/if}"
+                                       type="text" name="viber" value="{$client->viber_num}"
+                                       autocomplete="off">
+                                <label style="margin-left: 25px; display: none"
+                                       class="label label-success viber_confirmed">Cсылка для привязки
+                                    отправлена</label>
+                                <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
+                                       name="viber_same"
+                                       {if $client->viber_num == $client->phone_mobile}checked{/if}
+                                       value="1">
+                                <label class="viber_same_label">Совпадает с номером мобильного</label>
+                                <div style="margin-left: 20px" class="btn btn-success confirm_viber"
+                                     data-user="{$client->user_id}">Подтвердить
+                                </div>
+                                <br><br>
+                            </div>
+                            <div>
+                                <img class="icon_messag"
+                                     src="https://img.icons8.com/color/344/telegram-app--v1.png"
+                                     width="30"
+                                     height="30">
+                                {if isset($telegram_confirmed)}
+                                    <small class="badge badge-success">
+                                        Привязан
+                                    </small>
+                                {/if}
+                                <input class="form-control phone_num telegram_same"
+                                       style="width: 180px; margin-left: 10px; {if isset($order) && $order->telegram_num == $order->phone_mobile}display: none{/if}"
+                                       type="text" name="telegram" value="{$client->telegram_num}"
+                                       autocomplete="off">
+                                <label style="margin-left: 25px; display: none"
+                                       class="label label-success telegram_confirmed">Cсылка для
+                                    привязки отправлена</label>
+                                <input style="margin-left: 20px" type="checkbox" class="custom-checkbox"
+                                       name="telegram_same"
+                                       {if $client->telegram_num == $client->phone_mobile}checked{/if}
+                                       value="1">
+                                <label class="telegram_same_label">Совпадает с номером
+                                    мобильного</label>
+                                <div style="margin-left: 20px" class="btn btn-success confirm_telegram"
+                                     data-user="{$client->user_id}">
+                                    Подтвердить
+                                </div>
+                                <br><br>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <span>
+                            <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-close-user-data-form" data-type="numbers">Готово</a>
+                        </span>
+                        <span>
+                            <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-user-data-form" data-type="numbers">Отмена</a>
                         </span>
                     </div>
                 </div>
