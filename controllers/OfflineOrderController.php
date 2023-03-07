@@ -318,6 +318,14 @@ class OfflineOrderController extends Controller
                     $this->action_editPdn();
                     break;
 
+                case 'sendDataOnec':
+                    echo json_encode($this->actionSendOnec());
+                    die();
+
+                case 'sendDataDisk':
+                    echo json_encode($this->actionSendYaDisk());
+                    die();
+
 
             endswitch;
 
@@ -356,13 +364,29 @@ class OfflineOrderController extends Controller
                     $this->design->assign('projectNumber', $projectNumber);
 
                     $uploadsLoanOnec = ExchangeCronORM::where('orderId', $order->order_id)->get();
+
+                    $uploadLoanOnec = ExchangeCronORM::where('orderId', $order->order_id)->orderByRaw('id DESC')->first();
+                    $lastUpdateOnec = '';
+                    if ($uploadLoanOnec) {
+                        $lastUpdateOnec = $uploadLoanOnec->updated;
+                    }
+
                     $this->design->assign('uploadsLoanOnec', $uploadsLoanOnec);
+                    $this->design->assign('lastUpdateOnec', $lastUpdateOnec);
 
                     $uploadsPaymentOnec = SendPaymentCronORM::where('order_id', $order->order_id)->get();
                     $this->design->assign('uploadsPaymentOnec', $uploadsPaymentOnec);
 
                     $uploadsDocsYaDisk = YaDiskCronORM::where('order_id', $order->order_id)->get();
+
+                    $uploadDocsYaDisk = YaDiskCronORM::where('order_id', $order->order_id)->orderByRaw('id DESC')->first();
+                    $lastUploadDisk = '';
+                    if ($uploadDocsYaDisk) {
+                        $lastUploadDisk = $uploadDocsYaDisk->updated;
+                    }
+
                     $this->design->assign('uploadsDocsYaDisk', $uploadsDocsYaDisk);
+                    $this->design->assign('lastUploadDisk', $lastUploadDisk);
 
 
                     $old_orders = $this->orders->get_orders(['user_id' => $order->user_id]);
@@ -548,7 +572,7 @@ class OfflineOrderController extends Controller
                     ));
                     $order->have_crm_closed = !empty($user_close_orders);
 
-
+                    $showUploadButtons = false;
                     if (!empty($order->contract_id)) {
                         if ($contract_operations = $this->operations->get_operations(array('contract_id' => $order->contract_id)))
                             foreach ($contract_operations as $contract_operation)
@@ -558,7 +582,9 @@ class OfflineOrderController extends Controller
 
                         $contract = $this->contracts->get_contract((int)$order->contract_id);
                         $this->design->assign('contract', $contract);
+                        $showUploadButtons = $order->status == 5 && $contract->status == 2 ? true : false;
                     }
+                    $this->design->assign('showUploadButtons', $showUploadButtons);
 
 
                     $need_update_scorings = 0;
@@ -5674,8 +5700,8 @@ class OfflineOrderController extends Controller
         $isHoliday = WeekendCalendarORM::where('date', date('Y-m-d', strtotime($probablyStartDate)))->first();
 
         if (!empty($isHoliday)) {
-            echo json_encode(['error' => 'Дата выпала на выходной день']);
-            exit;
+            //echo json_encode(['error' => 'Дата выпала на выходной день']);
+            //exit;
         }
 
         if (empty($comment)) {
@@ -5738,11 +5764,17 @@ class OfflineOrderController extends Controller
 
         foreach ($oldOrder as $oldKey => $oldValue) {
             foreach ($newOrder as $newKey => $newValue) {
-                if ($oldKey == $newKey && $oldValue != $newValue && !in_array($newKey, ['probably_start_date', 'branche_id']))
+                if (in_array($newKey, ['company_id', 'amount', 'loan_type']) && $oldKey == $newKey && $oldValue != $newValue)
                     $needSms = 1;
             }
         }
 
+        $oldUser = UsersORM::find($userId);
+        if ($oldUser) {
+            if ($oldUser->profunion != $profUnion) {
+                $needSms = 1;
+            }
+        }
 
         $user =
             [
@@ -5982,6 +6014,43 @@ class OfflineOrderController extends Controller
 
         echo json_encode(['success' => 1]);
         exit;
+    }
+
+    private function actionSendOnec()
+    {
+        $orderId = $this->request->post('orderId');
+        $order = $this->orders->get_order($orderId);
+        if ($order) {
+            $insert =
+                [
+                    'orderId' => $orderId,
+                    'userId' => $order->user_id,
+                    'contractId' => $order->contract_id
+                ];
+
+            ExchangeCronORM::insert($insert);
+        }
+        return array('success' => 1);
+    }
+
+    private function actionSendYaDisk()
+    {
+        $orderId = $this->request->post('orderId');
+        $queues = [
+            'first_pak',
+            'second_pak',
+        ];
+        foreach ($queues as $queue) {
+            $cron =
+                [
+                    'order_id' => $orderId,
+                    'pak' => $queue,
+                    'online' => 1
+                ];
+
+            $this->YaDiskCron->add($cron);
+        }
+        return array('success' => 1);
     }
 
 }

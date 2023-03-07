@@ -3665,7 +3665,7 @@
                                                 <div class="row view-block p-2 snils-front">
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-0 row">
-                                                            <label class="control-label col-md-8 col-7 snils-number">{$order->pdn|replace:'.':','}% {if $client->pdn_time != null} <span>({date('d.m.Y', $client->pdn_time)})</span> {/if}
+                                                            <label class="control-label col-md-8 col-7 snils-number">{$order->pdn}% {if $client->pdn_time != null} <span>({date('d.m.Y', $client->pdn_time)})</span> {/if}
                                                                 </label>
                                                             {if $order->status == 0}
                                                                 <span>
@@ -3679,7 +3679,7 @@
                                                                         <input type="hidden" value="{$order->user_id}" id="formUserIdValue" style="margin-bottom: 10px;">
                                                                         <input type="hidden" value="{$order->order_id}" id="formOrderIdValue">
                                                                         <label for="formPdnValue">ПДН</label>
-                                                                        <input class="form-control mask_number_pdn" type="text" value="{$order->pdn|replace:'.':','}" id="formPdnValue" style="margin-bottom: 10px;">
+                                                                        <input class="form-control mask_number_pdn" type="text" value="{$order->pdn}" id="formPdnValue" style="margin-bottom: 10px;">
                                                                         <label for="formPdnComment">Причина редактирования</label>
                                                                         <textarea id="formPdnComment" class="form-control" style="margin-bottom:10px;" rows="3"></textarea>
                                                                         <span>

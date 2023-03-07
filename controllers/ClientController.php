@@ -273,7 +273,9 @@ class ClientController extends Controller
             }
 
             $company = CompaniesORM::find($client->company_id);
-            $company_name = $company->name;
+            if ($company) {
+                $company_name = $company->name;
+            }
 
         }
 
