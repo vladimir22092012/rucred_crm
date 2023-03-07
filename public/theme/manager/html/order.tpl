@@ -4628,6 +4628,12 @@
                         <input type="hidden" name="user_id" value="{$order->user_id}">
                         <div class="form-group" style="display:flex; flex-direction: column">
                             <div class="form-group">
+                                <label>ИНН держателя счета:</label>
+                                <input type="text" name="inn_holder"
+                                       class="form-control mask_number"
+                                       value="{$order->requisite->inn_holder}"/>
+                            </div>
+                            <div class="form-group">
                                 <label>ФИО держателя счета:</label>
                                 <input type="text" name="hold"
                                        class="form-control fio-hold-edit fioValidate"
@@ -4654,12 +4660,6 @@
                                 <input type="text" name="cor"
                                        class="form-control cor-acc mask_number"
                                        value="{$order->requisite->correspondent_acc}"/>
-                            </div>
-                            <div class="form-group">
-                                <label>ИНН держателя счета:</label>
-                                <input type="text" name="inn_holder"
-                                       class="form-control mask_number"
-                                       value="{$order->requisite->inn_holder}"/>
                             </div>
                             <div class="form-group">
                                 <label>Причина редактирования</label>
