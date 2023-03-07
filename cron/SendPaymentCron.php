@@ -36,7 +36,7 @@ class SendPaymentCron extends Core
 
             $payment = new stdClass();
             $payment->order_id = $cron->transaction_id;
-            $payment->date = date('Y-m-d H:i:s', strtotime($contract->deal_date));
+            $payment->date = date('Y-m-d H:i:s', strtotime($contract->issuance_date));
             $payment->amount = $order->amount;
             $payment->recepient = 9725055162;
             $payment->user_id = (string)$order->user->id;
