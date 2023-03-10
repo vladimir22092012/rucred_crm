@@ -275,6 +275,8 @@ class DocumentController extends Controller
         $tpl = $this->design->fetch('pdf/' . $document->template);
         $contract = $this->contracts->get_contract($order->contract_id);
 
+        $this->design->assign('contract', $contract);
+
         if (!empty($contract->number)) {
             $order->uid = $contract->number;
         } else {
