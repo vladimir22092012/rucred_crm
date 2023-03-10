@@ -27,6 +27,12 @@ class AuditCron extends Core
         {
             foreach ($overtime_scorings as $overtime_scoring)
             {
+
+                $order = OrdersORM::find($overtime_scoring->order_id);
+
+                if($order->status == 0)
+                    continue;
+
                 if (in_array($overtime_scoring->type, array('fms', 'fns', 'fssp')) && $overtime_scoring->repeat_count < 2)
                 {
                     $this->scorings->update_scoring($overtime_scoring->id, array(
