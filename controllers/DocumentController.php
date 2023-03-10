@@ -273,7 +273,7 @@ class DocumentController extends Controller
         $this->design->assign('$period_days', $period_days);
 
         $tpl = $this->design->fetch('pdf/' . $document->template);
-        $contract = $this->contracts->get_contract($order->contract_id);
+        $contract = ContractsORM::find($order->contract_id);
 
         $this->design->assign('contract', $contract);
 
