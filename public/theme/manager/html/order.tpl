@@ -1770,7 +1770,7 @@
                                 </div>
                             </div>
                             <div class="row pt-2">
-                                <div class="col-12 col-md-4 col-lg-3">
+                                <div class="col-12 col-md-4 col-lg-2">
                                     <div class="border p-2 view-block">
                                         <div style="display: flex; justify-content: space-between">
                                             <h6>
@@ -1830,7 +1830,7 @@
                                         {/if}
                                     </div>
                                 </div>
-                                <div class="col-12 col-md-8 col-lg-6">
+                                <div class="col-12 col-md-8 col-lg-7">
                                     <form class="mb-3 p-2 border" id="loan_settings">
                                         <input type="hidden" name="action" value="change_loan_settings"/>
                                         <input type="hidden" name="order_id" value="{$order->order_id}"/>
