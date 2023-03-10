@@ -5602,6 +5602,7 @@ class OfflineOrderController extends Controller
         $bik = $this->request->post('bik');
         $cor = $this->request->post('cor');
         $inn_holder = $this->request->post('inn_holder');
+        $settlementId = $this->request->post('settlementId');
         $comment = $this->request->post('comment');
 
         if (empty($comment)) {
@@ -5618,8 +5619,7 @@ class OfflineOrderController extends Controller
             exit;
         }
 
-        if ($user->inn != $inn_holder && $userFio == $hold)
-        {
+        if ($user->inn != $inn_holder && $userFio == $hold) {
             echo json_encode(['error' => 'ФИО владельца счёта совпадает с ФИО заёмщика, в таком случае, ИНН заёмщика и ИНН держателя счёта должны совпадать']);
             exit;
         }
@@ -5646,46 +5646,52 @@ class OfflineOrderController extends Controller
         $newValues = array_diff($update, $oldRequisites);
         $oldValues = array_intersect_key($oldRequisites, $newValues);
 
-        RequisitesORM::where('user_id', $userId)->update($newValues);
+        if (!empty($newValues)) {
 
-        $translate =
-            [
-                'name' => "Наименование банка",
-                'bik' => "Бик банка",
-                'number' => "Номер счета",
-                'holder' => "Держатель счета",
-                'correspondent_acc' => "Кор счет",
-                'inn_holder' => 'ИНН держателя счета'
-            ];
+            RequisitesORM::where('user_id', $userId)->update($newValues);
 
-        foreach ($oldValues as $key => $value) {
-            $oldValues[$translate[$key]] = $value;
-            unset($oldValues[$key]);
+            $translate =
+                [
+                    'name' => "Наименование банка",
+                    'bik' => "Бик банка",
+                    'number' => "Номер счета",
+                    'holder' => "Держатель счета",
+                    'correspondent_acc' => "Кор счет",
+                    'inn_holder' => 'ИНН держателя счета'
+                ];
+
+            foreach ($oldValues as $key => $value) {
+                $oldValues[$translate[$key]] = $value;
+                unset($oldValues[$key]);
+            }
+
+            foreach ($newValues as $key => $value) {
+                $newValues[$translate[$key]] = $value;
+                unset($newValues[$key]);
+            }
+
+            $newValues['Причина'] = $comment;
+
+            $this->changelogs->add_changelog(array(
+                'manager_id' => $this->manager->id,
+                'created' => date('Y-m-d H:i:s'),
+                'type' => 'requisites',
+                'old_values' => serialize($oldValues),
+                'new_values' => serialize($newValues),
+                'order_id' => $orderId,
+                'user_id' => $userId,
+            ));
+
+            $order = $this->orders->get_order($orderId);
+
+            $order->payment_schedule = PaymentsScheduleORM::where('order_id', $orderId)->where('actual', 1)->first()->toArray();
+
+            DocumentsORM::where('order_id', $orderId)
+                ->update(['params' => serialize($order)]);
+
         }
 
-        foreach ($newValues as $key => $value) {
-            $newValues[$translate[$key]] = $value;
-            unset($newValues[$key]);
-        }
-
-        $newValues['Причина'] = $comment;
-
-        $this->changelogs->add_changelog(array(
-            'manager_id' => $this->manager->id,
-            'created' => date('Y-m-d H:i:s'),
-            'type' => 'requisites',
-            'old_values' => serialize($oldValues),
-            'new_values' => serialize($newValues),
-            'order_id' => $orderId,
-            'user_id' => $userId,
-        ));
-
-        $order = $this->orders->get_order($orderId);
-
-        $order->payment_schedule = PaymentsScheduleORM::where('order_id', $orderId)->where('actual', 1)->first()->toArray();
-
-        DocumentsORM::where('order_id', $orderId)
-            ->update(['params' => serialize($order)]);
+        OrdersORM::where('id', $orderId)->update(['settlement_id' => $settlementId]);
 
         echo json_encode(['success' => 1]);
         exit;

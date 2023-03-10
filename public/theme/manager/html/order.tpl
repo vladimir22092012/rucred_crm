@@ -4628,6 +4628,13 @@
                         <input type="hidden" name="user_id" value="{$order->user_id}">
                         <div class="form-group" style="display:flex; flex-direction: column">
                             <div class="form-group">
+                                <label>Откуда перечисляем:</label>
+                                <select class="form-control" name="settlementId">
+                                    <option value="2" {if $order->settlement_id == 2}selected{/if}>МинБ</option>
+                                    <option value="3" {if $order->settlement_id == 3}selected{/if}>РДР</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <label>ФИО держателя счета:</label>
                                 <input type="text" name="hold"
                                        class="form-control fio-hold-edit fioValidate"
