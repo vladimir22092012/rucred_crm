@@ -2988,7 +2988,7 @@
                                                         <div class="form-group">
                                                             <label>Полная стоимость микрозайма, %
                                                                 годовых:</label>
-                                                            <span id="psk">{$payment_schedule->psk}%</span>
+                                                            <span id="psk">{$payment_schedule->psk|number_format: 3 : ',' : ' '}%</span>
                                                         </div>
                                                         {if $payment_schedule->type == 'restruct'}
                                                             <div class="form-group">
