@@ -4855,7 +4855,7 @@
                             <div class="form-group">
                                 <label>Номер клиента</label>
                                 <input type="text" name="personal_number" value="{$order->personal_number}"
-                                       class="form-control mask_number"/>
+                                       class="form-control mask_number" {if $client_status == 'ПК'}disabled{/if}/>
                             </div>
                             <div class="form-group">
                                 <label>Причина редактирования</label>
