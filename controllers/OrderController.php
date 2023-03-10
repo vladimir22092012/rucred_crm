@@ -3661,7 +3661,7 @@ class OrderController extends Controller
 
         ProjectContractNumberORM::updateOrCreate(['orderId' => $order->id, 'userId' => $userId], ['uid' => $new_number]);
 
-        ContractsORM::where('id', $order->contract_id)->update(['number' => $new_number, 'deal_date' => date('Y-m-d')]);
+        ContractsORM::where('id', $order->contract_id)->update(['number' => $new_number, 'deal_date' => date('Y-m-d H:i:s')]);
 
         $groupLoanType = GroupLoanTypesORM::where('group_id', $groupId)->where('loantype_id', $loanTypeId)->first();
 
