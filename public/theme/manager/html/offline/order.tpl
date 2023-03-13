@@ -4567,7 +4567,7 @@
                                                                         <br>
                                                                         <label>Полная стоимость микрозайма, %
                                                                             годовых:</label>
-                                                                        <span id="psk">{$schedule->psk}%</span>
+                                                                        <span id="psk">{$payment_schedule->psk|number_format: 3 : ',' : ' '}%</span>
                                                                     </div>
                                                                 </div>
                                                             </div>

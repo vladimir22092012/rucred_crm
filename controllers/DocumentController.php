@@ -271,11 +271,11 @@ class DocumentController extends Controller
         $period_days = date_diff($created_date, $probably_return_date)->days;
 
         $this->design->assign('$period_days', $period_days);
-
-        $tpl = $this->design->fetch('pdf/' . $document->template);
         $contract = ContractsORM::find($order->contract_id);
 
         $this->design->assign('contract', $contract);
+
+        $tpl = $this->design->fetch('pdf/' . $document->template);
 
         if (!empty($contract->number)) {
             $order->uid = $contract->number;
