@@ -148,7 +148,7 @@
                             <div class="jsgrid-grid-header jsgrid-header-scrollbar">
                                 <table class="jsgrid-table table table-striped table-hover">
                                     <tr class="jsgrid-header-row">
-                                        <th style="width: 70px;" class="jsgrid-header-cell jsgrid-align-right jsgrid-header-sortable {if $sort == 'order_id_desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'order_id_asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
+                                        <th style="width: 70px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'order_id_desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'order_id_asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
                                             {if $sort == 'order_id_asc'}<a href="{url page=null sort='order_id_desc'}">ID</a>
                                             {else}<a href="{url page=null sort='order_id_asc'}">ID</a>{/if}
                                         </th>
@@ -175,7 +175,7 @@
                                     </tr>
                                     <tr class="jsgrid-filter-row" id="search_form">
 
-                                        <td style="width: 70px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 70px;" class="jsgrid-cell">
                                             <input type="hidden" name="sort" value="{$sort}" />
                                             <input type="text" name="order_id" value="{$search['order_id']}" class="form-control input-sm">
                                         </td>

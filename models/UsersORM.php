@@ -12,6 +12,10 @@ class UsersORM extends \Illuminate\Database\Eloquent\Model
         'phone_mobile',
     ];
 
+    protected $appends = [
+        'companyName',
+    ];
+
     public function orders()
     {
         return $this->hasMany(OrdersORM::class, 'user_id','id');
@@ -20,4 +24,10 @@ class UsersORM extends \Illuminate\Database\Eloquent\Model
     public function getPhoneMobileAttribute($phone) {
         return PhoneHelpers::format($phone);
     }
+
+    public function getCompanyNameAttribute() {
+        $company = CompaniesORM::find($this->company_id);
+        return $company ? $company->name : '';
+    }
+
 }

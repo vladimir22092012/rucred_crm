@@ -554,12 +554,25 @@ class OfflineOrderController extends Controller
                     }
                     $this->design->assign('comments', $comments);
 
-                    $files = $this->users->get_files(array('user_id' => $order->user_id));
-                    foreach ($files as $file) {
-                        $format = explode('.', $file->name);
+                    $userfiles = $this->users->get_files(array('user_id' => $order->user_id));
+                    $files = [];
+                    foreach ($userfiles as $userfile) {
+                        $format = explode('.', $userfile->name);
 
                         if ($format[1] == 'pdf')
-                            $file->format = 'PDF';
+                            $userfile->format = 'PDF';
+                        $files[$userfile->type] = $userfile;
+                    }
+
+                    $types = [
+                        'Паспорт: разворот',
+                        'Паспорт: регистрация',
+                        'Селфи с паспортом'
+                    ];
+                    foreach ($types as $type) {
+                        if (!isset($files[$type])) {
+                            $files[$type] = false;
+                        }
                     }
 
                     $this->design->assign('files', $files);
@@ -2725,7 +2738,26 @@ class OfflineOrderController extends Controller
             $this->users->update_file($file_id, array('status' => $status));
         }
 
-        $files = $this->users->get_files(array('user_id' => $user_id));
+        $userfiles = $this->users->get_files(array('user_id' => $order->user_id));
+        $files = [];
+        foreach ($userfiles as $userfile) {
+            $format = explode('.', $file->name);
+
+            if ($format[1] == 'pdf')
+                $userfile->format = 'PDF';
+            $files[$userfile->type] = $userfile;
+        }
+
+        $types = [
+            'Паспорт: разворот',
+            'Паспорт: регистрация',
+            'Селфи с паспортом'
+        ];
+        foreach ($types as $type) {
+            if (!isset($files[$type])) {
+                $files[$type] = false;
+            }
+        }
 
         $this->design->assign('files', $files);
         exit;

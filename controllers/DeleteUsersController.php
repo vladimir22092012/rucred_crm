@@ -15,43 +15,14 @@ class DeleteUsersController extends Controller
             }
         }
 
-
         return $this->design->fetch('delete_users.tpl');
     }
 
-    private function action_delete_user()
-    {
-        $params = [];
-        $phone = $this->request->post('phone_mobile');
-        if (!empty($phone)) {
-            $phone = PhoneHelpers::format($phone, 'long_to_small');
-            if(strlen($phone) > 11 || strlen($phone) < 11){
-                echo json_encode(['error' => 'Проверьте правильность номера, не соответствует кол-во цифр']);
-                exit;
-            } else {
-                $params['phone_mobile'] = $phone;
-            }
-        }
-
-        $fields = [
-            'email',
-            'passport_serial',
-            'inn',
-            'snils'
-        ];
-        foreach ($fields as $field) {
-            if ($param = $this->request->post($field)) {
-                $params[$field] = $param;
-            }
-        }
-
-        $users = $this->users->get_users_by_params($params);
-
-        if (empty($users)) {
-            echo json_encode(['error' => 'Такого юзера нет']);
-            exit;
-        } else {
-            foreach ($users as $user){
+    private function action_delete_user() {
+        $userIds = $this->request->post('userIds');
+        if (count($userIds) > 0) {
+            $users = UsersORM::query()->whereIn('id', $userIds);
+            foreach ($users as $user) {
                 $orders = $this->orders->get_orders(['user_id' => $user->id]);
                 $this->orders->delete_orders_by_user_id($user->id);
                 $this->contracts->delete_contracts_by_user_id($user->id);
@@ -67,7 +38,51 @@ class DeleteUsersController extends Controller
                     $this->tickets->delete_by_order($order->order_id);
                 }
             }
-            echo json_encode(['success' => 1]);
+        }
+        echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_search_users()
+    {
+        $params = [];
+        $query = UsersORM::query();
+        $phone = $this->request->post('phone_mobile');
+        if (!empty($phone)) {
+            $phone = PhoneHelpers::format($phone, 'long_to_small');
+            if(strlen($phone) > 11 || strlen($phone) < 11){
+                echo json_encode(['error' => 'Проверьте правильность номера, не соответствует кол-во цифр']);
+                exit;
+            } else {
+                $query->where('phone_mobile', '=', $phone);
+            }
+        }
+        $fields = [
+            'email',
+            'passport_serial',
+            'inn',
+            'snils'
+        ];
+        foreach ($fields as $field) {
+            if ($param = $this->request->post($field)) {
+                if (!empty($param)) {
+                    $query->where($field, '=', $param);
+                }
+            }
+        }
+
+        $query->limit = 50;
+
+        $users = $query->get();
+
+        if (count($users) == 0) {
+            echo json_encode(['query' => $query->toSql(), 'users' => $users, 'error' => 'Пользователей по заданным параметрам, не найдено, попробуйте изменить условия поиска.']);
+            exit;
+        } else {
+            foreach ($users as $user){
+                /**/
+            }
+            echo json_encode(['success' => 1, 'users' => $users]);
             exit;
         }
     }
