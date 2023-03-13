@@ -22,7 +22,10 @@ class InfoSphere implements ApiInterface
 
         $request = self::curl($params);
 
-        $inn = 0;
+        $inn = 'ИНН не найден';
+
+        if(isset($request['Source']['@attributes']['checktype']) && $request['Source']['@attributes']['checktype'] != 'fns_inn')
+            return $inn;
 
         foreach ($request['Source'] as $sources) {
             if ($sources['@attributes']['checktype'] == 'fns_inn') {
@@ -35,7 +38,7 @@ class InfoSphere implements ApiInterface
             }
         }
 
-        return $inn;
+        return (int)$inn;
     }
 
     private static function curl($params)

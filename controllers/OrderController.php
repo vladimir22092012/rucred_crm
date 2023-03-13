@@ -295,6 +295,14 @@ class OrderController extends Controller
                     echo json_encode($this->actionSendYaDisk());
                     die();
 
+                case 'check_inn_infosphere':
+                    echo $this->action_check_inn_infosphere();
+                    exit;
+
+                case 'change_inn':
+                    $this->action_change_inn();
+                    exit;
+
             endswitch;
 
         } else {
@@ -5501,4 +5509,40 @@ class OrderController extends Controller
         return array('success' => 1);
     }
 
+    private function action_check_inn_infosphere()
+    {
+        $userId = $this->request->post('userId');
+
+        $user = UsersORM::find($userId);
+
+        $passportSerial = explode(' ', $user->passport_serial);
+        $user->passport_serial = $passportSerial[0];
+        $user->passport_number = $passportSerial[1];
+
+        $inn = InfoSphere::sendRequest($user);
+
+        if (is_int($inn) && $inn == $user->inn)
+            echo json_encode(['message' => 'ИНН введен корректно', 'need_change' => 1, 'inn' => $inn]);
+        elseif (is_int($inn) && $inn != $user->inn)
+            echo json_encode(['message' => 'Корректный ИНН '.$inn, 'need_change' => 1, 'inn' => $inn]);
+        else
+            echo json_encode(['message' => 'ИНН не найден', 'need_change' => 0]);
+
+        exit;
+    }
+
+    private function action_change_inn()
+    {
+        $userId = $this->request->post('userId');
+        $inn    = $this->request->post('inn');
+
+        $update =
+            [
+                'inn' => $inn,
+                'inn_confirmed' => 1
+            ];
+
+        UsersORM::where('id', $userId)->update($update);
+        exit;
+    }
 }

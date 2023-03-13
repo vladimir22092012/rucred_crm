@@ -1222,15 +1222,15 @@
                 });
             });
 
-            $('.showEditPdnForm').click(function() {
+            $('.showEditPdnForm').click(function () {
                 $(this).hide();
                 $('.js-edit-pdn-form').show();
             });
-            $('.js-close-edit-pdn-form').click(function() {
+            $('.js-close-edit-pdn-form').click(function () {
                 $('.showEditPdnForm').show();
                 $('.js-edit-pdn-form').hide();
             });
-            $('.js-save-edit-pdn-form').click(function() {
+            $('.js-save-edit-pdn-form').click(function () {
                 let userId = $('#formUserIdValue').val(),
                     orderId = $('#formOrderIdValue').val(),
                     pdn = $('#formPdnValue').val(),
@@ -1266,7 +1266,7 @@
                 $('.js-edit-pdn-form').hide();
             });
 
-            $('.startUpload').click(function() {
+            $('.startUpload').click(function () {
                 console.log($(this));
                 let button = $(this),
                     type = button.attr('data-type'),
@@ -1296,6 +1296,58 @@
                             Swal.fire({
                                 title: 'Успешно!',
                                 confirmButtonText: 'ОК'
+                            });
+                        }
+                    }
+                });
+            });
+
+            $('.check_inn_infosphere').on('click', function () {
+                let userId = $(this).attr('data-user');
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    beforeSend: function () {
+                        swal.fire({
+                            html: '<h5>Проверяем ИНН...</h5>',
+                            showConfirmButton: false,
+                            onRender: function () {
+                                // there will only ever be one sweet alert open.
+                                $('.swal2-content').prepend(sweet_loader);
+                            }
+                        });
+                    },
+                    data: {
+                        action: 'check_inn_infosphere',
+                        userId: userId
+                    },
+                    success: function (resp) {
+                        if (resp['need_change'] == 1) {
+                            Swal.fire({
+                                title: resp['message'],
+                                confirmButtonText: 'Заменить',
+                                allowOutsideClick: false
+                            }).then((result) => {
+                                if (result.value) {
+                                    $.ajax({
+                                        method: 'POST',
+                                        data: {
+                                            action: 'change_inn',
+                                            userId: userId,
+                                            inn: resp['inn']
+                                        }
+                                    });
+
+                                    location.reload();
+                                }
+                            });
+                        }
+                        if (resp['need_change'] == 0) {
+                            Swal.fire({
+                                title: resp['message'],
+                                confirmButtonText: 'ОК',
+                                allowOutsideClick: false
                             });
                         }
                     }
@@ -1804,12 +1856,14 @@
                                             </div>
                                             {if $showUploadButtons && in_array($manager->role, ['admin'])}
                                                 <button
-                                                    data-type="onec"
-                                                    data-order-id="{$order->order_id}"
-                                                    type="button"
-                                                    class="btn btn-xs btn-outline-success startUpload"
-                                                    >Запустить передачу в 1С</button>
-                                                <br><br>
+                                                        data-type="onec"
+                                                        data-order-id="{$order->order_id}"
+                                                        type="button"
+                                                        class="btn btn-xs btn-outline-success startUpload"
+                                                >Запустить передачу в 1С
+                                                </button>
+                                                <br>
+                                                <br>
                                             {/if}
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" class="custom-control-input"
@@ -1821,11 +1875,12 @@
                                             </div>
                                             {if $showUploadButtons && in_array($manager->role, ['admin'])}
                                                 <button
-                                                    data-type="disk"
-                                                    data-order-id="{$order->order_id}"
-                                                    type="button"
-                                                    class="btn btn-xs btn-outline-success startUpload"
-                                                >Запустить выгрузку на Я.Диск</button>
+                                                        data-type="disk"
+                                                        data-order-id="{$order->order_id}"
+                                                        type="button"
+                                                        class="btn btn-xs btn-outline-success startUpload"
+                                                >Запустить выгрузку на Я.Диск
+                                                </button>
                                             {/if}
                                         {/if}
                                     </div>
@@ -2988,7 +3043,8 @@
                                                         <div class="form-group">
                                                             <label>Полная стоимость микрозайма, %
                                                                 годовых:</label>
-                                                            <span id="psk">{$payment_schedule->psk|number_format: 3 : ',' : ' '}%</span>
+                                                            <span id="psk">{$payment_schedule->psk|number_format: 3 : ',' : ' '}
+                                                                %</span>
                                                         </div>
                                                         {if $payment_schedule->type == 'restruct'}
                                                             <div class="form-group">
@@ -3476,7 +3532,7 @@
                                             </div>
                                         {/if}
                                         <form class="mb-4 border">
-                                            <h6 class="card-header text-white">
+                                            <h6 class="card-header text-white pb-3">
                                                 <span>ИНН</span>
                                                 {*
                                                     <span class="float-right">
@@ -3484,6 +3540,10 @@
                                                                             class=" fas fa-edit"></i></a>
                                                 </span>
                                                 *}
+                                                {if $order->status == 0 && $user->inn_confirmed == 0}
+                                                    <span data-user="{$order->user_id}"
+                                                          class="float-right btn btn-xs btn-warning check_inn_infosphere">Проверить ИНН</span>
+                                                {/if}
                                             </h6>
                                             <div class="row view-block p-2 inn-front">
                                                 <div class="col-md-12">
@@ -3665,8 +3725,11 @@
                                                 <div class="row view-block p-2 snils-front">
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-0 row">
-                                                            <label class="control-label col-md-8 col-7 snils-number">{$order->pdn}% {if $client->pdn_time != null} <span>({date('d.m.Y', $client->pdn_time)})</span> {/if}
-                                                                </label>
+                                                            <label class="control-label col-md-8 col-7 snils-number">{$order->pdn}
+                                                                % {if $client->pdn_time != null}
+                                                                    <span>({date('d.m.Y', $client->pdn_time)})</span>
+                                                                {/if}
+                                                            </label>
                                                             {if $order->status == 0}
                                                                 <span>
                                                                     <a href="javascript:void(0);"
@@ -3675,20 +3738,32 @@
                                                                        data-user="{$order->user_id}">
                                                                         Редактировать
                                                                     </a>
-                                                                    <div class="js-edit-pdn-form" style="padding:15px;display: none;">
-                                                                        <input type="hidden" value="{$order->user_id}" id="formUserIdValue" style="margin-bottom: 10px;">
-                                                                        <input type="hidden" value="{$order->order_id}" id="formOrderIdValue">
+                                                                    <div class="js-edit-pdn-form"
+                                                                         style="padding:15px;display: none;">
+                                                                        <input type="hidden" value="{$order->user_id}"
+                                                                               id="formUserIdValue"
+                                                                               style="margin-bottom: 10px;">
+                                                                        <input type="hidden" value="{$order->order_id}"
+                                                                               id="formOrderIdValue">
                                                                         <label for="formPdnValue">ПДН</label>
-                                                                        <input class="form-control mask_number_pdn" type="text" value="{$order->pdn}" id="formPdnValue" style="margin-bottom: 10px;">
+                                                                        <input class="form-control mask_number_pdn"
+                                                                               type="text" value="{$order->pdn}"
+                                                                               id="formPdnValue"
+                                                                               style="margin-bottom: 10px;">
                                                                         <label for="formPdnComment">Причина редактирования</label>
-                                                                        <textarea id="formPdnComment" class="form-control" style="margin-bottom:10px;" rows="3"></textarea>
+                                                                        <textarea id="formPdnComment"
+                                                                                  class="form-control"
+                                                                                  style="margin-bottom:10px;"
+                                                                                  rows="3"></textarea>
                                                                         <span>
-                                                                            <a href="javascript:void(0);" class="btn btn-outline-success btn-xs js-save-edit-pdn-form">
+                                                                            <a href="javascript:void(0);"
+                                                                               class="btn btn-outline-success btn-xs js-save-edit-pdn-form">
                                                                                 Отправить
                                                                             </a>
                                                                         </span>
                                                                         <span>
-                                                                            <a href="javascript:void(0);" class="btn btn-outline-primary btn-xs js-close-edit-pdn-form">
+                                                                            <a href="javascript:void(0);"
+                                                                               class="btn btn-outline-primary btn-xs js-close-edit-pdn-form">
                                                                                Отмена
                                                                             </a>
                                                                         </span>
