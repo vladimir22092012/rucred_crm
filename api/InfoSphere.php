@@ -7,8 +7,8 @@ class InfoSphere implements ApiInterface
     {
         $params =
             [
-                'UserID' => 'barvil',
-                'Password' => 'KsetM+H5',
+                'UserID' => 'rucred_api',
+                'Password' => 'dHoL*0TI',
                 'sources' => 'fns',
                 'PersonReq' => [
                     'first' => $user->firstname,
