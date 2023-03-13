@@ -35,9 +35,7 @@ class InfoSphere implements ApiInterface
             }
         }
 
-        UsersORM::where('id', $user->id)->update(['inn' => $inn]);
-
-        return 1;
+        return $inn;
     }
 
     private static function curl($params)
