@@ -2499,23 +2499,19 @@
                     </div>
                 </div>
                 <div class="row pt-2 show_edit_block_addresses" style="padding: 20px; display: none;">
-                    <span id="addressesForm" style="display: flex; flex-wrap: wrap;">
-                        <div class="col-md-6">
-                            <div class="form-group mb-1">
-                                <label class="control-label">Адрес регистрации:</label>
-                                <input type="hidden" class="reg_address_json" name="reg_address_json" value="">
-                                <input type="text" name="reg_address" value="{$client->regaddress->adressfull}" class="findRegAddress form-control" required="true"/>
-                            </div>
+                    <div class="col-md-12" id="addressesForm">
+                        <div class="form-group mb-1">
+                            <label class="control-label">Адрес регистрации:</label>
+                            <input type="hidden" class="reg_address_json" name="reg_address_json" value="">
+                            <input type="text" name="reg_address" value="{$client->regaddress->adressfull}" class="findRegAddress form-control" required="true"/>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-1">
-                                <label class="control-label">Адрес проживания:</label>
-                                <input type="hidden" class="fakt_address_json" name="fakt_address_json" value="">
-                                <input type="text" name="fakt_address" value="{$client->faktaddress->adressfull}" class="findFaktAddress form-control" required="true"/>
-                            </div>
+                        <div class="form-group mb-1">
+                            <label class="control-label">Адрес проживания:</label>
+                            <input type="hidden" class="fakt_address_json" name="fakt_address_json" value="">
+                            <input type="text" name="fakt_address" value="{$client->faktaddress->adressfull}" class="findFaktAddress form-control" required="true"/>
                         </div>
-                    </span>
-                    <div class="col-md-12">
+                    </div>
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label for="editaddressesCommentValue">Комментарий</label>
                             <textarea id="editaddressesCommentValue" class="form-control"></textarea>

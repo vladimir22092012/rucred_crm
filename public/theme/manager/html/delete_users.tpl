@@ -8,16 +8,40 @@
 <script>
     $(function () {
 
-        $(document).on('click', '.delete_user', function() {
-            let email = $(this).attr('data-email'),
-                id = $(this).attr('data-id'),
-                data = {
+        $(document).on('change', '.userId', function() {
+            let table = $('#clients'),
+                count = 0;
+            table.find('input[type="checkbox"]').each((key, item) => {
+                if ($(item).prop('checked') == true) {
+                    count++;
+                }
+            });
+            if (count > 0) {
+                $('.delete_users').prop('disabled', false);
+            } else {
+                $('.delete_users').prop('disabled', true);
+            }
+            $('.count_selected').html(count);
+        });
+
+        $(document).on('click', '.delete_users', function() {
+            let table = $('#clients'),
+                ids = [];
+
+            table.find('input[type="checkbox"]').each((key, item) => {
+                console.log($(item).prop('checked'));
+                if ($(item).prop('checked') == true) {
+                    ids.push($(item).val());
+                }
+            });
+
+            let data = {
                     action: 'delete_user',
-                    userId: id
+                    userIds: ids
                 }
 
             Swal.fire({
-                title: 'Вы действительно хотите удалить пользователя ' + email + '?',
+                title: 'Вы действительно хотите удалить пользователей?',
                 showCloseButton: true,
                 showCancelButton: true,
                 confirmButtonText: "Удалить",
@@ -37,7 +61,11 @@
                                     confirmButtonText: 'ОК'
                                 });
                             } else {
-                                $('#user_'+id).remove();
+                                ids.forEach(function(id) {
+                                    $('#user_'+id).remove();
+                                });
+                                $('.delete_users').prop('disabled', true);
+                                $('.count_selected').html('0');
                             }
                         }
                     })
@@ -75,6 +103,7 @@
                             resp.users.forEach((client) => {
                                 let html = `
                                     <tr id='user_`+client.id+`'>
+                                        <td><input class='userId' type="checkbox" value="`+client.id+`"></td>
                                         <td>`+client.personal_number+`</td>
                                         <td>`+client.firstname+` `+client.lastname+` `+client.patronymic+`</td>
                                         <td>`+client.phone_mobile+` / `+client.email+`</td>
@@ -89,13 +118,6 @@
                                         <td>`+client.companyName+`</td>
                                         <td>заявки</td>
                                         <td>сделки</td>
-                                        <td>
-                                            <button class='btn btn-xs btn-danger delete_user'
-                                                    data-email='`+client.email+`'
-                                                    data-id='`+client.id+`'>
-                                                Удалить
-                                            </button>
-                                        </td>
                                     </tr>
                                 `;
                                 table.find('tbody').append(html);
@@ -220,6 +242,7 @@
                             <table class="jsgrid-table table table-striped table-hover" style="display: none" id="clients">
                                 <thead>
                                     <tr>
+                                        <th></th>
                                         <th>Номер клиента</th>
                                         <th>ФИО</th>
                                         <th>Телефон / Email</th>
@@ -229,11 +252,13 @@
                                         <th>Работодатель</th>
                                         <th>Наличие сформированных заявок</th>
                                         <th>Наличие сделок</th>
-                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
                             </table>
+                        </div>
+                        <div class="col-lg-12" style="margin-left: -35px;position: fixed;bottom: 0;z-index: 10;padding: 20px;background: #fff;">
+                            <button class="btn btn-danger delete_users" disabled>Удалить выбранных клиентов (<span class="count_selected">0</span>)</button>
                         </div>
                     </div>
                 </div>

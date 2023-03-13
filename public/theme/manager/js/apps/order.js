@@ -11,6 +11,10 @@ function OrderApp() {
             app.upload(this);
         });
 
+        $(document).on('change', '.upload_file', function () {
+            app.upload(this);
+        });
+
     };
 
     app.upload = function (input) {
@@ -21,11 +25,15 @@ function OrderApp() {
 
         var _type = $this.data('type');
 
+        if (_type === undefined || _type === '') {
+          _type = 'document';
+        }
+
         var form_data = new FormData();
 
         form_data.append('file', input.files[0]);
         form_data.append('user_id', $this.data('user'));
-        form_data.append('type', 'document');
+        form_data.append('type', _type);
         form_data.append('action', 'add');
         form_data.append('template', $this.data('doc-template'));
         form_data.append('notreplace', '1');

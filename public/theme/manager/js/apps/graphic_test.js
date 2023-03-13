@@ -477,6 +477,7 @@ $(function () {
                         speed: 300,
                         slidesToShow: 4,
                         slidesToScroll: 4,
+                        dots: true,
                         responsive: [
                             {
                                 breakpoint: 1024,

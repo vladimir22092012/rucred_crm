@@ -19,10 +19,10 @@ class DeleteUsersController extends Controller
     }
 
     private function action_delete_user() {
-        $userId = $this->request->post('userId');
-        if ($userId) {
-            $user = UsersORM::find($userId);
-            if ($user) {
+        $userIds = $this->request->post('userIds');
+        if (count($userIds) > 0) {
+            $users = UsersORM::query()->whereIn('id', $userIds);
+            foreach ($users as $user) {
                 $orders = $this->orders->get_orders(['user_id' => $user->id]);
                 $this->orders->delete_orders_by_user_id($user->id);
                 $this->contracts->delete_contracts_by_user_id($user->id);

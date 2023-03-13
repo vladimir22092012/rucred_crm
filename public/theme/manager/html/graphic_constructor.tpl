@@ -175,7 +175,9 @@
                                     <div class="price" id="pricelist">
 
                                     </div>
-
+                                    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                                        <span class="slider__label sr-only">
+                                    </div>
                                     <hr style="width: 100%; size: 5px">
                                     <div class="loantype_settings" style="width: 100%; display: none">
                                         <div>

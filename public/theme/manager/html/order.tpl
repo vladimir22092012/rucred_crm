@@ -4628,27 +4628,16 @@
                         <input type="hidden" name="user_id" value="{$order->user_id}">
                         <div class="form-group" style="display:flex; flex-direction: column">
                             <div class="form-group">
-                                <label>ИНН держателя счета:</label>
-                                <input type="text" name="inn_holder"
-                                       class="form-control mask_number"
-                                       value="{$order->requisite->inn_holder}"/>
-                            </div>
-                            <div class="form-group">
                                 <label>ФИО держателя счета:</label>
                                 <input type="text" name="hold"
                                        class="form-control fio-hold-edit fioValidate"
                                        value="{$order->requisite->holder}"/>
                             </div>
                             <div class="form-group">
-                                <label>Номер счета:</label>
-                                <input type="text" name="acc"
-                                       class="form-control acc-num-edit mask_number"
-                                       value="{$order->requisite->number}"/>
-                            </div>
-                            <div class="form-group">
-                                <label>Наименование банка:</label>
-                                <input type="text" name="bank"
-                                       class="form-control bank-name-edit" value="{$order->requisite->name}"/>
+                                <label>ИНН держателя счета:</label>
+                                <input type="text" name="inn_holder"
+                                       class="form-control mask_number"
+                                       value="{$order->requisite->inn_holder}"/>
                             </div>
                             <div class="form-group">
                                 <label>БИК:</label>
@@ -4656,10 +4645,21 @@
                                        class="form-control bik-edit mask_number" value="{$order->requisite->bik}"/>
                             </div>
                             <div class="form-group">
+                                <label>Наименование банка:</label>
+                                <input type="text" name="bank"
+                                       class="form-control bank-name-edit" value="{$order->requisite->name}"/>
+                            </div>
+                            <div class="form-group">
                                 <label>Кор. счет:</label>
                                 <input type="text" name="cor"
                                        class="form-control cor-acc mask_number"
                                        value="{$order->requisite->correspondent_acc}"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Номер счета:</label>
+                                <input type="text" name="acc"
+                                       class="form-control acc-num-edit mask_number"
+                                       value="{$order->requisite->number}"/>
                             </div>
                             <div class="form-group">
                                 <label>Причина редактирования</label>
@@ -4714,13 +4714,6 @@
                                        value="{$order->probably_start_date|date}">
                             </div>
                             <div class="form-group">
-                                <label>Состоит в профсоюзе:</label>
-                                <select name="profunion" class="form-control">
-                                    <option value="0" {if $order->profunion == 0}selected{/if}>Нет</option>
-                                    <option value="1" {if $order->profunion == 1}selected{/if}>Да</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
                                 <label>Группа:</label>
                                 <select class="form-control" id="group_select"
                                         name="group">
@@ -4754,6 +4747,13 @@
                                         <option value="{$branch->id}"
                                                 {if $order->branche_id != null && $order->branche_id == $branch->id}selected{/if}>{$branch->name}</option>
                                     {/foreach}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Состоит в профсоюзе:</label>
+                                <select name="profunion" class="form-control">
+                                    <option value="0" {if $order->profunion == 0}selected{/if}>Нет</option>
+                                    <option value="1" {if $order->profunion == 1}selected{/if}>Да</option>
                                 </select>
                             </div>
                             <div class="form-group">

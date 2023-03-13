@@ -156,6 +156,23 @@ class GraphicConstructorController extends Controller
         return $date;
     }
 
+    private function check_pay_date_array($date)
+    {
+        $weekend = 0;
+        for ($i = 0; $i <= 15; $i++) {
+            $check_date = $this->WeekendCalendar->check_date($date->format('Y-m-d'));
+
+            if ($check_date == null) {
+                break;
+            } else {
+                $date->sub(new DateInterval('P1D'));
+                $weekend++;
+            }
+        }
+
+        return [$date, $weekend];
+    }
+
     private function action_sum_to_pay()
     {
         $loan_id = $this->request->post('loan_id');
@@ -189,6 +206,8 @@ class GraphicConstructorController extends Controller
         if ($start_date >= $paydate || date_diff($paydate, $start_date)->days <= $loan->free_period)
             $paydate->add(new DateInterval('P1M'));
 
+        $temp_annoouitet_summ = 0;
+
         $percent_per_month = (($percent / 100) * 365) / 12;
         $annoouitet_pay = $amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
         $annoouitet_pay = round($annoouitet_pay, '2');
@@ -203,7 +222,12 @@ class GraphicConstructorController extends Controller
 
         $count_days_this_month = date('t', strtotime($start_date->format('Y-m-d')));
 
-        $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
+
+        list($paydate, $weekend) = $this->check_pay_date_array(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
+
+        if ($weekend > 0) {
+            $temp_annoouitet_summ = ($weekend + 1) * $rest_sum * ($percent / 100);
+        }
 
         if (date_diff($paydate, $start_date)->days <= $loan->free_period) {
             $plus_loan_percents = round(($percent / 100) * $amount * date_diff($paydate, $start_date)->days, 2);
@@ -229,10 +253,9 @@ class GraphicConstructorController extends Controller
             $loan_percents_pay = $sum_pay;
             $body_pay = 0.00;
         }
-
         $payment_schedule[$paydate->format('d.m.Y')] =
             [
-                'pay_sum' => $sum_pay,
+                'pay_sum' => $sum_pay + $temp_annoouitet_summ,
                 'loan_percents_pay' => $loan_percents_pay,
                 'loan_body_pay' => $body_pay,
                 'comission_pay' => 0.00,
@@ -248,7 +271,7 @@ class GraphicConstructorController extends Controller
 
             for ($i = 1; $i <= $period; $i++) {
                 $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
-                $date = $this->check_pay_date($paydate);
+                list($date, $weekend) = $this->check_pay_date_array($paydate);
 
                 if ($i == $period && $loan->id != 1) {
                     $loan_body_pay = $rest_sum;
