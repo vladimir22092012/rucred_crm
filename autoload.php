@@ -10,6 +10,8 @@ function core_autoload($classname)
         require __DIR__ .'/controllers/'.$classname.'.php';
     if (file_exists(__DIR__ .'/scorings/'.$classname.'.php'))
         require __DIR__ .'/scorings/'.$classname.'.php';
+    if (file_exists(__DIR__ .'/api/'.$classname.'.php'))
+        require __DIR__ .'/api/'.$classname.'.php';
 }
 spl_autoload_register('core_autoload');
 
