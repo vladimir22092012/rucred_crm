@@ -5519,7 +5519,8 @@ class OrderController extends Controller
         $user->passport_serial = $passportSerial[0];
         $user->passport_number = $passportSerial[1];
 
-        $inn = InfoSphere::sendRequest($user);
+        $inn = InfospheresFactory::get('inn');
+        $inn = $inn->sendRequest($user);
 
         if (is_int($inn) && $inn == $user->inn)
             echo json_encode(['message' => 'ИНН введен корректно', 'need_change' => 1, 'inn' => $inn]);
