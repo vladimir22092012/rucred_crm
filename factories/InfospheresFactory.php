@@ -8,6 +8,10 @@ class InfospheresFactory
         {
             case 'inn':
                 return new Inn();
+            case 'fms':
+                return new Fms();
+            case 'fmsdb':
+                return new FmsDb();
             default:
                 return new Exception('This Class Is Not Exist');
         }
