@@ -19,6 +19,19 @@ class Mvd extends InfoSphere
 
         $request = self::curl($params);
 
-        return $request;
+        $mvd = 'not found';
+
+        if (isset($request['Source']) && $request['Source']['ResultsCount'] > 0) {
+            foreach ($request['Source']['Record'] as $source) {
+                foreach ($source as $field) {
+                    if ($field['FieldName'] == 'ResultCode') {
+                        if ($field['FieldValue'] == 'FOUND')
+                            $mvd = 'found';
+                    }
+                }
+            }
+        }
+
+        return $mvd;
     }
 }
