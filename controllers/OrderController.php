@@ -3694,7 +3694,7 @@ class OrderController extends Controller
 
         ProjectContractNumberORM::updateOrCreate(['orderId' => $order->id, 'userId' => $userId], ['uid' => $new_number]);
 
-        ContractsORM::where('id', $order->contract_id)->update(['number' => $new_number, 'deal_date' => date('Y-m-d H:i:s')]);
+        ContractsORM::where('id', $order->contract_id)->update(['number' => $new_number]);
 
         $groupLoanType = GroupLoanTypesORM::where('group_id', $groupId)->where('loantype_id', $loanTypeId)->first();
 
@@ -3749,6 +3749,7 @@ class OrderController extends Controller
         if ($needSms == 1) {
             $this->action_reform_schedule($orderId);
             echo json_encode(['success' => 'needSms']);
+            ContractsORM::where('id', $order->contract_id)->update(['deal_date' => date('Y-m-d H:i:s')]);
             exit;
         } else {
             $this->action_reform_schedule($orderId, 0);
