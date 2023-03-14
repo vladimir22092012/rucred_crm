@@ -59,6 +59,11 @@ class AuditCron extends Core
         {
             if ($scoring = $this->scorings->get_repeat_scoring())
             {
+                $order = OrdersORM::find($scoring->order_id);
+
+                if($order->status == 0)
+                    continue;
+
                 $this->scorings->update_scoring($scoring->id, array(
                     'status' => 'process',
                     'start_date' => date('Y-m-d H:i:s')
@@ -76,6 +81,11 @@ class AuditCron extends Core
         {
             if ($scoring = $this->scorings->get_new_scoring())
             {
+                $order = OrdersORM::find($scoring->order_id);
+
+                if($order->status == 0)
+                    continue;
+
                 $this->scorings->update_scoring($scoring->id, array(
                     'status' => 'process',
                     'start_date' => date('Y-m-d H:i:s')
