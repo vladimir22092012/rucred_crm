@@ -15,8 +15,24 @@ class FmsDb extends InfoSphere
                 ]
             ];
 
-        $response = self::curl($params);
+        $request = self::curl($params);
 
-        return $response;
+        $fms = 'not found';
+
+        if (isset($request['Source']) && $request['Source']['ResultsCount'] > 0) {
+            foreach ($request['Source']['Record'] as $source) {
+                foreach ($source as $field) {
+                    if ($field['FieldName'] == 'ResultCode' && $field['FieldValue'] == 'VALID') {
+                        if ($field['FieldValue'] == 'VALID')
+                            $fms = 'valid';
+                        else
+                            $fms = 'invalid';
+
+                    }
+                }
+            }
+        }
+
+        return $fms;
     }
 }
