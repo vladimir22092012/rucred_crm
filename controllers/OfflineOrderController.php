@@ -3251,6 +3251,31 @@ class OfflineOrderController extends Controller
             'created' => date('Y-m-d H:i:s'),
         ));
 
+        $order = $this->orders->get_order($order_id);
+
+        $asp_log =
+            [
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'created' => date('Y-m-d H:i:s'),
+                'type' => 'employ_sms',
+                'recepient' => $order->phone_mobile,
+                'manager_id' => $this->manager->id
+            ];
+
+        $asp_id = $this->AspCodes->add_code($asp_log);
+
+        $this->documents->create_document(array(
+            'user_id' => $order->user_id,
+            'order_id' => $order->order_id,
+            'type' => 'IDENTIFICATION',
+            'params' => $order,
+            'numeration' => '03.07',
+            'asp_id' => $asp_id,
+            'hash' => sha1(rand(1, 99999999999)),
+            'stage_type' => 'reg-docs'
+        ));
+
         exit;
     }
 
@@ -3369,6 +3394,31 @@ class OfflineOrderController extends Controller
             'order_id' => $order_id,
             'user_id' => $order->user_id,
             'created' => date('Y-m-d H:i:s'),
+        ));
+
+        $order = $this->orders->get_order($order_id);
+
+        $asp_log =
+            [
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'created' => date('Y-m-d H:i:s'),
+                'type' => 'employ_sms',
+                'recepient' => $order->phone_mobile,
+                'manager_id' => $this->manager->id
+            ];
+
+        $asp_id = $this->AspCodes->add_code($asp_log);
+
+        $this->documents->create_document(array(
+            'user_id' => $order->user_id,
+            'order_id' => $order->order_id,
+            'type' => 'IDENTIFICATION',
+            'params' => $order,
+            'numeration' => '03.07',
+            'asp_id' => $asp_id,
+            'hash' => sha1(rand(1, 99999999999)),
+            'stage_type' => 'reg-docs'
         ));
 
         exit;
