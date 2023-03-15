@@ -20,6 +20,8 @@ class InfospheresFactory
                 return new Fssp();
             case 'cbrf':
                 return new CbRf();
+            case 'terrorists':
+                return new Terrorists();
             default:
                 return new Exception('This Class Is Not Exist');
         }
