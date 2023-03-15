@@ -19,6 +19,12 @@ class Terrorists extends InfoSphere
 
         $request = self::curl($params);
 
-        return $request;
+        if (!isset($request['Source']))
+            return 'error';
+
+        if ($request['Source']['ResultsCount'] == 1)
+            return 'found';
+        else
+            return 'not found';
     }
 }
