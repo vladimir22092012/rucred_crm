@@ -5825,11 +5825,9 @@ class OfflineOrderController extends Controller
         $order = OrdersORM::find($orderId);
         $user = UsersORM::find($userId);
 
-        if (empty($contract_number)) {
-            $new_number = $group->number . $company->number . ' ' . $loanType->number . ' ' . $user->personal_number . ' ' . $count_contracts;
-        } else {
-            $new_number = $contract_number;
-        }
+
+        $new_number = $group->number . $company->number . ' ' . $loanType->number . ' ' . $user->personal_number . ' ' . $count_contracts;
+
 
         ProjectContractNumberORM::updateOrCreate(['orderId' => $order->id, 'userId' => $userId], ['uid' => $new_number]);
 

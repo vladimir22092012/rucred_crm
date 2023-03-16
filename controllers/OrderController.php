@@ -722,7 +722,7 @@ class OrderController extends Controller
         $loantype = $this->Loantypes->get_loantype($order->loan_type);
         $this->design->assign('loantype', $loantype);
 
-        $loantypes = $this->GroupLoanTypes->get_loantypes_on($order->group_id);
+        $loantypes = $this->GroupLoanTypes->get_loantypes_on($order->group_id, 3);
         $this->design->assign('loantypes', $loantypes);
 
         $order = $this->orders->get_order($order_id);
@@ -3705,11 +3705,9 @@ class OrderController extends Controller
         $order = OrdersORM::find($orderId);
         $user = UsersORM::find($userId);
 
-        if (empty($contract_number)) {
-            $new_number = $group->number . $company->number . ' ' . $loanType->number . ' ' . $user->personal_number . ' ' . $count_contracts;
-        } else {
-            $new_number = $contract_number;
-        }
+
+        $new_number = $group->number . $company->number . ' ' . $loanType->number . ' ' . $user->personal_number . ' ' . $count_contracts;
+
 
         $issetContract = ContractsORM::query()->where('number', '=', $new_number)->first();
         if ($issetContract && $issetContract->id != $order->contract_id) {
@@ -5246,7 +5244,6 @@ class OrderController extends Controller
             $asp_id = $this->AspCodes->add_code($asp_log);
 
             DocumentsORM::where('order_id', $orderId)
-                ->whereNotIn('type', ['INDIVIDUALNIE_USLOVIA_ONL', 'GRAFIK_OBSL_MKR'])
                 ->update(['asp_id' => $asp_id]);
 
             echo json_encode(['success' => 1]);
