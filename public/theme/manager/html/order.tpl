@@ -20,12 +20,15 @@
 
             moment.locale('ru');
 
-            $('.daterange').daterangepicker({
-                singleDatePicker: true,
-                showDropdowns: true,
-                locale: {
-                    format: 'DD.MM.YYYY'
-                },
+            $('.daterange').each(function() {
+                $(this).daterangepicker({
+                    singleDatePicker: true,
+                    showDropdowns: true,
+                    locale: {
+                        format: 'DD.MM.YYYY'
+                    },
+                    startDate: $(this).val(),
+                });
             });
 
             $('input, textarea').on('input', function () {

@@ -70,12 +70,15 @@
 
             moment.locale('ru');
 
-            $('.daterange').daterangepicker({
-                singleDatePicker: true,
-                showDropdowns: true,
-                locale: {
-                    format: 'DD.MM.YYYY'
-                }
+            $('.daterange').each(function() {
+                $(this).daterangepicker({
+                    singleDatePicker: true,
+                    showDropdowns: true,
+                    locale: {
+                        format: 'DD.MM.YYYY'
+                    },
+                    startDate: $(this).val(),
+                });
             });
 
             $('input[name="subdivision_code"]').suggestions({
@@ -5320,7 +5323,7 @@
                             <div class="form-group">
                                 <label>Паспорт: Дата выдачи</label>
                                 <input name="passport_date" value="{$order->passport_date|date}"
-                                       class="form-control mask_number"/>
+                                       class="form-control daterange"/>
                             </div>
                             <div class="form-group">
                                 <label>Паспорт: Код подразделения</label>
