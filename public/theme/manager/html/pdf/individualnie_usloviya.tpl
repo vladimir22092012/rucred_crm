@@ -54,7 +54,10 @@
     <tr>
         <td style="20%" align="left">город Москва</td>
         <td style="70%"></td>
-        <td style="10%" align="right">{if isset($code_asp->code)}{$code_asp->created|date}{else}ХХ.ХХ.ХХХХ{/if} года</td>
+        <td style="10%" align="right">
+            {if isset($code_asp->code)}{$code_asp->created|date}
+            {elseif !empty($contract->deal_date)}{$contract->deal_date|date}
+            {else}ХХ.ХХ.ХХХХ{/if} года</td>
     </tr>
 </table>
 <div align="justify"><br>Общество с ограниченной ответственностью Микрокредитная компания «Русское кредитное общество»,
