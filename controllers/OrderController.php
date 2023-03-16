@@ -3705,11 +3705,9 @@ class OrderController extends Controller
         $order = OrdersORM::find($orderId);
         $user = UsersORM::find($userId);
 
-        if (empty($contract_number)) {
-            $new_number = $group->number . $company->number . ' ' . $loanType->number . ' ' . $user->personal_number . ' ' . $count_contracts;
-        } else {
-            $new_number = $contract_number;
-        }
+
+        $new_number = $group->number . $company->number . ' ' . $loanType->number . ' ' . $user->personal_number . ' ' . $count_contracts;
+
 
         $issetContract = ContractsORM::query()->where('number', '=', $new_number)->first();
         if ($issetContract && $issetContract->id != $order->contract_id) {
