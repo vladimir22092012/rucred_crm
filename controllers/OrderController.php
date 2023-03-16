@@ -5244,7 +5244,6 @@ class OrderController extends Controller
             $asp_id = $this->AspCodes->add_code($asp_log);
 
             DocumentsORM::where('order_id', $orderId)
-                ->whereNotIn('type', ['INDIVIDUALNIE_USLOVIA_ONL', 'GRAFIK_OBSL_MKR'])
                 ->update(['asp_id' => $asp_id]);
 
             echo json_encode(['success' => 1]);
