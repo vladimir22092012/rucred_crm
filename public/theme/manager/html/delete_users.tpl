@@ -101,6 +101,19 @@
                     }else{
                         if (resp.users.length > 0) {
                             resp.users.forEach((client) => {
+                                let registries = '';
+                                if (client.registries.client == true) {
+                                    registries += '<p>Реестр клиентов</p>';
+                                }
+                                if (client.registries.deals == true) {
+                                    registries += '<p>Реестр сделок</p>';
+                                }
+                                if (client.registries.missing == true) {
+                                    registries += '<p>Взаимодействия с клиентами</p>';
+                                }
+                                if (client.registries.orders == true) {
+                                    registries += '<p>Реестр заявок</p>';
+                                }
                                 let html = `
                                     <tr id='user_`+client.id+`'>
                                         <td><input class='userId' type="checkbox" value="`+client.id+`"></td>
@@ -114,10 +127,10 @@
                                             `+client.subdivision_code+`
                                         </td>
                                         <td>`+client.inn+` / `+client.snils+`</td>
-                                        <td>где замечен</td>
+                                        <td>`+registries+`</td>
                                         <td>`+client.companyName+`</td>
-                                        <td>заявки</td>
-                                        <td>сделки</td>
+                                        <td>`+client.issetOrders+`</td>
+                                        <td>`+client.issetDeals+`</td>
                                     </tr>
                                 `;
                                 table.find('tbody').append(html);

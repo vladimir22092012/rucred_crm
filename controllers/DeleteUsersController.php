@@ -21,23 +21,13 @@ class DeleteUsersController extends Controller
     private function action_delete_user() {
         $userIds = $this->request->post('userIds');
         if (count($userIds) > 0) {
-            $users = UsersORM::query()->whereIn('id', $userIds);
-            foreach ($users as $user) {
-                $orders = $this->orders->get_orders(['user_id' => $user->id]);
-                $this->orders->delete_orders_by_user_id($user->id);
-                $this->contracts->delete_contracts_by_user_id($user->id);
-                $this->users->delete_user($user->id);
-                $this->contacts->delete($user->id);
-                foreach ($orders as $order){
-                    $tickets = $this->tickets->get_by_order_id($order->order_id);
+            $ordersIds = OrdersORM::whereIn('user_id', $userIds)->pluck('id');
+            $ticketsIds = TicketsORM::query()->whereIn('order_id', $ordersIds)->pluck('id');
 
-                    foreach ($tickets as $ticket){
-                        $this->NotificationsCron->delete_by_ticket_id($ticket->id);
-                    }
-
-                    $this->tickets->delete_by_order($order->order_id);
-                }
-            }
+            NotificationCronORM::query()->whereIn('ticket_id', $ticketsIds)->delete();
+            TicketsORM::query()->whereIn('id', $ticketsIds)->delete();
+            ContractsORM::query()->whereIn('user_id', $userIds)->delete();
+            UsersORM::query()->whereIn('id', $userIds)->delete();
         }
         echo json_encode(['success' => 1]);
         exit;
