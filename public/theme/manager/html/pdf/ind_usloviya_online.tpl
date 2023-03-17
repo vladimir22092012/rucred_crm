@@ -1282,8 +1282,7 @@
         <td style="width: 45%"><u>платёжные реквизиты:</u>
         </td>
         <td style="width: 10%"></td>
-        <td style="width: 45%"><u>платёжные реквизиты:</u>
-        </td>
+        <td style="width: 45%"></td>
     </tr>
     <br>
     <tr>
@@ -1291,9 +1290,7 @@
             к/с {$settlement->cors}
         </td>
         <td style="width: 10%"></td>
-        <td style="width: 45%">р/с {$requisite->number} в {$requisite->name} БИК {$requisite->bik}
-            к/с {$requisite->correspondent_acc}
-        </td>
+        <td style="width: 45%"></td>
     </tr>
     <br>
     <br>
