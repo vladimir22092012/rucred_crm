@@ -191,13 +191,23 @@ class DocumentController extends Controller
         $this->design->assign('all_percents_string_part_two', $all_percents_string_part_two);
         $this->design->assign('all_percents_string', $all_percents_string);
 
-        $this->design->assign('percent_day', $document->params->percent ?? 0);
+        $percent_day = $document->params->percent ?? 0;
+        $tempPercent = explode('.', $percent_day);
+        if (isset($tempPercent[1])) {
+            if (strlen($tempPercent[1]) == 1) {
+                $percent_day = $tempPercent[0] . '.' . $tempPercent[1] . '00';
+            } elseif (strlen($tempPercent[1]) == 2) {
+                $percent_day = $tempPercent[0] . '.' . $tempPercent[1] . '0';
+            }
+        }
 
-        if (is_null($document->params->percent)) {
+        $this->design->assign('percent_day', $percent_day);
+
+        if (is_null($percent_day)) {
             $percents_per_day_str_part_one = 0;
             $percents_per_day_str_part_two = 0;
         } else {
-            $percents_per_day_str = explode('.', number_format($document->params->percent, 3, '.', ''));
+            $percents_per_day_str = explode('.', number_format($percent_day, 3, '.', ''));
             $percents_per_day_str_part_one = $this->num2str($percents_per_day_str[0]);
             $percents_per_day_str_part_two = $this->num2str($percents_per_day_str[1]);
         }
