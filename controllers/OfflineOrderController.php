@@ -554,7 +554,7 @@ class OfflineOrderController extends Controller
                     }
                     $this->design->assign('comments', $comments);
 
-                    $userfiles = $this->users->get_files(array('user_id' => $order->user_id));
+                    $userfiles = $this->users->get_files(array('order_id' => $order_id));
                     $files = [];
                     foreach ($userfiles as $userfile) {
                         $format = explode('.', $userfile->name);

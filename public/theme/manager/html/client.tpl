@@ -1365,145 +1365,147 @@
                                                 <div class="row p-2 view-block">
                                                     <ul class="col-md-12 list-inline"
                                                         style="display: flex; justify-content: left">
-                                                        {foreach $files as $file}
-                                                            {if $file->status == 0}
-                                                                {$item_class="border-warning"}
-                                                                {$ribbon_class="ribbon-warning"}
-                                                                {$ribbon_icon="fas fa-question"}
-                                                            {elseif $file->status == 1}
-                                                                {$item_class="border-primary"}
-                                                                {$ribbon_class="ribbon-primary"}
-                                                                {$ribbon_icon="fas fa-clock"}
-                                                            {elseif $file->status == 2}
-                                                                {$item_class="border-success border border-bg"}
-                                                                {$ribbon_class="ribbon-success"}
-                                                                {$ribbon_icon="fa fa-check-circle"}
-                                                            {elseif $file->status == 3}
-                                                                {$item_class="border-danger border"}
-                                                                {$ribbon_class="ribbon-danger"}
-                                                                {$ribbon_icon="fas fa-times-circle"}
-                                                            {elseif $file->status == 4}
-                                                                {$item_class="border-info border"}
-                                                                {$ribbon_class="ribbon-info"}
-                                                                {$ribbon_icon="fab fa-cloudversify"}
-                                                            {/if}
-                                                            <div data-file-id="{$file->id}" class="fileContainer" style="display: flex; flex-direction: column; margin-left: 15px">
-                                                                {if isset($file->format)}
-                                                                    <label class="badge badge-danger">Это PDF</label>
-                                                                {else}
-                                                                    <label class="badge badge-primary">Это фото</label>
+                                                        {foreach $files as $key => $file}
+                                                            {if $file}
+                                                                {if $file->status == 0}
+                                                                    {$item_class="border-warning"}
+                                                                    {$ribbon_class="ribbon-warning"}
+                                                                    {$ribbon_icon="fas fa-question"}
+                                                                {elseif $file->status == 1}
+                                                                    {$item_class="border-primary"}
+                                                                    {$ribbon_class="ribbon-primary"}
+                                                                    {$ribbon_icon="fas fa-clock"}
+                                                                {elseif $file->status == 2}
+                                                                    {$item_class="border-success border border-bg"}
+                                                                    {$ribbon_class="ribbon-success"}
+                                                                    {$ribbon_icon="fa fa-check-circle"}
+                                                                {elseif $file->status == 3}
+                                                                    {$item_class="border-danger border"}
+                                                                    {$ribbon_class="ribbon-danger"}
+                                                                    {$ribbon_icon="fas fa-times-circle"}
+                                                                {elseif $file->status == 4}
+                                                                    {$item_class="border-info border"}
+                                                                    {$ribbon_class="ribbon-info"}
+                                                                    {$ribbon_icon="fab fa-cloudversify"}
                                                                 {/if}
-                                                                <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
-                                                                    <a class="image-popup-fit-width js-event-add-click"
-                                                                       href="javascript:void(0);"
-                                                                       onclick="window.open('{$config->back_url}/files/users/{$client->id}/{$file->name}');"
-                                                                       data-event="50" data-manager="{$manager->id}"
-                                                                       data-order="{$order->order_id}"
-                                                                       data-user="{$client->id}">
-                                                                        <div class="ribbon ribbon-corner {$ribbon_class}">
-                                                                            <i
-                                                                                class="{$ribbon_icon}"></i></div>
-                                                                        <img src="{$config->back_url}/files/users/{$client->id}/{$file->name}"
-                                                                             alt="" class="img-responsive" style=""/>
-                                                                    </a>
-                                                                    <div class="order-image-actions"
-                                                                         {if !in_array($order->status, [0]) || $file->type == 'document'}style="display: none"{/if}>
-                                                                        {if $manager->role != 'employer'}
-                                                                            <div class="dropdown mr-1 show ">
-                                                                                <button type="button"
-                                                                                        class="btn {if $file->status==2}btn-success{elseif $file->status==3}btn-danger{else}btn-secondary{/if} dropdown-toggle"
-                                                                                        id="dropdownMenuOffset"
-                                                                                        data-toggle="dropdown"
-                                                                                        aria-haspopup="true"
-                                                                                        aria-expanded="true">
-                                                                                    {if $file->status == 2}Принят
-                                                                                    {elseif $file->status == 3}Отклонен
-                                                                                    {else}Статус
-                                                                                    {/if}
-                                                                                </button>
-                                                                                <div class="dropdown-menu"
-                                                                                     aria-labelledby="dropdownMenuOffset"
-                                                                                     x-placement="bottom-start">
-                                                                                    <div class="p-1 dropdown-item">
-                                                                                        <button
-                                                                                            class="btn btn-sm btn-block btn-outline-success js-image-accept js-event-add-click"
-                                                                                            data-event="51"
-                                                                                            data-manager="{$manager->id}"
-                                                                                            data-order="{$order->order_id}"
-                                                                                            data-user="{$client->id}"
-                                                                                            data-id="{$file->id}"
-                                                                                            type="button">
-                                                                                            <i class="fas fa-check-circle"></i>
-                                                                                            <span>Принять</span>
+                                                                <div style="display: flex; flex-direction: column; margin-left: 15px">
+                                                                    {if isset($file->format)}
+                                                                        <label class="badge badge-danger">Это PDF</label>
+                                                                    {else}
+                                                                        <label class="badge badge-primary">Это фото</label>
+                                                                    {/if}
+                                                                    <form action="{url}"
+                                                                          class="border js-order-item-form mb-3 {if $penalties['images'] && $penalties['images']->status!=3}card-outline-danger{/if}"
+                                                                          id="images_form">
+
+                                                                        <input type="hidden" name="action" value="images"/>
+                                                                        <input type="hidden" name="order_id" value="{$order->order_id}"/>
+                                                                        <input type="hidden" name="user_id" value="{$order->user_id}"/>
+                                                                        <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
+                                                                            <a class="image-popup-fit-width js-event-add-click"
+                                                                               href="javascript:void(0);"
+                                                                               onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$file->name}');"
+                                                                               data-event="50" data-manager="{$manager->id}"
+                                                                               data-order="{$order->order_id}"
+                                                                               data-user="{$order->user_id}">
+                                                                                <div class="ribbon ribbon-corner {$ribbon_class}">
+                                                                                    <i
+                                                                                        class="{$ribbon_icon}"></i></div>
+                                                                                <img src="{$config->back_url}/files/users/{$order->user_id}/{$file->name}"
+                                                                                     alt="" class="img-responsive" style=""/>
+                                                                            </a>
+                                                                            <div class="order-image-actions"
+                                                                                 {if !in_array($order->status, [0]) || $file->type == 'document'}style="display: none"{/if}>
+                                                                                {if $manager->role != 'employer'}
+                                                                                    <div class="dropdown mr-1 show ">
+                                                                                        <button type="button"
+                                                                                                class="btn {if $file->status==2}btn-success{elseif $file->status==3}btn-danger{else}btn-secondary{/if} dropdown-toggle"
+                                                                                                id="dropdownMenuOffset"
+                                                                                                data-toggle="dropdown"
+                                                                                                aria-haspopup="true"
+                                                                                                aria-expanded="true">
+                                                                                            {if $file->status == 2}Принят
+                                                                                            {elseif $file->status == 3}Отклонен
+                                                                                            {else}Статус
+                                                                                            {/if}
                                                                                         </button>
+                                                                                        <div class="dropdown-menu"
+                                                                                             aria-labelledby="dropdownMenuOffset"
+                                                                                             x-placement="bottom-start">
+                                                                                            <div class="p-1 dropdown-item">
+                                                                                                <button
+                                                                                                    class="btn btn-sm btn-block btn-outline-success js-image-accept js-event-add-click"
+                                                                                                    data-event="51"
+                                                                                                    data-manager="{$manager->id}"
+                                                                                                    data-order="{$order->order_id}"
+                                                                                                    data-user="{$order->user_id}"
+                                                                                                    data-id="{$file->id}"
+                                                                                                    type="button">
+                                                                                                    <i class="fas fa-check-circle"></i>
+                                                                                                    <span>Принять</span>
+                                                                                                </button>
+                                                                                            </div>
+                                                                                            <div class="p-1 dropdown-item">
+                                                                                                <button
+                                                                                                    class="btn btn-sm btn-block btn-outline-danger js-image-reject js-event-add-click"
+                                                                                                    data-event="52"
+                                                                                                    data-manager="{$manager->id}"
+                                                                                                    data-order="{$order->order_id}"
+                                                                                                    data-user="{$order->user_id}"
+                                                                                                    data-id="{$file->id}"
+                                                                                                    type="button">
+                                                                                                    <i class="fas fa-times-circle"></i>
+                                                                                                    <span>Отклонить</span>
+                                                                                                </button>
+                                                                                            </div>
+                                                                                            <div class="p-1 pt-3 dropdown-item">
+                                                                                                <button
+                                                                                                    class="btn btn-sm btn-block btn-danger js-image-remove js-event-add-click"
+                                                                                                    data-event="53"
+                                                                                                    data-manager="{$manager->id}"
+                                                                                                    data-order="{$order->order_id}"
+                                                                                                    data-user="{$order->user_id}"
+                                                                                                    data-id="{$file->id}"
+                                                                                                    type="button">
+                                                                                                    <i class="fas fa-trash"></i>
+                                                                                                    <span>Удалить</span>
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div>
-                                                                                    <div class="p-1 dropdown-item">
-                                                                                        <button
-                                                                                            class="btn btn-sm btn-block btn-outline-danger js-image-reject js-event-add-click"
-                                                                                            data-event="52"
-                                                                                            data-manager="{$manager->id}"
-                                                                                            data-order="{$order->order_id}"
-                                                                                            data-user="{$client->id}"
-                                                                                            data-id="{$file->id}"
-                                                                                            type="button">
-                                                                                            <i class="fas fa-times-circle"></i>
-                                                                                            <span>Отклонить</span>
-                                                                                        </button>
-                                                                                    </div>
-                                                                                    <div class="p-1 pt-3 dropdown-item">
-                                                                                        <button
-                                                                                            class="btn btn-sm btn-block btn-danger js-image-remove js-event-add-click"
-                                                                                            data-event="53"
-                                                                                            data-manager="{$manager->id}"
-                                                                                            data-order="{$order->order_id}"
-                                                                                            data-user="{$client->id}"
-                                                                                            data-id="{$file->id}"
-                                                                                            type="button">
-                                                                                            <i class="fas fa-trash"></i>
-                                                                                            <span>Удалить</span>
-                                                                                        </button>
-                                                                                    </div>
-                                                                                </div>
+                                                                                {/if}
                                                                             </div>
-                                                                        {/if}
-                                                                    </div>
-                                                                    <button data-file-id="{$file->id}" class="delete-photo btn btn-danger">Удалить</button>
+                                                                            <span><b>{$key}</b></span>
+                                                                        </li>
+                                                                    </form>
+                                                                </div>
+                                                            {else}
+                                                                <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
+                                                                    {if in_array($order->status, [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18])}
+                                                                        <form class="form_file_item" method="POST"
+                                                                              enctype="multipart/form-data">
+                                                                            {if $manager->role != 'employer'}
+                                                                                <div class="form_file_item">
+                                                                                    <input type="file" name="file" class="new_file"
+                                                                                           data-type="{$key}"
+                                                                                           id="file_{$key}"
+                                                                                           data-user="{$order->user_id}"
+                                                                                           data-order="{$order->order_id}"
+                                                                                           value=""
+                                                                                           style="display:none"/>
+                                                                                    <label for="file_{$key}">
+                                                                                        <i class="fa fa-plus-circle"></i>
+                                                                                        <span>Добавить фото</span>
+                                                                                    </label>
+                                                                                </div>
+                                                                            {/if}
+                                                                        </form>
+                                                                    {/if}
+                                                                    <span><b>{$key}</b></span>
                                                                 </li>
-                                                                <select class="form-control photo_status"
-                                                                        data-file="{$file->id}"
-                                                                        name="photo_status">
-                                                                    <option value="1"
-                                                                            {if $file->type == 'document'}selected{/if}>
-                                                                        Выберите тип документа
-                                                                    </option>
-                                                                    <option value="2"
-                                                                            {if $file->type == 'Паспорт: разворот'}selected{/if}>
-                                                                        Паспорт: разворот
-                                                                    </option>
-                                                                    <option value="3"
-                                                                            {if $file->type == 'Паспорт: регистрация'}selected{/if}>
-                                                                        Паспорт: регистрация
-                                                                    </option>
-                                                                    <option value="4"
-                                                                            {if $file->type == 'Селфи с паспортом'}selected{/if}>
-                                                                        Селфи с паспортом
-                                                                    </option>
-                                                                </select>
-                                                            </div>
+                                                            {/if}
                                                         {/foreach}
                                                     </ul>
-                                                    <div class="col-md-12">
-                                                        <div class="form_file_item">
-                                                            <input type="file" name="new_file" class="new_file"
-                                                                   id="new_file"
-                                                                   data-user="{$client->id}" value=""
-                                                                   style="display:none"/>
-                                                            <label for="new_file" class="btn btn-large btn-primary">
-                                                                <i class="fa fa-plus-circle"></i>
-                                                                <span>Добавить фото</span>
-                                                            </label>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                                 <div class="row edit-block {if !$images_error}hide{/if}">
                                                     {foreach $files as $file}

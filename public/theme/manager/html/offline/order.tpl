@@ -6,6 +6,7 @@
     <script src="theme/{$settings->theme|escape}/assets/plugins/fancybox3/dist/jquery.fancybox.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/offline_order.js?v=1.17"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/movements.app.js"></script>
+    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/upload_files.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery.maskedinput@1.4.1/src/jquery.maskedinput.min.js"
             type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
@@ -2934,14 +2935,16 @@
                                                             {else}
                                                                 <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
                                                                     {if in_array($order->status, [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18])}
-                                                                        <form method="POST"
+                                                                        <form class="form_file_item" method="POST"
                                                                               enctype="multipart/form-data">
                                                                             {if $manager->role != 'employer'}
                                                                                 <div class="form_file_item">
-                                                                                    <input type="file" name="file" class="upload_file"
-                                                                                           data-type="key"
+                                                                                    <input type="file" name="file" class="new_file"
+                                                                                           data-type="{$key}"
                                                                                            id="file_{$key}"
-                                                                                           data-user="{$order->user_id}" value=""
+                                                                                           data-user="{$order->user_id}"
+                                                                                           data-order="{$order->order_id}"
+                                                                                           value=""
                                                                                            style="display:none"/>
                                                                                     <label for="file_{$key}">
                                                                                         <i class="fa fa-plus-circle"></i>

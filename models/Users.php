@@ -482,6 +482,10 @@ class Users extends Core
             $user_id_filter = $this->db->placehold("AND user_id = ?", (int)$filter['user_id']);
         }
 
+        if (!empty($filter['order_id'])) {
+            $user_id_filter = $this->db->placehold("AND order_id = ?", (int)$filter['order_id']);
+        }
+
         if (isset($filter['status'])) {
             $status_filter = $this->db->placehold("AND status = ?", (int)$filter['status']);
         }

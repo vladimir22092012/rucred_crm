@@ -30,6 +30,7 @@ class UploadFilesController extends Controller
 
             $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
             $user_id = $this->request->post('user_id');
+            $order_id = $this->request->post('order_id');
 
             $format = explode('.', $file['name']);
 
@@ -93,6 +94,7 @@ class UploadFilesController extends Controller
                 } else {
                     $file_id = $this->users->add_file(array(
                         'user_id' => $user_id,
+                        'order_id' => $order_id ? $order_id : null,
                         'name' => $new_filename,
                         'type' => $type,
                         'status' => 0
