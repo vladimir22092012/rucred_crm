@@ -5863,13 +5863,6 @@ class OfflineOrderController extends Controller
             }
         }
 
-        $oldUser = UsersORM::find($userId);
-        if ($oldUser) {
-            if ($oldUser->profunion != $profUnion) {
-                $needSms = 1;
-            }
-        }
-
         $user =
             [
                 'group_id' => $groupId,
