@@ -63,7 +63,7 @@
                 });
             });
 
-            $('input, textarea').on('input', function () {
+            $('input:not(input[type=button], input[type=file], input[type=submit], input[type=reset]), textarea, select').on('input', function () {
                 let value = $(this).val();
                 value = value.toUpperCase();
                 $(this).val(value);

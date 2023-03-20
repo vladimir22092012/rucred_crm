@@ -224,7 +224,6 @@ class GraphicConstructorController extends Controller
 
 
         list($paydate, $weekend) = $this->check_pay_date_array(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
-
         if ($weekend > 0) {
             $temp_annoouitet_summ = ($weekend + 1) * $rest_sum * ($percent / 100);
         }

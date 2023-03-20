@@ -563,7 +563,7 @@ class Users extends Core
 
     public function check_filename($filename)
     {
-        $this->db->query("SELECT id FROM __files WHERE name = ?");
+        $this->db->query("SELECT id FROM __files WHERE name = '$filename'");
         return $this->db->result('id');
     }
 
