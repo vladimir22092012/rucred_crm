@@ -1893,6 +1893,29 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            {foreach $companies as $company}
+                                                <h6 class="card-header">
+                                                    <span class="text-white">Информация о работодателе</span>
+                                                </h6>
+
+                                                <div class="row m-0 pt-2 view-block">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group  mb-0 row employer_show">
+                                                            <label class="control-label col-md-3">Заявка:</label>
+                                                            <div class="col-md-6">
+                                                                <a href="{$company['url']}">{$company['order']}</a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group  mb-0 row employer_show">
+                                                            <label class="control-label col-md-3">Компания:</label>
+                                                            <div class="col-md-6">
+                                                                <p>{$company['name']}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {/foreach}
                                         </form>
 
 
@@ -1995,6 +2018,11 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group mb-0 row">
                                                         <label class="control-label col-md-8 col-7 snils-number">{$client->pdn}% {if $client->pdn_time != null} <span>({date('d.m.Y', $client->pdn_time)})</span> {/if}</label>
+                                                        {if $client->income}
+                                                            <label class="control-label col-md-8 col-7 snils-number">
+                                                                Заявленный доход {$client->income} руб.
+                                                            </label>
+                                                        {/if}
                                                     </div>
                                                 </div>
                                             </div>

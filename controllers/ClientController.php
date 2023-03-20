@@ -328,6 +328,18 @@ class ClientController extends Controller
 
         $this->design->assign('balances', $balances);
 
+        $companies = [];
+        foreach ($client->orders as $order) {
+            if ($order->status != 7 && !isset($companies[$order->company_id])) {
+                $company = CompaniesORM::find($order->company_id);
+                $companies[$order->company_id] = [
+                    'order' => $order->order_id,
+                    'url' => $order->offline == 1 ? '/offline_order/' . $order->order_id : '/order/' . $order->order_id,
+                    'name' => $company ? $company->name : 'Не известная компания',
+                ];
+            }
+        }
+        $this->design->assign('companies', $companies);
 
         return $this->design->fetch('client.tpl');
     }

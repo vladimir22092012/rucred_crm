@@ -3767,6 +3767,11 @@
                                                                     </div>
                                                                 </span>
                                                             {/if}
+                                                            {if $client->income}
+                                                                <label class="control-label col-md-8 col-7 snils-number">
+                                                                    Заявленный доход {$client->income} руб.
+                                                                </label>
+                                                            {/if}
                                                         </div>
                                                     </div>
                                                 </div>

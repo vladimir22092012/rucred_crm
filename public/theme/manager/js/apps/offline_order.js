@@ -817,7 +817,7 @@ console.info(resp);
 
             $('#status_'+_id).val(_status);
 
-            $(this).closest('form').submit();
+            $("#images_form_status").submit();
             app.update_page();
         });
 

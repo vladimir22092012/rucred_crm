@@ -4997,6 +4997,22 @@ class OrderController extends Controller
 
         $this->orders->update_order($order_id, ['status' => 10]);
         $this->tickets->update_by_theme_id(11, ['status' => 4], $order_id);
+
+        $queues = [
+            'first_pak',
+            'second_pak',
+        ];
+        foreach ($queues as $queue) {
+            $cron =
+                [
+                    'order_id' => $order_id,
+                    'pak' => $queue,
+                    'online' => 1
+                ];
+
+            $this->YaDiskCron->add($cron);
+        }
+
         exit;
     }
 

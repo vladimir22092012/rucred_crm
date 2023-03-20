@@ -2964,7 +2964,7 @@
                                                 </div>
                                             <form action="{url}"
                                                   class="border js-order-item-form mb-3 {if $penalties['images'] && $penalties['images']->status!=3}card-outline-danger{/if}"
-                                                  id="images_form">
+                                                  id="images_form_status">
 
                                                 <input type="hidden" name="action" value="images"/>
                                                 <input type="hidden" name="order_id" value="{$order->order_id}"/>
@@ -4100,6 +4100,12 @@
                                                                         </span>
                                                                     </div>
                                                                 </span>
+                                                            {/if}
+                                                            <br>
+                                                            {if $client->income}
+                                                                <label class="control-label col-md-8 col-7 snils-number">
+                                                                    Заявленный доход {$client->income} руб.
+                                                                </label>
                                                             {/if}
                                                         </div>
                                                     </div>

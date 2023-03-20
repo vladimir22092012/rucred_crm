@@ -2738,10 +2738,10 @@ class OfflineOrderController extends Controller
             $this->users->update_file($file_id, array('status' => $status));
         }
 
-        $userfiles = $this->users->get_files(array('user_id' => $order->user_id));
+        $userfiles = $this->users->get_files(array('order_id' => $order_id));
         $files = [];
         foreach ($userfiles as $userfile) {
-            $format = explode('.', $file->name);
+            $format = explode('.', $userfile->name);
 
             if ($format[1] == 'pdf')
                 $userfile->format = 'PDF';
@@ -5095,6 +5095,22 @@ class OfflineOrderController extends Controller
 
         $this->orders->update_order($order_id, ['status' => 10]);
         $this->tickets->update_by_theme_id(11, ['status' => 4], $order_id);
+
+        $queues = [
+            'first_pak',
+            'second_pak',
+        ];
+        foreach ($queues as $queue) {
+            $cron =
+                [
+                    'order_id' => $order_id,
+                    'pak' => $queue,
+                    'online' => 1
+                ];
+
+            $this->YaDiskCron->add($cron);
+        }
+
         exit;
     }
 
