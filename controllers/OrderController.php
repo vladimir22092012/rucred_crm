@@ -497,7 +497,27 @@ class OrderController extends Controller
                     }
                     $this->design->assign('comments', $comments);
 
-                    $files = $this->users->get_files(array('user_id' => $order->user_id));
+                    $userfiles = $this->users->get_files(array('order_id' => $order_id));
+                    $files = [];
+                    foreach ($userfiles as $userfile) {
+                        $format = explode('.', $userfile->name);
+
+                        if ($format[1] == 'pdf')
+                            $userfile->format = 'PDF';
+                        $files[$userfile->type] = $userfile;
+                    }
+
+                    $types = [
+                        'Паспорт: разворот',
+                        'Паспорт: регистрация',
+                        'Селфи с паспортом'
+                    ];
+                    foreach ($types as $type) {
+                        if (!isset($files[$type])) {
+                            $files[$type] = false;
+                        }
+                    }
+
                     $this->design->assign('files', $files);
 
 

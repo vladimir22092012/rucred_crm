@@ -554,7 +554,7 @@ class OfflineOrderController extends Controller
                     }
                     $this->design->assign('comments', $comments);
 
-                    $userfiles = $this->users->get_files(array('user_id' => $order->user_id));
+                    $userfiles = $this->users->get_files(array('order_id' => $order_id));
                     $files = [];
                     foreach ($userfiles as $userfile) {
                         $format = explode('.', $userfile->name);
@@ -3580,7 +3580,11 @@ class OfflineOrderController extends Controller
 
         $count_days_this_month = date('t', strtotime($start_date->format('Y-m-d')));
 
-        $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
+        $temp_annoouitet_summ = 0;
+        list($paydate, $weekend) = $this->check_pay_date_array(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
+        if ($weekend > 0) {
+            $temp_annoouitet_summ = ($weekend + 1) * $rest_sum * ($percent / 100);
+        }
 
         if ($loan->type == 'pdl') {
 
@@ -3625,7 +3629,7 @@ class OfflineOrderController extends Controller
 
         $payment_schedule[$paydate->format('d.m.Y')] =
             [
-                'pay_sum' => $sum_pay,
+                'pay_sum' => $sum_pay + $temp_annoouitet_summ,
                 'loan_percents_pay' => $loan_percents_pay,
                 'loan_body_pay' => $body_pay,
                 'comission_pay' => 0.00,

@@ -162,7 +162,29 @@ class ClientController extends Controller
         }
         $this->design->assign('managers', $managers);
 
-        $files = $this->users->get_files(array('user_id' => $id));
+        $userfiles = $this->users->get_files(array('user_id' => $id));
+        $files = [];
+        foreach ($userfiles as $userfile) {
+            $format = explode('.', $userfile->name);
+
+            if ($format[1] == 'pdf')
+                $userfile->format = 'PDF';
+            if (!isset($files[$userfile->type])) {
+                $files[$userfile->type] = $userfile;
+            }
+        }
+
+        $types = [
+            'Паспорт: разворот',
+            'Паспорт: регистрация',
+            'Селфи с паспортом'
+        ];
+        foreach ($types as $type) {
+            if (!isset($files[$type])) {
+                $files[$type] = false;
+            }
+        }
+
         $this->design->assign('files', $files);
 
         $comments = $this->comments->get_comments(array('user_id' => $client->id));

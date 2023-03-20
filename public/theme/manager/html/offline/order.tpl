@@ -62,7 +62,7 @@
                 });
             });
 
-            $('input, textarea').on('input', function () {
+            $('input:not(input[type=button], input[type=file], input[type=submit], input[type=reset]), textarea, select').on('input', function () {
                 let value = $(this).val();
                 value = value.toUpperCase();
                 $(this).val(value);
@@ -2937,14 +2937,16 @@
                                                             {else}
                                                                 <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
                                                                     {if in_array($order->status, [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18])}
-                                                                        <form method="POST"
+                                                                        <form class="form_file_item" method="POST"
                                                                               enctype="multipart/form-data">
                                                                             {if $manager->role != 'employer'}
                                                                                 <div class="form_file_item">
-                                                                                    <input type="file" name="file" class="upload_file"
-                                                                                           data-type="key"
+                                                                                    <input type="file" name="file" class="new_file"
+                                                                                           data-type="{$key}"
                                                                                            id="file_{$key}"
-                                                                                           data-user="{$order->user_id}" value=""
+                                                                                           data-user="{$order->user_id}"
+                                                                                           data-order="{$order->order_id}"
+                                                                                           value=""
                                                                                            style="display:none"/>
                                                                                     <label for="file_{$key}">
                                                                                         <i class="fa fa-plus-circle"></i>
