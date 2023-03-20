@@ -277,7 +277,7 @@
                     </div>
                     <div class="form-group">
                         <label for="name" class="control-label">Наименование группы</label>
-                        <input id="name-input" type="text" class="form-control" name="name" value=""/>
+                        <input id="name-input" type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control" name="name" value=""/>
                     </div>
                     <div class="form-group">
                         <label class="control-label">Доступность</label>
