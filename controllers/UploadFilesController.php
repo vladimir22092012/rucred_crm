@@ -92,6 +92,16 @@ class UploadFilesController extends Controller
                         'order_id' => (int)$this->request->post('order_id')
                     ));
                 } else {
+                    $existQuery = FilesORM::query()
+                        ->where('type', '=', $type)
+                        ->where('status', '=', 4)
+                        ->where('user_id', '=', $user_id);
+                    if ($order_id) {
+                        $existQuery->where('order_id', '=', $order_id);
+                    }
+                    if ($exist = $existQuery->first()) {
+                        $exist->delete();
+                    }
                     $file_id = $this->users->add_file(array(
                         'user_id' => $user_id,
                         'order_id' => $order_id ? $order_id : null,

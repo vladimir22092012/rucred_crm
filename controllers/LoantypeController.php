@@ -129,6 +129,20 @@ class LoantypeController extends Controller
 
         $loanType = LoantypesORM::find($loantype_id);
 
+        if ($standart_percents > $loanType->percent) {
+            echo json_encode([
+                    'error' => 'Уровень регулярной индивидуальной ставки выше уровня регулярной общей ставки'
+                ]);
+            exit;
+        }
+
+        if ($preferential_percents > $loanType->profunion) {
+            echo json_encode([
+                    'error' => 'Уровень льготной индивидуальной ставки выше уровня льготной общей ставки'
+                ]);
+            exit;
+        }
+
         if ($individual > $loanType->max_amount) {
             echo json_encode(['error' => 'Сумма больше максимальной для тарифа']);
             exit;

@@ -2857,15 +2857,24 @@
                                                                                     </label>
                                                                                 </div>
                                                                             {/if}
+                                                                            <span><b>{$key}</b></span>
                                                                         </form>
                                                                     {/if}
-                                                                    <span><b>{$key}</b></span>
                                                                 </li>
                                                             {/if}
                                                         {/foreach}
                                                     </ul>
                                                 </div>
 
+                                            </form>
+                                            <br>
+                                            <form action="{url}"
+                                                  class="border js-order-item-form mb-3 {if $penalties['images'] && $penalties['images']->status!=3}card-outline-danger{/if}"
+                                                  id="images_form_status">
+
+                                                <input type="hidden" name="action" value="images"/>
+                                                <input type="hidden" name="order_id" value="{$order->order_id}"/>
+                                                <input type="hidden" name="user_id" value="{$order->user_id}"/>
                                                 <div class="row edit-block {if !$images_error}hide{/if}">
                                                     {foreach $files as $file}
                                                         <div class="col-md-4 col-lg-3 col-xlg-3">
@@ -2887,7 +2896,7 @@
                                                     <div class="col-md-12">
                                                         <div class="form-actions">
                                                             <button type="submit" class="btn btn-success"><i
-                                                                        class="fa fa-check"></i> Сохранить
+                                                                    class="fa fa-check"></i> Сохранить
                                                             </button>
                                                             <button type="button"
                                                                     class="btn btn-inverse js-cancel-edit">
@@ -2897,8 +2906,6 @@
                                                     </div>
                                                 </div>
                                             </form>
-                                            <br>
-
 
                                             <!-- Данные о работе -->
                                             <h6 class="card-header">

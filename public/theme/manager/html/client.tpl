@@ -404,7 +404,7 @@
                                     message = 'Адреса успешно изменены';
                                 }
                                 if (field == 'passport') {
-                                    message = 'Паспортные данные успешно изменены';
+                                    message = 'Паспортные данные успешно изменены. Не забудьте обновить фотографии.';
                                 }
                                 if (field == 'snils') {
                                     message = 'СНИЛС успешно изменён';
@@ -1357,11 +1357,7 @@
                                             <h5 class="card-header">
                                                 <span class="text-white">Фотографии</span>
                                             </h5>
-                                            <form action="{url}" method="POST" class="border js-order-item-form mb-3"
-                                                  id="images_form">
-                                                <input type="hidden" name="action" value="images"/>
-                                                <input type="hidden" name="id" value="{$client->id}"/>
-                                                <input type="hidden" name="user_id" value="{$client->id}"/>
+
                                                 <div class="row p-2 view-block">
                                                     <ul class="col-md-12 list-inline"
                                                         style="display: flex; justify-content: left">
@@ -1426,6 +1422,7 @@
                                                                                                 aria-expanded="true">
                                                                                             {if $file->status == 2}Принят
                                                                                             {elseif $file->status == 3}Отклонен
+                                                                                            {elseif $file->status == 4}Заменить
                                                                                             {else}Статус
                                                                                             {/if}
                                                                                         </button>
@@ -1476,8 +1473,29 @@
                                                                                 {/if}
                                                                             </div>
                                                                             <span><b>{$key}</b></span>
+
                                                                         </li>
                                                                     </form>
+                                                                    {if $file->status == 4}
+                                                                        <form class="form_file_item" method="POST"
+                                                                              enctype="multipart/form-data">
+                                                                            {if $manager->role != 'employer'}
+                                                                                <div class="form_file_item">
+                                                                                    <input type="file" name="file" class="new_file"
+                                                                                           data-type="{$key}"
+                                                                                           id="file_{$key}"
+                                                                                           data-user="{$client->id}"
+                                                                                           data-order=""
+                                                                                           value=""
+                                                                                           style="display:none"/>
+                                                                                    <label for="file_{$key}">
+                                                                                        <i class="fa fa-plus-circle"></i>
+                                                                                        <span>Изменить фото</span>
+                                                                                    </label>
+                                                                                </div>
+                                                                            {/if}
+                                                                        </form>
+                                                                    {/if}
                                                                 </div>
                                                             {else}
                                                                 <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
@@ -1489,8 +1507,8 @@
                                                                                     <input type="file" name="file" class="new_file"
                                                                                            data-type="{$key}"
                                                                                            id="file_{$key}"
-                                                                                           data-user="{$order->user_id}"
-                                                                                           data-order="{$order->order_id}"
+                                                                                           data-user="{$client->id}"
+                                                                                           data-order=""
                                                                                            value=""
                                                                                            style="display:none"/>
                                                                                     <label for="file_{$key}">
@@ -1507,6 +1525,11 @@
                                                         {/foreach}
                                                     </ul>
                                                 </div>
+                                            <form action="{url}" method="POST" class="border js-order-item-form mb-3"
+                                                  id="images_form_status">
+                                                <input type="hidden" name="action" value="images"/>
+                                                <input type="hidden" name="id" value="{$client->id}"/>
+                                                <input type="hidden" name="user_id" value="{$client->id}"/>
                                                 <div class="row edit-block {if !$images_error}hide{/if}">
                                                     {foreach $files as $file}
                                                         <div class="col-md-4 col-lg-3 col-xlg-3">

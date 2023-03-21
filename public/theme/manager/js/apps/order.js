@@ -745,7 +745,7 @@ function OrderApp() {
 
             $('#status_' + _id).val(_status);
 
-            $(this).closest('form').submit();
+          $("#images_form_status").submit();
         });
 
         $(document).on('click', '.js-image-remove', function (e) {
