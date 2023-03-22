@@ -498,6 +498,9 @@ class OrderController extends Controller
                     $this->design->assign('comments', $comments);
 
                     $userfiles = $this->users->get_files(array('order_id' => $order_id));
+                    if (count($userfiles) == 0) {
+                        $userfiles = $this->users->get_files(array('user_id' => $order->user_id));
+                    }
                     $files = [];
                     foreach ($userfiles as $userfile) {
                         $format = explode('.', $userfile->name);

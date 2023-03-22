@@ -6160,4 +6160,21 @@ class OfflineOrderController extends Controller
         return array('success' => 1);
     }
 
+    private function check_pay_date_array($date)
+    {
+        $weekend = 0;
+        for ($i = 0; $i <= 15; $i++) {
+            $check_date = $this->WeekendCalendar->check_date($date->format('Y-m-d'));
+
+            if ($check_date == null) {
+                break;
+            } else {
+                $date->sub(new DateInterval('P1D'));
+                $weekend++;
+            }
+        }
+
+        return [$date, $weekend];
+    }
+
 }
