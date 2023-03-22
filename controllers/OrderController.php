@@ -4928,6 +4928,7 @@ class OrderController extends Controller
         $count_photos = 0;
         $count_approved_photos = 0;
 
+
         foreach ($photos as $photo) {
             if (in_array($photo->type, ['Паспорт: разворот', 'Паспорт: регистрация', 'Селфи с паспортом'])) {
                 $count_photos++;
@@ -4935,6 +4936,17 @@ class OrderController extends Controller
                 if ($photo->status != 0)
                     $count_approved_photos++;
             }
+        }
+
+        $user = UsersORM::find($order->user_id);
+        if ($user) {
+            if (!$user->inn_confirmed) {
+                echo json_encode(['error' => 'ИНН не проверен!']);
+                exit;
+            }
+        } else {
+            echo json_encode(['error' => 'Не найден пользователь!']);
+            exit;
         }
 
         if ($count_photos < 3) {

@@ -326,6 +326,14 @@ class OfflineOrderController extends Controller
                     echo json_encode($this->actionSendYaDisk());
                     die();
 
+                case 'check_inn_infosphere':
+                    echo $this->action_check_inn_infosphere();
+                    exit;
+
+                case 'change_inn':
+                    $this->action_change_inn();
+                    exit;
+
 
             endswitch;
 
@@ -5013,6 +5021,17 @@ class OfflineOrderController extends Controller
             }
         }
 
+        $user = UsersORM::find($order->user_id);
+        if ($user) {
+            if (!$user->inn_confirmed) {
+                echo json_encode(['error' => 'ИНН не проверен!']);
+                exit;
+            }
+        } else {
+            echo json_encode(['error' => 'Не найден пользователь!']);
+            exit;
+        }
+
         if ($count_photos < 3) {
             echo json_encode(['error' => 'Не забудьте добавить фото документов и селфи с паспортом!']);
             exit;
@@ -5049,6 +5068,20 @@ class OfflineOrderController extends Controller
         if ($count_scans_without_asp < 2) {
             echo json_encode(['error' => 'Проверьте сканы для форм 03.03 и 03.04']);
             exit;
+        }
+
+        $scoring_types = $this->scorings->get_types();
+        foreach ($scoring_types as $scoring_type) {
+            if ($scoring_type->name != 'fns' && empty($scoring_type->is_paid)) {
+                $add_scoring = array(
+                    'user_id' => $order->user_id,
+                    'order_id' => $order_id,
+                    'type' => $scoring_type->name,
+                    'status' => 'new',
+                    'start_date' => date('Y-m-d H:i:s'),
+                );
+                $this->scorings->add_scoring($add_scoring);
+            }
         }
 
         echo json_encode(['success' => 1]);
@@ -6163,6 +6196,44 @@ class OfflineOrderController extends Controller
         }
 
         return [$date, $weekend];
+    }
+
+    private function action_check_inn_infosphere()
+    {
+        $userId = $this->request->post('userId');
+
+        $user = UsersORM::find($userId);
+
+        $passportSerial = explode(' ', $user->passport_serial);
+        $user->passport_serial = $passportSerial[0];
+        $user->passport_number = $passportSerial[1];
+
+        $inn = InfospheresFactory::get('inn');
+        $inn = $inn->sendRequest($user);
+
+        if (is_int($inn) && $inn == $user->inn)
+            echo json_encode(['message' => 'ИНН введен корректно', 'need_change' => 1, 'inn' => $inn]);
+        elseif (is_int($inn) && $inn != $user->inn)
+            echo json_encode(['message' => 'Корректный ИНН '.$inn, 'need_change' => 1, 'inn' => $inn]);
+        else
+            echo json_encode(['message' => 'ИНН не найден', 'need_change' => 0]);
+
+        exit;
+    }
+
+    private function action_change_inn()
+    {
+        $userId = $this->request->post('userId');
+        $inn    = $this->request->post('inn');
+
+        $update =
+            [
+                'inn' => $inn,
+                'inn_confirmed' => 1
+            ];
+
+        UsersORM::where('id', $userId)->update($update);
+        exit;
     }
 
 }

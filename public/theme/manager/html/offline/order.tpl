@@ -17,6 +17,58 @@
 
             let token_dadata = "25c845f063f9f3161487619f630663b2d1e4dcd7";
 
+            $('.check_inn_infosphere').on('click', function () {
+                let userId = $(this).attr('data-user');
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    beforeSend: function () {
+                        swal.fire({
+                            html: '<h5>Проверяем ИНН...</h5>',
+                            showConfirmButton: false,
+                            onRender: function () {
+                                // there will only ever be one sweet alert open.
+                                $('.swal2-content').prepend(sweet_loader);
+                            }
+                        });
+                    },
+                    data: {
+                        action: 'check_inn_infosphere',
+                        userId: userId
+                    },
+                    success: function (resp) {
+                        if (resp['need_change'] == 1) {
+                            Swal.fire({
+                                title: resp['message'],
+                                confirmButtonText: 'Заменить',
+                                allowOutsideClick: false
+                            }).then((result) => {
+                                if (result.value) {
+                                    $.ajax({
+                                        method: 'POST',
+                                        data: {
+                                            action: 'change_inn',
+                                            userId: userId,
+                                            inn: resp['inn']
+                                        }
+                                    });
+
+                                    location.reload();
+                                }
+                            });
+                        }
+                        if (resp['need_change'] == 0) {
+                            Swal.fire({
+                                title: resp['message'],
+                                confirmButtonText: 'ОК',
+                                allowOutsideClick: false
+                            });
+                        }
+                    }
+                });
+            });
+
             $('.startUpload').click(function() {
                 console.log($(this));
                 let button = $(this),
@@ -3757,9 +3809,12 @@
                                             </div>
                                         {/if}
                                         <form class="mb-4 border">
-                                            <h6 class="card-header text-white">
+                                            <h6 class="card-header text-white pb-3">
                                                 <span>ИНН</span>
-                                                <span class="float-right"></span>
+                                                {if $order->status == 0 && $client->inn_confirmed == 0}
+                                                    <span data-user="{$order->user_id}"
+                                                          class="float-right btn btn-xs btn-warning check_inn_infosphere">Проверить ИНН</span>
+                                                {/if}
                                             </h6>
                                             <div class="row view-block p-2 inn-front">
                                                 <div class="col-md-12">
