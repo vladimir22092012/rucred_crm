@@ -1395,19 +1395,19 @@
                                                                           id="images_form">
 
                                                                         <input type="hidden" name="action" value="images"/>
-                                                                        <input type="hidden" name="order_id" value="{$order->order_id}"/>
-                                                                        <input type="hidden" name="user_id" value="{$order->user_id}"/>
+                                                                        <input type="hidden" name="order_id" value=""/>
+                                                                        <input type="hidden" name="user_id" value="{$client->id}"/>
                                                                         <li class="order-image-item ribbon-wrapper rounded-sm border {$item_class}">
                                                                             <a class="image-popup-fit-width js-event-add-click"
                                                                                href="javascript:void(0);"
-                                                                               onclick="window.open('{$config->back_url}/files/users/{$order->user_id}/{$file->name}');"
+                                                                               onclick="window.open('{$config->back_url}/files/users/{$client->id}/{$file->name}');"
                                                                                data-event="50" data-manager="{$manager->id}"
-                                                                               data-order="{$order->order_id}"
-                                                                               data-user="{$order->user_id}">
+                                                                               data-order=""
+                                                                               data-user="{$client->id}">
                                                                                 <div class="ribbon ribbon-corner {$ribbon_class}">
                                                                                     <i
                                                                                         class="{$ribbon_icon}"></i></div>
-                                                                                <img src="{$config->back_url}/files/users/{$order->user_id}/{$file->name}"
+                                                                                <img src="{$config->back_url}/files/users/{$client->id}/{$file->name}"
                                                                                      alt="" class="img-responsive" style=""/>
                                                                             </a>
                                                                             <div class="order-image-actions"
@@ -1434,8 +1434,8 @@
                                                                                                     class="btn btn-sm btn-block btn-outline-success js-image-accept js-event-add-click"
                                                                                                     data-event="51"
                                                                                                     data-manager="{$manager->id}"
-                                                                                                    data-order="{$order->order_id}"
-                                                                                                    data-user="{$order->user_id}"
+                                                                                                    data-order=""
+                                                                                                    data-user="{$client->id}"
                                                                                                     data-id="{$file->id}"
                                                                                                     type="button">
                                                                                                     <i class="fas fa-check-circle"></i>
@@ -1447,8 +1447,8 @@
                                                                                                     class="btn btn-sm btn-block btn-outline-danger js-image-reject js-event-add-click"
                                                                                                     data-event="52"
                                                                                                     data-manager="{$manager->id}"
-                                                                                                    data-order="{$order->order_id}"
-                                                                                                    data-user="{$order->user_id}"
+                                                                                                    data-order=""
+                                                                                                    data-user="{$client->id}"
                                                                                                     data-id="{$file->id}"
                                                                                                     type="button">
                                                                                                     <i class="fas fa-times-circle"></i>
@@ -1460,8 +1460,8 @@
                                                                                                     class="btn btn-sm btn-block btn-danger js-image-remove js-event-add-click"
                                                                                                     data-event="53"
                                                                                                     data-manager="{$manager->id}"
-                                                                                                    data-order="{$order->order_id}"
-                                                                                                    data-user="{$order->user_id}"
+                                                                                                    data-order=""
+                                                                                                    data-user="{$client->id}"
                                                                                                     data-id="{$file->id}"
                                                                                                     type="button">
                                                                                                     <i class="fas fa-trash"></i>
@@ -1679,7 +1679,7 @@
                                               class="border js-order-item-form mb-3" id="work_data_form">
 
                                             <input type="hidden" name="action" value="work"/>
-                                            <input type="hidden" name="order_id" value="{$order->order_id}"/>
+                                            <input type="hidden" name="order_id" value=""/>
                                             <input type="hidden" name="user_id" value="{$client->id}"/>
 
                                             <h6 class="card-header">
@@ -1831,7 +1831,7 @@
                                               class="border js-order-item-form mb-3">
 
                                             <input type="hidden" name="action" value="work"/>
-                                            <input type="hidden" name="order_id" value="{$order->order_id}"/>
+                                            <input type="hidden" name="order_id" value=""/>
                                             <input type="hidden" name="user_id" value="{$client->user_id}"/>
 
                                             <h6 class="card-header">
@@ -2362,8 +2362,8 @@
                                                             <tr>
                                                                 <td>{$order->date|date} {$order->date|time}</td>
                                                                 <td>
-                                                                    <a href="{if $order->offline == 1}offline_order{else}order{/if}/{$order->order_id}"
-                                                                       target="_blank">{$order->order_id}</a>
+                                                                    <a href="{if $order->offline == 1}offline_order{else}order{/if}/"
+                                                                       target="_blank"></a>
                                                                 </td>
                                                                 <td>{$order->contract->number}</td>
                                                                 <td class="text-center">{$order->amount}</td>
@@ -2450,7 +2450,7 @@
                                 <tbody>
                                     {foreach $client->orders as $order}
                                     <tr>
-                                        <td><a href="order/{$order->order_id}">{$order->order_id}</a></td>
+                                        <td><a href="order/"></a></td>
                                         <td>{$order->date|date} {$order->date|time}</td>
                                         <td>{$order->amount} руб</td>
                                         <td>{$order->period} {$order->period|plural:'день':'дней':'дня'}</td>
