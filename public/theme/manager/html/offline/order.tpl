@@ -1431,6 +1431,12 @@
                 $('.validity_period').click(function () {
                     $(this).setCursorPosition(0);
                 }).mask('99/99');
+
+                $('input:not(input[type=button], input[type=file], input[type=submit], input[type=reset]), textarea, select').on('input', function () {
+                    let value = $(this).val();
+                    value = value.toUpperCase();
+                    $(this).val(value);
+                });
             });
 
             $('.add_to_cards_table').on('click', function (e) {
@@ -1450,6 +1456,12 @@
                 $('.validity_period').click(function () {
                     $(this).setCursorPosition(0);
                 }).mask('99/99');
+
+                $('input:not(input[type=button], input[type=file], input[type=submit], input[type=reset]), textarea, select').on('input', function () {
+                    let value = $(this).val();
+                    value = value.toUpperCase();
+                    $(this).val(value);
+                });
             });
 
             $(document).on('click', '.delete_credit, .delete_card', function () {

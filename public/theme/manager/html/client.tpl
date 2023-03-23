@@ -55,7 +55,7 @@
 
             $('.passport_serial').click(function () {
                 $(this).setCursorPosition(0);
-            }).mask('99 99 999999');
+            }).mask('9999 999999');
 
             Inputmask({
                 casing: 'upper'
