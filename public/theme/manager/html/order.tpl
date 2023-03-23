@@ -31,7 +31,7 @@
                 });
             });
 
-            $('input:not(input[type=button], input[type=file], input[type=submit], input[type=reset]), textarea, select').on('input', function () {
+            $('input:not(input[type=button], input[type=file], input[type=submit], input[type=reset]), textarea').on('input', function () {
                 let value = $(this).val();
                 value = value.toUpperCase();
                 $(this).val(value);
@@ -1130,7 +1130,7 @@
                     $(this).setCursorPosition(0);
                 }).mask('99/99');
 
-                $('input:not(input[type=button], input[type=file], input[type=submit], input[type=reset]), textarea, select').on('input', function () {
+                $('input:not(input[type=button], input[type=file], input[type=submit], input[type=reset]), textarea').on('input', function () {
                     let value = $(this).val();
                     value = value.toUpperCase();
                     $(this).val(value);
@@ -1155,7 +1155,7 @@
                     $(this).setCursorPosition(0);
                 }).mask('99/99');
 
-                $('input:not(input[type=button], input[type=file], input[type=submit], input[type=reset]), textarea, select').on('input', function () {
+                $('input:not(input[type=button], input[type=file], input[type=submit], input[type=reset]), textarea').on('input', function () {
                     let value = $(this).val();
                     value = value.toUpperCase();
                     $(this).val(value);
