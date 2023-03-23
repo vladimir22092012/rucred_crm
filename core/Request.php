@@ -127,7 +127,7 @@ class Request extends Core
     public function url($params = array())
     {
         $url = @parse_url($_SERVER["REQUEST_URI"]);
-        parse_str($url['query'], $query);
+        parse_str($url['query'] ?? '', $query);
 
         if (false) {
             foreach ($query as &$v) {
@@ -200,7 +200,7 @@ if (!function_exists('http_build_url')) {
         }
 
         // Parse the original URL
-        $parse_url = parse_url($url);
+        $parse_url = parse_url($url ?? '');
 
         // Scheme and Host are always replaced
         if (isset($parts['scheme'])) {

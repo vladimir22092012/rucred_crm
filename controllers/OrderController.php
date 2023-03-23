@@ -295,6 +295,14 @@ class OrderController extends Controller
                     echo json_encode($this->actionSendYaDisk());
                     die();
 
+                case 'check_inn_infosphere':
+                    echo $this->action_check_inn_infosphere();
+                    exit;
+
+                case 'change_inn':
+                    $this->action_change_inn();
+                    exit;
+
             endswitch;
 
         } else {
@@ -489,7 +497,30 @@ class OrderController extends Controller
                     }
                     $this->design->assign('comments', $comments);
 
-                    $files = $this->users->get_files(array('user_id' => $order->user_id));
+                    $userfiles = $this->users->get_files(array('order_id' => $order_id));
+                    if (count($userfiles) == 0) {
+                        $userfiles = $this->users->get_files(array('user_id' => $order->user_id));
+                    }
+                    $files = [];
+                    foreach ($userfiles as $userfile) {
+                        $format = explode('.', $userfile->name);
+
+                        if ($format[1] == 'pdf')
+                            $userfile->format = 'PDF';
+                        $files[$userfile->type] = $userfile;
+                    }
+
+                    $types = [
+                        'Паспорт: разворот',
+                        'Паспорт: регистрация',
+                        'Селфи с паспортом'
+                    ];
+                    foreach ($types as $type) {
+                        if (!isset($files[$type])) {
+                            $files[$type] = false;
+                        }
+                    }
+
                     $this->design->assign('files', $files);
 
 
@@ -714,7 +745,7 @@ class OrderController extends Controller
         $loantype = $this->Loantypes->get_loantype($order->loan_type);
         $this->design->assign('loantype', $loantype);
 
-        $loantypes = $this->GroupLoanTypes->get_loantypes_on($order->group_id);
+        $loantypes = $this->GroupLoanTypes->get_loantypes_on($order->group_id, 3);
         $this->design->assign('loantypes', $loantypes);
 
         $order = $this->orders->get_order($order_id);
@@ -1207,6 +1238,15 @@ class OrderController extends Controller
             $this->documents->update_asp(['order_id' => $order_id, 'rucred_asp_id' => $asp_id, 'second_pak' => 1, 'online' => 1]);
             $asp_id = $this->AspCodes->get_code(['order_id' => $order_id, 'type' => 'sms']);
             $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id->id, 'second_pak' => 1, 'online' => 1]);
+
+            $cron =
+                [
+                    'order_id' => $order->order_id,
+                    'pak' => 'first_pak',
+                    'online' => 1
+                ];
+
+            $this->YaDiskCron->add($cron);
 
             $cron =
                 [
@@ -3102,6 +3142,7 @@ class OrderController extends Controller
         $bik = $this->request->post('bik');
         $cor = $this->request->post('cor');
         $inn_holder = $this->request->post('inn_holder');
+        $settlementId = $this->request->post('settlementId');
         $comment = $this->request->post('comment');
 
         if (empty($comment)) {
@@ -3118,8 +3159,7 @@ class OrderController extends Controller
             exit;
         }
 
-        if ($user->inn != $inn_holder && $userFio == $hold)
-        {
+        if ($user->inn != $inn_holder && $userFio == $hold) {
             echo json_encode(['error' => 'ФИО владельца счёта совпадает с ФИО заёмщика, в таком случае, ИНН заёмщика и ИНН держателя счёта должны совпадать']);
             exit;
         }
@@ -3146,46 +3186,50 @@ class OrderController extends Controller
         $newValues = array_diff($update, $oldRequisites);
         $oldValues = array_intersect_key($oldRequisites, $newValues);
 
-        RequisitesORM::where('user_id', $userId)->update($newValues);
+        if (!empty($newValues)) {
+            RequisitesORM::where('user_id', $userId)->update($newValues);
 
-        $translate =
-            [
-                'name' => "Наименование банка",
-                'bik' => "Бик банка",
-                'number' => "Номер счета",
-                'holder' => "Держатель счета",
-                'correspondent_acc' => "Кор счет",
-                'inn_holder' => 'ИНН держателя счета'
-            ];
+            $translate =
+                [
+                    'name' => "Наименование банка",
+                    'bik' => "Бик банка",
+                    'number' => "Номер счета",
+                    'holder' => "Держатель счета",
+                    'correspondent_acc' => "Кор счет",
+                    'inn_holder' => 'ИНН держателя счета'
+                ];
 
-        foreach ($oldValues as $key => $value) {
-            $oldValues[$translate[$key]] = $value;
-            unset($oldValues[$key]);
+            foreach ($oldValues as $key => $value) {
+                $oldValues[$translate[$key]] = $value;
+                unset($oldValues[$key]);
+            }
+
+            foreach ($newValues as $key => $value) {
+                $newValues[$translate[$key]] = $value;
+                unset($newValues[$key]);
+            }
+
+            $newValues['Причина'] = $comment;
+
+            $this->changelogs->add_changelog(array(
+                'manager_id' => $this->manager->id,
+                'created' => date('Y-m-d H:i:s'),
+                'type' => 'requisites',
+                'old_values' => serialize($oldValues),
+                'new_values' => serialize($newValues),
+                'order_id' => $orderId,
+                'user_id' => $userId,
+            ));
+
+            $order = $this->orders->get_order($orderId);
+
+            $order->payment_schedule = PaymentsScheduleORM::where('order_id', $orderId)->where('actual', 1)->first()->toArray();
+
+            DocumentsORM::where('order_id', $orderId)
+                ->update(['params' => serialize($order)]);
         }
 
-        foreach ($newValues as $key => $value) {
-            $newValues[$translate[$key]] = $value;
-            unset($newValues[$key]);
-        }
-
-        $newValues['Причина'] = $comment;
-
-        $this->changelogs->add_changelog(array(
-            'manager_id' => $this->manager->id,
-            'created' => date('Y-m-d H:i:s'),
-            'type' => 'requisites',
-            'old_values' => serialize($oldValues),
-            'new_values' => serialize($newValues),
-            'order_id' => $orderId,
-            'user_id' => $userId,
-        ));
-
-        $order = $this->orders->get_order($orderId);
-
-        $order->payment_schedule = PaymentsScheduleORM::where('order_id', $orderId)->where('actual', 1)->first()->toArray();
-
-        DocumentsORM::where('order_id', $orderId)
-            ->update(['params' => serialize($order)]);
+        OrdersORM::where('id', $orderId)->update(['settlement_id' => $settlementId]);
 
         echo json_encode(['success' => 1]);
         exit;
@@ -3435,6 +3479,31 @@ class OrderController extends Controller
             'created' => date('Y-m-d H:i:s'),
         ));
 
+        $order = $this->orders->get_order($order_id);
+
+        $asp_log =
+            [
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'created' => date('Y-m-d H:i:s'),
+                'type' => 'employ_sms',
+                'recepient' => $order->phone_mobile,
+                'manager_id' => $this->manager->id
+            ];
+
+        $asp_id = $this->AspCodes->add_code($asp_log);
+
+        $this->documents->create_document(array(
+            'user_id' => $order->user_id,
+            'order_id' => $order->order_id,
+            'type' => 'IDENTIFICATION',
+            'params' => $order,
+            'numeration' => '03.07',
+            'asp_id' => $asp_id,
+            'hash' => sha1(rand(1, 99999999999)),
+            'stage_type' => 'reg-docs'
+        ));
+
         exit;
     }
 
@@ -3553,6 +3622,31 @@ class OrderController extends Controller
             'created' => date('Y-m-d H:i:s'),
         ));
 
+        $order = $this->orders->get_order($order_id);
+
+        $asp_log =
+            [
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'created' => date('Y-m-d H:i:s'),
+                'type' => 'employ_sms',
+                'recepient' => $order->phone_mobile,
+                'manager_id' => $this->manager->id
+            ];
+
+        $asp_id = $this->AspCodes->add_code($asp_log);
+
+        $this->documents->create_document(array(
+            'user_id' => $order->user_id,
+            'order_id' => $order->order_id,
+            'type' => 'IDENTIFICATION',
+            'params' => $order,
+            'numeration' => '03.07',
+            'asp_id' => $asp_id,
+            'hash' => sha1(rand(1, 99999999999)),
+            'stage_type' => 'reg-docs'
+        ));
+
         exit;
     }
 
@@ -3634,11 +3728,9 @@ class OrderController extends Controller
         $order = OrdersORM::find($orderId);
         $user = UsersORM::find($userId);
 
-        if (empty($contract_number)) {
-            $new_number = $group->number . $company->number . ' ' . $loanType->number . ' ' . $user->personal_number . ' ' . $count_contracts;
-        } else {
-            $new_number = $contract_number;
-        }
+
+        $new_number = $group->number . $company->number . ' ' . $loanType->number . ' ' . $user->personal_number . ' ' . $count_contracts;
+
 
         $issetContract = ContractsORM::query()->where('number', '=', $new_number)->first();
         if ($issetContract && $issetContract->id != $order->contract_id) {
@@ -3681,14 +3773,6 @@ class OrderController extends Controller
             }
         }
 
-        $oldUser = UsersORM::find($userId);
-        if ($oldUser) {
-            if ($oldUser->profunion != $profUnion) {
-                $needSms = 1;
-            }
-        }
-
-
         $user =
             [
                 'group_id' => $groupId,
@@ -3703,6 +3787,7 @@ class OrderController extends Controller
         if ($needSms == 1) {
             $this->action_reform_schedule($orderId);
             echo json_encode(['success' => 'needSms']);
+            ContractsORM::where('id', $order->contract_id)->update(['deal_date' => date('Y-m-d H:i:s')]);
             exit;
         } else {
             $this->action_reform_schedule($orderId, 0);
@@ -4569,12 +4654,22 @@ class OrderController extends Controller
 
         $cron =
             [
+                'order_id' => $order->order_id,
+                'pak' => 'first_pak',
+                'online' => 1
+            ];
+
+        $this->YaDiskCron->add($cron);
+
+        $cron =
+            [
                 'order_id' => $order_id,
                 'pak' => 'second_pak',
                 'online' => 1
             ];
 
         $this->YaDiskCron->add($cron);
+
         $communication_theme = $this->CommunicationsThemes->get(17);
 
 
@@ -4833,6 +4928,7 @@ class OrderController extends Controller
         $count_photos = 0;
         $count_approved_photos = 0;
 
+
         foreach ($photos as $photo) {
             if (in_array($photo->type, ['Паспорт: разворот', 'Паспорт: регистрация', 'Селфи с паспортом'])) {
                 $count_photos++;
@@ -4840,6 +4936,17 @@ class OrderController extends Controller
                 if ($photo->status != 0)
                     $count_approved_photos++;
             }
+        }
+
+        $user = UsersORM::find($order->user_id);
+        if ($user) {
+            if (!$user->inn_confirmed) {
+                echo json_encode(['error' => 'ИНН не проверен!']);
+                exit;
+            }
+        } else {
+            echo json_encode(['error' => 'Не найден пользователь!']);
+            exit;
         }
 
         if ($count_photos < 3) {
@@ -4858,14 +4965,19 @@ class OrderController extends Controller
 
         $this->orders->update_order($order_id, ['status' => 2]);
 
-        $cron =
-            [
-                'order_id' => $order->order_id,
-                'pak' => 'first_pak',
-                'online' => 1
-            ];
-
-        $this->YaDiskCron->add($cron);
+        $scoring_types = $this->scorings->get_types();
+        foreach ($scoring_types as $scoring_type) {
+            if ($scoring_type->name != 'fns' && empty($scoring_type->is_paid)) {
+                $add_scoring = array(
+                    'user_id' => $order->user_id,
+                    'order_id' => $order_id,
+                    'type' => $scoring_type->name,
+                    'status' => 'new',
+                    'start_date' => date('Y-m-d H:i:s'),
+                );
+                $this->scorings->add_scoring($add_scoring);
+            }
+        }
 
         echo json_encode(['success' => 1]);
         exit;
@@ -4914,6 +5026,7 @@ class OrderController extends Controller
 
         $this->orders->update_order($order_id, ['status' => 10]);
         $this->tickets->update_by_theme_id(11, ['status' => 4], $order_id);
+
         exit;
     }
 
@@ -5173,7 +5286,6 @@ class OrderController extends Controller
             $asp_id = $this->AspCodes->add_code($asp_log);
 
             DocumentsORM::where('order_id', $orderId)
-                ->whereNotIn('type', ['INDIVIDUALNIE_USLOVIA_ONL', 'GRAFIK_OBSL_MKR'])
                 ->update(['asp_id' => $asp_id]);
 
             echo json_encode(['success' => 1]);
@@ -5462,4 +5574,41 @@ class OrderController extends Controller
         return array('success' => 1);
     }
 
+    private function action_check_inn_infosphere()
+    {
+        $userId = $this->request->post('userId');
+
+        $user = UsersORM::find($userId);
+
+        $passportSerial = explode(' ', $user->passport_serial);
+        $user->passport_serial = $passportSerial[0];
+        $user->passport_number = $passportSerial[1];
+
+        $inn = InfospheresFactory::get('inn');
+        $inn = $inn->sendRequest($user);
+
+        if (is_int($inn) && $inn == $user->inn)
+            echo json_encode(['message' => 'ИНН введен корректно', 'need_change' => 1, 'inn' => $inn]);
+        elseif (is_int($inn) && $inn != $user->inn)
+            echo json_encode(['message' => 'Корректный ИНН '.$inn, 'need_change' => 1, 'inn' => $inn]);
+        else
+            echo json_encode(['message' => 'ИНН не найден', 'need_change' => 0]);
+
+        exit;
+    }
+
+    private function action_change_inn()
+    {
+        $userId = $this->request->post('userId');
+        $inn    = $this->request->post('inn');
+
+        $update =
+            [
+                'inn' => $inn,
+                'inn_confirmed' => 1
+            ];
+
+        UsersORM::where('id', $userId)->update($update);
+        exit;
+    }
 }

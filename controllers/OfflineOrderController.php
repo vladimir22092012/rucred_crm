@@ -326,6 +326,14 @@ class OfflineOrderController extends Controller
                     echo json_encode($this->actionSendYaDisk());
                     die();
 
+                case 'check_inn_infosphere':
+                    echo $this->action_check_inn_infosphere();
+                    exit;
+
+                case 'change_inn':
+                    $this->action_change_inn();
+                    exit;
+
 
             endswitch;
 
@@ -554,12 +562,28 @@ class OfflineOrderController extends Controller
                     }
                     $this->design->assign('comments', $comments);
 
-                    $files = $this->users->get_files(array('user_id' => $order->user_id));
-                    foreach ($files as $file) {
-                        $format = explode('.', $file->name);
+                    $userfiles = $this->users->get_files(array('order_id' => $order_id));
+                    if (count($userfiles) == 0) {
+                        $userfiles = $this->users->get_files(array('user_id' => $order->user_id));
+                    }
+                    $files = [];
+                    foreach ($userfiles as $userfile) {
+                        $format = explode('.', $userfile->name);
 
                         if ($format[1] == 'pdf')
-                            $file->format = 'PDF';
+                            $userfile->format = 'PDF';
+                        $files[$userfile->type] = $userfile;
+                    }
+
+                    $types = [
+                        'Паспорт: разворот',
+                        'Паспорт: регистрация',
+                        'Селфи с паспортом'
+                    ];
+                    foreach ($types as $type) {
+                        if (!isset($files[$type])) {
+                            $files[$type] = false;
+                        }
                     }
 
                     $this->design->assign('files', $files);
@@ -1343,6 +1367,14 @@ class OfflineOrderController extends Controller
 
             $asp_id = $this->AspCodes->get_code(['order_id' => $order_id, 'type' => 'sms']);
             $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id->id, 'second_pak' => 1]);
+
+            $cron =
+                [
+                    'order_id' => $order->order_id,
+                    'pak' => 'first_pak'
+                ];
+
+            $this->YaDiskCron->add($cron);
 
             $cron =
                 [
@@ -2717,7 +2749,26 @@ class OfflineOrderController extends Controller
             $this->users->update_file($file_id, array('status' => $status));
         }
 
-        $files = $this->users->get_files(array('user_id' => $user_id));
+        $userfiles = $this->users->get_files(array('order_id' => $order_id));
+        $files = [];
+        foreach ($userfiles as $userfile) {
+            $format = explode('.', $userfile->name);
+
+            if ($format[1] == 'pdf')
+                $userfile->format = 'PDF';
+            $files[$userfile->type] = $userfile;
+        }
+
+        $types = [
+            'Паспорт: разворот',
+            'Паспорт: регистрация',
+            'Селфи с паспортом'
+        ];
+        foreach ($types as $type) {
+            if (!isset($files[$type])) {
+                $files[$type] = false;
+            }
+        }
 
         $this->design->assign('files', $files);
         exit;
@@ -3211,6 +3262,31 @@ class OfflineOrderController extends Controller
             'created' => date('Y-m-d H:i:s'),
         ));
 
+        $order = $this->orders->get_order($order_id);
+
+        $asp_log =
+            [
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'created' => date('Y-m-d H:i:s'),
+                'type' => 'employ_sms',
+                'recepient' => $order->phone_mobile,
+                'manager_id' => $this->manager->id
+            ];
+
+        $asp_id = $this->AspCodes->add_code($asp_log);
+
+        $this->documents->create_document(array(
+            'user_id' => $order->user_id,
+            'order_id' => $order->order_id,
+            'type' => 'IDENTIFICATION',
+            'params' => $order,
+            'numeration' => '03.07',
+            'asp_id' => $asp_id,
+            'hash' => sha1(rand(1, 99999999999)),
+            'stage_type' => 'reg-docs'
+        ));
+
         exit;
     }
 
@@ -3329,6 +3405,31 @@ class OfflineOrderController extends Controller
             'order_id' => $order_id,
             'user_id' => $order->user_id,
             'created' => date('Y-m-d H:i:s'),
+        ));
+
+        $order = $this->orders->get_order($order_id);
+
+        $asp_log =
+            [
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'created' => date('Y-m-d H:i:s'),
+                'type' => 'employ_sms',
+                'recepient' => $order->phone_mobile,
+                'manager_id' => $this->manager->id
+            ];
+
+        $asp_id = $this->AspCodes->add_code($asp_log);
+
+        $this->documents->create_document(array(
+            'user_id' => $order->user_id,
+            'order_id' => $order->order_id,
+            'type' => 'IDENTIFICATION',
+            'params' => $order,
+            'numeration' => '03.07',
+            'asp_id' => $asp_id,
+            'hash' => sha1(rand(1, 99999999999)),
+            'stage_type' => 'reg-docs'
         ));
 
         exit;
@@ -3490,7 +3591,11 @@ class OfflineOrderController extends Controller
 
         $count_days_this_month = date('t', strtotime($start_date->format('Y-m-d')));
 
-        $paydate = $this->check_pay_date(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
+        $temp_annoouitet_summ = 0;
+        list($paydate, $weekend) = $this->check_pay_date_array(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
+        if ($weekend > 0) {
+            $temp_annoouitet_summ = ($weekend + 1) * $rest_sum * ($percent / 100);
+        }
 
         if ($loan->type == 'pdl') {
 
@@ -3535,7 +3640,7 @@ class OfflineOrderController extends Controller
 
         $payment_schedule[$paydate->format('d.m.Y')] =
             [
-                'pay_sum' => $sum_pay,
+                'pay_sum' => $sum_pay + $temp_annoouitet_summ,
                 'loan_percents_pay' => $loan_percents_pay,
                 'loan_body_pay' => $body_pay,
                 'comission_pay' => 0.00,
@@ -4363,14 +4468,6 @@ class OfflineOrderController extends Controller
                 $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'first_pak' => 1]);
                 $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id, 'second_pak' => 1]);
 
-                $cron =
-                    [
-                        'order_id' => $order_id,
-                        'pak' => 'first_pak'
-                    ];
-
-                $this->YaDiskCron->add($cron);
-
                 $this->orders->update_order($order->order_id, ['status' => 1, 'contract_id' => $contract_id]);
                 $this->add_first_ticket($order->order_id, $order->user_id);
 
@@ -4569,6 +4666,14 @@ class OfflineOrderController extends Controller
         $this->documents->update_asp(['order_id' => $order_id, 'rucred_asp_id' => $asp_id, 'second_pak' => 1]);
         $asp_id = $this->AspCodes->get_code(['order_id' => $order_id, 'type' => 'sms']);
         $this->documents->update_asp(['order_id' => $order_id, 'asp_id' => $asp_id->id, 'second_pak' => 1]);
+
+        $cron =
+            [
+                'order_id' => $order->order_id,
+                'pak' => 'first_pak'
+            ];
+
+        $this->YaDiskCron->add($cron);
 
         $cron =
             [
@@ -4916,6 +5021,17 @@ class OfflineOrderController extends Controller
             }
         }
 
+        $user = UsersORM::find($order->user_id);
+        if ($user) {
+            if (!$user->inn_confirmed) {
+                echo json_encode(['error' => 'ИНН не проверен!']);
+                exit;
+            }
+        } else {
+            echo json_encode(['error' => 'Не найден пользователь!']);
+            exit;
+        }
+
         if ($count_photos < 3) {
             echo json_encode(['error' => 'Не забудьте добавить фото документов и селфи с паспортом!']);
             exit;
@@ -4952,6 +5068,20 @@ class OfflineOrderController extends Controller
         if ($count_scans_without_asp < 2) {
             echo json_encode(['error' => 'Проверьте сканы для форм 03.03 и 03.04']);
             exit;
+        }
+
+        $scoring_types = $this->scorings->get_types();
+        foreach ($scoring_types as $scoring_type) {
+            if ($scoring_type->name != 'fns' && empty($scoring_type->is_paid)) {
+                $add_scoring = array(
+                    'user_id' => $order->user_id,
+                    'order_id' => $order_id,
+                    'type' => $scoring_type->name,
+                    'status' => 'new',
+                    'start_date' => date('Y-m-d H:i:s'),
+                );
+                $this->scorings->add_scoring($add_scoring);
+            }
         }
 
         echo json_encode(['success' => 1]);
@@ -5001,6 +5131,7 @@ class OfflineOrderController extends Controller
 
         $this->orders->update_order($order_id, ['status' => 10]);
         $this->tickets->update_by_theme_id(11, ['status' => 4], $order_id);
+
         exit;
     }
 
@@ -5594,6 +5725,7 @@ class OfflineOrderController extends Controller
         $bik = $this->request->post('bik');
         $cor = $this->request->post('cor');
         $inn_holder = $this->request->post('inn_holder');
+        $settlementId = $this->request->post('settlementId');
         $comment = $this->request->post('comment');
 
         if (empty($comment)) {
@@ -5610,8 +5742,7 @@ class OfflineOrderController extends Controller
             exit;
         }
 
-        if ($user->inn != $inn_holder && $userFio == $hold)
-        {
+        if ($user->inn != $inn_holder && $userFio == $hold) {
             echo json_encode(['error' => 'ФИО владельца счёта совпадает с ФИО заёмщика, в таком случае, ИНН заёмщика и ИНН держателя счёта должны совпадать']);
             exit;
         }
@@ -5638,46 +5769,52 @@ class OfflineOrderController extends Controller
         $newValues = array_diff($update, $oldRequisites);
         $oldValues = array_intersect_key($oldRequisites, $newValues);
 
-        RequisitesORM::where('user_id', $userId)->update($newValues);
+        if (!empty($newValues)) {
 
-        $translate =
-            [
-                'name' => "Наименование банка",
-                'bik' => "Бик банка",
-                'number' => "Номер счета",
-                'holder' => "Держатель счета",
-                'correspondent_acc' => "Кор счет",
-                'inn_holder' => 'ИНН держателя счета'
-            ];
+            RequisitesORM::where('user_id', $userId)->update($newValues);
 
-        foreach ($oldValues as $key => $value) {
-            $oldValues[$translate[$key]] = $value;
-            unset($oldValues[$key]);
+            $translate =
+                [
+                    'name' => "Наименование банка",
+                    'bik' => "Бик банка",
+                    'number' => "Номер счета",
+                    'holder' => "Держатель счета",
+                    'correspondent_acc' => "Кор счет",
+                    'inn_holder' => 'ИНН держателя счета'
+                ];
+
+            foreach ($oldValues as $key => $value) {
+                $oldValues[$translate[$key]] = $value;
+                unset($oldValues[$key]);
+            }
+
+            foreach ($newValues as $key => $value) {
+                $newValues[$translate[$key]] = $value;
+                unset($newValues[$key]);
+            }
+
+            $newValues['Причина'] = $comment;
+
+            $this->changelogs->add_changelog(array(
+                'manager_id' => $this->manager->id,
+                'created' => date('Y-m-d H:i:s'),
+                'type' => 'requisites',
+                'old_values' => serialize($oldValues),
+                'new_values' => serialize($newValues),
+                'order_id' => $orderId,
+                'user_id' => $userId,
+            ));
+
+            $order = $this->orders->get_order($orderId);
+
+            $order->payment_schedule = PaymentsScheduleORM::where('order_id', $orderId)->where('actual', 1)->first()->toArray();
+
+            DocumentsORM::where('order_id', $orderId)
+                ->update(['params' => serialize($order)]);
+
         }
 
-        foreach ($newValues as $key => $value) {
-            $newValues[$translate[$key]] = $value;
-            unset($newValues[$key]);
-        }
-
-        $newValues['Причина'] = $comment;
-
-        $this->changelogs->add_changelog(array(
-            'manager_id' => $this->manager->id,
-            'created' => date('Y-m-d H:i:s'),
-            'type' => 'requisites',
-            'old_values' => serialize($oldValues),
-            'new_values' => serialize($newValues),
-            'order_id' => $orderId,
-            'user_id' => $userId,
-        ));
-
-        $order = $this->orders->get_order($orderId);
-
-        $order->payment_schedule = PaymentsScheduleORM::where('order_id', $orderId)->where('actual', 1)->first()->toArray();
-
-        DocumentsORM::where('order_id', $orderId)
-            ->update(['params' => serialize($order)]);
+        OrdersORM::where('id', $orderId)->update(['settlement_id' => $settlementId]);
 
         echo json_encode(['success' => 1]);
         exit;
@@ -5700,8 +5837,8 @@ class OfflineOrderController extends Controller
         $isHoliday = WeekendCalendarORM::where('date', date('Y-m-d', strtotime($probablyStartDate)))->first();
 
         if (!empty($isHoliday)) {
-            //echo json_encode(['error' => 'Дата выпала на выходной день']);
-            //exit;
+            echo json_encode(['error' => 'Дата выпала на выходной день']);
+            exit;
         }
 
         if (empty($comment)) {
@@ -5729,15 +5866,13 @@ class OfflineOrderController extends Controller
         $order = OrdersORM::find($orderId);
         $user = UsersORM::find($userId);
 
-        if (empty($contract_number)) {
-            $new_number = $group->number . $company->number . ' ' . $loanType->number . ' ' . $user->personal_number . ' ' . $count_contracts;
-        } else {
-            $new_number = $contract_number;
-        }
+
+        $new_number = $group->number . $company->number . ' ' . $loanType->number . ' ' . $user->personal_number . ' ' . $count_contracts;
+
 
         ProjectContractNumberORM::updateOrCreate(['orderId' => $order->id, 'userId' => $userId], ['uid' => $new_number]);
 
-        ContractsORM::where('id', $order->contract_id)->update(['number' => $new_number]);
+        ContractsORM::where('id', $order->contract_id)->update(['number' => $new_number, 'deal_date' => date('Y-m-d')]);
 
         $groupLoanType = GroupLoanTypesORM::where('group_id', $groupId)->where('loantype_id', $loanTypeId)->first();
 
@@ -5766,13 +5901,6 @@ class OfflineOrderController extends Controller
             foreach ($newOrder as $newKey => $newValue) {
                 if (in_array($newKey, ['company_id', 'amount', 'loan_type']) && $oldKey == $newKey && $oldValue != $newValue)
                     $needSms = 1;
-            }
-        }
-
-        $oldUser = UsersORM::find($userId);
-        if ($oldUser) {
-            if ($oldUser->profunion != $profUnion) {
-                $needSms = 1;
             }
         }
 
@@ -6051,6 +6179,61 @@ class OfflineOrderController extends Controller
             $this->YaDiskCron->add($cron);
         }
         return array('success' => 1);
+    }
+
+    private function check_pay_date_array($date)
+    {
+        $weekend = 0;
+        for ($i = 0; $i <= 15; $i++) {
+            $check_date = $this->WeekendCalendar->check_date($date->format('Y-m-d'));
+
+            if ($check_date == null) {
+                break;
+            } else {
+                $date->sub(new DateInterval('P1D'));
+                $weekend++;
+            }
+        }
+
+        return [$date, $weekend];
+    }
+
+    private function action_check_inn_infosphere()
+    {
+        $userId = $this->request->post('userId');
+
+        $user = UsersORM::find($userId);
+
+        $passportSerial = explode(' ', $user->passport_serial);
+        $user->passport_serial = $passportSerial[0];
+        $user->passport_number = $passportSerial[1];
+
+        $inn = InfospheresFactory::get('inn');
+        $inn = $inn->sendRequest($user);
+
+        if (is_int($inn) && $inn == $user->inn)
+            echo json_encode(['message' => 'ИНН введен корректно', 'need_change' => 1, 'inn' => $inn]);
+        elseif (is_int($inn) && $inn != $user->inn)
+            echo json_encode(['message' => 'Корректный ИНН '.$inn, 'need_change' => 1, 'inn' => $inn]);
+        else
+            echo json_encode(['message' => 'ИНН не найден', 'need_change' => 0]);
+
+        exit;
+    }
+
+    private function action_change_inn()
+    {
+        $userId = $this->request->post('userId');
+        $inn    = $this->request->post('inn');
+
+        $update =
+            [
+                'inn' => $inn,
+                'inn_confirmed' => 1
+            ];
+
+        UsersORM::where('id', $userId)->update($update);
+        exit;
     }
 
 }

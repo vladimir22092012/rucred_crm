@@ -27,6 +27,12 @@ class AuditCron extends Core
         {
             foreach ($overtime_scorings as $overtime_scoring)
             {
+
+                $order = OrdersORM::find($overtime_scoring->order_id);
+
+                if($order->status == 0)
+                    continue;
+
                 if (in_array($overtime_scoring->type, array('fms', 'fns', 'fssp')) && $overtime_scoring->repeat_count < 2)
                 {
                     $this->scorings->update_scoring($overtime_scoring->id, array(
@@ -53,6 +59,11 @@ class AuditCron extends Core
         {
             if ($scoring = $this->scorings->get_repeat_scoring())
             {
+                $order = OrdersORM::find($scoring->order_id);
+
+                if($order->status == 0)
+                    continue;
+
                 $this->scorings->update_scoring($scoring->id, array(
                     'status' => 'process',
                     'start_date' => date('Y-m-d H:i:s')
@@ -70,6 +81,11 @@ class AuditCron extends Core
         {
             if ($scoring = $this->scorings->get_new_scoring())
             {
+                $order = OrdersORM::find($scoring->order_id);
+
+                if($order->status == 0)
+                    continue;
+
                 $this->scorings->update_scoring($scoring->id, array(
                     'status' => 'process',
                     'start_date' => date('Y-m-d H:i:s')

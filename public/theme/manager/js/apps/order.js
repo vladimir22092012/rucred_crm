@@ -13,54 +13,61 @@ function OrderApp() {
 
     };
 
-    app.upload = function (input) {
+  app.upload = function(input){
 
-        var $this = $(input);
+    var $this = $(input);
 
-        var $fileblock = $this.closest('.form_file_item');
+    var $fileblock = $this.closest('.form_file_item');
 
-        var _type = $this.data('type');
+    var _type = $this.data('type');
 
-        var form_data = new FormData();
+    if (_type === '') {
+      _type = 'document';
+    }
 
-        form_data.append('file', input.files[0]);
-        form_data.append('user_id', $this.data('user'));
-        form_data.append('type', 'document');
-        form_data.append('action', 'add');
-        form_data.append('template', $this.data('doc-template'));
-        form_data.append('notreplace', '1');
+    var form_data = new FormData();
 
-        $.ajax({
-            url: '/upload_files',
-            data: form_data,
-            type: 'POST',
-            dataType: 'json',
-            processData: false,
-            contentType: false,
-            beforeLoad: function () {
-                $fileblock.addClass('loading');
-            },
-            success: function (resp) {
-                if (!!resp.error) {
-                    var error_text = '';
-                    if (resp.error == 'max_file_size')
-                        error_text = 'Превышен максимально допустимый размер файла.';
-                    else if (resp.error == 'error_uploading')
-                        error_text = 'Файл не удалось загрузить, попробуйте еще.';
-                    else
-                        error_text = resp.error;
+    form_data.append('file', input.files[0]);
+    form_data.append('user_id', $this.data('user'));
+    form_data.append('order_id', $this.data('order'));
+    form_data.append('type', _type);
+    form_data.append('action', 'add');
+    form_data.append('template', $this.data('doc-template'));
+    form_data.append('notreplace', '1');
 
-                    $fileblock.append('<div class="error_text">' + error_text + '</div>');
-                }
-                else {
-                    $fileblock.find('.error_text').remove();
+    $.ajax({
+      url: '/upload_files',
+      data: form_data,
+      type: 'POST',
+      dataType: 'json',
+      processData : false,
+      contentType : false,
+      beforeLoad: function(){
+        $fileblock.addClass('loading');
+      },
+      success: function(resp){
+        if (!!resp.error)
+        {
+          var error_text = '';
+          if (resp.error == 'max_file_size')
+            error_text = 'Превышен максимально допустимый размер файла.';
+          else if (resp.error == 'error_uploading')
+            error_text = 'Файл не удалось загрузить, попробуйте еще.';
+          else
+            error_text = resp.error;
 
-                    app.update_page();
-                }
+          $fileblock.append('<div class="error_text">'+error_text+'</div>');
+        }
+        else
+        {
+          $fileblock.find('.error_text').remove();
 
-            }
-        });
-    };
+          app.update_page();
+        }
+
+      }
+    });
+  };
 
     var _init_return_insure = function () {
         $(document).on('click', '.js-return-insure', function (e) {
@@ -738,7 +745,7 @@ function OrderApp() {
 
             $('#status_' + _id).val(_status);
 
-            $(this).closest('form').submit();
+          $("#images_form_status").submit();
         });
 
         $(document).on('click', '.js-image-remove', function (e) {

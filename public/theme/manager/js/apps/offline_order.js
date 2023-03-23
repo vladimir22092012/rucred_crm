@@ -22,11 +22,16 @@
 
         var _type = $this.data('type');
 
+        if (_type === '') {
+          _type = 'document';
+        }
+
         var form_data = new FormData();
 
         form_data.append('file', input.files[0]);
         form_data.append('user_id', $this.data('user'));
-        form_data.append('type', 'document');
+        form_data.append('order_id', $this.data('order'));
+        form_data.append('type', _type);
         form_data.append('action', 'add');
         form_data.append('template', $this.data('doc-template'));
         form_data.append('notreplace', '1');
@@ -151,7 +156,7 @@
                     {
                         var _html = '';
                         var _i = 0;
-                        
+
                         $.each(resp.body, function(k, item){
                             if (_i == 0 || (_i % 2) == 0)
                             var _row = '<tr>';
@@ -812,7 +817,7 @@ console.info(resp);
 
             $('#status_'+_id).val(_status);
 
-            $(this).closest('form').submit();
+            $("#images_form_status").submit();
             app.update_page();
         });
 
@@ -1297,7 +1302,7 @@ console.info(resp);
         _init_comment_form();
         _init_fssp_info();
         _init_okb_info();
-        
+
         _init_upload_file();
 
         _init_autoretry_accept();

@@ -162,7 +162,29 @@ class ClientController extends Controller
         }
         $this->design->assign('managers', $managers);
 
-        $files = $this->users->get_files(array('user_id' => $id));
+        $userfiles = $this->users->get_files(array('user_id' => $id));
+        $files = [];
+        foreach ($userfiles as $userfile) {
+            $format = explode('.', $userfile->name);
+
+            if ($format[1] == 'pdf')
+                $userfile->format = 'PDF';
+            if (!isset($files[$userfile->type])) {
+                $files[$userfile->type] = $userfile;
+            }
+        }
+
+        $types = [
+            'Паспорт: разворот',
+            'Паспорт: регистрация',
+            'Селфи с паспортом'
+        ];
+        foreach ($types as $type) {
+            if (!isset($files[$type])) {
+                $files[$type] = false;
+            }
+        }
+
         $this->design->assign('files', $files);
 
         $comments = $this->comments->get_comments(array('user_id' => $client->id));
@@ -306,6 +328,18 @@ class ClientController extends Controller
 
         $this->design->assign('balances', $balances);
 
+        $companies = [];
+        foreach ($client->orders as $order) {
+            if ($order->status != 7 && !isset($companies[$order->company_id])) {
+                $company = CompaniesORM::find($order->company_id);
+                $companies[$order->company_id] = [
+                    'order' => $order->order_id,
+                    'url' => $order->offline == 1 ? '/offline_order/' . $order->order_id : '/order/' . $order->order_id,
+                    'name' => $company ? $company->name : 'Не известная компания',
+                ];
+            }
+        }
+        $this->design->assign('companies', $companies);
 
         return $this->design->fetch('client.tpl');
     }
@@ -1041,9 +1075,11 @@ class ClientController extends Controller
             $old_files = $this->users->get_file($file_id);
             $old_values = array();
             foreach ($update as $key => $val) {
-                $old_values[$key] = $old_files->$key;
+                if (isset($old_values[$key])) {
+                    $old_values[$key] = $old_files->$key;
+                }
             }
-            if ($old_values['status'] != $update['status']) {
+            if (isset($old_values['status']) && $old_values['status'] != $update['status']) {
                 $this->changelogs->add_changelog(array(
                     'manager_id' => $this->manager->id,
                     'created' => date('Y-m-d H:i:s'),
@@ -1329,7 +1365,15 @@ class ClientController extends Controller
             }
             if (!empty($updateData)) {
                 if ($field == 'passport') {
-                    FilesORM::where('user_id', $user_id)->delete();
+                    $files = FilesORM::query()
+                        ->where('user_id', '=', $user->id)
+                        ->orWhereNull('order_id')
+                        ->get();
+                    foreach ($files as $file) {
+                        if ($file->status != 3) {
+                            $file->update(['status' => 4]);
+                        }
+                    }
                 }
                 $this->users->update_user($user_id, $updateData);
             }

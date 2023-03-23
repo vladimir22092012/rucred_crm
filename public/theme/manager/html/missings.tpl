@@ -158,20 +158,20 @@
                                     </tr>
 
                                     <tr class="jsgrid-filter-row" id="search_form">
-                                        <td style="width: 100px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 100px;" class="jsgrid-cell">
                                             <input type="hidden" name="sort" value="{$sort}"/>
                                             <input type="text" name="user_id" value="{$search['user_id']}"
                                                    class="form-control input-sm">
                                         </td>
-                                        <td style="width: 100px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 100px;" class="jsgrid-cell">
                                             <input type="text" name="created" value="{$search['created']}"
                                                    class="form-control input-sm">
                                         </td>
-                                        <td style="width: 100px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 100px;" class="jsgrid-cell">
                                             <input type="text" name="created" value="{$search['created']}"
                                                    class="form-control input-sm">
                                         </td>
-                                        <td style="width: 200px;" class="jsgrid-cell jsgrid-align-right">
+                                        <td style="width: 200px;" class="jsgrid-cell">
                                             <input type="text" name="fio" value="{$search['fio']}"
                                                    class="form-control input-sm">
                                         </td>
@@ -187,7 +187,7 @@
                                     <tbody>
                                     {foreach $clients as $client}
                                         <tr class="jsgrid-row">
-                                            <td style="width: 100px;" class="jsgrid-cell jsgrid-align-right">
+                                            <td style="width: 100px;" class="jsgrid-cell">
                                                 {if !empty($manager) && $manager->role == 'developer'}
                                                     <a href="neworder/draft/{$client->id}">{$client->id}</a>
                                                 {else}
