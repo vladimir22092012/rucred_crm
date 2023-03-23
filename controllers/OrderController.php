@@ -4965,6 +4965,20 @@ class OrderController extends Controller
 
         $this->orders->update_order($order_id, ['status' => 2]);
 
+        $scoring_types = $this->scorings->get_types();
+        foreach ($scoring_types as $scoring_type) {
+            if ($scoring_type->name != 'fns' && empty($scoring_type->is_paid)) {
+                $add_scoring = array(
+                    'user_id' => $order->user_id,
+                    'order_id' => $order_id,
+                    'type' => $scoring_type->name,
+                    'status' => 'new',
+                    'start_date' => date('Y-m-d H:i:s'),
+                );
+                $this->scorings->add_scoring($add_scoring);
+            }
+        }
+
         echo json_encode(['success' => 1]);
         exit;
     }
