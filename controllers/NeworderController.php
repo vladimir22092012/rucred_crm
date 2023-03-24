@@ -1011,18 +1011,22 @@ class NeworderController extends Controller
 
                     $loantype = $this->Loantypes->get_loantype($order['loan_type']);
 
-                    $contracts = $this->contracts->get_contracts(['user_id' => $user_id]);
 
-                    if (!empty($contracts)) {
-                        $count_contracts = count($contracts) + 1;
-                        $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
-                    } else {
-                        $count_contracts = '01';
-                    }
-
-                    $projectNumber = "$group->number$company->number $loantype->number $personal_number $count_contracts";
-
-                    ProjectContractNumberORM::updateOrCreate(['orderId' => $order_id, 'userId' => $user_id], ['uid' => $projectNumber]);
+                    ProjectContractNumberORM::updateOrCreate(
+                        [
+                            'orderId' => $order_id,
+                            'userId' => $user_id
+                        ],
+                        [
+                            'uid' => ProjectContractNumberORM::getNewNumber(
+                                $group->number,
+                                $company->number,
+                                $loantype->number,
+                                $personal_number,
+                                $user_id
+                            )
+                        ]
+                    );
 
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                     exit;
@@ -1086,18 +1090,21 @@ class NeworderController extends Controller
 
                     $loantype = $this->Loantypes->get_loantype($order['loan_type']);
 
-                    $contracts = $this->contracts->get_contracts(['user_id' => $user_id]);
-
-                    if (!empty($contracts)) {
-                        $count_contracts = count($contracts) + 1;
-                        $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
-                    } else {
-                        $count_contracts = '01';
-                    }
-
-                    $projectNumber = "$group->number$company->number $loantype->number $personal_number $count_contracts";
-
-                    ProjectContractNumberORM::updateOrCreate(['orderId' => $order_id, 'userId' => $user_id], ['uid' => $projectNumber]);
+                    ProjectContractNumberORM::updateOrCreate(
+                        [
+                            'orderId' => $order_id,
+                            'userId' => $user_id
+                        ],
+                        [
+                            'uid' => ProjectContractNumberORM::getNewNumber(
+                                $group->number,
+                                $company->number,
+                                $loantype->number,
+                                $personal_number,
+                                $user_id
+                            )
+                        ]
+                    );
 
                     response_json(['success' => 1, 'reason' => 'Заявка создана успешно', 'redirect' => $this->config->root_url . '/offline_order/' . $order_id]);
                 }
