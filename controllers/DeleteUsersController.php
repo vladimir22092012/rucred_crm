@@ -21,9 +21,17 @@ class DeleteUsersController extends Controller
     private function action_delete_user() {
         $userIds = $this->request->post('userIds');
         if (count($userIds) > 0) {
-            $ordersIds = OrdersORM::whereIn('user_id', $userIds)->pluck('id');
-            $ticketsIds = TicketsORM::query()->whereIn('order_id', $ordersIds)->pluck('id');
-
+            $ordersIds = [];
+            $orders = OrdersORM::query()->whereIn('user_id', $userIds)->get();
+            foreach ($orders as $order) {
+                $ordersIds[] = $order->id;
+            }
+            $tickets = TicketsORM::query()->whereIn('order_id', $ordersIds)->get();
+            $ticketsIds = [];
+            foreach ($tickets as $ticket) {
+                $ticketsIds[] = $ticket->id;
+            }
+            OrdersORM::query()->whereIn('id', $ordersIds)->delete();
             NotificationCronORM::query()->whereIn('ticket_id', $ticketsIds)->delete();
             TicketsORM::query()->whereIn('id', $ticketsIds)->delete();
             ContractsORM::query()->whereIn('user_id', $userIds)->delete();
