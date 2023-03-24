@@ -13,6 +13,23 @@ class TempCommandsCron extends Core
     private function execute() {
         echo 'start cron';
         //$this->createContracts();
+        $this->checkPhotos();
+    }
+
+    private function checkPhotos() {
+        $users = UsersORM::all();
+        foreach ($users as $user) {
+            $files = FilesORM::query()->where('user_id', '=', $user->id)->first();
+            if (!$files) {
+                $dir = __DIR__.'/../files/users/'.$user->id;
+                if (file_exists($dir)) {
+                    $dir_files = scandir($dir);
+                    if (is_array($dir_files) && count($dir_files) > 2) {
+                        echo $user->id.',';
+                    }
+                }
+            }
+        }
     }
 
     private function createContracts() {
