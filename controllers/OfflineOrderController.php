@@ -5867,7 +5867,8 @@ class OfflineOrderController extends Controller
         $user = UsersORM::find($userId);
 
 
-        $new_number = $group->number . $company->number . ' ' . $loanType->number . ' ' . $user->personal_number . ' ' . $count_contracts;
+        $number = ProjectContractNumberORM::query()->where('order_id', '=', $orderId)->first();
+        $new_number = ProjectContractNumberORM::refactorNumber($number, $group->number, $company->number, $loanType->number, $user->personal_number, $userId);
 
 
         ProjectContractNumberORM::updateOrCreate(['orderId' => $order->id, 'userId' => $userId], ['uid' => $new_number]);
