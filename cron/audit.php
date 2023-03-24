@@ -13,15 +13,15 @@ class AuditCron extends Core
     public function __construct()
     {
     	parent::__construct();
-        
+
         file_put_contents($this->config->root_dir.'cron/log.txt', date('d-m-Y H:i:s').' AUDIT RUN'.PHP_EOL, FILE_APPEND);
     }
-    
-    
+
+
     public function run()
     {
         $datetime = date('Y-m-d H:i:s', time() - 300);
-        
+
         $overtime_scorings = $this->scorings->get_overtime_scorings($datetime);
         if (!empty($overtime_scorings))
         {
@@ -41,7 +41,7 @@ class AuditCron extends Core
                         'string_result' => 'Повторный запрос',
                         'repeat_count' => $overtime_scoring->repeat_count + 1,
                     ));
-                    
+
                 }
                 else
                 {
@@ -68,9 +68,9 @@ class AuditCron extends Core
                     'status' => 'process',
                     'start_date' => date('Y-m-d H:i:s')
                 ));
-                
+
                 $classname = $scoring->type."_scoring";
-                
+
                 $scoring_result = $this->{$classname}->run_scoring($scoring->id);
             }
             $i--;
@@ -90,18 +90,51 @@ class AuditCron extends Core
                     'status' => 'process',
                     'start_date' => date('Y-m-d H:i:s')
                 ));
-                
+
                 $classname = $scoring->type."_scoring";
-                
+
                 $scoring_result = $this->{$classname}->run_scoring($scoring->id);
             }
             $i--;
         }
-        
+
     }
-    
-    
-    
+
+    public function execute() {
+        if ($this->isStarted()) {
+            exit;
+        }
+        $scorings = $this->scorings->get_scorings(['status' => ['new']]);
+        foreach ($scorings as $scoring) {
+            try {
+                $this->scorings->update_scoring($scoring->id, array(
+                    'status' => 'process',
+                    'start_date' => date('Y-m-d H:i:s')
+                ));
+
+                $classname = $scoring->type."_scoring";
+
+                $this->{$classname}->run_scoring($scoring->id);
+            } catch (Exception $exception) {
+                $this->scorings->update_scoring($scoring->id, array(
+                    'status' => 'process',
+                    'start_date' => date('Y-m-d H:i:s'),
+                    'string_result' => $exception->getMessage(),
+                ));
+            }
+        }
+    }
+
+    public function isStarted() {
+        $process_name = 'audit.php';
+        exec("ps -auxww | grep $process_name | grep -v grep",$output,$code);
+        if (!empty($output) && count($output) > 1) {
+            echo "Cron is started\r\n";
+            return true;
+        }
+        return false;
+    }
+
     /*
     public function run()
     {
@@ -116,30 +149,30 @@ class AuditCron extends Core
         }
     }
     */
-    
+
     public function run_audit($audit)
     {
     	foreach ($audit->types as $type)
         {
             $scoring_type = $this->scorings->get_type($type);
-            
+
             $classname = $type."_scoring";
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($classname);echo '</pre><hr />';
             $scoring_type_result = $this->$classname->run($audit->id, $audit->user_id, $audit->order_id);
-            
+
             if (!$scoring_type_result && $scoring_type->negative_action == 'stop')
             {
                 $this->scorings->update_audit($audit->id, array('status'=>'stopped'));
                 return false;
             }
-            
+
         }
-        
+
         $this->scorings->update_audit($audit->id, array('status'=>'completed'));
         return true;
     }
-    
+
 }
 
 $cron = new AuditCron();
-$cron->run();
+$cron->execute();
