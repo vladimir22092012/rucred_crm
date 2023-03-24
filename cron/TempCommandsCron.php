@@ -17,7 +17,9 @@ class TempCommandsCron extends Core
     }
 
     private function checkPhotos() {
-        $users = UsersORM::all();
+        /*FilesORM::query()->whereIn('user_id', [22692,22703,22704,22705,22706,22707,22708,22749,22753,22754,22759,22761,22764,22778,22803,22811,22813,22815,22823,22824,22828,22834,22839,22840,22846,22847,22864,22867,22870,23151,23152,23236,23239,23252,23260])->delete();
+        die();*/
+        $users = UsersORM::query()->whereIn('id', [22692,22703,22704,22705,22706,22707,22708,22749,22753,22754,22759,22761,22764,22778,22803,22811,22813,22815,22823,22824,22828,22834,22839,22840,22846,22847,22864,22867,22870,23151,23152,23236,23239,23252,23260])->get();
         foreach ($users as $user) {
             $files = FilesORM::query()->where('user_id', '=', $user->id)->first();
             if (!$files) {
@@ -25,7 +27,33 @@ class TempCommandsCron extends Core
                 if (file_exists($dir)) {
                     $dir_files = scandir($dir);
                     if (is_array($dir_files) && count($dir_files) > 2) {
-                        echo $user->id.',';
+                        $i = 0;
+                        foreach ($dir_files as $dir_file) {
+                            if ($dir_file != '.' && $dir_file != '..') {
+                                $types = [
+                                    'Паспорт: разворот',
+                                    'Селфи с паспортом',
+                                    'Паспорт: регистрация',
+                                ];
+                                if (strpos($dir_file, '.jpg') != false || strpos($dir_file, '.png') != false || strpos($dir_file, '.jpeg') != false) {
+                                    if ($i > 2) {
+                                        $i = 2;
+                                    }
+                                    FilesORM::create([
+                                        'user_id' => $user->id,
+                                        'name' => $dir_file,
+                                        'type' => $types[$i],
+                                        'status' => '2',
+                                        'created' => $user->created,
+                                        'sent_1c' => '0',
+                                        'sent_date' => null,
+                                    ]);
+                                    echo "User ".$user->id." save files done\n";
+                                    $i++;
+                                }
+
+                            }
+                        }
                     }
                 }
             }
