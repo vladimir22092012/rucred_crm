@@ -3856,7 +3856,7 @@ class OrderController extends Controller
                 $body_pay = 0;
                 $sum_pay = $loan_percents_pay;
             } else {
-                $loan_percents_pay = round($order['amount'] * ($order['percent'] / 100) * date_diff($paydate, $start_date)->days);
+                $loan_percents_pay = round($order['amount'] * ($order['percent'] / 100) * date_diff($paydate, $start_date)->days, 2);
                 $body_pay = $order['amount'];
                 $sum_pay = $loan_percents_pay + $body_pay;
             }
