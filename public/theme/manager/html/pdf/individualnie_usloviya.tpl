@@ -631,7 +631,9 @@
             <td style="width: 70%" align="left">Микрозаём предоставляется Заёмщику не позднее {$probably_start_date|date} в
                 безналичной форме, путём перечисления денежных средств:<br><br>☐ на расчётный счёт Заёмщика / реквизиты
                 банковской карты Заёмщика, указанные в п.7 Договора<br>☒ по реквизитам, указанным Заёмщиком в Заявлении
-                от {$probably_start_date|date} года о перечислении
+                от {if isset($code_asp->code)}{$code_asp->created|date}
+                {elseif !empty($contract->deal_date)}{$contract->deal_date|date}
+                {else}ХХ.ХХ.ХХХХ{/if} года о перечислении
                 заёмных денежных средств<br>☐ по реквизитам, указанным Заёмщиком в Заявлении
                 от {if isset($code_asp->code)}{$code_asp->created|date}
                 {elseif !empty($contract->deal_date)}{$contract->deal_date|date}
