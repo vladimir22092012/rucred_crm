@@ -5853,23 +5853,17 @@ class OfflineOrderController extends Controller
             exit;
         }
 
-        $count_contracts = ContractsORM::where('user_id', $userId)->whereIn('status', [2, 3, 4])->count();
-
-        if (!empty($count_contracts)) {
-            $count_contracts = str_pad($count_contracts, 2, '0', STR_PAD_LEFT);
-        } else {
-            $count_contracts = '01';
-        }
-
         $group = GroupsORM::find($groupId);
         $company = CompaniesORM::find($companyId);
         $order = OrdersORM::find($orderId);
         $user = UsersORM::find($userId);
 
-
-        $number = ProjectContractNumberORM::query()->where('order_id', '=', $orderId)->first();
-        $new_number = ProjectContractNumberORM::refactorNumber($number, $group->number, $company->number, $loanType->number, $user->personal_number, $userId);
-
+        $number = ProjectContractNumberORM::query()->where('orderId', '=', $orderId)->first();
+        if (isset($contract_number) && !empty($contract_number) && $contract_number != $number) {
+            $new_number = $contract_number;
+        } else {
+            $new_number = ProjectContractNumberORM::refactorNumber($number, $group->number, $company->number, $loanType->number, $user->personal_number, $userId);
+        }
 
         ProjectContractNumberORM::updateOrCreate(['orderId' => $order->id, 'userId' => $userId], ['uid' => $new_number]);
 

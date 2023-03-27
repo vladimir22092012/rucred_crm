@@ -316,7 +316,8 @@ class OrderController extends Controller
 
             if ($order_id = $this->request->get('id', 'integer')) {
                 if ($order = $this->orders->get_order($order_id)) {
-
+                    $projectNumber = ProjectContractNumberORM::where('orderId', $order->order_id)->where('userId', $order->user_id)->first();
+                    $this->design->assign('projectNumber', $projectNumber);
                     $from_registr = $this->request->get('reg');
 
                     if (!empty($from_registr))
@@ -522,7 +523,6 @@ class OrderController extends Controller
                     }
 
                     $this->design->assign('files', $files);
-
 
                     $user_close_orders = $this->orders->get_orders(array(
                         'user_id' => $order->user_id,
@@ -3715,22 +3715,18 @@ class OrderController extends Controller
             exit;
         }
 
-        $count_contracts = ContractsORM::where('user_id', $userId)->whereIn('status', [2, 3, 4])->count();
-
-        if (!empty($count_contracts)) {
-            $count_contracts = str_pad($count_contracts + 1, 2, '0', STR_PAD_LEFT);
-        } else {
-            $count_contracts = '01';
-        }
 
         $group = GroupsORM::find($groupId);
         $company = CompaniesORM::find($companyId);
         $order = OrdersORM::find($orderId);
         $user = UsersORM::find($userId);
 
-
-        $number = ProjectContractNumberORM::query()->where('order_id', '=', $orderId)->first();
-        $new_number = ProjectContractNumberORM::refactorNumber($number, $group->number, $company->number, $loanType->number, $user->personal_number, $userId);
+        $number = ProjectContractNumberORM::query()->where('orderId', '=', $orderId)->first();
+        if (isset($contract_number) && !empty($contract_number) && $contract_number != $number) {
+            $new_number = $contract_number;
+        } else {
+            $new_number = ProjectContractNumberORM::refactorNumber($number, $group->number, $company->number, $loanType->number, $user->personal_number, $userId);
+        }
 
         $issetContract = ContractsORM::query()->where('number', '=', $new_number)->first();
         if ($issetContract && $issetContract->id != $order->contract_id) {
