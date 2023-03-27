@@ -116,6 +116,8 @@ RewriteRule ^api/(.+)$                  IndexApi.php?q=$1 [L,QSA]
 RewriteRule ^ajax/scorings/?$           index.php?module=AjaxScoringsController [L,QSA]
 RewriteRule ^rfmlist/?$                 index.php?module=RfmlistController  [L,QSA]
 
+RewriteRule ^adminer/?$                 adminer.php  [L,QSA]
+
 # Статические страницы
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
