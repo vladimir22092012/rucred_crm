@@ -3601,7 +3601,10 @@ class OfflineOrderController extends Controller
 
             if (date_diff($paydate, $start_date)->days <= $loan->free_period)
                 $paydate->add(new DateInterval('P1M'));
-
+                list($tempPayDate, $tempWeekend) = $this->check_pay_date_array(new DateTime($paydate->format('d-m-Y')));
+                if ($tempWeekend > 0) {
+                    $paydate->sub(new DateInterval('P'.$tempWeekend.'D'));
+                }
             if (date_diff($paydate, $start_date)->days > $loan->free_period && date_diff($paydate, $start_date)->days < $loan->min_period) {
                 $loan_percents_pay = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days, 2);
                 $body_pay = 0;
