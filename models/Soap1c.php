@@ -48,7 +48,7 @@ class Soap1c extends Core
         if ($order = $this->orders->get_order($order_id)) {
 
             $contract = $this->contracts->get_contract($order->contract_id);
-            
+
             $company = $this->companies->get_company(2);
             $order->regaddress = $this->addresses->get_address($order->regaddress_id);
             $order->faktaddress = $this->addresses->get_address($order->faktaddress_id);
@@ -67,7 +67,7 @@ class Soap1c extends Core
             $item->НомерДоговора = $contract->number;
             $item->Дата = date('YmdHis', strtotime($contract->deal_date));
             $item->ДатаЗаявки = date('YmdHis', strtotime($order->date));
-            $item->ДатаВыдачи = date('YmdHis', strtotime($contract->issuance_date));
+            $item->ДатаВыдачи = date('YmdHis', strtotime($order->probably_start_date));
             $item->Срок = $period;
             $item->Периодичность = 'День';
             $item->ПроцентнаяСтавка = $order->percent;
@@ -227,7 +227,7 @@ class Soap1c extends Core
             $params['login'] = $this->login;
             $params['password'] = $this->password;
         }
-        
+
         try {
             $service_url = $this->link . $service . ".1cws?wsdl";
 
