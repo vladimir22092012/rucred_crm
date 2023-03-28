@@ -5272,7 +5272,7 @@
                             <div class="form-group">
                                 <label>Номер договора:</label>
                                 <input type="text" name="contract_number"
-                                       class="form-control" value="{$contract->number}"/>
+                                       class="form-control" value="{$projectNumber->uid}"/>
                             </div>
                             <div class="form-group">
                                 <label>Сумма займа:</label>
@@ -5383,7 +5383,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Дата рождения</label>
-                                <input class="form-control mask_number" name="birth" value="{$order->birth|date}"/>
+                                <input class="form-control daterange" name="birth" value="{$order->birth|date}"/>
                             </div>
                             <div class="form-group">
                                 <label>Место рождения</label>
