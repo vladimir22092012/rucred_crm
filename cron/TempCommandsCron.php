@@ -13,7 +13,29 @@ class TempCommandsCron extends Core
     private function execute() {
         echo 'start cron';
         //$this->createContracts();
-        $this->checkPhotos();
+        //$this->checkPhotos();
+        //$this->sendYaDisk();
+    }
+
+    private function sendYaDisk() {
+        $orders = OrdersORM::query()->where('status', '=', 5)->get();
+        print_r(count($orders));
+        foreach ($orders as $order) {
+            $cron =
+                [
+                    'order_id' => $order->id,
+                    'pak' => 'first_pak'
+                ];
+
+            $this->YaDiskCron->add($cron);
+            $cron =
+                [
+                    'order_id' => $order->id,
+                    'pak' => 'second_pak'
+                ];
+
+            $this->YaDiskCron->add($cron);
+        }
     }
 
     private function checkPhotos() {

@@ -158,6 +158,28 @@ class YaDisk extends Core
                 $this->upload(0, $order, $resource, $file_name, $document);
             }
 
+            if ($type == 'identification.tpl') {
+                $file_name = "$personal_number Form 0307 $date";
+                $file_name = $this->translit($file_name);
+
+                try {
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/');
+                    $resource->create();
+                } catch (Exception $e) {
+
+                }
+
+                try {
+                    $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Approvals/');
+                    $resource->create();
+                } catch (Exception $e) {
+
+                }
+                $resource = $this->disk->getResource('disk:/RC3100 CRM Data/3101 Clients/' . $order->personal_number . ' ' . $translit_fio . '/Approvals/' . $file_name . '.pdf');
+
+                $this->upload(0, $order, $resource, $file_name, $document);
+            }
+
             if ($type == 'soglasie_minb.tpl') {
                 $file_name = "$personal_number Form 04051 $date";
                 $file_name = $this->translit($file_name);
@@ -337,6 +359,7 @@ class YaDisk extends Core
 
                 $this->upload(0, $order, $resource, $file_name, $document);
             }
+
         }
     }
 

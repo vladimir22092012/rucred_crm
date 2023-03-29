@@ -15,20 +15,20 @@
 <div align="left">Настоящим {$company->name} подтверждает, что указанное ниже лицо:
 </div>
 <br>
-<table border="1" cellpadding="5">
+<table border="1" cellpadding="5" width="100%">
     <tr>
-        <td>ФИО:</td>
-        <td>{$lastname} {$firstname} {$patronymic}</td>
+        <td width="30%">ФИО:</td>
+        <td width="70%">{$lastname} {$firstname} {$patronymic}</td>
     </tr>
     <tr>
-        <td>Паспортные данные:</td>
-        <td>Паспорт гражданина Российской Федерации {$passport_serial}-{$passport_number},
+        <td width="30%">Паспортные данные:</td>
+        <td width="70%">Паспорт гражданина Российской Федерации {$passport_serial}-{$passport_number},
             выдан {$passport_issued} {$passport_date|date} г., код подразделения {$subdivision_code}
         </td>
     </tr>
     <tr>
-        <td>ИНН:</td>
-        <td>{$inn}</td>
+        <td width="30%">ИНН:</td>
+        <td width="70%">{$inn}</td>
     </tr>
 </table>
 <br>
@@ -74,9 +74,6 @@
         <td colspan="2">
             <hr>
         </td>
-    </tr>
-    <tr>
-        <td colspan="2"><strong>Подписант:</strong> {$lastname} {$firstname} {$patronymic}</td>
     </tr>
     <tr>
         <td colspan="2"><strong>Название организации(компании):</strong> {$company->name}</td>

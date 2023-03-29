@@ -32,6 +32,7 @@ class DocumentController extends Controller
         $uid = ProjectContractNumberORM::where('orderId', $order->order_id)->first();
         $this->design->assign('uid', $uid->uid);
 
+        $this->design->assign('company', CompaniesORM::find($order->company_id));
 
         $this->design->assign('settlement', $settlement);
 
