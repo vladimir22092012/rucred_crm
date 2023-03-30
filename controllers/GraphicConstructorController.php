@@ -212,21 +212,20 @@ class GraphicConstructorController extends Controller
         $annoouitet_pay = $amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
         $annoouitet_pay = round($annoouitet_pay, '2');
 
+        list($paydate, $weekend) = $this->check_pay_date_array(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
+
         if ($loan_id == 1) {
             $percent_per_month = (($percent / 100) * 360) / 12;
             $annoouitet_pay = $amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -1)));
             $annoouitet_pay = round($annoouitet_pay, '2');
+        } else {
+            if ($weekend > 0) {
+                $temp_annoouitet_summ = ($weekend) * $rest_sum * ($percent / 100);
+            }
         }
 
         $iteration = 0;
-
         $count_days_this_month = date('t', strtotime($start_date->format('Y-m-d')));
-
-
-        list($paydate, $weekend) = $this->check_pay_date_array(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
-        if ($weekend > 0) {
-            $temp_annoouitet_summ = $weekend * $rest_sum * ($percent / 100);
-        }
         if (date_diff($paydate, $start_date)->days <= $loan->free_period) {
             $plus_loan_percents = round(($percent / 100) * $amount * date_diff($paydate, $start_date)->days, 2);
             $sum_pay = $annoouitet_pay + $plus_loan_percents;
