@@ -3722,7 +3722,7 @@ class OrderController extends Controller
         $user = UsersORM::find($userId);
 
         $number = ProjectContractNumberORM::query()->where('orderId', '=', $orderId)->first();
-        if (isset($contract_number) && !empty($contract_number) && $contract_number != $number) {
+        if (isset($contract_number) && !empty($contract_number) && $contract_number != $number->uid) {
             $new_number = $contract_number;
         } else {
             $new_number = ProjectContractNumberORM::refactorNumber($number, $group->number, $company->number, $loanType->number, $user->personal_number, $userId);
