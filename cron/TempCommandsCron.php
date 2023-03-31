@@ -14,7 +14,7 @@ class TempCommandsCron extends Core
         echo 'start cron';
         //$this->createContracts();
         //$this->checkPhotos();
-        //$this->sendYaDisk();
+        $this->sendYaDisk();
     }
 
     private function sendYaDisk() {

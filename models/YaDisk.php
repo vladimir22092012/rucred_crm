@@ -374,6 +374,95 @@ class YaDisk extends Core
                 $this->design->assign($param_name, $param_value);
             }
 
+            //Надо выносить в компонент всё это дело, код повторяется из controllers/DocumentController.php
+            $percent_day = $document->params->percent ?? 0;
+            $tempPercent = explode('.', $percent_day);
+            if (isset($tempPercent[1])) {
+                if (strlen($tempPercent[1]) == 1) {
+                    $percent_day = $tempPercent[0] . '.' . $tempPercent[1] . '00';
+                } elseif (strlen($tempPercent[1]) == 2) {
+                    $percent_day = $tempPercent[0] . '.' . $tempPercent[1] . '0';
+                }
+            }
+
+            $this->design->assign('percent_day', $percent_day);
+
+            if (is_null($percent_day)) {
+                $percents_per_day_str_part_one = 0;
+                $percents_per_day_str_part_two = 0;
+            } else {
+                $percents_per_day_str = explode('.', number_format($percent_day, 3, '.', ''));
+                $percents_per_day_str_part_one = $this->num2str($percents_per_day_str[0]);
+                $percents_per_day_str_part_two = $this->num2str($percents_per_day_str[1]);
+            }
+
+            if (isset($document->params->payment_schedule['schedule'])) {
+                $payment_schedule = json_decode($document->params->payment_schedule['schedule'], true);
+            } else {
+                //Заглушка от ошибок для первого документа (в нем отсутствуют эти данные)
+                $payment_schedule = [
+                    "09.12.2022" => [
+                        "pay_sum" => 0,
+                        "loan_percents_pay" => 0,
+                        "loan_body_pay" => 0,
+                        "comission_pay" => 0,
+                        "rest_pay" => 0
+                    ],
+                    "result" => [
+                        "all_sum_pay" => 0.1,
+                        "all_loan_percents_pay" => 0.1,
+                        "all_loan_body_pay" => 0,
+                        "all_comission_pay" => 0,
+                        "all_rest_pay_sum" => 0
+                    ]
+                ];
+            }
+
+
+            uksort(
+                $payment_schedule,
+                function ($a, $b) {
+
+                    if ($a == $b) {
+                        return 0;
+                    }
+
+                    return (date('Y-m-d', strtotime($a)) < date('Y-m-d', strtotime($b))) ? -1 : 1;
+                });
+
+            $this->design->assign('percents_per_day_str_part_one', $percents_per_day_str_part_one);
+            $this->design->assign('percents_per_day_str_part_two', $percents_per_day_str_part_two);
+
+            $start_date = new DateTime(date('Y-m-d', strtotime($order->probably_start_date)));
+            $end_date = new DateTime(date('Y-m-d', strtotime($order->probably_return_date)));
+
+            $period = date_diff($start_date, $end_date)->days;
+
+            $this->design->assign('period', $period);
+
+            $period_str = $this->num2str($period);
+
+            $this->design->assign('period_str', $period_str);
+
+            $all_percents_string = explode('.', $payment_schedule['result']['all_loan_percents_pay']);
+            $all_percents_string_part_one = $this->num2str($all_percents_string[0]);
+
+            $all_percents_string = explode('.', $payment_schedule['result']['all_loan_percents_pay']);
+            $all_percents_string_part_one = $this->num2str($all_percents_string[0]);
+
+            $all_percents_string_part_two = str_pad($all_percents_string[1], '2', '0', STR_PAD_RIGHT);
+            $this->design->assign('all_percents_string_part_two', $all_percents_string_part_two);
+            $this->design->assign('all_percents_string', $all_percents_string);
+
+            $this->design->assign('all_percents_string_part_one', $all_percents_string_part_one);
+
+            $first_part_all_sum_pay = explode('.', $payment_schedule['result']['all_sum_pay']);
+            $first_part_all_sum_pay = $first_part_all_sum_pay[0];
+
+            $this->design->assign('payment_schedule', $payment_schedule);
+            $this->design->assign('first_part_all_sum_pay', $first_part_all_sum_pay);
+
+
             $order = $this->orders->get_order($document->params->order_id);
             $this->design->assign('created_date', $order->date);
 
