@@ -212,28 +212,30 @@ class GraphicConstructorController extends Controller
         $annoouitet_pay = $amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -$loan->max_period)));
         $annoouitet_pay = round($annoouitet_pay, '2');
 
+        list($paydate, $weekend) = $this->check_pay_date_array(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
+
         if ($loan_id == 1) {
             $percent_per_month = (($percent / 100) * 360) / 12;
             $annoouitet_pay = $amount * ($percent_per_month / (1 - pow((1 + $percent_per_month), -1)));
             $annoouitet_pay = round($annoouitet_pay, '2');
+        } else {
+            if ($weekend > 0) {
+                $temp_annoouitet_summ = ($weekend) * $rest_sum * ($percent / 100);
+            }
         }
 
         $iteration = 0;
-
         $count_days_this_month = date('t', strtotime($start_date->format('Y-m-d')));
-
-
-        list($paydate, $weekend) = $this->check_pay_date_array(new DateTime($paydate->format('Y-m-' . $first_pay_day)));
-        if ($weekend > 0) {
-            $temp_annoouitet_summ = ($weekend + 1) * $rest_sum * ($percent / 100);
-        }
-
         if (date_diff($paydate, $start_date)->days <= $loan->free_period) {
             $plus_loan_percents = round(($percent / 100) * $amount * date_diff($paydate, $start_date)->days, 2);
             $sum_pay = $annoouitet_pay + $plus_loan_percents;
             $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2, PHP_ROUND_HALF_DOWN);
             $body_pay = $sum_pay - $loan_percents_pay;
             $paydate->add(new DateInterval('P1M'));
+            list($tempPayDate, $tempWeekend) = $this->check_pay_date_array(new DateTime($paydate->format('d-m-Y')));
+            if ($tempWeekend > 0) {
+                $paydate->sub(new DateInterval('P'.$tempWeekend.'D'));
+            }
             $iteration++;
         } elseif (date_diff($paydate, $start_date)->days >= $loan->min_period && date_diff($paydate, $start_date)->days < $count_days_this_month) {
             $minus_percents = ($percent / 100) * $amount * ($count_days_this_month - date_diff($paydate, $start_date)->days);
@@ -245,6 +247,10 @@ class GraphicConstructorController extends Controller
         } elseif (date_diff($paydate, $start_date)->days >= $count_days_this_month) {
             $sum_pay = $annoouitet_pay;
             $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
+            $days = date_diff($paydate, $start_date)->days - $count_days_this_month;
+            if ($days > 0) {
+                $temp_annoouitet_summ += $days * (($percent / 100) * $amount);
+            }
             $body_pay = round($sum_pay - $loan_percents_pay, 2);
             $iteration++;
         } else {
@@ -252,10 +258,11 @@ class GraphicConstructorController extends Controller
             $loan_percents_pay = $sum_pay;
             $body_pay = 0.00;
         }
+
         $payment_schedule[$paydate->format('d.m.Y')] =
             [
                 'pay_sum' => $sum_pay + $temp_annoouitet_summ,
-                'loan_percents_pay' => $loan_percents_pay,
+                'loan_percents_pay' => $loan_percents_pay + $temp_annoouitet_summ,
                 'loan_body_pay' => $body_pay,
                 'comission_pay' => 0.00,
                 'rest_pay' => $rest_sum -= $body_pay
