@@ -19,6 +19,22 @@ class UsersORM extends \Illuminate\Database\Eloquent\Model
         'issetDeals'
     ];
 
+    const OKB_TYPE_ONE   = '1';
+    const OKB_TYPE_TWO   = '2';
+    const OKB_TYPE_THREE = '3';
+
+    const OKB_TYPES = [
+        self::OKB_TYPE_ONE => 'Заём / Кредит',
+        self::OKB_TYPE_TWO => 'Микрозаём',
+        self::OKB_TYPE_THREE => 'Кред.линия',
+    ];
+
+    const OKB_TYPE_PERCENTS = [
+        self::OKB_TYPE_ONE => 24,
+        self::OKB_TYPE_TWO => 143,
+        self::OKB_TYPE_THREE => 36,
+    ];
+
     public function orders()
     {
         return $this->hasMany(OrdersORM::class, 'user_id','id');
@@ -68,6 +84,10 @@ class UsersORM extends \Illuminate\Database\Eloquent\Model
             ->where('user_id', '=', $this->id)
             ->whereIn('status', [5, 7, 17, 18, 19])
             ->get();
+    }
+
+    public static function caclulatePdn($in, $okb_story) {
+
     }
 
 }

@@ -1439,28 +1439,89 @@
                 });
             });
 
-            $('.add_to_cards_table').on('click', function (e) {
+            $('.add_to_credits_table').on('click', function (e) {
                 e.preventDefault();
 
-                $('#cards_table').append(
+                let html = $(
                     '<tr>' +
-                    '<td><input class="form-control bank_validate" name="cards_bank_name[][cards_bank_name]" type="text" value=""></td>' +
-                    '<td><input class="form-control mask_number" name="cards_limit[][cards_limit]" type="text" value=""></td>' +
-                    '<td><input class="form-control mask_number" name="cards_rest_sum[][cards_rest_sum]" type="text" value=""></td>' +
-                    '<td><input class="form-control validity_period" name="cards_validity_period[][cards_validity_period]" type="text" value=""></td>' +
-                    '<td><select class="form-control" name="cards_delay[][cards_delay]"><option value="Да">Да</option>' +
+                    '<td><input class="form-control bank_validate" name="credits_bank_name[][credits_bank_name]" type="text" value=""></td>' +
+                    '<td><input class="form-control mask_number" name="credits_rest_sum[][credits_rest_sum]" type="text" value=""></td>' +
+                    '<td><input class="form-control mask_number" name="credits_month_pay[][credits_month_pay]" type="text" value=""></td>' +
+                    '<td><input class="form-control validity_period" name="credits_return_date[][credits_return_date]" type="text" value=""></td>' +
+                    '<td><input class="form-control credit_procents" name="credits_percents[][credits_percents]" type="text" value=""></td>' +
+                    '<td><select class="form-control" name="credits_delay[][credits_delay]"><option value="Да">Да</option>' +
                     '<option value="Нет" selected>Нет</option></select></td>' +
-                    '<td><div class="btn btn-outline-danger delete_card">-</div></td>' +
-                    '</tr>');
+                    '<td><div class="btn btn-outline-danger delete_credit">-</div></td>' +
+                    '</tr>'
+                );
+
+                $('#credits_table').append(html);
 
                 $('.validity_period').click(function () {
                     $(this).setCursorPosition(0);
                 }).mask('99/99');
 
+                $('input:not(input[type=button], input[type=file], input[type=submit], input[type=reset]), textarea, select').on('input', function () {
+                    let value = $(this).val();
+                    value = value.toUpperCase();
+                    $(this).val(value);
+                });
+            });
+
+            $('.add_to_okb_table').on('click', function (e) {
+                e.preventDefault();
+
+                $('#okb_table').append(`
+                    <tr>
+                        <td>
+                            <select class="form-control okb_type" name="okb_story[][type]">
+                                {foreach $okb_types as $type => $label}
+                                    <option value="{$type}">
+                                        {$label}
+                                    </option>
+                                {/foreach}
+                            </select
+                        </td>
+                        <td>
+                            <input name="okb_story[][updated_at]"
+                                   class="form-control okb_updated_at daterange" value="{$date}"/>
+                        </td>
+                        <td>
+                            <input name="okb_story[][start_date]"
+                                   class="form-control okb_start_date daterange" value="{$date}"/>
+                        </td>
+                        <td>
+                            <input name="okb_story[][end_date]"
+                                   class="form-control okb_end_date daterange" value="{$date}"/>
+                        </td>
+                        <td>
+                            <input name="okb_story[][debts]"
+                                   class="form-control okb_debts"/>
+                        </td>
+                        <td>
+                            <input name="okb_story[][delay]"
+                                   class="form-control okb_delay"/>
+                        </td>
+                        <td>
+                            <div class="btn btn-outline-danger delete_card">-</div>
+                        </td>
+                    </tr>
+                `);
+
                 $('input:not(input[type=button], input[type=file], input[type=submit], input[type=reset]), textarea').on('input', function () {
                     let value = $(this).val();
                     value = value.toUpperCase();
                     $(this).val(value);
+                });
+                $('.daterange').each(function() {
+                    $(this).daterangepicker({
+                        singleDatePicker: true,
+                        showDropdowns: true,
+                        locale: {
+                            format: 'DD.MM.YYYY'
+                        },
+                        startDate: $(this).val(),
+                    });
                 });
             });
 
@@ -1469,13 +1530,91 @@
             });
 
             $('.savePdn').on('click', function () {
-                let form = $(this).closest('form').serialize();
+                let modal = $('#pdnModal'),
+                    post = {
+                        action: modal.find('input[name="action"]').val(),
+                        order_id: modal.find('input[name="order_id"]').val(),
+                        in: modal.find('input[name="in"]').val(),
+                        out: modal.find('input[name="out"]').val(),
+                        dependents: modal.find('input[name="dependents"]').val(),
+                        okb_story: [],
+                    },
+                    rows = modal.find('#okb_table tr'),
+                    error = false;
+
+                rows.each((key, item) => {
+                    let type = $(item).find('.okb_type'),
+                        updated_at = $(item).find('.okb_updated_at'),
+                        start_date = $(item).find('.okb_start_date'),
+                        end_date = $(item).find('.okb_end_date'),
+                        debts = $(item).find('.okb_debts'),
+                        delay = $(item).find('.okb_delay');
+
+                    if (type.val() == undefined || type.val() == 'undefined' || type.val() == '') {
+                        error = true;
+                        type.addClass('is-invalid')
+                    } else {
+                        type.removeClass('is-invalid')
+                    }
+
+                    if (updated_at.val() == undefined || updated_at.val() == 'undefined' || updated_at.val() == '') {
+                        error = true;
+                        updated_at.addClass('is-invalid')
+                    } else {
+                        updated_at.removeClass('is-invalid')
+                    }
+
+                    if (start_date.val() == undefined || start_date.val() == 'undefined' || start_date.val() == '') {
+                        error = true;
+                        start_date.addClass('is-invalid')
+                    } else {
+                        start_date.removeClass('is-invalid')
+                    }
+
+                    if (end_date.val() == undefined || end_date.val() == 'undefined' || end_date.val() == '') {
+                        error = true;
+                        end_date.addClass('is-invalid')
+                    } else {
+                        end_date.removeClass('is-invalid')
+                    }
+
+                    if (debts.val() == undefined || debts.val() == 'undefined' || debts.val() == '') {
+                        error = true;
+                        debts.addClass('is-invalid')
+                    } else {
+                        debts.removeClass('is-invalid')
+                    }
+
+                    if (delay.val() == undefined || delay.val() == 'undefined' || delay.val() == '') {
+                        error = true;
+                        delay.addClass('is-invalid')
+                    } else {
+                        delay.removeClass('is-invalid')
+                    }
+                    post.okb_story.push({
+                        type: type.val(),
+                        updated_at: updated_at.val(),
+                        start_date: start_date.val(),
+                        end_date: end_date.val(),
+                        debts: debts.val(),
+                        delay: delay.val(),
+                    });
+                });
+                if (error === true) {
+                    Swal.fire({
+                        title: 'Данные ОКБ заполнены не верно!',
+                        confirmButtonText: 'ОК'
+                    });
+                    return;
+                }
 
                 $.ajax({
                     method: 'POST',
                     dataType: 'JSON',
-                    data: form,
+                    data: post,
                     success: function (resp) {
+                        console.log(resp);
+                        return;
                         if (resp['error']) {
                             Swal.fire({
                                 title: resp['error'],
@@ -1492,6 +1631,7 @@
                         }
                     }
                 });
+
             });
 
             $('.modalStartDate').click().mask('99.99.9999');
@@ -5457,7 +5597,142 @@
             </div>
         </div>
     </div>
+
     <div id="pdnModal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Пересчет ПДН</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="alert" style="display:none"></div>
+                    <form id="pdnModalForm">
+                        <input type="hidden" name="action" value="newEditPdn">
+                        <input type="hidden" name="order_id" value="{$order->order_id}">
+                        <div class="form-group" style="display:flex; justify-content: space-between">
+                            <div class="form-group" style="width: 350px">
+                                <label>Среднемесячный доход руб.</label>
+                                <input type="text" name="in" class="form-control" value="{$order->income}">
+                            </div>
+                            <div class="form-group" style="width: 350px">
+                                <label>Среднемесячные расходы руб.</label>
+                                <input type="text" name="out" class="form-control" value="{$order->expenses}">
+                            </div>
+                            <div class="form-group" style="width: 350px">
+                                <label>Количество иждивенцев</label>
+                                <input type="text" name="dependents" class="form-control" placeholder="необязательно"
+                                       value="{$order->dependents}">
+                            </div>
+                        </div>
+                        <label>Данные ОКБ:</label>
+                        <div class="form-group" style="display: flex">
+                            <table class="jsgrid-table table table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Обязательство</th>
+                                    <th>Дата обновления</th>
+                                    <th>Дата начала</th>
+                                    <th>Дата прекращения</th>
+                                    <th>Задолженность срочная</th>
+                                    <th>Задолженность просроченная</th>
+                                    <th><input type="button"
+                                               class="btn btn-outline-success add_to_okb_table"
+                                               value="+"></th>
+                                </tr>
+                                </thead>
+                                <tbody id="okb_table">
+
+                                {if count($client->okb_story) > 0}
+                                    {foreach json_decode($client->okb_story) as $okb_story}
+                                        <tr>
+                                            <td>
+                                                <select class="form-control" name="okb_story[][type]">
+                                                    {foreach $okb_types as $type => $label}
+                                                        <option value="{$type}" {if $okb_story->type == $type}selected{/if}>
+                                                            {$label}
+                                                        </option>
+                                                    {/foreach}
+                                                </select
+                                            </td>
+                                            <td>
+                                                <input name="okb_story[][updated_at]" value="{$okb_story->updated_at}"
+                                                       class="form-control daterange"/>
+                                            </td>
+                                            <td>
+                                                <input name="okb_story[][start_date]" value="{$okb_story->start_date}"
+                                                       class="form-control daterange"/>
+                                            </td>
+                                            <td>
+                                                <input name="okb_story[][end_date]" value="{$okb_story->end_date}"
+                                                       class="form-control daterange"/>
+                                            </td>
+                                            <td>
+                                                <input name="okb_story[][debts]" value="{$okb_story->debts}"
+                                                       class="form-control"/>
+                                            </td>
+                                            <td>
+                                                <input name="okb_story[][delay]" value="{$okb_story->delay}"
+                                                       class="form-control"/>
+                                            </td>
+                                            <td>
+                                                <div class="btn btn-outline-danger delete_card">-</div>
+                                            </td>
+                                        </tr>
+                                    {/foreach}
+                                {else}
+                                    <tr>
+                                        <td>
+                                            <select class="form-control okb_type" name="okb_story[][type]">
+                                                {foreach $okb_types as $type => $label}
+                                                    <option value="{$type}">
+                                                        {$label}
+                                                    </option>
+                                                {/foreach}
+                                            </select
+                                        </td>
+                                        <td>
+                                            <input name="okb_story[][updated_at]"
+                                                   class="form-control okb_updated_at daterange" value="{$date}"/>
+                                        </td>
+                                        <td>
+                                            <input name="okb_story[][start_date]"
+                                                   class="form-control okb_start_date daterange" value="{$date}"/>
+                                        </td>
+                                        <td>
+                                            <input name="okb_story[][end_date]"
+                                                   class="form-control okb_end_date daterange" value="{$date}"/>
+                                        </td>
+                                        <td>
+                                            <input name="okb_story[][debts]"
+                                                   class="form-control okb_debts"/>
+                                        </td>
+                                        <td>
+                                            <input name="okb_story[][delay]"
+                                                   class="form-control okb_delay"/>
+                                        </td>
+                                        <td>
+                                            <div class="btn btn-outline-danger delete_card">-</div>
+                                        </td>
+                                    </tr>
+                                {/if}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div>
+                            <input type="button" class="btn btn-danger cancel" data-dismiss="modal" value="Отмена">
+                            <input type="button" class="btn btn-success float-right savePdn" value="Сохранить">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {*<div id="pdnModal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
          aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -5657,7 +5932,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>*}
     <script>
         class ItcAccordion {
             constructor(target, config) {

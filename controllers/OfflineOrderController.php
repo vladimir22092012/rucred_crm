@@ -318,6 +318,10 @@ class OfflineOrderController extends Controller
                     $this->action_editPdn();
                     break;
 
+                case 'newEditPdn':
+                    $this->action_newEditPdn();
+                    die();
+
                 case 'sendDataOnec':
                     echo json_encode($this->actionSendOnec());
                     die();
@@ -333,8 +337,6 @@ class OfflineOrderController extends Controller
                 case 'change_inn':
                     $this->action_change_inn();
                     exit;
-
-
             endswitch;
 
         } else {
@@ -481,6 +483,9 @@ class OfflineOrderController extends Controller
 
                     $client = $this->users->get_user($order->user_id);
                     $this->design->assign('client', $client);
+
+                    $this->design->assign('okb_types', UsersORM::OKB_TYPES);
+                    $this->design->assign('date', date('d.m.Y'));
 
                     $communications = $this->communications->get_communications(array('user_id' => $client->id));
                     $this->design->assign('communications', $communications);
@@ -6139,6 +6144,55 @@ class OfflineOrderController extends Controller
         UsersORM::where('id', $order->user_id)->update($update);
 
         echo json_encode(['success' => 1]);
+        exit;
+    }
+
+    private function action_newEditPdn()
+    {
+        $orderId = $this->request->post('order_id');
+        $okb_story = $this->request->post('okb_story');
+
+        $order = OrdersORM::with('user')->find($orderId);
+
+        $dependents = $this->request->post('dependents');
+
+        $in = preg_replace("/[^,.0-9]/", '', $this->request->post('in'));
+        $out = preg_replace("/[^,.0-9]/", '', $this->request->post('out'));
+
+        if (empty($in)) {
+            echo json_encode(['error' => 1, 'reason' => 'Отсутствует среднемесячный доход']);
+            exit;
+        }
+
+        if (empty($out)) {
+            echo json_encode(['error' => 1, 'reason' => 'Отсутствует среднемесячный расход']);
+            exit;
+        }
+
+        $pdn = 0;
+        foreach ($okb_story as $key => $story) {
+            $diff = date_diff(new DateTime($story['start_date']), new DateTime($story['end_date']));
+
+            $period = $diff->m;
+            if ($period == 0 && $diff->days > 0) {
+                $period = 1;
+            }
+
+            $okb_story[$key]['period'] = $period;
+        }
+
+        $update =
+            [
+                'pdn' => $pdn,
+                'income' => $in,
+                'expenses' => $out,
+                'dependents' => $dependents
+            ];
+
+        UsersORM::where('id', $order->user_id)->update($update);
+
+        echo json_encode(['success' => $okb_story]);
+        die();
         exit;
     }
 
