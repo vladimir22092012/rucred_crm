@@ -86,8 +86,70 @@ class UsersORM extends \Illuminate\Database\Eloquent\Model
             ->get();
     }
 
-    public static function caclulatePdn($in, $okb_story) {
+    public static function caclulatePdn($order, $in, $okb_story, $schedules) {
+        $totalPayment = 0;
+        $pdn = 0;
+        OkbStoriesORM::query()->where('user_id', '=', $order->user_id)->delete();
 
+        foreach ($okb_story as $key => $story) {
+            $period = 0;
+            $debts = number_format(str_replace(',', '.', $story['debts']), 2, '.', '');
+            $delay = number_format(str_replace(',', '.', $story['delay']), 2, '.', '');
+            $okb_story[$key]['debts'] = $debts;
+            $okb_story[$key]['delay'] = $delay;
+            $temp_percent = (UsersORM::OKB_TYPE_PERCENTS[$story['type']] / 100) / 12;
+            if ($story['type'] != 3) {
+                if ($story['updated_at']) {
+                    $max = date_diff(new DateTime($story['end_date']), new DateTime($story['updated_at']))->days;
+                } else {
+                    $max = date_diff(new DateTime($story['end_date']), new DateTime(date('d.m.Y')))->days;
+                }
+                $period = ceil($max / (365 / 12));
+
+                $payment = round(($debts * $temp_percent) / (1 - (1 + $temp_percent) ** -$period), 2);
+            } else {
+                $array = [
+                    (5/100) * ($debts + $delay + $delay),
+                    (10/100) * ($debts + $delay)
+                ];
+                $payment = round(min($array), 2);
+            }
+            $totalPayment += $payment;
+            $okb_story[$key]['period'] = $period;
+            $okb_story[$key]['payment'] = $payment;
+
+            OkbStoriesORM::create([
+                'user_id' => $order->user_id,
+                'type' => $story['type'],
+                'updated_at' => $story['updated_at'],
+                'start_date' => $story['start_date'],
+                'end_date' => $story['end_date'],
+                'debts' => $debts,
+                'delay' => $delay,
+            ]);
+        }
+
+        if (count($schedules) > 0) {
+            foreach ($schedules as $schedule) {
+                if ($schedule->actual != 1) {
+                    continue;
+                }
+                $schedule_array = json_decode($schedule->schedule, true);
+                foreach ($schedule_array as $key => $item) {
+                    if ($key != 'result') {
+                        $totalPayment += $item['pay_sum'];
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+
+        if ($totalPayment && $in) {
+            $pdn = round(($totalPayment / $in) * 100, 2);
+        }
+
+        return $pdn;
     }
 
 }

@@ -1613,8 +1613,6 @@
                     dataType: 'JSON',
                     data: post,
                     success: function (resp) {
-                        console.log(resp);
-                        return;
                         if (resp['error']) {
                             Swal.fire({
                                 title: resp['error'],

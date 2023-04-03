@@ -769,7 +769,7 @@ class OfflineOrderController extends Controller
             $this->form_docs($order_id);
         }
 
-        $schedules = $this->PaymentsSchedules->gets($order_id);;
+        $schedules = $this->PaymentsSchedules->gets($order_id);
 
         if (count($schedules) > 1) {
 
@@ -6169,21 +6169,14 @@ class OfflineOrderController extends Controller
             exit;
         }
 
-        $pdn = 0;
-        foreach ($okb_story as $key => $story) {
-            $diff = date_diff(new DateTime($story['start_date']), new DateTime($story['end_date']));
+        $schedules = $this->PaymentsSchedules->gets($orderId);
+        $pdn = UsersORM::caclulatePdn($order, $in, $okb_story, $schedules);
 
-            $period = $diff->m;
-            if ($period == 0 && $diff->days > 0) {
-                $period = 1;
-            }
-
-            $okb_story[$key]['period'] = $period;
-        }
 
         $update =
             [
                 'pdn' => $pdn,
+                'pdn_time' => time(),
                 'income' => $in,
                 'expenses' => $out,
                 'dependents' => $dependents
@@ -6191,7 +6184,7 @@ class OfflineOrderController extends Controller
 
         UsersORM::where('id', $order->user_id)->update($update);
 
-        echo json_encode(['success' => $okb_story]);
+        echo json_encode(['success' => 1]);
         die();
         exit;
     }
