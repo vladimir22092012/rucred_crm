@@ -110,6 +110,8 @@ class UsersORM extends \Illuminate\Database\Eloquent\Model
                     $payment = round(($debts * $temp_percent) / (1 - (1 + $temp_percent) ** -$period), 2);
                 } catch (Exception $exception) {
                     $payment = 0;
+                } catch (DivisionByZeroError) {
+                    $payment = 0;
                 }
             } else {
                 $array = [
