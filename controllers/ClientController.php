@@ -221,8 +221,16 @@ class ClientController extends Controller
         $this->design->assign('changelog_types', $changelog_types);
         $this->design->assign('changelogs', $changelogs);
 
-        if ($client->orders = $this->orders->get_orders(array('user_id' => $client->id))) {
+        if ($client->orders = $this->orders->get_orders(array('user_id' => $client->id, 'status' => [0,1,2,4,6,8,10,11,12,13,14,15,16,17,18,19,20]))) {
             foreach ($client->orders as $o) {
+                if ($o->contract_id) {
+                    $o->contract = $this->contracts->get_contract($o->contract_id);
+                }
+            }
+        }
+
+        if ($client->deals = $this->orders->get_orders(array('user_id' => $client->id, 'status' => [5,7,9]))) {
+            foreach ($client->deals as $o) {
                 if ($o->contract_id) {
                     $o->contract = $this->contracts->get_contract($o->contract_id);
                 }
