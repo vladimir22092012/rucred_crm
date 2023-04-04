@@ -106,7 +106,11 @@ class UsersORM extends \Illuminate\Database\Eloquent\Model
                 }
                 $period = ceil($max / (365 / 12));
 
-                $payment = round(($debts * $temp_percent) / (1 - (1 + $temp_percent) ** -$period), 2);
+                try {
+                    $payment = round(($debts * $temp_percent) / (1 - (1 + $temp_percent) ** -$period), 2);
+                } catch (Exception $exception) {
+                    $payment = 0;
+                }
             } else {
                 $array = [
                     (5/100) * ($debts + $delay + $delay),
