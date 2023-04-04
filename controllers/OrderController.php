@@ -275,6 +275,10 @@ class OrderController extends Controller
                     $this->action_editPdn();
                     break;
 
+                case 'newEditPdn':
+                    $this->action_newEditPdn();
+                    die();
+
                 case 'sendOnecTrigger':
                     $this->actionSendOnecTrigger();
                     break;
@@ -5367,6 +5371,48 @@ class OrderController extends Controller
         DocumentsORM::where('order_id', $orderId)
             ->update(['params' => serialize($order)]);
 
+        exit;
+    }
+
+    private function action_newEditPdn()
+    {
+        $orderId = $this->request->post('order_id');
+        $okb_story = $this->request->post('okb_story');
+
+        $order = OrdersORM::with('user')->find($orderId);
+
+        $dependents = $this->request->post('dependents');
+
+        $in = preg_replace("/[^,.0-9]/", '', $this->request->post('in'));
+        $out = preg_replace("/[^,.0-9]/", '', $this->request->post('out'));
+
+        if (empty($in)) {
+            echo json_encode(['error' => 1, 'reason' => 'Отсутствует среднемесячный доход']);
+            exit;
+        }
+
+        if (empty($out)) {
+            echo json_encode(['error' => 1, 'reason' => 'Отсутствует среднемесячный расход']);
+            exit;
+        }
+
+        $schedules = $this->PaymentsSchedules->gets($orderId);
+        $pdn = UsersORM::caclulatePdn($order, $in, $okb_story, $schedules);
+
+
+        $update =
+            [
+                'pdn' => $pdn,
+                'pdn_time' => time(),
+                'income' => $in,
+                'expenses' => $out,
+                'dependents' => $dependents
+            ];
+
+        UsersORM::where('id', $order->user_id)->update($update);
+
+        echo json_encode(['success' => 1]);
+        die();
         exit;
     }
 
