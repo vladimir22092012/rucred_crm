@@ -3828,8 +3828,10 @@ class OrderController extends Controller
         $paydate = new DateTime(date('Y-m-' . "$first_pay_day", strtotime($start_date->format('Y-m-d'))));
         $paydate->setDate($paydate->format('Y'), $paydate->format('m'), $first_pay_day);
 
-        if ($start_date > $paydate)
+        if ($start_date > $paydate) {
             $paydate->add(new DateInterval('P1M'));
+            $paydate = $this->check_pay_date($paydate);
+        }
 
         $percent_per_month = (($order['percent'] / 100) * 365) / 12;
 
@@ -3844,8 +3846,10 @@ class OrderController extends Controller
 
         if ($loan->type == 'pdl') {
 
-            if (date_diff($paydate, $start_date)->days <= $loan->free_period)
+            if (date_diff($paydate, $start_date)->days <= $loan->free_period) {
                 $paydate->add(new DateInterval('P1M'));
+                $paydate = $this->check_pay_date($paydate);
+            }
 
             if (date_diff($paydate, $start_date)->days > $loan->free_period && date_diff($paydate, $start_date)->days < $loan->min_period) {
                 $loan_percents_pay = round(($order['percent'] / 100) * $order['amount'] * date_diff($paydate, $start_date)->days, 2);
@@ -3863,6 +3867,7 @@ class OrderController extends Controller
                 $loan_percents_pay = round(($rest_sum * $percent_per_month) + $plus_loan_percents, 2, PHP_ROUND_HALF_DOWN);
                 $body_pay = $sum_pay - $loan_percents_pay;
                 $paydate->add(new DateInterval('P1M'));
+                $paydate = $this->check_pay_date($paydate);
                 $iteration++;
             } elseif (date_diff($paydate, $start_date)->days >= $loan->min_period && date_diff($paydate, $start_date)->days < $count_days_this_month) {
                 $minus_percents = ($order['percent'] / 100) * $order['amount'] * ($count_days_this_month - date_diff($paydate, $start_date)->days);

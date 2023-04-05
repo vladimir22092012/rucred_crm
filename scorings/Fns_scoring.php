@@ -6,17 +6,17 @@ class Fns_scoring extends Core
     private $order_id;
     private $audit_id;
     private $type;
-    
-    private $url = "https://service.nalog.ru/inn-proc.do";
-    
 
-    
+    private $url = "https://service.nalog.ru/inn-proc.do";
+
+
+
     public function run_scoring($scoring_id)
     {
         $update = array();
-        
+
     	$scoring_type = $this->scorings->get_type('fns');
-        
+
         if ($scoring = $this->scorings->get_scoring($scoring_id))
         {
             if ($order = $this->orders->get_order((int)$scoring->order_id))
@@ -29,7 +29,7 @@ class Fns_scoring extends Core
                         'success' => 1,
                         'string_result' => $order->inn
                     );
-                    
+
                 }
                 else
                 {
@@ -45,10 +45,10 @@ class Fns_scoring extends Core
                         $birthday = date('d.m.Y', strtotime($order->birth));
                         $passportdate = date('d.m.Y', strtotime($order->passport_date));
                         $fns = $this->get_inn($order->lastname, $order->firstname, $order->patronymic, $birthday, 21, $order->passport_serial, $passportdate);
-    
-                    
+
+
                         $score = !empty($fns->inn);
-                    
+
                         if (empty($score) && $scoring->repeat_count < 2)
                         {
                             $update = array(
@@ -57,7 +57,7 @@ class Fns_scoring extends Core
                                 'string_result' => 'ПОВТОРНЫЙ ЗАПРОС',
                                 'repeat_count' => $scoring->repeat_count + 1,
                             );
-                            
+
                         }
                         else
                         {
@@ -67,7 +67,7 @@ class Fns_scoring extends Core
                                 'success' => $score,
                                 'string_result' => empty($fns->inn) ? 'ИНН не найден' : $fns->inn
                             );
-                            
+
                             if (!empty($score))
                             {
                                 $this->users->update_user($order->user_id, array('inn' => $fns->inn));
@@ -83,20 +83,20 @@ class Fns_scoring extends Core
                     'string_result' => 'не найдена заявка'
                 );
             }
-            
+
             if (!empty($update))
                 $this->scorings->update_scoring($scoring_id, $update);
-            
+
             return $update;
         }
     }
-    
-    
+
+
     public function get_inn($surname, $name, $patronymic, $birthdate, $doctype, $docnumber, $docdate)
     {
         $docnumber_clear = str_replace(array('-', ' '), '', $docnumber);
         $docno = substr($docnumber_clear, 0, 2).' '.substr($docnumber_clear, 2, 2).' '.substr($docnumber_clear, 4, 6);
-        
+
         $data = array(
             "fam" => $surname,
             "nam" => $name,
@@ -126,7 +126,7 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($data);echo '</pre><hr />';
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        
+
         $resp = curl_exec($ch);
 echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';
 
