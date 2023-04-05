@@ -5865,7 +5865,7 @@ class OfflineOrderController extends Controller
         if (isset($contract_number) && !empty($contract_number) && $contract_number != $number) {
             $new_number = $contract_number;
         } else {
-            $new_number = ProjectContractNumberORM::refactorNumber($number, $group->number, $company->number, $loanType->number, $user->personal_number, $userId);
+            $new_number = ProjectContractNumberORM::refactorNumber($number, $group->number, $company->number, $loanType->number, $user->personal_number, $userId, $orderId);
         }
 
         ProjectContractNumberORM::updateOrCreate(['orderId' => $order->id, 'userId' => $userId], ['uid' => $new_number]);

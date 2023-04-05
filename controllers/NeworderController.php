@@ -1023,7 +1023,8 @@ class NeworderController extends Controller
                                 $company->number,
                                 $loantype->number,
                                 $personal_number,
-                                $user_id
+                                $user_id,
+                                $order_id,
                             )
                         ]
                     );
@@ -1101,7 +1102,8 @@ class NeworderController extends Controller
                                 $company->number,
                                 $loantype->number,
                                 $personal_number,
-                                $user_id
+                                $user_id,
+                                $order_id
                             )
                         ]
                     );
