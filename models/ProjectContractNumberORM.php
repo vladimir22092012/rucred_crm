@@ -15,11 +15,12 @@ class ProjectContractNumberORM extends \Illuminate\Database\Eloquent\Model
      * @param $user_id
      * @return string
      */
-    public static function getNewNumber($group_number, $company_number, $loantype_number, $personal_number, $user_id)
+    public static function getNewNumber($group_number, $company_number, $loantype_number, $personal_number, $user_id, $order_id)
     {
         try {
             $count_orders = OrdersORM::query()
                 ->where('user_id', '=', $user_id)
+                ->where('id', '!=', $order_id)
                 ->whereNotIn('status', [8,11,15,16,20])
                 ->count();
 
@@ -42,17 +43,17 @@ class ProjectContractNumberORM extends \Illuminate\Database\Eloquent\Model
      * @page $user_id
      * @return string
      */
-    public static function refactorNumber($number, $group_number, $company_number, $loantype_number, $personal_number, $user_id)
+    public static function refactorNumber($number, $group_number, $company_number, $loantype_number, $personal_number, $user_id, $order_id)
     {
         if ($number) {
             if (isset($number_array[3])) {
                 $number_array = explode(' ', $number->uid);
                 return "$group_number$company_number $loantype_number $personal_number {$number_array[3]}";
             } else {
-                return self::getNewNumber($group_number, $company_number, $loantype_number, $personal_number, $user_id);
+                return self::getNewNumber($group_number, $company_number, $loantype_number, $personal_number, $user_id, $order_id);
             }
         } else {
-            return self::getNewNumber($group_number, $company_number, $loantype_number, $personal_number, $user_id);
+            return self::getNewNumber($group_number, $company_number, $loantype_number, $personal_number, $user_id, $order_id);
         }
 
     }
