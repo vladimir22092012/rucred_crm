@@ -249,7 +249,7 @@ class GraphicConstructorController extends Controller
             $loan_percents_pay = round($rest_sum * $percent_per_month, 2, PHP_ROUND_HALF_DOWN);
             $days = date_diff($paydate, $start_date)->days - $count_days_this_month;
             if ($days > 0) {
-                $temp_annoouitet_summ += $days * (($percent / 100) * $amount);
+                $temp_annoouitet_summ = $days * (($percent / 100) * $amount);
             }
             $body_pay = round($sum_pay - $loan_percents_pay, 2);
             $iteration++;
