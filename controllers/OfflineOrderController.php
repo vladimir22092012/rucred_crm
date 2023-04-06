@@ -6265,12 +6265,14 @@ class OfflineOrderController extends Controller
         $inn = InfospheresFactory::get('inn');
         $inn = $inn->sendRequest($user);
 
-        if (is_int($inn) && $inn == $user->inn && $inn != 0)
+        if (is_int($inn) && $inn == $user->inn && $inn != 0) {
             echo json_encode(['message' => 'ИНН введен корректно', 'need_change' => 1, 'inn' => $inn]);
-        elseif (is_int($inn) && $inn != $user->inn && $inn != 0)
+        } elseif (is_int($inn) && $inn != $user->inn && $inn != 0) {
             echo json_encode(['message' => 'Корректный ИНН '.$inn, 'need_change' => 1, 'inn' => $inn]);
-        else
+        } else {
+            UsersORM::where('id', $userId)->update(['inn_confirmed' => 1]);
             echo json_encode(['message' => 'ИНН не найден', 'need_change' => 0]);
+        }
 
         exit;
     }
