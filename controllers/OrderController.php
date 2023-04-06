@@ -2141,7 +2141,7 @@ class OrderController extends Controller
             ];
 
         foreach ($new_values as $key => $value) {
-            if (isset($keys[$key])) {
+            if (isset($keys[$key]) && !empty($value) && $value != '') {
                 $update[$keys[$key]] = $value;
             }
         }
@@ -5637,9 +5637,9 @@ class OrderController extends Controller
         $inn = InfospheresFactory::get('inn');
         $inn = $inn->sendRequest($user);
 
-        if (is_int($inn) && $inn == $user->inn)
+        if (is_int($inn) && $inn == $user->inn && $inn != 0)
             echo json_encode(['message' => 'ИНН введен корректно', 'need_change' => 1, 'inn' => $inn]);
-        elseif (is_int($inn) && $inn != $user->inn)
+        elseif (is_int($inn) && $inn != $user->inn && $inn != 0)
             echo json_encode(['message' => 'Корректный ИНН '.$inn, 'need_change' => 1, 'inn' => $inn]);
         else
             echo json_encode(['message' => 'ИНН не найден', 'need_change' => 0]);

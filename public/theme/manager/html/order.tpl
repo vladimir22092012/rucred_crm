@@ -5198,7 +5198,7 @@
                                     {foreach json_decode($client->okb_story) as $okb_story}
                                         <tr>
                                             <td>
-                                                <select class="form-control" name="okb_story[][type]">
+                                                <select class="form-control okb_type" name="okb_story[][type]">
                                                     {foreach $okb_types as $type => $label}
                                                         <option value="{$type}" {if $okb_story->type == $type}selected{/if}>
                                                             {$label}
@@ -5208,23 +5208,23 @@
                                             </td>
                                             <td>
                                                 <input name="okb_story[][updated_at]" value="{$okb_story->updated_at}"
-                                                       class="form-control daterange"/>
+                                                       class="form-control okb_updated_at daterange"/>
                                             </td>
                                             <td>
                                                 <input name="okb_story[][start_date]" value="{$okb_story->start_date}"
-                                                       class="form-control daterange"/>
+                                                       class="form-control okb_start_date daterange"/>
                                             </td>
                                             <td>
                                                 <input name="okb_story[][end_date]" value="{$okb_story->end_date}"
-                                                       class="form-control daterange"/>
+                                                       class="form-control okb_end_date daterange"/>
                                             </td>
                                             <td>
                                                 <input name="okb_story[][debts]" value="{$okb_story->debts}"
-                                                       class="form-control"/>
+                                                       class="form-control okb_debts"/>
                                             </td>
                                             <td>
                                                 <input name="okb_story[][delay]" value="{$okb_story->delay}"
-                                                       class="form-control"/>
+                                                       class="form-control okb_delay"/>
                                             </td>
                                             <td>
                                                 <div class="btn btn-outline-danger delete_card">-</div>
