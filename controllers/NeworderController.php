@@ -973,11 +973,10 @@ class NeworderController extends Controller
             if (isset($user_id)) {
                 $user = $this->users->get_user($user_id);
 
-                if (!empty($user->personal_number)) {
-                    $personal_number = $user->personal_number;
+                if (empty($user->personal_number)) {
+                    $this->users->update_user($user_id, ['personal_number' => $personal_number]);
                 }
 
-                $this->users->update_user($user_id, ['personal_number' => $personal_number]);
             }
 
             $order['uid'] = "$group->number$company->number " . $personal_number;

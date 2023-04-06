@@ -318,6 +318,10 @@ class OfflineOrderController extends Controller
                     $this->action_editPdn();
                     break;
 
+                case 'newEditPdn':
+                    $this->action_newEditPdn();
+                    die();
+
                 case 'sendDataOnec':
                     echo json_encode($this->actionSendOnec());
                     die();
@@ -333,8 +337,6 @@ class OfflineOrderController extends Controller
                 case 'change_inn':
                     $this->action_change_inn();
                     exit;
-
-
             endswitch;
 
         } else {
@@ -482,6 +484,9 @@ class OfflineOrderController extends Controller
                     $client = $this->users->get_user($order->user_id);
                     $this->design->assign('client', $client);
 
+                    $this->design->assign('okb_types', UsersORM::OKB_TYPES);
+                    $this->design->assign('date', date('d.m.Y'));
+
                     $communications = $this->communications->get_communications(array('user_id' => $client->id));
                     $this->design->assign('communications', $communications);
 
@@ -616,6 +621,15 @@ class OfflineOrderController extends Controller
                     $scorings = array();
                     if ($result_scorings = $this->scorings->get_scorings(array('order_id' => $order->order_id))) {
                         foreach ($result_scorings as $scoring) {
+                            if ($scoring->type == 'fns') {
+                                $scoring->pending = false;
+                                $start = strtotime($scoring->start_date);
+                                $seconds = time() - $start;
+                                if ($seconds > (5 * 60)) {
+                                    $scoring->pending = true;
+                                }
+
+                            }
                             if ($scoring->type == 'juicescore') {
                                 $scoring->body = unserialize($scoring->body);
                             }
@@ -764,7 +778,7 @@ class OfflineOrderController extends Controller
             $this->form_docs($order_id);
         }
 
-        $schedules = $this->PaymentsSchedules->gets($order_id);;
+        $schedules = $this->PaymentsSchedules->gets($order_id);
 
         if (count($schedules) > 1) {
 
@@ -6142,6 +6156,48 @@ class OfflineOrderController extends Controller
         exit;
     }
 
+    private function action_newEditPdn()
+    {
+        $orderId = $this->request->post('order_id');
+        $okb_story = $this->request->post('okb_story');
+
+        $order = OrdersORM::with('user')->find($orderId);
+
+        $dependents = $this->request->post('dependents');
+
+        $in = preg_replace("/[^,.0-9]/", '', $this->request->post('in'));
+        $out = preg_replace("/[^,.0-9]/", '', $this->request->post('out'));
+
+        if (empty($in)) {
+            echo json_encode(['error' => 1, 'reason' => 'Отсутствует среднемесячный доход']);
+            exit;
+        }
+
+        if (empty($out)) {
+            echo json_encode(['error' => 1, 'reason' => 'Отсутствует среднемесячный расход']);
+            exit;
+        }
+
+        $schedules = $this->PaymentsSchedules->gets($orderId);
+        $pdn = UsersORM::caclulatePdn($order, $in, $okb_story, $schedules);
+
+
+        $update =
+            [
+                'pdn' => $pdn,
+                'pdn_time' => time(),
+                'income' => $in,
+                'expenses' => $out,
+                'dependents' => $dependents
+            ];
+
+        UsersORM::where('id', $order->user_id)->update($update);
+
+        echo json_encode(['success' => 1]);
+        die();
+        exit;
+    }
+
     private function actionSendOnec()
     {
         $orderId = $this->request->post('orderId');
@@ -6209,12 +6265,14 @@ class OfflineOrderController extends Controller
         $inn = InfospheresFactory::get('inn');
         $inn = $inn->sendRequest($user);
 
-        if (is_int($inn) && $inn == $user->inn)
+        if (is_int($inn) && $inn == $user->inn && $inn != 0) {
             echo json_encode(['message' => 'ИНН введен корректно', 'need_change' => 1, 'inn' => $inn]);
-        elseif (is_int($inn) && $inn != $user->inn)
+        } elseif (is_int($inn) && $inn != $user->inn && $inn != 0) {
             echo json_encode(['message' => 'Корректный ИНН '.$inn, 'need_change' => 1, 'inn' => $inn]);
-        else
+        } else {
+            UsersORM::where('id', $userId)->update(['inn_confirmed' => 1]);
             echo json_encode(['message' => 'ИНН не найден', 'need_change' => 0]);
+        }
 
         exit;
     }

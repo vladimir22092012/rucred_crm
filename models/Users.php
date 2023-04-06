@@ -140,6 +140,7 @@ class Users extends Core
         if (!empty($result->telegram_num)) {
             $result->telegram_num = PhoneHelpers::format($result->telegram_num);
         }
+        $result->okb_story = OkbStoriesORM::query()->where('user_id', '=', $result->id)->get();
         return $result;
     }
 

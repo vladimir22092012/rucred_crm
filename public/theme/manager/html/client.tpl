@@ -2362,8 +2362,8 @@
                                                             <tr>
                                                                 <td>{$order->date|date} {$order->date|time}</td>
                                                                 <td>
-                                                                    <a href="{if $order->offline == 1}offline_order{else}order{/if}/"
-                                                                       target="_blank"></a>
+                                                                    <a href="{if $order->offline == 1}offline_order{else}order{/if}/{$order->order_id}"
+                                                                       target="_blank">{$order->order_id}</a>
                                                                 </td>
                                                                 <td>{$order->contract->number}</td>
                                                                 <td class="text-center">{$order->amount}</td>
@@ -2380,11 +2380,39 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div id="navpills-loans" class="tab-pane active">
+                                        <div id="navpills-loans" class="tab-pane">
                                             <div class="card">
                                                 <div class="card-body">
                                                     <h3>Кредитная история 1C</h3>
-                                                    {if $client->loan_history|count > 0}
+                                                    <table class="table">
+                                                        <tr>
+                                                            <th>Дата</th>
+                                                            <th>Заявка</th>
+                                                            <th>Договор</th>
+                                                            <th class="text-center">Сумма</th>
+                                                            <th class="text-center">Период</th>
+                                                            <th class="text-right">Статус</th>
+                                                        </tr>
+                                                        {foreach $client->deals as $order}
+                                                            <tr>
+                                                                <td>{$order->date|date} {$order->date|time}</td>
+                                                                <td>
+                                                                    <a href="{if $order->offline == 1}offline_order{else}order{/if}/{$order->order_id}"
+                                                                       target="_blank">{$order->order_id}</a>
+                                                                </td>
+                                                                <td>{$order->contract->number}</td>
+                                                                <td class="text-center">{$order->amount}</td>
+                                                                <td class="text-center">{$order->period}</td>
+                                                                <td class="text-right">
+                                                                    {$order_statuses[$order->status]}
+                                                                    {if $order->contract->status==3}
+                                                                        <br/>
+                                                                        <small>{$order->contract->close_date|date} {$order->contract->close_date|time}</small>{/if}
+                                                                </td>
+                                                            </tr>
+                                                        {/foreach}
+                                                    </table>
+                                                    {*{if $client->loan_history|count > 0}
                                                         <table class="table">
                                                             <tr>
                                                                 <th>Дата</th>
@@ -2425,7 +2453,7 @@
                                                         </table>
                                                     {else}
                                                         <h4>Нет кредитов</h4>
-                                                    {/if}
+                                                    {/if}*}
                                                 </div>
                                             </div>
                                         </div>
