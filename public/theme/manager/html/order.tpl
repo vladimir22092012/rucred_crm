@@ -3624,6 +3624,9 @@
                                                                             {if $scorings[$scoring_type->name]->created}
                                                                                 Дата скоринга: {$scorings[$scoring_type->name]->created|date} {$scorings[$scoring_type->name]->created|time}
                                                                             {/if}
+                                                                        {if $scoring_type->name == 'fns' && $scorings[$scoring_type->name]->pending == true}
+                                                                            <p>В данный момент проверка ФНС не доступна, вы можете продолжить работу с заявкой</p>
+                                                                        {/if}
                                                                         {if $scoring_type->name == 'fssp'}
                                                                             <a href="/ajax/show_fssp.php?id={$scorings[$scoring_type->name]->id}&password=Hjkdf8d"
                                                                                target="_blank">Подробнее</a>

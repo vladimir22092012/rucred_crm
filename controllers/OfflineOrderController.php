@@ -625,7 +625,7 @@ class OfflineOrderController extends Controller
                                 $scoring->pending = false;
                                 $start = strtotime($scoring->start_date);
                                 $seconds = time() - $start;
-                                if ($seconds > (5 * 60 * 60)) {
+                                if ($seconds > (5 * 60)) {
                                     $scoring->pending = true;
                                 }
 
