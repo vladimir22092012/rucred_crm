@@ -1166,6 +1166,63 @@
                 $(this).closest('tr').remove();
             });
 
+            $('.add_to_okb_table').on('click', function (e) {
+                e.preventDefault();
+
+                $('#okb_table').append(`
+                    <tr>
+                        <td>
+                            <select class="form-control okb_type" name="okb_story[][type]">
+                                {foreach $okb_types as $type => $label}
+                                    <option value="{$type}">
+                                        {$label}
+                                    </option>
+                                {/foreach}
+                            </select
+                        </td>
+                        <td>
+                            <input name="okb_story[][updated_at]"
+                                   class="form-control okb_updated_at daterange" value="{$date}"/>
+                        </td>
+                        <td>
+                            <input name="okb_story[][start_date]"
+                                   class="form-control okb_start_date daterange" value="{$date}"/>
+                        </td>
+                        <td>
+                            <input name="okb_story[][end_date]"
+                                   class="form-control okb_end_date daterange" value="{$date}"/>
+                        </td>
+                        <td>
+                            <input name="okb_story[][debts]"
+                                   class="form-control okb_debts"/>
+                        </td>
+                        <td>
+                            <input name="okb_story[][delay]"
+                                   class="form-control okb_delay"/>
+                        </td>
+                        <td>
+                            <div class="btn btn-outline-danger delete_card">-</div>
+                        </td>
+                    </tr>
+                `);
+
+                $('input:not(input[type=button], input[type=file], input[type=submit], input[type=reset]), textarea').on('input', function () {
+                    let value = $(this).val();
+                    value = value.toUpperCase();
+                    $(this).val(value);
+                });
+                $('.daterange').each(function() {
+                    $(this).daterangepicker({
+                        singleDatePicker: true,
+                        showDropdowns: true,
+                        locale: {
+                            format: 'DD.MM.YYYY'
+                        },
+                        startDate: $(this).val(),
+                    });
+                });
+            });
+
             $('.savePdn').on('click', function () {
                 let modal = $('#pdnModal'),
                     post = {

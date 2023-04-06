@@ -621,6 +621,15 @@ class OfflineOrderController extends Controller
                     $scorings = array();
                     if ($result_scorings = $this->scorings->get_scorings(array('order_id' => $order->order_id))) {
                         foreach ($result_scorings as $scoring) {
+                            if ($scoring->type == 'fns') {
+                                $scoring->pending = false;
+                                $start = strtotime($scoring->start_date);
+                                $seconds = time() - $start;
+                                if ($seconds > (5 * 60 * 60)) {
+                                    $scoring->pending = true;
+                                }
+
+                            }
                             if ($scoring->type == 'juicescore') {
                                 $scoring->body = unserialize($scoring->body);
                             }
@@ -6256,9 +6265,9 @@ class OfflineOrderController extends Controller
         $inn = InfospheresFactory::get('inn');
         $inn = $inn->sendRequest($user);
 
-        if (is_int($inn) && $inn == $user->inn)
+        if (is_int($inn) && $inn == $user->inn && $inn != 0)
             echo json_encode(['message' => 'ИНН введен корректно', 'need_change' => 1, 'inn' => $inn]);
-        elseif (is_int($inn) && $inn != $user->inn)
+        elseif (is_int($inn) && $inn != $user->inn && $inn != 0)
             echo json_encode(['message' => 'Корректный ИНН '.$inn, 'need_change' => 1, 'inn' => $inn]);
         else
             echo json_encode(['message' => 'ИНН не найден', 'need_change' => 0]);

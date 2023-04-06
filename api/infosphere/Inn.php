@@ -10,18 +10,17 @@ class Inn extends InfoSphere
                 'Password' => self::$password,
                 'sources' => 'fns',
                 'PersonReq' => [
-                    'first' => $user->firstname,
-                    'middle' => $user->patronymic,
-                    'paternal' => $user->lastname,
+                    'first' => mb_convert_case($user->firstname, MB_CASE_TITLE, "UTF-8"),
+                    'middle' => mb_convert_case($user->patronymic, MB_CASE_TITLE, "UTF-8"),
+                    'paternal' => mb_convert_case($user->lastname, MB_CASE_TITLE, "UTF-8"),
                     'birthDt' => date('Y-m-d', strtotime($user->birth)),
                     'passport_series' => $user->passport_serial,
                     'passport_number' => $user->passport_number
                 ]
             ];
-
         $request = self::curl($params);
 
-        $inn = 'ИНН не найден';
+        $inn = 0;
 
         if(isset($request['Source']['@attributes']['checktype']) && $request['Source']['@attributes']['checktype'] != 'fns_inn')
             return $inn;
