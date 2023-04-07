@@ -2834,7 +2834,7 @@
                                                             <label class="control-label col-md-4">Адрес
                                                                 прописки:</label>
                                                             <div class="col-md-8">
-                                                                <p class="form-control-static">{$order->regaddress->adressfull}</p>
+                                                                <p class="form-control-static textupper">{$order->regaddress->adressfull}</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -2844,7 +2844,7 @@
                                                             <label class="control-label col-md-4">Адрес
                                                                 проживания:</label>
                                                             <div class="col-md-8">
-                                                                <p class="form-control-static">{$order->faktaddress->adressfull}</p>
+                                                                <p class="form-control-static textupper">{$order->faktaddress->adressfull}</p>
                                                             </div>
                                                         </div>
                                                     </div>

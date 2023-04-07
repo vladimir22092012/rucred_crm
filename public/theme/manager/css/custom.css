@@ -10,7 +10,7 @@
   border: 1px solid rgba(0, 0, 0, 0.4); }
 
 .custom-control-label::before {
-//  background-color: #383f48; 
+//  background-color: #383f48;
 }
 
 .js-bablo-button {
@@ -43,14 +43,14 @@
     height:16px;
     line-height:14px;
     border-radius:50%;
-    color:#31b131; 
+    color:#31b131;
     font-family: 'Font Awesome 5 Free';
     font-weight: 900;
     font-size: 14px;
 }
 .button-toggle.open:before {
     content:"\f056";
-    color:#f62d51; 
+    color:#f62d51;
 }
 .button-toggle-wrapper + span {
     display:inline-block;
@@ -111,7 +111,7 @@
     max-height:98%;
     display:inline-block;
     vertical-align: middle;
-    
+
 }
 .order-image-actions {
     position:absolute;
@@ -221,4 +221,7 @@
  overflow:hidden;
  color:#54667a;
  white-space:normal
+}
+.textupper {
+  text-transform: uppercase;
 }
