@@ -29,8 +29,8 @@ class Soap1c extends Core
         else
         {
             $this->link = "http://141.101.178.136:63025/RKO/ws/";
-            $this->login = 'Администратор';
-            $this->password = '';
+            $this->login = 'CRMOmen';
+            $this->password = '4PtdD86Q';
         }
     }
 
