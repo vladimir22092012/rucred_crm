@@ -55,6 +55,7 @@ $(function () {
                 let company_id = $('.my_company').val();
                 let branch_id = $('.branches').val();
                 let amount = $('#order_sum').val();
+                let profunion = $('#profunion1').prop('checked') === true ? 1 : 0;
 
                 $.ajax({
                     method: 'POST',
@@ -67,7 +68,8 @@ $(function () {
                         branch_id: branch_id,
                         amount: amount,
                         percents: percents,
-                        company_id: company_id
+                        company_id: company_id,
+                        profunion: profunion,
                     },
                     success: function (sum) {
                         sum['annouitet'] = new Intl.NumberFormat("ru").format(sum['annouitet']);

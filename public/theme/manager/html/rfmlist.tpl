@@ -1,7 +1,28 @@
 {$meta_title="Rfmlist" scope=parent}
 
 {capture name='page_scripts'}
+    <script>
+        $('#start_check').click(function(e) {
+            e.preventDefault();
 
+            let type = $('#check_type').val();
+            $.ajax({
+                url: '/rfmlist',
+                method: 'POST',
+                dataType: 'JSON',
+                data: {
+                    action: 'start_check',
+                    type: type,
+                },
+                success: function (response) {
+                    Swal.fire({
+                        title: response['text'],
+                        confirmButtonText: 'ОК'
+                    });
+                }
+            })
+        });
+    </script>
 {/capture}
 <div class="page-wrapper">
     <!-- ============================================================== -->
@@ -96,10 +117,38 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="alert alert-info">
-                                            Для загрузки используйте формат xml.
+                                            Для загрузки используйте формат xml, xlsx.
                                             <br />
                                         </div>
                                     </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-4">
+                                        <h3>Проверка по клиентам</h3>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    {if count($types) <= 0}
+                                        <div class="col-6">
+                                            <div class="alert alert-danger">
+                                                Нет загруженных файлов для проверки
+                                                <br />
+                                            </div>
+                                        </div>
+                                    {else}
+                                        <div class="col-6">
+                                            <select class="form-control" id="check_type">
+                                                {foreach $types as $key => $type}
+                                                    <option value="{$key}">{$type}</option>
+                                                {/foreach}
+                                            </select>
+                                        </div>
+                                        <div class="col-4">
+                                            <button type="button" id="start_check" class="btn btn-primary">Запустить</button>
+                                        </div>
+                                    {/if}
                                 </div>
 
                             </form>

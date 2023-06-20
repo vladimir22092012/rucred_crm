@@ -22,9 +22,9 @@ class Soap1c extends Core
 
         if($onec_mode == 'test')
         {
-            $this->link = "http://141.101.178.136:63025/RKO-Test/ws/";
-            $this->login = '';
-            $this->password = '';
+            $this->link = "http://141.101.178.136:63025/rko-datex/ws/";
+            $this->login = 'CRMOmen';
+            $this->password = '123456789';
         }
         else
         {
@@ -146,6 +146,7 @@ class Soap1c extends Core
     {
         $item = new StdClass();
         $item->OrderID = $payment->order_id;
+        $item->НомерДоговора = $payment->contract->number;
         $item->Дата = date('YmdHis', strtotime($payment->date));
         $item->Сумма = $payment->amount;
         $item->ИННПлательщика = $payment->recepient;

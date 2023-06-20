@@ -117,6 +117,10 @@ class ClientController extends Controller
         if (!empty($blacklist_id))
             $in_blacklist = 1;
 
+        $rfmScorings = RfmscoringresultORM::query()->where('user_id', '=', $id)->get();
+        $this->design->assign('rfm_scorings', $rfmScorings);
+
+
         $this->design->assign('in_blacklist', $in_blacklist);
 
         $client->regaddress = $this->addresses->get_address($client->regaddress_id);

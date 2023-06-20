@@ -113,8 +113,7 @@ class AuditCron extends Core
                 ));
 
                 $classname = $scoring->type."_scoring";
-
-                $this->{$classname}->run_scoring($scoring->id);
+                $this->{ucfirst($classname)}->run_scoring($scoring->id);
             } catch (Exception $exception) {
                 $this->scorings->update_scoring($scoring->id, array(
                     'status' => 'process',

@@ -1864,7 +1864,12 @@
                         {else}
                             <a href="orders">Реестр онлайн-заявок</a>
                         {/if}</li>
-                    <li class="breadcrumb-item active">Заявка
+                    <li class="breadcrumb-item active">
+                        {if isset($from_registr)}
+                        Сделка
+                        {else}
+                            Заявка
+                        {/if}
                         № {if !empty($contract->number)}{$contract->number}{else}{$order->group_number} {$order->company_number} {$order->personal_number}{/if}
                         ({$order->order_id})
                     </li>

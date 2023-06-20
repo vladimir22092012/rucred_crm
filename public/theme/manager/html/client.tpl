@@ -756,6 +756,13 @@
                                 <span class="hidden-xs-down">Кредитная история</span>
                             </a>
                         </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#historyRfm" role="tab" aria-selected="true">
+                                <span class="hidden-sm-up"><i class="ti-email"></i></span>
+                                <span class="hidden-xs-down">Логирование RFM</span>
+                            </a>
+                        </li>
                     </ul>
                     <!-- Tab panes -->
                     <div class="tab-content tabcontent-border">
@@ -2454,6 +2461,36 @@
                                                     {else}
                                                         <h4>Нет кредитов</h4>
                                                     {/if}*}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="historyRfm" class="tab-pane" role="tabpanel">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="tab-content br-n pn">
+                                        <div id="navpills-orders" class="tab-pane active">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h3>Логирование RFM</h3>
+                                                    <table class="table">
+                                                        <tr>
+                                                            <th>Дата</th>
+                                                            <th>Результат</th>
+                                                        </tr>
+                                                        {foreach $rfm_scorings as $rfmsc}
+                                                            <tr>
+                                                                <td>{$rfmsc->created|date} {$order->created|time}</td>
+                                                                <td>
+                                                                    {$rfmsc->data}
+                                                                </td>
+                                                            </tr>
+                                                        {/foreach}
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>

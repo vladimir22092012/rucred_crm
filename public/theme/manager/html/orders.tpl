@@ -333,9 +333,6 @@
                                                         <span class="label label-success">Црм</span>
                                                     {/if}
                                                 </small>
-                                                {if $order->count_schedules > 1}
-                                                    <span class="label label-danger">Реструктуризирован</span>
-                                                {/if}
                                             </td>
                                             <td style="width: 70px;" class="jsgrid-cell">
                                                 {$order->date|date}

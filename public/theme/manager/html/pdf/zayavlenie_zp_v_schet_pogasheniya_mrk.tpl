@@ -56,7 +56,7 @@
     </tr>
     <tr>
         <td style="width: 30%">Назначение платежа:</td>
-        <td style="width: 70%">Оплата по договору микрозайма № <strong>{$uid}</strong> от <strong>{if isset($code_asp->code)}{$code_asp->created|date}{else}ХХ.ХХ.ХХХХ{/if}</strong>
+        <td style="width: 70%">Оплата по договору микрозайма № <strong>{$uid}</strong> от <strong>{if isset($code_asp->code)}{$code_asp->created|date}{else}{$date|date}{/if}</strong>
             // заемщик <strong>{$lastname|upper} {$firstname|upper} {$patronymic|upper}</strong> ИНН <strong>{$inn}</strong>
         </td>
     </tr>
@@ -67,7 +67,7 @@
     в
     полном объёме из причитающихся мне при увольнении выплат и компенсаций по вышеуказанным реквизитам.
 </div>
-<div>Приложение:<br>Копия Графика платежей от <strong>{if isset($code_asp->code)}{$code_asp->created|date}{else}ХХ.ХХ.ХХХХ{/if}</strong> года<br>
+<div>Приложение:<br>Копия Графика платежей от <strong>{if isset($code_asp->code)}{$code_asp->created|date}{else}{$date|date}чыыв{/if}</strong> года<br>
 </div>
 <div></div>
 {if !isset($code_asp->code)}

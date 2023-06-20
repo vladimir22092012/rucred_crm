@@ -15,6 +15,12 @@ class TempCommandsCron extends Core
         //$this->createContracts();
         //$this->checkPhotos();
         //$this->sendYaDisk();
+        $documents = DocumentsORM::where('order_id', '=', 51501)->get();
+        foreach ($documents as $document) {
+            $params = unserialize($document->params);
+            print_r("{$params->lastname} {$params->firstname} {$params->patronymic}".PHP_EOL);
+        }
+
     }
 
     private function sendYaDisk() {
