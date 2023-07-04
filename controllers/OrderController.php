@@ -307,6 +307,10 @@ class OrderController extends Controller
                     $this->action_change_inn();
                     exit;
 
+                case 'addFile':
+                    $this->action_addFile();
+                    exit;
+
             endswitch;
 
         } else {
@@ -793,6 +797,19 @@ class OrderController extends Controller
         foreach ($documents as $document) {
             $key = date('Y-m-d', strtotime($document->created));
 
+            $sort_docs[$key][] = $document;
+        }
+
+        $others = OtherDocuments::query()->where('order_id', '=', $order_id)->get();
+        foreach ($others as $other) {
+            $key = date('Y-m-d', strtotime($other->created_at));
+            $document = new stdClass();
+            $document->id = $other->id;
+            $document->numberation = '';
+            $document->name = $other->name;
+            $document->user_id = $other->user_id;
+            $document->md5_name = $other->md5_name;
+            $document->type = 'other';
             $sort_docs[$key][] = $document;
         }
 
@@ -5576,6 +5593,39 @@ class OrderController extends Controller
             UsersORM::where('id', $userId)->update(['inn_confirmed' => 1]);
             echo json_encode(['message' => 'ИНН не найден', 'need_change' => 0]);
         }
+        exit;
+    }
+
+    public function action_addFile() {
+        $user_id = $this->request->post('user_id');
+        $order_id = $this->request->post('order_id');
+        $import_file = $this->request->files("document");
+
+        $name = $import_file['name'];
+        $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+
+        if ($ext != 'pdf') {
+            echo json_encode(['status' => 'error', 'message' => 'Загрузите документ в формате pdf']);
+            exit;
+        }
+
+        $uploaded_name = $import_file['tmp_name'];
+        $md5Name = md5(time()).'.'.$ext;
+        $filePath = $this->config->root_dir.'files/users/'.$user_id.'/'.$md5Name;
+
+        if (move_uploaded_file($import_file['tmp_name'], $filePath)) {
+            OtherDocuments::create([
+                'order_id' => $order_id,
+                'user_id' => $user_id,
+                'name' => $name,
+                'path' => $filePath,
+                'md5_name' => $md5Name,
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
+            echo json_encode(['status' => 'ok', 'message' => 'Файл успешно загружен']);
+            exit;
+        }
+        echo json_encode(['status' => 'error', 'message' => 'Ошибка загрузки файла']);
         exit;
     }
 

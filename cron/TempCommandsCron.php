@@ -12,14 +12,44 @@ class TempCommandsCron extends Core
 
     private function execute() {
         echo 'start cron';
-        //$this->createContracts();
-        //$this->checkPhotos();
-        //$this->sendYaDisk();
-        $documents = DocumentsORM::where('order_id', '=', 51501)->get();
-        foreach ($documents as $document) {
-            $params = unserialize($document->params);
-            print_r("{$params->lastname} {$params->firstname} {$params->patronymic}".PHP_EOL);
+        $order_id = 51714;
+        $order = $this->orders->get_order($order_id);
+        $projectNumber = ProjectContractNumberORM::where('orderId', $order->order_id)->first();
+
+        $payment_schedule = $this->PaymentsSchedules->get(['order_id' => $order_id, 'actual' => 1]);
+        $payment_schedule = json_decode($payment_schedule->schedule, true);
+
+        $date = date('Y-m-d');
+
+        foreach ($payment_schedule as $payday => $payment) {
+            if ($payday != 'result') {
+                $payday = date('Y-m-d', strtotime($payday));
+                if ($payday > $date) {
+                    $next_payment = $payday;
+                    break;
+                }
+            }
         }
+
+        $contract =
+            [
+                'order_id' => $order->order_id,
+                'user_id' => $order->user_id,
+                'number' => $projectNumber->uid,
+                'amount' => $order->amount,
+                'period' => $order->period,
+                'base_percent' => $order->percent,
+                'peni_percent' => 0,
+                'status' => 0,
+                'loan_body_summ' => $order->amount,
+                'loan_percents_summ' => 0,
+                'loan_peni_summ' => 0,
+                'issuance_date' => date('Y-m-d H:i:s'),
+                'return_date' => $next_payment
+            ];
+        $contract_id = $this->Contracts->add_contract($contract);
+        print_r($contract_id);
+        $this->orders->update_order($order->order_id, ['contract_id' => $contract_id, 'status' => 2]);
 
     }
 

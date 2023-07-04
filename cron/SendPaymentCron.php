@@ -44,7 +44,7 @@ class SendPaymentCron extends Core
             $payment->description = $description;
             $payment->user_acc_number = $requisites->number;
             $payment->user_bik = $requisites->bik;
-            $payment->users_inn = $user->inn;
+            $payment->users_inn = $requisites->inn_holder;
 
             $result = $this->soap1c->send_payment($payment);
 

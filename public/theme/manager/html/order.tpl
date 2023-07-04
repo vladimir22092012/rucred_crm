@@ -20,6 +20,43 @@
 
             moment.locale('ru');
 
+            $('#upload_document').click(function() {
+                $('#document_file').click();
+            });
+
+            $('#document_file').on('change', function() {
+                var formData = new FormData();
+                formData.append('order_id', $(this).attr('data-order-id'));
+                formData.append('user_id', $(this).attr('data-user-id'));
+                formData.append('action', 'addFile');
+                formData.append('document', this.files[0]);
+
+                $.ajax({
+                    type        : 'POST',
+                    data        : formData,
+                    cache       : false,
+                    dataType    : 'json',
+                    processData : false,
+                    contentType : false,
+                    success     : function(response){
+                        if (response.status == 'ok') {
+                            Swal.fire({
+                                title: response['message'],
+                                confirmButtonText: 'ОК'
+                            });
+                            setTimeout(function() {
+                                location.reload();
+                            }, 2000)
+                        } else {
+                            Swal.fire({
+                                title: response['message'],
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+                    },
+                });
+            });
+
             $('.daterange').each(function() {
                 $(this).daterangepicker({
                     singleDatePicker: true,
@@ -3422,6 +3459,8 @@
                                                            data-order="{$order->order_id}"
                                                            value="Сформировать документы">
                                                 {/if}*}
+                                                <button id="upload_document" type="button" class="btn btn-success btn-xs">Загрузить документ</button>
+                                                <input data-order-id="{$order->order_id}" data-user-id="{$order->user_id}" type="file" id="document_file" name="document" style="display: none">
                                             </h6>
                                             <br>
                                             {if !empty($sort_docs)}
@@ -3441,20 +3480,36 @@
                                                                  style="width: 40%!important; margin-left: 50px">
                                                                 <label class="control-label">{$document->name}</label>
                                                             </div>
-                                                            <div style="margin-left: 10px">
-                                                                <a target="_blank"
-                                                                   href="{$config->back_url}/document?id={$document->id}&action=download_file"><input
-                                                                            type="button"
-                                                                            class="btn btn-outline-success download_doc"
-                                                                            value="Сохранить"></a>
-                                                            </div>
-                                                            <div style="margin-left: 10px">
-                                                                <a target="_blank"
-                                                                   href="{$config->back_url}/document/{$document->id}"><input
+                                                            {if $document->type == 'other'}
+                                                                <div style="margin-left: 10px">
+                                                                    <a target="_blank"
+                                                                       class="btn btn-outline-success"
+                                                                       download="{$document->name}"
+                                                                       href="{$config->back_url}/files/users/{$document->user_id}/{$document->md5_name}">Сохранить</a>
+                                                                </div>
+                                                                <div style="margin-left: 10px">
+                                                                    <a target="_blank"
+                                                                       href="{$config->back_url}/files/users/{$document->user_id}/{$document->md5_name}"><input
                                                                             type="button"
                                                                             class="btn btn-outline-warning print_doc"
                                                                             value="Распечатать"></a>
-                                                            </div>
+                                                                </div>
+                                                            {else}
+                                                                <div style="margin-left: 10px">
+                                                                    <a target="_blank"
+                                                                       href="{$config->back_url}/document?id={$document->id}&action=download_file"><input
+                                                                            type="button"
+                                                                            class="btn btn-outline-success download_doc"
+                                                                            value="Сохранить"></a>
+                                                                </div>
+                                                                <div style="margin-left: 10px">
+                                                                    <a target="_blank"
+                                                                       href="{$config->back_url}/document/{$document->id}"><input
+                                                                            type="button"
+                                                                            class="btn btn-outline-warning print_doc"
+                                                                            value="Распечатать"></a>
+                                                                </div>
+                                                            {/if}
                                                             {*
                                                             <div class="btn-group"
                                                                  style="margin-left: 10px; height: 35px">
