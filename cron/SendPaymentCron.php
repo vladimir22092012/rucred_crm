@@ -28,13 +28,13 @@ class SendPaymentCron extends Core
             $user     = UsersORM::find($cron->user_id);
             $requisites = RequisitesORM::find($cron->requisites_id);
             $dealDate = date('d.m.Y', strtotime($contract->deal_date));
-
             $fio = "$user->lastname $user->firstname $user->patronymic";
 
             $description = "Выдача средств по договору микрозайма № $contract->number от $dealDate
             // заемщик $fio ИНН $user->inn. Без налога (НДС)";
 
             $payment = new stdClass();
+            $payment->contract = $contract;
             $payment->order_id = $cron->transaction_id;
             $payment->date = date('Y-m-d H:i:s', strtotime($contract->issuance_date));
             $payment->amount = $order->amount;
@@ -42,9 +42,44 @@ class SendPaymentCron extends Core
             $payment->user_id = (string)$order->user->id;
             $payment->number = '40701810300000000347';
             $payment->description = $description;
+
+            $holder = null;
+            $same_holder = 0;
+            if ($requisites) {
+                $holder = $requisites->holder;
+            }
+
+            if (!empty($holder)) {
+                $holder = explode(' ', $holder, 3);
+                $same_holder = 0;
+
+                if (count($holder) == 3) {
+                    list($holder_name, $holder_firstname, $holder_patronymic) = $holder;
+                    if ($user->lastname == $holder_name && $user->firstname == $holder_firstname && $user->patronymic == $holder_patronymic)
+                        $same_holder = 1;
+                }
+
+                if (count($holder) == 2) {
+                    list($holder_name, $holder_firstname) = $holder;
+                    if ($user->lastname == $holder_name && $user->firstname == $holder_firstname)
+                        $same_holder = 1;
+                }
+            }
+
             $payment->user_acc_number = $requisites->number;
             $payment->user_bik = $requisites->bik;
             $payment->users_inn = $requisites->inn_holder;
+            if ($same_holder == 0) {
+                $some_person = new StdClass();
+                $some_person->НаименованиеБанка = $requisites->name;
+                $some_person->БИК = $requisites->bik;
+                $some_person->РасчётныйСчёт = $requisites->number;
+                $some_person->ФИОПолучателя = $requisites->holder;
+                $some_person->ИННПолучателя = $requisites->inn_holder;
+                $payment->some_person = $some_person;
+            } else {
+                $payment->some_person = null;
+            }
 
             $result = $this->soap1c->send_payment($payment);
 
