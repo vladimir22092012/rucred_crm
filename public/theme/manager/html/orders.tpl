@@ -146,8 +146,8 @@
                                        class="btn btn-xs {if $filter_status==1}btn-info{else}btn-outline-info{/if}">Принята</a>
                                     <a href="{if $filter_status==2}{url status=null page=null}{else}{url status=2 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==2}btn-success{else}btn-outline-success{/if}">А.Подготовлена</a>
-                                    <a href="{if $filter_status==3}{url status=null page=null}{else}{url status=3 page=null}{/if}"
-                                       class="btn btn-xs {if $filter_status==3}btn-danger{else}btn-outline-danger{/if}">Отказ</a>
+                                    <a href="{if $filter_status==20}{url status=null page=null}{else}{url status=20 page=null}{/if}"
+                                       class="btn btn-xs {if $filter_status==20}btn-danger{else}btn-outline-danger{/if}">А.Отказ</a>
                                     <a href="{if $filter_status==4}{url status=null page=null}{else}{url status=4 page=null}{/if}"
                                        class="btn btn-xs {if $filter_status==4}btn-inverse{else}btn-outline-inverse{/if}">Подписан</a>
                                     <a href="{if $filter_status==6}{url status=null page=null}{else}{url status=6 page=null}{/if}"

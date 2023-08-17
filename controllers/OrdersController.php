@@ -20,20 +20,20 @@ class OrdersController extends Controller
 
         switch ($period) :
             case 'today':
-                $filter['date_from'] = date('Y-m-d');
+                $filter['date_from'] = date('Y-m-d 00:00:01');
                 break;
 
             case 'yesterday':
-                $filter['date_from'] = date('Y-m-d', time() - 86400);
-                $filter['date_to'] = date('Y-m-d', time() - 86400);
+                $filter['date_from'] = date('Y-m-d 00:00:01', time() - 86400);
+                $filter['date_to'] = date('Y-m-d 23:59:59', time() - 86400);
                 break;
 
             case 'month':
-                $filter['date_from'] = date('Y-m-01');
+                $filter['date_from'] = date('Y-m-01 00:00:01');
                 break;
 
             case 'year':
-                $filter['date_from'] = date('Y-01-01');
+                $filter['date_from'] = date('Y-01-01 00:00:01');
                 break;
 
             case 'all':
@@ -44,8 +44,8 @@ class OrdersController extends Controller
             case 'optional':
                 $daterange = $this->request->get('daterange');
                 $filter_daterange = array_map('trim', explode('-', $daterange));
-                $filter['date_from'] = date('Y-m-d', strtotime($filter_daterange[0]));
-                $filter['date_to'] = date('Y-m-d', strtotime($filter_daterange[1]));
+                $filter['date_from'] = date('Y-m-d 00:00:01', strtotime($filter_daterange[0]));
+                $filter['date_to'] = date('Y-m-d 23:59:59', strtotime($filter_daterange[1]));
                 break;
         endswitch;
         $this->design->assign('period', $period);

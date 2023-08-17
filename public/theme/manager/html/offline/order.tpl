@@ -17,6 +17,43 @@
 
             let token_dadata = "25c845f063f9f3161487619f630663b2d1e4dcd7";
 
+            $('#upload_document').click(function() {
+                $('#document_file').click();
+            });
+
+            $('#document_file').on('change', function() {
+                var formData = new FormData();
+                formData.append('order_id', $(this).attr('data-order-id'));
+                formData.append('user_id', $(this).attr('data-user-id'));
+                formData.append('action', 'addFile');
+                formData.append('document', this.files[0]);
+
+                $.ajax({
+                    type        : 'POST',
+                    data        : formData,
+                    cache       : false,
+                    dataType    : 'json',
+                    processData : false,
+                    contentType : false,
+                    success     : function(response){
+                        if (response.status == 'ok') {
+                            Swal.fire({
+                                title: response['message'],
+                                confirmButtonText: 'ОК'
+                            });
+                            setTimeout(function() {
+                                location.reload();
+                            }, 2000)
+                        } else {
+                            Swal.fire({
+                                title: response['message'],
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+                    },
+                });
+            });
+
             $('.check_inn_infosphere').on('click', function () {
                 let userId = $(this).attr('data-user');
 
@@ -3631,6 +3668,8 @@
                                                                value="Сформировать документы">
                                                     {/if}
                                                 {/if}
+                                                <button id="upload_document" type="button" class="btn btn-success btn-xs">Загрузить документ</button>
+
                                             </h6>
                                             <br>
                                             {if !empty($sort_docs)}

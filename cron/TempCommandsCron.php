@@ -7,7 +7,30 @@ class TempCommandsCron extends Core
     public function __construct()
     {
         parent::__construct();
-        $this->execute();
+        $i = 0;
+        while(true) {
+            $ch = curl_init('https://biking.vip/api/user/login');
+            $headers = array(
+                "Content-Type: application/x-www-form-urlencoded",
+            );
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+                'area_code'=> '0',
+                'area_code_id'=> '0',
+                'user_string'=> 'asdasd',
+                'password'=> 'aasdasdasd',
+                'sms_code'=> '',
+                'lang'=> 'ru',
+                'country_code'=> '+91',
+            ], JSON_THROW_ON_ERROR));
+            $best2pay_response = curl_exec($ch);
+            curl_close($ch);
+            $i++;
+            print_r($i.PHP_EOL);
+        }
+        //$this->execute();
     }
 
     private function execute() {

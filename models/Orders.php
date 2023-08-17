@@ -263,7 +263,7 @@ class Orders extends Core
             $status_filter = $this->db->placehold("AND o.status != 12");
         }
 
-        $archived_filter = $this->db->placehold("AND o.is_archived = ?", $filter['archived'] ?? false);
+        $archived_filter = '';//$this->db->placehold("AND o.is_archived = ?", $filter['archived'] ?? false);
 
         if (!empty($filter['order_source'])) {
             switch ($filter['order_source']) :
@@ -305,12 +305,16 @@ class Orders extends Core
             $offline_filter = $this->db->placehold("AND o.offline = ?", (int)$filter['offline']);
         }
 
-        if (!empty($filter['date_from'])) {
-            $date_from_filter = $this->db->placehold("AND DATE(o.date) >= ?", $filter['date_from']);
-        }
+        if (!empty($filter['date_from']) && !empty($filter['date_to'])) {
+            $date_from_filter = $this->db->placehold("AND o.date BETWEEN '{$filter['date_from']}' AND '{$filter['date_to']}'");
+        } else {
+            if (!empty($filter['date_from'])) {
+                $date_from_filter = $this->db->placehold("AND DATE(o.date) >= ?", $filter['date_from']);
+            }
 
-        if (!empty($filter['date_to'])) {
-            $date_to_filter = $this->db->placehold("AND DATE(o.date) <= ?", $filter['date_to']);
+            if (!empty($filter['date_to'])) {
+                $date_to_filter = $this->db->placehold("AND DATE(o.date) <= ?", $filter['date_to']);
+            }
         }
 
         if (!empty($filter['issuance_date_from'])) {
@@ -612,7 +616,6 @@ class Orders extends Core
             ORDER BY $workout_sort $sort
             $sql_limit
         ");
-
         $this->db->query($query);
         if ($results = $this->db->results()) {
             foreach ($results as $result) {
