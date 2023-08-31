@@ -104,7 +104,7 @@ class AuditCron extends Core
         if ($this->isStarted()) {
             exit;
         }
-        $scorings = $this->scorings->get_scorings(['status' => ['new']]);
+        $scorings = ScoringsORM::query()->where('status', '=', 'new')->get();
         foreach ($scorings as $scoring) {
             try {
                 $this->scorings->update_scoring($scoring->id, array(
@@ -131,6 +131,7 @@ class AuditCron extends Core
             echo "Cron is started\r\n";
             return true;
         }
+        echo "Cron not started\r\n";
         return false;
     }
 
